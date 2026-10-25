@@ -1,0 +1,180 @@
+= World-Building & Lore Canon: The Cosmology of Lux and Tenebris
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Canonical Introduction
+
+This document establishes the living world-building canon, cosmological ontology,
+historical epoch, and atmospheric lore for *Tenebris and Lux* ("Darkness and Light").
+It provides the creative foundation from which all subsequent narrative scripts,
+room architectures, creature ecologies, and philosophical themes arise.
+
+== 1. The Primordial Cosmology
+
+[quote, The First Inscription of the Keepers]
+"In the beginning was the Radiance, and from the Radiance, form was spoken into the deep.
+Yet where form stands, cast upon the stone is shadow; and where shadow waits, silence gathers.
+Do not mistake the lamp for the sun, nor the shadow for the grave."
+
+In the universe of *Tenebris and Lux*, existence is not composed of inert matter governed
+purely by mechanistic physics. Physical reality is held together by an eternal, ontological
+tension between three sovereign states:
+
+=== Lux (The Primordial Radiance)
+
+* **Ontological Nature**: Cohesion, memory, spiritual warmth, clarity of thought, and structural integrity.
+* **Physics of Light**: Lux is finite, radiating outward and dissipating against cold subterranean stone. Left unattended, it naturally attenuates over time (`LUX_DECAY_RATE = 5`).
+* **The Living Spark**: Every conscious entity possesses an internal reservoir of Lux. As long as Lux endures, stone walls remain solid, minds remain lucid, and pathways are navigable.
+* **The Peril of Hyper-Radiance**: While light brings clarity, unmediated pure light has historical precedent of burning, calcifying, and blinding those who seek absolute dominion. The ancient zealots who sought eternal day were consumed into statues of calcified salt.
+
+=== Tenebris (The Creeping Veil)
+
+* **Ontological Nature**: Entropy, dissolution, silence, rest, and the primordial void.
+* **Behavior**: Tenebris does not attack with malice; it flows like cold water into abandoned chambers. It is the natural consequence of energy waning.
+* **The Veil of Dissolution**: When an entity's Lux drops to $0$, it does not simply suffer physical injury; its identity unravels. Its memories dissolve into the stones, leaving only a shadow-echo wandering the corridors.
+* **The Mercy of Shadow**: In ancient esoteric texts, darkness was also understood as the womb of contemplation, rest, germination, and protection from scorching daylight.
+
+=== The Penumbra (The Living Threshold)
+
+Between absolute blinding radiance and absolute void lies the **Penumbra**—the twilight boundary
+where mortal beings live, breathe, and adapt. Neither pure light nor total darkness is hospitable
+to mortal flesh. Wisdom lies not in eradicating darkness, but in cultivating steady, self-sustaining
+embers within the sanctuary of the threshold.
+
+== 2. The Great Fracture & Historical Epochs
+
+=== Epoch I: The Age of Solar Spires
+
+Millennia ago, an enlightened civilization known as the **Aethelgard Lightbearers** constructed
+colossal monoliths on the surface world that channeled celestial radiance deep into the heart of
+the subterranean crust. These underground sanctuaries were connected by grand corridors of white
+granite, lit by eternal crystalline braziers. In this era, the subterranean realms flourished as
+vaults of astronomical scholarship, subterranean agriculture, and sacred contemplation.
+
+=== Epoch II: The Great Occlusion (The Sundering)
+
+A celestial cataclysm known as **The Great Eclipse** severed the surface spires from the subterranean
+network. The celestial body that fed the spires cooled or vanished, casting the surface into permafrost
+and cutting off the underground vaults from celestial nourishment. Cut off from the sun, the eternal
+braziers began to flicker and die. Desperate, the Lightbearers attempted to capture their waning radiance
+by crystallizing their remaining prayers and solar currents into **Lumina Shards**.
+
+=== Epoch III: The Long Gloom & The Dissolution
+
+Without sustained light, societal cohesion collapsed. As individual Lux reservoirs waned, fear gripped
+the inhabitants. Those who hoarded light turned upon one another; those who succumbed to the dark
+dissolved into wandering spectral echoes known as **Umbral Wraiths**. The grand marble corridors decayed,
+subterranean waters flooded lower vaults, and silence settled over the sanctuaries.
+
+=== Epoch IV: The Present Epoch — The Waning Vigil
+
+The player awakens as an **Aura-Wanderer** in the decaying remnants of *The Fading Sanctuary*.
+With only a dying ember on the altar and two precious Lumina Shards in hand, the traveler
+must navigate the ruined subterranean labyrinth in search of the legendary **Hearth of the First Flame**—a
+mythic primordial kiln said to hold an inextinguishable ember capable of sustaining the subterranean world.
+
+== 3. Sacred Artifacts, Relics & Materials
+
+=== Lumina Shards
+
+[sidebar]
+****
+*Physical Description:*
+Hexagonal crystals of translucent amber and pale gold. When held in the palm, they emit a gentle,
+rhythmic warmth resembling a resting heartbeat.
+****
+
+* **Function**: Kindling a Lumina Shard (`kindle` action) crushes the crystal, releasing
+  its stored resonance directly into the traveler's aura, immediately restoring $+30$ Lux.
+* **Origin**: These shards are non-renewable petrifications of ancient prayers and solar
+  currents. They cannot be manufactured—only unearthed from forgotten urns, altar crevices,
+  and ancient scriptoria.
+* **Ethical Weight**: To crush a shard is to consume an irreplaceable historical memory for personal
+  survival. Every kindling is a tragic transaction of cultural entropy for transient warmth.
+
+=== The Traveler's Lamp (Phase 2 Subsystem)
+
+An ornate brass vessel inscribed with protective glyphs. While the current prototype
+measures Lux as an intrinsic bodily aura, future phases will introduce the Lamp as an
+upgradeable mechanical focus, capable of accepting lenses, oils, and focusing prisms.
+
+=== Solar Vellum & Phosphor Ink
+
+Ancient manuscripts preserved in the sealed reliquaries. Unlike organic paper, Solar Vellum
+glows faintly when touched by a living hand possessing Lux $\ge 50$. It contains the forgotten
+blueprints of the Spires and philosophical treatises on the harmony of light and shadow.
+
+== 4. Subterranean Topography: The Initial Sanctuaries
+
+The current prototype models four canonical chambers representing the threshold of the ruins:
+
+=== 1. The Fading Sanctuary (`ROOM_SANCTUARY`)
+* **Architecture**: A domed stone hall supported by cracked marble pillars. In the center sits
+  a fractured altar where faint golden embers pulse feebly against the creeping chill.
+* **Significance**: The bedrock of awakening; a place of sacred origin where the ambient
+  darkness is temporarily held at bay.
+* **Passages**: North $\to$ The Corridor of Shadows.
+
+=== 2. The Corridor of Shadows (`ROOM_CORRIDOR_SHADOWS`)
+* **Architecture**: A narrow, high-vaulted passage draped in thick gloom. Cobwebs hang like
+  shrouds, and the air smells of cold iron and damp earth.
+* **Significance**: The central crossroads of the upper ruins. Here the traveler first feels
+  the chilling leeches that siphon Lux from the aura.
+* **Passages**: South $\to$ The Fading Sanctuary; North $\to$ The Hall of Whispers; East $\to$ The Chamber of Ancient Runes.
+
+=== 3. The Hall of Whispers (`ROOM_HALL_WHISPERS`)
+* **Architecture**: A massive acoustic chamber whose ceiling is lost in darkness. Distant
+  echoes murmur continuously—fragments of prayers, ancient warnings, and spectral laments.
+* **Significance**: A test of psychological resolve where audio cues and narrative
+  fragments reveal the history of the fallen Lightbearers.
+* **Passages**: South $\to$ The Corridor of Shadows.
+
+=== 4. The Chamber of Ancient Runes (`ROOM_CHAMBER_RUNES`)
+* **Architecture**: A circular chamber carved from obsidian, lined with glowing phosphorescent
+  runes that hum with dormant electrical energy.
+* **Significance**: The repository of primordial knowledge. The runes speak of the
+  balance between light and void, hinting at mechanisms to restore the subterranean spires.
+* **Passages**: West $\to$ The Corridor of Shadows.
+
+=== Downstream Sectors (Roadmap Expansion)
+
+* **Sector 5: The Sunken Scriptorium**: Flooded archives containing submerged parchment and waterborne luminescent flora.
+* **Sector 6: The Obsidian Chasm**: A bottomless abyss crossed by narrow light-bridges that solidify only when illuminated.
+* **Sector 7: The Gilded Reliquary**: Vault of the High Priests, guarded by autonomous solar automatons.
+* **Sector 8: The Silent Arboretum**: Subterranean greenhouse where crystalline trees bloom in total darkness.
+* **Sector 9: The Abyssal Foundry**: Smelting chambers where raw starlight was once forged into weapons and structural beams.
+* **Sector 10: The Hearth of the First Flame**: The central sanctum and climax of the journey.
+
+== 5. Subterranean Inhabitants & Spectral Ecology
+
+Rather than conventional monsters, the ecosystem of *Tenebris and Lux* consists of beings
+shaped by their relationship to illumination:
+
+[cols="1,2,2", options="header"]
+|===
+| Entity | Origin | Behavioral Invariant
+| **Umbral Wraiths** | The dissipated spirits of Lightbearers whose Lux reached zero | Attracted to bright light; they circle unlit corridors and flee from sudden shard kindling.
+| **Gloom Beetles** | Bioluminescent insects that feed on mineralized Lumina deposits | Harmless scavengers whose shells faintly illuminate hidden stone caches.
+| **Stone Sentinels** | Autonomous carved gargoyles powered by dormant light cores | Motionless in total darkness; awaken only when bathed in radiant illumination.
+| **Penumbral Weavers**| Subterranean arachnids that spin light-trapping silk | Construct webs across doorways that dampen lamp intensity by $50\%$.
+| **Void Leeches** | Parasitic shadows adhering to cold stone walls | Slowly siphon $1$ Lux per turn if the traveler lingers motionless in unlit rooms.
+|===
+
+== 6. Philosophical & Thematic Invariants
+
+1. **Light is Costly, Darkness is Free**:
+   - Darkness requires no maintenance; it is the default state of entropy.
+   - Light demands continuous sacrifice, fuel, and spiritual vigilance.
+2. **Equilibrium over Eradication**:
+   - The ultimate goal is not the total annihilation of shadow (which would burn the world to ash),
+     but the preservation of a measured, sustainable sanctuary.
+3. **Mechanical Truth in Narrative**:
+   - Every sentence of world lore must map to an invariant rule in the code:
+     `state.lux <= 0` is the exact mathematical expression of spiritual dissolution.

@@ -51,7 +51,7 @@ Every source file, header, and configuration file in this repository strictly ad
    - Reports detailed audit manifests without relying on crude crashes.
 
 5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**
-   - For executables (`main.c`): Command-line argument parsing (`--audit`, `--help`, `--version`, `--smoke-test`), teardown, and return codes.
+   - For executables (`src/main.c`): Command-line argument parsing (`--audit`, `--help`, `--version`, `--smoke-test`), teardown, and return codes.
    - For modular units: Standalone unit tests and verification suite.
    - For headers (`.h`): Include guard closing `#endif`.
 
@@ -101,7 +101,7 @@ CMake 3.24+ is configured for C11:
 - `./build/tenebris-lux --audit`: Run internal diagnostic self-audit suite.
 - `./build/tenebris-lux --version`: Display version information.
 - `./build/tenebris-lux --help`: Display command-line options.
-- `gcc -std=c11 -Wall -Wextra -Wpedantic -fsyntax-only main.c`: Fast syntax and diagnostics check without producing a binary.
+- `gcc -std=c11 -Wall -Wextra -Wpedantic -fsyntax-only -Iinclude src/main.c`: Fast syntax and diagnostics check without producing a binary.
 
 ---
 

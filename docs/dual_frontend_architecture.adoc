@@ -1,0 +1,200 @@
+= Architectural Specification: The Dual CLI + Native GUI Paradigm
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Abstract
+
+This document defines the formal architectural blueprint governing the dual-frontend
+execution model of *Tenebris and Lux* ("Darkness and Light"). Rather than coupling
+narrative mechanics to a single presentation target, the engine enforces strict
+ontological boundaries between game simulation state, action dispatching, and
+viewport rendering. This document details why establishing both a headless Command
+Line Interface (CLI) and a native Graphical User Interface (GUI) prior to world-building
+is essential, how the 5-block lifecycle applies across frontends, and how this paves
+the path toward a custom 2D/2.5D/3D engine.
+
+== 1. The Core Architectural Philosophy
+
+[quote, OmniCode Architectural Invariant]
+"Form precedes fullness. Representation must remain sovereign over presentation."
+
+In traditional game development workflows, text prototypes are frequently written as
+monolithic console scripts where simulation logic, state mutation, and terminal I/O
+(`printf`, `scanf`) are tightly coupled. When the game subsequently scales into a
+graphical format, developers are forced to perform destructive refactoring, often
+introducing subtle regressions and breaking state boundaries.
+
+*Tenebris and Lux* addresses this through an explicit **Dual-Frontend Architecture**:
+
+[cols="1,2,2", options="header"]
+|===
+| Dimension | Command Line Interface (CLI) | Native Graphical Interface (GUI)
+| **Primary Role** | Automated verification, CI/CD regression, script piping | Player immersion, atmospheric visualization, ergonomics
+| **I/O Channel** | Standard Streams (`stdin`, `stdout`) | Native X11 event loop & double-buffered Pixmap
+| **Latency Target** | < 1 ms per turn | 60 FPS deterministic render tick (~16.6 ms)
+| **State Interaction** | Universal Action Dispatcher (`game_process_command`) | Universal Action Dispatcher (`game_process_command`)
+| **External Footprint**| Zero dependencies (Pure ISO C11 standard library) | Zero external downloads (Native POSIX Xlib only)
+|===
+
+=== Universal Action Dispatcher & Intent Emitter
+
+Neither frontend owns or mutates the player state (`player_state_t`) directly. Instead,
+each frontend acts as an intent emitter that translates user input into canonical command
+tokens passed to `game_process_command()`:
+
+[source,c]
+----
+void game_process_command(player_state_t *state, const char *raw_input,
+    char *out_msg, size_t msg_len);
+----
+
+The lifecycle of an action execution proceeds through five deterministic phases:
+
+[source,text]
+----
+┌─────────────────┐       ┌────────────────────────┐       ┌─────────────────┐
+│ Input Source    │  ==>  │ Command Tokenizer      │  ==>  │ Invariant Check │
+│ (CLI or GUI)    │       │ (sanitization & parse) │       │ (state bounds)  │
+└─────────────────┘       └────────────────────────┘       └─────────────────┘
+                                                                    │
+                                                                    ▼
+┌─────────────────┐       ┌────────────────────────┐       ┌─────────────────┐
+│ Presenter Blit  │  <==  │ Action Result Log      │  <==  │ State Mutation  │
+│ (stdout or X11) │       │ (chronicle message)    │       │ (lux, room, etc)│
+└─────────────────┘       └────────────────────────┘       └─────────────────┘
+----
+
+1. **Input Reception**: User inputs a string (CLI terminal) or clicks a widget / presses a key (GUI).
+2. **Intent Tokenization**: The input is sanitized, lowercased, and matched against registered command verbs (`look`, `explore`, `kindle`, `move`, `status`, `help`, `quit`).
+3. **Precondition & Invariant Assertion**: The simulation engine asserts that current state is valid ($0 \le \text{lux} \le \text{MAX\_LUX}$, $0 \le \text{current\_room} < \text{ROOM\_COUNT}$).
+4. **Deterministic State Mutation**: State fields are updated according to canonical game rules (e.g., kindling decrements shards by 1 and increments Lux by 30 up to 100).
+5. **Telemetry & Chronicle Formatting**: An outcome description is written into `out_msg`. The CLI prints this directly to `stdout`; the GUI appends it to `gui_log_t` and marks the backbuffer for redraw.
+
+== 2. Native Desktop GUI Architecture: Why Not Web?
+
+This project explicitly rejects web-based wrappers (Electron, Tauri, Chromium Embedded Framework, WebSockets)
+in favor of a lean native binary compiled directly from ISO C11:
+
+[sidebar]
+****
+*The Fallacy of Web Wrappers in Systems Game Development:*
+Web architectures introduce non-deterministic garbage collection pauses, bundle
+hundreds of megabytes of third-party browser code, and abstract away hardware memory
+boundaries. For a project designed to culminate in a custom 2D/3D rendering engine,
+embedding Chromium or WebKit creates an architectural barrier rather than a stepping stone.
+****
+
+Key technical advantages of the native POSIX X11 approach:
+
+* **Instant Launch & Zero Overhead**: The entire executable binary is under 500 KB, with resident memory consumption below 15 MB.
+* **Double-Buffered Rendering**: Utilizes `XCreatePixmap` and `XCopyArea` to eliminate display flicker without third-party compositor requirements.
+* **Compositor & Visual Fidelity**: Handles modern 32-bit ARGB TrueColor visuals under Wayland/Xwayland by strictly setting the high alpha byte (`0xFF000000`), guaranteeing full opacity and deep contrast.
+* **Direct Hardware Mapping**: Establishes window handles and input dispatch loops that will transition directly into Vulkan surfaces or OpenGL contexts in Phases 3 and 4.
+* **Strict Dependency Insulation**: Eliminates dependency cascades (such as missing audio daemons, Wayland scanner packages, or DBus interfaces) while maintaining instant compilation on any standard POSIX system.
+
+=== Double-Buffering & Render Synchronization
+
+To achieve flicker-free rendering without tearing, `src/gui.c` implements offscreen
+double-buffering:
+
+[source,c]
+----
+// Allocate backbuffer pixmap matching the exact depth of the root window
+backbuffer = XCreatePixmap(display, window, GUI_WINDOW_WIDTH,
+                           GUI_WINDOW_HEIGHT, window_depth);
+
+// 1. Draw entire frame to offscreen pixmap
+render_frame(display, backbuffer, gc, state, &palette, &log);
+
+// 2. Atomically blit backbuffer to visible on-screen window
+XCopyArea(display, backbuffer, window, gc, 0, 0,
+          GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 0, 0);
+XFlush(display);
+----
+
+=== Dynamic Visual Palette
+
+The visual presentation adheres to a tailored, atmospheric palette designed to reflect
+the eternal struggle between Lux and Tenebris:
+
+[cols="1,2,2", options="header"]
+|===
+| Element | Hex Color | Atmospheric Purpose
+| **Obsidian Void** | `#0D0E12` | Background canvas representing deep, silent subterranean rock.
+| **Stone Panel** | `#1A1D24` | Elevated frame for status panels and room description cards.
+| **Gloom Accent** | `#262B36` | Inactive button borders and decorative chamber dividers.
+| **Golden Radiance** | `#F0CE78` | Full Lux aura (> 60%), emitting warm celestial light.
+| **Amber Twilight** | `#D49442` | Diminished Lux aura (25% – 60%), indicating creeping chill.
+| **Crimson Ember** | `#C84444` | Critical Lux alert (< 25%), signaling impending dissolution.
+| **Lumina Crystal** | `#64C8D4` | Shard count display, representing frozen starlight.
+|===
+
+== 3. The 5-Block Implementation Mapping
+
+In strict accordance with the OmniCode framework, the presentation subsystem is structured
+into five invariant blocks across headers and source files:
+
+=== Presentation Architecture Breakdown (`include/gui.h` & `src/gui.c`)
+
+1. **BLOCK 1: METADATA BLOCK**
+   - Outlines module identity, layer (`Presentation / Viewport`), author, version, and invariant contracts:
+     `gui.h` and `gui.c` must remain strictly read-only with respect to `player_state_t`.
+2. **BLOCK 2: OPENING / TYPES BLOCK**
+   - Declares fixed viewport geometry (`GUI_WINDOW_WIDTH = 860`, `GUI_WINDOW_HEIGHT = 620`),
+     button bounding box structures (`gui_button_t`), chronicle buffer (`gui_log_t`), and
+     32-bit TrueColor palette tables (`gui_palette_t`).
+3. **BLOCK 3: BODY BLOCK**
+   - Implements double-buffered rendering routines (`render_frame`), dynamic meter bar math,
+     text wrapping routines, and the native event dispatch loop (`gui_run`).
+4. **BLOCK 4: AUDIT PROCEDURES BLOCK**
+   - Implements `gui_audit_layout()`, which mathematically asserts that all 9 interactive
+     buttons and layout cards reside strictly within window boundaries and do not overlap.
+5. **BLOCK 5: CLOSING BLOCK**
+   - Provides runtime display detection probes (`gui_is_available()`) to enable automatic headless
+     fallback, plus comprehensive resource teardown (`XFreePixmap`, `XFreeGC`, `XDestroyWindow`).
+
+== 4. Headless CI & Deterministic Replay
+
+Because simulation logic is decoupled from presentation, automated verification can execute
+in continuous integration environments without requiring an X server or virtual framebuffer (`Xvfb`):
+
+[source,bash]
+----
+# Run headless CTest verification suite
+ctest --test-dir build -C Debug --output-on-failure
+
+# Execute internal invariant self-audit suite
+./build/tenebris-lux --audit
+
+# Force headless terminal CLI mode
+./build/tenebris-lux --cli
+----
+
+Automated replay scripts can be piped directly into the CLI frontend to verify deterministic
+gameplay paths:
+
+[source,bash]
+----
+printf "look\nexplore\nkindle\nmove north\nstatus\nquit\n" | ./build/tenebris-lux --cli
+----
+
+== 5. Custom Engine Evolution Roadmap
+
+The dual-frontend architecture serves as the foundation for a 4-phase engine roadmap:
+
+[cols="1,1,2,2", options="header"]
+|===
+| Phase | Milestone | Subsystem Architecture | Presentation Technology
+| **Phase 1** | `v0.0.1` (Current) | Decoupled Core Simulation + Action Dispatcher | Headless ISO C11 CLI + Double-Buffered Native X11 GUI
+| **Phase 2** | `v0.1.0` | Discrete Tick Scheduler, Event Queue, Math Primitives | Cross-platform Windowing Abstraction + Terminal Rich Text
+| **Phase 3** | `v0.2.0` | 2D / 2.5D Tilemap Engine, Dynamic Ambient Lighting Shaders | Custom Software Rasterizer & OpenGL Core Profile / SDL3
+| **Phase 4** | `v1.0.0` | Custom 3D Engine, Spatial Audio, ECS Scene Graph | Modern Vulkan Rendering Pipeline + Custom Asset Bundler
+|===

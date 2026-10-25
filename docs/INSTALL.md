@@ -82,10 +82,10 @@ If CMake is unavailable, you can compile the text prototype directly with `gcc` 
 
 ```bash
 # Debug build with full diagnostics and native X11 GUI
-gcc -std=c11 -Wall -Wextra -Wpedantic -g main.c gui.c -lX11 -o tenebris-lux
+gcc -std=c11 -Wall -Wextra -Wpedantic -g src/main.c src/gui.c -Iinclude -lX11 -o tenebris-lux
 
 # Release build with optimization
-gcc -std=c11 -Wall -Wextra -Wpedantic -O2 main.c gui.c -lX11 -o tenebris-lux
+gcc -std=c11 -Wall -Wextra -Wpedantic -O2 src/main.c src/gui.c -Iinclude -lX11 -o tenebris-lux
 ```
 
 ---
@@ -132,7 +132,7 @@ ctest --test-dir build -C Debug --output-on-failure
 To run a fast syntax check without generating an executable:
 
 ```bash
-gcc -std=c11 -Wall -Wextra -Wpedantic -fsyntax-only main.c
+gcc -std=c11 -Wall -Wextra -Wpedantic -fsyntax-only -Iinclude src/main.c
 ```
 
 ---

@@ -68,7 +68,7 @@ This discipline ensures:
 - **Embedded Self-Auditing**: Diagnostic routines verify runtime state integrity without crashing.
 - **Renderer Decoupling**: Simulation logic remains pure and portable.
 
-For in-depth architectural specifications, see [ARCHITECTURE.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/ARCHITECTURE.md) and [dual_frontend_architecture.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dual_frontend_architecture.md).
+For in-depth architectural specifications, see [ARCHITECTURE.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/ARCHITECTURE.md) and [dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dual_frontend_architecture.adoc).
 
 ---
 
@@ -138,6 +138,6 @@ ctest --test-dir build -C Debug --output-on-failure
 
 - [docs/INSTALL.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.md): Comprehensive compilation, installation, and troubleshooting guide.
 - [docs/ARCHITECTURE.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/ARCHITECTURE.md): Technical deep-dive into the 5-block structure and game mechanics.
-- [docs/dual_frontend_architecture.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dual_frontend_architecture.md): The Dual CLI + GUI paradigm and architectural rationale.
-- [docs/world_and_lore.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/world_and_lore.md): Foundations of world-building, Lumina shards, and the cosmology of Lux & Tenebris.
+- [docs/dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dual_frontend_architecture.adoc): The Dual CLI + GUI paradigm and architectural rationale (AsciiDoc).
+- [docs/world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/world_and_lore.adoc): Foundations of world-building, Lumina shards, and the cosmology of Lux & Tenebris (AsciiDoc).
 - [AGENTS.md](file:///home/professorseanex/Tenebris%20and%20Lux/AGENTS.md): Contributor and AI agent coding guidelines, style rules, and commit discipline.
