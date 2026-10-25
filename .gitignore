@@ -1,4 +1,22 @@
-# Build directories and binaries
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, VCS Exclusion Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .gitignore
+# @layer         Version Control & Workspace Hygiene
+# @version       0.0.1
+# @epoch         2026.10
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @role          Git Exclusion Policy & Build Artifact Insulation
+# @invariants    Never track intermediate binaries, build outputs, or local state.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING / COMPILED BINARIES BLOCK
+# ( Native Executables, Object Files & Dynamic Libraries )
+# ==============================================================================
 build/
 dist/
 bin/
@@ -8,8 +26,14 @@ out/
 *.exe
 *.out
 *.app
+*.so
+*.dylib
+*.a
 
-# CMake files
+# ==============================================================================
+# BLOCK 3: BODY / BUILD SYSTEM ARTIFACTS BLOCK
+# ( CMake Caches, Generated Build Files & Toolchain Temporary Files )
+# ==============================================================================
 CMakeCache.txt
 CMakeFiles/
 CMakeScripts/
@@ -18,16 +42,27 @@ Makefile
 CTestTestfile.cmake
 Testing/
 compile_commands.json
+install_manifest.txt
+_deps/
 
-# IDE / Editor configuration
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / LOGS & TELEMETRY BLOCK
+# ( Diagnostic Dumps, Crash Reports, Trace Records & Audit Outputs )
+# ==============================================================================
+*.log
+*.audit
+scratch/
+test_output/
+
+# ==============================================================================
+# BLOCK 5: CLOSING / IDE & OS SPECIFIC METADATA BLOCK
+# ( Editor Workspaces, Language Server Indices & OS Detritus )
+# ==============================================================================
+.cache/
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
-
-# Scratch & Logs
-*.log
-scratch/
-.cache/
+Thumbs.db

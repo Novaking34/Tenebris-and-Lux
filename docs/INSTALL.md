@@ -81,28 +81,43 @@ The resulting binary will be located at:
 If CMake is unavailable, you can compile the text prototype directly with `gcc` or `clang`:
 
 ```bash
-# Debug build with full diagnostics
-gcc -std=c11 -Wall -Wextra -Wpedantic -g main.c -o tenebris-lux
+# Debug build with full diagnostics and native X11 GUI
+gcc -std=c11 -Wall -Wextra -Wpedantic -g main.c gui.c -lX11 -o tenebris-lux
 
 # Release build with optimization
-gcc -std=c11 -Wall -Wextra -Wpedantic -O2 main.c -o tenebris-lux
+gcc -std=c11 -Wall -Wextra -Wpedantic -O2 main.c gui.c -lX11 -o tenebris-lux
 ```
 
 ---
 
 ## 4. Running the Game
 
-Launch the interactive text prototype:
+By default, launching `./build/tenebris-lux` will automatically detect your desktop environment:
+
+- If a display is available, it opens the native graphical desktop GUI.
+- If run in a headless environment, it seamlessly defaults to CLI terminal mode.
 
 ```bash
+# Default (auto-detects GUI or CLI)
 ./build/tenebris-lux
+
+# Force terminal CLI mode
+./build/tenebris-lux --cli
+
+# Force native desktop GUI mode
+./build/tenebris-lux --gui
+
+# Run diagnostic self-audit
+./build/tenebris-lux --audit
 ```
 
 ### Command-Line Arguments
 
-- `./build/tenebris-lux --help`: Display available command-line flags.
-- `./build/tenebris-lux --version`: Display application version.
-- `./build/tenebris-lux --audit`: Execute the internal diagnostic self-audit suite.
+- `-h, --help`: Display available command-line flags.
+- `-v, --version`: Display application version.
+- `-a, --audit`: Execute the internal diagnostic self-audit suite.
+- `-c, --cli`: Force execution in terminal CLI mode.
+- `-g, --gui`: Force execution in native desktop GUI mode.
 
 ---
 

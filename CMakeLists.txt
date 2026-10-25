@@ -28,14 +28,29 @@ set(CMAKE_C_EXTENSIONS OFF)
 # Export compile commands for language servers (clangd, compile_commands.json)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Discover native X11 windowing subsystem for Linux/POSIX
+find_package(X11 REQUIRED)
+
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
 # ( Target Definitions, Source Manifests & Link Libraries )
 # ==============================================================================
 
 add_executable(tenebris-lux
-    main.c
-    main.h
+    src/main.c
+    include/main.h
+    src/gui.c
+    include/gui.h
+)
+
+target_include_directories(tenebris-lux PRIVATE
+    include
+    ${X11_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(tenebris-lux PRIVATE
+    ${X11_LIBRARIES}
 )
 
 # ==============================================================================
