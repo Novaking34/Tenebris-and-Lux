@@ -1,0 +1,19 @@
+= Subsystem Architecture Index
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:icons: font
+
+[abstract]
+== Overview
+
+This directory contains the technical specifications governing the 5-block lifecycle,
+simulation decoupling, and dual-frontend execution model.
+
+== Documentation Manifest
+
+1. **[ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc)**  
+   *Core Engine & System Architecture*: Invariant boundaries, state machine definitions, decoupled presentation layers, and the multi-phase engine roadmap.
+
+2. **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**  
+   *Dual CLI + Native GUI Paradigm*: Native POSIX X11 double-buffering, TrueColor visual negotiation, headless CI testing, and latency specifications.

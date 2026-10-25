@@ -1,0 +1,81 @@
+= World Topography & Encounter Design: The Kingdom of Sol-Tenebrae
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document specifies the spatial geography, province layouts, environmental encounters,
+and threat scaling governing the fractured Kingdom of **Sol-Tenebrae**.
+
+== 1. Spatial Structure: The Contested Provinces
+
+The prototype models four foundational provinces representing the path from the ancient
+halls of awakening to the frontlines of the re-awakened Dark Lord Malakor:
+
+[source,text]
+----
+┌───────────────────────┐
+│ The Abyssal Threshold │
+│ (Dark Lord Monolith)  │
+└───────────▲───────────┘
+            │ West
+┌───────────┴───────────┐
+│ The Fractured Marches │
+│ (Civil War Highlands) │
+└───────────▲───────────┘
+            │ South / North
+┌───────────┴───────────┐
+│ Sunken Citadel Gates  │
+│ (Siege Vanguard)      │
+└───────────▲───────────┘
+            │ South / North
+┌───────────┴───────────┐
+│  The Garrison Altar   │
+│  (Ancestral Redoubt)  │
+└───────────────────────┘
+----
+
+=== Province 1: The Garrison Altar (`LOC_GARRISON_ALTAR`)
+* **Role**: The nexus of awakening and strategic attunement.
+* **Environment**: High-vaulted hall of carved solar silver and obsidian. Quiet, sanctified ground.
+* **Threat Vigor**: $0$ (Safe zone; no enemy spawns).
+* **Connections**: North $\to$ The Sunken Citadel Gates.
+
+=== Province 2: The Sunken Citadel Gates (`LOC_CITADEL_GATES`)
+* **Role**: The fortified bulwark defending the central Kingdom valleys.
+* **Environment**: Massive white granite ramparts scorched by black void-fire. Banners of the fallen garrison flutter in the ash.
+* **Threat Encounter**: **Umbral Siege Vanguard** ($50$ Threat HP).
+  - Armed with blackened warhammers and void-shields.
+  - Can be staggered and blinded via `ward` with the Shield of Lux ($25$ stagger damage), or severed via `strike` with the Sword of Tenebris ($30 \dots 45$ damage).
+* **Connections**: South $\to$ The Garrison Altar; North $\to$ The Fractured Marches.
+
+=== Province 3: The Fractured Marches (`LOC_DIVIDED_MARCHES`)
+* **Role**: The political and moral crucible of the civil war.
+* **Environment**: Windswept alpine meadows scarred by trenches and burnt encampments.
+* **Factions Present**: Clashing squadrons of Solar Order Inquisitors and Umbral Covenant Partisans.
+* **Threat Encounter**: Crossfire and skirmishers ($30$ Threat HP).
+  - Demands moral navigation: balancing the forces (`balance`) to demonstrate unity, or taking a side.
+* **Connections**: South $\to$ The Sunken Citadel Gates; East $\to$ The Abyssal Threshold.
+
+=== Province 4: The Abyssal Threshold (`LOC_ABYSSAL_THRESHOLD`)
+* **Role**: The dread gateway to the Dark Lord Malakor's awakened citadel.
+* **Environment**: Towering obsidian monoliths where physical geometry bends. Gravitational anomalies and reality-tearing shadow rifts.
+* **Threat Encounter**: **Harbinger of Malakor** ($90$ Threat HP).
+  - Heavy boss encounter requiring dynamic stance shifts: raising the Shield of Lux to deflect void rays, and unleashing the Sword of Tenebris to cut through reality rifts.
+* **Connections**: West $\to$ The Fractured Marches.
+
+== 2. Threat Progression & Combat Invariants
+
+1. **Reversible Spatial Navigation**:
+   - Every directional movement into a province must possess a corresponding reverse vector (North $\leftrightarrow$ South, East $\leftrightarrow$ West).
+2. **Combat Lock Invariants**:
+   - Entering an active combat zone initializes `threat_hp`.
+   - Players may retreat (`move south` / `move west`) to disengage, but retreating leaves the province contested.
+   - Vanquishing a threat permanently increments `foes_vanquished` and secures the province.

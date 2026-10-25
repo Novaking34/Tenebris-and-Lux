@@ -1,0 +1,68 @@
+= Codebase Tour: Native Desktop GUI & Viewport Rendering
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document provides a technical walkthrough of the native graphical presentation layer
+implemented in `include/gui.h` and `src/gui.c`. It explains the X11 double-buffering architecture,
+palette color allocation under 32-bit compositors, event handling, and layout auditing.
+
+== 1. The Native X11 Architecture
+
+The GUI is written directly against standard POSIX Xlib (`<X11/Xlib.h>`), eliminating heavyweight
+web browsers, electron wrappers, and external dependencies.
+
+=== Key Specifications:
+* **Geometry**: $860 \times 620$ fixed resolution canvas (`GUI_WINDOW_WIDTH`, `GUI_WINDOW_HEIGHT`).
+* **Frame Target**: 60 FPS deterministic render tick (~16.6 ms) via `nanosleep(&ts, NULL)`.
+* **Double Buffering**: Backbuffer pixmap allocated matching the root window's exact depth (`XCreatePixmap`).
+* **Atomic Blit**: `XCopyArea` blits the offscreen pixmap to the visible window in a single hardware cycle, eliminating flicker.
+
+== 2. TrueColor Palette & Alpha Opacity
+
+Under modern Linux compositors (such as Wayland/Xwayland), windows frequently provide 32-bit ARGB
+TrueColor visuals. If drawn pixels do not set the highest alpha byte (`0xFF000000`), the desktop
+compositor renders the drawn primitives as 100% transparent.
+
+`src/gui.c` solves this through explicit color allocation:
+
+[source,c]
+----
+static unsigned long alloc_color(Display *d, int screen, unsigned int rgb_hex)
+{
+    XColor col;
+    // Map RGB components...
+    if (XAllocColor(d, DefaultColormap(d, screen), &col)) {
+        if (DefaultDepth(d, screen) == 32 || (col.pixel & 0xFF000000) == 0) {
+            return col.pixel | 0xFF000000; // Force full opacity
+        }
+        return col.pixel;
+    }
+    return 0xFF000000 | rgb_hex;
+}
+----
+
+== 3. Event Loop & Action Routing
+
+The main event loop in `gui_run()` handles three primary X11 event types:
+1. **`ClientMessage`**: Intercepts `WM_DELETE_WINDOW` for clean application exit when clicking the window close button.
+2. **`ButtonPress`**: Executes hit-testing against the 9 interactive button bounding boxes (`find_clicked_button`).
+3. **`KeyPress`**: Maps keyboard keys (`w`, `s`, `b`, `t`, `l`, `i`, `n`, `r`, `q`) to corresponding actions.
+
+All button clicks and hotkeys dispatch directly to `game_process_command()`, ensuring the presentation
+layer remains strictly read-only with respect to game state.
+
+== 4. Viewport Layout Auditing (`gui_audit_layout`)
+
+Block 4 implements mathematical layout verification:
+- Asserts that all 9 buttons fit strictly within window boundaries ($[0 \dots 860], [0 \dots 620]$).
+- Executes pairwise AABB (Axis-Aligned Bounding Box) intersection tests to mathematically prove that no two buttons overlap.
+- Runs as part of `./build/tenebris-lux --audit` and CTest.

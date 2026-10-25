@@ -1,0 +1,98 @@
+= Installation and Build Manual
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This guide details the system requirements, toolchain prerequisites, CMake compilation workflows,
+direct C11 compiler instructions, and verification procedures for *Tenebris and Lux* across
+Linux, macOS, and Windows.
+
+== 1. System Requirements
+
+=== Supported Operating Systems
+
+* **Linux**: Ubuntu 20.04+, Debian 11+, Fedora 38+, Arch Linux, or any modern POSIX environment.
+* **macOS**: macOS 12 (Monterey) or later with Xcode Command Line Tools.
+* **Windows**: Windows 10/11 with MSVC (Visual Studio 2022) or MinGW-w64 / MSYS2.
+
+=== Required Software
+
+1. **C11 Compiler**:
+   - `gcc` (version 9.0+) OR
+   - `clang` (version 10.0+) OR
+   - Microsoft Visual C++ (`cl.exe`, 2019+)
+2. **CMake**: Version 3.24 or higher.
+3. **Make / Ninja**: Standard build generator.
+4. **X11 Development Headers** (Linux GUI): `libx11-dev` (Debian/Ubuntu) or `libX11-devel` (Fedora/RHEL).
+
+On Debian/Ubuntu systems:
+
+[source,bash]
+----
+sudo apt-get update
+sudo apt-get install -y build-essential cmake libx11-dev
+----
+
+== 2. Building with CMake (Recommended)
+
+=== Step 1: Configure the Build
+
+From the repository root directory:
+
+[source,bash]
+----
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+----
+
+=== Step 2: Compile the Engine and Test Suites
+
+[source,bash]
+----
+cmake --build build --config Debug
+----
+
+The resulting binaries will be located at:
+* Main Game Executable: `./build/tenebris-lux`
+* Game Invariants Test Suite: `./build/test_game_invariants`
+* Gameplay Scenarios Test Suite: `./build/test_gameplay_scenarios`
+
+== 3. Running the Game
+
+[source,bash]
+----
+# Default: Launch native graphical desktop GUI (auto-detects display)
+./build/tenebris-lux
+
+# Force terminal CLI mode
+./build/tenebris-lux --cli
+
+# Force native desktop GUI mode
+./build/tenebris-lux --gui
+
+# Run internal invariant self-audit
+./build/tenebris-lux --audit
+----
+
+== 4. Automated Verification & Testing
+
+Run all automated unit and game development tests via CTest:
+
+[source,bash]
+----
+ctest --test-dir build -C Debug --output-on-failure
+----
+
+To run a fast syntax check without generating an executable:
+
+[source,bash]
+----
+gcc -std=c11 -Wall -Wextra -Wpedantic -fsyntax-only -Iinclude src/main.c
+----

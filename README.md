@@ -68,7 +68,7 @@ This discipline ensures:
 - **Embedded Self-Auditing**: Diagnostic routines verify runtime state integrity without crashing.
 - **Renderer Decoupling**: Simulation logic remains pure and portable.
 
-For in-depth architectural specifications, see [ARCHITECTURE.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/ARCHITECTURE.md) and [dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dual_frontend_architecture.adoc).
+For in-depth architectural specifications, see [ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc) and [dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc).
 
 ---
 
@@ -91,7 +91,7 @@ For in-depth architectural specifications, see [ARCHITECTURE.md](file:///home/pr
 
 ## 4. Quickstart: Build & Play
 
-For detailed prerequisites, operating system setup, and troubleshooting, refer to [INSTALL.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.md).
+For detailed prerequisites, operating system setup, and troubleshooting, refer to [INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc).
 
 ### Quick Build with CMake
 
@@ -99,7 +99,7 @@ For detailed prerequisites, operating system setup, and troubleshooting, refer t
 # 1. Configure the build directory
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
-# 2. Compile the game
+# 2. Compile the game and test suites
 cmake --build build --config Debug
 
 # 3. Launch the game (auto-detects native GUI, or fallback to CLI)
@@ -130,7 +130,7 @@ cmake --build build --config Debug
 # Run internal self-audit (verifies state bounds and GUI layout)
 ./build/tenebris-lux --audit
 
-# Run CTest verification suite
+# Run full CTest verification suite
 ctest --test-dir build -C Debug --output-on-failure
 ```
 
@@ -138,8 +138,11 @@ ctest --test-dir build -C Debug --output-on-failure
 
 ## 5. Repository Documentation Index
 
-- [docs/INSTALL.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.md): Comprehensive compilation, installation, and troubleshooting guide.
-- [docs/ARCHITECTURE.md](file:///home/professorseanex/Tenebris%20and%20Lux/docs/ARCHITECTURE.md): Technical deep-dive into the 5-block structure and game mechanics.
-- [docs/dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dual_frontend_architecture.adoc): The Dual CLI + GUI paradigm and architectural rationale (AsciiDoc).
-- [docs/world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/world_and_lore.adoc): Foundations of world-building, Lumina shards, and the cosmology of Lux & Tenebris (AsciiDoc).
-- [AGENTS.md](file:///home/professorseanex/Tenebris%20and%20Lux/AGENTS.md): Contributor and AI agent coding guidelines, style rules, and commit discipline.
+- **[docs/README.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/README.adoc)**: Central documentation portal and index.
+- **[docs/INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc)**: Comprehensive compilation, installation, and troubleshooting guide.
+- **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)**: Technical deep-dive into the 5-block structure and dual-frontend engine.
+- **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)**: Canonical chronicles of the Shield of Lux, Sword of Tenebris, and the Dark Lord.
+- **[docs/game_design/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/README.adoc)**: Combat mechanics, world topography, and game dev testing philosophy.
+- **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)**: Living engineering and game design developer log chronicle.
+- **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)**: Subsystem implementation tours for simulation, GUI, and test suites.
+- **[AGENTS.md](file:///home/professorseanex/Tenebris%20and%20Lux/AGENTS.md)**: Contributor and AI agent coding guidelines, style rules, and commit discipline.
