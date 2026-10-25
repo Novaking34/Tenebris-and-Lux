@@ -1,0 +1,33 @@
+# Build directories and binaries
+build/
+dist/
+bin/
+out/
+*.o
+*.obj
+*.exe
+*.out
+*.app
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+
+# IDE / Editor configuration
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Scratch & Logs
+*.log
+scratch/
+.cache/
