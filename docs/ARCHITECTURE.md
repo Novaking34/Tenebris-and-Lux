@@ -8,7 +8,7 @@
 
 ## 1. Design Overview
 
-*Tenebris and Lux* ("Darkness and Light") is architected with a strict separation between **simulation state** and **presentation layer**. The current prototype operates via a terminal interface, but the data structures and state machines are decoupled to allow plug-and-play migration to 2D tilemaps, 2.5D isometric viewports, and full 3D rendering engines.
+*Tenebris and Lux* ("Darkness and Light") is architected with a strict separation between **simulation state** and **presentation layer**. The current prototype operates via dual presentation frontends (a headless terminal CLI and a native double-buffered X11 GUI), while the underlying state machines are decoupled to allow plug-and-play migration to 2D tilemaps, 2.5D isometric viewports, and full 3D rendering engines.
 
 ```mermaid
 flowchart TD
