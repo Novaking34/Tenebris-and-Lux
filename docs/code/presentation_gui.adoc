@@ -12,8 +12,8 @@ v0.0.1, 2026-10-24
 == Overview
 
 This document provides a technical walkthrough of the native graphical presentation layer
-implemented in `include/gui.h` and `src/gui.c`. It explains the X11 double-buffering architecture,
-palette color allocation under 32-bit compositors, event handling, and layout auditing.
+implemented in `include/gui/gui.h` and `src/gui/gui.c`. It explains the X11 double-buffering architecture,
+palette color allocation under 32-bit compositors, event handling, geometric hit-testing, and layout auditing.
 
 == 1. The Native X11 Architecture
 
@@ -22,7 +22,7 @@ web browsers, electron wrappers, and external dependencies.
 
 === Key Specifications:
 * **Geometry**: $860 \times 620$ fixed resolution canvas (`GUI_WINDOW_WIDTH`, `GUI_WINDOW_HEIGHT`).
-* **Frame Target**: 60 FPS deterministic render tick (~16.6 ms) via `nanosleep(&ts, NULL)`.
+* **Frame Target**: 60 FPS deterministic render tick (~16.6 ms) via `time_sleep_ms(16.66)`.
 * **Double Buffering**: Backbuffer pixmap allocated matching the root window's exact depth (`XCreatePixmap`).
 * **Atomic Blit**: `XCopyArea` blits the offscreen pixmap to the visible window in a single hardware cycle, eliminating flicker.
 
@@ -54,7 +54,7 @@ static unsigned long alloc_color(Display *d, int screen, unsigned int rgb_hex)
 
 The main event loop in `gui_run()` handles three primary X11 event types:
 1. **`ClientMessage`**: Intercepts `WM_DELETE_WINDOW` for clean application exit when clicking the window close button.
-2. **`ButtonPress`**: Executes hit-testing against the 9 interactive button bounding boxes (`find_clicked_button`).
+2. **`ButtonPress`**: Executes hit-testing against the 9 interactive button bounding boxes via `geom_point_in_rect()` (`find_clicked_button`).
 3. **`KeyPress`**: Maps keyboard keys (`w`, `s`, `b`, `t`, `l`, `i`, `n`, `r`, `q`) to corresponding actions.
 
 All button clicks and hotkeys dispatch directly to `game_process_command()`, ensuring the presentation
@@ -62,7 +62,7 @@ layer remains strictly read-only with respect to game state.
 
 == 4. Viewport Layout Auditing (`gui_audit_layout`)
 
-Block 4 implements mathematical layout verification:
-- Asserts that all 9 buttons fit strictly within window boundaries ($[0 \dots 860], [0 \dots 620]$).
-- Executes pairwise AABB (Axis-Aligned Bounding Box) intersection tests to mathematically prove that no two buttons overlap.
+Block 4 implements mathematical layout verification using Layer 0 `geom_utils`:
+- Asserts that all 9 buttons fit strictly within window boundaries via `geom_rect_within_bounds()`.
+- Executes pairwise AABB (Axis-Aligned Bounding Box) intersection tests via `geom_rect_intersects()` to mathematically prove that no two buttons overlap.
 - Runs as part of `./build/tenebris-lux --audit` and CTest.

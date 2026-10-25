@@ -3,13 +3,13 @@
 // ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
 // =============================================================================
 // @project       Tenebris and Lux
-// @file          main.h
-// @layer         Core Engine & Game Simulation
+// @file          game.h
+// @layer         Layer 1: Core Engine & Game Simulation
 // @version       0.0.1
 // @epoch         2026.10
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Central Interface Header, Type Definitions & Game State
+// @role          Central Simulation Interface Header, Types & State Model
 // @invariants    Rank 1 (< >): Form precedes fullness.
 //                1. Shield of Lux power invariant: 0 <= shield_power <= MAX_RESONANCE.
 //                2. Sword of Tenebris edge invariant: 0 <= sword_edge <= MAX_RESONANCE.
@@ -23,8 +23,8 @@
 //   the Dark Lord Malakor re-awakens. Follows the OmniCode 5-Block discipline.
 // =============================================================================
 
-#ifndef TENEBRIS_LUX_MAIN_H
-#define TENEBRIS_LUX_MAIN_H
+#ifndef TENEBRIS_LUX_GAME_H
+#define TENEBRIS_LUX_GAME_H
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
@@ -110,4 +110,4 @@ int game_run_self_audit(void);
 // ( Include Guard Teardown & Header Close )
 // =============================================================================
 
-#endif /* TENEBRIS_LUX_MAIN_H */
+#endif /* TENEBRIS_LUX_GAME_H */

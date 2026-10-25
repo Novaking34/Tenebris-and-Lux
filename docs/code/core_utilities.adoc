@@ -1,0 +1,94 @@
+= Codebase Tour: Core Utilities Layer (Layer 0)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document provides a technical walkthrough of the foundational utilities in Layer 0:
+`include/util/` and `src/util/`. These modules provide mathematical clamping, string parsing,
+2D geometry bounding, and high-resolution monotonic timing. They have zero heap allocations,
+zero external dependencies, and complete reentrancy.
+
+== 1. Mathematical Invariant Utilities (`math_utils.h` & `math_utils.c`)
+
+Provides axiomatic numerical bounds enforcement:
+
+[source,c]
+----
+int math_clamp_int(int val, int min_val, int max_val);
+int math_saturating_sub(int val, int sub_val);
+int math_saturating_add(int val, int add_val, int max_val);
+int math_nudge_toward(int val, int target, int step);
+int math_scale_ratio(int val, int max_val, int target_scale);
+----
+
+=== Architectural Roles:
+* `math_clamp_int`: Guarantees values stay within strict limits (e.g. `moral_sway` within `[-100, +100]`).
+* `math_saturating_sub`: Guarantees non-negative reduction down to $0$ without integer underflow (e.g. `sword_edge`, `threat_hp`).
+* `math_saturating_add`: Guarantees addition saturates at a ceiling (`MAX_RESONANCE`) without integer overflow.
+* `math_nudge_toward`: Steers values toward an equilibrium anchor (e.g. moving moral sway toward $0$ during equilibrium stance).
+* `math_scale_ratio`: Safe integer ratio scaling for HUD meter fill calculations.
+
+== 2. String Manipulation Utilities (`string_utils.h` & `string_utils.c`)
+
+Provides safe, bounded, in-place string manipulation:
+
+[source,c]
+----
+void str_safe_copy(char *dst, const char *src, size_t dst_size);
+void str_trim_inplace(char *str);
+bool str_case_eq(const char *s1, const char *s2);
+bool str_contains_nocase(const char *haystack, const char *needle);
+----
+
+=== Architectural Roles:
+* `str_safe_copy`: Guarantees null-termination and prevents buffer overflows.
+* `str_trim_inplace`: Strips leading and trailing whitespace in-place via safe `memmove`.
+* `str_case_eq`: Case-insensitive string comparison for CLI command verbs.
+* `str_contains_nocase`: Substring search for flexible player commands and stance selection.
+
+== 3. 2D Geometry Utilities (`geom_utils.h` & `geom_utils.c`)
+
+Provides screen-space coordinates and bounding-box hit testing:
+
+[source,c]
+----
+typedef struct {
+    int x;
+    int y;
+    int w;
+    int h;
+} geom_rect_t;
+
+geom_rect_t geom_make_rect(int x, int y, int w, int h);
+bool geom_point_in_rect(int px, int py, geom_rect_t r);
+bool geom_rect_intersects(geom_rect_t a, geom_rect_t b);
+bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h);
+----
+
+=== Architectural Roles:
+* `geom_point_in_rect`: Point-in-rectangle hit testing for mouse clicks on GUI buttons.
+* `geom_rect_intersects`: Axis-Aligned Bounding Box (AABB) collision testing between UI components to prove no overlap.
+* `geom_rect_within_bounds`: Layout boundary audit asserting all buttons reside within window dimensions.
+
+== 4. Monotonic Timing Utilities (`time_utils.h` & `time_utils.c`)
+
+Provides high-resolution timing and non-drifting frame pacing:
+
+[source,c]
+----
+double time_get_monotonic_ms(void);
+double time_get_monotonic_us(void);
+void time_sleep_ms(double ms);
+----
+
+=== Architectural Roles:
+* `time_get_monotonic_us`: Microsecond precision clock for simulation latency benchmarking (< 50 $\mu\text{s}$ per turn).
+* `time_sleep_ms`: Sleep wrapper using `nanosleep` for maintaining 60 FPS frame rates without CPU spinlocks.

@@ -12,13 +12,13 @@ v0.0.1, 2026-10-24
 == Overview
 
 This document provides a technical walkthrough of the automated game development test suite
-located in `tests/test_game_invariants.c` and `tests/test_gameplay_scenarios.c`. It explains
-how these tests integrate into CMake/CTest, the invariant assertions, golden replays, softlock
+located in `tests/test_utils.c`, `tests/test_game_invariants.c`, and `tests/test_gameplay_scenarios.c`.
+It explains how these tests integrate into CMake/CTest, the invariant assertions, golden replays, softlock
 immunity stress testing, and microsecond latency benchmarking.
 
 == 1. CMake & CTest Test Targets
 
-The project registers five distinct test targets within `CMakeLists.txt`:
+The project registers six distinct test targets within `CMakeLists.txt`:
 
 [source,cmake]
 ----
@@ -28,6 +28,7 @@ add_test(NAME cli_version_test COMMAND tenebris-lux --version)
 add_test(NAME subsystem_audit_test COMMAND tenebris-lux --audit)
 
 # Dedicated Game Development Test Executables
+add_test(NAME core_utils_test COMMAND test_utils)
 add_test(NAME game_invariants_test COMMAND test_game_invariants)
 add_test(NAME gameplay_scenarios_test COMMAND test_gameplay_scenarios)
 ----

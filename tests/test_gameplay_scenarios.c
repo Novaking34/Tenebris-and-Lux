@@ -23,7 +23,8 @@
 
 #define _POSIX_C_SOURCE 199309L
 
-#include "main.h"
+#include "sim/game.h"
+#include "util/time_utils.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -190,17 +191,15 @@ static void test_simulation_latency_and_headroom(void)
     player_state_t state;
     game_init(&state);
 
-    struct timespec start, end;
-    clock_gettime(CLOCK_MONOTONIC, &start);
+    double start_us = time_get_monotonic_us();
 
     for (int i = 0; i < 10000; i++) {
         game_process_command(&state, "balance", NULL, 0);
     }
 
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    double elapsed_ms = (end.tv_sec - start.tv_sec) * 1000.0 +
-                        (end.tv_nsec - start.tv_nsec) / 1000000.0;
-    double us_per_turn = (elapsed_ms * 1000.0) / 10000.0;
+    double end_us = time_get_monotonic_us();
+    double elapsed_ms = (end_us - start_us) / 1000.0;
+    double us_per_turn = (end_us - start_us) / 10000.0;
 
     printf("[BENCHMARK] 10,000 turns executed in %.2f ms (%.3f us / turn)\n",
         elapsed_ms, us_per_turn);

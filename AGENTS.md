@@ -1,7 +1,7 @@
 # Repository Guidelines & Agent Standards
 
 > **Project**: Tenebris and Lux  
-> **Standard**: OmniCode 5-Block Ontological Architecture & Invariant Discipline  
+> **Standard**: OmniCode 5-Block Ontological Architecture & Layered Invariant Discipline  
 > **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  
 > **Repository**: [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux)
 
@@ -34,82 +34,158 @@ Every source file, header, and configuration file in this repository strictly ad
 
 1. **BLOCK 1: METADATA BLOCK**
    - Must contain file identity tags (`@project`, `@file`, `@layer`, `@version`, `@author`, `@system`, `@role`, `@invariants`).
-   - Outlines the architectural intent and axiomatic invariants governing the module.
+   - Outlines architectural intent and axiomatic invariants governing the module.
 
 2. **BLOCK 2: OPENING / TYPES BLOCK**
-   - Explicit includes of standard headers.
+   - Explicit includes of layered headers.
    - Type definitions, enums, structs, and compile-time constants (`#define`).
    - Preconditions and memory layout definitions.
 
 3. **BLOCK 3: BODY BLOCK**
-   - The implementation logic, algorithm definitions, and state transitions.
-   - Pure, modular, single-responsibility functions.
+   - Pure, modular, single-responsibility functions and algorithms.
+   - Core gameplay mechanics, mathematical clamping, and state transitions.
 
 4. **BLOCK 4: AUDIT PROCEDURES BLOCK**
    - Dedicated diagnostic routines (e.g. `audit_*` functions).
-   - Asserts and validates data structure integrity (e.g., verifying Lux remains within `[0, MAX_LUX]`, room IDs are within valid bounds).
-   - Reports detailed audit manifests without relying on crude crashes.
+   - Validates subsystem state invariant integrity (e.g., resonance within `[0, MAX_RESONANCE]`, viewport non-overlap, monotonic clock ticks).
+   - Reports detailed audit manifests without relying on crude runtime crashes.
 
 5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**
-   - For executables (`src/main.c`): Command-line argument parsing (`--audit`, `--help`, `--version`, `--smoke-test`), teardown, and return codes.
-   - For modular units: Standalone unit tests and verification suite.
+   - For executables (`src/main.c`): Command-line argument parsing (`--audit`, `--help`, `--version`, `--cli`, `--gui`), teardown, and return codes.
+   - For modular units: Standalone unit tests and verification suites.
    - For headers (`.h`): Include guard closing `#endif`.
 
 ---
 
-## 2. Invariant & Quality Discipline
+## 2. Layered Architecture & Directory Strata
 
-1. **Form Precedes Fullness**:
-   - Define exact data types and invariants before writing procedural logic.
-   - State representation must be clear, bounded, and deterministic.
+The codebase is organized into strict, hierarchical strata. Higher layers may depend on lower layers, but lower layers NEVER depend on higher layers.
 
-2. **Zero-Warning Tolerance**:
-   - Code must compile cleanly with `-Wall -Wextra -Wpedantic` under `-std=c11`.
-   - Never suppress compiler warnings without documented rationale.
+```text
+Layer 4: Verification Suite       [ tests/ ]
+           │
+Layer 3: Application Entry        [ src/main.c ]
+           │
+Layer 2: Presentation & Viewport  [ src/gui/   <-> include/gui/ ]
+           │
+Layer 1: Simulation Engine        [ src/sim/   <-> include/sim/ ]
+           │
+Layer 0: Core Utilities           [ src/util/  <-> include/util/ ]
+```
 
-3. **Diagnostic Audit Requirement**:
-   - Every core subsystem must provide an audit function that can be invoked via CLI (`--audit`) or CI/CTest to verify state validity.
+### Layer Definitions
 
-4. **Line-Length Discipline**:
-   - Keep line lengths bounded (recommended $\le 80$ characters, strict limit $\le 100$ characters) for high readability across split-view IDEs.
+1. **Layer 0: Core Utilities (`src/util/`, `include/util/`)**:
+   - Zero-dependency foundational primitives:
+     - `math_utils`: Clamping (`math_clamp_int`), saturating arithmetic (`math_saturating_add`, `math_saturating_sub`), equilibrium nudging (`math_nudge_toward`), ratio scaling (`math_scale_ratio`).
+     - `string_utils`: Safe copying (`str_safe_copy`), in-place trimming (`str_trim_inplace`), case-insensitive matching (`str_case_eq`, `str_contains_nocase`).
+     - `geom_utils`: 2D bounding boxes (`geom_rect_t`), point-in-rect hit testing (`geom_point_in_rect`), AABB intersection (`geom_rect_intersects`), and viewport bounds validation (`geom_rect_within_bounds`).
+     - `time_utils`: High-resolution monotonic timing (`time_get_monotonic_ms`, `time_get_monotonic_us`) and millisecond sleep (`time_sleep_ms`).
+   - *Invariant*: Zero heap allocations, pure reentrant C11, no GUI or game dependencies.
 
-5. **Indentation & Formatting**:
-   - Four spaces for indentation (no hard tabs).
-   - Function signatures, braces, and control structures follow K&R/Linux kernel style with 4-space indent.
+2. **Layer 1: Simulation Engine (`src/sim/`, `include/sim/`)**:
+   - Implements game state (`player_state_t`), twin armaments, stance mechanics, moral sway continuum, and location topology.
+   - Fully decoupled from windowing or rendering. Can run headless, in CLI, or under simulation test harnesses.
+   - *Header*: `include/sim/game.h`
+   - *Source*: `src/sim/game.c`
+
+3. **Layer 2: Presentation & Viewports (`src/gui/`, `include/gui/`)**:
+   - Native X11 double-buffered desktop interface. Translates mouse clicks and keystrokes into universal simulation commands.
+   - Renders health/resonance meters, region chronicle, stance visualizers, and interactive controls.
+   - *Header*: `include/gui/gui.h`
+   - *Source*: `src/gui/gui.c`
+
+4. **Layer 3: Application Entry & Presentation Router (`src/main.c`)**:
+   - Entry point parsing CLI flags (`--help`, `--version`, `--audit`, `--cli`, `--gui`).
+   - Implements automatic headless fallback: launches GUI when X11 display is available, gracefully falls back to terminal CLI otherwise.
+
+5. **Layer 4: Verification & Test Suite (`tests/`)**:
+   - Automated game development verification suite integrated into CTest:
+     - `test_utils`: Verifies Layer 0 mathematical, string, geometric, and timing invariants.
+     - `test_game_invariants`: Verifies Layer 1 state limits, stance deterministic transitions, and audit tripwires.
+     - `test_gameplay_scenarios`: Verifies deterministic replayability, softlock immunity under 1,000 chaotic commands, and 60 FPS latency budget (< 50 microseconds per simulation turn).
 
 ---
 
-## 3. Coding Style & Naming Conventions
+## 3. Strict Include Pathing & Root Hygiene
 
-- **Functions & Variables**: `snake_case` (e.g., `game_init`, `player_state`, `lumina_shards`).
-- **Types & Enums**: `snake_case` with `_t` suffix (e.g., `player_state_t`, `room_id_t`, `game_audit_report_t`).
-- **Constants & Macros**: `UPPER_SNAKE_CASE` (e.g., `APP_NAME`, `MAX_LUX`, `INITIAL_LUX`).
-- **Header Guards**: `#ifndef TENEBRIS_LUX_<FILENAME>_H` `#define TENEBRIS_LUX_<FILENAME>_H` ... `#endif`.
-- **Memory & Safety**:
-  - Always check buffer sizes and bounds before string manipulations (`snprintf`, `strncpy`).
-  - No undefined behaviors, dangling pointers, or unchecked return values.
+1. **Explicit Pathing (No Forwarders)**:
+   - Header includes must explicitly declare their stratum:
+     - `#include "sim/game.h"`
+     - `#include "gui/gui.h"`
+     - `#include "util/math_utils.h"`
+     - `#include "util/geom_utils.h"`
+   - Never generate lazy forwarder headers in `include/` root.
+2. **Root Directory Hygiene**:
+   - The repository root must ONLY contain essential project anchors:
+     - `CMakeLists.txt`
+     - `.gitignore`
+     - `README.md`
+     - `AGENTS.md`
+   - All source code lives in `src/<layer>/`.
+   - All public headers live in `include/<layer>/`.
+   - All tests live in `tests/`.
+   - All documentation lives in `docs/<category>/`.
 
 ---
 
-## 4. Build, Test, and Development Commands
+## 4. Lore, Canon & Thematic Invariants
 
-CMake 3.24+ is configured for C11:
+1. **Twin Relics Canon**:
+   - **The Shield of Lux**: Personification of Light, barrier resonance, clarity, and protection.
+   - **The Sword of Tenebris**: Personification of Darkness, edge sharpness, abyssal mist, and severance.
+2. **Metaphysical Neutrality**:
+   - Neither Light (Lux) nor Darkness (Tenebris) is inherently good or evil. They are primal cosmic apex forces.
+   - The wielder's intent and application determine the moral sway (`moral_sway` in `[-100, +100]`):
+     - Positive sway: Virtue, protection, mercy.
+     - Negative sway: Malice, ruin, ruthless dominion.
+3. **The True Antagonist**:
+   - The Kingdom of Sol-Tenebrae is torn by civil war between the Solar Order and Umbral Covenant.
+   - The true overarching existential threat is the re-awakening **Dark Lord Malakor**, whose void vanguard encroaches from the Abyssal Threshold.
+
+---
+
+## 5. Game Development Testing Philosophy
+
+Game development testing is fundamentally distinct from standard software CRUD testing:
+
+1. **State Machine Completeness**: Every stance (`STANCE_WARDING`, `STANCE_STRIKING`, `STANCE_EQUILIBRIUM`, `STANCE_NEUTRAL`) must form a strongly connected, deterministic transition graph.
+2. **Conserved Resources & Bounded Invariants**: Shield power and sword edge must strictly respect `[0, MAX_RESONANCE]`. Moral sway must remain in `[-100, +100]`.
+3. **Softlock Immunity & Chaotic Stress**: Subjecting the engine to thousands of arbitrary, invalid, or chaotic inputs must never crash, deadlock, or induce undefined state.
+4. **Frame-Budget Latency Headroom**: Simulation ticks must execute in under 50 microseconds to guarantee ample frame-time budget for 60 FPS presentation.
+
+---
+
+## 6. Documentation Standards (AsciiDoc)
+
+- All technical manuals, architecture designs, dev logs, and lore documents are standardized in **AsciiDoc (`.adoc`)** format.
+- Located within `docs/`:
+  - `docs/architecture/`: System design, layered strata, dual-frontend architecture.
+  - `docs/lore/`: World chronicle, Kingdom geography, relic genesis.
+  - `docs/game_design/`: Combat mechanics, stances, topographical map, test criteria.
+  - `docs/dev_logs/`: Chronological engineering logs and milestone postmortems.
+  - `docs/code/`: Module walkthroughs and subsystem code documentation.
+
+---
+
+## 7. Build, Test, and Quality Commands
+
+CMake 3.24+ is configured for C11 with zero-warning tolerance:
 
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: Configure build directory.
-- `cmake --build build --config Debug`: Compile executable `./build/tenebris-lux`.
-- `ctest --test-dir build -C Debug --output-on-failure`: Run full automated test suite.
-- `./build/tenebris-lux --audit`: Run internal diagnostic self-audit suite.
+- `cmake --build build --config Debug`: Compile executable `./build/tenebris-lux` and test suites.
+- `ctest --test-dir build -C Debug --output-on-failure`: Run full automated test suite (6/6 tests).
+- `./build/tenebris-lux --audit`: Run internal diagnostic self-audit suite (5/5 checks).
 - `./build/tenebris-lux --version`: Display version information.
 - `./build/tenebris-lux --help`: Display command-line options.
-- `gcc -std=c11 -Wall -Wextra -Wpedantic -fsyntax-only -Iinclude src/main.c`: Fast syntax and diagnostics check without producing a binary.
+- `./build/tenebris-lux --cli`: Force text-based CLI terminal mode.
+- `./build/tenebris-lux --gui`: Launch native X11 double-buffered desktop GUI.
 
 ---
 
-## 5. Structured Git Commit & Release Tagging Guidelines
+## 8. Structured Git Commit & Release Tagging Guidelines
 
-Do **not** use terse or vague one-line commit messages. Every commit must serve as an enduring, self-contained record of engineering rationale, architectural modifications, and verification telemetry that subsequent agents and human developers can build upon.
-
-### Commit Message Format
+Do **not** use terse or vague one-line commit messages. Every commit must serve as an enduring record of engineering rationale, architectural modifications, and verification telemetry:
 
 ```text
 <type>(<scope>): <summary title>
@@ -130,8 +206,3 @@ and how this fulfills the invariant contracts of the project.
 - Diagnostic audit status (e.g. ./build/tenebris-lux --audit output).
 - Compiler diagnostic check (-Wall -Wextra -Wpedantic clean).
 ```
-
-### Milestone & Release Tagging
-
-- The current development phase is **v0.0.1** (Early Foundational Text Prototype).
-- Every major structural milestone must be explicitly tagged in Git (e.g., `git tag -a v0.0.1 -m "..."`).

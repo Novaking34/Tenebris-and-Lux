@@ -4,7 +4,7 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          gui.c
-// @layer         Presentation & Viewport Subsystem
+// @layer         Layer 2: Presentation & Viewport Subsystem
 // @version       0.0.1
 // @epoch         2026.10
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -21,9 +21,11 @@
 // ( System Headers, Visual Palette, Layout Geometry & State Tables )
 // =============================================================================
 
-#define _POSIX_C_SOURCE 199309L
-
-#include "gui.h"
+#include "gui/gui.h"
+#include "sim/game.h"
+#include "util/geom_utils.h"
+#include "util/math_utils.h"
+#include "util/time_utils.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -144,7 +146,7 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     XSetForeground(d, gc, p->border);
     XDrawRectangle(d, dr, gc, bar_s_x, bar_s_y, bar_s_w, bar_s_h);
 
-    int fill_s = (state->shield_power * bar_s_w) / MAX_RESONANCE;
+    int fill_s = math_scale_ratio(state->shield_power, MAX_RESONANCE, bar_s_w);
     if (fill_s > 0) {
         XSetForeground(d, gc, p->shield_gold);
         XFillRectangle(d, dr, gc, bar_s_x + 1, bar_s_y + 1, fill_s - 2, bar_s_h - 2);
@@ -166,7 +168,7 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     XSetForeground(d, gc, p->border);
     XDrawRectangle(d, dr, gc, bar_t_x, bar_t_y, bar_t_w, bar_t_h);
 
-    int fill_t = (state->sword_edge * bar_t_w) / MAX_RESONANCE;
+    int fill_t = math_scale_ratio(state->sword_edge, MAX_RESONANCE, bar_t_w);
     if (fill_t > 0) {
         XSetForeground(d, gc, p->sword_violet);
         XFillRectangle(d, dr, gc, bar_t_x + 1, bar_t_y + 1, fill_t - 2, bar_t_h - 2);
@@ -268,8 +270,9 @@ static void render_frame(Display *d, Drawable dr, GC gc,
 static const gui_button_t *find_clicked_button(int x, int y)
 {
     for (int i = 0; i < NUM_BUTTONS; i++) {
-        if (x >= buttons[i].x && x <= (buttons[i].x + buttons[i].width) &&
-            y >= buttons[i].y && y <= (buttons[i].y + buttons[i].height)) {
+        geom_rect_t rect = geom_make_rect(buttons[i].x, buttons[i].y,
+            buttons[i].width, buttons[i].height);
+        if (geom_point_in_rect(x, y, rect)) {
             return &buttons[i];
         }
     }
@@ -351,7 +354,6 @@ int gui_run(player_state_t *state)
     log_append(&log, "The Dark Lord Malakor stirs in the deep abyss. Choose your stance.");
 
     bool running = true;
-    struct timespec ts = { 0, 16666666L }; // ~60 FPS tick
 
     while (running && state->is_running) {
         while (XPending(display)) {
@@ -408,7 +410,7 @@ int gui_run(player_state_t *state)
             GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 0, 0);
         XFlush(display);
 
-        nanosleep(&ts, NULL);
+        time_sleep_ms(16.66);
     }
 
     XFreePixmap(display, backbuffer);
@@ -427,25 +429,19 @@ bool gui_audit_layout(void)
 {
     for (int i = 0; i < NUM_BUTTONS; i++) {
         const gui_button_t *b = &buttons[i];
+        geom_rect_t r1 = geom_make_rect(b->x, b->y, b->width, b->height);
 
-        if (b->x < 0 || (b->x + b->width) > GUI_WINDOW_WIDTH) {
-            fprintf(stderr, "[GUI AUDIT] Button '%s' exceeds horizontal bounds: x=%d w=%d\n",
-                b->label, b->x, b->width);
-            return false;
-        }
-
-        if (b->y < 0 || (b->y + b->height) > GUI_WINDOW_HEIGHT) {
-            fprintf(stderr, "[GUI AUDIT] Button '%s' exceeds vertical bounds: y=%d h=%d\n",
-                b->label, b->y, b->height);
+        if (!geom_rect_within_bounds(r1, GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT)) {
+            fprintf(stderr, "[GUI AUDIT] Button '%s' exceeds window bounds: x=%d y=%d w=%d h=%d\n",
+                b->label, b->x, b->y, b->width, b->height);
             return false;
         }
 
         /* Check for accidental button overlap with other buttons */
         for (int j = i + 1; j < NUM_BUTTONS; j++) {
             const gui_button_t *b2 = &buttons[j];
-            bool overlap_x = (b->x < b2->x + b2->width) && (b->x + b->width > b2->x);
-            bool overlap_y = (b->y < b2->y + b2->height) && (b->y + b->height > b2->y);
-            if (overlap_x && overlap_y) {
+            geom_rect_t r2 = geom_make_rect(b2->x, b2->y, b2->width, b2->height);
+            if (geom_rect_intersects(r1, r2)) {
                 fprintf(stderr, "[GUI AUDIT] Overlap detected between '%s' and '%s'\n",
                     b->label, b2->label);
                 return false;

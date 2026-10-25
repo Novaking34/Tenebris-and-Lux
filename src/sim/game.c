@@ -4,7 +4,7 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          game.c
-// @layer         Core Engine & Game Simulation
+// @layer         Layer 1: Core Engine & Game Simulation
 // @version       0.0.1
 // @epoch         2026.10
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -22,7 +22,9 @@
 // ( System Includes, Static Lookups, World Definitions & Text Tables )
 // =============================================================================
 
-#include "main.h"
+#include "sim/game.h"
+#include "util/math_utils.h"
+#include "util/string_utils.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -55,25 +57,6 @@ static const char *stance_names[STANCE_COUNT] = {
     "Equilibrium (Twin Harmonized)"
 };
 
-static void trim_whitespace(char *str)
-{
-    char *start = str;
-    while (isspace((unsigned char)*start)) {
-        start++;
-    }
-    if (start != str) {
-        memmove(str, start, strlen(start) + 1);
-    }
-    if (*str == '\0') {
-        return;
-    }
-
-    char *end = str + strlen(str) - 1;
-    while (end >= str && isspace((unsigned char)*end)) {
-        *end = '\0';
-        end--;
-    }
-}
 
 const char *game_get_location_name(location_id_t loc)
 {
@@ -189,12 +172,9 @@ static void handle_ward(player_state_t *state, char *out_msg, size_t msg_len)
         int boost = (state->stance == STANCE_WARDING) ? 15 : 10;
         int stagger = (state->stance == STANCE_WARDING) ? 25 : 15;
 
-        state->shield_power += boost;
-        if (state->shield_power > MAX_RESONANCE) state->shield_power = MAX_RESONANCE;
-
-        state->threat_hp -= stagger;
-        state->moral_sway += 3;
-        if (state->moral_sway > 100) state->moral_sway = 100;
+        state->shield_power = math_saturating_add(state->shield_power, boost, MAX_RESONANCE);
+        state->threat_hp = math_saturating_sub(state->threat_hp, stagger);
+        state->moral_sway = math_clamp_int(state->moral_sway + 3, -100, 100);
         state->innocents_warded++;
 
         if (state->threat_hp <= 0) {
@@ -215,10 +195,8 @@ static void handle_ward(player_state_t *state, char *out_msg, size_t msg_len)
         }
     } else {
         /* Non-combat Warding */
-        state->shield_power += 20;
-        if (state->shield_power > MAX_RESONANCE) state->shield_power = MAX_RESONANCE;
-        state->moral_sway += 1;
-        if (state->moral_sway > 100) state->moral_sway = 100;
+        state->shield_power = math_saturating_add(state->shield_power, 20, MAX_RESONANCE);
+        state->moral_sway = math_clamp_int(state->moral_sway + 1, -100, 100);
 
         if (out_msg) {
             snprintf(out_msg, msg_len,
@@ -236,14 +214,13 @@ static void handle_strike(player_state_t *state, char *out_msg, size_t msg_len)
         int cost = (state->stance == STANCE_STRIKING) ? 8 : 12;
         int damage = (state->stance == STANCE_STRIKING) ? 45 : 30;
 
-        state->sword_edge = (state->sword_edge >= cost) ? (state->sword_edge - cost) : 0;
-        state->threat_hp -= damage;
+        state->sword_edge = math_saturating_sub(state->sword_edge, cost);
+        state->threat_hp = math_saturating_sub(state->threat_hp, damage);
 
         if (state->threat_hp <= 0) {
             state->threat_hp = 0;
             state->foes_vanquished++;
-            state->moral_sway += 2;
-            if (state->moral_sway > 100) state->moral_sway = 100;
+            state->moral_sway = math_clamp_int(state->moral_sway + 2, -100, 100);
 
             if (out_msg) {
                 snprintf(out_msg, msg_len,
@@ -260,8 +237,7 @@ static void handle_strike(player_state_t *state, char *out_msg, size_t msg_len)
         }
     } else {
         /* Non-combat Hone/Sever */
-        state->sword_edge += 15;
-        if (state->sword_edge > MAX_RESONANCE) state->sword_edge = MAX_RESONANCE;
+        state->sword_edge = math_saturating_add(state->sword_edge, 15, MAX_RESONANCE);
 
         if (out_msg) {
             snprintf(out_msg, msg_len,
@@ -274,19 +250,14 @@ static void handle_strike(player_state_t *state, char *out_msg, size_t msg_len)
 
 static void handle_balance(player_state_t *state, char *out_msg, size_t msg_len)
 {
-    state->shield_power += 15;
-    if (state->shield_power > MAX_RESONANCE) state->shield_power = MAX_RESONANCE;
-
-    state->sword_edge += 15;
-    if (state->sword_edge > MAX_RESONANCE) state->sword_edge = MAX_RESONANCE;
+    state->shield_power = math_saturating_add(state->shield_power, 15, MAX_RESONANCE);
+    state->sword_edge = math_saturating_add(state->sword_edge, 15, MAX_RESONANCE);
 
     /* Nudge moral sway toward cosmic center (0) */
-    if (state->moral_sway > 0) state->moral_sway -= 2;
-    else if (state->moral_sway < 0) state->moral_sway += 2;
+    state->moral_sway = math_nudge_toward(state->moral_sway, 0, 2);
 
     if (state->threat_hp > 0) {
-        state->threat_hp -= 20;
-        if (state->threat_hp < 0) state->threat_hp = 0;
+        state->threat_hp = math_saturating_sub(state->threat_hp, 20);
         if (state->threat_hp == 0) state->foes_vanquished++;
 
         if (out_msg) {
@@ -396,10 +367,9 @@ void game_process_command(player_state_t *state, const char *raw_input,
     char *out_msg, size_t msg_len)
 {
     char buffer[MAX_INPUT_LEN];
-    strncpy(buffer, raw_input, sizeof(buffer) - 1);
-    buffer[sizeof(buffer) - 1] = '\0';
+    str_safe_copy(buffer, raw_input, sizeof(buffer));
+    str_trim_inplace(buffer);
 
-    trim_whitespace(buffer);
     if (strlen(buffer) == 0) {
         return;
     }
