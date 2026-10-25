@@ -21,7 +21,7 @@
 // ( System Headers & Test Assertion Macros )
 // =============================================================================
 
-#include "main.h"
+#include "sim/game.h"
 
 #include <assert.h>
 #include <stdio.h>

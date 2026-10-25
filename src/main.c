@@ -4,7 +4,7 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          main.c
-// @layer         Application Entry & CLI Coordinator
+// @layer         Layer 3: Application Entry & Presentation Router
 // @version       0.0.1
 // @epoch         2026.10
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -21,11 +21,10 @@
 // ( System Headers & Application Constants )
 // =============================================================================
 
-#include "main.h"
-#include "gui.h"
+#include "sim/game.h"
+#include "gui/gui.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 // =============================================================================

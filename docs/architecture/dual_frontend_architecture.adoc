@@ -142,10 +142,10 @@ the dynamic tension between the Shield of Lux and the Sword of Tenebris:
 In strict accordance with the OmniCode framework, the presentation subsystem is structured
 into five invariant blocks across headers and source files:
 
-=== Presentation Architecture Breakdown (`include/gui.h` & `src/gui.c`)
+=== Presentation Architecture Breakdown (`include/gui/gui.h` & `src/gui/gui.c`)
 
 1. **BLOCK 1: METADATA BLOCK**
-   - Outlines module identity, layer (`Presentation / Viewport`), author, version, and invariant contracts:
+   - Outlines module identity, layer (`Layer 2: Presentation / Viewport`), author, version, and invariant contracts:
      `gui.h` and `gui.c` must remain strictly read-only with respect to `player_state_t`.
 2. **BLOCK 2: OPENING / TYPES BLOCK**
    - Declares fixed viewport geometry (`GUI_WINDOW_WIDTH = 860`, `GUI_WINDOW_HEIGHT = 620`),

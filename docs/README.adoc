@@ -32,9 +32,10 @@ AsciiDoc (`.adoc`) documentation guidelines for clean, comprehensive game develo
 | **Developer Logs** | **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)** | 
   - **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**: Inception, the survival battery audit, the paradigm pivot, and game dev testing.
 | **Code Tours** | **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)** | 
-  - **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**: Walkthrough of `include/main.h` and `src/game.c`. +
-  - **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**: Walkthrough of `include/gui.h` and `src/gui.c`. +
-  - **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**: Walkthrough of `tests/test_game_invariants.c` and `tests/test_gameplay_scenarios.c`.
+  - **[core_utilities.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/core_utilities.adoc)**: Walkthrough of Layer 0 `include/util/` and `src/util/` (math, string, geometry, timing). +
+  - **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**: Walkthrough of Layer 1 `include/sim/game.h` and `src/sim/game.c`. +
+  - **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**: Walkthrough of Layer 2 `include/gui/gui.h` and `src/gui/gui.c`. +
+  - **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**: Walkthrough of Layer 4 `tests/test_utils.c`, `tests/test_game_invariants.c`, and `tests/test_gameplay_scenarios.c`.
 |===
 
 == 2. Ontological Documentation Principles

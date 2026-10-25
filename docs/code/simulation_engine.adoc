@@ -12,12 +12,12 @@ v0.0.1, 2026-10-24
 == Overview
 
 This document provides a technical walkthrough of the core simulation engine implemented
-in `include/main.h` and `src/game.c`. It explains the memory layouts, state transitions,
-relic mechanics, combat algorithms, and the 5-block lifecycle discipline.
+in `include/sim/game.h` and `src/sim/game.c`. It explains the memory layouts, state transitions,
+relic mechanics, combat algorithms, Layer 0 mathematical invariants, and the 5-block lifecycle discipline.
 
 == 1. State Structure & Memory Layout (`player_state_t`)
 
-The heart of the simulation is defined in `include/main.h`:
+The heart of the simulation is defined in `include/sim/game.h`:
 
 [source,c]
 ----
@@ -40,7 +40,7 @@ This ensures deterministic cache locality, zero memory leaks, and instant serial
 
 == 2. Universal Action Dispatcher (`game_process_command`)
 
-Located in `src/game.c`, `game_process_command()` acts as the singular entry point for
+Located in `src/sim/game.c`, `game_process_command()` acts as the singular entry point for
 all player intentions, whether emitted by the terminal CLI or the native GUI:
 
 [source,c]
@@ -50,19 +50,19 @@ void game_process_command(player_state_t *state, const char *raw_input,
 ----
 
 === Execution Pipeline:
-1. **Input Sanitization**: Copies `raw_input` to a local buffer and executes in-place whitespace trimming (`trim_whitespace`).
+1. **Input Sanitization**: Copies `raw_input` safely via `str_safe_copy()` and executes in-place whitespace trimming (`str_trim_inplace()`).
 2. **Verb Tokenization**: Splits input into `command` and trailing `arg`.
 3. **Action Dispatch**:
-   - `ward`: Calls `handle_ward()`, modifying `shield_power`, staggering active threats, and elevating moral virtue.
-   - `strike`: Calls `handle_strike()`, spending `sword_edge` to inflict heavy severance damage.
-   - `balance`: Calls `handle_balance()`, simultaneously recovering both relics and parrying incoming blows.
+   - `ward`: Calls `handle_ward()`, modifying `shield_power` via `math_saturating_add()`, staggering active threats with `math_saturating_sub()`, and elevating moral virtue with `math_clamp_int()`.
+   - `strike`: Calls `handle_strike()`, spending `sword_edge` via `math_saturating_sub()` to inflict heavy severance damage.
+   - `balance`: Calls `handle_balance()`, simultaneously recovering both relics, parrying blows, and nudging moral sway toward 0 via `math_nudge_toward()`.
    - `stance`: Calls `handle_stance()`, shifting the tactical state machine.
    - `move`: Calls `handle_move()`, validating directional topology and spawning province encounters.
 4. **Invariant Logging**: Writes a human-readable telemetry outcome into `out_msg` for presentation.
 
 == 3. Diagnostic Self-Auditing (`game_audit_state`)
 
-Following Block 4 of the OmniCode protocol, `src/game.c` includes built-in diagnostic audit routines:
+Following Block 4 of the OmniCode protocol, `src/sim/game.c` includes built-in diagnostic audit routines:
 
 [source,c]
 ----

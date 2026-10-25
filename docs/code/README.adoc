@@ -12,11 +12,14 @@ the simulation engine, presentation viewport, and test suites.
 
 == Implementation Manifest
 
-1. **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**  
-   *Core Simulation Walkthrough*: `include/main.h` and `src/game.c`. Details memory layouts, the `player_state_t` struct, universal action dispatching, and self-auditing routines.
+1. **[core_utilities.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/core_utilities.adoc)**  
+   *Layer 0 Core Utilities Walkthrough*: `include/util/` and `src/util/`. Details math clamping, string utilities, 2D geometry hit-testing, and monotonic timing primitives.
 
-2. **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**  
-   *Native Graphical Viewport*: `include/gui.h` and `src/gui.c`. Details native POSIX X11 double-buffering, 32-bit ARGB TrueColor visual negotiation, event dispatching, and layout auditing.
+2. **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**  
+   *Layer 1 Core Simulation Walkthrough*: `include/sim/game.h` and `src/sim/game.c`. Details memory layouts, the `player_state_t` struct, universal action dispatching, and self-auditing routines.
 
-3. **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**  
-   *Game Dev Test Suite Walkthrough*: `tests/test_game_invariants.c` and `tests/test_gameplay_scenarios.c`. Details CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and microsecond latency benchmarks.
+3. **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**  
+   *Layer 2 Native Graphical Viewport*: `include/gui/gui.h` and `src/gui/gui.c`. Details native POSIX X11 double-buffering, 32-bit ARGB TrueColor visual negotiation, event dispatching, and layout auditing.
+
+4. **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**  
+   *Layer 4 Game Dev Test Suite Walkthrough*: `tests/test_utils.c`, `tests/test_game_invariants.c`, and `tests/test_gameplay_scenarios.c`. Details CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and microsecond latency benchmarks.
