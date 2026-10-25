@@ -8,26 +8,30 @@
 
 ## 1. Design Overview
 
-*Tenebris and Lux* ("Darkness and Light") is architected with a strict separation between **simulation state** and **presentation layer**. The current prototype operates via dual presentation frontends (a headless terminal CLI and a native double-buffered X11 GUI), while the underlying state machines are decoupled to allow plug-and-play migration to 2D tilemaps, 2.5D isometric viewports, and full 3D rendering engines.
+*Tenebris and Lux* ("Darkness and Light") is an atmospheric chivalric fantasy game and custom engine architecture. The story centers upon two primordial relics—**The Shield of Lux** and **The Sword of Tenebris**—wielded amidst a Kingdom fractured by ideological schism and threatened by the re-awakening of the **Dark Lord Malakor**.
+
+The engine strictly separates **simulation state** from the **presentation layer**:
 
 ```mermaid
 flowchart TD
     subgraph CoreSimulation ["Core Simulation Engine (C11)"]
-        State["player_state_t\n(Lux, Shards, Room, Turns)"]
-        TurnEngine["Turn & Action Dispatcher\n(explore, kindle, move, look)"]
-        AuditEngine["Audit & Verification Suite\n(game_audit_state, game_run_self_audit)"]
+        State["player_state_t\n(Shield Lux, Sword Tenebris, Stance, Moral Sway, Location)"]
+        ActionEngine["Action & Combat Dispatcher\n(ward, strike, balance, stance, move, look)"]
+        AuditEngine["Diagnostic Audit & Invariant Engine\n(relic bounds, stance validity, sway limits)"]
     end
 
-    subgraph Frontends ["Modular Frontends"]
-        CLI["Text Terminal Frontend\n(Current Prototype)"]
-        Renderer2D["2D/2.5D Engine Frontend\n(Phase 3 Planned)"]
-        Renderer3D["Custom 3D Engine Frontend\n(Phase 4 Planned)"]
+    subgraph Frontends ["Presentation Frontends"]
+        CLI["Headless Terminal CLI\n(Automated Testing & Headless Play)"]
+        GUI["Native Desktop GUI\n(Double-Buffered X11 Viewport)"]
+        Renderer2D["2D/2.5D Sprite & Tilemap\n(Phase 3 Planned)"]
+        Renderer3D["Custom Vulkan 3D Pipeline\n(Phase 4 Planned)"]
     end
 
-    CLI --> TurnEngine
-    Renderer2D -.-> TurnEngine
-    Renderer3D -.-> TurnEngine
-    TurnEngine --> State
+    CLI --> ActionEngine
+    GUI --> ActionEngine
+    Renderer2D -.-> ActionEngine
+    Renderer3D -.-> ActionEngine
+    ActionEngine --> State
     AuditEngine --> State
 ```
 
@@ -38,41 +42,50 @@ flowchart TD
 In alignment with the OmniCode framework, all C source code, headers, and build scripts are organized into 5 standardized blocks:
 
 1. **BLOCK 1: METADATA BLOCK**  
-   Defines identity, layer, author, version, role, and invariant axioms.
+   Defines module identity, layer, author, version, role, and invariant axioms.
 2. **BLOCK 2: OPENING / TYPES BLOCK**  
-   Header imports, constants, state structures (`player_state_t`), and room enumerations (`room_id_t`).
+   Header imports, constants, state structures (`player_state_t`, `relic_resonance_t`, `moral_sway_t`), and location enumerations (`location_id_t`).
 3. **BLOCK 3: BODY BLOCK**  
-   Core game simulation, command execution, state transitions, and light attenuation logic.
+   Core simulation routines, relic stance transitions, combat calculations, and moral alignment resolution.
 4. **BLOCK 4: AUDIT PROCEDURES BLOCK**  
-   Self-healing diagnostic routines, tripwire assertions, and invariant verification reports.
+   Self-healing diagnostic routines, invariant tripwires, and game development testing verification harnesses.
 5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**  
-   CLI interface, argument parsing, automated test runs, and teardown.
+   CLI argument parser, headless game runner, automated test hooks, and clean teardown.
 
 ---
 
 ## 3. Core Mechanics & State Invariants
 
-### Light & Darkness Balance
+### The Twin Relics: Shield and Sword
 
-- **Lux ($\text{Light}$)**: A bounded integer between 0 and 100 (`MAX_LUX`). Every deliberate action costs $5$ Lux by default.
-- **Tenebris ($\text{Darkness}$)**: When Lux reaches $0$, the player is enveloped by darkness and the run terminates.
-- **Lumina Shards**: Rare crystals discovered during exploration. Consuming $1$ shard restores $+30$ Lux, capped at $\text{MAX\_LUX}$.
-- **Room Topology**: A connected discrete graph of locations representing ancient chambers, corridors, and sanctuaries.
+- **The Shield of Lux (`shield_power`, $0 \dots 100$)**:
+  Represents radiant warding, defense, barrier integrity, and illumination.
+- **The Sword of Tenebris (`sword_edge`, $0 \dots 100$)**:
+  Represents umbral sharpness, severance, kinetic strike force, and mist cloaking.
+- **Tactical Stance (`combat_stance_t`)**:
+  - `STANCE_NEUTRAL`: Relics held in readiness.
+  - `STANCE_WARDING`: Shield raised forward; enhances defensive warding; mitigates incoming damage.
+  - `STANCE_STRIKING`: Sword drawn for offensive severance; boosts strike damage.
+  - `STANCE_EQUILIBRIUM`: Twin mastery; balances offensive and defensive resonance.
+- **Moral Sway (`moral_sway_t`, $-100 \dots +100$)**:
+  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless, seek harmony, and heal the realm).
+  - Negative ($< 0$): **Tyranny & Ruin** (using power for cruel domination, ruthless execution, and feeding the Dark Lord).
 
 ### Invariant Axioms
 
-1. **Lux Boundary Invariant**: $0 \le \text{state.lux} \le \text{MAX\_LUX}$.
-2. **Inventory Non-Negativity**: $\text{state.lumina\_shards} \ge 0$.
-3. **Valid Location Invariant**: $0 \le \text{state.current\_room} < \text{ROOM\_COUNT}$.
-4. **Audit Reliability**: The self-audit suite must return non-zero exit codes if any invariant fails during validation.
+1. **Shield Power Boundary**: $0 \le \text{state.shield\_power} \le \text{MAX\_POWER}$.
+2. **Sword Edge Boundary**: $0 \le \text{state.sword\_edge} \le \text{MAX\_EDGE}$.
+3. **Moral Sway Bounded Range**: $-100 \le \text{state.moral\_sway} \le +100$.
+4. **Valid Location Invariant**: $0 \le \text{state.current\_location} < \text{LOCATION\_COUNT}$.
+5. **Deterministic Replay Guarantee**: Any identical sequence of actions from a given initial state must produce identical state telemetry.
 
 ---
 
 ## 4. Multi-Phase Engine Evolution
 
 ```text
-Phase 1: Pure C11 Text Prototype  ---> Game loop, state, inventory, lore.
-Phase 2: Decoupled Core Subsystems ---> Event queue, tick scheduler, math.
-Phase 3: 2D / 2.5D Visualization   ---> Tile rendering, sprite animations, dynamic lighting.
-Phase 4: Custom 3D Game Engine     ---> Custom shader pipeline, spatial audio, scene graph.
+Phase 1: Dual CLI + Native GUI Prototype ---> Twin Relics, Stance Loop, Kingdom Topology, Audit Suite.
+Phase 2: Decoupled Core Subsystems      ---> Event bus, tick scheduler, ECS (Entity Component System).
+Phase 3: 2D / 2.5D Presentation Layer   ---> Sprite animations, dynamic shadow caster, tactical grid.
+Phase 4: Custom 3D Game Engine          ---> Vulkan rendering, spatial audio, 3D character controllers.
 ```

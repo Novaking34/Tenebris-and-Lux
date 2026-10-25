@@ -11,9 +11,9 @@
 // @repository    https://github.com/Novaking34/tenebris-lux
 // @role          Native Desktop X11 Double-Buffered GUI Implementation
 // @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Zero-dependency native X11 double buffering.
-//                2. Every button click or hotkey dispatches through core engine.
-//                3. Diagnostic audit verifies layout bounding boxes at startup.
+//                1. Zero-dependency native X11 double buffering with 32-bit alpha safety.
+//                2. Every button click or hotkey dispatches through universal action pipeline.
+//                3. Diagnostic audit verifies layout bounding boxes and non-overlapping cards.
 // =============================================================================
 
 // =============================================================================
@@ -35,15 +35,15 @@
 #define NUM_BUTTONS 9
 
 static const gui_button_t buttons[NUM_BUTTONS] = {
-    {  40, 480, 160, 42, "Look (L)",      "look",       'l' },
-    { 220, 480, 160, 42, "Explore (E)",   "explore",    'e' },
-    { 400, 480, 160, 42, "Kindle (K)",    "kindle",     'k' },
-    { 580, 480, 160, 42, "Status (T)",    "status",     't' },
-    {  40, 536, 160, 42, "North (N)",     "move north", 'n' },
-    { 220, 536, 160, 42, "South (S)",     "move south", 's' },
-    { 400, 536, 160, 42, "East (R)",      "move east",  'r' },
-    { 580, 536, 160, 42, "West (W)",      "move west",  'w' },
-    { 750,  20,  70, 32, "Quit",          "quit",       'q' }
+    {  40, 480, 160, 42, "Ward (W)",      "ward",               'w' },
+    { 220, 480, 160, 42, "Strike (S)",    "strike",             's' },
+    { 400, 480, 160, 42, "Balance (B)",   "balance",            'b' },
+    { 580, 480, 160, 42, "Stance (T)",    "stance equilibrium", 't' },
+    {  40, 536, 160, 42, "Look (L)",      "look",               'l' },
+    { 220, 536, 160, 42, "Status (I)",    "status",             'i' },
+    { 400, 536, 160, 42, "Advance (N)",   "move north",         'n' },
+    { 580, 536, 160, 42, "Retreat (R)",   "move south",         'r' },
+    { 750,  20,  70, 32, "Quit",          "quit",               'q' }
 };
 
 typedef struct {
@@ -52,9 +52,10 @@ typedef struct {
     unsigned long border;
     unsigned long text_main;
     unsigned long text_muted;
-    unsigned long lux_high;
-    unsigned long lux_med;
-    unsigned long lux_low;
+    unsigned long shield_gold;
+    unsigned long sword_violet;
+    unsigned long virtue_green;
+    unsigned long malice_red;
     unsigned long btn_bg;
     unsigned long btn_border;
 } gui_palette_t;
@@ -115,93 +116,126 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     XSetForeground(d, gc, p->border);
     XDrawRectangle(d, dr, gc, 20, 15, GUI_WINDOW_WIDTH - 40, 50);
 
-    XSetForeground(d, gc, p->lux_high);
+    XSetForeground(d, gc, p->shield_gold);
     XDrawString(d, dr, gc, 40, 42, "TENEBRIS AND LUX  [v0.0.1]", 26);
     XSetForeground(d, gc, p->text_muted);
     XDrawString(d, dr, gc, 260, 42,
-        "- An Ontological Journey Between Light and Shadow", 49);
+        "- The Chronicles of the Shield of Lux and Sword of Tenebris", 59);
 
-    /* --- Lux Energy Gauge Panel --- */
+    /* --- Dual Relics Status Panel --- */
     XSetForeground(d, gc, p->panel);
-    XFillRectangle(d, dr, gc, 20, 75, GUI_WINDOW_WIDTH - 40, 65);
+    XFillRectangle(d, dr, gc, 20, 75, GUI_WINDOW_WIDTH - 40, 85);
     XSetForeground(d, gc, p->border);
-    XDrawRectangle(d, dr, gc, 20, 75, GUI_WINDOW_WIDTH - 40, 65);
+    XDrawRectangle(d, dr, gc, 20, 75, GUI_WINDOW_WIDTH - 40, 85);
 
-    char lux_label[64];
-    snprintf(lux_label, sizeof(lux_label), "Lux Level: %d / %d",
-        state->lux, MAX_LUX);
-    XSetForeground(d, gc, p->text_main);
-    XDrawString(d, dr, gc, 40, 98, lux_label, strlen(lux_label));
+    /* Left Meter: Shield of Lux */
+    char shield_label[64];
+    snprintf(shield_label, sizeof(shield_label), "Shield of Lux (Aegis): %d / 100",
+        state->shield_power);
+    XSetForeground(d, gc, p->shield_gold);
+    XDrawString(d, dr, gc, 40, 96, shield_label, strlen(shield_label));
 
-    char stat_str[128];
-    snprintf(stat_str, sizeof(stat_str),
-        "Lumina Shards: %d    |    Turns Survived: %d",
-        state->lumina_shards, state->turns_survived);
-    XSetForeground(d, gc, p->text_muted);
-    XDrawString(d, dr, gc, 400, 98, stat_str, strlen(stat_str));
-
-    /* Visual Meter Bar */
-    int bar_x = 40;
-    int bar_y = 108;
-    int bar_w = GUI_WINDOW_WIDTH - 80;
-    int bar_h = 18;
-
+    int bar_s_x = 40;
+    int bar_s_y = 104;
+    int bar_s_w = 370;
+    int bar_s_h = 16;
     XSetForeground(d, gc, p->bg);
-    XFillRectangle(d, dr, gc, bar_x, bar_y, bar_w, bar_h);
+    XFillRectangle(d, dr, gc, bar_s_x, bar_s_y, bar_s_w, bar_s_h);
     XSetForeground(d, gc, p->border);
-    XDrawRectangle(d, dr, gc, bar_x, bar_y, bar_w, bar_h);
+    XDrawRectangle(d, dr, gc, bar_s_x, bar_s_y, bar_s_w, bar_s_h);
 
-    int fill_w = (state->lux * bar_w) / MAX_LUX;
-    if (fill_w > 0) {
-        if (state->lux > 50) {
-            XSetForeground(d, gc, p->lux_high);
-        } else if (state->lux > 20) {
-            XSetForeground(d, gc, p->lux_med);
-        } else {
-            XSetForeground(d, gc, p->lux_low);
-        }
-        XFillRectangle(d, dr, gc, bar_x + 1, bar_y + 1, fill_w - 2, bar_h - 2);
+    int fill_s = (state->shield_power * bar_s_w) / MAX_RESONANCE;
+    if (fill_s > 0) {
+        XSetForeground(d, gc, p->shield_gold);
+        XFillRectangle(d, dr, gc, bar_s_x + 1, bar_s_y + 1, fill_s - 2, bar_s_h - 2);
     }
 
-    /* --- Room Chamber Viewport --- */
-    XSetForeground(d, gc, p->panel);
-    XFillRectangle(d, dr, gc, 20, 150, GUI_WINDOW_WIDTH - 40, 130);
+    /* Right Meter: Sword of Tenebris */
+    char sword_label[64];
+    snprintf(sword_label, sizeof(sword_label), "Sword of Tenebris (Edge): %d / 100",
+        state->sword_edge);
+    XSetForeground(d, gc, p->sword_violet);
+    XDrawString(d, dr, gc, 450, 96, sword_label, strlen(sword_label));
+
+    int bar_t_x = 450;
+    int bar_t_y = 104;
+    int bar_t_w = 370;
+    int bar_t_h = 16;
+    XSetForeground(d, gc, p->bg);
+    XFillRectangle(d, dr, gc, bar_t_x, bar_t_y, bar_t_w, bar_t_h);
     XSetForeground(d, gc, p->border);
-    XDrawRectangle(d, dr, gc, 20, 150, GUI_WINDOW_WIDTH - 40, 130);
+    XDrawRectangle(d, dr, gc, bar_t_x, bar_t_y, bar_t_w, bar_t_h);
 
-    const char *room_name = game_get_room_name(state->current_room);
-    const char *room_desc = game_get_room_desc(state->current_room);
+    int fill_t = (state->sword_edge * bar_t_w) / MAX_RESONANCE;
+    if (fill_t > 0) {
+        XSetForeground(d, gc, p->sword_violet);
+        XFillRectangle(d, dr, gc, bar_t_x + 1, bar_t_y + 1, fill_t - 2, bar_t_h - 2);
+    }
 
-    char room_hdr[128];
-    snprintf(room_hdr, sizeof(room_hdr), "[ Chamber: %s ]", room_name);
-    XSetForeground(d, gc, p->lux_high);
-    XDrawString(d, dr, gc, 40, 180, room_hdr, strlen(room_hdr));
+    /* Sub-bar line: Stance and Moral Sway */
+    char stance_str[96];
+    snprintf(stance_str, sizeof(stance_str), "Stance: %s",
+        game_get_stance_name(state->stance));
+    XSetForeground(d, gc, p->text_main);
+    XDrawString(d, dr, gc, 40, 142, stance_str, strlen(stance_str));
+
+    char sway_str[128];
+    snprintf(sway_str, sizeof(sway_str), "Moral Sway: %+d [%s]",
+        state->moral_sway, game_get_sway_desc(state->moral_sway));
+    if (state->moral_sway > 0) {
+        XSetForeground(d, gc, p->virtue_green);
+    } else if (state->moral_sway < 0) {
+        XSetForeground(d, gc, p->malice_red);
+    } else {
+        XSetForeground(d, gc, p->text_muted);
+    }
+    XDrawString(d, dr, gc, 450, 142, sway_str, strlen(sway_str));
+
+    /* --- Kingdom Region Viewport --- */
+    XSetForeground(d, gc, p->panel);
+    XFillRectangle(d, dr, gc, 20, 170, GUI_WINDOW_WIDTH - 40, 115);
+    XSetForeground(d, gc, p->border);
+    XDrawRectangle(d, dr, gc, 20, 170, GUI_WINDOW_WIDTH - 40, 115);
+
+    const char *loc_name = game_get_location_name(state->location);
+    const char *loc_desc = game_get_location_desc(state->location);
+
+    char loc_hdr[128];
+    snprintf(loc_hdr, sizeof(loc_hdr), "[ Province: %s ]", loc_name);
+    XSetForeground(d, gc, p->shield_gold);
+    XDrawString(d, dr, gc, 40, 196, loc_hdr, strlen(loc_hdr));
 
     XSetForeground(d, gc, p->text_main);
-    XDrawString(d, dr, gc, 40, 215, room_desc, strlen(room_desc));
+    XDrawString(d, dr, gc, 40, 226, loc_desc, strlen(loc_desc));
 
-    if (state->lux <= LOW_LUX_THRESHOLD && state->is_running) {
-        XSetForeground(d, gc, p->lux_low);
-        XDrawString(d, dr, gc, 40, 255,
-            "[!] WARNING: Your Lux is critically low! Kindle a Lumina shard immediately.", 75);
-    } else if (!state->is_running) {
-        XSetForeground(d, gc, p->lux_low);
-        XDrawString(d, dr, gc, 40, 255,
-            "[!] Darkness has claimed your essence. The run has ended.", 57);
+    if (state->threat_hp > 0) {
+        char threat_str[128];
+        snprintf(threat_str, sizeof(threat_str),
+            "[!] COMBAT ENGAGED: Dark Lord's Vanguard Presence (Threat Vigor: %d/100)",
+            state->threat_hp);
+        XSetForeground(d, gc, p->malice_red);
+        XDrawString(d, dr, gc, 40, 260, threat_str, strlen(threat_str));
+    } else {
+        char honor_str[128];
+        snprintf(honor_str, sizeof(honor_str),
+            "Territory Secured | Foes Vanquished: %d | Innocents Warded: %d | Turns: %d",
+            state->foes_vanquished, state->innocents_warded, state->turns_taken);
+        XSetForeground(d, gc, p->text_muted);
+        XDrawString(d, dr, gc, 40, 260, honor_str, strlen(honor_str));
     }
 
     /* --- Chronicle / Action Log Viewport --- */
     XSetForeground(d, gc, p->panel);
-    XFillRectangle(d, dr, gc, 20, 290, GUI_WINDOW_WIDTH - 40, 175);
+    XFillRectangle(d, dr, gc, 20, 295, GUI_WINDOW_WIDTH - 40, 175);
     XSetForeground(d, gc, p->border);
-    XDrawRectangle(d, dr, gc, 20, 290, GUI_WINDOW_WIDTH - 40, 175);
+    XDrawRectangle(d, dr, gc, 20, 295, GUI_WINDOW_WIDTH - 40, 175);
 
     XSetForeground(d, gc, p->text_muted);
-    XDrawString(d, dr, gc, 40, 315, "--- Chronicle of Events ---", 27);
+    XDrawString(d, dr, gc, 40, 318, "--- Chronicle of Deeds ---", 26);
 
     for (int i = 0; i < log->count; i++) {
-        XSetForeground(d, gc, (i == log->count - 1) ? p->lux_high : p->text_main);
-        XDrawString(d, dr, gc, 40, 340 + (i * 22), log->lines[i],
+        XSetForeground(d, gc, (i == log->count - 1) ? p->shield_gold : p->text_main);
+        XDrawString(d, dr, gc, 40, 342 + (i * 22), log->lines[i],
             strlen(log->lines[i]));
     }
 
@@ -215,132 +249,172 @@ static void render_frame(Display *d, Drawable dr, GC gc,
         XSetForeground(d, gc, p->btn_border);
         XDrawRectangle(d, dr, gc, b->x, b->y, b->width, b->height);
 
-        XSetForeground(d, gc, (i == NUM_BUTTONS - 1) ? p->lux_low : p->lux_high);
+        if (i == NUM_BUTTONS - 1) {
+            XSetForeground(d, gc, p->malice_red);
+        } else if (i == 0) {
+            XSetForeground(d, gc, p->shield_gold);
+        } else if (i == 1) {
+            XSetForeground(d, gc, p->sword_violet);
+        } else {
+            XSetForeground(d, gc, p->text_main);
+        }
+
         int text_x = b->x + 16;
         int text_y = b->y + 25;
         XDrawString(d, dr, gc, text_x, text_y, b->label, strlen(b->label));
     }
 }
 
-static void trigger_command(player_state_t *state, const char *cmd,
-    gui_log_t *log)
+static const gui_button_t *find_clicked_button(int x, int y)
 {
-    char msg[GUI_LOG_ENTRY_LEN];
-    msg[0] = '\0';
-    game_process_command(state, cmd, msg, sizeof(msg));
-    if (strlen(msg) > 0) {
-        log_append(log, msg);
+    for (int i = 0; i < NUM_BUTTONS; i++) {
+        if (x >= buttons[i].x && x <= (buttons[i].x + buttons[i].width) &&
+            y >= buttons[i].y && y <= (buttons[i].y + buttons[i].height)) {
+            return &buttons[i];
+        }
     }
+    return NULL;
+}
+
+static const gui_button_t *find_button_by_hotkey(char key)
+{
+    for (int i = 0; i < NUM_BUTTONS; i++) {
+        if (buttons[i].hotkey == key) {
+            return &buttons[i];
+        }
+    }
+    return NULL;
+}
+
+bool gui_is_available(void)
+{
+    Display *d = XOpenDisplay(NULL);
+    if (d == NULL) {
+        return false;
+    }
+    XCloseDisplay(d);
+    return true;
 }
 
 int gui_run(player_state_t *state)
 {
-    Display *d = XOpenDisplay(NULL);
-    if (!d) {
-        fprintf(stderr, "GUI Error: Cannot open X11 display.\n");
+    Display *display = XOpenDisplay(NULL);
+    if (display == NULL) {
+        fprintf(stderr, "GUI Error: Failed to open X11 display.\n");
         return 1;
     }
 
-    int screen = DefaultScreen(d);
-    Window root = RootWindow(d, screen);
+    int screen = DefaultScreen(display);
+    Window root = RootWindow(display, screen);
 
-    gui_palette_t p;
-    p.bg         = alloc_color(d, screen, 0x13101C);
-    p.panel      = alloc_color(d, screen, 0x1F1A2C);
-    p.border     = alloc_color(d, screen, 0x3C324E);
-    p.text_main  = alloc_color(d, screen, 0xE8E2F2);
-    p.text_muted = alloc_color(d, screen, 0x8C829E);
-    p.lux_high   = alloc_color(d, screen, 0xF0CE78);
-    p.lux_med    = alloc_color(d, screen, 0xD49442);
-    p.lux_low    = alloc_color(d, screen, 0xC84444);
-    p.btn_bg     = alloc_color(d, screen, 0x2A2338);
-    p.btn_border = alloc_color(d, screen, 0x564870);
+    XSetWindowAttributes swa;
+    swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask;
+    swa.background_pixel = BlackPixel(display, screen);
 
-    Window win = XCreateSimpleWindow(d, root, 100, 100,
-        GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 1, p.border, p.bg);
+    Window window = XCreateWindow(display, root,
+        100, 100, GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 0,
+        CopyFromParent, InputOutput, CopyFromParent,
+        CWEventMask | CWBackPixel, &swa);
 
-    XStoreName(d, win, "Tenebris and Lux [v0.0.1]");
+    XStoreName(display, window, "Tenebris and Lux [v0.0.1]");
 
-    Atom wm_delete = XInternAtom(d, "WM_DELETE_WINDOW", False);
-    XSetWMProtocols(d, win, &wm_delete, 1);
+    Atom wm_delete = XInternAtom(display, "WM_DELETE_WINDOW", False);
+    XSetWMProtocols(display, window, &wm_delete, 1);
 
-    XSelectInput(d, win, ExposureMask | KeyPressMask | ButtonPressMask);
-    XMapWindow(d, win);
+    XMapWindow(display, window);
 
     XWindowAttributes wa;
-    XGetWindowAttributes(d, win, &wa);
+    XGetWindowAttributes(display, window, &wa);
+    int window_depth = wa.depth;
 
-    GC gc = XCreateGC(d, win, 0, NULL);
-    Pixmap backbuffer = XCreatePixmap(d, win,
-        GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, wa.depth);
+    Pixmap backbuffer = XCreatePixmap(display, window,
+        GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, window_depth);
+    GC gc = XCreateGC(display, backbuffer, 0, NULL);
+
+    gui_palette_t pal;
+    pal.bg           = alloc_color(display, screen, 0x0D0E12); // Obsidian Void
+    pal.panel        = alloc_color(display, screen, 0x1A1D24); // Dark Granite
+    pal.border       = alloc_color(display, screen, 0x2E3440); // Carved Stone Border
+    pal.text_main    = alloc_color(display, screen, 0xECEFF4); // Radiant Ivory
+    pal.text_muted   = alloc_color(display, screen, 0x8892B0); // Twilight Silver
+    pal.shield_gold  = alloc_color(display, screen, 0xF0CE78); // Shield of Lux Gold
+    pal.sword_violet = alloc_color(display, screen, 0x8A78C8); // Sword of Tenebris Violet
+    pal.virtue_green = alloc_color(display, screen, 0x52B788); // Virtue / Mercy Emerald
+    pal.malice_red   = alloc_color(display, screen, 0xE63946); // Malice / Tyranny Crimson
+    pal.btn_bg       = alloc_color(display, screen, 0x1E222B); // Button Slate
+    pal.btn_border   = alloc_color(display, screen, 0x3E4452); // Button Rim
 
     gui_log_t log;
     log.count = 0;
-    log_append(&log, "You awaken in the silence of The Fading Sanctuary.");
-    log_append(&log, "Creeping Tenebris surrounds you. Manage your Lux carefully.");
+    log_append(&log, "Awakened at The Garrison Altar in the Kingdom of Sol-Tenebrae.");
+    log_append(&log, "You bear the Shield of Lux and the Sword of Tenebris.");
+    log_append(&log, "The Dark Lord Malakor stirs in the deep abyss. Choose your stance.");
 
     bool running = true;
+    struct timespec ts = { 0, 16666666L }; // ~60 FPS tick
+
     while (running && state->is_running) {
-        while (XPending(d)) {
+        while (XPending(display)) {
             XEvent ev;
-            XNextEvent(d, &ev);
+            XNextEvent(display, &ev);
 
             if (ev.type == ClientMessage) {
                 if ((Atom)ev.xclient.data.l[0] == wm_delete) {
                     running = false;
-                }
-            } else if (ev.type == KeyPress) {
-                KeySym key = XLookupKeysym(&ev.xkey, 0);
-                if (key == XK_q || key == XK_Escape) {
-                    running = false;
-                } else if (key == XK_e) {
-                    trigger_command(state, "explore", &log);
-                } else if (key == XK_k) {
-                    trigger_command(state, "kindle", &log);
-                } else if (key == XK_l) {
-                    trigger_command(state, "look", &log);
-                } else if (key == XK_t) {
-                    trigger_command(state, "status", &log);
-                } else if (key == XK_n) {
-                    trigger_command(state, "move north", &log);
-                } else if (key == XK_s) {
-                    trigger_command(state, "move south", &log);
-                } else if (key == XK_r) {
-                    trigger_command(state, "move east", &log);
-                } else if (key == XK_w) {
-                    trigger_command(state, "move west", &log);
+                    state->is_running = false;
+                    break;
                 }
             } else if (ev.type == ButtonPress) {
-                int bx = ev.xbutton.x;
-                int by = ev.xbutton.y;
-                for (int i = 0; i < NUM_BUTTONS; i++) {
-                    const gui_button_t *b = &buttons[i];
-                    if (bx >= b->x && bx <= b->x + b->width &&
-                        by >= b->y && by <= b->y + b->height) {
-                        if (strcmp(b->command, "quit") == 0) {
-                            running = false;
-                        } else {
-                            trigger_command(state, b->command, &log);
+                const gui_button_t *btn = find_clicked_button(ev.xbutton.x, ev.xbutton.y);
+                if (btn != NULL) {
+                    char out_msg[GUI_LOG_ENTRY_LEN];
+                    out_msg[0] = '\0';
+                    game_process_command(state, btn->command, out_msg, sizeof(out_msg));
+                    if (strlen(out_msg) > 0) {
+                        log_append(&log, out_msg);
+                    }
+                    if (strcmp(btn->command, "quit") == 0) {
+                        running = false;
+                    }
+                }
+            } else if (ev.type == KeyPress) {
+                KeySym ks = XLookupKeysym(&ev.xkey, 0);
+                char key = 0;
+                if (ks >= XK_a && ks <= XK_z) {
+                    key = (char)('a' + (ks - XK_a));
+                } else if (ks >= XK_A && ks <= XK_Z) {
+                    key = (char)('a' + (ks - XK_A));
+                }
+
+                if (key != 0) {
+                    const gui_button_t *btn = find_button_by_hotkey(key);
+                    if (btn != NULL) {
+                        char out_msg[GUI_LOG_ENTRY_LEN];
+                        out_msg[0] = '\0';
+                        game_process_command(state, btn->command, out_msg, sizeof(out_msg));
+                        if (strlen(out_msg) > 0) {
+                            log_append(&log, out_msg);
                         }
-                        break;
+                        if (strcmp(btn->command, "quit") == 0) {
+                            running = false;
+                        }
                     }
                 }
             }
         }
 
-        render_frame(d, backbuffer, gc, state, &p, &log);
-        XCopyArea(d, backbuffer, win, gc, 0, 0,
+        render_frame(display, backbuffer, gc, state, &pal, &log);
+        XCopyArea(display, backbuffer, window, gc, 0, 0,
             GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 0, 0);
-        XFlush(d);
+        XFlush(display);
 
-        struct timespec ts = {0, 16000000}; /* ~60 FPS */
         nanosleep(&ts, NULL);
     }
 
-    XFreePixmap(d, backbuffer);
-    XFreeGC(d, gc);
-    XDestroyWindow(d, win);
-    XCloseDisplay(d);
+    XFreePixmap(display, backbuffer);
+    XFreeGC(display, gc);
+    XDestroyWindow(display, window);
+    XCloseDisplay(display);
     return 0;
 }
 
@@ -351,31 +425,39 @@ int gui_run(player_state_t *state)
 
 bool gui_audit_layout(void)
 {
-    /* Invariant: All buttons must be within window dimensions */
     for (int i = 0; i < NUM_BUTTONS; i++) {
         const gui_button_t *b = &buttons[i];
-        if (b->x < 0 || b->y < 0) {
+
+        if (b->x < 0 || (b->x + b->width) > GUI_WINDOW_WIDTH) {
+            fprintf(stderr, "[GUI AUDIT] Button '%s' exceeds horizontal bounds: x=%d w=%d\n",
+                b->label, b->x, b->width);
             return false;
         }
-        if (b->x + b->width > GUI_WINDOW_WIDTH ||
-            b->y + b->height > GUI_WINDOW_HEIGHT) {
+
+        if (b->y < 0 || (b->y + b->height) > GUI_WINDOW_HEIGHT) {
+            fprintf(stderr, "[GUI AUDIT] Button '%s' exceeds vertical bounds: y=%d h=%d\n",
+                b->label, b->y, b->height);
             return false;
+        }
+
+        /* Check for accidental button overlap with other buttons */
+        for (int j = i + 1; j < NUM_BUTTONS; j++) {
+            const gui_button_t *b2 = &buttons[j];
+            bool overlap_x = (b->x < b2->x + b2->width) && (b->x + b->width > b2->x);
+            bool overlap_y = (b->y < b2->y + b2->height) && (b->y + b->height > b2->y);
+            if (overlap_x && overlap_y) {
+                fprintf(stderr, "[GUI AUDIT] Overlap detected between '%s' and '%s'\n",
+                    b->label, b2->label);
+                return false;
+            }
         }
     }
+
     return true;
 }
 
 // =============================================================================
 // BLOCK 5: CLOSING BLOCK
-// ( Headless Display Probe & Subsystem Teardown )
 // =============================================================================
 
-bool gui_is_available(void)
-{
-    Display *d = XOpenDisplay(NULL);
-    if (d) {
-        XCloseDisplay(d);
-        return true;
-    }
-    return false;
-}
+// End of gui.c

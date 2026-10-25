@@ -1,0 +1,605 @@
+// =============================================================================
+// BLOCK 1: METADATA BLOCK
+// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+// =============================================================================
+// @project       Tenebris and Lux
+// @file          game.c
+// @layer         Core Engine & Game Simulation
+// @version       0.0.1
+// @epoch         2026.10
+// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+// @repository    https://github.com/Novaking34/tenebris-lux
+// @role          Core Simulation Logic, Relic Actions, Stance Dispatcher & Audits
+// @invariants    Rank 1 (< >): Form precedes fullness.
+//                1. Shield of Lux power bounded: 0 <= shield_power <= MAX_RESONANCE.
+//                2. Sword of Tenebris edge bounded: 0 <= sword_edge <= MAX_RESONANCE.
+//                3. Moral sway bounded continuum: -100 <= moral_sway <= +100.
+//                4. Valid location and stance enumerations strictly enforced.
+// =============================================================================
+
+// =============================================================================
+// BLOCK 2: OPENING BLOCK / STATIC DATA
+// ( System Includes, Static Lookups, World Definitions & Text Tables )
+// =============================================================================
+
+#include "main.h"
+
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static const char *location_names[LOC_COUNT] = {
+    "The Garrison Altar",
+    "The Sunken Citadel Gates",
+    "The Fractured Marches",
+    "The Abyssal Threshold"
+};
+
+static const char *location_descriptions[LOC_COUNT] = {
+    "Ancestral redoubt of the Wardens. Twin pedestals of solar silver and "
+    "star-quenched obsidian stand ready to channel the Shield of Lux and "
+    "Sword of Tenebris.",
+    "White granite battlements scorched by void-fire. Beyond the fractured "
+    "portcullis, the vanguard legions of the Dark Lord Malakor gather.",
+    "A windswept highland where Solar Order knights and Umbral Covenant "
+    "partisans clash in tragic civil war, blind to the true encroaching terror.",
+    "The shattered monolith gates of the Dark Lord Malakor. The fabric of reality "
+    "bends as shadow tendrils strike against the radiant barrier of starlight."
+};
+
+static const char *stance_names[STANCE_COUNT] = {
+    "Neutral (At Ease)",
+    "Aegis Warding (Shield High Guard)",
+    "Edge Striking (Sword Drawn)",
+    "Equilibrium (Twin Harmonized)"
+};
+
+static void trim_whitespace(char *str)
+{
+    char *start = str;
+    while (isspace((unsigned char)*start)) {
+        start++;
+    }
+    if (start != str) {
+        memmove(str, start, strlen(start) + 1);
+    }
+    if (*str == '\0') {
+        return;
+    }
+
+    char *end = str + strlen(str) - 1;
+    while (end >= str && isspace((unsigned char)*end)) {
+        *end = '\0';
+        end--;
+    }
+}
+
+const char *game_get_location_name(location_id_t loc)
+{
+    if (loc >= 0 && loc < LOC_COUNT) {
+        return location_names[loc];
+    }
+    return "Uncharted Realm";
+}
+
+const char *game_get_location_desc(location_id_t loc)
+{
+    if (loc >= 0 && loc < LOC_COUNT) {
+        return location_descriptions[loc];
+    }
+    return "Gloom obscures the contours of the land.";
+}
+
+const char *game_get_stance_name(combat_stance_t stance)
+{
+    if (stance >= 0 && stance < STANCE_COUNT) {
+        return stance_names[stance];
+    }
+    return "Unknown Stance";
+}
+
+const char *game_get_sway_desc(int sway)
+{
+    if (sway >= 40) return "Saint of Radiant Mercy (Virtue Unyielding)";
+    if (sway >= 15) return "Righteous Guardian (Protective Aegis)";
+    if (sway <= -40) return "Sovereign of Ruin (Tyranny Unchecked)";
+    if (sway <= -15) return "Ruthless Executioner (Harsh Scourge)";
+    return "Bearer of Equilibrium (Harmonized Poise)";
+}
+
+// =============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Core Simulation, Relic Actions, Stance Dispatcher & Command Interpreter )
+// =============================================================================
+
+void game_init(player_state_t *state)
+{
+    state->shield_power = INITIAL_SHIELD_POWER;
+    state->sword_edge = INITIAL_SWORD_EDGE;
+    state->moral_sway = INITIAL_MORAL_SWAY;
+    state->threat_hp = 0;
+    state->stance = STANCE_NEUTRAL;
+    state->location = LOC_GARRISON_ALTAR;
+    state->is_running = true;
+    state->turns_taken = 0;
+    state->foes_vanquished = 0;
+    state->innocents_warded = 0;
+}
+
+void game_print_intro(void)
+{
+    printf("============================================================\n");
+    printf("                  %s  [v%s]\n", APP_NAME, APP_VERSION);
+    printf("       The Chronicles of the Shield and the Sword\n");
+    printf("============================================================\n");
+    printf("The Kingdom of Sol-Tenebrae is divided by civil schism.\n");
+    printf("From the deep abyss, the Dark Lord Malakor re-awakens.\n");
+    printf("Wield the Shield of Lux and Sword of Tenebris to shape destiny.\n");
+    printf("Type 'help' to view available tactical commands.\n\n");
+}
+
+void game_print_status(const player_state_t *state)
+{
+    printf("\n--- Relic Status & Bearer Covenant ---\n");
+    printf("Location:      %s\n", game_get_location_name(state->location));
+    printf("Stance:        %s\n", game_get_stance_name(state->stance));
+    printf("Shield of Lux: %d/100 (Warding Power)\n", state->shield_power);
+    printf("Sword Tenebris:%d/100 (Edge Sharpness)\n", state->sword_edge);
+    printf("Moral Sway:    %+d [%s]\n", state->moral_sway,
+        game_get_sway_desc(state->moral_sway));
+    if (state->threat_hp > 0) {
+        printf("Active Threat: Vanguard Threat Vigor: %d/100\n", state->threat_hp);
+    }
+    printf("Honor Record:  %d Foes Vanquished | %d Innocents Warded | %d Turns\n",
+        state->foes_vanquished, state->innocents_warded, state->turns_taken);
+    printf("--------------------------------------\n\n");
+}
+
+void game_print_location(const player_state_t *state)
+{
+    printf("\n[%s]\n", game_get_location_name(state->location));
+    printf("%s\n", game_get_location_desc(state->location));
+    if (state->threat_hp > 0) {
+        printf("[!] A vanguard patrol of the Dark Lord blocks your path (Vigor: %d/100)!\n",
+            state->threat_hp);
+    }
+    printf("\n");
+}
+
+void game_print_help(void)
+{
+    printf("\n--- Tactical Command Manual ---\n");
+    printf("  ward                 - Raise the Shield of Lux (defend, illuminate, protect)\n");
+    printf("  strike               - Draw the Sword of Tenebris (sever armor, strike foes)\n");
+    printf("  balance              - Harmonize both relics to restore equilibrium & parry\n");
+    printf("  stance <type>        - Shift stance: warding, striking, equilibrium, neutral\n");
+    printf("  look                 - Survey current region and tactical terrain\n");
+    printf("  status               - Inspect relic charges, stance, and moral sway\n");
+    printf("  move <n|s|e|w>       - Traverse the provinces of the fractured Kingdom\n");
+    printf("  help                 - Display this command manual\n");
+    printf("  quit                 - Relinquish the armaments and exit\n");
+    printf("-------------------------------\n\n");
+}
+
+static void handle_ward(player_state_t *state, char *out_msg, size_t msg_len)
+{
+    if (state->threat_hp > 0) {
+        /* Combat Warding */
+        int boost = (state->stance == STANCE_WARDING) ? 15 : 10;
+        int stagger = (state->stance == STANCE_WARDING) ? 25 : 15;
+
+        state->shield_power += boost;
+        if (state->shield_power > MAX_RESONANCE) state->shield_power = MAX_RESONANCE;
+
+        state->threat_hp -= stagger;
+        state->moral_sway += 3;
+        if (state->moral_sway > 100) state->moral_sway = 100;
+        state->innocents_warded++;
+
+        if (state->threat_hp <= 0) {
+            state->threat_hp = 0;
+            state->foes_vanquished++;
+            if (out_msg) {
+                snprintf(out_msg, msg_len,
+                    "Shield of Lux flared! Blinded and routed the enemy vanguard.");
+            }
+            printf("You raise the Shield of Lux! A radiant shockwave shatters the vanguard's resolve!\n");
+        } else {
+            if (out_msg) {
+                snprintf(out_msg, msg_len,
+                    "Warded incoming assault! Staggered foe (-%d HP). Shield at %d.",
+                    stagger, state->shield_power);
+            }
+            printf("You lock the Shield of Lux into the earth. The void-strike glances off in a golden flash!\n");
+        }
+    } else {
+        /* Non-combat Warding */
+        state->shield_power += 20;
+        if (state->shield_power > MAX_RESONANCE) state->shield_power = MAX_RESONANCE;
+        state->moral_sway += 1;
+        if (state->moral_sway > 100) state->moral_sway = 100;
+
+        if (out_msg) {
+            snprintf(out_msg, msg_len,
+                "Shield of Lux projected a protective aura (Power: %d/100).",
+                state->shield_power);
+        }
+        printf("You raise the Shield of Lux. Warm golden starlight wards the perimeter.\n");
+    }
+}
+
+static void handle_strike(player_state_t *state, char *out_msg, size_t msg_len)
+{
+    if (state->threat_hp > 0) {
+        /* Combat Strike */
+        int cost = (state->stance == STANCE_STRIKING) ? 8 : 12;
+        int damage = (state->stance == STANCE_STRIKING) ? 45 : 30;
+
+        state->sword_edge = (state->sword_edge >= cost) ? (state->sword_edge - cost) : 0;
+        state->threat_hp -= damage;
+
+        if (state->threat_hp <= 0) {
+            state->threat_hp = 0;
+            state->foes_vanquished++;
+            state->moral_sway += 2;
+            if (state->moral_sway > 100) state->moral_sway = 100;
+
+            if (out_msg) {
+                snprintf(out_msg, msg_len,
+                    "Sword of Tenebris cleaved through the Dark Lord's vanguard!");
+            }
+            printf("With a twilight arc, the Sword of Tenebris severs the shadow fiend completely!\n");
+        } else {
+            if (out_msg) {
+                snprintf(out_msg, msg_len,
+                    "Struck with Sword of Tenebris (-%d HP). Foe at %d HP.",
+                    damage, state->threat_hp);
+            }
+            printf("The obsidian blade whistles through the gloom, slicing through enchanted armor!\n");
+        }
+    } else {
+        /* Non-combat Hone/Sever */
+        state->sword_edge += 15;
+        if (state->sword_edge > MAX_RESONANCE) state->sword_edge = MAX_RESONANCE;
+
+        if (out_msg) {
+            snprintf(out_msg, msg_len,
+                "Sword of Tenebris attuned to the void (Edge: %d/100).",
+                state->sword_edge);
+        }
+        printf("You trace the edge of the Sword of Tenebris. Cold abyssal mist sharpens the blade.\n");
+    }
+}
+
+static void handle_balance(player_state_t *state, char *out_msg, size_t msg_len)
+{
+    state->shield_power += 15;
+    if (state->shield_power > MAX_RESONANCE) state->shield_power = MAX_RESONANCE;
+
+    state->sword_edge += 15;
+    if (state->sword_edge > MAX_RESONANCE) state->sword_edge = MAX_RESONANCE;
+
+    /* Nudge moral sway toward cosmic center (0) */
+    if (state->moral_sway > 0) state->moral_sway -= 2;
+    else if (state->moral_sway < 0) state->moral_sway += 2;
+
+    if (state->threat_hp > 0) {
+        state->threat_hp -= 20;
+        if (state->threat_hp < 0) state->threat_hp = 0;
+        if (state->threat_hp == 0) state->foes_vanquished++;
+
+        if (out_msg) {
+            snprintf(out_msg, msg_len,
+                "Equilibrium Parry & Riposte! Foe struck (-20 HP). Relics balanced.");
+        }
+        printf("You parry with the Shield of Lux and riposte with the Sword of Tenebris in perfect synergy!\n");
+    } else {
+        if (out_msg) {
+            snprintf(out_msg, msg_len,
+                "Harmonized twin relics. Shield: %d/100 | Sword: %d/100.",
+                state->shield_power, state->sword_edge);
+        }
+        printf("You cross the Shield and Sword before your chest. Golden light and twilight mist intertwine.\n");
+    }
+}
+
+static void handle_stance(player_state_t *state, const char *arg,
+    char *out_msg, size_t msg_len)
+{
+    if (arg == NULL || strlen(arg) == 0) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Current stance: %s.",
+                game_get_stance_name(state->stance));
+        }
+        printf("Current stance: %s. Valid stances: warding, striking, equilibrium, neutral.\n",
+            game_get_stance_name(state->stance));
+        return;
+    }
+
+    if (strstr(arg, "ward") != NULL) {
+        state->stance = STANCE_WARDING;
+    } else if (strstr(arg, "strik") != NULL) {
+        state->stance = STANCE_STRIKING;
+    } else if (strstr(arg, "equil") != NULL || strstr(arg, "balance") != NULL) {
+        state->stance = STANCE_EQUILIBRIUM;
+    } else if (strstr(arg, "neut") != NULL) {
+        state->stance = STANCE_NEUTRAL;
+    } else {
+        if (out_msg) snprintf(out_msg, msg_len, "Unknown stance '%s'.", arg);
+        printf("Unknown stance '%s'. Valid: warding, striking, equilibrium, neutral.\n", arg);
+        return;
+    }
+
+    if (out_msg) {
+        snprintf(out_msg, msg_len, "Shifted stance to: %s.",
+            game_get_stance_name(state->stance));
+    }
+    printf("You shift your footing. Active Stance: %s.\n",
+        game_get_stance_name(state->stance));
+}
+
+static void handle_move(player_state_t *state, const char *direction,
+    char *out_msg, size_t msg_len)
+{
+    if (direction == NULL || strlen(direction) == 0) {
+        if (out_msg) snprintf(out_msg, msg_len, "Specify a direction (north, south, east, west).");
+        printf("Travel where? Specify a direction (e.g. 'move north').\n");
+        return;
+    }
+
+    location_id_t next_loc = state->location;
+    char dir = (char)tolower((unsigned char)direction[0]);
+
+    switch (state->location) {
+    case LOC_GARRISON_ALTAR:
+        if (dir == 'n') next_loc = LOC_CITADEL_GATES;
+        break;
+    case LOC_CITADEL_GATES:
+        if (dir == 's') next_loc = LOC_GARRISON_ALTAR;
+        else if (dir == 'n') next_loc = LOC_DIVIDED_MARCHES;
+        break;
+    case LOC_DIVIDED_MARCHES:
+        if (dir == 's') next_loc = LOC_CITADEL_GATES;
+        else if (dir == 'e') next_loc = LOC_ABYSSAL_THRESHOLD;
+        break;
+    case LOC_ABYSSAL_THRESHOLD:
+        if (dir == 'w') next_loc = LOC_DIVIDED_MARCHES;
+        break;
+    default:
+        break;
+    }
+
+    if (next_loc == state->location) {
+        if (out_msg) snprintf(out_msg, msg_len, "Path blocked in that direction.");
+        printf("The path is impassable or contested in that direction.\n");
+        return;
+    }
+
+    state->location = next_loc;
+
+    /* Spawn location encounters */
+    if (state->location == LOC_CITADEL_GATES && state->foes_vanquished == 0) {
+        state->threat_hp = 50;
+    } else if (state->location == LOC_ABYSSAL_THRESHOLD && state->threat_hp == 0) {
+        state->threat_hp = 90;
+    }
+
+    if (out_msg) {
+        snprintf(out_msg, msg_len, "Marched into %s.", location_names[next_loc]);
+    }
+    printf("You march forward across the Kingdom...\n");
+    game_print_location(state);
+}
+
+void game_process_command(player_state_t *state, const char *raw_input,
+    char *out_msg, size_t msg_len)
+{
+    char buffer[MAX_INPUT_LEN];
+    strncpy(buffer, raw_input, sizeof(buffer) - 1);
+    buffer[sizeof(buffer) - 1] = '\0';
+
+    trim_whitespace(buffer);
+    if (strlen(buffer) == 0) {
+        return;
+    }
+
+    char *command = strtok(buffer, " ");
+    if (command == NULL) {
+        return;
+    }
+    char *arg = strtok(NULL, "");
+    if (arg != NULL) {
+        while (isspace((unsigned char)*arg)) {
+            arg++;
+        }
+    }
+
+    if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0) {
+        state->is_running = false;
+        if (out_msg) snprintf(out_msg, msg_len, "Relinquishing armaments. Farewell.");
+        printf("You lower your weapons and step back from the frontline. Farewell, Champion.\n");
+        return;
+    }
+
+    if (strcmp(command, "help") == 0) {
+        if (out_msg) snprintf(out_msg, msg_len, "Commands: ward, strike, balance, stance, look, status, move.");
+        game_print_help();
+        return;
+    }
+
+    if (strcmp(command, "status") == 0) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Shield: %d | Sword: %d | Stance: %s | Sway: %+d",
+                state->shield_power, state->sword_edge,
+                game_get_stance_name(state->stance), state->moral_sway);
+        }
+        game_print_status(state);
+        return;
+    }
+
+    if (strcmp(command, "look") == 0) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Surveying %s.", location_names[state->location]);
+        }
+        game_print_location(state);
+        return;
+    }
+
+    if (strcmp(command, "ward") == 0 || strcmp(command, "shield") == 0) {
+        handle_ward(state, out_msg, msg_len);
+    } else if (strcmp(command, "strike") == 0 || strcmp(command, "slash") == 0) {
+        handle_strike(state, out_msg, msg_len);
+    } else if (strcmp(command, "balance") == 0 || strcmp(command, "harmonize") == 0) {
+        handle_balance(state, out_msg, msg_len);
+    } else if (strcmp(command, "stance") == 0) {
+        handle_stance(state, arg, out_msg, msg_len);
+    } else if (strcmp(command, "move") == 0 || strcmp(command, "go") == 0) {
+        handle_move(state, arg, out_msg, msg_len);
+    } else {
+        if (out_msg) snprintf(out_msg, msg_len, "Unknown command '%s'.", command);
+        printf("Unknown command: '%s'. Type 'help' for tactical options.\n", command);
+        return;
+    }
+
+    state->turns_taken++;
+}
+
+void game_loop_cli(player_state_t *state)
+{
+    char input_line[MAX_INPUT_LEN];
+
+    game_print_intro();
+    game_print_location(state);
+
+    while (state->is_running) {
+        printf("relics [Shield:%d | Sword:%d]> ",
+            state->shield_power, state->sword_edge);
+        fflush(stdout);
+
+        if (!fgets(input_line, sizeof(input_line), stdin)) {
+            break;
+        }
+
+        input_line[strcspn(input_line, "\r\n")] = '\0';
+        game_process_command(state, input_line, NULL, 0);
+    }
+}
+
+// =============================================================================
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Diagnostic Audits, State Invariant Verifications & Tripwires )
+// =============================================================================
+
+game_audit_report_t game_audit_state(const player_state_t *state)
+{
+    game_audit_report_t report;
+    report.is_valid = true;
+    report.error_count = 0;
+    report.error_log[0] = '\0';
+
+    if (state->shield_power < 0 || state->shield_power > MAX_RESONANCE) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Shield power (%d) outside invariant bounds [0, %d]. ",
+            state->shield_power, MAX_RESONANCE);
+    }
+
+    if (state->sword_edge < 0 || state->sword_edge > MAX_RESONANCE) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Sword edge (%d) outside invariant bounds [0, %d]. ",
+            state->sword_edge, MAX_RESONANCE);
+    }
+
+    if (state->moral_sway < -100 || state->moral_sway > 100) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Moral sway (%d) outside invariant bounds [-100, +100]. ",
+            state->moral_sway);
+    }
+
+    if (state->stance < 0 || state->stance >= STANCE_COUNT) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Stance (%d) outside valid range [0, %d). ",
+            state->stance, STANCE_COUNT);
+    }
+
+    if (state->location < 0 || state->location >= LOC_COUNT) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Location (%d) outside valid bounds [0, %d). ",
+            state->location, LOC_COUNT);
+    }
+
+    return report;
+}
+
+int game_run_self_audit(void)
+{
+    printf("============================================================\n");
+    printf("   Tenebris and Lux - Relic & Stance Invariant Self-Audit   \n");
+    printf("============================================================\n");
+
+    player_state_t test_state;
+    game_init(&test_state);
+
+    game_audit_report_t report = game_audit_state(&test_state);
+    if (!report.is_valid) {
+        printf("[FAIL] Initial state audit failed: %s\n", report.error_log);
+        return 1;
+    }
+    printf("[PASS] Test 1: Initial twin relic state verified.\n");
+
+    /* Test 2: Bounded capacity enforcement on ward and strike */
+    test_state.shield_power = 95;
+    game_process_command(&test_state, "ward", NULL, 0);
+    if (test_state.shield_power != MAX_RESONANCE) {
+        printf("[FAIL] Shield power exceeded ceiling: %d\n", test_state.shield_power);
+        return 1;
+    }
+    printf("[PASS] Test 2: Shield of Lux ceiling invariant verified.\n");
+
+    /* Test 3: Stance transition state machine */
+    game_process_command(&test_state, "stance striking", NULL, 0);
+    if (test_state.stance != STANCE_STRIKING) {
+        printf("[FAIL] Stance transition to striking failed.\n");
+        return 1;
+    }
+    game_process_command(&test_state, "stance equilibrium", NULL, 0);
+    if (test_state.stance != STANCE_EQUILIBRIUM) {
+        printf("[FAIL] Stance transition to equilibrium failed.\n");
+        return 1;
+    }
+    printf("[PASS] Test 3: Stance state machine transitions verified.\n");
+
+    /* Test 4: Diagnostic tripwire on corrupt state */
+    player_state_t corrupt_state = test_state;
+    corrupt_state.moral_sway = 999;
+    game_audit_report_t corrupt_report = game_audit_state(&corrupt_state);
+    if (corrupt_report.is_valid) {
+        printf("[FAIL] Corrupt moral sway was not caught by diagnostic tripwire!\n");
+        return 1;
+    }
+    printf("[PASS] Test 4: Diagnostic tripwire caught corrupt state.\n");
+
+    return 0;
+}
+
+// =============================================================================
+// BLOCK 5: CLOSING BLOCK
+// ( Teardown & Verification Helper )
+// =============================================================================
+
+// End of game.c
