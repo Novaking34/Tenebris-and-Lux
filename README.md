@@ -9,9 +9,9 @@ license: "MIT"
 
 # Tenebris and Lux
 
-> **"In the boundary where shadow converges upon light, only embers of wisdom endure."**
+> **"The Shield protects and confines; the Sword severs and defends. The metal knows neither virtue nor malice—only the hand that grips the hilt."**
 
-*Tenebris and Lux* ("Darkness and Light") is a C game project and custom engine initiative. The project starts with a robust, text-based interactive prototype to establish the core mechanics, state machine, and lore balance between **Lux** (light, hope, clarity) and **Tenebris** (creeping shadows and entropy), designed to evolve into 2D/2.5D visual layers and a custom 3D game engine.
+*Tenebris and Lux* ("Darkness and Light") is a C game project and custom engine architecture. The story chronicles the epic struggle within the divided Kingdom of **Sol-Tenebrae**, threatened by the re-awakening of the **Dark Lord Malakor**. At the heart of the journey lie two neutral, primordial armaments—**The Shield of Lux** and **The Sword of Tenebris**—whose power can be wielded for righteous salvation or tyrannical devastation depending on the bearer's choices.
 
 ---
 
@@ -19,7 +19,7 @@ license: "MIT"
 
 | Attribute | Specification |
 | :--- | :--- |
-| **Engine Version** | `0.0.1` (Early Text Prototype Milestone) |
+| **Engine Version** | `0.0.1` (Early Prototype Milestone) |
 | **Organization** | CreativeWorkzStudio LLC |
 | **Repository** | [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux) |
 | **Core Standard** | ISO C11 (`-std=c11`, zero external dependencies) |
@@ -33,9 +33,9 @@ license: "MIT"
 
 ## 1. Project Vision & Lore
 
-In *Tenebris and Lux*, light is not merely illumination—it is energy, life, and spiritual cohesion.
+In *Tenebris and Lux*, Light and Darkness are not moral absolutes of good and evil; they are apex primordial forces personified.
 
-As a traveler awakening in *The Fading Sanctuary*, you must navigate forgotten stone corridors while preserving your fading **Lux** (Light). Each step through the dark wanes your aura. To survive the creeping **Tenebris**, you must explore uncharted chambers, discover ancient **Lumina Shards**, and kindle them to push back the abyss.
+As the chosen Champion awakening at the *Garrison Altar*, you bear the ancient **Shield of Lux** and the **Sword of Tenebris**. You must navigate a Kingdom fractured by civil strife between the dogmatic Order of the Radiant Solar and the secretive Umbral Covenant, while preparing to confront the awakened Dark Lord Malakor. Every tactical choice, ward, and strike sways whether you become a righteous savior or a terrifying tyrant.
 
 ---
 
@@ -114,11 +114,13 @@ cmake --build build --config Debug
 
 ### In-Game Commands & Hotkeys
 
-- `look` / **(L)**: Inspect current room and ambient surroundings.
-- `status` / **(T)**: Check light level (Lux), Lumina shards, and survival turns.
-- `explore` / **(E)**: Search the gloom for Lumina shards and ancient relics.
-- `kindle` / **(K)**: Consume 1 Lumina shard to restore 30 Lux.
-- `move <n|s|e|w>` / **(N, S, R, W)**: Journey into connected chambers.
+- `look` / **(L)**: Inspect current location, faction tensions, and surroundings.
+- `status` / **(I)**: Inspect the Shield of Lux, Sword of Tenebris, Stance, and Moral Sway.
+- `ward` / **(W)**: Raise the Shield of Lux to establish a radiant barrier or reveal hidden truths.
+- `strike` / **(S)**: Unleash the Sword of Tenebris to sever enemy defenses or cloak in shadow.
+- `balance` / **(B)**: Seek harmony between the twin relics to restore equilibrium.
+- `stance <ward|strike|equilibrium>` / **(T)**: Shift tactical and metaphysical stance.
+- `move <n|s|e|w>` / **(N, S, R, W)**: Travel across the fractured Kingdom provinces.
 - `help`: View all available actions.
 - `quit` / **(Q)**: Exit the game.
 

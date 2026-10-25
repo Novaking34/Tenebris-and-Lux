@@ -120,21 +120,21 @@ XCopyArea(display, backbuffer, window, gc, 0, 0,
 XFlush(display);
 ----
 
-=== Dynamic Visual Palette
+=== Dynamic Visual Palette: The Twin Relics
 
 The visual presentation adheres to a tailored, atmospheric palette designed to reflect
-the eternal struggle between Lux and Tenebris:
+the dynamic tension between the Shield of Lux and the Sword of Tenebris:
 
 [cols="1,2,2", options="header"]
 |===
 | Element | Hex Color | Atmospheric Purpose
-| **Obsidian Void** | `#0D0E12` | Background canvas representing deep, silent subterranean rock.
-| **Stone Panel** | `#1A1D24` | Elevated frame for status panels and room description cards.
-| **Gloom Accent** | `#262B36` | Inactive button borders and decorative chamber dividers.
-| **Golden Radiance** | `#F0CE78` | Full Lux aura (> 60%), emitting warm celestial light.
-| **Amber Twilight** | `#D49442` | Diminished Lux aura (25% – 60%), indicating creeping chill.
-| **Crimson Ember** | `#C84444` | Critical Lux alert (< 25%), signaling impending dissolution.
-| **Lumina Crystal** | `#64C8D4` | Shard count display, representing frozen starlight.
+| **Obsidian Void** | `#0D0E12` | Background canvas representing the bedrock of the fractured realm.
+| **Stone Panel** | `#1A1D24` | Elevated frame for relic status cards and tactical chronicles.
+| **Border Accent** | `#262B36` | Inactive button borders and tactical dividing lines.
+| **Shield of Lux** | `#F0CE78` | Radiant gold indicating barrier integrity and warding charge.
+| **Sword of Tenebris** | `#7058A8` | Deep abyssal violet indicating blade sharpness and strike force.
+| **Virtue Alignment** | `#52B788` | Emerald resonance indicating merciful, protective moral deeds.
+| **Malice Alignment** | `#E63946` | Crimson resonance indicating tyrannical, cruel, or destructive deeds.
 |===
 
 == 3. The 5-Block Implementation Mapping

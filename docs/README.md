@@ -20,7 +20,7 @@ This directory maintains the technical specifications, world-building lore, and 
    *The Dual CLI + GUI Paradigm (AsciiDoc)*: In-depth technical specification of the headless CLI testbed and double-buffered native X11 graphical viewport.
 
 4. **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/world_and_lore.adoc)**  
-   *Cosmology of Lux and Tenebris (AsciiDoc)*: Canonical lore bible covering the primordial radiance, creeping shadows, Lumina shards, sanctuary topography, and creature ecologies.
+   *The Chronicles of the Shield and the Sword (AsciiDoc)*: Canonical lore bible covering the Shield of Lux, the Sword of Tenebris, primordial neutrality, the divided Kingdom of Sol-Tenebrae, and the awakening of the Dark Lord.
 
 ---
 
