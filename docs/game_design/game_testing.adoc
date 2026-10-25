@@ -1,0 +1,96 @@
+= Ludological Engineering Manifesto: Why Game Dev Testing Differs from Software Testing
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Abstract
+
+In classical software engineering, testing focuses primarily on stateless input/output validation,
+API schemas, and unit function assertions (`assert(f(x) == y)`). In game development, testing
+requires an entirely distinct paradigm: verifying continuous state continuity, economy balance,
+softlock immunity, deterministic replay parity, and strict 60 FPS frame-budget headroom.
+This document outlines the testing philosophy governing *Tenebris and Lux*.
+
+== 1. The Fundamental Divergence
+
+[cols="1,2,2", options="header"]
+|===
+| Dimension | Traditional Software Testing | Game Development Testing
+| **State Nature** | Ephemeral, localized, often stateless | Continuous, cumulative, multi-turn state machine
+| **Failure Modes** | Null pointer exceptions, HTTP 500s, syntax errors | Softlocks, economy collapse, degenerate gameplay loops, visual desync
+| **Correctness Metric** | Does output match expected schema? | Does the game feel right? Is the state bounded, balanced, and unexploitable?
+| **Input Cadence** | Controlled, structured API payloads | Unbounded, chaotic human keystrokes, rapid button mash, simultaneous events
+| **Time Budget** | Milliseconds/seconds per request | 16.6 milliseconds total frame budget (60 FPS) with microseconds for simulation
+|===
+
+== 2. Core Pillars of Game Development Testing
+
+=== Pillar 1: Dynamic State Invariants & Bounded Continuity
+
+In a game like *Tenebris and Lux*, state variables (`shield_power`, `sword_edge`, `moral_sway`, `threat_hp`)
+are constantly mutated across hundreds of player turns. A single off-by-one error or uncapped addition
+will cause state drift, resulting in overflow, negative health zombies, or invulnerability exploits.
+
+* **Invariant Axioms**:
+  - `0 <= state.shield_power <= 100` must hold after every single action turn.
+  - `0 <= state.sword_edge <= 100` must hold even when spamming strikes at zero energy.
+  - `-100 <= state.moral_sway <= +100` must never overflow into undefined integers.
+* **Diagnostic Tripwires**: The game engine provides `game_audit_state()`, a self-healing diagnostic
+  routine that asserts all invariants simultaneously and outputs a detailed diagnostic manifest
+  without crashing the game process.
+
+=== Pillar 2: Deterministic Replay ("Golden Master Replay")
+
+Games are emergent systems. If two players—or an automated CI runner—replay the exact same sequence of
+commands from the same seed, the end state must be **100% bitwise identical**:
+
+[source,c]
+----
+// Golden Master Replay Assertion
+TEST_ASSERT(run1.shield_power == run2.shield_power, "Deterministic shield");
+TEST_ASSERT(run1.sword_edge   == run2.sword_edge,   "Deterministic sword");
+TEST_ASSERT(run1.moral_sway   == run2.moral_sway,   "Deterministic sway");
+TEST_ASSERT(run1.threat_hp    == run2.threat_hp,    "Deterministic threat");
+----
+
+This ensures that gameplay balance, combat resolution, and narrative branching do not drift across
+compiler optimizations, operating systems, or refactored engine code.
+
+=== Pillar 3: Softlock Immunity & Degenerate Play Detection
+
+A **softlock** occurs when a player is technically still playing, but has no valid action forward:
+- Running out of relic energy during an un-fleeable battle.
+- Getting trapped behind a one-way gate with no exit command.
+- Inputting malformed or rapid chaotic strings that cause the parser to lock up.
+
+Our automated stress suite executes **1,000 rapid chaotic commands** (combining invalid strings,
+rapid stance transitions, and empty tokens), verifying that the game engine rejects nonsense safely,
+maintains continuous memory integrity, and never enters a deadlocked state.
+
+=== Pillar 4: Economy & Combat Balance Invariance
+
+Game testing must verify that no single player action is universally dominant (the "dominant strategy" flaw).
+If a player can simply spam `ward` forever without consequence, or if `strike` renders all other actions
+useless, the game design collapses:
+- Warding increases shield power and moral virtue, but deals limited stagger damage.
+- Striking inflicts decisive severance damage, but consumes finite sword edge.
+- Balancing recovers both relics and parries attacks, but requires timing and resets extreme moral sway.
+
+=== Pillar 5: Frame-Budget Latency Headroom
+
+In standard software, a backend database query taking 50 ms is acceptable. In game development,
+a game running at 60 FPS has **only 16.6 milliseconds** to:
+1. Poll hardware events and window queues.
+2. Execute game simulation logic.
+3. Compute spatial audio and particle animations.
+4. Render the scene graph to the backbuffer and blit to the display.
+
+Simulation logic must therefore execute in **microseconds**.
+In our automated benchmark (`test_gameplay_scenarios`), 10,000 action turns execute in **160 ms**
+(**16.02 $\mu\text{s}$ per turn**), consuming less than **$0.1\%$** of a 60 FPS frame.

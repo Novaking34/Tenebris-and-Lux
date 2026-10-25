@@ -1,0 +1,21 @@
+= World-Building & Lore Index
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:icons: font
+
+[abstract]
+== Overview
+
+This directory contains the living narrative bible, cosmological ontology, and historical
+lore for *Tenebris and Lux*.
+
+== Canonical Manifest
+
+1. **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**  
+   *The Chronicles of the Shield and the Sword*: Canonical lore bible covering:
+   - The primordial neutrality of Lux and Tenebris.
+   - The Shield of Lux and the Sword of Tenebris.
+   - The schism of the Kingdom of Sol-Tenebrae (The Solar Order vs. The Umbral Covenant).
+   - The re-awakening of the Dark Lord Malakor.
+   - The moral sway of the wielder.

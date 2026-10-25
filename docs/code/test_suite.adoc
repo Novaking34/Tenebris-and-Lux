@@ -1,0 +1,54 @@
+= Codebase Tour: Game Dev Testing Suite & CTest Integration
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document provides a technical walkthrough of the automated game development test suite
+located in `tests/test_game_invariants.c` and `tests/test_gameplay_scenarios.c`. It explains
+how these tests integrate into CMake/CTest, the invariant assertions, golden replays, softlock
+immunity stress testing, and microsecond latency benchmarking.
+
+== 1. CMake & CTest Test Targets
+
+The project registers five distinct test targets within `CMakeLists.txt`:
+
+[source,cmake]
+----
+# CLI Contract & Smoke Tests
+add_test(NAME cli_help_test COMMAND tenebris-lux --help)
+add_test(NAME cli_version_test COMMAND tenebris-lux --version)
+add_test(NAME subsystem_audit_test COMMAND tenebris-lux --audit)
+
+# Dedicated Game Development Test Executables
+add_test(NAME game_invariants_test COMMAND test_game_invariants)
+add_test(NAME gameplay_scenarios_test COMMAND test_gameplay_scenarios)
+----
+
+== 2. State Invariant Suite (`tests/test_game_invariants.c`)
+
+This executable verifies the mathematical boundaries of the simulation without presentation overhead:
+
+1. **`test_initial_state_invariants`**: Verifies initial power levels (Shield 80, Sword 80, Moral Sway 0, Garrison Altar).
+2. **`test_relic_energy_bounds`**: Spams actions 20 times to prove relic energies are clamped at $100$ and never drop below $0$.
+3. **`test_stance_state_machine`**: Verifies transitions between `STANCE_WARDING`, `STANCE_STRIKING`, `STANCE_EQUILIBRIUM`, and `STANCE_NEUTRAL`, proving invalid inputs reject safely.
+4. **`test_moral_sway_boundaries`**: Verifies the $[-100 \dots +100]$ moral continuum.
+5. **`test_spatial_topology`**: Asserts that every province path is bidirectional and non-existent directions are cleanly rejected.
+6. **`test_diagnostic_tripwire_manifests`**: Intentionally injects corrupt values into `player_state_t` to verify that `game_audit_state()` detects failures.
+
+== 3. Gameplay Scenarios & Replay Suite (`tests/test_gameplay_scenarios.c`)
+
+This executable simulates real gameplay sessions, softlock stresses, and performance benchmarks:
+
+1. **`test_scenario_righteous_warden`**: Simulates a defensive player who moves to the Citadel Gates, adopts `STANCE_WARDING`, and successfully staggers and blinds the vanguard using the Shield of Lux.
+2. **`test_scenario_umbral_striker`**: Simulates an offensive player who shifts to `STANCE_STRIKING` and cleaves the vanguard using the Sword of Tenebris.
+3. **`test_scenario_deterministic_golden_replay`**: Runs a 17-step scripted play session across two independent runs, asserting bitwise equality across all state telemetry (Shield, Sword, Sway, HP, Turns).
+4. **`test_softlock_and_stress_invariance`**: Fires 1,000 rapid chaotic commands (empty strings, malformed syntax, rapid stance shifts) to prove that the engine never deadlocks or leaks memory.
+5. **`test_simulation_latency_and_headroom`**: Benchmarks 10,000 turns of simulation dispatch. Proves that turns execute in **$16\,\mu\text{s}$**, consuming less than $0.1\%$ of the 60 FPS ($16.6\,\text{ms}$) frame budget.

@@ -1,0 +1,22 @@
+= Developer Logs Index & Engineering Chronology
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:icons: font
+
+[abstract]
+== Overview
+
+This directory preserves the living engineering and game design chronicle of *Tenebris and Lux*.
+Every major architectural milestone, paradigm shift, and design breakthrough is documented
+here to provide enduring context for human developers and AI pair programmers.
+
+== Dev Log Manifest
+
+1. **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**  
+   *Genesis, The Paradigm Pivot & Game Dev Invariants*:
+   - Clean ISO C11 foundations and the OmniCode 5-Block protocol.
+   - Analysis of the early survival-battery prototype and its implicit biases.
+   - The paradigm pivot: The Shield of Lux, The Sword of Tenebris, and the re-awakening Dark Lord.
+   - Native double-buffered X11 GUI and headless terminal CLI.
+   - The dedicated game development testing suite.

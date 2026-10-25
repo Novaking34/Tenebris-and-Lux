@@ -1,0 +1,46 @@
+= Tenebris and Lux — Canonical Documentation Bedrock
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+Welcome to the central documentation portal for *Tenebris and Lux* ("Darkness and Light").
+This repository adheres to the **OmniCode Universal 5-Block Lifecycle Protocol** and standard
+AsciiDoc (`.adoc`) documentation guidelines for clean, comprehensive game development manuals.
+
+== 1. Documentation Taxonomy & Directory Index
+
+[cols="1,2,3", options="header"]
+|===
+| Category | Directory | Description
+| **Installation** | **[INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc)** | System requirements, CMake compilation workflows, direct GCC/Clang instructions, and troubleshooting.
+| **Architecture** | **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)** | 
+  - **[ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc)**: System boundaries, state invariants, and engine evolution roadmap. +
+  - **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**: Headless CLI + native double-buffered X11 GUI specifications.
+| **Lore & World** | **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)** | 
+  - **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**: Primordial neutrality, the Shield of Lux, Sword of Tenebris, the divided Kingdom of Sol-Tenebrae, and the Dark Lord Malakor.
+| **Game Design** | **[docs/game_design/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/README.adoc)** | 
+  - **[relics_and_combat.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/relics_and_combat.adoc)**: Relic mechanics, stances, and the moral sway continuum. +
+  - **[world_topography.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/world_topography.adoc)**: Kingdom provinces, encounters, and threat scaling. +
+  - **[game_testing.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/game_testing.adoc)**: The philosophy of game development testing vs. standard software testing.
+| **Developer Logs** | **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)** | 
+  - **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**: Inception, the survival battery audit, the paradigm pivot, and game dev testing.
+| **Code Tours** | **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)** | 
+  - **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**: Walkthrough of `include/main.h` and `src/game.c`. +
+  - **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**: Walkthrough of `include/gui.h` and `src/gui.c`. +
+  - **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**: Walkthrough of `tests/test_game_invariants.c` and `tests/test_gameplay_scenarios.c`.
+|===
+
+== 2. Ontological Documentation Principles
+
+All documentation adheres to three core rules:
+
+* **Form Precedes Fullness**: Define rules, boundaries, and mathematical invariants before authoring prose or gameplay tables.
+* **Bi-Directional Traceability**: Every mechanic introduced in documentation maps directly to an invariant verification function in the engine.
+* **Universal Accessibility**: Ground the mechanics so they function identically whether driven by terminal keyboards or graphical viewports.

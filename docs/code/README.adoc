@@ -1,0 +1,22 @@
+= Codebase Architecture & Implementation Index
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:icons: font
+
+[abstract]
+== Overview
+
+This directory provides deep-dive walkthroughs of the source code implementation across
+the simulation engine, presentation viewport, and test suites.
+
+== Implementation Manifest
+
+1. **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**  
+   *Core Simulation Walkthrough*: `include/main.h` and `src/game.c`. Details memory layouts, the `player_state_t` struct, universal action dispatching, and self-auditing routines.
+
+2. **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**  
+   *Native Graphical Viewport*: `include/gui.h` and `src/gui.c`. Details native POSIX X11 double-buffering, 32-bit ARGB TrueColor visual negotiation, event dispatching, and layout auditing.
+
+3. **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**  
+   *Game Dev Test Suite Walkthrough*: `tests/test_game_invariants.c` and `tests/test_gameplay_scenarios.c`. Details CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and microsecond latency benchmarks.

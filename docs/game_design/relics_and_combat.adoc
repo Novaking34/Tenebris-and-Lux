@@ -1,0 +1,76 @@
+= Game Design Specification: The Twin Relics, Combat Stances & Moral Sway
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document specifies the core ludological mechanics of *Tenebris and Lux*: the twin
+primordial relics (**The Shield of Lux** and **The Sword of Tenebris**), the dynamic
+combat stance state machine, and the continuous moral sway continuum ($-100 \dots +100$).
+
+== 1. Primordial Neutrality & Relic Mechanics
+
+Neither relic is inherently good nor evil. They are manifestations of cosmic extremes:
+
+[cols="1,2,2", options="header"]
+|===
+| Relic | The Shield of Lux | The Sword of Tenebris
+| **Aspect** | Apex Radiance & Cohesion | Apex Entropy & Dissolution
+| **Energy Gauge** | `shield_power` ($0 \dots 100$) | `sword_edge` ($0 \dots 100$)
+| **Primary Action** | `ward` (or `shield`) | `strike` (or `slash`)
+| **Tactical Role** | Damage deflection, stagger, barrier formation, illumination | Severance, armor penetration, mist cloaking, finishing strikes
+| **Resource Dynamics** | Regenerates $+20$ on ward; absorbs incoming blows | Consumes edge on strikes; hones $+15$ outside combat
+|===
+
+== 2. The Combat Stance State Machine
+
+The player shifts combat footing via the `stance <type>` command:
+
+[source,text]
+----
+                   ┌───────────────────┐
+                   │  STANCE_NEUTRAL   │
+                   └─────────┬─────────┘
+                             │
+         ┌───────────────────┼───────────────────┐
+         ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ STANCE_WARDING  │ │ STANCE_STRIKING │ │STANCE_EQUILIBRIUM
+│ (Shield Guard)  │ │ (Sword Drawn)   │ │ (Twin Harmony)  │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+----
+
+1. **`STANCE_NEUTRAL`**: Relics held at waist. Balanced baseline.
+2. **`STANCE_WARDING`**: Shield locked forward in high guard.
+   - Warding boost: $+15$ Shield power regeneration on action.
+   - Combat deflection: Staggers active foes for $25$ damage and protects innocents.
+3. **`STANCE_STRIKING`**: Greatsword gripped in two-handed assault posture.
+   - Strike damage increased from $30$ to $45$ severance damage.
+   - Edge cost reduced from $12$ to $8$ points.
+4. **`STANCE_EQUILIBRIUM`**: Harmonized twin-wield posture.
+   - Simultaneously restores $+15$ Shield power and $+15$ Sword edge.
+   - Parries incoming attacks while riposting for $20$ counter-damage.
+   - Nudges moral sway toward cosmic center ($0$).
+
+== 3. The Moral Sway Continuum
+
+The moral trajectory of the Champion is tracked on a continuous integer axis:
+
+[source,text]
+----
+[ -100: Sovereign of Ruin ] ◄──── [ 0: Equilibrium ] ────► [ +100: Saint of Mercy ]
+----
+
+* **Virtue & Mercy ($+1 \dots +100$)**:
+  - Gained by shielding the defenseless (`ward`), routing foes without unnecessary brutality, and seeking reconciliation between the Kingdom's warring orders.
+* **Tyranny & Ruin ($-1 \dots -100$)**:
+  - Accumulated through relentless slaughter, excessive use of scorched-earth light to blind subjects, or feeding the Dark Lord's chaos.
+* **Equilibrium ($0$)**:
+  - Maintained by balancing the blade and the aegis; recognizing that light without shadow is a blinding wasteland, and shadow without light is a stagnant abyss.

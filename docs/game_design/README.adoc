@@ -1,0 +1,22 @@
+= Game Design & Ludology Index
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:icons: font
+
+[abstract]
+== Overview
+
+This directory houses the foundational game design pillars, combat mechanics, spatial topography,
+and testing philosophy for *Tenebris and Lux*.
+
+== Game Design Manifest
+
+1. **[relics_and_combat.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/relics_and_combat.adoc)**  
+   *The Twin Relics, Combat Stances & Moral Sway*: Detailed specifications of the Shield of Lux, Sword of Tenebris, the 4-stance state machine, and the $[-100 \dots +100]$ moral continuum.
+
+2. **[world_topography.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/world_topography.adoc)**  
+   *World Topography & Encounter Design*: The geography of the Kingdom of Sol-Tenebrae, contested provinces, environmental encounters, and threat scaling.
+
+3. **[game_testing.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/game_testing.adoc)**  
+   *Game Dev Testing vs Software Testing*: Deep dive into continuous state invariants, golden master replay parity, softlock immunity stress tests, and 60 FPS frame-budget latency headroom.

@@ -1,0 +1,75 @@
+= Codebase Tour: Simulation Engine & Core State Machines
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-24
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document provides a technical walkthrough of the core simulation engine implemented
+in `include/main.h` and `src/game.c`. It explains the memory layouts, state transitions,
+relic mechanics, combat algorithms, and the 5-block lifecycle discipline.
+
+== 1. State Structure & Memory Layout (`player_state_t`)
+
+The heart of the simulation is defined in `include/main.h`:
+
+[source,c]
+----
+typedef struct {
+    int shield_power;           // [0..100] Barrier integrity & Lux charge
+    int sword_edge;             // [0..100] Blade sharpness & Tenebris charge
+    int moral_sway;             // [-100..+100] Moral alignment axis
+    int threat_hp;              // [0..100] Threat vigor of active foe
+    combat_stance_t stance;     // Active stance: warding, striking, equilibrium
+    location_id_t location;     // Current Kingdom province
+    bool is_running;            // Game loop active flag
+    int turns_taken;            // Total turns / actions taken
+    int foes_vanquished;        // Number of vanguard defeated
+    int innocents_warded;       // Number of allies protected
+} player_state_t;
+----
+
+All state variables are strictly bounded integers with zero dynamic allocations on the heap.
+This ensures deterministic cache locality, zero memory leaks, and instant serialization.
+
+== 2. Universal Action Dispatcher (`game_process_command`)
+
+Located in `src/game.c`, `game_process_command()` acts as the singular entry point for
+all player intentions, whether emitted by the terminal CLI or the native GUI:
+
+[source,c]
+----
+void game_process_command(player_state_t *state, const char *raw_input,
+    char *out_msg, size_t msg_len);
+----
+
+=== Execution Pipeline:
+1. **Input Sanitization**: Copies `raw_input` to a local buffer and executes in-place whitespace trimming (`trim_whitespace`).
+2. **Verb Tokenization**: Splits input into `command` and trailing `arg`.
+3. **Action Dispatch**:
+   - `ward`: Calls `handle_ward()`, modifying `shield_power`, staggering active threats, and elevating moral virtue.
+   - `strike`: Calls `handle_strike()`, spending `sword_edge` to inflict heavy severance damage.
+   - `balance`: Calls `handle_balance()`, simultaneously recovering both relics and parrying incoming blows.
+   - `stance`: Calls `handle_stance()`, shifting the tactical state machine.
+   - `move`: Calls `handle_move()`, validating directional topology and spawning province encounters.
+4. **Invariant Logging**: Writes a human-readable telemetry outcome into `out_msg` for presentation.
+
+== 3. Diagnostic Self-Auditing (`game_audit_state`)
+
+Following Block 4 of the OmniCode protocol, `src/game.c` includes built-in diagnostic audit routines:
+
+[source,c]
+----
+game_audit_report_t game_audit_state(const player_state_t *state);
+int game_run_self_audit(void);
+----
+
+Every state boundary (shield power, sword edge, moral sway, stance, location) is checked against
+compile-time limits. If an invariant is violated, an audit report is generated with exact error messages,
+enabling automated continuous integration testing without relying on crude process crashes.
