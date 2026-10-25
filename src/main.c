@@ -9,7 +9,7 @@
 // @epoch         2026.10
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Core Simulation Loop, Command Interpreter & Audit Harness
+// @role          Core Simulation Loop, Dual CLI/GUI Dispatcher & Audit Harness
 // @invariants    Rank 1 (< >): Form precedes fullness.
 //                1. Cognition precedes action: Input validation precedes state.
 //                2. Finite energy: Lux attenuation is monotonic per action turn.
@@ -22,6 +22,7 @@
 // =============================================================================
 
 #include "main.h"
+#include "gui.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -63,6 +64,22 @@ static void trim_whitespace(char *str)
     end[1] = '\0';
 }
 
+const char *game_get_room_name(room_id_t room)
+{
+    if (room >= 0 && room < ROOM_COUNT) {
+        return room_names[room];
+    }
+    return "Unknown Void";
+}
+
+const char *game_get_room_desc(room_id_t room)
+{
+    if (room >= 0 && room < ROOM_COUNT) {
+        return room_descriptions[room];
+    }
+    return "Shifting shadows obscure all physical features.";
+}
+
 // =============================================================================
 // BLOCK 3: BODY BLOCK
 // ( Core Simulation, Command Interpreter, State Transitions & Mechanics )
@@ -80,7 +97,7 @@ void game_init(player_state_t *state)
 void game_print_intro(void)
 {
     printf("============================================================\n");
-    printf("                  %s\n", APP_NAME);
+    printf("                  %s  [v%s]\n", APP_NAME, APP_VERSION);
     printf("               %s\n", APP_DESCRIPTION);
     printf("============================================================\n");
     printf("Balance your Lux (Light) against creeping Tenebris (Shadow).\n");
@@ -127,9 +144,13 @@ void game_print_help(void)
     printf("--------------------------\n\n");
 }
 
-static void handle_move(player_state_t *state, const char *arg)
+static void handle_move(player_state_t *state, const char *arg,
+    char *out_msg, size_t msg_len)
 {
     if (arg == NULL || strlen(arg) == 0) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Specify a direction: north, south, east, west.");
+        }
         printf("Move where? Specify a direction (e.g., 'move north').\n");
         return;
     }
@@ -142,6 +163,7 @@ static void handle_move(player_state_t *state, const char *arg)
         } else if (state->current_room == ROOM_CORRIDOR_SHADOWS) {
             next_room = ROOM_HALL_WHISPERS;
         } else {
+            if (out_msg) snprintf(out_msg, msg_len, "The path north is sealed by solid stone.");
             printf("The path north is sealed by solid stone.\n");
             return;
         }
@@ -151,6 +173,7 @@ static void handle_move(player_state_t *state, const char *arg)
         } else if (state->current_room == ROOM_CORRIDOR_SHADOWS) {
             next_room = ROOM_SANCTUARY;
         } else {
+            if (out_msg) snprintf(out_msg, msg_len, "The path south is consumed by darkness.");
             printf("The path south is consumed by impenetrable darkness.\n");
             return;
         }
@@ -158,6 +181,7 @@ static void handle_move(player_state_t *state, const char *arg)
         if (state->current_room == ROOM_CORRIDOR_SHADOWS) {
             next_room = ROOM_CHAMBER_RUNES;
         } else {
+            if (out_msg) snprintf(out_msg, msg_len, "You cannot travel east from here.");
             printf("You cannot travel east from here.\n");
             return;
         }
@@ -165,40 +189,58 @@ static void handle_move(player_state_t *state, const char *arg)
         if (state->current_room == ROOM_CHAMBER_RUNES) {
             next_room = ROOM_CORRIDOR_SHADOWS;
         } else {
+            if (out_msg) snprintf(out_msg, msg_len, "You cannot travel west from here.");
             printf("You cannot travel west from here.\n");
             return;
         }
     } else {
+        if (out_msg) snprintf(out_msg, msg_len, "Unknown direction '%s'.", arg);
         printf("Unknown direction '%s'. Valid: north, south, east, west.\n", arg);
         return;
     }
 
     state->current_room = next_room;
+    if (out_msg) {
+        snprintf(out_msg, msg_len, "Moved into %s.", room_names[next_room]);
+    }
     printf("You journey forward into the dark...\n");
     game_print_room(state);
 }
 
-static void handle_explore(player_state_t *state)
+static void handle_explore(player_state_t *state, char *out_msg, size_t msg_len)
 {
     printf("You search cautiously through the gloom...\n");
     int roll = rand() % 100;
 
     if (roll < 45) {
         state->lumina_shards++;
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Discovered 1 Lumina Shard! (Total: %d)",
+                state->lumina_shards);
+        }
         printf("A glimmer catches your eye! Found 1 Lumina Shard (Total: %d).\n",
             state->lumina_shards);
     } else if (roll < 75) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Old inscriptions found, but no shards were uncovered.");
+        }
         printf("Old inscriptions line the walls, but no relics were found.\n");
     } else {
         int drain = 5;
         state->lux = (state->lux > drain) ? (state->lux - drain) : 0;
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "A cold shadow chill leeched %d Lux!", drain);
+        }
         printf("A sudden cold chill sweeps past, leeching %d Lux!\n", drain);
     }
 }
 
-static void handle_kindle(player_state_t *state)
+static void handle_kindle(player_state_t *state, char *out_msg, size_t msg_len)
 {
     if (state->lumina_shards <= 0) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "No Lumina shards remaining to kindle.");
+        }
         printf("You have no Lumina shards left to kindle. Explore to find more.\n");
         return;
     }
@@ -209,12 +251,17 @@ static void handle_kindle(player_state_t *state)
         state->lux = MAX_LUX;
     }
 
+    if (out_msg) {
+        snprintf(out_msg, msg_len, "Kindled shard! Restored %d Lux (Now: %d/%d).",
+            KINDLE_RESTORE_AMOUNT, state->lux, MAX_LUX);
+    }
     printf("You crush a Lumina shard. Radiant warmth surges into your aura!\n");
     printf("Restored %d Lux (Current Lux: %d/%d).\n",
         KINDLE_RESTORE_AMOUNT, state->lux, MAX_LUX);
 }
 
-void game_process_command(player_state_t *state, const char *raw_input)
+void game_process_command(player_state_t *state, const char *raw_input,
+    char *out_msg, size_t msg_len)
 {
     char buffer[MAX_INPUT_LEN];
     strncpy(buffer, raw_input, sizeof(buffer) - 1);
@@ -235,32 +282,42 @@ void game_process_command(player_state_t *state, const char *raw_input)
 
     if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0) {
         state->is_running = false;
+        if (out_msg) snprintf(out_msg, msg_len, "Stepping back into the veil. Farewell.");
         printf("You step back into the veil. Farewell, traveler.\n");
         return;
     }
 
     if (strcmp(command, "help") == 0) {
+        if (out_msg) snprintf(out_msg, msg_len, "Commands: look, explore, kindle, status, move.");
         game_print_help();
         return;
     }
 
     if (strcmp(command, "status") == 0) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Status: %d/%d Lux | %d Shards | Turn %d",
+                state->lux, MAX_LUX, state->lumina_shards, state->turns_survived);
+        }
         game_print_status(state);
         return;
     }
 
     if (strcmp(command, "look") == 0) {
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "Observing %s.", room_names[state->current_room]);
+        }
         game_print_room(state);
         return;
     }
 
     if (strcmp(command, "explore") == 0) {
-        handle_explore(state);
+        handle_explore(state, out_msg, msg_len);
     } else if (strcmp(command, "kindle") == 0) {
-        handle_kindle(state);
+        handle_kindle(state, out_msg, msg_len);
     } else if (strcmp(command, "move") == 0 || strcmp(command, "go") == 0) {
-        handle_move(state, arg);
+        handle_move(state, arg, out_msg, msg_len);
     } else {
+        if (out_msg) snprintf(out_msg, msg_len, "Unknown command '%s'.", command);
         printf("Unknown command: '%s'. Type 'help' for options.\n", command);
         return;
     }
@@ -271,6 +328,9 @@ void game_process_command(player_state_t *state, const char *raw_input)
 
     if (state->lux <= 0) {
         state->lux = 0;
+        if (out_msg) {
+            snprintf(out_msg, msg_len, "The Lux died. Darkness claims you.");
+        }
         printf("\n============================================================\n");
         printf("The last ember of your Lux has died.\n");
         printf("The cold tendrils of Tenebris encompass you completely...\n");
@@ -284,7 +344,7 @@ void game_process_command(player_state_t *state, const char *raw_input)
     }
 }
 
-void game_loop(player_state_t *state)
+void game_loop_cli(player_state_t *state)
 {
     char input_line[MAX_INPUT_LEN];
 
@@ -299,7 +359,7 @@ void game_loop(player_state_t *state)
         }
 
         input_line[strcspn(input_line, "\r\n")] = '\0';
-        game_process_command(state, input_line);
+        game_process_command(state, input_line, NULL, 0);
     }
 }
 
@@ -387,7 +447,7 @@ int game_run_self_audit(void)
     /* Test 2: Kindle Mechanic Bound Protection */
     test_state.lux = MAX_LUX;
     test_state.lumina_shards = 5;
-    game_process_command(&test_state, "kindle");
+    game_process_command(&test_state, "kindle", NULL, 0);
     if (test_state.lux > MAX_LUX) {
         fprintf(stderr, "[FAIL] Test 2: Lux exceeded MAX_LUX after kindle: %d\n",
             test_state.lux);
@@ -405,19 +465,29 @@ int game_run_self_audit(void)
     }
     printf("[PASS] Test 3: Diagnostic tripwire successfully caught corrupt state.\n");
 
+    /* Test 4: GUI Layout Invariant Audit */
+    if (!gui_audit_layout()) {
+        fprintf(stderr, "[FAIL] Test 4: GUI button layout bounds exceeded!\n");
+        return 1;
+    }
+    printf("[PASS] Test 4: GUI viewport layout invariants verified.\n");
+
     printf("============================================================\n");
-    printf("Audit Result: ALL INVARIANT CHECKS PASSED (3/3)\n");
+    printf("Audit Result: ALL INVARIANT CHECKS PASSED (4/4)\n");
     printf("============================================================\n");
     return 0;
 }
 
 // =============================================================================
 // BLOCK 5: CLOSING / TEST & CLI BLOCK
-// ( CLI Entry Point, Automated Invariant Unit Tests & Teardown )
+// ( CLI/GUI Dispatcher, Argument Parsing & Teardown )
 // =============================================================================
 
 int main(int argc, char *argv[])
 {
+    bool force_cli = false;
+    bool force_gui = false;
+
     if (argc > 1) {
         if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
             printf("Usage: tenebris-lux [options]\n\n");
@@ -425,6 +495,8 @@ int main(int argc, char *argv[])
             printf("  -h, --help     Show this help message and exit\n");
             printf("  -v, --version  Show version information and exit\n");
             printf("  -a, --audit    Run internal invariant audit and exit\n");
+            printf("  -c, --cli      Launch game in terminal CLI mode\n");
+            printf("  -g, --gui      Launch game in native desktop GUI mode\n");
             return 0;
         }
         if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-v") == 0) {
@@ -434,13 +506,38 @@ int main(int argc, char *argv[])
         if (strcmp(argv[1], "--audit") == 0 || strcmp(argv[1], "-a") == 0) {
             return game_run_self_audit();
         }
-        fprintf(stderr, "Unknown option: %s\nUse --help for usage.\n", argv[1]);
-        return 1;
+        if (strcmp(argv[1], "--cli") == 0 || strcmp(argv[1], "-c") == 0) {
+            force_cli = true;
+        } else if (strcmp(argv[1], "--gui") == 0 || strcmp(argv[1], "-g") == 0) {
+            force_gui = true;
+        } else {
+            fprintf(stderr, "Unknown option: %s\nUse --help for usage.\n", argv[1]);
+            return 1;
+        }
     }
 
     player_state_t state;
     game_init(&state);
-    game_loop(&state);
 
+    if (force_cli) {
+        game_loop_cli(&state);
+        return 0;
+    }
+
+    if (force_gui) {
+        if (!gui_is_available()) {
+            fprintf(stderr, "Error: No graphical X11 display available for --gui.\n");
+            return 1;
+        }
+        return gui_run(&state);
+    }
+
+    /* Default behavior: Launch native GUI if display available, otherwise CLI */
+    if (gui_is_available()) {
+        return gui_run(&state);
+    }
+
+    printf("[Notice] No graphical display detected. Launching in CLI mode.\n\n");
+    game_loop_cli(&state);
     return 0;
 }

@@ -31,6 +31,7 @@
 // =============================================================================
 
 #include <stdbool.h>
+#include <stddef.h>
 
 #define APP_NAME "Tenebris and Lux"
 #define APP_VERSION "0.0.1"
@@ -71,12 +72,15 @@ typedef struct {
 // =============================================================================
 
 void game_init(player_state_t *state);
+const char *game_get_room_name(room_id_t room);
+const char *game_get_room_desc(room_id_t room);
 void game_print_intro(void);
 void game_print_status(const player_state_t *state);
 void game_print_room(const player_state_t *state);
 void game_print_help(void);
-void game_process_command(player_state_t *state, const char *raw_input);
-void game_loop(player_state_t *state);
+void game_process_command(player_state_t *state, const char *raw_input,
+    char *out_msg, size_t msg_len);
+void game_loop_cli(player_state_t *state);
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
