@@ -22,7 +22,10 @@
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
+#include "util/manifest.h"
 #include <stdbool.h>
+
+extern const module_metadata_t geom_utils_manifest;
 
 typedef struct {
     int x;
@@ -45,6 +48,7 @@ bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h);
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // =============================================================================
 
+diag_result_t geom_utils_preflight(void);
 bool geom_utils_audit(void);
 
 // =============================================================================

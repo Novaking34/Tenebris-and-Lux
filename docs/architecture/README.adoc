@@ -1,6 +1,6 @@
 = Subsystem Architecture Index
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v0.0.1, 2026-10-26
 :doctype: article
 :icons: font
 
@@ -8,7 +8,7 @@ v0.0.1, 2026-10-24
 == Overview
 
 This directory contains the technical specifications governing the 5-block lifecycle,
-simulation decoupling, and dual-frontend execution model.
+simulation decoupling, central manifest registry, and dual-frontend execution model.
 
 == Documentation Manifest
 
@@ -17,3 +17,6 @@ simulation decoupling, and dual-frontend execution model.
 
 2. **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**  
    *Dual CLI + Native GUI Paradigm*: Native POSIX X11 double-buffering, TrueColor visual negotiation, headless CI testing, and latency specifications.
+
+3. **[preflight_and_manifest_spec.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/preflight_and_manifest_spec.adoc)**  
+   *Central Manifest & Pre-Flight Verification Architecture*: Executable module metadata, the "Don't start a machine with loose bolts" pre-flight philosophy, severity taxonomy (Warning, Critical, Fatal), and expected vs. actual verification matrices.

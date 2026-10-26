@@ -23,7 +23,8 @@ AsciiDoc (`.adoc`) documentation standard for clean, modular, and comprehensive 
 | **Installation** | **[INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc)** | System requirements, CMake compilation workflows, direct GCC/Clang instructions, and troubleshooting.
 | **Architecture** | **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)** | 
   - **[ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc)**: System boundaries, 5-block lifecycle, TRPG architecture, and engine evolution roadmap. +
-  - **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**: Headless CLI + native double-buffered X11 GUI specifications.
+  - **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**: Headless CLI + native double-buffered X11 GUI specifications. +
+  - **[preflight_and_manifest_spec.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/preflight_and_manifest_spec.adoc)**: Central Manifest registry, executable metadata contracts, loose-bolts machine checks, and expected vs actual gap analysis.
 | **Lore & World** | **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)** | 
   - **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**: Primordial neutrality of Lux and Tenebris, the Kingdom of Sacyra, and Dark Lord Malakor. +
   - **[characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc)**: Dramatis personae of Elijah Ro-enheart (son of the former Royal Guard Head) and Lady Katrina Jaren (noble court aspirant / Adventurers' Guild).
@@ -34,7 +35,8 @@ AsciiDoc (`.adoc`) documentation standard for clean, modular, and comprehensive 
   - **[game_testing.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/game_testing.adoc)**: The philosophy of game development testing vs. standard software testing.
 | **Developer Logs** | **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)** | 
   - **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**: Inception, the survival battery audit, the paradigm pivot, and game dev testing. +
-  - **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)**: 2014–2018 RPG Maker genesis, the Kingdom of Sacyra, dual protagonists (Elijah & Katrina), and the Tactical Strategy RPG evolution.
+  - **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)**: 2014–2018 RPG Maker genesis, the Kingdom of Sacyra, dual protagonists (Elijah & Katrina), and the Tactical Strategy RPG evolution. +
+  - **[devlog_003_preflight_and_manifest_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_003_preflight_and_manifest_architecture.adoc)**: Executable Block 1 metadata, zero-heap Central Manifest, loose-bolts machine checks, and expected vs actual gap analysis.
 | **Code Tours** | **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)** | 
   - **[core_utilities.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/core_utilities.adoc)**: Walkthrough of Layer 0 `include/util/` and `src/util/` (math, string, geometry, timing). +
   - **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**: Walkthrough of Layer 1 `include/sim/game.h` and `src/sim/game.c`. +

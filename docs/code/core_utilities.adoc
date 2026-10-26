@@ -92,3 +92,32 @@ void time_sleep_ms(double ms);
 === Architectural Roles:
 * `time_get_monotonic_us`: Microsecond precision clock for simulation latency benchmarking (< 50 $\mu\text{s}$ per turn).
 * `time_sleep_ms`: Sleep wrapper using `nanosleep` for maintaining 60 FPS frame rates without CPU spinlocks.
+
+== 5. Central Manifest & Pre-Flight System (`manifest.h` & `manifest.c`)
+
+Transforms declarative Block 1 file headers into executable compiled metadata structs (`module_metadata_t`):
+
+[source,c]
+----
+typedef struct {
+    const char *module_id;
+    const char *file_name;
+    module_layer_t layer;
+    struct { uint8_t major, minor, patch; } version;
+    const char *description;
+    size_t invariant_count;
+    const char *invariants[MANIFEST_MAX_INVARIANTS];
+    diag_result_t (*preflight_check)(void);
+} module_metadata_t;
+
+void manifest_registry_init(manifest_registry_t *registry);
+bool manifest_register(manifest_registry_t *registry, const module_metadata_t *module);
+preflight_status_t manifest_run_preflight(manifest_registry_t *registry);
+void manifest_print_report(const manifest_registry_t *registry);
+----
+
+=== Architectural Roles:
+* `module_metadata_t`: Immutable static metadata node binding provenance, version, invariants, and self-auditing function pointer per file.
+* `manifest_registry_t`: Fixed-capacity registry (capacity 32) operating with zero dynamic allocations.
+* Graded Policy Evaluator: Enforces the 5-tier diagnostic severity hierarchy (`PASS` < `INFO` < `WARNING` < `CRITICAL` < `FATAL`) and 4-tier engine launch status (`READY`, `WARNINGS`, `DOWNGRADED`, `HALTED`).
+* Loose-Bolts Enforcement: Prevents the game engine from booting if any core mathematical, timing, memory, or state invariant fails prior to runtime.

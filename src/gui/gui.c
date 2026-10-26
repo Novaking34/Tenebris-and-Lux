@@ -425,6 +425,57 @@ int gui_run(player_state_t *state)
 // ( Viewport Integrity Checks & Surface Tripwires )
 // =============================================================================
 
+static const char *const gui_invariants[] = {
+    "Double-buffered native X11 rendering",
+    "Universal action dispatch without direct mutation",
+    "Non-overlapping button geometry and bounded layout",
+    "Headless fallback when X11 display is unavailable"
+};
+
+const module_metadata_t gui_manifest = {
+    "gui.viewport.x11",
+    "gui.h",
+    LAYER_2_PRESENTATION,
+    { 0, 0, 1 },
+    "Native X11 double-buffered presentation viewport and event dispatcher",
+    4,
+    {
+        gui_invariants[0],
+        gui_invariants[1],
+        gui_invariants[2],
+        gui_invariants[3]
+    },
+    gui_preflight
+};
+
+diag_result_t gui_preflight(void)
+{
+    diag_result_t res;
+    res.subsystem = gui_manifest.module_id;
+    res.check_name = "Layout Bounds & Display Availability";
+
+    /* Test 1 (Fatal Check): Layout bounds & non-overlapping buttons */
+    if (!gui_audit_layout()) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Viewport layout bounds exceeded or button overlap detected.";
+        return res;
+    }
+
+    /* Test 2 (Critical Check): Native display availability */
+    if (!gui_is_available()) {
+        res.passed = false;
+        res.severity = SEVERITY_CRITICAL;
+        res.details = "X11 display not detected ($DISPLAY empty or unconnectable); safe CLI fallback enabled.";
+        return res;
+    }
+
+    res.passed = true;
+    res.severity = SEVERITY_PASS;
+    res.details = "X11 display connected; viewport bounds and button geometry verified.";
+    return res;
+}
+
 bool gui_audit_layout(void)
 {
     for (int i = 0; i < NUM_BUTTONS; i++) {

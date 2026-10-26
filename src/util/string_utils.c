@@ -17,12 +17,33 @@
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / STATIC DATA
-// =============================================================================
-
 #include "util/string_utils.h"
 
 #include <ctype.h>
 #include <string.h>
+
+static const char *const string_invariants[] = {
+    "Form precedes fullness: Safe null-termination guaranteed",
+    "Buffer bounds enforcement: dst[dst_size - 1] == '\\0'",
+    "Graceful NULL pointer resilience across all operations",
+    "Zero dynamic heap allocations: in-place mutations only"
+};
+
+const module_metadata_t string_utils_manifest = {
+    "core.util.string",
+    "string_utils.h",
+    LAYER_0_CORE_UTIL,
+    { 0, 0, 1 },
+    "Safe string copying, in-place trimming and case-insensitive matching",
+    4,
+    {
+        string_invariants[0],
+        string_invariants[1],
+        string_invariants[2],
+        string_invariants[3]
+    },
+    string_utils_preflight
+};
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
@@ -100,28 +121,98 @@ void str_safe_copy(char *dst, const char *src, size_t dst_size)
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Pre-Flight Loose-Bolts Inspection & Self-Audits )
 // =============================================================================
+
+diag_result_t string_utils_preflight(void)
+{
+    diag_result_t res;
+    res.subsystem = string_utils_manifest.module_id;
+    res.check_name = "Buffer Bounds & NULL Safety";
+
+    /* Test 1: Buffer truncation and null-termination safety */
+    char buf[8];
+    memset(buf, 'Z', sizeof(buf));
+    str_safe_copy(buf, "0123456789ABCDEF", sizeof(buf));
+    if (buf[sizeof(buf) - 1] != '\0' || strlen(buf) != 7 || strcmp(buf, "0123456") != 0) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: str_safe_copy failed buffer bounds null-termination.";
+        return res;
+    }
+
+    /* Test 2: NULL pointer resilience */
+    str_safe_copy(NULL, "valid", 10);
+    str_safe_copy(buf, NULL, sizeof(buf));
+    if (buf[0] != '\0') {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: str_safe_copy did not initialize destination on NULL source.";
+        return res;
+    }
+    str_trim_inplace(NULL);
+    if (!str_case_eq(NULL, NULL) || str_case_eq("a", NULL) || str_case_eq(NULL, "b")) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: str_case_eq failed NULL pointer comparison contract.";
+        return res;
+    }
+    if (str_contains_nocase(NULL, "test") || str_contains_nocase("test", NULL)) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: str_contains_nocase crashed or faulted on NULL pointer.";
+        return res;
+    }
+
+    /* Test 3: In-place whitespace trimming edge cases */
+    char t1[16] = "";
+    str_trim_inplace(t1);
+    if (t1[0] != '\0') {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: str_trim_inplace corrupted empty string.";
+        return res;
+    }
+
+    char t2[16] = "   \t  \n ";
+    str_trim_inplace(t2);
+    if (t2[0] != '\0') {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: str_trim_inplace failed on pure whitespace string.";
+        return res;
+    }
+
+    char t3[32] = " \t  Shield of Lux \r\n ";
+    str_trim_inplace(t3);
+    if (strcmp(t3, "Shield of Lux") != 0) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: str_trim_inplace corrupted padded token.";
+        return res;
+    }
+
+    /* Test 4: Case-insensitive matching */
+    if (!str_case_eq("TENEBRIS", "tenebris") ||
+        str_case_eq("tenebris", "lux") ||
+        !str_contains_nocase("Kingdom of Sacyra", "sacyra") ||
+        str_contains_nocase("Sacyra", "Malakor")) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Case-insensitive string matching logic error.";
+        return res;
+    }
+
+    res.passed = true;
+    res.severity = SEVERITY_PASS;
+    res.details = "Buffer safety, NULL resilience & trimming verified.";
+    return res;
+}
 
 bool string_utils_audit(void)
 {
-    char buf[64];
-
-    str_safe_copy(buf, "   hello world   ", sizeof(buf));
-    str_trim_inplace(buf);
-    if (strcmp(buf, "hello world") != 0) return false;
-
-    str_safe_copy(buf, "     ", sizeof(buf));
-    str_trim_inplace(buf);
-    if (strcmp(buf, "") != 0) return false;
-
-    if (!str_case_eq("WARD", "ward")) return false;
-    if (str_case_eq("ward", "strike")) return false;
-
-    if (!str_contains_nocase("stance striking", "strik")) return false;
-    if (!str_contains_nocase("STANCE WARDING", "ward")) return false;
-    if (str_contains_nocase("ward", "strike")) return false;
-
-    return true;
+    diag_result_t pf = string_utils_preflight();
+    return pf.passed && (pf.severity != SEVERITY_FATAL);
 }
 
 // =============================================================================
