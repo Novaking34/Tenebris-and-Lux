@@ -4,15 +4,31 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          geom_utils.h
-// @layer         Core Utilities Layer (Layer 0)
-// @version       0.0.1
-// @epoch         2026.10
+// @id            core.util.geom
+// @layer         Layer 0: Core Utilities
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          2D Geometry Structures, Bounding Box Collisions & Hit-Testing
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Non-negative dimensions: w >= 0 and h >= 0.
-//                2. Coordinate origin at top-left (standard screen space).
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   2D geometry structures, bounding box overlap (AABB), and hit-testing primitives.
+//   Serves as the spatial foundation for UI click detection, viewport bounds
+//   checking, and grid cell interaction in presentation and tactical layers.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack value structures, zero heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic, thread-safe).
+//   - Latency Budget:        < 2 microseconds per hit-test.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Non-negative dimensions: geom_make_rect clamps negative w or h to 0.
+//   2. Screen-space coordinates: Origin (0,0) at top-left, increasing right and down.
+//   3. AABB overlap reflexivity: A non-empty rectangle always intersects itself.
+//   4. Bound containment: Returns false for any rectangle extending outside boundaries.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_GEOM_UTILS_H

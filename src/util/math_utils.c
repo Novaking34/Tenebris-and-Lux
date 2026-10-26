@@ -4,15 +4,29 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          math_utils.c
-// @layer         Core Utilities Layer (Layer 0)
-// @version       0.0.1
-// @epoch         2026.10
+// @id            core.util.math
+// @layer         Layer 0: Core Utilities
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Implementation of Mathematical Clamping & Bounded Arithmetic
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Deterministic pure calculation with zero side effects.
-//                2. Never overflows across standard 32-bit signed integer limits.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Pure implementation of bounded integer arithmetic, clamping functions,
+//   and equilibrium nudging algorithms.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/register execution, zero heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic, thread-safe).
+//   - Latency Budget:        < 1 microsecond per calculation.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Deterministic pure calculation with zero side effects.
+//   2. Never overflows across standard 32-bit signed integer limits.
+//   3. Non-positive maximums in ratio scaling safely return 0 without SIGFPE.
 // =============================================================================
 
 // =============================================================================
@@ -30,8 +44,15 @@ const module_metadata_t math_utils_manifest = {
     "core.util.math",
     "math_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 0, 1 },
+    { 1, 0, 0 },
+    1,                          // interface_rev
+    "2026-10-26",               // last_updated
     "Mathematical invariant clamping and bounded arithmetic primitives",
+    0,                          // dependency_count
+    { NULL },                   // dependencies
+    ALLOC_ZERO_HEAP,            // alloc_policy
+    CONCURRENCY_REENTRANT,      // concurrency
+    1,                          // max_budget_us
     4,
     {
         math_invariants[0],

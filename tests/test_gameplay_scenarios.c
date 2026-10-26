@@ -4,16 +4,30 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          test_gameplay_scenarios.c
-// @layer         Verification & Game Dev Test Suite
-// @version       0.0.1
-// @epoch         2026.10
+// @id            test.verification.scenarios
+// @layer         Layer 4: Verification Suite
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Game Development Gameplay Scenarios, Replay & Performance Suite
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Deterministic replay invariance: identical inputs yield identical state.
-//                2. Softlock immunity: no sequence of commands causes deadlock.
-//                3. 60 FPS budget: action simulation latency < 50 microseconds per turn.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Game development gameplay scenarios, replay determinism & latency suite.
+//   Verifies deterministic replay invariance, softlock immunity under 1000
+//   chaotic random inputs, and sub-50-microsecond simulation tick latency.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: sim.engine.core, core.util.time
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Deterministic test execution).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Sequential test runner).
+//   - Latency Budget:        Total suite completes in under 1 second.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Deterministic replay invariance: Identical inputs yield identical state.
+//   2. Softlock immunity: No sequence of chaotic commands causes deadlock or crash.
+//   3. 60 FPS budget: Action simulation latency < 50 microseconds per turn.
 // =============================================================================
 
 // =============================================================================

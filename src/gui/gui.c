@@ -4,16 +4,30 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          gui.c
-// @layer         Layer 2: Presentation & Viewport Subsystem
-// @version       0.0.1
-// @epoch         2026.10
+// @id            gui.viewport.x11
+// @layer         Layer 2: Presentation & Viewport
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Native Desktop X11 Double-Buffered GUI Implementation
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Zero-dependency native X11 double buffering with 32-bit alpha safety.
-//                2. Every button click or hotkey dispatches through universal action pipeline.
-//                3. Diagnostic audit verifies layout bounding boxes and non-overlapping cards.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Native desktop X11 double-buffered GUI presentation implementation.
+//   Translates X11 key and mouse events into universal simulation actions,
+//   rendering the tactical viewport with 32-bit color geometry and typography.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: sim.engine.core, core.util.geom, core.util.time
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Static layout structures and X11 pixmap).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (X11 event loop bound to main thread).
+//   - Latency Budget:        < 16,666 microseconds per frame (60 FPS budget).
+//
+// AXIOMATIC INVARIANTS:
+//   1. Zero-dependency native X11 double buffering with 32-bit alpha safety.
+//   2. Every button click or hotkey dispatches through universal action pipeline.
+//   3. Diagnostic audit verifies layout bounding boxes and non-overlapping cards.
 // =============================================================================
 
 // =============================================================================
@@ -436,8 +450,15 @@ const module_metadata_t gui_manifest = {
     "gui.viewport.x11",
     "gui.h",
     LAYER_2_PRESENTATION,
-    { 0, 0, 1 },
+    { 1, 0, 0 },
+    1,                          // interface_rev
+    "2026-10-26",               // last_updated
     "Native X11 double-buffered presentation viewport and event dispatcher",
+    3,                          // dependency_count
+    { "sim.engine.core", "core.util.geom", "core.util.time", NULL }, // dependencies
+    ALLOC_ZERO_HEAP,            // alloc_policy
+    CONCURRENCY_MAIN_THREAD,    // concurrency
+    16666,                      // max_budget_us
     4,
     {
         gui_invariants[0],

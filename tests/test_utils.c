@@ -4,14 +4,29 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          test_utils.c
-// @layer         Verification & Game Dev Test Suite
-// @version       0.0.1
-// @epoch         2026.10
+// @id            test.verification.utils
+// @layer         Layer 4: Verification Suite
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Core Utilities Diagnostic Verification Suite
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. 100% pass across all utility subsystem self-audits.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Automated diagnostic verification suite for all Layer 0 utility primitives
+//   and the central pre-flight manifest registry.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: core.util.*, sim.engine.core
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Deterministic test execution).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Sequential test runner).
+//   - Latency Budget:        Total suite completes in under 1 second.
+//
+// AXIOMATIC INVARIANTS:
+//   1. 100% pass across all utility subsystem self-audits.
+//   2. Policy escalation: WARNINGS, DOWNGRADED, and HALT_FATAL strictly respected.
+//   3. Active DAG dependency validation halts if upstream dependency is missing.
 // =============================================================================
 
 // =============================================================================
@@ -91,7 +106,10 @@ static void test_manifest_and_preflight(void)
     manifest_registry_init(&reg_warn);
     module_metadata_t mod_warn = {
         "mock.warn", "warn.h", LAYER_0_CORE_UTIL, { 1, 0, 0 },
-        "Warn Mock", 0, { NULL }, mock_warn_check
+        1, "2026-10-26", "Warn Mock",
+        0, { NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_REENTRANT, 50,
+        0, { NULL }, mock_warn_check
     };
     manifest_register(&reg_warn, &math_utils_manifest);
     manifest_register(&reg_warn, &mod_warn);
@@ -103,7 +121,10 @@ static void test_manifest_and_preflight(void)
     manifest_registry_init(&reg_crit);
     module_metadata_t mod_crit = {
         "mock.crit", "crit.h", LAYER_2_PRESENTATION, { 1, 0, 0 },
-        "Crit Mock", 0, { NULL }, mock_crit_check
+        1, "2026-10-26", "Crit Mock",
+        0, { NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_MAIN_THREAD, 50,
+        0, { NULL }, mock_crit_check
     };
     manifest_register(&reg_crit, &math_utils_manifest);
     manifest_register(&reg_crit, &mod_crit);
@@ -115,7 +136,10 @@ static void test_manifest_and_preflight(void)
     manifest_registry_init(&reg_fatal);
     module_metadata_t mod_fatal = {
         "mock.fatal", "fatal.h", LAYER_0_CORE_UTIL, { 1, 0, 0 },
-        "Fatal Mock", 0, { NULL }, mock_fatal_check
+        1, "2026-10-26", "Fatal Mock",
+        0, { NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_REENTRANT, 50,
+        0, { NULL }, mock_fatal_check
     };
     manifest_register(&reg_fatal, &math_utils_manifest);
     manifest_register(&reg_fatal, &mod_warn);
@@ -123,6 +147,21 @@ static void test_manifest_and_preflight(void)
     manifest_register(&reg_fatal, &mod_fatal);
     TEST_ASSERT(manifest_run_preflight(&reg_fatal) == PREFLIGHT_STATUS_HALT_FATAL, "fatal halt escalation");
     printf("[PASS] Fatal halt loose-bolts enforcement verified.\n");
+
+    /* Test DAG missing dependency failure */
+    manifest_registry_t reg_dep;
+    manifest_registry_init(&reg_dep);
+    module_metadata_t mod_dep = {
+        "mock.dep", "dep.h", LAYER_1_SIMULATION, { 1, 0, 0 },
+        1, "2026-10-26", "Dependency Mock",
+        1, { "unregistered.prerequisite.module", NULL, NULL, NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_REENTRANT, 50,
+        0, { NULL }, NULL
+    };
+    manifest_register(&reg_dep, &mod_dep);
+    TEST_ASSERT(manifest_run_preflight(&reg_dep) == PREFLIGHT_STATUS_HALT_FATAL, "missing dependency must fatal halt");
+    TEST_ASSERT(reg_dep.results[0].severity == SEVERITY_FATAL, "dependency failure severity fatal");
+    printf("[PASS] Active DAG dependency validation verified.\n");
 }
 
 static void test_all_utilities(void)

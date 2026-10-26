@@ -4,15 +4,30 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          string_utils.h
-// @layer         Core Utilities Layer (Layer 0)
-// @version       0.0.1
-// @epoch         2026.10
+// @id            core.util.string
+// @layer         Layer 0: Core Utilities
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Safe String Operations, In-Place Trimming & Token Parsing
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Memory safety: all operations are null-terminated and bounded.
-//                2. Zero heap allocations: in-place mutations only.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Safe string manipulation, bounded copying, and case-insensitive matching.
+//   Serves as the text safety layer preventing buffer overruns, unterminated
+//   strings, and NULL pointer faults across CLI and dialogue subsystems.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (In-place or caller-supplied stack buffers).
+//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant execution on provided buffers).
+//   - Latency Budget:        < 10 microseconds per operation.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Memory safety: dst[dst_size - 1] is unconditionally guaranteed null-terminated.
+//   2. Resilience: Gracefully handles NULL pointers across all parameters without crashing.
+//   3. Zero heap allocations: All mutations operate in-place or into caller buffers.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_STRING_UTILS_H

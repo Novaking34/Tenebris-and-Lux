@@ -4,23 +4,33 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          game.h
-// @layer         Layer 1: Core Engine & Game Simulation
-// @version       0.0.1
-// @epoch         2026.10
+// @id            sim.engine.core
+// @layer         Layer 1: Simulation Engine
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Central Simulation Interface Header, Types & State Model
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Shield of Lux power invariant: 0 <= shield_power <= MAX_RESONANCE.
-//                2. Sword of Tenebris edge invariant: 0 <= sword_edge <= MAX_RESONANCE.
-//                3. Moral sway bounded continuum: -100 <= moral_sway <= +100.
-//                4. Stance validity: 0 <= current_stance < STANCE_COUNT.
-//                5. Location bounds: 0 <= current_location < LOC_COUNT.
 //
-// PURPOSE & ARCHITECTURAL PHILOSOPHY:
-//   Models the dual armaments—The Shield of Lux and The Sword of Tenebris—and
-//   the chivalric struggle within the fractured Kingdom of Sol-Tenebrae as
-//   the Dark Lord Malakor re-awakens. Follows the OmniCode 5-Block discipline.
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Central simulation interface, state model, and stance state machine.
+//   Serves as the headless simulation brain driving both dual protagonists:
+//   Elijah Ro-enheart (heavy vanguard bearer of the Shield of Lux) and
+//   Katrina Jaren (agile outrider wielder of the Sword of Tenebris).
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: core.util.math, core.util.string
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Deterministic caller-owned state, zero heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state transitions via player_state_t*).
+//   - Latency Budget:        < 50 microseconds per simulation tick.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Shield of Lux power invariant: 0 <= shield_power <= MAX_RESONANCE.
+//   2. Sword of Tenebris edge invariant: 0 <= sword_edge <= MAX_RESONANCE.
+//   3. Moral sway bounded continuum: -100 <= moral_sway <= +100.
+//   4. Stance validity: 0 <= current_stance < STANCE_COUNT.
+//   5. Location bounds: 0 <= current_location < LOC_COUNT.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_GAME_H

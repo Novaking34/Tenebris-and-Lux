@@ -4,17 +4,30 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          game.c
-// @layer         Layer 1: Core Engine & Game Simulation
-// @version       0.0.1
-// @epoch         2026.10
+// @id            sim.engine.core
+// @layer         Layer 1: Simulation Engine
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Core Simulation Logic, Relic Actions, Stance Dispatcher & Audits
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Shield of Lux power bounded: 0 <= shield_power <= MAX_RESONANCE.
-//                2. Sword of Tenebris edge bounded: 0 <= sword_edge <= MAX_RESONANCE.
-//                3. Moral sway bounded continuum: -100 <= moral_sway <= +100.
-//                4. Valid location and stance enumerations strictly enforced.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Core simulation logic, twin relics resonance transitions, moral sway
+//   calculations, and deterministic stance state dispatcher.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: core.util.math, core.util.string
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Deterministic caller-owned state, zero heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state transitions via player_state_t*).
+//   - Latency Budget:        < 50 microseconds per simulation tick.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Shield of Lux power bounded: 0 <= shield_power <= MAX_RESONANCE.
+//   2. Sword of Tenebris edge bounded: 0 <= sword_edge <= MAX_RESONANCE.
+//   3. Moral sway bounded continuum: -100 <= moral_sway <= +100.
+//   4. Valid location and stance enumerations strictly enforced.
 // =============================================================================
 
 // =============================================================================
@@ -527,8 +540,15 @@ const module_metadata_t game_manifest = {
     "sim.engine.core",
     "game.h",
     LAYER_1_SIMULATION,
-    { 0, 0, 1 },
+    { 1, 0, 0 },
+    1,                          // interface_rev
+    "2026-10-26",               // last_updated
     "Core simulation engine, twin relics resonance and stance state machine",
+    2,                          // dependency_count
+    { "core.util.math", "core.util.string", NULL, NULL }, // dependencies
+    ALLOC_ZERO_HEAP,            // alloc_policy
+    CONCURRENCY_REENTRANT,      // concurrency
+    50,                         // max_budget_us
     4,
     {
         game_invariants[0],

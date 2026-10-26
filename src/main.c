@@ -4,16 +4,31 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          main.c
+// @id            app.entry.main
 // @layer         Layer 3: Application Entry & Presentation Router
-// @version       0.0.1
-// @epoch         2026.10
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Executable Entry Point, Argument Parser & Presentation Router
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Headless fallback guarantees graceful degradation when display absent.
-//                2. Zero-warning clean compilation under -std=c11 -Wall -Wextra.
-//                3. Diagnostic self-audit returns 0 only when all invariants pass.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Executable entry point, command-line argument router, pre-flight orchestrator,
+//   and presentation frontend selector. Serves as the gateway coordinating
+//   subsystem boot, executing diagnostics, and selecting GUI or CLI presentation.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: sim.engine.core, gui.viewport.x11, core.util.*
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap in startup routing).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Process main thread execution).
+//   - Latency Budget:        < 5 milliseconds total pre-flight initialization.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Headless fallback guarantees graceful degradation when display absent.
+//   2. Zero-warning clean compilation under -std=c11 -Wall -Wextra -Wpedantic.
+//   3. Diagnostic self-audit returns 0 only when all invariants pass.
+//   4. Loose bolts principle: Pre-flight halt terminates prior to simulation.
 // =============================================================================
 
 // =============================================================================
