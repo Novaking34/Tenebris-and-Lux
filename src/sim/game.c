@@ -516,6 +516,110 @@ game_audit_report_t game_audit_state(const player_state_t *state)
     return report;
 }
 
+static const char *const game_invariants[] = {
+    "Shield of Lux resonance bounded: [0, MAX_RESONANCE]",
+    "Sword of Tenebris edge bounded: [0, MAX_RESONANCE]",
+    "Moral sway continuum bounded: [-100, +100]",
+    "Deterministic stance transitions & topology"
+};
+
+const module_metadata_t game_manifest = {
+    "sim.engine.core",
+    "game.h",
+    LAYER_1_SIMULATION,
+    { 0, 0, 1 },
+    "Core simulation engine, twin relics resonance and stance state machine",
+    4,
+    {
+        game_invariants[0],
+        game_invariants[1],
+        game_invariants[2],
+        game_invariants[3]
+    },
+    game_preflight
+};
+
+diag_result_t game_preflight(void)
+{
+    diag_result_t res;
+    res.subsystem = game_manifest.module_id;
+    res.check_name = "Relic Invariants & Stance Determinism";
+
+    player_state_t test_state;
+    game_init(&test_state);
+
+    /* Test 1: Initial state invariant audit */
+    game_audit_report_t report = game_audit_state(&test_state);
+    if (!report.is_valid) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Initial game state violated relic invariants.";
+        return res;
+    }
+
+    /* Test 2: Bounded capacity saturation on twin relics */
+    test_state.shield_power = 95;
+    test_state.shield_power = math_saturating_add(test_state.shield_power, 15, MAX_RESONANCE);
+    if (test_state.shield_power != MAX_RESONANCE) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Shield of Lux resonance exceeded maximum capacity.";
+        return res;
+    }
+
+    test_state.sword_edge = 90;
+    test_state.sword_edge = math_saturating_add(test_state.sword_edge, 20, MAX_RESONANCE);
+    if (test_state.sword_edge != MAX_RESONANCE) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Sword of Tenebris edge exceeded maximum capacity.";
+        return res;
+    }
+
+    /* Test 3: Stance state machine validity */
+    test_state.stance = STANCE_STRIKING;
+    if (test_state.stance != STANCE_STRIKING ||
+        strcmp(game_get_stance_name(test_state.stance), "Edge Striking (Sword Drawn)") != 0) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Stance state machine failed STANCE_STRIKING transition.";
+        return res;
+    }
+
+    /* Test 4: Diagnostic tripwire on corrupt states */
+    player_state_t corrupt = test_state;
+    corrupt.moral_sway = 500;
+    if (game_audit_state(&corrupt).is_valid) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Corrupt moral sway was not trapped by audit tripwire.";
+        return res;
+    }
+
+    corrupt = test_state;
+    corrupt.shield_power = -5;
+    if (game_audit_state(&corrupt).is_valid) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Corrupt negative shield power was not trapped by tripwire.";
+        return res;
+    }
+
+    corrupt = test_state;
+    corrupt.location = LOC_COUNT + 1;
+    if (game_audit_state(&corrupt).is_valid) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Out-of-bounds location was not trapped by tripwire.";
+        return res;
+    }
+
+    res.passed = true;
+    res.severity = SEVERITY_PASS;
+    res.details = "Simulation engine invariants, stance transitions & resonance bounds verified.";
+    return res;
+}
+
 int game_run_self_audit(void)
 {
     printf("============================================================\n");

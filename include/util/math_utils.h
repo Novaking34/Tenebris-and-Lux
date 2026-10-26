@@ -23,7 +23,10 @@
 // ( Standard Headers & Preconditions )
 // =============================================================================
 
+#include "util/manifest.h"
 #include <stdbool.h>
+
+extern const module_metadata_t math_utils_manifest;
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
@@ -41,6 +44,7 @@ int math_scale_ratio(int val, int max_val, int target_scale);
 // ( Diagnostic Audit Signatures )
 // =============================================================================
 
+diag_result_t math_utils_preflight(void);
 bool math_utils_audit(void);
 
 // =============================================================================

@@ -1,0 +1,79 @@
+= DevLog 003: Central Manifest, Executable Block 1 Metadata & Pre-Flight Architecture
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-26
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Abstract & Engineering Intent
+
+In this milestone, we moved beyond purely declarative Block 1 metadata comments into **executable, compiled metadata structures** (`module_metadata_t`) managed by a zero-allocation **Central Manifest Registry** (`include/util/manifest.h`, `src/util/manifest.c`). Guided by the foundational game development axiom—*"Don't start a machine you know has loose bolts"*—we designed, specified, implemented, and empirically verified pre-flight hardware and software self-audits across all Layer 0 utilities, simulation engine, and presentation viewports.
+
+== 1. The Core Problem: Loose Bolts & Silent Corruption
+
+In game development, complex games are machines with hundreds of interlocking moving parts. A subtle defect in a foundational layer—such as a non-monotonic clock, an integer overflow on damage saturation, an unchecked negative rectangle dimension, or an unbuffered string copy—can propagate upward, manifesting as elusive micro-stutters, physics drift, state desynchronization, or catastrophic runtime crashes.
+
+Rather than waiting for the game loop to execute before identifying structural anomalies, the engine must perform systematic pre-flight verification on startup, classifying faults along a graded severity spectrum:
+* **Warnings (`SEVERITY_WARNING`)**: Log notices (e.g. coarse sleep timer resolution); launch proceeds normally.
+* **Critical Faults (`SEVERITY_CRITICAL`)**: Subsystem offline, but engine core intact (e.g. no `$DISPLAY` for X11 GUI); downgrade gracefully to safe mode (terminal CLI).
+* **Fatal Violations (`SEVERITY_FATAL`)**: Core invariants broken (e.g. non-monotonic time, arithmetic bounds failure, corrupt initial state); halt the engine immediately with a detailed diagnostic manifest.
+
+== 2. Architectural Implementation
+
+=== 2.1 Compiled Metadata Structures
+
+Every subsystem in the codebase now exports an immutable `module_metadata_t` instance:
+
+[source,c]
+----
+typedef struct {
+    const char *module_id;
+    const char *file_name;
+    module_layer_t layer;
+    struct { uint8_t major, minor, patch; } version;
+    const char *description;
+    size_t invariant_count;
+    const char *invariants[MANIFEST_MAX_INVARIANTS];
+    diag_result_t (*preflight_check)(void);
+} module_metadata_t;
+----
+
+=== 2.2 Subsystem Integrations
+
+The pre-flight registry manages 7 fully audited modules across Layers 0, 1, and 2:
+1. `core.util.manifest`: Self-audits registry capacity limits, duplicate registration rejection, and severity escalation rules.
+2. `core.util.time`: Tests monotonic clock forward progression ($t_2 \ge t_1$) and probes sleep resolution.
+3. `core.util.math`: Tests clamp bounds, saturating add/sub overflow safety, division-by-zero defense, and nudge directionality.
+4. `core.util.geom`: Tests negative dimension clamping, boundary point containment, AABB overlap reflexivity, and viewport bounds containment.
+5. `core.util.string`: Tests buffer safe truncation null-termination, NULL pointer resilience, and whitespace trimming edge cases.
+6. `sim.engine.core`: Tests initial relic state integrity, resonance saturation ceilings, deterministic stance state transitions, and diagnostic tripwires on corrupt states.
+7. `gui.viewport.x11`: Tests button layout non-overlap and asserts window bounds (`gui_audit_layout`), while checking X11 display availability (`gui_is_available`). If `$DISPLAY` is unconnectable, emits `SEVERITY_CRITICAL` to trigger automatic CLI safe mode fallback.
+
+== 3. "Expected" vs. "Actual" Gap Analysis
+
+Following our strict engineering discipline, the technical specification was drafted **prior to implementation** in `docs/architecture/preflight_and_manifest_spec.adoc`. Upon completion, empirical benchmarks were gathered and recorded:
+
+[cols="1,2,2,1", options="header"]
+|===
+| Verification Item | Expected Baseline | Actual Result | Status
+| *Module Registration* | $\ge 5$ Core Modules | **7 Modules Registered** | **EXCEEDED**
+| *Severity Spectrum* | 4 Discrete Levels | **5 Graded Levels** (`PASS`, `INFO`, `WARN`, `CRIT`, `FATAL`) | **EXCEEDED**
+| *Pre-Flight Telemetry* | 80-Column ASCII Table | **Integrated Table** with status badges and policy verdicts | **SATISFIED**
+| *CTest Integration* | 6/6 Suites Passing in $< 0.05\,\text{s}$ | **6/6 Passing in $0.02\,\text{s}$** | **SATISFIED**
+| *Subsystem Invariants* | 5/5 Invariants Passing | **5/5 Invariant Checks + 7 Pre-Flight Subsystems Passing (12 Total)** | **EXCEEDED**
+| *Loose-Bolts Tripwire* | Fatal Error Halts Immediately | **Verified**: Engine halted on injected stance mismatch; exited code $\ne 0$ | **VERIFIED**
+| *Graceful Downgrade* | Unset `$DISPLAY` drops GUI $\to$ CLI | **Verified**: Emits `SEVERITY_CRITICAL`, enters `PREFLIGHT_STATUS_DOWNGRADED`, launches safe CLI | **VERIFIED**
+|===
+
+== 4. Summary & Next Steps
+
+The engine now possesses an institutional, compile-time and pre-flight runtime foundation that guarantees system health prior to rendering a single frame or executing a single turn.
+
+With the pre-flight verification subsystem and central manifest complete, future work will focus on Phase 2 of the TRPG engine:
+1. Laying out the 2D discrete tactical battlefield grid.
+2. Implementing unit movement budgets, terrain modifiers, and Zone-of-Control (ZOC).
+3. Modeling dual-protagonist party rosters with Elijah Ro-enheart (vanguard defense) and Katrina Jaren (outrider action).

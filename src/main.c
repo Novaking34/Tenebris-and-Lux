@@ -23,9 +23,26 @@
 
 #include "sim/game.h"
 #include "gui/gui.h"
+#include "util/manifest.h"
+#include "util/math_utils.h"
+#include "util/string_utils.h"
+#include "util/geom_utils.h"
+#include "util/time_utils.h"
 
 #include <stdio.h>
 #include <string.h>
+
+static void init_engine_manifest(manifest_registry_t *registry)
+{
+    manifest_registry_init(registry);
+    manifest_register(registry, &manifest_utils_manifest);
+    manifest_register(registry, &time_utils_manifest);
+    manifest_register(registry, &math_utils_manifest);
+    manifest_register(registry, &geom_utils_manifest);
+    manifest_register(registry, &string_utils_manifest);
+    manifest_register(registry, &game_manifest);
+    manifest_register(registry, &gui_manifest);
+}
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
@@ -56,7 +73,17 @@ static void print_version(void)
 
 static int run_full_subsystem_audit(void)
 {
-    printf("============================================================\n");
+    manifest_registry_t registry;
+    init_engine_manifest(&registry);
+    manifest_run_preflight(&registry);
+    manifest_print_report(&registry);
+
+    if (registry.status == PREFLIGHT_STATUS_HALT_FATAL) {
+        fprintf(stderr, "[FATAL] Pre-flight failed due to loose bolts!\n");
+        return 1;
+    }
+
+    printf("\n============================================================\n");
     printf("      Tenebris and Lux - Comprehensive Subsystem Audit      \n");
     printf("============================================================\n");
 
@@ -74,7 +101,7 @@ static int run_full_subsystem_audit(void)
     printf("[PASS] Test 5: GUI viewport layout invariants verified.\n");
 
     printf("============================================================\n");
-    printf("Audit Result: ALL INVARIANT CHECKS PASSED (5/5)\n");
+    printf("Audit Result: ALL INVARIANT CHECKS PASSED (5/5 + Pre-Flight)\n");
     printf("============================================================\n");
     return 0;
 }
@@ -111,6 +138,17 @@ int main(int argc, char *argv[])
         }
     }
 
+    /* Pre-Flight Inspection: "Don't start a machine you know has loose bolts" */
+    manifest_registry_t registry;
+    init_engine_manifest(&registry);
+    preflight_status_t preflight = manifest_run_preflight(&registry);
+
+    if (preflight == PREFLIGHT_STATUS_HALT_FATAL) {
+        fprintf(stderr, "\n[FATAL ERROR] Engine startup halted due to loose bolts!\n");
+        manifest_print_report(&registry);
+        return 1;
+    }
+
     player_state_t state;
     game_init(&state);
 
@@ -127,12 +165,13 @@ int main(int argc, char *argv[])
         return gui_run(&state);
     }
 
-    /* Default behavior: Launch native GUI if display available, otherwise CLI */
-    if (gui_is_available()) {
-        return gui_run(&state);
+    /* Graded policy check: If pre-flight detected missing presentation layer, downgrade */
+    if (preflight == PREFLIGHT_STATUS_DOWNGRADED || !gui_is_available()) {
+        printf("[Notice] Graphical display unavailable. Downgrading to CLI safe mode.\n\n");
+        game_loop_cli(&state);
+        return 0;
     }
 
-    printf("[Notice] No graphical display detected. Launching in CLI mode.\n\n");
-    game_loop_cli(&state);
-    return 0;
+    /* Default launch mode */
+    return gui_run(&state);
 }

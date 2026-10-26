@@ -60,6 +60,8 @@ int gui_run(player_state_t *state);
 // ( Viewport Integrity Checks & Surface Tripwires )
 // =============================================================================
 
+extern const module_metadata_t gui_manifest;
+diag_result_t gui_preflight(void);
 bool gui_audit_layout(void);
 
 // =============================================================================

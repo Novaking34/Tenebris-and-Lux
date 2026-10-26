@@ -22,8 +22,11 @@
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
+#include "util/manifest.h"
 #include <stdbool.h>
 #include <stddef.h>
+
+extern const module_metadata_t string_utils_manifest;
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
@@ -39,6 +42,7 @@ void str_safe_copy(char *dst, const char *src, size_t dst_size);
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // =============================================================================
 
+diag_result_t string_utils_preflight(void);
 bool string_utils_audit(void);
 
 // =============================================================================

@@ -45,6 +45,7 @@ endif()
 
 # Core Utility Sources (Layer 0)
 set(UTIL_SOURCES
+    src/util/manifest.c
     src/util/math_utils.c
     src/util/string_utils.c
     src/util/geom_utils.c
@@ -59,6 +60,7 @@ add_executable(tenebris-lux
     ${UTIL_SOURCES}
     include/sim/game.h
     include/gui/gui.h
+    include/util/manifest.h
     include/util/math_utils.h
     include/util/string_utils.h
     include/util/geom_utils.h

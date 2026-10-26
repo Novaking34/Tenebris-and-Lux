@@ -31,8 +31,12 @@
 // ( Type Definitions, Enums, State Structures & System Constants )
 // =============================================================================
 
+#include "util/manifest.h"
 #include <stdbool.h>
 #include <stddef.h>
+
+extern const module_metadata_t game_manifest;
+diag_result_t game_preflight(void);
 
 #define APP_NAME "Tenebris and Lux"
 #define APP_VERSION "0.0.1"
