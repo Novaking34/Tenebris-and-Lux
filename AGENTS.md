@@ -131,17 +131,24 @@ Layer 0: Core Utilities           [ src/util/  <-> include/util/ ]
 
 ## 4. Lore, Canon & Thematic Invariants
 
-1. **Twin Relics Canon**:
-   - **The Shield of Lux**: Personification of Light, barrier resonance, clarity, and protection.
+1. **Genesis & Provenance**:
+   - Conceived between **2014–2018** in RPG Maker as the very first major game of **CreativeWorkzStudio** prior to its publishing house evolution.
+   - Reborn as a custom-engineered **Tactical Strategy RPG (TRPG)** featuring a grid-based battlefield with cinematic traditional side-scroll / action combat resolution.
+2. **Twin Relics Canon**:
+   - **The Shield of Lux**: Personification of Light, barrier resonance, kinetic deflection, and protection.
    - **The Sword of Tenebris**: Personification of Darkness, edge sharpness, abyssal mist, and severance.
-2. **Metaphysical Neutrality**:
+3. **Metaphysical Neutrality**:
    - Neither Light (Lux) nor Darkness (Tenebris) is inherently good or evil. They are primal cosmic apex forces.
    - The wielder's intent and application determine the moral sway (`moral_sway` in `[-100, +100]`):
      - Positive sway: Virtue, protection, mercy.
      - Negative sway: Malice, ruin, ruthless dominion.
-3. **The True Antagonist**:
-   - The Kingdom of Sol-Tenebrae is torn by civil war between the Solar Order and Umbral Covenant.
-   - The true overarching existential threat is the re-awakening **Dark Lord Malakor**, whose void vanguard encroaches from the Abyssal Threshold.
+4. **Setting: The Kingdom of Sacyra**:
+   - The story takes place in the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`).
+   - Governed by the Crown and the **Royal Guard**, balanced against competing regional **Noble Houses** on the Royal Court, and the independent **Adventurers' Guild**.
+   - The overarching existential threat is the re-awakening **Dark Lord Malakor**, whose void vanguard advances from the Abyssal Threshold.
+5. **Dual Protagonists**:
+   - **Elijah Ro-enheart**: Descendant of a proud royal army family; son of the former Head of the Royal Guard. Frontline heavy vanguard bearer of the Shield of Lux.
+   - **Katrina Jaren**: Daughter of noble House Jaren; groomed for an aristocratic seat on the Royal Court, but passionately aspires to join the local Adventurers' Guild. Agile outrider wielder of the Sword of Tenebris.
 
 ---
 

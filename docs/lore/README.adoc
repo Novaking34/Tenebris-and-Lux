@@ -1,21 +1,28 @@
-= World-Building & Lore Index
+= World-Building & Lore Index: The Chronicles of Sacyra
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v0.0.1, 2026-10-26
 :doctype: article
 :icons: font
 
 [abstract]
 == Overview
 
-This directory contains the living narrative bible, cosmological ontology, and historical
-lore for *Tenebris and Lux*.
+This directory contains the canonical world bible, cosmology, character dossiers,
+and socio-political history of the **Kingdom of Sacyra** in *Tenebris and Lux*.
 
 == Canonical Manifest
 
 1. **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**  
-   *The Chronicles of the Shield and the Sword*: Canonical lore bible covering:
-   - The primordial neutrality of Lux and Tenebris.
-   - The Shield of Lux and the Sword of Tenebris.
-   - The schism of the Kingdom of Sol-Tenebrae (The Solar Order vs. The Umbral Covenant).
-   - The re-awakening of the Dark Lord Malakor.
-   - The moral sway of the wielder.
+   *The Chronicles of Sacyra*: The foundational world bible detailing:
+   - The primordial neutrality of Lux (Radiance) and Tenebris (Darkness).
+   - The genesis and mechanics of the Shield of Lux and Sword of Tenebris.
+   - The Kingdom of Sacyra (Crown, Royal Guard, Noble Houses, Adventurers' Guild).
+   - The existential invasion of Dark Lord Malakor from the Abyssal Threshold.
+   - The moral sway continuum of mortal wielders.
+
+2. **[characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc)**  
+   *Dramatis Personae*: Complete character dossiers, lineage, and TRPG doctrines:
+   - **Elijah Ro-enheart**: Son of the former Royal Guard Head; stalwart defender of Sacyra; bearer of the Shield of Lux.
+   - **Katrina Jaren**: Noble-born daughter of House Jaren; Adventurers' Guild aspirant; swift wielder of the Sword of Tenebris.
+   - Dual-protagonist synergy, social conflicts, and tactical battlefield dynamics.
+   - **Dark Lord Malakor** and the void-blighted vanguard.

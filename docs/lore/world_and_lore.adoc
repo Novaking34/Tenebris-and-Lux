@@ -1,6 +1,6 @@
-= World-Building & Lore Canon: The Chronicles of the Shield and the Sword
+= World-Building & Lore Canon: The Chronicles of Sacyra
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v0.0.1, 2026-10-26
 :doctype: book
 :toc: left
 :toclevels: 3
@@ -13,146 +13,119 @@ v0.0.1, 2026-10-24
 
 This document establishes the living world-building canon, cosmological ontology,
 and historical epic of *Tenebris and Lux* ("Darkness and Light"). 
-At its core, this is the story of two primordial relics—**The Shield of Lux** and 
-**The Sword of Tenebris**—and a noble Kingdom fractured by civil strife, creeping 
-corruption, and the catastrophic re-awakening of the **Dark Lord**.
+Conceived in 2014–2018 as the foundational game project of **CreativeWorkzStudio**, 
+this is the epic of two primordial relics—**The Shield of Lux** and 
+**The Sword of Tenebris**—set within the storied **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*).
+The story is driven by two central protagonists: **Elijah Ro-enheart**, son of a former head
+of the Royal Guard, and **Katrina Jaren**, a noble-born daughter navigating royal court expectations
+while yearning for the Adventurers' Guild, as the re-awakening **Dark Lord Malakor** rises from the abyss.
 
 == 1. The Primordial Cosmology: Neutrality of the Apex Forces
 
-[quote, The Ancient Covenant of Sol-Tenebrae]
-"Light without shadow is a blinding desert that calcifies the soul.
-Shadow without light is an endless void where memory sleeps.
-The Shield protects and confines; the Sword severs and defends.
-The metal knows neither virtue nor malice—only the hand that grips the hilt."
+[quote, The Sacyran Chronicle of Antiquity]
+"Light without shadow is a blinding desert that calcifies the spirit.
+Shadow without light is a suffocating void where purpose drowns.
+The Shield preserves and confines; the Sword severs and liberates.
+The relics know neither virtue nor malice—only the soul that wields them."
 
 In the cosmology of *Tenebris and Lux*, the cosmos is governed by two apex forces that
-transcend mortal morality. They are neither benevolent nor malevolent:
+transcend human morality. Neither is inherently good nor evil:
 
 === Lux (The Apex of Radiance)
 
 * **Ontological Essence**: Manifestation, illumination, cohesion, preservation, and structure.
 * **The Dual Nature of Light**:
-  - **Righteous Manifestation**: Offers sanctuary to the vulnerable, dispels terrifying deceptions, preserves cultural wisdom, and reveals truth.
-  - **Tyrannical Manifestation**: Scorches the land, blinds those who seek nuance, enforces merciless stasis, and calcifies living beings into unyielding stone.
+  - **Virtuous Manifestation**: Wards the vulnerable with impenetrable golden barriers, unmasks dark deceits, preserves cultural knowledge, and inspires steadfast courage.
+  - **Tyrannical Manifestation**: Scorches the earth in unyielding glare, blinds those seeking mercy, enforces inflexible order, and petrifies living will into stone.
 
 === Tenebris (The Apex of Darkness)
 
 * **Ontological Essence**: Mystery, dissolution, rest, severance, and the fertile void.
 * **The Dual Nature of Darkness**:
-  - **Virtuous Manifestation**: Veils the weak from tyrannical gaze, severs unholy chains, allows the weary to sleep and heal, and pierces through arrogant illusions.
-  - **Malevolent Manifestation**: Sows suffocating paranoia, consumes compassion, unleashes ravenous entropy, and aids the destructive ambitions of the Dark Lord.
+  - **Virtuous Manifestation**: Veils the oppressed from predators, cuts through unholy bonds and tyrant armor, grants restful oblivion to the weary, and pierces through arrogant illusions.
+  - **Malevolent Manifestation**: Spreads creeping rot, feeds paranoia, dissolves conscience into nihilism, and serves the destructive malice of the Dark Lord.
 
-=== The Moral Sway of the Wielder
+=== The Moral Sway of the Wielders
 
-Neither force can be judged in the abstract. Good and evil belong entirely to the
-**intent, conscience, and actions of the wielder**. A knight wielding the blinding
-radiance of Lux can become a cruel oppressor, while a shadow-knight wielding the
-abyssal edge of Tenebris can act as the ultimate savior of an enslaved realm.
+Neither Lux nor Tenebris dictates a character's morality. Good and evil belong entirely to the
+**intent, conscience, and actions of the wielder**. In the Kingdom of Sacyra, a knight channeling
+the blinding radiance of Lux can act as a cold oppressor, while a warrior wielding the void-quenched
+blade of Tenebris can stand as the people's ultimate protector.
 
-== 2. The Twin Relics: Shield and Sword
+== 2. The Twin Relics: Shield of Lux & Sword of Tenebris
 
-Before the founding of the Kingdom, the Primordial Architects forged two armaments
-to maintain cosmic equilibrium across the land:
+Before the crowning of Sacyra's first monarch, primordial celestial smiths forged two sovereign
+armaments to anchor the realm against cosmic oblivion:
 
 [cols="1,2,2", options="header"]
 |===
 | Relic | The Shield of Lux | The Sword of Tenebris
 | **Aspect** | The Sovereign Aegis of Radiance | The Sovereign Blade of the Abyss
-| **Physical Form** | A towering kite-shield of burnished solar silver, centered with a living celestial orb that pulses with warm golden resonance. | A two-handed greatsword forged from star-quenched obsidian, its edge rippling with deep twilight violet and mist.
-| **Primal Function** | Warding, barrier generation, radiant illumination, kinetic deflection, and stasis containment. | Severance, reality piercing, armor penetration, mist-veiling, and entropy unleashing.
-| **Virtuous Wielding** | Wards innocents against onslaught; creates safe havens; unmasks deceptions. | Slices through tyrants' armor; cuts unholy binds; cloaks the fleeing in merciful shadow.
-| **Corrupted Wielding** | Blinds subjects into obedience; traps souls in eternal petrified stasis. | Slaughter; terrorizing the helpless; tearing down the pillars of civilization.
+| **Physical Form** | A towering kite-shield of burnished solar silver, centered with a living celestial sunstone that pulses with warm golden resonance. | A two-handed greatsword forged from star-quenched obsidian, its edge rippling with deep twilight violet mist and void-tempered steel.
+| **Primal Function** | Warding, kinetic deflection, barrier projection, illumination, and stasis shielding. | Severance, armor piercing, shadow manipulation, reality-edge slicing, and mist cloaking.
+| **Virtuous Wielding** | Wards allies, shields innocents from siege engines, and unmasks lurking infiltrators. | Slices through corrupted war machines, cuts captive chains, and strikes from the dark to liberate.
+| **Corrupted Wielding** | Blinds subjects into terrified compliance; traps souls in eternal petrified stasis. | Indiscriminate butchery; feeding the blade's hunger on mortal dread; total subjugation.
 |===
 
-=== Relic Resonance & Synergy
+=== Harmonized Equilibrium
 
-The Shield and the Sword are not antagonistic enemies; they are metaphysical twins.
-- When raised together in harmony (**The Stance of Equilibrium**), the Shield anchors the defender's footing while the Sword carves a path through encroaching evil.
-- If one relic is lost or corrupted without the counterweight of the other, the wielder risks being consumed by either calcifying light or hungry shadow.
+The Shield and Sword were never intended to war against one another; they are complementary halves
+of a cosmic balance:
+- When wielded in tandem or in synchronized coordination by trusted companions (**The Stance of Equilibrium**), the Shield deflects kinetic onslaught while the Sword opens devastating counter-attack avenues.
+- If one relic is wielded without the tempering influence of the other, its bearer risks succumbing to either calcifying stasis or devouring void-sickness.
 
-== 3. The Kingdom Divided: Sol-Tenebrae in Crisis
+== 3. The Kingdom of Sacyra: Setting & Society
 
-The Kingdom of **Sol-Tenebrae** once stood as a testament to the balance between
-day and night. Its cities were designed with sunlit spires for study and moonlit
-groves for rest and meditation.
+The **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`) is a grand, historic realm
+defined by stone bastions, sweeping borderlands, and deeply rooted chivalric traditions.
 
-=== The Schism of the High Courts
+=== Governance and Courtly Politics
 
-Generations of peace bred dogma. The Kingdom fractured into two warring ideologies:
+* **The Crown & The Royal Guard**: Sacyra's royal palace commands the central citadel. The **Royal Guard** represents the pinnacle of martial honor and personal devotion to the throne, sworn to protect the realm against external ruin and internal treachery.
+* **The Noble Houses**: Hereditary aristocratic families hold vast regional fiefs, supply knights to the royal army, and compete for influence and appointed seats on the prestigious **Royal Court**.
+* **The Adventurers' Guild**: An independent, meritocratic brotherhood operating throughout Sacyra's frontier outposts and merchant crossroads. Unlike the rigid court or the ceremonial nobility, the Guild takes on perilous monster contracts, frontier patrols, and ancient ruin expeditions, valuing practical skill and personal freedom above noble pedigree.
 
-1. **The Order of the Radiant Solar**:
-   - Zealous purists who claim Lux is the only divine power.
-   - Seek to banish all shadows, burning night markets and outlawing sleep during daylight.
-   - Their inquisitors wield solar scepters to forcibly "purge" citizens of shadow.
+=== The Crisis: The Re-Awakening of Dark Lord Malakor
 
-2. **The Umbral Covenant**:
-   - Outcasts, subterranean guilds, and shadow-scholars who retreat into deep catacombs.
-   - Believe the Solar Order has blinded the Kingdom to truth.
-   - Some maintain peaceful stewardship of the dark, but radical sects embrace nihilistic destruction.
+After centuries of dormancy sealed beneath the Abyssal Vaults along Sacyra's furthest borders,
+the ancient terror **Dark Lord Malakor** has broken free.
 
-=== The Re-Awakening of the Dark Lord
+* Malakor is not a personification of Tenebris, but a corrupt mortal arch-sorcerer who twisted dark magic into a tool of catastrophic conquest.
+* Seeking to conquer Sacyra, Malakor commands legions of void-blighted fiends, corrupted constructs, and dread vanguard captains.
+* His vanguard has already shattered the outer border redoubts, threatening to overrun Sacyra unless heroes arise who can awaken and master the legendary Shield and Sword.
 
-Exploiting the Kingdom's internal fracture, the ancient harbinger known in whispers as
-the **Dark Lord Malakor** has broken the primordial seals of the Abyssal Vault.
+== 4. The Dual Protagonists
 
-* The Dark Lord is **not** Tenebris itself; he is a mortal who achieved immortality by
-  twisting the void into a weapon of domination.
-* Malakor seeks to claim both the **Sword of Tenebris** to sever the Kingdom's defenses
-  and the **Shield of Lux** to petrify the surviving populace into eternal, unblinking submission.
-* His vanguard—the **Umbral Legions** and **Blighted Automata**—now march across the
-  provinces, laying siege to the border marches.
+The heart of *Tenebris and Lux* is the intertwined journey of two young figures from opposite ends
+of Sacyra's social fabric:
 
-== 4. Topography of the Fractured Realm
+=== 1. Elijah Ro-enheart (The Vanguard of Duty)
 
-The current journey begins across the contested threshold of the Kingdom:
+* **Lineage**: Born into a proud line of soldiers who have served in Sacyra's royal army for generations. His father was a legendary former head of the **Royal Guard**.
+* **Role & Archetype**: Frontline combatant, tactician, and stalwart protector. Raised under a strict code of chivalric duty, martial conditioning, and sacrificial defense.
+* **Character Dilemma**: Strives to live up to the immense shadow of his father's legacy while questioning whether blind obedience to royal orders truly protects the people of Sacyra when court politics paralyze the realm.
+* **Relic Attunement**: Naturally drawn to the **Shield of Lux**, anchoring defensive formations, absorbing enemy assaults, and safeguarding his squad.
 
-=== 1. The Garrison Altar (`LOC_GARRISON_ALTAR`)
-* **Setting**: The ancestral redoubt of the Wardens. Ancient banners hang above an
-  altar of twin pedestals where the Shield and Sword once rested in peace.
-* **Role**: The nexus of awakening and strategic council. Here the Champion chooses
-  how to attune the relics before marching to the frontlines.
+=== 2. Katrina Jaren (The Free-Spirited Blade)
 
-=== 2. The Sunken Citadel Gates (`LOC_CITADEL_GATES`)
-* **Setting**: Massive battlements of white granite scorched by void-fire. The gates
-  stand half-shattered, besieged by the Dark Lord's vanguard.
-* **Role**: Tactical chokepoint. Raising the Shield of Lux repels the siege engines;
-  drawing the Sword of Tenebris allows the Champion to strike down the siege captains.
+* **Lineage**: A daughter of **House Jaren**, one of the most prominent noble families in the Kingdom of Sacyra.
+* **Role & Archetype**: Agile skirmisher, perceptive scout, and tactical striker. Possesses natural martial brilliance and a fiercely independent spirit.
+* **Character Dilemma**: Raised and groomed since childhood to take a ceremonial seat upon the Royal Court, Katrina suffocates under high-society diplomacy. She secretly longs to break free of courtly expectations and join the **local Adventurers' Guild**, seeking genuine adventure and frontline camaraderie.
+* **Relic Attunement**: Naturally resonates with the **Sword of Tenebris**, channeling its fluid, decisive severance to bypass armored juggernauts and cut through enemy flanks.
 
-=== 3. The Fractured Marches (`LOC_DIVIDED_MARCHES`)
-* **Setting**: A windswept highland where Solar Order knights and Umbral Covenant partisans
-  clash in blind, tragic civil war while the real evil approaches.
-* **Role**: Moral crucible. The Champion must choose whether to force peace through
-  overwhelming light, strike from the shadows, or demonstrate the harmony of both relics.
+=== Dynamic Interplay
 
-=== 4. The Abyssal Threshold (`LOC_DARK_LORD_THRESHOLD`)
-* **Setting**: The shattered gates to the Dark Lord's dread monolith, where the fabric
-  of reality bends and shadows take physical, razor-sharp forms.
-* **Role**: The vanguard of the final confrontation. Demands mastery of both the
-  Shield's warding brilliance and the Sword's devastating severance.
+Together, Elijah and Katrina represent the living synthesis of Sacyra: military discipline paired with adventurer initiative; steadfast defense matched with decisive offense; the golden starlight of Lux intertwined with the twilight edge of Tenebris.
 
-== 5. The Champion's Stances & Gameplay Paradigm
+== 5. The Tactical Strategy RPG (TRPG) Paradigm
 
-Rather than a survival clock measuring dying embers, the Champion actively shifts
-between four fundamental combat and narrative stances:
+Unlike standard linear dungeon crawlers, *Tenebris and Lux* is built as a **Tactical Strategy RPG**:
 
-1. **Stance of the Aegis (Shield Dominant)**:
-   - *Mechanic*: Maximizes Lux Ward power; creates impenetrable defensive barriers;
-     deflects projectile curses; reveals cloaked enemies.
-   - *Ethical Risk*: Excessive reliance on the Shield induces defensive passivity and
-     risks calcifying the wielder's heart against empathy.
-
-2. **Stance of the Edge (Sword Dominant)**:
-   - *Mechanic*: Unleashes Tenebris strike resonance; pierces enchanted armor; severs
-     demonic bindings; slips through enemy lines inside a cloak of mist.
-   - *Ethical Risk*: Excessive bloodlust risks feeding the blade's hunger, eroding
-     the wielder's restraint into ruthless brutality.
-
-3. **Stance of Equilibrium (Twin Mastery)**:
-   - *Mechanic*: Channels the Shield and Sword simultaneously. The Shield parries
-     attacks while the Sword counter-strikes.
-   - *Requirement*: Demands deep internal poise and balanced moral alignment.
-
-4. **The Moral Sway**:
-   - Every major deed shifts the Champion's resonance toward **Virtue (Stewardship & Mercy)**
-     or **Malice (Domination & Ruin)**, altering how factions react and determining the
-     fate of the Kingdom.
+1. **Strategic Grid Battlefield**:
+   - Battles take place across multi-elevation grid maps (provinces, castle courtyards, bridges, and mountain passes).
+   - Units position according to terrain bonuses, line-of-sight, directional flanking, and movement budgets.
+2. **Cinematic Combat Resolution**:
+   - When a unit initiates combat against an enemy on the grid, the game transitions into a dynamic **traditional side-scroll / action-based cinematic duel**.
+   - Attacks, parries, spell wards, and severance slashes play out with visual weight and player agency before returning to the grid.
+3. **Moral Sway Influence**:
+   - Dialogue choices, tactical decisions (mercy vs. ruthless execution), and relic usage alter the party's **Moral Sway** (`[-100, +100]`), influencing recruitable companions, kingdom politics, and the story's ultimate conclusion.

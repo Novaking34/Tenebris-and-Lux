@@ -1,6 +1,6 @@
 = Game Design Specification: The Twin Relics, Combat Stances & Moral Sway
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v0.0.1, 2026-10-26
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -11,27 +11,30 @@ v0.0.1, 2026-10-24
 [abstract]
 == Overview
 
-This document specifies the core ludological mechanics of *Tenebris and Lux*: the twin
-primordial relics (**The Shield of Lux** and **The Sword of Tenebris**), the dynamic
-combat stance state machine, and the continuous moral sway continuum ($-100 \dots +100$).
+This document specifies the core ludological mechanics of *Tenebris and Lux* in the **Kingdom of Sacyra**:
+the twin primordial relics (**The Shield of Lux** and **The Sword of Tenebris**), the dynamic combat stance
+state machine, the moral sway continuum (`[-100, +100]`), and their integration into the Tactical Strategy RPG
+system featuring grid maneuvering and cinematic side-view combat resolution.
 
 == 1. Primordial Neutrality & Relic Mechanics
 
-Neither relic is inherently good nor evil. They are manifestations of cosmic extremes:
+Neither relic is inherently good nor evil. They are manifestations of cosmic apex forces whose morality is
+dictated solely by the intentions and choices of their wielders—**Elijah Ro-enheart** and **Katrina Jaren**:
 
 [cols="1,2,2", options="header"]
 |===
 | Relic | The Shield of Lux | The Sword of Tenebris
 | **Aspect** | Apex Radiance & Cohesion | Apex Entropy & Dissolution
 | **Energy Gauge** | `shield_power` ($0 \dots 100$) | `sword_edge` ($0 \dots 100$)
-| **Primary Action** | `ward` (or `shield`) | `strike` (or `slash`)
-| **Tactical Role** | Damage deflection, stagger, barrier formation, illumination | Severance, armor penetration, mist cloaking, finishing strikes
-| **Resource Dynamics** | Regenerates $+20$ on ward; absorbs incoming blows | Consumes edge on strikes; hones $+15$ outside combat
+| **Primary Bearer** | **Elijah Ro-enheart** (Vanguard Defense) | **Katrina Jaren** (Agile Severance)
+| **Grid Role** | Zone-of-Control denial, sanctuary aura, ally protection | High-mobility flanking, armor penetration, mist evasion
+| **Cinematic Action** | Timed kinetic blocks, shield-bashes, radiant shockwaves | Rapid dash strikes, armor severance, twilight blade waves
+| **Resource Dynamics** | Regenerates $+20$ on ward; absorbs incoming assault | Consumes edge on strikes; hones $+15$ outside combat
 |===
 
 == 2. The Combat Stance State Machine
 
-The player shifts combat footing via the `stance <type>` command:
+The battle posture shifts dynamically across four discrete combat stances:
 
 [source,text]
 ----
@@ -48,20 +51,20 @@ The player shifts combat footing via the `stance <type>` command:
 ----
 
 1. **`STANCE_NEUTRAL`**: Relics held at waist. Balanced baseline.
-2. **`STANCE_WARDING`**: Shield locked forward in high guard.
-   - Warding boost: $+15$ Shield power regeneration on action.
-   - Combat deflection: Staggers active foes for $25$ damage and protects innocents.
-3. **`STANCE_STRIKING`**: Greatsword gripped in two-handed assault posture.
-   - Strike damage increased from $30$ to $45$ severance damage.
-   - Edge cost reduced from $12$ to $8$ points.
-4. **`STANCE_EQUILIBRIUM`**: Harmonized twin-wield posture.
-   - Simultaneously restores $+15$ Shield power and $+15$ Sword edge.
-   - Parries incoming attacks while riposting for $20$ counter-damage.
-   - Nudges moral sway toward cosmic center ($0$).
+   - Standard movement on the tactical grid; baseline attack parameters.
+2. **`STANCE_WARDING`**: Shield raised in protective vanguard high-guard.
+   - Grid Effect: Increases allied defense within adjacent tiles by $+25\%$.
+   - Cinematic Duel: Boosts Shield power recovery ($+15$), increases stagger damage against attacking foes ($25$ HP), and wards against incoming status curses.
+3. **`STANCE_STRIKING`**: Greatsword held in aggressive two-handed assault posture.
+   - Grid Effect: Increases unit movement by $+1$ tile and grants armor-piercing flank bonuses.
+   - Cinematic Duel: Increases strike severance from $30$ to $45$ damage; reduces edge cost from $12$ to $8$ points.
+4. **`STANCE_EQUILIBRIUM`**: Harmonized twin-relic synchronization.
+   - Grid Effect: Immunity to positioning debuffs and void mire terrain penalties.
+   - Cinematic Duel: Simultaneously restores $+15$ Shield power and $+15$ Sword edge; parries incoming strikes while counter-attacking for $20$ damage; nudges moral sway toward center ($0$).
 
 == 3. The Moral Sway Continuum
 
-The moral trajectory of the Champion is tracked on a continuous integer axis:
+The moral trajectory of Sacyra's champions is tracked along a continuous bounded integer axis:
 
 [source,text]
 ----
@@ -69,8 +72,11 @@ The moral trajectory of the Champion is tracked on a continuous integer axis:
 ----
 
 * **Virtue & Mercy ($+1 \dots +100$)**:
-  - Gained by shielding the defenseless (`ward`), routing foes without unnecessary brutality, and seeking reconciliation between the Kingdom's warring orders.
+  - Gained by shielding fleeing militia, sparing defeated enemy officers, resolving noble-court corruption through justice, and protecting the innocent with the Shield of Lux.
+  - Unlocks royal alliances, Knight Commander endorsements, and sanctuary miracles.
 * **Tyranny & Ruin ($-1 \dots -100$)**:
-  - Accumulated through relentless slaughter, excessive use of scorched-earth light to blind subjects, or feeding the Dark Lord's chaos.
+  - Accumulated through ruthless executions, collateral damage in villages, using scorched-earth radiance to blind subjects, or giving in to the void's bloodlust.
+  - Unlocks forbidden void arts, mercenary enlistments, and intimidation tactics.
 * **Equilibrium ($0$)**:
-  - Maintained by balancing the blade and the aegis; recognizing that light without shadow is a blinding wasteland, and shadow without light is a stagnant abyss.
+  - Maintained by balancing the blade and the aegis; recognizing that light without shadow is a calcified wasteland, and shadow without light is an endless void.
+  - Unlocks the ultimate secret synthesis arts of ancient Sacyra.
