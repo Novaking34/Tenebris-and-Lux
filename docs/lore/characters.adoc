@@ -1,0 +1,104 @@
+= Dramatis Personae: Heroes & Figures of Sacyra
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-26
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document provides complete biographical dossiers, martial doctrines, and thematic arcs
+for the central protagonists and key figures of *Tenebris and Lux* in the **Kingdom of Sacyra**.
+
+== 1. Elijah Ro-enheart (The Aegis of Lineage)
+
+[quote, Elijah Ro-enheart]
+"My father taught me that a shield is not a wall to hide behind, but a promise made to the people standing behind you."
+
+=== Biography & Heritage
+
+* **Full Name**: Elijah Ro-enheart
+* **Affiliation**: Kingdom of Sacyra Royal Army (formerly Royal Cadet Corps)
+* **Family Lineage**: The Ro-enhearts have served the Sacyran crown for five unbroken generations. Elijah's father, **Commander Gareth Ro-enheart**, was the esteemed former Head of the Royal Guard, famed for holding the Sunken Citadel against an allied barbarian siege decades prior.
+* **Upbringing**: Raised in the barracks and training quadrangles of the capital citadel. Trained rigorously in shield craft, formation tactics, and military law from childhood.
+* **Visual & Demeanor**: Broad-shouldered, armored in fitted silver-steel infantry plate over deep navy gambeson. Earnest, disciplined, observant, and burdened by the immense expectations of his family name.
+
+=== Combat & Tactical Doctrine (TRPG)
+
+* **Battlefield Role (Grid)**: Heavy Frontline Anchor / Guardian Vanguard.
+* **Grid Attributes**: High defense, heavy physical mitigation, zone-of-control denial, ally interception.
+* **Cinematic Action Style (Side-View)**:
+  - Solid, grounded sword-and-shield techniques.
+  - Heavy shield-bashes that stagger incoming charges and break enemy poise.
+  - Barrier projection: Raises the **Shield of Lux** to cast wide golden auric domes that deflect projectile swarms.
+
+=== Narrative Arc & Internal Conflict
+
+Elijah enters the war believing unquestioningly in military discipline and hierarchy. However, as the
+Dark Lord Malakor's invasion accelerates and noble houses in the royal court squabble over political
+favor rather than sending reinforcements to border villages, Elijah is forced to confront what true
+honor demands: does a soldier serve the written decree of a hesitant court, or the living people of Sacyra?
+
+== 2. Katrina Jaren (The Blade of Freedom)
+
+[quote, Katrina Jaren]
+"Silk dresses and court etiquette won't turn back a vanguard blade. Let my cousins argue over tax registries; my place is on the frontier."
+
+=== Biography & Heritage
+
+* **Full Name**: Lady Katrina Jaren
+* **Affiliation**: House Jaren (Aristocracy of Sacyra); Aspirant of the Adventurers' Guild
+* **Family Lineage**: **House Jaren** is an old, wealthy noble house holding lucrative trade vineyards and silver mines in Sacyra's eastern province. They command significant political clout on the Royal Court.
+* **Upbringing**: Groomed by private tutors, diplomats, and court heralds to occupy a powerful hereditary seat on the Royal Court to advance family interests. Katrina despised the stifling, hypocritical court etiquette, sneaking away to train with Guild sellswords and ranger outriders.
+* **Visual & Demeanor**: Quick-footed, clad in tailored lightweight leather armor over noble-weave tunic, with rapier and long-dagger sheaths. Quick-witted, fiercely autonomous, skeptical of bureaucratic protocol, and fiercely loyal to companions who earn her respect.
+
+=== Combat & Tactical Doctrine (TRPG)
+
+* **Battlefield Role (Grid)**: High-Mobility Skirmisher / Flanking Striker.
+* **Grid Attributes**: High movement tiles, evasive evasion against counter-attacks, armor-piercing critical strikes, hit-and-run tactics.
+* **Cinematic Action Style (Side-View)**:
+  - Fluid, dynamic acrobatics, quick dashes, and precise target severance.
+  - Channels the **Sword of Tenebris** to cloak in mist, closing distances instantly.
+  - Unleashes crescent twilight blades that slice clean through heavy automaton plating and void-cursed armor.
+
+=== Narrative Arc & Internal Conflict
+
+Katrina longs for the unvarnished honesty of the **Adventurers' Guild**, where skill and character
+matter more than noble pedigree. Yet her noble education gave her a sharp analytical mind and an
+understanding of political subterfuge that simple soldiers lack. As she takes up the Sword of Tenebris
+alongside Elijah, she must reconcile her thirst for personal freedom with her inescapable responsibility
+to the survival of Sacyra.
+
+== 3. Dual-Protagonist Dynamics: The Wielders of Harmony
+
+The heart of the gameplay and story is the contrast and evolving partnership between Elijah and Katrina:
+
+[cols="1,2,2", options="header"]
+|===
+| Dimension | Elijah Ro-enheart | Katrina Jaren
+| **Social Caste** | Military Soldier / Son of the Royal Guard Head | High Aristocracy / House Jaren
+| **Institution** | Sacyran Royal Army (Structure, Law, Duty) | Adventurers' Guild Aspirant (Freedom, Merit, Exploration)
+| **Relic Affinity** | **The Shield of Lux** (Defense, Preservation, Barrier) | **The Sword of Tenebris** (Offense, Severance, Velocity)
+| **Combat Rhythm** | Anchor, Stagger, Absorb, Hold the Line | Flank, Pierce, Evade, Sever Key Threats
+| **Moral Perspective** | Starts with Lawful Duty; learns the necessity of independent conscience | Starts with Rebellious Independence; learns the weight of sacrifice and leadership
+|===
+
+=== Tactical Synergy on the Grid
+
+* **The Warding Wall**: Elijah positions on a bottleneck grid tile, activating Shield of Lux aura to increase Katrina's evasion and protect her from ranged artillery.
+* **The Twilight Riposte**: When an enemy assaults Elijah's shield, Katrina triggers an interception attack from an adjacent grid square, executing a devastating tandem strike.
+* **Relic Sharing**: While each hero naturally attunes to one relic, critical narrative crises and high-level TRPG skills allow them to pass or dual-wield the twin armaments, unlocking the supreme **Stance of Equilibrium**.
+
+== 4. Antagonist: Dark Lord Malakor (The Void Sovereign)
+
+* **Identity**: The ancient necromantic lord of the deep Abyssal Vaults bordering Sacyra.
+* **Nature**: An immortal warlord who long ago submerged his mortal body in forbidden void mists, Malakor embodies tyrannical ambition.
+* **Objective**: Overrun the Kingdom of Sacyra, capture both the Shield of Lux and the Sword of Tenebris, and use their primordial power to permanently extinguish free will across the continent.
+* **The Vanguard**:
+  - **Umbral Centurions**: Corrupted soldiers encased in blackened, spiked plate armor.
+  - **Blighted Automata**: Ancient war-golems reanimated by dark soul-engines.
+  - **Void Stalkers**: Ethereal shadow beasts that bypass heavy armor to strike at unit rear lines.

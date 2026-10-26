@@ -1,0 +1,94 @@
+= Developer Log 002: The Sacyra Chronicles, Dual Protagonists & TRPG Evolution
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-26
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Abstract
+
+This developer log chronicles the foundational provenance and overarching creative vision
+of *Tenebris and Lux*, rooted in its 2014–2018 high school inception as the premier game project
+of CreativeWorkzStudio. It documents the elimination of placeholder factions in favor of the canonical
+**Kingdom of Sacyra**, the introduction of dual protagonists **Elijah Ro-enheart** and **Katrina Jaren**,
+and the technical specification of the game's true genre: a **Tactical Strategy RPG (TRPG)** fusing
+grid-based tactical maneuvering with cinematic traditional side-scroll / action-based combat resolution.
+
+== 1. Historical Provenance: The 2014–2018 High School Genesis
+
+Before CreativeWorkzStudio evolved into a multifaceted publishing house, *Tenebris and Lux* was its
+very first major game in active development.
+
+* **The RPG Maker Era (2014–2018)**: Conceived while the author was in high school learning game design
+  and programming. The initial iterations were built using the default offerings of RPG Maker, exploring
+  community plugins, and crafting characters through its Character Generator.
+* **The Lost Assets & The Blank Canvas**: With no legacy digital assets surviving from that era, the
+  project stands not as a nostalgic port, but as a complete ground-up rebirth—realizing the original
+  creative vision with the systems engineering maturity, mathematical rigor, and architectural discipline
+  of modern custom engine design.
+
+== 2. Narrative Realignment: The Kingdom of Sacyra
+
+During early prototype scaffolding, generic placeholder factions ("The Solar Order" and "The Umbral Covenant")
+were inserted to test basic moral sway logic. On October 26, 2026, the creator firmly realigned the canon,
+stripping away these synthetic factions to reveal the true world:
+
+=== 1. The Kingdom of Sacyra (`/sɔːˈkiːrə/`)
+
+* The setting is the historic **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*).
+* Sacyra is a structured, chivalric realm anchored by three distinct socio-political pillars:
+  1. **The Crown & Royal Guard**: Guardians of legal order, national defense, and the ancestral throne.
+  2. **The Noble Houses & Royal Court**: High aristocracy governing regional fiefs and vying for political dominance on the royal council.
+  3. **The Adventurers' Guild**: A pragmatic, frontier-based brotherhood operating beyond courtly vanity, answering commoner monster distress calls and exploring untamed ruins.
+* **The Existential Threat**: The ancient necromantic sovereign **Dark Lord Malakor** breaking through the Abyssal Vaults, threatening to extinguish all mortal agency.
+
+=== 2. The Dual Protagonists
+
+Rather than a generic lone wanderer, the narrative is anchored by two contrasting protagonists whose
+fates, lineages, and martial philosophies intertwine:
+
+[cols="1,2,2", options="header"]
+|===
+| Character | Elijah Ro-enheart | Lady Katrina Jaren
+| **Social Origin** | Military Lineage (Common/Barracks Nobility) | High Aristocracy (House Jaren)
+| **Family Heritage** | Son of the former Head of the Royal Guard | Daughter of an influential noble house on the Royal Court
+| **Internal Desire** | Living up to his father's legendary military legacy while discovering what true honor demands | Escaping stifling aristocratic court expectations to join the local **Adventurers' Guild**
+| **Relic Synergy** | **The Shield of Lux** (Sanctuary, Warding, Formation Hold) | **The Sword of Tenebris** (Severance, Mist-Veil, Critical Strike)
+| **TRPG Doctrine** | Frontline heavy vanguard; zone-of-control denial; ally interception | Agile outrider skirmisher; bypassing enemy lines; flanking assassin
+|===
+
+== 3. Ludological Evolution: The Tactical Strategy RPG (TRPG)
+
+The game's true mechanical identity is a **Tactical Strategy RPG (TRPG)**. This fundamentally informs
+how the simulation engine and presentation viewports are being constructed:
+
+=== 1. The Dual-Layer Combat Loop
+
+The combat loop operates across two synchronized phases:
+
+1. **Strategic Grid Phase**:
+   - The battle takes place on a discrete 2D grid representing castles, ramparts, thickets, and void-blighted frontier passes.
+   - Units position based on movement ranges, terrain defense bonuses, directional facing (Front, Flank, Rear), and Zone-of-Control (ZOC) restrictions.
+2. **Cinematic Combat Resolution (Side-View Action)**:
+   - When a unit initiates combat against an enemy target, the game transitions into a dynamic **2D traditional side-scroll / action-based clash**.
+   - Attacks play out with timed player agency: precision blocks with the Shield of Lux, poise-breaking shield bashes, and devastating severance slashes with the Sword of Tenebris.
+   - Upon duel conclusion, remaining unit health, stagger, and relic resonance seamlessly persist back to the tactical grid.
+
+=== 2. Architectural Implications for the C Engine
+
+Knowing this was originally an RPG Maker project gives us clear architectural directives:
+* **Decoupled Data Architecture**: Static definitions (`Units`, `Skills`, `Equipment`, `TerrainTypes`) must exist as clean data tables distinct from session state (`player_state_t`, `grid_t`).
+* **Deterministic Event Pipeline**: Interactive map features (gates, switches, dialog triggers) will follow a clean, reentrant command interpreter model.
+* **Zero Engine Bloat**: By building this custom in C11 rather than relying on bloated runtimes, our TRPG will maintain sub-millisecond turn updates, instantaneous scene transitions, and absolute softlock immunity.
+
+== 4. Next Milestone Roadmap
+
+1. **Phase 1 (Complete)**: Established OmniCode 5-block layering, Layer 0 utilities, CTest verification suite, and canonical documentation.
+2. **Phase 2 (Active)**: Expand simulation state to model dual protagonists (Elijah & Katrina), party data structures, and the foundational 2D tactical grid.
+3. **Phase 3**: Implement the cinematic side-scroll combat transition in the presentation layer.
+4. **Phase 4**: Expand the tactical campaign across the provinces of Sacyra to confront the vanguard of Dark Lord Malakor.

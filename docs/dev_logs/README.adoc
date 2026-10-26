@@ -1,6 +1,6 @@
 = Developer Logs Index & Engineering Chronology
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v0.0.1, 2026-10-26
 :doctype: article
 :icons: font
 
@@ -14,9 +14,16 @@ here to provide enduring context for human developers and AI pair programmers.
 == Dev Log Manifest
 
 1. **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**  
-   *Genesis, The Paradigm Pivot & Game Dev Invariants*:
+   *Genesis, The Paradigm Pivot & Game Dev Invariants* (2026-10-24):
    - Clean ISO C11 foundations and the OmniCode 5-Block protocol.
    - Analysis of the early survival-battery prototype and its implicit biases.
    - The paradigm pivot: The Shield of Lux, The Sword of Tenebris, and the re-awakening Dark Lord.
    - Native double-buffered X11 GUI and headless terminal CLI.
    - The dedicated game development testing suite.
+
+2. **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)**  
+   *The Sacyra Chronicles, Dual Protagonists & TRPG Evolution* (2026-10-26):
+   - Inception context: High school development (2014–2018) in RPG Maker as CreativeWorkzStudio's premier game.
+   - Canonical setting establishment: The Kingdom of Sacyra (Crown, Royal Guard, Noble Houses, Adventurers' Guild).
+   - Dual protagonists: Elijah Ro-enheart (Royal Guard lineage, vanguard defense) and Katrina Jaren (noble court aspirant, outrider agility).
+   - Technical specification of the true genre: Tactical Strategy RPG (TRPG) combining a 2D strategic grid with cinematic side-view action combat resolution.

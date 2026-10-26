@@ -1,6 +1,6 @@
 = System Architecture & Technical Design Specification
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v0.0.1, 2026-10-26
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -13,17 +13,20 @@ v0.0.1, 2026-10-24
 
 This document specifies the technical design, subsystem boundaries, data models, and
 ontological lifecycle governing *Tenebris and Lux* ("Darkness and Light").
-The simulation centers upon two primordial relics—**The Shield of Lux** and **The Sword of Tenebris**—wielded
-amidst a Kingdom fractured by ideological schism and threatened by the re-awakening of the **Dark Lord Malakor**.
+Set within the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`), the game is a
+**Tactical Strategy RPG (TRPG)** centered on dual protagonists—**Elijah Ro-enheart** (son of the former
+Head of the Royal Guard) and **Katrina Jaren** (noble court aspirant seeking the Adventurers' Guild)—who
+wield the primordial **Shield of Lux** and **Sword of Tenebris** against the encroaching dread legions of
+**Dark Lord Malakor**.
 
 The engine strictly separates **simulation state** from the **presentation layer**:
 
 [source,text]
 ----
 ┌────────────────────────────────────────────────────────┐
-│              CORE SIMULATION ENGINE (C11)              │
-│  State: player_state_t (Shield, Sword, Stance, Sway)   │
-│  Action Engine: game_process_command()                 │
+│             LAYER 1: SIMULATION ENGINE (C11)           │
+│  State: player_state_t (Elijah & Katrina, Armaments)   │
+│  Tactical Grid & Action Router: game_process_command() │
 │  Audit Suite: game_audit_state(), game_run_self_audit()│
 └───────────────────────────┬────────────────────────────┘
                             │
@@ -33,6 +36,13 @@ The engine strictly separates **simulation state** from the **presentation layer
 │  Headless Terminal CLI │      │ Native Double-Buffered │
 │  (Automated CI & stdin)│      │ X11 Graphical Viewport │
 └────────────────────────┘      └────────────────────────┘
+                            │
+                            ▼ (Layer 0 Primitives)
+┌────────────────────────────────────────────────────────┐
+│               LAYER 0: FOUNDATIONAL UTILITIES          │
+│   math_utils (clamping, saturation) | string_utils     │
+│   geom_utils (2D AABB, hit-tests)   | time_utils (ms)  │
+└────────────────────────────────────────────────────────┘
 ----
 
 == 1. The Universal 5-Block Code Structure
@@ -50,16 +60,16 @@ In alignment with the OmniCode framework, all C source code, headers, and build 
 === The Twin Relics: Shield and Sword
 
 * **The Shield of Lux (`shield_power`, $0 \dots 100$)**:
-  Represents radiant warding, defense, barrier integrity, and illumination.
+  Primarily borne by **Elijah Ro-enheart**. Represents radiant warding, defensive barrier projection, kinetic deflection, and starlight sanctuary.
 * **The Sword of Tenebris (`sword_edge`, $0 \dots 100$)**:
-  Represents umbral sharpness, severance, kinetic strike force, and mist cloaking.
+  Primarily borne by **Katrina Jaren**. Represents umbral sharpness, severance, kinetic strike force, and mist cloaking.
 * **Tactical Stance (`combat_stance_t`)**:
   - `STANCE_NEUTRAL`: Relics held in readiness.
   - `STANCE_WARDING`: Shield raised forward; enhances defensive warding; mitigates incoming damage.
   - `STANCE_STRIKING`: Sword drawn for offensive severance; boosts strike damage.
   - `STANCE_EQUILIBRIUM`: Twin mastery; balances offensive and defensive resonance.
 * **Moral Sway (`moral_sway`, $-100 \dots +100$)**:
-  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless, seek harmony, and heal the realm).
+  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless, seek harmony, and heal Sacyra).
   - Negative ($< 0$): **Tyranny & Ruin** (using power for cruel domination, ruthless execution, and feeding the Dark Lord).
 
 === Invariant Axioms
@@ -75,8 +85,8 @@ In alignment with the OmniCode framework, all C source code, headers, and build 
 [cols="1,2,3", options="header"]
 |===
 | Phase | Milestone | Subsystem Architecture
-| **Phase 1 (Current)** | `v0.0.1` | Dual CLI + Native GUI Prototype: Twin Relics, Stance Loop, Kingdom Topology, Audit Suite.
-| **Phase 2** | `v0.1.0` | Decoupled Core Subsystems: Event bus, tick scheduler, ECS (Entity Component System).
-| **Phase 3** | `v0.2.0` | 2D / 2.5D Presentation Layer: Sprite animations, dynamic shadow caster, tactical grid.
-| **Phase 4** | `v1.0.0` | Custom 3D Game Engine: Vulkan rendering pipeline, spatial audio, 3D character controllers.
+| **Phase 1 (Current)** | `v0.0.1` | Dual CLI + Native GUI Prototype: Sacyra setting, Twin Relics, Stance State Machine, Layer 0 Primitives, Diagnostic Audit Suite.
+| **Phase 2** | `v0.1.0` | Tactical Strategy RPG Grid Engine: Discrete 2D grid coordinates, unit movement budgets, terrain modifiers, Zone-of-Control (ZOC), and dual-protagonist data models.
+| **Phase 3** | `v0.2.0` | Cinematic Combat Resolution: Transition from grid to traditional 2D side-view action duels, timed ward/strike inputs, and poise meters.
+| **Phase 4** | `v1.0.0` | Full TRPG Campaign of Sacyra: Dynamic party management, story branching, and final confrontation against Dark Lord Malakor.
 |===

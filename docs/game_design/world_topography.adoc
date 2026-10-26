@@ -1,6 +1,6 @@
-= World Topography & Encounter Design: The Kingdom of Sol-Tenebrae
+= World Topography & Encounter Design: The Kingdom of Sacyra
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v0.0.1, 2026-10-26
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -12,70 +12,66 @@ v0.0.1, 2026-10-24
 == Overview
 
 This document specifies the spatial geography, province layouts, environmental encounters,
-and threat scaling governing the fractured Kingdom of **Sol-Tenebrae**.
+and tactical grid battlefields governing the **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*)
+as Elijah Ro-enheart and Katrina Jaren defend the realm from Dark Lord Malakor.
 
-== 1. Spatial Structure: The Contested Provinces
+== 1. Spatial Structure: The Provinces of Sacyra
 
-The prototype models four foundational provinces representing the path from the ancient
-halls of awakening to the frontlines of the re-awakened Dark Lord Malakor:
+The Tactical Strategy RPG campaign progresses across the major defensive tiers of the Kingdom:
 
 [source,text]
 ----
-┌───────────────────────┐
-│ The Abyssal Threshold │
-│ (Dark Lord Monolith)  │
-└───────────▲───────────┘
-            │ West
-┌───────────┴───────────┐
-│ The Fractured Marches │
-│ (Civil War Highlands) │
-└───────────▲───────────┘
-            │ South / North
-┌───────────┴───────────┐
-│ Sunken Citadel Gates  │
-│ (Siege Vanguard)      │
-└───────────▲───────────┘
-            │ South / North
-┌───────────┴───────────┐
-│  The Garrison Altar   │
-│  (Ancestral Redoubt)  │
-└───────────────────────┘
+┌───────────────────────────────────────┐
+│         The Abyssal Threshold         │
+│  (Dark Lord Malakor's Dread Monolith) │
+└───────────────────▲───────────────────┘
+                    │ West
+┌───────────────────┴───────────────────┐
+│         The Fractured Marches         │
+│ (Contested Borderlands & Guild Camp)  │
+└───────────────────▲───────────────────┘
+                    │ North / South
+┌───────────────────┴───────────────────┐
+│        Sunken Citadel Ramparts        │
+│     (Outer Royal Bastion & Gates)     │
+└───────────────────▲───────────────────┘
+                    │ North / South
+┌───────────────────┴───────────────────┐
+│          The Garrison Altar           │
+│  (Royal Guard Ancestral Headquarters) │
+└───────────────────────────────────────┘
 ----
 
-=== Province 1: The Garrison Altar (`LOC_GARRISON_ALTAR`)
-* **Role**: The nexus of awakening and strategic attunement.
-* **Environment**: High-vaulted hall of carved solar silver and obsidian. Quiet, sanctified ground.
-* **Threat Vigor**: $0$ (Safe zone; no enemy spawns).
-* **Connections**: North $\to$ The Sunken Citadel Gates.
+=== 1. The Garrison Altar (`LOC_GARRISON_ALTAR`)
+* **Role**: The ancestral redoubt of Sacyra's Royal Guard and the starting staging ground.
+* **Environment**: High-vaulted halls of carved silver-white granite and polished obsidian pedestals where Elijah's father once held council.
+* **Significance**: Here, Elijah Ro-enheart and Katrina Jaren first awaken the dormant Shield of Lux and Sword of Tenebris as reports of Malakor's vanguard arrive.
+* **Grid Battlefield**: Smooth stone flags, defensive pillars providing $+15\%$ cover, training dummies, weapon racks.
+* **Threat Vigor**: $0$ (Sanctified safe zone; tactical deployment and stance tutorial).
+* **Connections**: North $\to$ Sunken Citadel Ramparts.
 
-=== Province 2: The Sunken Citadel Gates (`LOC_CITADEL_GATES`)
-* **Role**: The fortified bulwark defending the central Kingdom valleys.
-* **Environment**: Massive white granite ramparts scorched by black void-fire. Banners of the fallen garrison flutter in the ash.
-* **Threat Encounter**: **Umbral Siege Vanguard** ($50$ Threat HP).
-  - Armed with blackened warhammers and void-shields.
-  - Can be staggered and blinded via `ward` with the Shield of Lux ($25$ stagger damage), or severed via `strike` with the Sword of Tenebris ($30 \dots 45$ damage).
-* **Connections**: South $\to$ The Garrison Altar; North $\to$ The Fractured Marches.
+=== 2. Sunken Citadel Ramparts (`LOC_CITADEL_GATES`)
+* **Role**: The primary fortified bastion guarding the central valleys of Sacyra.
+* **Environment**: Colossal stone ramparts scorched by void-fire; fractured portcullises and smoking ballista batteries.
+* **Encounter**: **Malakor's Void Vanguard Captain** ($50$ Threat HP) commanding shock troops and blighted footmen.
+* **Tactical Grid Elements**:
+  - Narrow stone choke-points where Elijah's *Royal Intercept* and Shield of Lux can hold off numerical superiority.
+  - Rampart parapets offering Katrina elevated flanking routes and line-of-sight plunging strikes.
+* **Connections**: South $\to$ Garrison Altar; North $\to$ Fractured Marches.
 
-=== Province 3: The Fractured Marches (`LOC_DIVIDED_MARCHES`)
-* **Role**: The political and moral crucible of the civil war.
-* **Environment**: Windswept alpine meadows scarred by trenches and burnt encampments.
-* **Factions Present**: Clashing squadrons of Solar Order Inquisitors and Umbral Covenant Partisans.
-* **Threat Encounter**: Crossfire and skirmishers ($30$ Threat HP).
-  - Demands moral navigation: balancing the forces (`balance`) to demonstrate unity, or taking a side.
-* **Connections**: South $\to$ The Sunken Citadel Gates; East $\to$ The Abyssal Threshold.
+=== 3. The Fractured Marches (`LOC_DIVIDED_MARCHES`)
+* **Role**: The windswept highlands along the Kingdom's frontier, home to forward outposts of the **Adventurers' Guild** and noble house estates.
+* **Environment**: Rolling rocky hills, abandoned watchtowers, and misty ravines where royal army patrols and guild outriders clash with vanguard skirmishers.
+* **Encounter**: **Corrupted Golem Vanguard & Shadow Stalkers** ($70$ Threat HP).
+* **Tactical Grid Elements**:
+  - Uneven terrain, forest thickets granting $+20\%$ evasion, and muddy ditches that slow heavy armor.
+  - Katrina's knowledge of local guild ranger paths allows the party to surprise enemy artillery from the rear.
+* **Connections**: South $\to$ Sunken Citadel Ramparts; West $\to$ Abyssal Threshold.
 
-=== Province 4: The Abyssal Threshold (`LOC_ABYSSAL_THRESHOLD`)
-* **Role**: The dread gateway to the Dark Lord Malakor's awakened citadel.
-* **Environment**: Towering obsidian monoliths where physical geometry bends. Gravitational anomalies and reality-tearing shadow rifts.
-* **Threat Encounter**: **Harbinger of Malakor** ($90$ Threat HP).
-  - Heavy boss encounter requiring dynamic stance shifts: raising the Shield of Lux to deflect void rays, and unleashing the Sword of Tenebris to cut through reality rifts.
-* **Connections**: West $\to$ The Fractured Marches.
-
-== 2. Threat Progression & Combat Invariants
-
-1. **Reversible Spatial Navigation**:
-   - Every directional movement into a province must possess a corresponding reverse vector (North $\leftrightarrow$ South, East $\leftrightarrow$ West).
-2. **Combat Lock Invariants**:
-   - Entering an active combat zone initializes `threat_hp`.
-   - Players may retreat (`move south` / `move west`) to disengage, but retreating leaves the province contested.
-   - Vanquishing a threat permanently increments `foes_vanquished` and secures the province.
+=== 4. The Abyssal Threshold (`LOC_DARK_LORD_THRESHOLD`)
+* **Role**: The dark frontier where the fabric of reality bends into the subterranean vaults of Dark Lord Malakor.
+* **Environment**: Jagged obsidian monoliths, boiling void-mist chasms, and anti-radiant storms.
+* **Encounter**: **Dread Lord Vanguard Commander** ($90 \dots 100$ Threat HP).
+* **Tactical Grid Elements**:
+  - Void Mire tiles causing $-5$ HP per turn, demanding strict stance management and the Shield of Lux's purifying aura to cross safely.
+  - Multi-tile boss presence demanding coordinated tandem strikes between Elijah and Katrina to shatter dread shields.

@@ -1,6 +1,6 @@
 ---
 project_title: "Tenebris and Lux"
-subtitle: "An Atmospheric Game & Engine Architecture Written in C"
+subtitle: "An Atmospheric Tactical Strategy RPG & Custom Engine Architecture Written in C"
 version: "0.0.1"
 organization: "CreativeWorkzStudio LLC"
 repository: "https://github.com/Novaking34/tenebris-lux"
@@ -11,7 +11,9 @@ license: "MIT"
 
 > **"The Shield protects and confines; the Sword severs and defends. The metal knows neither virtue nor malice—only the hand that grips the hilt."**
 
-*Tenebris and Lux* ("Darkness and Light") is a C game project and custom engine architecture. The story chronicles the epic struggle within the divided Kingdom of **Sol-Tenebrae**, threatened by the re-awakening of the **Dark Lord Malakor**. At the heart of the journey lie two neutral, primordial armaments—**The Shield of Lux** and **The Sword of Tenebris**—whose power can be wielded for righteous salvation or tyrannical devastation depending on the bearer's choices.
+*Tenebris and Lux* ("Darkness and Light") is a custom-engineered **Tactical Strategy RPG (TRPG)** and C11 game engine architecture. Conceived between 2014–2018 in RPG Maker as the foundational project of **CreativeWorkzStudio**, the story chronicles the defense of the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`) against the re-awakened **Dark Lord Malakor**. 
+
+The journey is anchored by two protagonists: **Elijah Ro-enheart**, son of the former Head of the Royal Guard, and **Katrina Jaren**, a noble court aspirant drawn to the Adventurers' Guild. Together they awaken and wield two primordial, morally neutral relics—**The Shield of Lux** and **The Sword of Tenebris**—whose power shapes the destiny of the realm through player choices, tactical positioning, and moral sway.
 
 ---
 
@@ -20,22 +22,27 @@ license: "MIT"
 | Attribute | Specification |
 | :--- | :--- |
 | **Engine Version** | `0.0.1` (Early Prototype Milestone) |
+| **Genre** | Tactical Strategy RPG (TRPG) — 2D Grid Battlefield + Cinematic Side-View Duels |
 | **Organization** | CreativeWorkzStudio LLC |
 | **Repository** | [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux) |
 | **Core Standard** | ISO C11 (`-std=c11`, zero external dependencies) |
 | **Build System** | CMake 3.24+ (and direct C11 compiler support) |
 | **Structural Paradigm** | OmniCode Universal 5-Block Code Lifecycle Protocol |
-| **Invariant Discipline** | Diagnostic Audit Procedures & Strict State Boundaries |
+| **Layered Strata** | Layer 0 (Util), Layer 1 (Sim), Layer 2 (GUI), Layer 3 (Entry), Layer 4 (Tests) |
 | **Author / Lead** | ProfessorSeanEX / CreativeWorkzStudio LLC |
 | **License** | MIT License |
 
 ---
 
-## 1. Project Vision & Lore
+## 1. Project Vision & Canonical Setting
 
-In *Tenebris and Lux*, Light and Darkness are not moral absolutes of good and evil; they are apex primordial forces personified.
+In *Tenebris and Lux*, Light and Darkness are not moral absolutes of good and evil; they are primal cosmic forces personified.
 
-As the chosen Champion awakening at the *Garrison Altar*, you bear the ancient **Shield of Lux** and the **Sword of Tenebris**. You must navigate a Kingdom fractured by civil strife between the dogmatic Order of the Radiant Solar and the secretive Umbral Covenant, while preparing to confront the awakened Dark Lord Malakor. Every tactical choice, ward, and strike sways whether you become a righteous savior or a terrifying tyrant.
+* **The Kingdom of Sacyra (`/sɔːˈkiːrə/`)**: A historic kingdom governed by the Crown and the legendary **Royal Guard**, balanced against competing regional **Noble Houses** on the Royal Court, and the independent, meritocratic **Adventurers' Guild**.
+* **Dual Protagonists**:
+  - **Elijah Ro-enheart**: Lineage of royal army service; son of the former Head of the Royal Guard. Frontline heavy vanguard bearer of the Shield of Lux.
+  - **Katrina Jaren**: Daughter of noble House Jaren; groomed for a seat on the Royal Court while longing for the freedom of the Adventurers' Guild. Agile outrider wielder of the Sword of Tenebris.
+* **The Existential Threat**: **Dark Lord Malakor** breaking through the ancient Abyssal Vaults along Sacyra's frontier.
 
 ---
 
@@ -62,30 +69,25 @@ Inheriting the structural discipline of the **OmniCode** framework, every source
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-This discipline ensures:
-
-- **Zero Ambiguity**: File responsibilities and state definitions are clear at a glance.
-- **Embedded Self-Auditing**: Diagnostic routines verify runtime state integrity without crashing.
-- **Renderer Decoupling**: Simulation logic remains pure and portable.
-
 For in-depth architectural specifications, see [ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc) and [dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc).
 
 ---
 
-## 3. Roadmap: From Prototype to Custom Engine
+## 3. Roadmap: From Prototype to Custom TRPG Engine
 
 - [x] **Phase 1: Dual-Frontend Prototype (Current - v0.0.1)**
   - Pure C11 interactive simulation with zero external downloads.
   - Native double-buffered X11 GUI and terminal CLI running side-by-side.
-  - Core mechanics: Lux decay, Lumina shard harvesting, room traversal, command parser.
-  - Automated diagnostic audits (`--audit`) and CTest integration.
-- [ ] **Phase 2: Core Engine Subsystems**
-  - Modular engine packages (`src/core/`, `src/sim/`, `src/render/`).
-  - Decoupled state dispatcher, tick system, event bus, and math/geometry primitives.
-- [ ] **Phase 3: 2D / 2.5D Presentation Layer**
-  - Tilemap rendering, dynamic ambient lighting shaders, sprite animations.
-- [ ] **Phase 4: 3D Custom Engine**
-  - Custom rendering pipeline (Vulkan/OpenGL), spatial audio, scene graph, and entity systems.
+  - Sacyra setting, Twin Relics, Stances, Moral Sway continuum `[-100, +100]`.
+  - Layer 0 Core Utilities (`math_utils`, `string_utils`, `geom_utils`, `time_utils`).
+  - Automated diagnostic audits (`--audit`) and CTest integration (6/6 tests passing).
+- [ ] **Phase 2: Tactical Strategy RPG Grid Engine**
+  - Discrete 2D grid coordinates, movement budgets, terrain defense bonuses, Zone-of-Control (ZOC).
+  - Dual-protagonist party state modeling (Elijah Ro-enheart & Katrina Jaren).
+- [ ] **Phase 3: Cinematic Side-View Combat Resolution**
+  - Grid-to-duel scene transition, 2D side-scroll action clashes, timed warding/strikes, stagger meters.
+- [ ] **Phase 4: Full Sacyra Campaign**
+  - Tactical campaign across the provinces of Sacyra against Dark Lord Malakor.
 
 ---
 
@@ -140,9 +142,9 @@ ctest --test-dir build -C Debug --output-on-failure
 
 - **[docs/README.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/README.adoc)**: Central documentation portal and index.
 - **[docs/INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc)**: Comprehensive compilation, installation, and troubleshooting guide.
-- **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)**: Technical deep-dive into the 5-block structure and dual-frontend engine.
-- **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)**: Canonical chronicles of the Shield of Lux, Sword of Tenebris, and the Dark Lord.
-- **[docs/game_design/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/README.adoc)**: Combat mechanics, world topography, and game dev testing philosophy.
-- **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)**: Living engineering and game design developer log chronicle.
-- **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)**: Subsystem implementation tours for simulation, GUI, and test suites.
+- **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)**: System design, 5-block lifecycle, TRPG architecture, and dual-frontend engine.
+- **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)**: Canonical chronicles of Sacyra, the Shield and Sword, and [characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc) (Elijah Ro-enheart & Katrina Jaren).
+- **[docs/game_design/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/README.adoc)**: [tactical_trpg_system.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/tactical_trpg_system.adoc) (Grid + Cinematic Side-View), relics, topography, and testing philosophy.
+- **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)**: Living engineering chronology ([DevLog 001](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc) and [DevLog 002](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)).
+- **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)**: Subsystem implementation tours for utilities, simulation, GUI, and test suites.
 - **[AGENTS.md](file:///home/professorseanex/Tenebris%20and%20Lux/AGENTS.md)**: Contributor and AI agent coding guidelines, style rules, and commit discipline.

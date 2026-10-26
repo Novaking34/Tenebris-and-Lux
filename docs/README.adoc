@@ -1,18 +1,19 @@
-= Tenebris and Lux — Canonical Documentation Bedrock
+= Documentation Architecture & Living Repository Index
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
-:doctype: article
+v0.0.1, 2026-10-26
+:doctype: book
 :toc: left
 :toclevels: 3
 :sectnums:
 :icons: font
+:source-highlighter: rouge
 
 [abstract]
 == Overview
 
-Welcome to the central documentation portal for *Tenebris and Lux* ("Darkness and Light").
-This repository adheres to the **OmniCode Universal 5-Block Lifecycle Protocol** and standard
-AsciiDoc (`.adoc`) documentation guidelines for clean, comprehensive game development manuals.
+Welcome to the central documentation index for *Tenebris and Lux* ("Darkness and Light"),
+the premier Tactical Strategy RPG (TRPG) of CreativeWorkzStudio. This repository follows the
+AsciiDoc (`.adoc`) documentation standard for clean, modular, and comprehensive game development manuals.
 
 == 1. Documentation Taxonomy & Directory Index
 
@@ -21,16 +22,19 @@ AsciiDoc (`.adoc`) documentation guidelines for clean, comprehensive game develo
 | Category | Directory | Description
 | **Installation** | **[INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc)** | System requirements, CMake compilation workflows, direct GCC/Clang instructions, and troubleshooting.
 | **Architecture** | **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)** | 
-  - **[ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc)**: System boundaries, state invariants, and engine evolution roadmap. +
+  - **[ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc)**: System boundaries, 5-block lifecycle, TRPG architecture, and engine evolution roadmap. +
   - **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**: Headless CLI + native double-buffered X11 GUI specifications.
 | **Lore & World** | **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)** | 
-  - **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**: Primordial neutrality, the Shield of Lux, Sword of Tenebris, the divided Kingdom of Sol-Tenebrae, and the Dark Lord Malakor.
+  - **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**: Primordial neutrality of Lux and Tenebris, the Kingdom of Sacyra, and Dark Lord Malakor. +
+  - **[characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc)**: Dramatis personae of Elijah Ro-enheart (son of the former Royal Guard Head) and Lady Katrina Jaren (noble court aspirant / Adventurers' Guild).
 | **Game Design** | **[docs/game_design/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/README.adoc)** | 
+  - **[tactical_trpg_system.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/tactical_trpg_system.adoc)**: Tactical Strategy RPG system: 2D grid positioning, terrain, and cinematic side-view action duels. +
   - **[relics_and_combat.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/relics_and_combat.adoc)**: Relic mechanics, stances, and the moral sway continuum. +
-  - **[world_topography.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/world_topography.adoc)**: Kingdom provinces, encounters, and threat scaling. +
+  - **[world_topography.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/world_topography.adoc)**: Sacyran provinces, encounters, and threat scaling. +
   - **[game_testing.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/game_testing.adoc)**: The philosophy of game development testing vs. standard software testing.
 | **Developer Logs** | **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)** | 
-  - **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**: Inception, the survival battery audit, the paradigm pivot, and game dev testing.
+  - **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**: Inception, the survival battery audit, the paradigm pivot, and game dev testing. +
+  - **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)**: 2014–2018 RPG Maker genesis, the Kingdom of Sacyra, dual protagonists (Elijah & Katrina), and the Tactical Strategy RPG evolution.
 | **Code Tours** | **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)** | 
   - **[core_utilities.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/core_utilities.adoc)**: Walkthrough of Layer 0 `include/util/` and `src/util/` (math, string, geometry, timing). +
   - **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**: Walkthrough of Layer 1 `include/sim/game.h` and `src/sim/game.c`. +
