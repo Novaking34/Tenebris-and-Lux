@@ -4,16 +4,30 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          test_game_invariants.c
-// @layer         Verification & Game Dev Test Suite
-// @version       0.0.1
-// @epoch         2026.10
+// @id            test.verification.invariants
+// @layer         Layer 4: Verification Suite
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Game Development Invariant & Boundary Verification Suite
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Relic energy invariants: 0 <= shield <= 100, 0 <= sword <= 100.
-//                2. Stance transition state machine is deterministic and complete.
-//                3. Topological paths across Kingdom provinces are strictly bounded.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Game development invariant & boundary verification suite.
+//   Verifies bounded twin relics energy, moral sway continuum bounds,
+//   deterministic stance transitions, and topological map bounds.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: sim.engine.core
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Deterministic test execution).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Sequential test runner).
+//   - Latency Budget:        Total suite completes in under 1 second.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Relic energy invariants: 0 <= shield <= 100, 0 <= sword <= 100.
+//   2. Stance transition state machine is deterministic and complete.
+//   3. Topological paths across Kingdom provinces are strictly bounded.
 // =============================================================================
 
 // =============================================================================

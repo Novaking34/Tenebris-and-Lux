@@ -4,15 +4,29 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          time_utils.c
+// @id            core.util.time
 // @layer         Layer 0: Core Utilities
-// @version       0.0.1
-// @epoch         2026.10
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Implementation of High-Resolution Timing & Frame Sleep
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Monotonic precision without clock drift or leap adjustments.
-//                2. Strictly non-decreasing clock ticks across thread contexts.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Implementation of high-resolution POSIX monotonic clock queries and
+//   frame sleep pacing routines for simulation and GUI loops.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/static, zero dynamic heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, non-blocking time queries).
+//   - Latency Budget:        < 5 microseconds per query.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Monotonic precision without clock drift or leap adjustments.
+//   2. Strictly non-decreasing clock ticks across thread contexts (t2 >= t1).
+//   3. Non-negative frame sleep clamp.
 // =============================================================================
 
 // =============================================================================
@@ -34,14 +48,20 @@ const module_metadata_t time_utils_manifest = {
     "core.util.time",
     "time_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 0, 1 },
+    { 1, 0, 0 },
+    1,                          // interface_rev
+    "2026-10-26",               // last_updated
     "High-resolution monotonic timer and frame sleep utilities",
+    0,                          // dependency_count
+    { NULL },                   // dependencies
+    ALLOC_ZERO_HEAP,            // alloc_policy
+    CONCURRENCY_REENTRANT,      // concurrency
+    5,                          // max_budget_us
     3,
     {
         time_invariants[0],
         time_invariants[1],
-        time_invariants[2],
-        NULL
+        time_invariants[2]
     },
     time_utils_preflight
 };

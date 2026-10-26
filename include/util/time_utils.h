@@ -4,16 +4,30 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          time_utils.h
+// @id            core.util.time
 // @layer         Layer 0: Core Utilities
-// @version       0.0.1
-// @epoch         2026.10
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          High-Resolution Monotonic Clock & Frame Timing Utilities
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Monotonicity: Time guarantees strictly non-decreasing clock (t2 >= t1).
-//                2. POSIX conformance: CLOCK_MONOTONIC timing backend.
-//                3. Frame sleep pacing: Non-negative sleep durations.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   High-resolution monotonic timing backend and frame sleep pacing.
+//   Serves as the foundation for elapsed time measurement across simulation
+//   ticks and presentation frame pacing (60 FPS latency budget).
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/static execution, zero dynamic heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, non-blocking time queries).
+//   - Latency Budget:        < 5 microseconds per query.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Monotonicity: Time guarantees strictly non-decreasing clock ticks (t2 >= t1).
+//   2. POSIX conformance: CLOCK_MONOTONIC timing source without drift or leap adjustments.
+//   3. Frame sleep pacing: Non-negative sleep durations (negative inputs clamped to 0).
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_TIME_UTILS_H

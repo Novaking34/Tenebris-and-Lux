@@ -4,16 +4,32 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          gui.h
-// @layer         Layer 2: Presentation & Viewport Subsystem
-// @version       0.0.1
-// @epoch         2026.10
+// @id            gui.viewport.x11
+// @layer         Layer 2: Presentation & Viewport
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Native Desktop Graphical Interface Header & Viewport API
-// @invariants    Rank 1 (< >): Presentation follows simulation.
-//                1. GUI never mutates state outside universal action dispatchers.
-//                2. Double-buffered rendering guarantees flicker-free frames.
-//                3. Headless fallback guarantees graceful exit when display absent.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Native desktop X11 presentation interface, double-buffered graphics
+//   renderer, and interactive input event loop. Serves as the visual window
+//   translating user interactions into universal simulation commands and
+//   rendering the relics, stances, and chronicle log.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: sim.engine.core, core.util.geom, core.util.time
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Static layout buffers and X11 pixmap, zero heap).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (X11 event loop bound to main thread).
+//   - Latency Budget:        < 16,666 microseconds per frame (60 FPS budget).
+//
+// AXIOMATIC INVARIANTS:
+//   1. Presentation follows simulation: GUI translates events to actions, never mutates state directly.
+//   2. Double-buffered rendering: Off-screen pixmap composition guarantees zero tearing.
+//   3. Non-overlapping button geometry: Layout passes strict AABB non-overlap audits.
+//   4. Headless fallback: Gracefully handles DISPLAY absence allowing automatic CLI fallback.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_GUI_H

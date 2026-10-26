@@ -35,3 +35,11 @@ here to provide enduring context for human developers and AI pair programmers.
    - Implemented pre-flight loose-bolts machine checks across time, math, geom, string, game simulation, and GUI.
    - Implemented 5-tier diagnostic severity hierarchy and 4-tier engine startup policy (Warnings, Downgrades, Fatal halts).
    - Completed "Expected" vs. "Actual" gap analysis with empirical benchmark telemetry.
+
+4. **[devlog_004_pedagogical_metadata_and_dependency_contracts.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc)**  
+   *Pedagogical Metadata Architecture, Temporal ISO 8601 Timelines & Active DAG Dependency Contracts* (2026-10-26):
+   - Solved the pedagogical metadata dilemma: established the dual-audience protocol (plain-English mission statements for novices, rigorous technical contracts for seniors).
+   - Mandated full ISO 8601 calendar dates (`YYYY-MM-DD`, `2026-10-26`) across all code headers, manifest structs, and technical specs to eliminate chronological ambiguity during manual audits.
+   - Upgraded `module_metadata_t` to include interface contract revisions (`interface_rev`), memory allocation models (`alloc_policy_t`), and concurrency guarantees (`concurrency_policy_t`).
+   - Implemented active boot-time Directed Acyclic Graph (DAG) upstream dependency validation (`dependencies[4]`) in `manifest_run_preflight()`—missing prerequisites trigger immediate `SEVERITY_FATAL` halts.
+   - Upgraded all Layer 0 utilities, Layer 1 simulation engine, Layer 2 GUI viewport, and Layer 4 test suites with 100% pass rates and zero compiler warnings.

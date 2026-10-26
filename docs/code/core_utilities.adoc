@@ -1,6 +1,6 @@
 = Codebase Tour: Core Utilities Layer (Layer 0)
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v1.0.0, 2026-10-26
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -95,18 +95,51 @@ void time_sleep_ms(double ms);
 
 == 5. Central Manifest & Pre-Flight System (`manifest.h` & `manifest.c`)
 
-Transforms declarative Block 1 file headers into executable compiled metadata structs (`module_metadata_t`):
+Transforms declarative Block 1 file headers into executable compiled metadata structures (`module_metadata_t`) enforcing contract revisions, DAG dependency tracking, memory models, and pre-flight machine audits:
 
 [source,c]
 ----
+typedef enum {
+    ALLOC_ZERO_HEAP = 0,    // Pure stack/static execution (Layer 0 guarantee)
+    ALLOC_FIXED_POOL,       // Fixed static ring/pool buffers
+    ALLOC_ARENA,            // Frame/scene arena allocator
+    ALLOC_DYNAMIC           // Managed heap allocation
+} alloc_policy_t;
+
+typedef enum {
+    CONCURRENCY_REENTRANT = 0, // Thread-safe, stateless pure functions
+    CONCURRENCY_THREAD_LOCAL,  // Per-thread state
+    CONCURRENCY_MAIN_THREAD    // Viewport/GUI event loop affinity
+} concurrency_policy_t;
+
 typedef struct {
-    const char *module_id;
-    const char *file_name;
-    module_layer_t layer;
-    struct { uint8_t major, minor, patch; } version;
-    const char *description;
+    /* 1. Identity & Provenance */
+    const char *module_id;          // e.g. "core.util.time"
+    const char *file_name;          // e.g. "time_utils.h"
+    module_layer_t layer;           // Stratum in architectural hierarchy
+    struct {
+        uint8_t major;
+        uint8_t minor;
+        uint8_t patch;
+    } version;
+    uint8_t interface_rev;          // Contract ABI revision
+    const char *last_updated;       // ISO 8601 full date: "YYYY-MM-DD"
+    const char *description;        // Plain-English mission statement
+    
+    /* 2. Architectural Dependencies */
+    size_t dependency_count;
+    const char *dependencies[MANIFEST_MAX_DEPENDENCIES]; // Upstream module IDs required
+    
+    /* 3. Resource & Execution Contracts */
+    alloc_policy_t alloc_policy;
+    concurrency_policy_t concurrency;
+    uint32_t max_budget_us;         // Max execution latency budget (in microseconds)
+    
+    /* 4. Invariant Contracts */
     size_t invariant_count;
     const char *invariants[MANIFEST_MAX_INVARIANTS];
+    
+    /* 5. Pre-Flight Machine Self-Audit */
     diag_result_t (*preflight_check)(void);
 } module_metadata_t;
 
@@ -117,7 +150,8 @@ void manifest_print_report(const manifest_registry_t *registry);
 ----
 
 === Architectural Roles:
-* `module_metadata_t`: Immutable static metadata node binding provenance, version, invariants, and self-auditing function pointer per file.
-* `manifest_registry_t`: Fixed-capacity registry (capacity 32) operating with zero dynamic allocations.
+* `module_metadata_t`: Immutable static metadata node binding provenance, version, interface contract revision (`interface_rev`), ISO 8601 update date (`2026-10-26`), upstream DAG dependencies, allocation policy, concurrency guarantees, and self-auditing function pointer per file.
+* `manifest_registry_t`: Fixed-capacity registry (capacity 32) operating with zero dynamic allocations (`ALLOC_ZERO_HEAP`).
+* DAG Dependency Enforcement: Validates that all upstream modules declared in `dependencies[]` are registered prior to runtime; missing prerequisites halt execution with `SEVERITY_FATAL`.
 * Graded Policy Evaluator: Enforces the 5-tier diagnostic severity hierarchy (`PASS` < `INFO` < `WARNING` < `CRITICAL` < `FATAL`) and 4-tier engine launch status (`READY`, `WARNINGS`, `DOWNGRADED`, `HALTED`).
 * Loose-Bolts Enforcement: Prevents the game engine from booting if any core mathematical, timing, memory, or state invariant fails prior to runtime.

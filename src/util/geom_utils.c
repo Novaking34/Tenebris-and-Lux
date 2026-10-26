@@ -4,15 +4,29 @@
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          geom_utils.c
-// @layer         Core Utilities Layer (Layer 0)
-// @version       0.0.1
-// @epoch         2026.10
+// @id            core.util.geom
+// @layer         Layer 0: Core Utilities
+// @version       1.0.0
+// @interface_rev Rev 1
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Implementation of 2D Rectangles, Hit-Testing & AABB Overlap
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Exact AABB intersection: overlapping boundaries return true.
-//                2. Zero dynamic allocations.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Pure implementation of 2D bounding boxes (geom_rect_t), point containment,
+//   and axis-aligned bounding box (AABB) intersection tests.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack value structures, zero heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic, thread-safe).
+//   - Latency Budget:        < 2 microseconds per hit-test.
+//
+// AXIOMATIC INVARIANTS:
+//   1. Exact AABB intersection: overlapping boundaries return true.
+//   2. Non-negative width and height normalization on creation.
+//   3. Zero dynamic memory allocation.
 // =============================================================================
 
 // =============================================================================
@@ -30,8 +44,15 @@ const module_metadata_t geom_utils_manifest = {
     "core.util.geom",
     "geom_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 0, 1 },
+    { 1, 0, 0 },
+    1,                          // interface_rev
+    "2026-10-26",               // last_updated
     "2D geometry structures, bounding box collisions and hit-testing",
+    0,                          // dependency_count
+    { NULL },                   // dependencies
+    ALLOC_ZERO_HEAP,            // alloc_policy
+    CONCURRENCY_REENTRANT,      // concurrency
+    2,                          // max_budget_us
     4,
     {
         geom_invariants[0],

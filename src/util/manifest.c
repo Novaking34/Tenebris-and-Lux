@@ -2,19 +2,32 @@
 // BLOCK 1: METADATA BLOCK
 // ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
 // =============================================================================
-// @project       Tenebris and Lux
+// @id            core.util.manifest
 // @file          manifest.c
 // @layer         Layer 0: Core Utilities
-// @version       0.0.1
-// @epoch         2026.10
+// @version       0.0.2 (Phase 1: Dual-Frontend Prototype)
+// @interface_rev Rev 2 (Added DAG dependencies, allocation & concurrency contracts)
+// @date          2026-10-26
+// @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @role          Central Manifest Registry & Pre-Flight Verification Implementation
-// @invariants    Rank 1 (< >): Form precedes fullness.
-//                1. Fixed static capacity: Never exceed MANIFEST_MAX_MODULES.
-//                2. Zero heap allocations: 100% stack/static execution.
-//                3. Severity escalation: FATAL > CRITICAL > WARNING > PASS.
-//                4. Loose bolts principle: System halts immediately on any FATAL check.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Central manifest registry and pre-flight verification implementation.
+//   Evaluates registered subsystem metadata, validates upstream dependencies,
+//   and executes loose-bolts pre-flight diagnostic checks before runtime.
+//
+// DEPENDENCY & RESOURCE CONTRACTS:
+//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack and static execution).
+//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, static capacity bounds).
+//
+// AXIOMATIC INVARIANTS:
+//   1. Fixed static capacity: Never exceed MANIFEST_MAX_MODULES.
+//   2. Zero heap allocations: 100% stack/static execution.
+//   3. Severity escalation: FATAL > CRITICAL > WARNING > PASS.
+//   4. Loose bolts principle: System halts immediately on any FATAL check.
+//   5. Missing upstream dependencies trigger SEVERITY_FATAL.
 // =============================================================================
 
 // =============================================================================
@@ -82,6 +95,40 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
     registry->critical_count = 0;
     registry->fatal_count = 0;
 
+    /* Step 1: Active DAG Dependency Graph Verification */
+    for (size_t i = 0; i < registry->count; i++) {
+        const module_metadata_t *mod = registry->modules[i];
+        if (mod == NULL) continue;
+
+        for (size_t d = 0; d < mod->dependency_count; d++) {
+            const char *req_dep = mod->dependencies[d];
+            if (req_dep == NULL) continue;
+
+            bool found = false;
+            for (size_t j = 0; j < registry->count; j++) {
+                if (registry->modules[j] != NULL &&
+                    strcmp(registry->modules[j]->module_id, req_dep) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                diag_result_t dep_res;
+                dep_res.passed = false;
+                dep_res.severity = SEVERITY_FATAL;
+                dep_res.subsystem = mod->module_id;
+                dep_res.check_name = "Dependency DAG";
+                dep_res.details = "Fatal: Unregistered upstream dependency declared.";
+                registry->results[i] = dep_res;
+                registry->fatal_count++;
+                registry->status = PREFLIGHT_STATUS_HALT_FATAL;
+                return registry->status;
+            }
+        }
+    }
+
+    /* Step 2: Individual Module Pre-Flight Verification */
     for (size_t i = 0; i < registry->count; i++) {
         const module_metadata_t *mod = registry->modules[i];
         if (mod == NULL) {
@@ -134,8 +181,9 @@ void manifest_print_report(const manifest_registry_t *registry)
 
     printf("================================================================================\n");
     printf("           Tenebris and Lux - Pre-Flight Subsystem Integrity Manifest           \n");
+    printf(" Build Telemetry: %s %s | Target Standard: ISO 8601 (2026-10-26)\n", __DATE__, __TIME__);
     printf("================================================================================\n");
-    printf("%-20s %-16s %-10s %s\n", "MODULE ID", "FILE", "STATUS", "DIAGNOSTIC DETAILS");
+    printf("%-20s %-15s %-4s %-11s %-7s %s\n", "MODULE ID", "FILE", "REV", "ALLOCATION", "STATUS", "DIAGNOSTIC DETAILS");
     printf("--------------------------------------------------------------------------------\n");
 
     for (size_t i = 0; i < registry->count; i++) {
@@ -152,9 +200,11 @@ void manifest_print_report(const manifest_registry_t *registry)
         default:                sev_str = "[????]"; break;
         }
 
-        printf("%-20s %-16s %-10s %s\n",
+        printf("%-20s %-15s r%-3u %-11s %-7s %s\n",
             mod->module_id ? mod->module_id : "unknown",
             mod->file_name ? mod->file_name : "unknown",
+            mod->interface_rev,
+            manifest_alloc_policy_to_str(mod->alloc_policy),
             sev_str,
             res->details ? res->details : "Verified.");
     }
@@ -212,6 +262,27 @@ const char *manifest_layer_to_str(module_layer_t layer)
     return "Unknown Layer";
 }
 
+const char *manifest_alloc_policy_to_str(alloc_policy_t policy)
+{
+    switch (policy) {
+    case ALLOC_ZERO_HEAP: return "Zero-Heap";
+    case ALLOC_FIXED_POOL: return "Fixed-Pool";
+    case ALLOC_ARENA:      return "Arena";
+    case ALLOC_DYNAMIC:    return "Dynamic";
+    default:               return "Unknown";
+    }
+}
+
+const char *manifest_concurrency_to_str(concurrency_policy_t policy)
+{
+    switch (policy) {
+    case CONCURRENCY_REENTRANT:   return "Reentrant";
+    case CONCURRENCY_THREAD_LOCAL: return "Thread-Local";
+    case CONCURRENCY_MAIN_THREAD:   return "Main-Thread";
+    default:                       return "Unknown";
+    }
+}
+
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // ( Self-Audit of Central Registry Invariants )
@@ -252,8 +323,15 @@ const module_metadata_t manifest_utils_manifest = {
     "core.util.manifest",
     "manifest.h",
     LAYER_0_CORE_UTIL,
-    { 0, 0, 1 },
+    { 0, 0, 2 },
+    2,                          // interface_rev
+    "2026-10-26",               // last_updated
     "Central manifest registry and pre-flight policy engine",
+    0,                          // dependency_count
+    { NULL },                   // dependencies
+    ALLOC_ZERO_HEAP,            // alloc_policy
+    CONCURRENCY_REENTRANT,      // concurrency
+    10,                         // max_budget_us
     4,
     {
         manifest_invariants[0],
@@ -290,22 +368,37 @@ bool manifest_audit(void)
 
     module_metadata_t mod_pass = {
         "test.mod.pass", "pass.h", LAYER_0_CORE_UTIL, { 1, 0, 0 },
-        "Pass module", 0, { NULL }, dummy_pass_check
+        1, "2026-10-26", "Pass module", 0, { NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_REENTRANT, 10,
+        0, { NULL }, dummy_pass_check
     };
 
     module_metadata_t mod_warn = {
         "test.mod.warn", "warn.h", LAYER_0_CORE_UTIL, { 1, 0, 0 },
-        "Warn module", 0, { NULL }, dummy_warn_check
+        1, "2026-10-26", "Warn module", 0, { NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_REENTRANT, 10,
+        0, { NULL }, dummy_warn_check
     };
 
     module_metadata_t mod_crit = {
         "test.mod.crit", "crit.h", LAYER_2_PRESENTATION, { 1, 0, 0 },
-        "Critical module", 0, { NULL }, dummy_crit_check
+        1, "2026-10-26", "Critical module", 0, { NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_MAIN_THREAD, 50,
+        0, { NULL }, dummy_crit_check
     };
 
     module_metadata_t mod_fatal = {
         "test.mod.fatal", "fatal.h", LAYER_0_CORE_UTIL, { 1, 0, 0 },
-        "Fatal module", 0, { NULL }, dummy_fatal_check
+        1, "2026-10-26", "Fatal module", 0, { NULL },
+        ALLOC_ZERO_HEAP, CONCURRENCY_REENTRANT, 10,
+        0, { NULL }, dummy_fatal_check
+    };
+
+    module_metadata_t mod_missing_dep = {
+        "test.mod.depfail", "depfail.h", LAYER_1_SIMULATION, { 1, 0, 0 },
+        1, "2026-10-26", "Missing dep module", 1, { "unregistered.upstream" },
+        ALLOC_ZERO_HEAP, CONCURRENCY_REENTRANT, 20,
+        0, { NULL }, dummy_pass_check
     };
 
     /* Invariant 1: Registration of clean module produces PREFLIGHT_STATUS_OK */
@@ -332,6 +425,11 @@ bool manifest_audit(void)
     manifest_register(&reg, &mod_pass);
     manifest_register(&reg, &mod_crit);
     manifest_register(&reg, &mod_fatal);
+    if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_HALT_FATAL) return false;
+
+    /* Invariant 6: Active DAG dependency enforcement halts on missing upstream */
+    manifest_registry_init(&reg);
+    manifest_register(&reg, &mod_missing_dep);
     if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_HALT_FATAL) return false;
 
     return true;
