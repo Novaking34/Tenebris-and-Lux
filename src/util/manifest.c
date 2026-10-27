@@ -57,27 +57,84 @@ static const char *layer_names[LAYER_COUNT] = {
 // Mission: Initialize registry storage and register subsystem metadata nodes.
 // -----------------------------------------------------------------------------
 
+/**
+ * Initializes a manifest registry structure to an empty state.
+ *
+ * ### Machine Role & Mission
+ *
+ * Prepares the zero-heap registry storage prior to module registration.
+ * Wipes registered pointers and resets diagnostic tally counters.
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.manifest (Central Manifest Registry)
+ * - Assembly:   Central Registry Lifecycle & Registration
+ * - Cog:        Registry Storage Initializer
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, in-place memset).
+ * - Concurrency:    REENTRANT_PURE (Thread-safe on distinct registry structs).
+ * - Latency Budget: < 1 microsecond execution time (O(1)).
+ *
+ * @param[out] registry Pointer to caller-allocated registry structure.
+ */
 void manifest_registry_init(manifest_registry_t *registry)
 {
+    /* Step 1: Precondition check on target pointer */
     if (registry == NULL) {
         return;
     }
+
+    /* Step 2: Zero-fill static registry memory */
     memset(registry, 0, sizeof(manifest_registry_t));
+
+    /* Step 3: Establish baseline readiness status */
     registry->status = PREFLIGHT_STATUS_OK;
 }
 
+/**
+ * Registers a subsystem's compiled metadata record into the manifest registry.
+ *
+ * ### Machine Role & Mission
+ *
+ * Collects compiled module records (provenance, contracts, diagnostic
+ * function pointers) into the centralized pre-flight evaluation tree.
+ * Rejects duplicates and enforces the static capacity limit.
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.manifest (Central Manifest Registry)
+ * - Assembly:   Central Registry Lifecycle & Registration
+ * - Cog:        Subsystem Node Registrar
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (Stores immutable pointers only).
+ * - Concurrency:    REENTRANT_PURE (Thread-safe on distinct registry structs).
+ * - Latency Budget: < 2 microseconds execution time (O(N) search).
+ *
+ * @param[in,out] registry Target registry collecting module records.
+ * @param[in]     module   Pointer to immutable compiled module metadata.
+ *
+ * @return `true` if registration succeeded; `false` on duplicate or overflow.
+ */
 bool manifest_register(manifest_registry_t *registry,
                        const module_metadata_t *module)
 {
+    /* Step 1: Precondition checks on registry and module pointers */
     if (registry == NULL || module == NULL || module->module_id == NULL) {
         return false;
     }
 
+    /* Step 2: Capacity boundary enforcement */
     if (registry->count >= MANIFEST_MAX_MODULES) {
         return false;
     }
 
-    /* Check for duplicate module_id */
+    /* Step 3: Check for duplicate module_id to guarantee unique nodes */
     for (size_t i = 0; i < registry->count; i++) {
         if (registry->modules[i] != NULL &&
             strcmp(registry->modules[i]->module_id, module->module_id) == 0) {
@@ -85,6 +142,7 @@ bool manifest_register(manifest_registry_t *registry,
         }
     }
 
+    /* Step 4: Insert module pointer into static registry array */
     registry->modules[registry->count] = module;
     registry->count++;
     return true;
@@ -95,18 +153,46 @@ bool manifest_register(manifest_registry_t *registry,
 // Mission: Execute DAG dependency graph audits and pre-flight machine checks.
 // -----------------------------------------------------------------------------
 
+/**
+ * Executes comprehensive pre-flight diagnostics across all registered modules.
+ *
+ * ### Machine Role & Mission
+ *
+ * Core "loose-bolts" orchestrator. Enforces two strict sequential phases:
+ * Phase 1: Resolves Directed Acyclic Graph (DAG) dependencies.
+ * Phase 2: Dispatches module preflight callbacks and escalates policy.
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.manifest (Central Manifest Registry)
+ * - Assembly:   DAG Dependency Resolution & Pre-Flight Evaluation
+ * - Cog:        Loose-Bolts Pre-Flight Orchestrator
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, stack results array).
+ * - Concurrency:    CONCURRENCY_MAIN_THREAD (Sequential boot validation).
+ * - Latency Budget: < 5 milliseconds total pre-flight execution budget.
+ *
+ * @param[in,out] registry Initialized and populated manifest registry.
+ *
+ * @return Aggregate pre-flight status code (OK, WARNINGS, DOWNGRADED, HALT).
+ */
 preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
 {
+    /* Step 1: Precondition validation */
     if (registry == NULL) {
         return PREFLIGHT_STATUS_HALT_FATAL;
     }
 
+    /* Step 2: Reset diagnostic tally counters */
     registry->pass_count = 0;
     registry->warn_count = 0;
     registry->critical_count = 0;
     registry->fatal_count = 0;
 
-    /* Step 1: Active DAG Dependency Graph Verification */
+    /* Step 3: Active DAG Dependency Graph Verification */
     for (size_t i = 0; i < registry->count; i++) {
         const module_metadata_t *mod = registry->modules[i];
         if (mod == NULL) continue;
@@ -140,7 +226,7 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
         }
     }
 
-    /* Step 2: Individual Module Pre-Flight Verification */
+    /* Step 4: Individual Module Pre-Flight Verification */
     for (size_t i = 0; i < registry->count; i++) {
         const module_metadata_t *mod = registry->modules[i];
         if (mod == NULL) {
@@ -174,7 +260,7 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
         }
     }
 
-    /* Evaluate graded policy */
+    /* Step 5: Evaluate graded policy hierarchy */
     if (registry->fatal_count > 0) {
         registry->status = PREFLIGHT_STATUS_HALT_FATAL;
     } else if (registry->critical_count > 0) {
@@ -189,16 +275,28 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
 }
 
 // -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.3: TELEMETRY REPORTING & SERIALIZATION COGS ]
-// Mission: Format pre-flight telemetry tables and serialize taxonomy strings.
+// [ SUB-ASSEMBLY 3.3: TELEMETRY & HUMAN-READABLE REPORTING COGS ]
+// Mission: Format pre-flight telemetry tables and render policy verdicts.
 // -----------------------------------------------------------------------------
 
+/**
+ * Prints a formatted diagnostic summary table to stdout.
+ *
+ * ### Machine Role & Mission
+ *
+ * Emits the comprehensive boot telemetry table to the terminal, detailing
+ * registered subsystems, interface revisions, memory models, and statuses.
+ *
+ * @param[in] registry Evaluated manifest registry.
+ */
 void manifest_print_report(const manifest_registry_t *registry)
 {
+    /* Step 1: Precondition check */
     if (registry == NULL) {
         return;
     }
 
+    /* Step 2: Render telemetry table header */
     puts("========================================================"
          "========================");
     puts("           Tenebris and Lux - Pre-Flight Subsystem "
@@ -213,6 +311,7 @@ void manifest_print_report(const manifest_registry_t *registry)
     puts("--------------------------------------------------------"
          "------------------------");
 
+    /* Step 3: Iterate through registered subsystem modules */
     for (size_t i = 0; i < registry->count; i++) {
         const module_metadata_t *mod = registry->modules[i];
         const diag_result_t *res = &registry->results[i];
@@ -236,6 +335,7 @@ void manifest_print_report(const manifest_registry_t *registry)
             res->details ? res->details : "Verified.");
     }
 
+    /* Step 4: Render summary telemetry counts */
     puts("--------------------------------------------------------"
          "------------------------");
     printf("Telemetry: %zu modules registered | %zu Pass | %zu Warn | "
@@ -243,6 +343,7 @@ void manifest_print_report(const manifest_registry_t *registry)
            registry->count, registry->pass_count, registry->warn_count,
            registry->critical_count, registry->fatal_count);
 
+    /* Step 5: Render engine policy verdict */
     switch (registry->status) {
     case PREFLIGHT_STATUS_OK:
         printf("Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED "
@@ -265,6 +366,12 @@ void manifest_print_report(const manifest_registry_t *registry)
          "========================");
 }
 
+/**
+ * Returns static string representation of a diagnostic severity code.
+ *
+ * @param[in] severity Diagnostic severity level.
+ * @return Null-terminated static string identifier.
+ */
 const char *manifest_severity_to_str(diag_severity_t severity)
 {
     switch (severity) {
@@ -277,6 +384,12 @@ const char *manifest_severity_to_str(diag_severity_t severity)
     }
 }
 
+/**
+ * Returns static string representation of a pre-flight aggregate status.
+ *
+ * @param[in] status Aggregate preflight status enum.
+ * @return Null-terminated static status name.
+ */
 const char *manifest_status_to_str(preflight_status_t status)
 {
     switch (status) {
@@ -288,6 +401,12 @@ const char *manifest_status_to_str(preflight_status_t status)
     }
 }
 
+/**
+ * Returns static string name of an architectural layer stratum.
+ *
+ * @param[in] layer Architectural layer stratum.
+ * @return Null-terminated static stratum description.
+ */
 const char *manifest_layer_to_str(module_layer_t layer)
 {
     if (layer >= 0 && layer < LAYER_COUNT) {
@@ -296,6 +415,12 @@ const char *manifest_layer_to_str(module_layer_t layer)
     return "Unknown Layer";
 }
 
+/**
+ * Returns static string representation of a memory allocation policy.
+ *
+ * @param[in] policy Memory allocation contract policy.
+ * @return Null-terminated static memory model identifier.
+ */
 const char *manifest_alloc_policy_to_str(alloc_policy_t policy)
 {
     switch (policy) {
@@ -307,6 +432,12 @@ const char *manifest_alloc_policy_to_str(alloc_policy_t policy)
     }
 }
 
+/**
+ * Returns static string representation of a concurrency contract.
+ *
+ * @param[in] policy Concurrency and thread safety policy.
+ * @return Null-terminated static concurrency identifier.
+ */
 const char *manifest_concurrency_to_str(concurrency_policy_t policy)
 {
     switch (policy) {
@@ -389,6 +520,16 @@ const module_metadata_t manifest_utils_manifest = {
     manifest_utils_preflight
 };
 
+/**
+ * Pre-flight diagnostic check evaluating manifest registry invariants.
+ *
+ * ### Machine Role & Mission
+ *
+ * Verifies that the manifest registry itself respects all static capacity
+ * bounds, duplicate module rejections, and policy escalation rules.
+ *
+ * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
+ */
 diag_result_t manifest_utils_preflight(void)
 {
     diag_result_t res;
@@ -409,6 +550,11 @@ diag_result_t manifest_utils_preflight(void)
     return res;
 }
 
+/**
+ * Standalone boolean self-audit testing manifest invariants.
+ *
+ * @return `true` if all manifest tests pass cleanly; `false` on violation.
+ */
 bool manifest_audit(void)
 {
     manifest_registry_t reg;

@@ -15,7 +15,9 @@
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Core simulation logic, twin relics resonance transitions, moral sway
-//   calculations, and deterministic stance state dispatcher.
+//   calculations, and deterministic stance state dispatcher. Serves as the
+//   headless simulation brain driving both dual protagonists: Elijah
+//   Ro-enheart (Shield of Lux) and Katrina Jaren (Sword of Tenebris).
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: core.util.math, core.util.string
@@ -80,30 +82,81 @@ static const char *stance_names[STANCE_COUNT] = {
 // Mission: Initialize state, resolve geography, and format narrative labels.
 // -----------------------------------------------------------------------------
 
+/**
+ * Returns human-readable name of a kingdom location.
+ *
+ * ### Machine Role & Mission
+ *
+ * Translates discrete location enum identifiers into static string labels
+ * for presentation across CLI, GUI, and diagnostic audit logs.
+ *
+ * @param[in] loc Location enum identifier.
+ * @return Null-terminated static string name.
+ */
 const char *game_get_location_name(location_id_t loc)
 {
+    /* Step 1: Range check on location enum */
     if (loc >= 0 && loc < LOC_COUNT) {
         return location_names[loc];
     }
+
+    /* Step 2: Fallback string on out-of-bounds inputs */
     return "Uncharted Realm";
 }
 
+/**
+ * Returns descriptive narrative overview of a kingdom location.
+ *
+ * ### Machine Role & Mission
+ *
+ * Provides immersive environmental lore for the active province.
+ *
+ * @param[in] loc Location enum identifier.
+ * @return Null-terminated static string description.
+ */
 const char *game_get_location_desc(location_id_t loc)
 {
+    /* Step 1: Range check on location enum */
     if (loc >= 0 && loc < LOC_COUNT) {
         return location_descriptions[loc];
     }
+
+    /* Step 2: Fallback description on out-of-bounds inputs */
     return "Gloom obscures the contours of the land.";
 }
 
+/**
+ * Returns textual representation of a combat stance.
+ *
+ * ### Machine Role & Mission
+ *
+ * Formats stance identifiers into human-readable tactical names.
+ *
+ * @param[in] stance Combat stance enum identifier.
+ * @return Null-terminated static stance name.
+ */
 const char *game_get_stance_name(combat_stance_t stance)
 {
+    /* Step 1: Range check on stance enum */
     if (stance >= 0 && stance < STANCE_COUNT) {
         return stance_names[stance];
     }
+
+    /* Step 2: Fallback string on out-of-bounds stance */
     return "Unknown Stance";
 }
 
+/**
+ * Returns narrative description of moral sway alignment.
+ *
+ * ### Machine Role & Mission
+ *
+ * Maps continuous moral sway integers [-100, +100] into canonical lore
+ * titles reflecting virtue, mercy, balance, or ruthless dominion.
+ *
+ * @param[in] sway Signed integer moral sway value in [-100, +100].
+ * @return Static description of alignment continuum.
+ */
 const char *game_get_sway_desc(int sway)
 {
     if (sway >= 40) return "Saint of Radiant Mercy (Virtue Unyielding)";
@@ -113,10 +166,24 @@ const char *game_get_sway_desc(int sway)
     return "Lord of the Abyssal Void (Ruthless Dominion)";
 }
 
+/**
+ * Initializes player state with canonical starting values.
+ *
+ * ### Machine Role & Mission
+ *
+ * Configures dual protagonists, relic charges (80 Lux / 80 Tenebris),
+ * starting location at The Garrison Altar, and neutral stance.
+ *
+ * @param[out] state Pointer to caller-allocated player state struct.
+ */
 void game_init(player_state_t *state)
 {
-    if (state == NULL) return;
+    /* Step 1: Precondition check on destination pointer */
+    if (state == NULL) {
+        return;
+    }
 
+    /* Step 2: Populate canonical game state fields */
     state->shield_power = INITIAL_SHIELD_POWER;
     state->sword_edge = INITIAL_SWORD_EDGE;
     state->moral_sway = INITIAL_MORAL_SWAY;
@@ -129,6 +196,9 @@ void game_init(player_state_t *state)
     state->innocents_warded = 0;
 }
 
+/**
+ * Prints game introduction chronicle to stdout.
+ */
 void game_print_intro(void)
 {
     printf("============================================================\n");
@@ -140,6 +210,11 @@ void game_print_intro(void)
     printf("Type 'help' for commands, or 'quit' to yield.\n\n");
 }
 
+/**
+ * Prints formatted status card to stdout.
+ *
+ * @param[in] state Immutable pointer to player state.
+ */
 void game_print_status(const player_state_t *state)
 {
     printf("\n--- Relic Status & Bearer Covenant ---\n");
@@ -157,6 +232,11 @@ void game_print_status(const player_state_t *state)
     printf("--------------------------------------\n\n");
 }
 
+/**
+ * Prints current location overview and lore to stdout.
+ *
+ * @param[in] state Immutable pointer to player state.
+ */
 void game_print_location(const player_state_t *state)
 {
     printf("\n[%s]\n", game_get_location_name(state->location));
@@ -168,6 +248,9 @@ void game_print_location(const player_state_t *state)
     printf("\n");
 }
 
+/**
+ * Prints CLI command help menu to stdout.
+ */
 void game_print_help(void)
 {
     printf("\n--- Tactical Command Manual ---\n");
@@ -188,10 +271,13 @@ void game_print_help(void)
 // Mission: Parse commands and execute deterministic state transitions.
 // -----------------------------------------------------------------------------
 
+/**
+ * Internal command handler for 'ward' actions.
+ */
 static void handle_ward(player_state_t *state, char *out_msg, size_t msg_len)
 {
     if (state->threat_hp > 0) {
-        /* Combat Warding */
+        /* Combat Warding: stance determines defensive bonus and stagger */
         int boost = (state->stance == STANCE_WARDING) ? 15 : 10;
         int stagger = (state->stance == STANCE_WARDING) ? 25 : 15;
 
@@ -220,7 +306,7 @@ static void handle_ward(player_state_t *state, char *out_msg, size_t msg_len)
                    "The void-strike glances off in a golden flash!\n");
         }
     } else {
-        /* Non-combat Warding */
+        /* Non-combat Warding: charges shield power and increments virtue */
         state->shield_power =
             math_saturating_add(state->shield_power, 20, MAX_RESONANCE);
         state->moral_sway = math_clamp_int(state->moral_sway + 1, -100, 100);
@@ -235,10 +321,13 @@ static void handle_ward(player_state_t *state, char *out_msg, size_t msg_len)
     }
 }
 
+/**
+ * Internal command handler for 'strike' actions.
+ */
 static void handle_strike(player_state_t *state, char *out_msg, size_t msg_len)
 {
     if (state->threat_hp > 0) {
-        /* Combat Strike */
+        /* Combat Strike: stance determines damage and sharpness cost */
         int cost = (state->stance == STANCE_STRIKING) ? 8 : 12;
         int damage = (state->stance == STANCE_STRIKING) ? 45 : 30;
 
@@ -267,7 +356,7 @@ static void handle_strike(player_state_t *state, char *out_msg, size_t msg_len)
                    "slicing through enchanted armor!\n");
         }
     } else {
-        /* Non-combat Hone/Sever */
+        /* Non-combat Hone/Sever: attunes sword edge to the abyssal void */
         state->sword_edge =
             math_saturating_add(state->sword_edge, 15, MAX_RESONANCE);
 
@@ -281,16 +370,21 @@ static void handle_strike(player_state_t *state, char *out_msg, size_t msg_len)
     }
 }
 
+/**
+ * Internal command handler for 'balance' actions.
+ */
 static void handle_balance(player_state_t *state, char *out_msg, size_t msg_len)
 {
+    /* Step 1: Simultaneously restore both relic resonance pools */
     state->shield_power =
         math_saturating_add(state->shield_power, 15, MAX_RESONANCE);
     state->sword_edge =
         math_saturating_add(state->sword_edge, 15, MAX_RESONANCE);
 
-    /* Nudge moral sway toward cosmic center (0) */
+    /* Step 2: Nudge moral sway toward cosmic center (0) */
     state->moral_sway = math_nudge_toward(state->moral_sway, 0, 2);
 
+    /* Step 3: Combat vs non-combat resolution */
     if (state->threat_hp > 0) {
         state->threat_hp = math_saturating_sub(state->threat_hp, 20);
         if (state->threat_hp == 0) state->foes_vanquished++;
@@ -312,9 +406,13 @@ static void handle_balance(player_state_t *state, char *out_msg, size_t msg_len)
     }
 }
 
+/**
+ * Internal command handler for stance transitions.
+ */
 static void handle_stance(player_state_t *state, const char *arg,
     char *out_msg, size_t msg_len)
 {
+    /* Step 1: If no argument passed, display current stance */
     if (arg == NULL || strlen(arg) == 0) {
         if (out_msg) {
             snprintf(out_msg, msg_len, "Current stance: %s.",
@@ -326,6 +424,7 @@ static void handle_stance(player_state_t *state, const char *arg,
         return;
     }
 
+    /* Step 2: Match stance target token */
     if (strstr(arg, "ward") != NULL) {
         state->stance = STANCE_WARDING;
     } else if (strstr(arg, "strik") != NULL) {
@@ -341,6 +440,7 @@ static void handle_stance(player_state_t *state, const char *arg,
         return;
     }
 
+    /* Step 3: Format transition narrative */
     if (out_msg) {
         snprintf(out_msg, msg_len, "Shifted stance to: %s.",
             game_get_stance_name(state->stance));
@@ -349,9 +449,13 @@ static void handle_stance(player_state_t *state, const char *arg,
         game_get_stance_name(state->stance));
 }
 
+/**
+ * Internal command handler for spatial movement across Sacyran provinces.
+ */
 static void handle_move(player_state_t *state, const char *direction,
     char *out_msg, size_t msg_len)
 {
+    /* Step 1: Precondition check on direction input */
     if (direction == NULL || strlen(direction) == 0) {
         if (out_msg) {
             snprintf(out_msg, msg_len,
@@ -364,6 +468,7 @@ static void handle_move(player_state_t *state, const char *direction,
     location_id_t next_loc = state->location;
     char dir = (char)tolower((unsigned char)direction[0]);
 
+    /* Step 2: Topological map transition routing */
     switch (state->location) {
     case LOC_GARRISON_ALTAR:
         if (dir == 'n') next_loc = LOC_CITADEL_GATES;
@@ -383,6 +488,7 @@ static void handle_move(player_state_t *state, const char *direction,
         break;
     }
 
+    /* Step 3: Blocked path evaluation */
     if (next_loc == state->location) {
         if (out_msg) {
             snprintf(out_msg, msg_len, "Path blocked in that direction.");
@@ -393,7 +499,7 @@ static void handle_move(player_state_t *state, const char *direction,
 
     state->location = next_loc;
 
-    /* Spawn location encounters */
+    /* Step 4: Encounter triggers */
     if (state->location == LOC_CITADEL_GATES && state->foes_vanquished == 0) {
         state->threat_hp = 50;
     } else if (state->location == LOC_ABYSSAL_THRESHOLD &&
@@ -409,9 +515,23 @@ static void handle_move(player_state_t *state, const char *direction,
     game_print_location(state);
 }
 
+/**
+ * Evaluates and dispatches a text command against player state.
+ *
+ * ### Machine Role & Mission
+ *
+ * Primary simulation entry router. Translates user text commands
+ * into deterministic mutations across relic charges, stance, and topology.
+ *
+ * @param[in,out] state     Mutable player state struct.
+ * @param[in]     raw_input Raw command string from CLI or GUI.
+ * @param[out]    out_msg   Buffer receiving narrative feedback.
+ * @param[in]     msg_len   Capacity of out_msg buffer in bytes.
+ */
 void game_process_command(player_state_t *state, const char *raw_input,
     char *out_msg, size_t msg_len)
 {
+    /* Step 1: Copy into stack buffer and trim in-place */
     char buffer[MAX_INPUT_LEN];
     str_safe_copy(buffer, raw_input, sizeof(buffer));
     str_trim_inplace(buffer);
@@ -420,6 +540,7 @@ void game_process_command(player_state_t *state, const char *raw_input,
         return;
     }
 
+    /* Step 2: Tokenize command verb and arguments */
     char *command = strtok(buffer, " ");
     if (command == NULL) {
         return;
@@ -431,6 +552,7 @@ void game_process_command(player_state_t *state, const char *raw_input,
         }
     }
 
+    /* Step 3: Match command verb against dispatcher table */
     if (strcmp(command, "quit") == 0 || strcmp(command, "exit") == 0) {
         state->is_running = false;
         if (out_msg) {
@@ -489,9 +611,15 @@ void game_process_command(player_state_t *state, const char *raw_input,
         return;
     }
 
+    /* Step 4: Increment simulation turn counter on successful command */
     state->turns_taken++;
 }
 
+/**
+ * Executes interactive terminal text loop.
+ *
+ * @param[in,out] state Active player state.
+ */
 void game_loop_cli(player_state_t *state)
 {
     char input_line[MAX_INPUT_LEN];
@@ -523,6 +651,17 @@ void game_loop_cli(player_state_t *state)
 // Mission: Verify state bounds, stance determinism, and mathematical safety.
 // -----------------------------------------------------------------------------
 
+/**
+ * Validates all state invariants on a given player state struct.
+ *
+ * ### Machine Role & Mission
+ *
+ * Diagnostic tripwire evaluating resonance bounds [0, 100], moral sway
+ * boundaries [-100, +100], and enum range validity.
+ *
+ * @param[in] state Pointer to state to audit.
+ * @return Diagnostic audit report with error counts and details.
+ */
 game_audit_report_t game_audit_state(const player_state_t *state)
 {
     game_audit_report_t report;
@@ -608,6 +747,17 @@ const module_metadata_t game_manifest = {
     game_preflight
 };
 
+/**
+ * Pre-flight diagnostic check evaluating simulation engine invariants.
+ *
+ * ### Machine Role & Mission
+ *
+ * Invoked during pre-flight boot by the Central Manifest orchestrator.
+ * Confirms initial state validity, saturating arithmetic ceilings,
+ * deterministic stance transitions, and diagnostic corruption traps.
+ *
+ * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
+ */
 diag_result_t game_preflight(void)
 {
     diag_result_t res;
@@ -699,6 +849,11 @@ diag_result_t game_preflight(void)
     return res;
 }
 
+/**
+ * Executes full Layer 1 simulation self-audit test suite.
+ *
+ * @return 0 on complete audit pass; non-zero on invariant violation.
+ */
 int game_run_self_audit(void)
 {
     printf("============================================================\n");

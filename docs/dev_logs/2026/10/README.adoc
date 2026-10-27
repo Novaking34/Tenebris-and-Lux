@@ -31,6 +31,10 @@ Logs are categorized into thematic subdirectories based on their focus:
    *Ontological Sub-Assemblies, LSP Docstrings, Strict 80-Column Discipline & Calendar Chronology*  
    Implements the Stratum -> Machine -> Assembly -> Cog framework, IDE-optimized LSP Markdown hover docstrings, strict <= 80 column line discipline, and calendar-based log archiving.
 
+5. **[devlog_006_source_and_root_pedagogical_commenting.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc)** (2026-10-27)  
+   *Source Implementation & Root Pedagogical Commenting*  
+   Expands the Ontological Documentation Architecture and LSP docstrings across 100% of C source files with in-function step comments, alongside comprehensive pedagogical commenting of root configuration anchors.
+
 === Lore & Game Design (`docs/dev_logs/2026/10/lore_and_design/`)
 
 1. **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)** (2026-10-26)  

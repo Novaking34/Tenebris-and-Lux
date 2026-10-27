@@ -32,7 +32,7 @@
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / STATIC DATA
-// ( System Headers, Visual Palette, Layout Geometry & State Tables )
+// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
 #include "gui/gui.h"
@@ -49,6 +49,11 @@
 #include <time.h>
 
 #define NUM_BUTTONS 9
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 2.1: STATIC BUTTON TOPOLOGY & COLOR PALETTE ]
+// Mission: Define discrete button bounds, action commands, and UI palette.
+// -----------------------------------------------------------------------------
 
 static const gui_button_t buttons[NUM_BUTTONS] = {
     {  40, 480, 160, 42, "Ward (W)",      "ward",               'w' },
@@ -76,16 +81,51 @@ typedef struct {
     unsigned long btn_border;
 } gui_palette_t;
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 2.2: PALETTE ALLOCATION & CHRONICLE HELPERS ]
+// Mission: Translate 24-bit RGB values to X11 pixels and manage ring-buffers.
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Allocates an X11 pixel color from a 24-bit RGB hexadecimal integer.
+ *
+ * ### Machine Role & Mission
+ * Queries the default X11 colormap to allocate a color cell matching the
+ * requested RGB value. On 32-bit composited visuals (ARGB visuals), this
+ * ensures the alpha channel is clamped to 255 (0xFF000000) to prevent
+ * transparent visual corruption.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Color Palette & Visual Hardware Mapping
+ * - Cog: RGB Hex to Hardware Pixel Color Allocator
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero dynamic allocations).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Bound to X11 connection handle).
+ * - Latency Budget: < 5 microseconds per color allocation.
+ *
+ * @param[in] d       Connected X11 Display handle.
+ * @param[in] screen  Screen index of display.
+ * @param[in] rgb_hex 24-bit RGB hexadecimal color value (0xRRGGBB).
+ * @return Allocated X11 pixel value with alpha channel enforced.
+ */
 static unsigned long alloc_color(Display *d, int screen, unsigned int rgb_hex)
 {
+    /* Step 1: Deconstruct 24-bit RGB hex into 8-bit color channels */
     XColor col;
     unsigned int r = (rgb_hex >> 16) & 0xFF;
     unsigned int g = (rgb_hex >> 8)  & 0xFF;
     unsigned int b = (rgb_hex)       & 0xFF;
+
+    /* Step 2: Scale 8-bit channels [0, 255] to X11 16-bit range [0, 65535] */
     col.red   = (unsigned short)(r * 257);
     col.green = (unsigned short)(g * 257);
     col.blue  = (unsigned short)(b * 257);
     col.flags = DoRed | DoGreen | DoBlue;
+
+    /* Step 3: Allocate color cell from default colormap */
     if (XAllocColor(d, DefaultColormap(d, screen), &col)) {
         /* On 32-bit composited visuals, ensure alpha channel is 255 (opaque) */
         if (DefaultDepth(d, screen) == 32 || (col.pixel & 0xFF000000) == 0) {
@@ -93,19 +133,47 @@ static unsigned long alloc_color(Display *d, int screen, unsigned int rgb_hex)
         }
         return col.pixel;
     }
+
+    /* Fallback: Direct 32-bit ARGB packed integer */
     return 0xFF000000 | rgb_hex;
 }
 
+/**
+ * @brief Appends a formatted narrative entry to the GUI chronicle ring-buffer.
+ *
+ * ### Machine Role & Mission
+ * Maintains the scrolling combat and exploration narrative log in the GUI
+ * viewport. When the log reaches GUI_MAX_LOG_LINES, older entries are shifted
+ * upward by one position, discarding the oldest event in FIFO order.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Narrative Chronicle Ring-Buffer
+ * - Cog: Bounded Chronicle String Inserter & Shifter
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero dynamic allocations, fixed buffer).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Main presentation thread only).
+ * - Latency Budget: < 10 microseconds per append operation.
+ *
+ * @param[in,out] log Target GUI log ring-buffer struct.
+ * @param[in]     msg Narrative message string to append.
+ */
 static void log_append(gui_log_t *log, const char *msg)
 {
+    /* Step 1: Guard against null or empty input */
     if (msg == NULL || strlen(msg) == 0) {
         return;
     }
+
+    /* Step 2: Append if buffer has capacity */
     if (log->count < GUI_MAX_LOG_LINES) {
         strncpy(log->lines[log->count], msg, GUI_LOG_ENTRY_LEN - 1);
         log->lines[log->count][GUI_LOG_ENTRY_LEN - 1] = '\0';
         log->count++;
     } else {
+        /* Step 3: Shift entries upward to make room for newest entry */
         for (int i = 0; i < GUI_MAX_LOG_LINES - 1; i++) {
             strncpy(log->lines[i], log->lines[i + 1], GUI_LOG_ENTRY_LEN);
         }
@@ -116,17 +184,50 @@ static void log_append(gui_log_t *log, const char *msg)
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Native Double-Buffered Rendering Routines & Event Dispatcher )
+// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.1: DOUBLE-BUFFERED RENDERING & GEOMETRY RASTERIZATION ]
+// Mission: Draw background, banner, twin relic meters, region, and buttons.
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Renders a complete simulation frame onto an off-screen X11 backbuffer.
+ *
+ * ### Machine Role & Mission
+ * Composes the entire graphical interface for a single frame: header banner,
+ * twin relic meters (Shield of Lux and Sword of Tenebris), stance and moral
+ * sway indicators, regional status panel, action chronicle log, and interactive
+ * command buttons. Rendering directly to an off-screen pixmap guarantees
+ * tear-free presentation.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Double-Buffered Graphics Frame Composer
+ * - Cog: Frame Rasterization & Viewport Renderer
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero dynamic allocations).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Bound to X11 main event loop).
+ * - Latency Budget: < 5000 microseconds (well within 16,666 us 60 FPS budget).
+ *
+ * @param[in] d     Connected X11 Display handle.
+ * @param[in] dr    Target Drawable (off-screen Pixmap backbuffer).
+ * @param[in] gc    Graphics Context handle.
+ * @param[in] state Pointer to active simulation player state.
+ * @param[in] p     Pointer to pre-allocated color palette.
+ * @param[in] log   Pointer to narrative chronicle ring-buffer.
+ */
 static void render_frame(Display *d, Drawable dr, GC gc,
     const player_state_t *state, const gui_palette_t *p, const gui_log_t *log)
 {
-    /* Background Canvas */
+    /* Step 1: Render background canvas */
     XSetForeground(d, gc, p->bg);
     XFillRectangle(d, dr, gc, 0, 0, GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT);
 
-    /* --- Header Banner --- */
+    /* Step 2: Render header banner */
     XSetForeground(d, gc, p->panel);
     XFillRectangle(d, dr, gc, 20, 15, GUI_WINDOW_WIDTH - 40, 50);
     XSetForeground(d, gc, p->border);
@@ -138,7 +239,7 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     XDrawString(d, dr, gc, 260, 42,
         "- The Chronicles of the Shield of Lux and Sword of Tenebris", 59);
 
-    /* --- Dual Relics Status Panel --- */
+    /* Step 3: Render dual relics status panel */
     XSetForeground(d, gc, p->panel);
     XFillRectangle(d, dr, gc, 20, 75, GUI_WINDOW_WIDTH - 40, 85);
     XSetForeground(d, gc, p->border);
@@ -190,7 +291,7 @@ static void render_frame(Display *d, Drawable dr, GC gc,
                        fill_t - 2, bar_t_h - 2);
     }
 
-    /* Sub-bar line: Stance and Moral Sway */
+    /* Step 4: Render stance and moral sway */
     char stance_str[96];
     snprintf(stance_str, sizeof(stance_str), "Stance: %s",
         game_get_stance_name(state->stance));
@@ -209,7 +310,7 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     }
     XDrawString(d, dr, gc, 450, 142, sway_str, strlen(sway_str));
 
-    /* --- Kingdom Region Viewport --- */
+    /* Step 5: Render Kingdom Region viewport */
     XSetForeground(d, gc, p->panel);
     XFillRectangle(d, dr, gc, 20, 170, GUI_WINDOW_WIDTH - 40, 115);
     XSetForeground(d, gc, p->border);
@@ -243,7 +344,7 @@ static void render_frame(Display *d, Drawable dr, GC gc,
         XDrawString(d, dr, gc, 40, 260, honor_str, strlen(honor_str));
     }
 
-    /* --- Chronicle / Action Log Viewport --- */
+    /* Step 6: Render action log / chronicle viewport */
     XSetForeground(d, gc, p->panel);
     XFillRectangle(d, dr, gc, 20, 295, GUI_WINDOW_WIDTH - 40, 175);
     XSetForeground(d, gc, p->border);
@@ -260,7 +361,7 @@ static void render_frame(Display *d, Drawable dr, GC gc,
             strlen(log->lines[i]));
     }
 
-    /* --- Interactive Action Buttons --- */
+    /* Step 7: Render interactive action buttons */
     for (int i = 0; i < NUM_BUTTONS; i++) {
         const gui_button_t *b = &buttons[i];
 
@@ -286,8 +387,37 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     }
 }
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.2: SPATIAL INPUT DETECTION & HOTKEY ROUTING ]
+// Mission: Resolve mouse click coordinates and keystrokes into button actions.
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Locates an interactive button at the specified screen coordinates.
+ *
+ * ### Machine Role & Mission
+ * Iterates through the static button topology table, performing a 2D
+ * point-in-rectangle hit test via Layer 0 geometric primitives. Returns the
+ * matching button pointer if a hit is detected.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Spatial Button Collision & Input Mapping
+ * - Cog: Cursor Point-in-Rectangle Hit Detector
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero dynamic allocations, pointer lookup).
+ * - Concurrency: REENTRANT_PURE (Pure immutable button table inspection).
+ * - Latency Budget: < 1 microsecond.
+ *
+ * @param[in] x Screen horizontal X coordinate in pixels.
+ * @param[in] y Screen vertical Y coordinate in pixels.
+ * @return Pointer to matching `gui_button_t`, or NULL if no button hit.
+ */
 static const gui_button_t *find_clicked_button(int x, int y)
 {
+    /* Step 1: Iterate through button list and test point intersection */
     for (int i = 0; i < NUM_BUTTONS; i++) {
         geom_rect_t rect = geom_make_rect(buttons[i].x, buttons[i].y,
             buttons[i].width, buttons[i].height);
@@ -295,31 +425,110 @@ static const gui_button_t *find_clicked_button(int x, int y)
             return &buttons[i];
         }
     }
+
+    /* Step 2: No collision detected */
     return NULL;
 }
 
+/**
+ * @brief Resolves a keyboard character into its associated button action.
+ *
+ * ### Machine Role & Mission
+ * Performs an exact case-sensitive match against registered button hotkey
+ * characters ('w', 's', 'b', 't', 'l', 'i', 'n', 'r', 'q').
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Spatial Button Collision & Input Mapping
+ * - Cog: Hotkey Character Action Button Resolver
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero dynamic allocations).
+ * - Concurrency: REENTRANT_PURE (Immutable table inspection).
+ * - Latency Budget: < 1 microsecond.
+ *
+ * @param[in] key Hotkey character to resolve.
+ * @return Pointer to matching `gui_button_t`, or NULL if unregistered.
+ */
 static const gui_button_t *find_button_by_hotkey(char key)
 {
+    /* Step 1: Iterate through button list and compare hotkey character */
     for (int i = 0; i < NUM_BUTTONS; i++) {
         if (buttons[i].hotkey == key) {
             return &buttons[i];
         }
     }
+
+    /* Step 2: Unmatched hotkey */
     return NULL;
 }
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.3: PUBLIC PRESENTATION INTERFACE & EVENT PUMP ]
+// Mission: Probe display availability and execute the X11 double-buffered loop.
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Probes whether a graphical X11 display server is reachable.
+ *
+ * ### Machine Role & Mission
+ * Attempts a lightweight connection probe via XOpenDisplay(NULL) to test
+ * if an X11 server is accessible. This allows the application entry router
+ * to gracefully downgrade to terminal CLI mode in headless environments.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: X11 Server Connection & Headless Probe
+ * - Cog: Display Connection Probe Primitive
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero heap allocations).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Opens temporary connection).
+ * - Latency Budget: < 2000 microseconds probe time.
+ *
+ * @return `true` if an X11 server is accessible; `false` in headless contexts.
+ */
 bool gui_is_available(void)
 {
+    /* Step 1: Attempt connection to X11 display from $DISPLAY */
     Display *d = XOpenDisplay(NULL);
     if (d == NULL) {
         return false;
     }
+
+    /* Step 2: Close test connection and report accessibility */
     XCloseDisplay(d);
     return true;
 }
 
+/**
+ * @brief Launches the native X11 double-buffered presentation loop.
+ *
+ * ### Machine Role & Mission
+ * Serves as the primary graphical desktop interface for Tenebris and Lux.
+ * Creates an X11 top-level window, off-screen backbuffer pixmap, initializes
+ * the dark fantasy color palette, and pumps user input events (clicks, keys)
+ * at 60 FPS while dispatching actions to the universal simulation engine.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Presentation Lifecycle & Event Dispatch
+ * - Cog: Native X11 Double-Buffered Event Loop
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Static structures, zero engine heap).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Bound to X11 event loop).
+ * - Latency Budget: < 16,666 microseconds per frame (60 FPS budget).
+ *
+ * @param[in,out] state Active simulation player state.
+ * @return Exit status code (0 on clean exit, non-zero on failure).
+ */
 int gui_run(player_state_t *state)
 {
+    /* Step 1: Open X11 display connection */
     Display *display = XOpenDisplay(NULL);
     if (display == NULL) {
         fprintf(stderr, "GUI Error: Failed to open X11 display.\n");
@@ -329,6 +538,7 @@ int gui_run(player_state_t *state)
     int screen = DefaultScreen(display);
     Window root = RootWindow(display, screen);
 
+    /* Step 2: Configure window attributes and event masks */
     XSetWindowAttributes swa;
     swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
                      StructureNotifyMask;
@@ -346,6 +556,7 @@ int gui_run(player_state_t *state)
 
     XMapWindow(display, window);
 
+    /* Step 3: Allocate off-screen double-buffer pixmap and graphics context */
     XWindowAttributes wa;
     XGetWindowAttributes(display, window, &wa);
     int window_depth = wa.depth;
@@ -354,6 +565,7 @@ int gui_run(player_state_t *state)
         GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, window_depth);
     GC gc = XCreateGC(display, backbuffer, 0, NULL);
 
+    /* Step 4: Allocate color palette */
     gui_palette_t pal;
     pal.bg           = alloc_color(display, screen, 0x0D0E12); // Obsidian Void
     pal.panel        = alloc_color(display, screen, 0x1A1D24); // Dark Granite
@@ -367,6 +579,7 @@ int gui_run(player_state_t *state)
     pal.btn_bg       = alloc_color(display, screen, 0x1E222B); // Button Slate
     pal.btn_border   = alloc_color(display, screen, 0x3E4452); // Button Rim
 
+    /* Step 5: Initialize chronicle narrative log */
     gui_log_t log;
     log.count = 0;
     log_append(&log, "Awakened at The Garrison Altar in Sacyra.");
@@ -375,6 +588,7 @@ int gui_run(player_state_t *state)
 
     bool running = true;
 
+    /* Step 6: Execute 60 FPS double-buffered event pump */
     while (running && state->is_running) {
         while (XPending(display)) {
             XEvent ev;
@@ -436,6 +650,7 @@ int gui_run(player_state_t *state)
         time_sleep_ms(16.66);
     }
 
+    /* Step 7: Teardown display resources and backbuffer */
     XFreePixmap(display, backbuffer);
     XFreeGC(display, gc);
     XDestroyWindow(display, window);
@@ -445,8 +660,13 @@ int gui_run(player_state_t *state)
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// ( Viewport Integrity Checks & Surface Tripwires )
+// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: INVARIANT MANIFEST & PRE-FLIGHT VERIFIER ]
+// Mission: Provide verifiable metadata and boot-time layout bounds checks.
+// -----------------------------------------------------------------------------
 
 static const char *const gui_invariants[] = {
     "Double-buffered native X11 rendering",
@@ -478,13 +698,36 @@ const module_metadata_t gui_manifest = {
     gui_preflight
 };
 
+/**
+ * @brief Pre-flight diagnostic callback probing display accessibility.
+ *
+ * ### Machine Role & Mission
+ * Audits GUI prerequisites prior to game loop initiation. Performs two tests:
+ * 1. Fatal Check: Layout bounds and button non-overlap audit.
+ * 2. Critical Check: Display connection probe. If missing, reports
+ *    SEVERITY_CRITICAL enabling graceful downgrade to CLI mode.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Viewport Bounds Audits & Pre-Flight
+ * - Cog: GUI Pre-Flight Diagnostic Verifier
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero dynamic allocations).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Probes system environment).
+ * - Latency Budget: < 2000 microseconds execution time.
+ *
+ * @return Diagnostic check outcome reporting SEVERITY_PASS or CRITICAL.
+ */
 diag_result_t gui_preflight(void)
 {
+    /* Step 1: Initialize diagnostic result record */
     diag_result_t res;
     res.subsystem = gui_manifest.module_id;
     res.check_name = "Layout Bounds & Display Availability";
 
-    /* Test 1 (Fatal Check): Layout bounds & non-overlapping buttons */
+    /* Step 2: Fatal Check - Layout bounds & non-overlapping buttons */
     if (!gui_audit_layout()) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
@@ -493,7 +736,7 @@ diag_result_t gui_preflight(void)
         return res;
     }
 
-    /* Test 2 (Critical Check): Native display availability */
+    /* Step 3: Critical Check - Native display availability */
     if (!gui_is_available()) {
         res.passed = false;
         res.severity = SEVERITY_CRITICAL;
@@ -502,6 +745,7 @@ diag_result_t gui_preflight(void)
         return res;
     }
 
+    /* Step 4: Verification passed */
     res.passed = true;
     res.severity = SEVERITY_PASS;
     res.details =
@@ -509,8 +753,30 @@ diag_result_t gui_preflight(void)
     return res;
 }
 
+/**
+ * @brief Audits all interactive button rectangles for collisions and bounds.
+ *
+ * ### Machine Role & Mission
+ * Iterates through all registered button definitions, asserting that every
+ * button rectangle resides strictly within [0, GUI_WINDOW_WIDTH] x [0,
+ * GUI_WINDOW_HEIGHT] and does not intersect any other button's bounding box.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 2 (Presentation & Viewport)
+ * - Machine: gui.viewport.x11 (Native Desktop X11 Viewport)
+ * - Assembly: Viewport Bounds Audits & Pre-Flight
+ * - Cog: Bounding Box Bounds & Non-Overlap Invariant Auditor
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Zero dynamic heap allocations).
+ * - Concurrency: REENTRANT_PURE (Immutable table inspection).
+ * - Latency Budget: < 50 microseconds.
+ *
+ * @return `true` if all buttons reside inside viewport and do not overlap.
+ */
 bool gui_audit_layout(void)
 {
+    /* Step 1: Verify each button is contained entirely within the window */
     for (int i = 0; i < NUM_BUTTONS; i++) {
         const gui_button_t *b = &buttons[i];
         geom_rect_t r1 = geom_make_rect(b->x, b->y, b->width, b->height);
@@ -522,7 +788,7 @@ bool gui_audit_layout(void)
             return false;
         }
 
-        /* Check for accidental button overlap with other buttons */
+        /* Step 2: Check for accidental overlap with subsequent buttons */
         for (int j = i + 1; j < NUM_BUTTONS; j++) {
             const gui_button_t *b2 = &buttons[j];
             geom_rect_t r2 =
@@ -536,6 +802,7 @@ bool gui_audit_layout(void)
         }
     }
 
+    /* Step 3: All buttons strictly conform to layout geometry */
     return true;
 }
 

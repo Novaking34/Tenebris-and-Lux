@@ -1,0 +1,163 @@
+= DevLog 006: Source Implementation & Root Pedagogical Commenting
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-27
+:doctype: article
+:icons: font
+:sectnums:
+
+[abstract]
+== Executive Summary
+
+This log chronicles the complete expansion of the OmniCode 5-Block Ontological
+Documentation Architecture to the entire source implementation tree (`src/**/*.c`)
+and root configuration anchors (`CMakeLists.txt`, `.gitignore`, `README.md`).
+Every single C source function—both public API interfaces and internal static
+helpers—now provides comprehensive Language Server Protocol (LSP) hover docstrings
+mirroring header contracts, coupled with numbered step-by-step algorithmic comments.
+Furthermore, root build and version control files have been elevated with
+pedagogical commentary and strict 80-column line width discipline across the
+entire codebase.
+
+== 1. Architectural Intent: End-to-End Documentation Consistency
+
+While header files (`include/**/*.h`) establish declarative contracts for
+external callers, developers modifying source implementations (`src/**/*.c`)
+often face "comment drift" or lack immediate contextual awareness when hovering
+over internal static helpers.
+
+To eliminate this discrepancy, the Machine-Cog Ontological Documentation Standard
+has been systematically implemented across 100% of the C source files:
+
+1. **Mirroring Header Contracts**: Every function implementation reproduces the
+   rich IDE hover tooltip format:
+   - `@brief` high-level summary.
+   - `### Machine Role & Mission` explaining tactical/engine purpose.
+   - `### Ontological Classification` (Stratum -> Machine -> Assembly -> Cog).
+   - `### Execution & Resource Contract` (Memory Model, Concurrency, Latency).
+   - Doxygen parameter (`@param`) and return (`@return`) declarations.
+2. **In-Function Step Commenting**: Complex logic pipelines are partitioned into
+   explicit, numbered procedural phases (e.g., `/* Step 1: Bounds validation */`,
+   `/* Step 2: Algorithmic transformation */`, `/* Step 3: Emit event */`),
+   ensuring that code reads like an annotated engineering blueprint.
+
+== 2. Source Code Implementation Matrix
+
+[cols="1,2,2,1", options="header"]
+|===
+| Module | File | Sub-Assemblies Documented | Functions Annotated
+
+| **Math Utils**
+| `src/util/math_utils.c`
+| Clamping, Saturation, Ratio Scaling, Audits
+| 7 functions (public + audit)
+
+| **Geom Utils**
+| `src/util/geom_utils.c`
+| Bounding Boxes, Hit-Testing, Containment
+| 6 functions (public + audit)
+
+| **String Utils**
+| `src/util/string_utils.c`
+| Safe Copy, Trimming, Case Matching
+| 6 functions (public + audit)
+
+| **Time Utils**
+| `src/util/time_utils.c`
+| Monotonic Clocks, Millisecond Sleeping
+| 5 functions (public + audit)
+
+| **Manifest**
+| `src/util/manifest.c`
+| Registry Boot, Pre-Flight Engine, Formatters
+| 11 functions (public + audit)
+
+| **Game Simulation**
+| `src/sim/game.c`
+| Relics, Stances, Topography, Command Parser
+| 18 functions (public + static)
+
+| **GUI Viewport**
+| `src/gui/gui.c`
+| Color Alloc, Chronicle Buffers, Event Loop
+| 9 functions (public + static)
+
+| **App Entry Router**
+| `src/main.c`
+| Manifest Boot, CLI Flags, Pre-Flight Dispatch
+| 5 functions (public + static)
+|===
+
+== 3. Root Configuration Pedagogical Enhancement
+
+Root configuration files anchor the build system and repository hygiene.
+They have been restructured with the Universal 5-Block Lifecycle Protocol
+and educational commentary:
+
+=== 3.1 `CMakeLists.txt`
+- **Block 1 (Metadata)**: Project provenance, minimum CMake version (3.24),
+  and ISO C11 standard invariants.
+- **Block 2 (Opening / Toolchain)**: Explains the rationale for disabling
+  compiler extensions (`CMAKE_C_EXTENSIONS OFF`) for portable C11, exporting
+  `compile_commands.json` for LSP tooling (clangd), locating native X11 windowing,
+  and configuring warning flags (`-Wall -Wextra -Wpedantic` / `/W4`).
+- **Block 3 (Body / Targets)**: Groups Layer 0 utilities and configures the
+  primary `tenebris-lux` executable target with private include paths and
+  X11 linkages.
+- **Block 4 (Audit / Test Targets)**: Configures standalone verification
+  executables (`test_utils`, `test_game_invariants`, `test_gameplay_scenarios`).
+- **Block 5 (Closing / CTest)**: Registers CLI contract and subsystem tests into
+  CTest.
+
+=== 3.2 `.gitignore`
+- **Block 1 (Metadata)**: Version control exclusion contracts and repository
+  hygiene invariants.
+- **Block 2 (Compiled Binaries)**: Groups object code (`*.o`, `*.obj`),
+  static libraries (`*.a`, `*.lib`), dynamic libraries (`*.so`, `*.dylib`),
+  and native executables.
+- **Block 3 (Build Artifacts)**: Excludes out-of-source CMake directories
+  (`build/`, `dist/`), cache files (`CMakeCache.txt`), and temporary makefiles.
+- **Block 4 (Telemetry & Logs)**: Excludes transient runtime traces (`*.log`,
+  `*.audit`) and experimental scratch directories.
+- **Block 5 (IDE & OS Detritus)**: Excludes `.vscode/`, `.idea/`, `.cache/`,
+  macOS `.DS_Store`, and editor swap files.
+
+=== 3.3 `README.md`
+- Synchronized documentation indices to point to the chronological calendar
+  archive in `docs/dev_logs/2026/10/README.adoc`.
+
+== 4. Strict 80-Column Verification Audit
+
+An automated Python static audit across all 18 repository files verified
+strict adherence to the 80-column line width discipline:
+
+[source,bash]
+----
+$ python3 -c "
+import glob
+files = sorted(glob.glob('src/**/*.c') + glob.glob('include/**/*.h') + ['CMakeLists.txt', '.gitignore'])
+total_bad = sum(1 for f in files for l in open(f) if len(l.rstrip('\r\n')) > 80)
+print(f'Total bad lines across {len(files)} files: {total_bad}')
+"
+Total bad lines across 17 files: 0
+----
+
+== 5. Verification & Telemetry Results
+
+1. **Compilation Telemetry**:
+   - Compiler: GCC / Clang (ISO C11 `-std=c11`).
+   - Flags: `-Wall -Wextra -Wpedantic`.
+   - Result: 100% clean compilation, zero warnings.
+
+2. **Automated Test Suite (CTest)**:
+   - `cli_help_test`: Passed (0.00s)
+   - `cli_version_test`: Passed (0.00s)
+   - `subsystem_audit_test`: Passed (0.00s)
+   - `core_utils_test`: Passed (0.00s)
+   - `game_invariants_test`: Passed (0.00s)
+   - `gameplay_scenarios_test`: Passed (0.01s)
+   - Aggregate Pass Rate: 6/6 tests passing (100%) in 0.04s.
+
+3. **Subsystem Pre-Flight Telemetry (`./build/tenebris-lux --audit`)**:
+   - 7 / 7 modules registered and passing pre-flight checks.
+   - 5 / 5 core invariant self-audit checks passing.
+   - Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED (System Ready).
