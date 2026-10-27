@@ -56,3 +56,10 @@ thematically (`architecture/`, `lore_and_design/`).
    - Upgraded all Layer 0 and Layer 1 headers with rich Markdown docstrings for IDE hover tooltips (clean first-paragraph descriptions, empty line after headers, no raw line delimiter pollution).
    - Enforced strict 80-column line width discipline across 100% of the C codebase (0 lines exceeding 80 columns across all 18 files).
    - Reorganized developer logs into chronological and topical directory trees (`YYYY/MM/<topic>/`).
+
+6. **[devlog_006_source_and_root_pedagogical_commenting.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc)**  
+   *Source Implementation & Root Pedagogical Commenting* (2026-10-27 | Architecture):
+   - Expanded Ontological Documentation Architecture and LSP hover docstrings across 100% of C source files (`src/**/*.c`).
+   - Added numbered step-by-step procedural comments inside all functions.
+   - Upgraded root configuration files (`CMakeLists.txt`, `.gitignore`, `README.md`) with pedagogical commentary and OmniCode 5-block structure.
+   - Confirmed 100% strict 80-column line width compliance across all 18 repository files.

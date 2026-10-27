@@ -6,63 +6,141 @@
 # @file          .gitignore
 # @layer         Version Control & Workspace Hygiene
 # @version       0.0.1
-# @epoch         2026.10
+# @interface_rev Rev 2
+# @date          2026-10-26
+# @updated       2026-10-26
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
-# @role          Git Exclusion Policy & Build Artifact Insulation
-# @invariants    Never track intermediate binaries, build outputs, or local state.
+#
+# PURPOSE & ARCHITECTURAL ROLE:
+#   Repository version control exclusion manifest and root hygiene guard.
+#   Guarantees that intermediate build artifacts, machine-specific binaries,
+#   IDE workspace states, diagnostic dumps, and OS cache detritus never
+#   pollute the Git history or corrupt cross-platform verification trees.
+#
+# PEDAGOGICAL MISSION:
+#   Maintains an immaculate, reproducible repository state across Unix,
+#   Linux, and Windows environments, ensuring new contributors and automated
+#   agents operate exclusively on canonical, unpolluted source code.
+#
+# AXIOMATIC INVARIANTS:
+#   1. Zero binary tracking: Never commit machine-generated object code.
+#   2. Zero CMake cache leakage: Toolchain paths remain strictly local.
+#   3. Zero user-environment leakage: IDE and editor caches stay untracked.
+#   4. Strict 80-column line width discipline across comments and rules.
 # ==============================================================================
 
 # ==============================================================================
 # BLOCK 2: OPENING / COMPILED BINARIES BLOCK
 # ( Native Executables, Object Files & Dynamic Libraries )
+# Stratum: Version Control | Machine: vcs.hygiene.binaries
 # ==============================================================================
-build/
-dist/
-bin/
-out/
+
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 2.1: INTERMEDIATE OBJECT FILES & ARCHIVES ]
+# Mission: Insulate repo from platform-dependent object code and libraries.
+# ------------------------------------------------------------------------------
+
+# Intermediate compiler object code (ELF, Mach-O, PE/COFF)
 *.o
 *.obj
+
+# Static library archives
+*.a
+*.lib
+
+# Dynamic shared libraries and shared objects
+*.so
+*.dylib
+*.dll
+
+# Native executables and application bundles
 *.exe
 *.out
 *.app
-*.so
-*.dylib
-*.a
+
+# Distribution directories and target output staging
+bin/
+out/
+dist/
 
 # ==============================================================================
 # BLOCK 3: BODY / BUILD SYSTEM ARTIFACTS BLOCK
 # ( CMake Caches, Generated Build Files & Toolchain Temporary Files )
+# Stratum: Version Control | Machine: vcs.hygiene.cmake
 # ==============================================================================
+
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 3.1: CMAKE BUILD DIRECTORIES & CACHES ]
+# Mission: Exclude generated build trees and toolchain configuration state.
+# ------------------------------------------------------------------------------
+
+# Primary out-of-source CMake build directories
+build/
+build-*/
+
+# Root CMake cache files generated during in-source configurations
 CMakeCache.txt
 CMakeFiles/
 CMakeScripts/
 cmake_install.cmake
 Makefile
+
+# CTest test driver files and testing reports
 CTestTestfile.cmake
 Testing/
+
+# Compiler commands database (exported for local LSP engines)
 compile_commands.json
+
+# CMake installation manifests and external dependency caches
 install_manifest.txt
 _deps/
 
 # ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES / LOGS & TELEMETRY BLOCK
 # ( Diagnostic Dumps, Crash Reports, Trace Records & Audit Outputs )
+# Stratum: Version Control | Machine: vcs.hygiene.telemetry
 # ==============================================================================
+
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 4.1: DIAGNOSTIC LOGS & SCRATCH DIRECTORIES ]
+# Mission: Prevent transient runtime traces and scratch files from commit.
+# ------------------------------------------------------------------------------
+
+# Engine diagnostic runtime traces and crash logs
 *.log
 *.audit
+
+# Temporary scratch and experiment worktrees
 scratch/
 test_output/
 
 # ==============================================================================
 # BLOCK 5: CLOSING / IDE & OS SPECIFIC METADATA BLOCK
 # ( Editor Workspaces, Language Server Indices & OS Detritus )
+# Stratum: Version Control | Machine: vcs.hygiene.workspaces
 # ==============================================================================
-.cache/
+
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 5.1: EDITOR SETTINGS & LANGUAGE SERVER CACHES ]
+# Mission: Guard repository from developer-specific editor configurations.
+# ------------------------------------------------------------------------------
+
+# IDE workspace folders and metadata
 .vscode/
 .idea/
+.cache/
+
+# Vim / Emacs swap files and lock buffers
 *.swp
 *.swo
 *~
+.#*
+
+# Operating system desktop database files and thumbnail caches
 .DS_Store
 Thumbs.db
+ehthumbs.db
+
+# End of .gitignore

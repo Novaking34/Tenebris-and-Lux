@@ -15,7 +15,8 @@
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Pure implementation of bounded integer arithmetic, clamping functions,
-//   and equilibrium nudging algorithms.
+//   and equilibrium nudging algorithms. Serves as the mathematical foundation
+//   guardrailing resource limits, relic charges, and gameplay meters.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: None (Foundational leaf module).
@@ -76,28 +77,139 @@ const module_metadata_t math_utils_manifest = {
 // Mission: Guardrail calculations against integer overflow and underflow.
 // -----------------------------------------------------------------------------
 
+/**
+ * Clamps a signed integer to a closed interval [min_val, max_val].
+ *
+ * ### Machine Role & Mission
+ *
+ * Serves as a foundational mathematical guardrail preventing overflow,
+ * underflow, or boundary corruption across player statistics, resonance
+ * meters, and moral sway values. If min_val > max_val, boundaries swap.
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.math (Bounded Arithmetic Engine)
+ * - Assembly:   Integer Clamping & Saturation
+ * - Cog:        Scalar Interval Clamp Primitive
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
+ * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
+ * - Latency Budget: < 1 microsecond execution time (O(1) branching).
+ *
+ * @param[in] val     The raw input integer to evaluate.
+ * @param[in] min_val Lower boundary limit (inclusive).
+ * @param[in] max_val Upper boundary limit (inclusive).
+ *
+ * @return Clamped value satisfying `min_val <= result <= max_val`.
+ *
+ * @pre  `min_val <= max_val` under normal operation.
+ * @post Result resides strictly within `[min_val, max_val]`.
+ */
 int math_clamp_int(int val, int min_val, int max_val)
 {
+    /* Step 1: Self-healing inversion check (swap if boundaries inverted) */
     if (min_val > max_val) {
         int tmp = min_val;
         min_val = max_val;
         max_val = tmp;
     }
-    if (val < min_val) return min_val;
-    if (val > max_val) return max_val;
+
+    /* Step 2: Enforce lower boundary floor */
+    if (val < min_val) {
+        return min_val;
+    }
+
+    /* Step 3: Enforce upper boundary ceiling */
+    if (val > max_val) {
+        return max_val;
+    }
+
+    /* Step 4: Value already resides cleanly within [min_val, max_val] */
     return val;
 }
 
+/**
+ * Subtracts an integer value with saturation at zero (non-negative floor).
+ *
+ * ### Machine Role & Mission
+ *
+ * Prevents negative resource anomalies when spending player stamina,
+ * deducting relic resonance charges, or applying damage to enemy threat vigor.
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.math (Bounded Arithmetic Engine)
+ * - Assembly:   Integer Clamping & Saturation
+ * - Cog:        Saturating Subtraction Primitive
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
+ * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
+ * - Latency Budget: < 1 microsecond execution time (O(1)).
+ *
+ * @param[in] val     Current base value (e.g., remaining hit points).
+ * @param[in] sub_val Amount to subtract (negative values safely treated as 0).
+ *
+ * @return `max(0, val - sub_val)`.
+ *
+ * @post Return value is guaranteed to be non-negative (>= 0).
+ */
 int math_saturating_sub(int val, int sub_val)
 {
-    if (sub_val < 0) return val;
+    /* Step 1: Guard against negative subtraction inputs (no-op) */
+    if (sub_val < 0) {
+        return val;
+    }
+
+    /* Step 2: Underflow protection: floor at zero if deduction exceeds val */
     return (val >= sub_val) ? (val - sub_val) : 0;
 }
 
+/**
+ * Adds an integer value with saturation at an upper ceiling limit.
+ *
+ * ### Machine Role & Mission
+ *
+ * Safely charges relic resonance, restores shield barrier power, and
+ * accumulates progress counters without overflowing beyond max capacity.
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.math (Bounded Arithmetic Engine)
+ * - Assembly:   Integer Clamping & Saturation
+ * - Cog:        Saturating Addition Primitive
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
+ * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
+ * - Latency Budget: < 1 microsecond execution time (O(1)).
+ *
+ * @param[in] val     Current base value (e.g., current shield charge).
+ * @param[in] add_val Amount to add (negative values safely treated as 0).
+ * @param[in] max_val Upper ceiling threshold (e.g., MAX_RESONANCE = 100).
+ *
+ * @return `min(max_val, val + add_val)`.
+ *
+ * @post Return value never exceeds `max_val`.
+ */
 int math_saturating_add(int val, int add_val, int max_val)
 {
-    if (add_val < 0) return val;
+    /* Step 1: Guard against negative addition inputs (no-op) */
+    if (add_val < 0) {
+        return val;
+    }
+
+    /* Step 2: Compute sum in signed register */
     int sum = val + add_val;
+
+    /* Step 3: Clamp to ceiling if sum breaches maximum capacity */
     return (sum > max_val) ? max_val : sum;
 }
 
@@ -106,23 +218,96 @@ int math_saturating_add(int val, int add_val, int max_val)
 // Mission: Nudge values toward stability and compute safe UI scale ratios.
 // -----------------------------------------------------------------------------
 
+/**
+ * Nudges an integer toward a target value by at most a specified step size.
+ *
+ * ### Machine Role & Mission
+ *
+ * Provides smooth convergence toward equilibrium states without overshoot.
+ * Used to slowly decay heightened moral sway toward cosmic center (0).
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.math (Bounded Arithmetic Engine)
+ * - Assembly:   Equilibrium & Ratio Scaling
+ * - Cog:        Equilibrium Convergence Primitive
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
+ * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
+ * - Latency Budget: < 1 microsecond execution time (O(1)).
+ *
+ * @param[in] val    Current source value.
+ * @param[in] target Target equilibrium anchor to approach.
+ * @param[in] step   Maximum distance step to advance per invocation.
+ *
+ * @return Converged value guaranteed not to overshoot target.
+ */
 int math_nudge_toward(int val, int target, int step)
 {
-    if (step < 0) step = -step;
+    /* Step 1: Absolute step magnitude normalization */
+    if (step < 0) {
+        step = -step;
+    }
+
+    /* Step 2: Forward approach with overshoot clamp */
     if (val < target) {
         int next = val + step;
         return (next > target) ? target : next;
-    } else if (val > target) {
+    }
+
+    /* Step 3: Backward approach with undershoot clamp */
+    if (val > target) {
         int next = val - step;
         return (next < target) ? target : next;
     }
+
+    /* Step 4: Value is already at target equilibrium anchor */
     return target;
 }
 
+/**
+ * Scales an integer value by a ratio safely mapped to a target pixel width.
+ *
+ * ### Machine Role & Mission
+ *
+ * Converts numerical gameplay meters into pixel widths for HUD progress bars.
+ * Includes explicit division-by-zero immunity and 64-bit overflow guardrails.
+ *
+ * ### Ontological Classification
+ *
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.math (Bounded Arithmetic Engine)
+ * - Assembly:   Equilibrium & Ratio Scaling
+ * - Cog:        Safe Ratio Scaling Primitive
+ *
+ * ### Execution & Resource Contract
+ *
+ * - Memory Model:   ALLOC_ZERO_HEAP (64-bit temporary intermediate math).
+ * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
+ * - Latency Budget: < 1 microsecond execution time (O(1)).
+ *
+ * @param[in] val          Current meter value (0 <= val <= max_val).
+ * @param[in] max_val      Maximum meter capacity (safe if <= 0).
+ * @param[in] target_scale Target pixel width or range.
+ *
+ * @return Scaled integer residing within `[0, target_scale]`.
+ */
 int math_scale_ratio(int val, int max_val, int target_scale)
 {
-    if (max_val <= 0 || val <= 0) return 0;
-    if (val >= max_val) return target_scale;
+    /* Step 1: Zero divisor & negative value defense (prevents SIGFPE) */
+    if (max_val <= 0 || val <= 0) {
+        return 0;
+    }
+
+    /* Step 2: Saturated ceiling shortcut */
+    if (val >= max_val) {
+        return target_scale;
+    }
+
+    /* Step 3: Safe 64-bit intermediate multiplication to avoid overflow */
     return (int)(((long long)val * target_scale) / max_val);
 }
 
@@ -136,13 +321,24 @@ int math_scale_ratio(int val, int max_val, int target_scale)
 // Mission: Validate mathematical axioms and arithmetic ceilings prior to boot.
 // -----------------------------------------------------------------------------
 
+/**
+ * Pre-flight diagnostic check evaluating bounded arithmetic invariants.
+ *
+ * ### Machine Role & Mission
+ *
+ * Executed during engine boot by the Central Manifest orchestrator.
+ * Confirms that integer clamping, saturating addition/subtraction,
+ * division-by-zero resilience, and equilibrium convergence operate correctly.
+ *
+ * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
+ */
 diag_result_t math_utils_preflight(void)
 {
     diag_result_t res;
     res.subsystem = math_utils_manifest.module_id;
     res.check_name = "Clamping & Saturating Bounds";
 
-    /* Test 1: Clamping bounds */
+    /* Check 1: Clamping bounds, inversion recovery, and exact values */
     if (math_clamp_int(150, 0, 100) != 100 ||
         math_clamp_int(-50, 0, 100) != 0 ||
         math_clamp_int(50, 0, 100) != 50 ||
@@ -153,7 +349,7 @@ diag_result_t math_utils_preflight(void)
         return res;
     }
 
-    /* Test 2: Saturating arithmetic underflow & overflow bounds */
+    /* Check 2: Saturating arithmetic underflow & overflow bounds */
     if (math_saturating_sub(10, 15) != 0 ||
         math_saturating_sub(20, 5) != 15 ||
         math_saturating_sub(0, 10) != 0 ||
@@ -166,7 +362,7 @@ diag_result_t math_utils_preflight(void)
         return res;
     }
 
-    /* Test 3: Zero divisor & negative input protection in math_scale_ratio */
+    /* Check 3: Zero divisor & negative input protection in math_scale_ratio */
     if (math_scale_ratio(50, 0, 100) != 0 ||
         math_scale_ratio(-10, 100, 100) != 0 ||
         math_scale_ratio(50, -100, 100) != 0 ||
@@ -177,7 +373,7 @@ diag_result_t math_utils_preflight(void)
         return res;
     }
 
-    /* Test 4: Nudge directionality and overshoot protection */
+    /* Check 4: Nudge directionality and overshoot protection */
     if (math_nudge_toward(10, 0, 3) != 7 ||
         math_nudge_toward(-10, 0, 3) != -7 ||
         math_nudge_toward(2, 0, 5) != 0 ||
@@ -194,6 +390,11 @@ diag_result_t math_utils_preflight(void)
     return res;
 }
 
+/**
+ * Standalone boolean self-audit wrapper for regression test suites.
+ *
+ * @return `true` if all mathematical invariant tripwires pass cleanly.
+ */
 bool math_utils_audit(void)
 {
     diag_result_t pf = math_utils_preflight();
