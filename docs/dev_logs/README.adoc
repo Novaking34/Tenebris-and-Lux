@@ -1,6 +1,6 @@
 = Developer Logs Index & Engineering Chronology
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v0.0.2, 2026-10-26
 :doctype: article
 :icons: font
 
@@ -10,36 +10,49 @@ v0.0.1, 2026-10-26
 This directory preserves the living engineering and game design chronicle of *Tenebris and Lux*.
 Every major architectural milestone, paradigm shift, and design breakthrough is documented
 here to provide enduring context for human developers and AI pair programmers.
+Developer logs are organized chronologically by calendar hierarchy (`YYYY/MM/`) and categorized
+thematically (`architecture/`, `lore_and_design/`).
 
-== Dev Log Manifest
+== Calendar Archives
 
-1. **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_001_genesis_and_pivot.adoc)**  
-   *Genesis, The Paradigm Pivot & Game Dev Invariants* (2026-10-24):
+* **[October 2026 Monthly Chronicle](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/README.adoc)** (5 Logs)
+
+== Complete Dev Log Manifest
+
+1. **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc)**  
+   *Genesis, The Paradigm Pivot & Game Dev Invariants* (2026-10-24 | Architecture):
    - Clean ISO C11 foundations and the OmniCode 5-Block protocol.
    - Analysis of the early survival-battery prototype and its implicit biases.
    - The paradigm pivot: The Shield of Lux, The Sword of Tenebris, and the re-awakening Dark Lord.
    - Native double-buffered X11 GUI and headless terminal CLI.
    - The dedicated game development testing suite.
 
-2. **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)**  
-   *The Sacyra Chronicles, Dual Protagonists & TRPG Evolution* (2026-10-26):
+2. **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)**  
+   *The Sacyra Chronicles, Dual Protagonists & TRPG Evolution* (2026-10-26 | Lore & Design):
    - Inception context: High school development (2014–2018) in RPG Maker as CreativeWorkzStudio's premier game.
    - Canonical setting establishment: The Kingdom of Sacyra (Crown, Royal Guard, Noble Houses, Adventurers' Guild).
    - Dual protagonists: Elijah Ro-enheart (Royal Guard lineage, vanguard defense) and Katrina Jaren (noble court aspirant, outrider agility).
    - Technical specification of the true genre: Tactical Strategy RPG (TRPG) combining a 2D strategic grid with cinematic side-view action combat resolution.
 
-3. **[devlog_003_preflight_and_manifest_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_003_preflight_and_manifest_architecture.adoc)**  
-   *Central Manifest, Executable Block 1 Metadata & Pre-Flight Architecture* (2026-10-26):
+3. **[devlog_003_preflight_and_manifest_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc)**  
+   *Central Manifest, Executable Block 1 Metadata & Pre-Flight Architecture* (2026-10-26 | Architecture):
    - Transformed declarative Block 1 metadata comments into executable `module_metadata_t` records.
    - Designed and built the zero-heap Central Manifest Registry (`manifest.h`, `manifest.c`).
    - Implemented pre-flight loose-bolts machine checks across time, math, geom, string, game simulation, and GUI.
    - Implemented 5-tier diagnostic severity hierarchy and 4-tier engine startup policy (Warnings, Downgrades, Fatal halts).
    - Completed "Expected" vs. "Actual" gap analysis with empirical benchmark telemetry.
 
-4. **[devlog_004_pedagogical_metadata_and_dependency_contracts.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc)**  
-   *Pedagogical Metadata Architecture, Temporal ISO 8601 Timelines & Active DAG Dependency Contracts* (2026-10-26):
+4. **[devlog_004_pedagogical_metadata_and_dependency_contracts.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc)**  
+   *Pedagogical Metadata Architecture, Temporal ISO 8601 Timelines & Active DAG Dependency Contracts* (2026-10-26 | Architecture):
    - Solved the pedagogical metadata dilemma: established the dual-audience protocol (plain-English mission statements for novices, rigorous technical contracts for seniors).
    - Mandated full ISO 8601 calendar dates (`YYYY-MM-DD`, `2026-10-26`) across all code headers, manifest structs, and technical specs to eliminate chronological ambiguity during manual audits.
    - Upgraded `module_metadata_t` to include interface contract revisions (`interface_rev`), memory allocation models (`alloc_policy_t`), and concurrency guarantees (`concurrency_policy_t`).
    - Implemented active boot-time Directed Acyclic Graph (DAG) upstream dependency validation (`dependencies[4]`) in `manifest_run_preflight()`—missing prerequisites trigger immediate `SEVERITY_FATAL` halts.
    - Upgraded all Layer 0 utilities, Layer 1 simulation engine, Layer 2 GUI viewport, and Layer 4 test suites with 100% pass rates and zero compiler warnings.
+
+5. **[devlog_005_ontological_code_layering_and_docstrings.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc)**  
+   *Ontological Sub-Assemblies, LSP Docstrings, Strict 80-Column Discipline & Calendar Chronology* (2026-10-26 | Architecture):
+   - Formulated the Machine-Cog ontological framework: Stratum -> Machine -> Assembly -> Cog -> Fasteners.
+   - Upgraded all Layer 0 and Layer 1 headers with rich Markdown docstrings for IDE hover tooltips (clean first-paragraph descriptions, empty line after headers, no raw line delimiter pollution).
+   - Enforced strict 80-column line width discipline across 100% of the C codebase (0 lines exceeding 80 columns across all 18 files).
+   - Reorganized developer logs into chronological and topical directory trees (`YYYY/MM/<topic>/`).

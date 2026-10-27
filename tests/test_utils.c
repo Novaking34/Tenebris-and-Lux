@@ -25,8 +25,8 @@
 //
 // AXIOMATIC INVARIANTS:
 //   1. 100% pass across all utility subsystem self-audits.
-//   2. Policy escalation: WARNINGS, DOWNGRADED, and HALT_FATAL strictly respected.
-//   3. Active DAG dependency validation halts if upstream dependency is missing.
+//   2. Policy escalation: WARNINGS, DOWNGRADED, HALT_FATAL strictly observed.
+//   3. DAG dependency validation halts if upstream dependency is missing.
 // =============================================================================
 
 // =============================================================================
@@ -58,19 +58,25 @@
 
 static diag_result_t mock_warn_check(void)
 {
-    diag_result_t res = { true, SEVERITY_WARNING, "mock.warn", "MockWarn", "Clock drift detected." };
+    diag_result_t res = {
+        true, SEVERITY_WARNING, "mock.warn", "MockWarn", "Drift detected."
+    };
     return res;
 }
 
 static diag_result_t mock_crit_check(void)
 {
-    diag_result_t res = { false, SEVERITY_CRITICAL, "mock.crit", "MockCrit", "Subsystem offline." };
+    diag_result_t res = {
+        false, SEVERITY_CRITICAL, "mock.crit", "MockCrit", "Offline."
+    };
     return res;
 }
 
 static diag_result_t mock_fatal_check(void)
 {
-    diag_result_t res = { false, SEVERITY_FATAL, "mock.fatal", "MockFatal", "Loose bolt detected." };
+    diag_result_t res = {
+        false, SEVERITY_FATAL, "mock.fatal", "MockFatal", "Loose bolt."
+    };
     return res;
 }
 
@@ -84,18 +90,25 @@ static void test_manifest_and_preflight(void)
     manifest_registry_t reg;
     manifest_registry_init(&reg);
 
-    TEST_ASSERT(manifest_register(&reg, &manifest_utils_manifest), "register manifest_utils");
-    TEST_ASSERT(manifest_register(&reg, &math_utils_manifest), "register math_utils");
-    TEST_ASSERT(manifest_register(&reg, &string_utils_manifest), "register string_utils");
-    TEST_ASSERT(manifest_register(&reg, &geom_utils_manifest), "register geom_utils");
-    TEST_ASSERT(manifest_register(&reg, &time_utils_manifest), "register time_utils");
+    TEST_ASSERT(manifest_register(&reg, &manifest_utils_manifest),
+                "register manifest_utils");
+    TEST_ASSERT(manifest_register(&reg, &math_utils_manifest),
+                "register math_utils");
+    TEST_ASSERT(manifest_register(&reg, &string_utils_manifest),
+                "register string_utils");
+    TEST_ASSERT(manifest_register(&reg, &geom_utils_manifest),
+                "register geom_utils");
+    TEST_ASSERT(manifest_register(&reg, &time_utils_manifest),
+                "register time_utils");
 
     /* Invariant: Duplicate registration must be rejected */
-    TEST_ASSERT(!manifest_register(&reg, &math_utils_manifest), "reject duplicate module");
+    TEST_ASSERT(!manifest_register(&reg, &math_utils_manifest),
+                "reject duplicate module");
 
     /* Invariant: Clean pre-flight returns PREFLIGHT_STATUS_OK */
     preflight_status_t status = manifest_run_preflight(&reg);
-    TEST_ASSERT(status == PREFLIGHT_STATUS_OK, "all core utils clean preflight");
+    TEST_ASSERT(status == PREFLIGHT_STATUS_OK,
+                "all core utils clean preflight");
     TEST_ASSERT(reg.count == 5, "5 modules registered");
     TEST_ASSERT(reg.pass_count == 5, "5 modules passed");
     TEST_ASSERT(reg.fatal_count == 0, "0 fatal errors");
@@ -113,7 +126,8 @@ static void test_manifest_and_preflight(void)
     };
     manifest_register(&reg_warn, &math_utils_manifest);
     manifest_register(&reg_warn, &mod_warn);
-    TEST_ASSERT(manifest_run_preflight(&reg_warn) == PREFLIGHT_STATUS_WARNINGS, "warning escalation");
+    TEST_ASSERT(manifest_run_preflight(&reg_warn) == PREFLIGHT_STATUS_WARNINGS,
+                "warning escalation");
     printf("[PASS] Warning policy escalation verified.\n");
 
     /* Test Critical downgrade escalation */
@@ -128,7 +142,8 @@ static void test_manifest_and_preflight(void)
     };
     manifest_register(&reg_crit, &math_utils_manifest);
     manifest_register(&reg_crit, &mod_crit);
-    TEST_ASSERT(manifest_run_preflight(&reg_crit) == PREFLIGHT_STATUS_DOWNGRADED, "critical downgrade");
+    TEST_ASSERT(manifest_run_preflight(&reg_crit) ==
+                PREFLIGHT_STATUS_DOWNGRADED, "critical downgrade");
     printf("[PASS] Critical downgrade policy verified.\n");
 
     /* Test Fatal halt escalation */
@@ -145,7 +160,8 @@ static void test_manifest_and_preflight(void)
     manifest_register(&reg_fatal, &mod_warn);
     manifest_register(&reg_fatal, &mod_crit);
     manifest_register(&reg_fatal, &mod_fatal);
-    TEST_ASSERT(manifest_run_preflight(&reg_fatal) == PREFLIGHT_STATUS_HALT_FATAL, "fatal halt escalation");
+    TEST_ASSERT(manifest_run_preflight(&reg_fatal) ==
+                PREFLIGHT_STATUS_HALT_FATAL, "fatal halt escalation");
     printf("[PASS] Fatal halt loose-bolts enforcement verified.\n");
 
     /* Test DAG missing dependency failure */
@@ -159,8 +175,10 @@ static void test_manifest_and_preflight(void)
         0, { NULL }, NULL
     };
     manifest_register(&reg_dep, &mod_dep);
-    TEST_ASSERT(manifest_run_preflight(&reg_dep) == PREFLIGHT_STATUS_HALT_FATAL, "missing dependency must fatal halt");
-    TEST_ASSERT(reg_dep.results[0].severity == SEVERITY_FATAL, "dependency failure severity fatal");
+    TEST_ASSERT(manifest_run_preflight(&reg_dep) ==
+                PREFLIGHT_STATUS_HALT_FATAL, "missing dep must fatal halt");
+    TEST_ASSERT(reg_dep.results[0].severity == SEVERITY_FATAL,
+                "dependency failure severity fatal");
     printf("[PASS] Active DAG dependency validation verified.\n");
 }
 

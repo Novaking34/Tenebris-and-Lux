@@ -14,23 +14,26 @@
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Pure implementation of bounded string copies, in-place whitespace trimming,
-//   and ASCII case-insensitive substring searching.
+//   Pure implementation of bounded string copies, in-place whitespace
+//   trimming, and ASCII case-insensitive substring searching.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (In-place or caller-supplied stack buffers).
-//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant execution on provided buffers).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (In-place or caller buffers).
+//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant buffer operations).
 //   - Latency Budget:        < 10 microseconds per operation.
 //
 // AXIOMATIC INVARIANTS:
-//   1. Safe buffer bounds: dst[dst_size - 1] is unconditionally guaranteed null.
-//   2. Pointer safety: Handles NULL pointers gracefully without segmentation faults.
+//   1. Safe buffer bounds: dst[dst_size - 1] is unconditionally null.
+//   2. Pointer safety: Handles NULL pointers gracefully without crashes.
 //   3. Zero dynamic allocations.
 // =============================================================================
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / STATIC DATA
+// Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
+// =============================================================================
+
 #include "util/string_utils.h"
 
 #include <ctype.h>
@@ -68,8 +71,24 @@ const module_metadata_t string_utils_manifest = {
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
-// ( String Implementations )
+// Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.1: MEMORY-SAFE BUFFER OPERATIONS ]
+// Mission: Guardrail string copying and trimming against memory bugs.
+// -----------------------------------------------------------------------------
+
+void str_safe_copy(char *dst, const char *src, size_t dst_size)
+{
+    if (dst == NULL || dst_size == 0) return;
+    if (src == NULL) {
+        dst[0] = '\0';
+        return;
+    }
+    strncpy(dst, src, dst_size - 1);
+    dst[dst_size - 1] = '\0';
+}
 
 void str_trim_inplace(char *str)
 {
@@ -94,6 +113,11 @@ void str_trim_inplace(char *str)
         end--;
     }
 }
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.2: CASE-INSENSITIVE TEXT MATCHING COGS ]
+// Mission: Parse player command verbs and dialogue responses flexibly.
+// -----------------------------------------------------------------------------
 
 bool str_case_eq(const char *a, const char *b)
 {
@@ -129,21 +153,15 @@ bool str_contains_nocase(const char *haystack, const char *needle)
     return false;
 }
 
-void str_safe_copy(char *dst, const char *src, size_t dst_size)
-{
-    if (dst == NULL || dst_size == 0) return;
-    if (src == NULL) {
-        dst[0] = '\0';
-        return;
-    }
-    strncpy(dst, src, dst_size - 1);
-    dst[dst_size - 1] = '\0';
-}
-
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// ( Pre-Flight Loose-Bolts Inspection & Self-Audits )
+// Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
+// Mission: Verify string buffer safety, NULL resilience, and trimming.
+// -----------------------------------------------------------------------------
 
 diag_result_t string_utils_preflight(void)
 {
@@ -155,10 +173,11 @@ diag_result_t string_utils_preflight(void)
     char buf[8];
     memset(buf, 'Z', sizeof(buf));
     str_safe_copy(buf, "0123456789ABCDEF", sizeof(buf));
-    if (buf[sizeof(buf) - 1] != '\0' || strlen(buf) != 7 || strcmp(buf, "0123456") != 0) {
+    if (buf[sizeof(buf) - 1] != '\0' || strlen(buf) != 7 ||
+        strcmp(buf, "0123456") != 0) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_safe_copy failed buffer bounds null-termination.";
+        res.details = "Fatal: str_safe_copy failed buffer null-termination.";
         return res;
     }
 
@@ -168,20 +187,22 @@ diag_result_t string_utils_preflight(void)
     if (buf[0] != '\0') {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_safe_copy did not initialize destination on NULL source.";
+        res.details = "Fatal: str_safe_copy did not initialize on NULL src.";
         return res;
     }
     str_trim_inplace(NULL);
-    if (!str_case_eq(NULL, NULL) || str_case_eq("a", NULL) || str_case_eq(NULL, "b")) {
+    if (!str_case_eq(NULL, NULL) || str_case_eq("a", NULL) ||
+        str_case_eq(NULL, "b")) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_case_eq failed NULL pointer comparison contract.";
+        res.details = "Fatal: str_case_eq failed NULL comparison contract.";
         return res;
     }
-    if (str_contains_nocase(NULL, "test") || str_contains_nocase("test", NULL)) {
+    if (str_contains_nocase(NULL, "test") ||
+        str_contains_nocase("test", NULL)) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_contains_nocase crashed or faulted on NULL pointer.";
+        res.details = "Fatal: str_contains_nocase faulted on NULL pointer.";
         return res;
     }
 
@@ -200,7 +221,7 @@ diag_result_t string_utils_preflight(void)
     if (t2[0] != '\0') {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_trim_inplace failed on pure whitespace string.";
+        res.details = "Fatal: str_trim_inplace failed on whitespace string.";
         return res;
     }
 

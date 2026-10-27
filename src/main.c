@@ -14,14 +14,14 @@
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Executable entry point, command-line argument router, pre-flight orchestrator,
-//   and presentation frontend selector. Serves as the gateway coordinating
-//   subsystem boot, executing diagnostics, and selecting GUI or CLI presentation.
+//   Executable entry point, command-line argument router, pre-flight router,
+//   and presentation frontend selector. Coordinates subsystem boot,
+//   executing diagnostics, and selecting GUI or CLI presentation.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: sim.engine.core, gui.viewport.x11, core.util.*
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap in startup routing).
-//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Process main thread execution).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap in router).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Main thread execution).
 //   - Latency Budget:        < 5 milliseconds total pre-flight initialization.
 //
 // AXIOMATIC INVARIANTS:
@@ -145,21 +145,24 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[1], "--cli") == 0 || strcmp(argv[1], "-c") == 0) {
             force_cli = true;
-        } else if (strcmp(argv[1], "--gui") == 0 || strcmp(argv[1], "-g") == 0) {
+        } else if (strcmp(argv[1], "--gui") == 0 ||
+                   strcmp(argv[1], "-g") == 0) {
             force_gui = true;
         } else {
-            fprintf(stderr, "Unknown option: %s\nUse --help for usage.\n", argv[1]);
+            fprintf(stderr, "Unknown option: %s\nUse --help for usage.\n",
+                    argv[1]);
             return 1;
         }
     }
 
-    /* Pre-Flight Inspection: "Don't start a machine you know has loose bolts" */
+    /* Pre-Flight: "Don't start a machine you know has loose bolts" */
     manifest_registry_t registry;
     init_engine_manifest(&registry);
     preflight_status_t preflight = manifest_run_preflight(&registry);
 
     if (preflight == PREFLIGHT_STATUS_HALT_FATAL) {
-        fprintf(stderr, "\n[FATAL ERROR] Engine startup halted due to loose bolts!\n");
+        fprintf(stderr,
+                "\n[FATAL ERROR] Engine startup halted due to loose bolts!\n");
         manifest_print_report(&registry);
         return 1;
     }
@@ -174,15 +177,17 @@ int main(int argc, char *argv[])
 
     if (force_gui) {
         if (!gui_is_available()) {
-            fprintf(stderr, "Error: No graphical X11 display available for --gui.\n");
+            fprintf(stderr,
+                    "Error: No graphical X11 display available for --gui.\n");
             return 1;
         }
         return gui_run(&state);
     }
 
-    /* Graded policy check: If pre-flight detected missing presentation layer, downgrade */
+    /* Graded policy check: If pre-flight detected missing presentation */
     if (preflight == PREFLIGHT_STATUS_DOWNGRADED || !gui_is_available()) {
-        printf("[Notice] Graphical display unavailable. Downgrading to CLI safe mode.\n\n");
+        printf("[Notice] Graphical display unavailable. "
+               "Downgrading to CLI safe mode.\n\n");
         game_loop_cli(&state);
         return 0;
     }

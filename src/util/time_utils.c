@@ -19,8 +19,8 @@
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/static, zero dynamic heap).
-//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, non-blocking time queries).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/static, zero heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, non-blocking time).
 //   - Latency Budget:        < 5 microseconds per query.
 //
 // AXIOMATIC INVARIANTS:
@@ -31,6 +31,7 @@
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / STATIC DATA
+// Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
 // =============================================================================
 
 #define _POSIX_C_SOURCE 199309L
@@ -68,8 +69,13 @@ const module_metadata_t time_utils_manifest = {
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Monotonic Clock Implementations )
+// Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.1: MONOTONIC CLOCKS & FRAME PACING COGS ]
+// Mission: Drift-free monotonic time measurement and frame sleep pacing.
+// -----------------------------------------------------------------------------
 
 double time_get_monotonic_ms(void)
 {
@@ -96,8 +102,13 @@ void time_sleep_ms(double ms)
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// ( Pre-Flight Loose-Bolts Inspection & Self-Audits )
+// Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
+// Mission: Validate clock monotonicity and sleep resolution prior to boot.
+// -----------------------------------------------------------------------------
 
 diag_result_t time_utils_preflight(void)
 {
@@ -127,13 +138,13 @@ diag_result_t time_utils_preflight(void)
     if (slept < 0.5) {
         res.passed = true;
         res.severity = SEVERITY_WARNING;
-        res.details = "Warning: Timer sleep resolution is coarse (< 0.5ms measured).";
+        res.details = "Warning: Timer sleep resolution is coarse (< 0.5ms).";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "Monotonic clock stable; sub-millisecond resolution verified.";
+    res.details = "Monotonic clock stable; sub-ms resolution verified.";
     return res;
 }
 

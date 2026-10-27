@@ -20,14 +20,14 @@
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: sim.engine.core, core.util.geom, core.util.time
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Static layout structures and X11 pixmap).
-//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (X11 event loop bound to main thread).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Static layout, zero heap).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Main thread event loop).
 //   - Latency Budget:        < 16,666 microseconds per frame (60 FPS budget).
 //
 // AXIOMATIC INVARIANTS:
 //   1. Zero-dependency native X11 double buffering with 32-bit alpha safety.
-//   2. Every button click or hotkey dispatches through universal action pipeline.
-//   3. Diagnostic audit verifies layout bounding boxes and non-overlapping cards.
+//   2. Button clicks and hotkeys dispatch through universal pipeline.
+//   3. Diagnostic audit verifies bounding boxes and non-overlapping cards.
 // =============================================================================
 
 // =============================================================================
@@ -146,8 +146,8 @@ static void render_frame(Display *d, Drawable dr, GC gc,
 
     /* Left Meter: Shield of Lux */
     char shield_label[64];
-    snprintf(shield_label, sizeof(shield_label), "Shield of Lux (Aegis): %d / 100",
-        state->shield_power);
+    snprintf(shield_label, sizeof(shield_label),
+             "Shield of Lux (Aegis): %d / 100", state->shield_power);
     XSetForeground(d, gc, p->shield_gold);
     XDrawString(d, dr, gc, 40, 96, shield_label, strlen(shield_label));
 
@@ -163,13 +163,14 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     int fill_s = math_scale_ratio(state->shield_power, MAX_RESONANCE, bar_s_w);
     if (fill_s > 0) {
         XSetForeground(d, gc, p->shield_gold);
-        XFillRectangle(d, dr, gc, bar_s_x + 1, bar_s_y + 1, fill_s - 2, bar_s_h - 2);
+        XFillRectangle(d, dr, gc, bar_s_x + 1, bar_s_y + 1,
+                       fill_s - 2, bar_s_h - 2);
     }
 
     /* Right Meter: Sword of Tenebris */
     char sword_label[64];
-    snprintf(sword_label, sizeof(sword_label), "Sword of Tenebris (Edge): %d / 100",
-        state->sword_edge);
+    snprintf(sword_label, sizeof(sword_label),
+             "Sword of Tenebris (Edge): %d / 100", state->sword_edge);
     XSetForeground(d, gc, p->sword_violet);
     XDrawString(d, dr, gc, 450, 96, sword_label, strlen(sword_label));
 
@@ -185,7 +186,8 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     int fill_t = math_scale_ratio(state->sword_edge, MAX_RESONANCE, bar_t_w);
     if (fill_t > 0) {
         XSetForeground(d, gc, p->sword_violet);
-        XFillRectangle(d, dr, gc, bar_t_x + 1, bar_t_y + 1, fill_t - 2, bar_t_h - 2);
+        XFillRectangle(d, dr, gc, bar_t_x + 1, bar_t_y + 1,
+                       fill_t - 2, bar_t_h - 2);
     }
 
     /* Sub-bar line: Stance and Moral Sway */
@@ -227,15 +229,16 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     if (state->threat_hp > 0) {
         char threat_str[128];
         snprintf(threat_str, sizeof(threat_str),
-            "[!] COMBAT ENGAGED: Dark Lord's Vanguard Presence (Threat Vigor: %d/100)",
+            "[!] COMBAT ENGAGED: Vanguard Threat (Vigor: %d/100)",
             state->threat_hp);
         XSetForeground(d, gc, p->malice_red);
         XDrawString(d, dr, gc, 40, 260, threat_str, strlen(threat_str));
     } else {
         char honor_str[128];
         snprintf(honor_str, sizeof(honor_str),
-            "Territory Secured | Foes Vanquished: %d | Innocents Warded: %d | Turns: %d",
-            state->foes_vanquished, state->innocents_warded, state->turns_taken);
+            "Secured | Foes: %d | Warded: %d | Turns: %d",
+            state->foes_vanquished, state->innocents_warded,
+            state->turns_taken);
         XSetForeground(d, gc, p->text_muted);
         XDrawString(d, dr, gc, 40, 260, honor_str, strlen(honor_str));
     }
@@ -250,7 +253,9 @@ static void render_frame(Display *d, Drawable dr, GC gc,
     XDrawString(d, dr, gc, 40, 318, "--- Chronicle of Deeds ---", 26);
 
     for (int i = 0; i < log->count; i++) {
-        XSetForeground(d, gc, (i == log->count - 1) ? p->shield_gold : p->text_main);
+        unsigned long fg = (i == log->count - 1) ?
+            p->shield_gold : p->text_main;
+        XSetForeground(d, gc, fg);
         XDrawString(d, dr, gc, 40, 342 + (i * 22), log->lines[i],
             strlen(log->lines[i]));
     }
@@ -325,7 +330,8 @@ int gui_run(player_state_t *state)
     Window root = RootWindow(display, screen);
 
     XSetWindowAttributes swa;
-    swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask;
+    swa.event_mask = ExposureMask | KeyPressMask | ButtonPressMask |
+                     StructureNotifyMask;
     swa.background_pixel = BlackPixel(display, screen);
 
     Window window = XCreateWindow(display, root,
@@ -351,21 +357,21 @@ int gui_run(player_state_t *state)
     gui_palette_t pal;
     pal.bg           = alloc_color(display, screen, 0x0D0E12); // Obsidian Void
     pal.panel        = alloc_color(display, screen, 0x1A1D24); // Dark Granite
-    pal.border       = alloc_color(display, screen, 0x2E3440); // Carved Stone Border
-    pal.text_main    = alloc_color(display, screen, 0xECEFF4); // Radiant Ivory
-    pal.text_muted   = alloc_color(display, screen, 0x8892B0); // Twilight Silver
-    pal.shield_gold  = alloc_color(display, screen, 0xF0CE78); // Shield of Lux Gold
-    pal.sword_violet = alloc_color(display, screen, 0x8A78C8); // Sword of Tenebris Violet
-    pal.virtue_green = alloc_color(display, screen, 0x52B788); // Virtue / Mercy Emerald
-    pal.malice_red   = alloc_color(display, screen, 0xE63946); // Malice / Tyranny Crimson
+    pal.border       = alloc_color(display, screen, 0x2E3440); // Carved Stone
+    pal.text_main    = alloc_color(display, screen, 0xECEFF4); // Ivory
+    pal.text_muted   = alloc_color(display, screen, 0x8892B0); // Silver
+    pal.shield_gold  = alloc_color(display, screen, 0xF0CE78); // Lux Gold
+    pal.sword_violet = alloc_color(display, screen, 0x8A78C8); // Violet
+    pal.virtue_green = alloc_color(display, screen, 0x52B788); // Emerald
+    pal.malice_red   = alloc_color(display, screen, 0xE63946); // Crimson
     pal.btn_bg       = alloc_color(display, screen, 0x1E222B); // Button Slate
     pal.btn_border   = alloc_color(display, screen, 0x3E4452); // Button Rim
 
     gui_log_t log;
     log.count = 0;
-    log_append(&log, "Awakened at The Garrison Altar in the Kingdom of Sol-Tenebrae.");
+    log_append(&log, "Awakened at The Garrison Altar in Sacyra.");
     log_append(&log, "You bear the Shield of Lux and the Sword of Tenebris.");
-    log_append(&log, "The Dark Lord Malakor stirs in the deep abyss. Choose your stance.");
+    log_append(&log, "The Dark Lord Malakor stirs in the deep abyss.");
 
     bool running = true;
 
@@ -381,11 +387,13 @@ int gui_run(player_state_t *state)
                     break;
                 }
             } else if (ev.type == ButtonPress) {
-                const gui_button_t *btn = find_clicked_button(ev.xbutton.x, ev.xbutton.y);
+                const gui_button_t *btn =
+                    find_clicked_button(ev.xbutton.x, ev.xbutton.y);
                 if (btn != NULL) {
                     char out_msg[GUI_LOG_ENTRY_LEN];
                     out_msg[0] = '\0';
-                    game_process_command(state, btn->command, out_msg, sizeof(out_msg));
+                    game_process_command(state, btn->command, out_msg,
+                                         sizeof(out_msg));
                     if (strlen(out_msg) > 0) {
                         log_append(&log, out_msg);
                     }
@@ -407,7 +415,8 @@ int gui_run(player_state_t *state)
                     if (btn != NULL) {
                         char out_msg[GUI_LOG_ENTRY_LEN];
                         out_msg[0] = '\0';
-                        game_process_command(state, btn->command, out_msg, sizeof(out_msg));
+                        game_process_command(state, btn->command, out_msg,
+                                             sizeof(out_msg));
                         if (strlen(out_msg) > 0) {
                             log_append(&log, out_msg);
                         }
@@ -455,7 +464,7 @@ const module_metadata_t gui_manifest = {
     "2026-10-26",               // last_updated
     "Native X11 double-buffered presentation viewport and event dispatcher",
     3,                          // dependency_count
-    { "sim.engine.core", "core.util.geom", "core.util.time", NULL }, // dependencies
+    { "sim.engine.core", "core.util.geom", "core.util.time", NULL },
     ALLOC_ZERO_HEAP,            // alloc_policy
     CONCURRENCY_MAIN_THREAD,    // concurrency
     16666,                      // max_budget_us
@@ -479,7 +488,8 @@ diag_result_t gui_preflight(void)
     if (!gui_audit_layout()) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: Viewport layout bounds exceeded or button overlap detected.";
+        res.details =
+            "Fatal: Viewport bounds exceeded or button overlap detected.";
         return res;
     }
 
@@ -487,13 +497,15 @@ diag_result_t gui_preflight(void)
     if (!gui_is_available()) {
         res.passed = false;
         res.severity = SEVERITY_CRITICAL;
-        res.details = "X11 display not detected ($DISPLAY empty or unconnectable); safe CLI fallback enabled.";
+        res.details =
+            "X11 display not detected ($DISPLAY empty); safe CLI fallback.";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "X11 display connected; viewport bounds and button geometry verified.";
+    res.details =
+        "X11 display connected; viewport bounds & button geometry verified.";
     return res;
 }
 
@@ -504,7 +516,8 @@ bool gui_audit_layout(void)
         geom_rect_t r1 = geom_make_rect(b->x, b->y, b->width, b->height);
 
         if (!geom_rect_within_bounds(r1, GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT)) {
-            fprintf(stderr, "[GUI AUDIT] Button '%s' exceeds window bounds: x=%d y=%d w=%d h=%d\n",
+            fprintf(stderr,
+                "[GUI AUDIT] Button '%s' exceeds window: x=%d y=%d w=%d h=%d\n",
                 b->label, b->x, b->y, b->width, b->height);
             return false;
         }
@@ -512,9 +525,11 @@ bool gui_audit_layout(void)
         /* Check for accidental button overlap with other buttons */
         for (int j = i + 1; j < NUM_BUTTONS; j++) {
             const gui_button_t *b2 = &buttons[j];
-            geom_rect_t r2 = geom_make_rect(b2->x, b2->y, b2->width, b2->height);
+            geom_rect_t r2 =
+                geom_make_rect(b2->x, b2->y, b2->width, b2->height);
             if (geom_rect_intersects(r1, r2)) {
-                fprintf(stderr, "[GUI AUDIT] Overlap detected between '%s' and '%s'\n",
+                fprintf(stderr,
+                    "[GUI AUDIT] Overlap detected between '%s' and '%s'\n",
                     b->label, b2->label);
                 return false;
             }

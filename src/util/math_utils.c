@@ -19,8 +19,8 @@
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/register execution, zero heap).
-//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic, thread-safe).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/register, zero heap).
+//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic).
 //   - Latency Budget:        < 1 microsecond per calculation.
 //
 // AXIOMATIC INVARIANTS:
@@ -31,6 +31,9 @@
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / STATIC DATA
+// Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
+// =============================================================================
+
 #include "util/math_utils.h"
 
 static const char *const math_invariants[] = {
@@ -65,11 +68,21 @@ const module_metadata_t math_utils_manifest = {
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Pure Mathematical Implementations )
+// Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.1: INTEGER CLAMPING & SATURATION COGS ]
+// Mission: Guardrail calculations against integer overflow and underflow.
+// -----------------------------------------------------------------------------
 
 int math_clamp_int(int val, int min_val, int max_val)
 {
+    if (min_val > max_val) {
+        int tmp = min_val;
+        min_val = max_val;
+        max_val = tmp;
+    }
     if (val < min_val) return min_val;
     if (val > max_val) return max_val;
     return val;
@@ -87,6 +100,11 @@ int math_saturating_add(int val, int add_val, int max_val)
     int sum = val + add_val;
     return (sum > max_val) ? max_val : sum;
 }
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.2: EQUILIBRIUM & RATIO SCALING COGS ]
+// Mission: Nudge values toward stability and compute safe UI scale ratios.
+// -----------------------------------------------------------------------------
 
 int math_nudge_toward(int val, int target, int step)
 {
@@ -110,8 +128,13 @@ int math_scale_ratio(int val, int max_val, int target_scale)
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// ( Pre-Flight Loose-Bolts Inspection & Self-Audits )
+// Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
+// Mission: Validate mathematical axioms and arithmetic ceilings prior to boot.
+// -----------------------------------------------------------------------------
 
 diag_result_t math_utils_preflight(void)
 {
@@ -139,7 +162,7 @@ diag_result_t math_utils_preflight(void)
         math_saturating_add(10, -5, 100) != 10) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: Saturating arithmetic violated bounded invariant.";
+        res.details = "Fatal: Saturating arithmetic violated bounds.";
         return res;
     }
 
@@ -161,13 +184,13 @@ diag_result_t math_utils_preflight(void)
         math_nudge_toward(-2, 0, 5) != 0) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: math_nudge_toward overshot or drifted from target.";
+        res.details = "Fatal: math_nudge_toward overshot target anchor.";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "Clamping, saturating arithmetic & zero-divisor safety verified.";
+    res.details = "Clamping, saturation & zero-divisor safety verified.";
     return res;
 }
 

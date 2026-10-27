@@ -6,7 +6,7 @@
 // @file          manifest.c
 // @layer         Layer 0: Core Utilities
 // @version       0.0.2 (Phase 1: Dual-Frontend Prototype)
-// @interface_rev Rev 2 (Added DAG dependencies, allocation & concurrency contracts)
+// @interface_rev Rev 2 (DAG dependencies, allocation & concurrency contracts)
 // @date          2026-10-26
 // @updated       2026-10-26
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -20,7 +20,7 @@
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: None (Foundational leaf module).
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack and static execution).
-//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, static capacity bounds).
+//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, bounded capacity).
 //
 // AXIOMATIC INVARIANTS:
 //   1. Fixed static capacity: Never exceed MANIFEST_MAX_MODULES.
@@ -49,8 +49,13 @@ static const char *layer_names[LAYER_COUNT] = {
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Core Registry Logic, Pre-Flight Evaluator & Report Generators )
+// Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.1: CENTRAL REGISTRY LIFECYCLE & REGISTRATION COGS ]
+// Mission: Initialize registry storage and register subsystem metadata nodes.
+// -----------------------------------------------------------------------------
 
 void manifest_registry_init(manifest_registry_t *registry)
 {
@@ -61,7 +66,8 @@ void manifest_registry_init(manifest_registry_t *registry)
     registry->status = PREFLIGHT_STATUS_OK;
 }
 
-bool manifest_register(manifest_registry_t *registry, const module_metadata_t *module)
+bool manifest_register(manifest_registry_t *registry,
+                       const module_metadata_t *module)
 {
     if (registry == NULL || module == NULL || module->module_id == NULL) {
         return false;
@@ -83,6 +89,11 @@ bool manifest_register(manifest_registry_t *registry, const module_metadata_t *m
     registry->count++;
     return true;
 }
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.2: DAG DEPENDENCY RESOLUTION & PRE-FLIGHT EVALUATION ]
+// Mission: Execute DAG dependency graph audits and pre-flight machine checks.
+// -----------------------------------------------------------------------------
 
 preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
 {
@@ -119,7 +130,8 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
                 dep_res.severity = SEVERITY_FATAL;
                 dep_res.subsystem = mod->module_id;
                 dep_res.check_name = "Dependency DAG";
-                dep_res.details = "Fatal: Unregistered upstream dependency declared.";
+                dep_res.details =
+                    "Fatal: Unregistered upstream dependency declared.";
                 registry->results[i] = dep_res;
                 registry->fatal_count++;
                 registry->status = PREFLIGHT_STATUS_HALT_FATAL;
@@ -148,7 +160,10 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
 
         registry->results[i] = res;
 
-        if (res.severity == SEVERITY_FATAL || (!res.passed && res.severity != SEVERITY_WARNING && res.severity != SEVERITY_CRITICAL)) {
+        bool is_fatal = (res.severity == SEVERITY_FATAL) ||
+            (!res.passed && res.severity != SEVERITY_WARNING &&
+             res.severity != SEVERITY_CRITICAL);
+        if (is_fatal) {
             registry->fatal_count++;
         } else if (res.severity == SEVERITY_CRITICAL) {
             registry->critical_count++;
@@ -173,18 +188,30 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
     return registry->status;
 }
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.3: TELEMETRY REPORTING & SERIALIZATION COGS ]
+// Mission: Format pre-flight telemetry tables and serialize taxonomy strings.
+// -----------------------------------------------------------------------------
+
 void manifest_print_report(const manifest_registry_t *registry)
 {
     if (registry == NULL) {
         return;
     }
 
-    printf("================================================================================\n");
-    printf("           Tenebris and Lux - Pre-Flight Subsystem Integrity Manifest           \n");
-    printf(" Build Telemetry: %s %s | Target Standard: ISO 8601 (2026-10-26)\n", __DATE__, __TIME__);
-    printf("================================================================================\n");
-    printf("%-20s %-15s %-4s %-11s %-7s %s\n", "MODULE ID", "FILE", "REV", "ALLOCATION", "STATUS", "DIAGNOSTIC DETAILS");
-    printf("--------------------------------------------------------------------------------\n");
+    puts("========================================================"
+         "========================");
+    puts("           Tenebris and Lux - Pre-Flight Subsystem "
+         "Integrity Manifest           ");
+    printf(" Build Telemetry: %s %s | Standard: ISO 8601 (2026-10-26)\n",
+           __DATE__, __TIME__);
+    puts("========================================================"
+         "========================");
+    printf("%-20s %-15s %-4s %-11s %-7s %s\n",
+           "MODULE ID", "FILE", "REV", "ALLOCATION", "STATUS",
+           "DIAGNOSTIC DETAILS");
+    puts("--------------------------------------------------------"
+         "------------------------");
 
     for (size_t i = 0; i < registry->count; i++) {
         const module_metadata_t *mod = registry->modules[i];
@@ -209,26 +236,33 @@ void manifest_print_report(const manifest_registry_t *registry)
             res->details ? res->details : "Verified.");
     }
 
-    printf("--------------------------------------------------------------------------------\n");
-    printf("Telemetry: %zu modules registered | %zu Pass | %zu Warn | %zu Critical | %zu Fatal\n",
-        registry->count, registry->pass_count, registry->warn_count,
-        registry->critical_count, registry->fatal_count);
+    puts("--------------------------------------------------------"
+         "------------------------");
+    printf("Telemetry: %zu modules registered | %zu Pass | %zu Warn | "
+           "%zu Critical | %zu Fatal\n",
+           registry->count, registry->pass_count, registry->warn_count,
+           registry->critical_count, registry->fatal_count);
 
     switch (registry->status) {
     case PREFLIGHT_STATUS_OK:
-        printf("Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED (System Ready)\n");
+        printf("Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED "
+               "(System Ready)\n");
         break;
     case PREFLIGHT_STATUS_WARNINGS:
-        printf("Policy Verdict: SYSTEM LAUNCH PERMITTED WITH NOTICES (Non-critical Warnings)\n");
+        printf("Policy Verdict: SYSTEM LAUNCH PERMITTED WITH NOTICES "
+               "(Warnings)\n");
         break;
     case PREFLIGHT_STATUS_DOWNGRADED:
-        printf("Policy Verdict: CRITICAL SUBSYSTEM FAULT - DOWNGRADING TO SAFE MODE\n");
+        printf("Policy Verdict: CRITICAL SUBSYSTEM FAULT - "
+               "DOWNGRADING TO SAFE MODE\n");
         break;
     case PREFLIGHT_STATUS_HALT_FATAL:
-        printf("Policy Verdict: LOOSE BOLTS DETECTED - ENGINE BOOT HALTED IMMEDIATELY\n");
+        printf("Policy Verdict: LOOSE BOLTS DETECTED - "
+               "ENGINE BOOT HALTED IMMEDIATELY\n");
         break;
     }
-    printf("================================================================================\n");
+    puts("========================================================"
+         "========================");
 }
 
 const char *manifest_severity_to_str(diag_severity_t severity)
@@ -285,30 +319,43 @@ const char *manifest_concurrency_to_str(concurrency_policy_t policy)
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// ( Self-Audit of Central Registry Invariants )
+// Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
+// Mission: Verify registry capacity bounds, duplicate rejection, and policies.
+// -----------------------------------------------------------------------------
 
 static diag_result_t dummy_pass_check(void)
 {
-    diag_result_t res = { true, SEVERITY_PASS, "test.pass", "PassCheck", "All green." };
+    diag_result_t res = {
+        true, SEVERITY_PASS, "test.pass", "PassCheck", "All green."
+    };
     return res;
 }
 
 static diag_result_t dummy_warn_check(void)
 {
-    diag_result_t res = { true, SEVERITY_WARNING, "test.warn", "WarnCheck", "Suboptimal timing." };
+    diag_result_t res = {
+        true, SEVERITY_WARNING, "test.warn", "WarnCheck", "Suboptimal timing."
+    };
     return res;
 }
 
 static diag_result_t dummy_crit_check(void)
 {
-    diag_result_t res = { false, SEVERITY_CRITICAL, "test.crit", "CritCheck", "Display unavailable." };
+    diag_result_t res = {
+        false, SEVERITY_CRITICAL, "test.crit", "CritCheck", "Display error."
+    };
     return res;
 }
 
 static diag_result_t dummy_fatal_check(void)
 {
-    diag_result_t res = { false, SEVERITY_FATAL, "test.fatal", "FatalCheck", "Loose bolt detected." };
+    diag_result_t res = {
+        false, SEVERITY_FATAL, "test.fatal", "FatalCheck", "Loose bolt."
+    };
     return res;
 }
 
@@ -357,7 +404,8 @@ diag_result_t manifest_utils_preflight(void)
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "Static capacity, duplicate rejection & graded policy verified.";
+    res.details =
+        "Static capacity, duplicate rejection & graded policy verified.";
     return res;
 }
 
@@ -418,19 +466,25 @@ bool manifest_audit(void)
     manifest_registry_init(&reg);
     manifest_register(&reg, &mod_pass);
     manifest_register(&reg, &mod_crit);
-    if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_DOWNGRADED) return false;
+    if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_DOWNGRADED) {
+        return false;
+    }
 
     /* Invariant 5: Fatal halt escalation */
     manifest_registry_init(&reg);
     manifest_register(&reg, &mod_pass);
     manifest_register(&reg, &mod_crit);
     manifest_register(&reg, &mod_fatal);
-    if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_HALT_FATAL) return false;
+    if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_HALT_FATAL) {
+        return false;
+    }
 
-    /* Invariant 6: Active DAG dependency enforcement halts on missing upstream */
+    /* Invariant 6: Active DAG dependency halts on missing upstream */
     manifest_registry_init(&reg);
     manifest_register(&reg, &mod_missing_dep);
-    if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_HALT_FATAL) return false;
+    if (manifest_run_preflight(&reg) != PREFLIGHT_STATUS_HALT_FATAL) {
+        return false;
+    }
 
     return true;
 }
