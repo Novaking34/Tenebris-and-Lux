@@ -19,8 +19,8 @@
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack value structures, zero heap).
-//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic, thread-safe).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack value structures).
+//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic).
 //   - Latency Budget:        < 2 microseconds per hit-test.
 //
 // AXIOMATIC INVARIANTS:
@@ -31,6 +31,9 @@
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / STATIC DATA
+// Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
+// =============================================================================
+
 #include "util/geom_utils.h"
 
 static const char *const geom_invariants[] = {
@@ -65,8 +68,13 @@ const module_metadata_t geom_utils_manifest = {
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
-// ( Geometric Implementations )
+// Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.1: RECTANGLE CONSTRUCTORS & HIT-TESTING COGS ]
+// Mission: Construct validated bounding boxes and perform point containment.
+// -----------------------------------------------------------------------------
 
 geom_rect_t geom_make_rect(int x, int y, int w, int h)
 {
@@ -83,6 +91,11 @@ bool geom_point_in_rect(int px, int py, geom_rect_t r)
     return (px >= r.x && px <= (r.x + r.w) &&
             py >= r.y && py <= (r.y + r.h));
 }
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.2: AABB COLLISION & BOUNDS AUDIT COGS ]
+// Mission: Detect spatial overlaps and verify containment within viewports.
+// -----------------------------------------------------------------------------
 
 bool geom_rect_intersects(geom_rect_t a, geom_rect_t b)
 {
@@ -101,8 +114,13 @@ bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h)
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// ( Pre-Flight Loose-Bolts Inspection & Self-Audits )
+// Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
+// Mission: Verify geometric invariants, hit-testing accuracy, and AABB overlap.
+// -----------------------------------------------------------------------------
 
 diag_result_t geom_utils_preflight(void)
 {
@@ -139,13 +157,13 @@ diag_result_t geom_utils_preflight(void)
     if (!geom_rect_intersects(r, r)) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: geom_rect_intersects violated reflexivity (r intersects r).";
+        res.details = "Fatal: geom_rect_intersects violated reflexivity.";
         return res;
     }
     if (geom_rect_intersects(r, r_disjoint)) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: geom_rect_intersects reported false positive for disjoint rects.";
+        res.details = "Fatal: geom_rect_intersects reported false positive.";
         return res;
     }
 
@@ -157,7 +175,7 @@ diag_result_t geom_utils_preflight(void)
         geom_rect_within_bounds(geom_make_rect(0, 95, 10, 10), 100, 100)) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: geom_rect_within_bounds allowed out-of-bounds coordinates.";
+        res.details = "Fatal: geom_rect_within_bounds allowed out-of-bounds.";
         return res;
     }
 

@@ -21,15 +21,15 @@
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: sim.engine.core, core.util.geom, core.util.time
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Static layout buffers and X11 pixmap, zero heap).
-//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (X11 event loop bound to main thread).
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Static buffers, zero heap).
+//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (X11 event loop bound).
 //   - Latency Budget:        < 16,666 microseconds per frame (60 FPS budget).
 //
 // AXIOMATIC INVARIANTS:
-//   1. Presentation follows simulation: GUI translates events to actions, never mutates state directly.
-//   2. Double-buffered rendering: Off-screen pixmap composition guarantees zero tearing.
-//   3. Non-overlapping button geometry: Layout passes strict AABB non-overlap audits.
-//   4. Headless fallback: Gracefully handles DISPLAY absence allowing automatic CLI fallback.
+//   1. Presentation follows simulation: GUI never mutates state directly.
+//   2. Double-buffered rendering: Off-screen pixmap guarantees zero tearing.
+//   3. Non-overlapping button geometry: Layout passes strict AABB audits.
+//   4. Headless fallback: Gracefully handles DISPLAY absence for CLI.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_GUI_H
@@ -37,7 +37,7 @@
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
-// ( Includes, Dimensions, Layout Constants & Viewport Structs )
+// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
 #include "sim/game.h"
@@ -48,6 +48,9 @@
 #define GUI_MAX_LOG_LINES 6
 #define GUI_LOG_ENTRY_LEN 128
 
+/**
+ * Interactive button definition in discrete screen coordinates.
+ */
 typedef struct {
     int x;
     int y;
@@ -58,6 +61,9 @@ typedef struct {
     char hotkey;
 } gui_button_t;
 
+/**
+ * Scrollable ring-buffer storing recent chronicle narrative events.
+ */
 typedef struct {
     char lines[GUI_MAX_LOG_LINES][GUI_LOG_ENTRY_LEN];
     int count;
@@ -65,19 +71,59 @@ typedef struct {
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
-// ( GUI Lifecycle, Event Loop & Viewport Declarations )
+// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.1: DESKTOP PRESENTATION LIFECYCLE & EVENT ROUTING ]
+// Mission: Probe display availability, initialize window, and pump X11 events.
+// -----------------------------------------------------------------------------
+
+/**
+ * Probes whether a graphical X11 display server is reachable.
+ *
+ * Checks the DISPLAY environment variable and attempts a lightweight
+ * connection probe to decide between GUI launch or headless CLI downgrade.
+ *
+ * @return `true` if an X11 server is accessible; `false` in headless contexts.
+ */
 bool gui_is_available(void);
+
+/**
+ * Launches the native X11 double-buffered presentation loop.
+ *
+ * Renders the Shield of Lux barrier meter, Sword of Tenebris edge meter,
+ * moral sway continuum, and interactive tactical stance buttons.
+ *
+ * @param[in,out] state Active simulation player state.
+ * @return Exit status code (0 on clean exit).
+ */
 int gui_run(player_state_t *state);
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// ( Viewport Integrity Checks & Surface Tripwires )
+// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: VIEWPORT BOUNDS AUDITS & PRE-FLIGHT ]
+// Mission: Verify button AABB non-overlap, window bounds, and display status.
+// -----------------------------------------------------------------------------
+
 extern const module_metadata_t gui_manifest;
+
+/**
+ * Pre-flight diagnostic callback probing display accessibility.
+ *
+ * @return Diagnostic check outcome reporting SEVERITY_PASS or CRITICAL.
+ */
 diag_result_t gui_preflight(void);
+
+/**
+ * Audits all interactive button rectangles for AABB collisions and bounds.
+ *
+ * @return `true` if all buttons reside inside viewport and do not overlap.
+ */
 bool gui_audit_layout(void);
 
 // =============================================================================

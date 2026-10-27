@@ -1,0 +1,38 @@
+= Developer Logs: October 2026 Monthly Chronicle
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-26
+:doctype: article
+:icons: font
+
+[abstract]
+== Overview
+
+This directory preserves the developer logs recorded during **October 2026** for *Tenebris and Lux*.
+Logs are categorized into thematic subdirectories based on their focus:
+`architecture/` for foundational engine design, and `lore_and_design/` for world-building, narrative, and TRPG gameplay mechanics.
+
+== Thematic Index
+
+=== Architecture (`docs/dev_logs/2026/10/architecture/`)
+
+1. **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc)** (2026-10-24)  
+   *Genesis, The Paradigm Pivot & Game Dev Invariants*  
+   Establishes the C11 foundations, OmniCode 5-Block structure, the paradigm pivot from a survival battery test to the twin relics of Lux and Tenebris, and the verification test suite.
+
+2. **[devlog_003_preflight_and_manifest_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc)** (2026-10-26)  
+   *Central Manifest, Executable Block 1 Metadata & Pre-Flight Architecture*  
+   Transforms declarative Block 1 metadata into compiled `module_metadata_t` records and implements the zero-heap Central Manifest registry with loose-bolts pre-flight diagnostic tripwires.
+
+3. **[devlog_004_pedagogical_metadata_and_dependency_contracts.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc)** (2026-10-26)  
+   *Pedagogical Metadata Architecture, Temporal ISO 8601 Timelines & Active DAG Dependency Contracts*  
+   Establishes the dual-audience protocol (plain English + formal contracts), full ISO 8601 date formatting, allocation/concurrency contracts, and boot-time DAG upstream dependency enforcement.
+
+4. **[devlog_005_ontological_code_layering_and_docstrings.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc)** (2026-10-26)  
+   *Ontological Sub-Assemblies, LSP Docstrings, Strict 80-Column Discipline & Calendar Chronology*  
+   Implements the Stratum -> Machine -> Assembly -> Cog framework, IDE-optimized LSP Markdown hover docstrings, strict <= 80 column line discipline, and calendar-based log archiving.
+
+=== Lore & Game Design (`docs/dev_logs/2026/10/lore_and_design/`)
+
+1. **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)** (2026-10-26)  
+   *The Sacyra Chronicles, Dual Protagonists & TRPG Evolution*  
+   Documents the 2014–2018 RPG Maker roots of the project, establishes the chivalric Kingdom of Sacyra, details dual protagonists Elijah Ro-enheart and Katrina Jaren, and outlines the Tactical Strategy RPG (TRPG) genre specification.

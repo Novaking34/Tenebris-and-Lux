@@ -25,9 +25,9 @@
 //   - Latency Budget:        Total suite completes in under 1 second.
 //
 // AXIOMATIC INVARIANTS:
-//   1. Deterministic replay invariance: Identical inputs yield identical state.
-//   2. Softlock immunity: No sequence of chaotic commands causes deadlock or crash.
-//   3. 60 FPS budget: Action simulation latency < 50 microseconds per turn.
+//   1. Deterministic replay: Identical inputs yield identical state.
+//   2. Softlock immunity: Chaotic inputs never deadlock or crash.
+//   3. 60 FPS budget: Action simulation latency < 50 us per turn.
 // =============================================================================
 
 // =============================================================================
@@ -80,9 +80,10 @@ static void test_scenario_righteous_warden(void)
     TEST_ASSERT(state.threat_hp == 25, "First ward staggered foe to 25 HP");
     TEST_ASSERT(state.moral_sway > 0, "Warding increased moral virtue");
 
-    game_process_command(&state, "ward", NULL, 0); // Stagger 25 -> 0 HP left (routed)
+    game_process_command(&state, "ward", NULL, 0); // Stagger -> 0 HP (routed)
     TEST_ASSERT(state.threat_hp == 0, "Second ward routed enemy vanguard");
-    TEST_ASSERT(state.foes_vanquished == 1, "Vanquished 1 foe via radiant ward");
+    TEST_ASSERT(state.foes_vanquished == 1,
+                "Vanquished 1 foe via radiant ward");
     TEST_ASSERT(state.innocents_warded == 2, "Innocents warded count updated");
 
     game_audit_report_t rep = game_audit_state(&state);
@@ -103,9 +104,11 @@ static void test_scenario_umbral_striker(void)
     TEST_ASSERT(state.threat_hp == 50, "Encountered Citadel vanguard");
 
     /* 2. Cleave with the Sword of Tenebris */
-    game_process_command(&state, "strike", NULL, 0); // 45 damage -> 5 HP left
-    TEST_ASSERT(state.threat_hp == 5, "Striking stance dealt 45 severance damage");
-    TEST_ASSERT(state.sword_edge < INITIAL_SWORD_EDGE, "Sword edge spent on strike");
+    game_process_command(&state, "strike", NULL, 0); // 45 dmg -> 5 HP left
+    TEST_ASSERT(state.threat_hp == 5,
+                "Striking stance dealt 45 severance damage");
+    TEST_ASSERT(state.sword_edge < INITIAL_SWORD_EDGE,
+                "Sword edge spent on strike");
 
     /* 3. Deliver finishing blow */
     game_process_command(&state, "strike", NULL, 0);
@@ -155,14 +158,19 @@ static void test_scenario_deterministic_golden_replay(void)
     }
 
     /* Assert 100% deterministic bitwise parity across runs */
-    TEST_ASSERT(run1.shield_power == run2.shield_power, "Deterministic shield power");
-    TEST_ASSERT(run1.sword_edge == run2.sword_edge, "Deterministic sword edge");
-    TEST_ASSERT(run1.moral_sway == run2.moral_sway, "Deterministic moral sway");
+    TEST_ASSERT(run1.shield_power == run2.shield_power,
+                "Deterministic shield power");
+    TEST_ASSERT(run1.sword_edge == run2.sword_edge,
+                "Deterministic sword edge");
+    TEST_ASSERT(run1.moral_sway == run2.moral_sway,
+                "Deterministic moral sway");
     TEST_ASSERT(run1.stance == run2.stance, "Deterministic stance");
     TEST_ASSERT(run1.location == run2.location, "Deterministic location");
     TEST_ASSERT(run1.threat_hp == run2.threat_hp, "Deterministic threat HP");
-    TEST_ASSERT(run1.foes_vanquished == run2.foes_vanquished, "Deterministic foes vanquished");
-    TEST_ASSERT(run1.turns_taken == run2.turns_taken, "Deterministic turns count");
+    TEST_ASSERT(run1.foes_vanquished == run2.foes_vanquished,
+                "Deterministic foes vanquished");
+    TEST_ASSERT(run1.turns_taken == run2.turns_taken,
+                "Deterministic turns count");
 
     printf("[PASS] Golden replay matches perfectly across independent runs.\n");
 }
@@ -180,7 +188,8 @@ static void test_softlock_and_stress_invariance(void)
 
     const char *chaotic_inputs[] = {
         "ward", "strike", "balance", "look", "status",
-        "stance warding", "stance striking", "stance equilibrium", "stance neutral",
+        "stance warding", "stance striking",
+        "stance equilibrium", "stance neutral",
         "move north", "move south", "move east", "move west",
         "", "   ", "unknown_verb", "move", "stance", "ward now", "help"
     };
@@ -192,11 +201,12 @@ static void test_softlock_and_stress_invariance(void)
 
         /* Invariant audit tripwire after each command */
         game_audit_report_t rep = game_audit_state(&state);
-        TEST_ASSERT(rep.is_valid, "State must remain valid under continuous input stress");
+        TEST_ASSERT(rep.is_valid,
+                    "State remains valid under continuous input stress");
     }
 
     TEST_ASSERT(state.turns_taken > 0, "Turns progressed normally");
-    printf("[PASS] 1,000 chaotic commands executed with zero state corruption or softlocks.\n");
+    printf("[PASS] 1,000 chaotic commands executed with zero softlocks.\n");
 }
 
 static void test_simulation_latency_and_headroom(void)
@@ -218,9 +228,9 @@ static void test_simulation_latency_and_headroom(void)
     printf("[BENCHMARK] 10,000 turns executed in %.2f ms (%.3f us / turn)\n",
         elapsed_ms, us_per_turn);
 
-    /* Assert that per-turn latency is under 50 microseconds (leaving full 60 FPS headroom) */
+    /* Assert per-turn latency is under 50 us (full 60 FPS headroom) */
     TEST_ASSERT(us_per_turn < 50.0, "Simulation turn latency < 50 us");
-    printf("[PASS] Simulation latency easily meets 60 FPS frame-budget requirements.\n");
+    printf("[PASS] Simulation latency meets 60 FPS frame-budget budget.\n");
 }
 
 // =============================================================================

@@ -62,11 +62,15 @@ static void test_initial_state_invariants(void)
     player_state_t state;
     game_init(&state);
 
-    TEST_ASSERT(state.shield_power == INITIAL_SHIELD_POWER, "Initial shield power match");
-    TEST_ASSERT(state.sword_edge == INITIAL_SWORD_EDGE, "Initial sword edge match");
-    TEST_ASSERT(state.moral_sway == INITIAL_MORAL_SWAY, "Initial moral sway zero");
+    TEST_ASSERT(state.shield_power == INITIAL_SHIELD_POWER,
+                "Initial shield power match");
+    TEST_ASSERT(state.sword_edge == INITIAL_SWORD_EDGE,
+                "Initial sword edge match");
+    TEST_ASSERT(state.moral_sway == INITIAL_MORAL_SWAY,
+                "Initial moral sway zero");
     TEST_ASSERT(state.stance == STANCE_NEUTRAL, "Initial stance neutral");
-    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR, "Initial location at Garrison Altar");
+    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR,
+                "Initial location at Garrison Altar");
     TEST_ASSERT(state.is_running == true, "Game is initially running");
     TEST_ASSERT(state.threat_hp == 0, "No initial threat at Garrison Altar");
 
@@ -84,18 +88,22 @@ static void test_relic_energy_bounds(void)
     /* Spam ward to reach ceiling */
     for (int i = 0; i < 20; i++) {
         game_process_command(&state, "ward", NULL, 0);
-        TEST_ASSERT(state.shield_power <= MAX_RESONANCE, "Shield cannot exceed MAX_RESONANCE");
+        TEST_ASSERT(state.shield_power <= MAX_RESONANCE,
+                    "Shield cannot exceed MAX_RESONANCE");
         TEST_ASSERT(state.shield_power >= 0, "Shield cannot be negative");
     }
-    TEST_ASSERT(state.shield_power == MAX_RESONANCE, "Shield power clamped at MAX_RESONANCE");
+    TEST_ASSERT(state.shield_power == MAX_RESONANCE,
+                "Shield power clamped at MAX_RESONANCE");
 
     /* Spam strike outside combat to hone edge */
     for (int i = 0; i < 20; i++) {
         game_process_command(&state, "strike", NULL, 0);
-        TEST_ASSERT(state.sword_edge <= MAX_RESONANCE, "Sword edge cannot exceed MAX_RESONANCE");
+        TEST_ASSERT(state.sword_edge <= MAX_RESONANCE,
+                    "Sword edge cannot exceed MAX_RESONANCE");
         TEST_ASSERT(state.sword_edge >= 0, "Sword edge cannot be negative");
     }
-    TEST_ASSERT(state.sword_edge == MAX_RESONANCE, "Sword edge clamped at MAX_RESONANCE");
+    TEST_ASSERT(state.sword_edge == MAX_RESONANCE,
+                "Sword edge clamped at MAX_RESONANCE");
 
     game_audit_report_t rep = game_audit_state(&state);
     TEST_ASSERT(rep.is_valid, "State remains valid after energy capping");
@@ -112,17 +120,20 @@ static void test_stance_state_machine(void)
     TEST_ASSERT(state.stance == STANCE_WARDING, "Transition to STANCE_WARDING");
 
     game_process_command(&state, "stance striking", NULL, 0);
-    TEST_ASSERT(state.stance == STANCE_STRIKING, "Transition to STANCE_STRIKING");
+    TEST_ASSERT(state.stance == STANCE_STRIKING,
+                "Transition to STANCE_STRIKING");
 
     game_process_command(&state, "stance equilibrium", NULL, 0);
-    TEST_ASSERT(state.stance == STANCE_EQUILIBRIUM, "Transition to STANCE_EQUILIBRIUM");
+    TEST_ASSERT(state.stance == STANCE_EQUILIBRIUM,
+                "Transition to STANCE_EQUILIBRIUM");
 
     game_process_command(&state, "stance neutral", NULL, 0);
     TEST_ASSERT(state.stance == STANCE_NEUTRAL, "Transition to STANCE_NEUTRAL");
 
     /* Test invalid stance input preserves current stance */
     game_process_command(&state, "stance gibberish_unknown", NULL, 0);
-    TEST_ASSERT(state.stance == STANCE_NEUTRAL, "Invalid stance command rejects safely");
+    TEST_ASSERT(state.stance == STANCE_NEUTRAL,
+                "Invalid stance command rejects safely");
 
     game_audit_report_t rep = game_audit_state(&state);
     TEST_ASSERT(rep.is_valid, "State remains valid after stance transitions");
@@ -144,7 +155,8 @@ static void test_moral_sway_boundaries(void)
     state.moral_sway = -99;
     /* Balance pulls sway back toward 0 */
     game_process_command(&state, "balance", NULL, 0);
-    TEST_ASSERT(state.moral_sway == -97, "Balance nudges negative sway toward equilibrium");
+    TEST_ASSERT(state.moral_sway == -97,
+                "Balance nudges negative sway toward equilibrium");
 
     game_audit_report_t rep = game_audit_state(&state);
     TEST_ASSERT(rep.is_valid, "State remains valid across sway extremes");
@@ -159,17 +171,21 @@ static void test_spatial_topology(void)
 
     /* Start at Garrison Altar: cannot move south, west, or east */
     game_process_command(&state, "move south", NULL, 0);
-    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR, "Cannot move south from Garrison Altar");
+    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR,
+                "Cannot move south from Garrison Altar");
     game_process_command(&state, "move west", NULL, 0);
-    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR, "Cannot move west from Garrison Altar");
+    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR,
+                "Cannot move west from Garrison Altar");
 
     /* Move North to Citadel Gates */
     game_process_command(&state, "move north", NULL, 0);
-    TEST_ASSERT(state.location == LOC_CITADEL_GATES, "Moved North to Citadel Gates");
+    TEST_ASSERT(state.location == LOC_CITADEL_GATES,
+                "Moved North to Citadel Gates");
 
     /* Move South back to Garrison Altar */
     game_process_command(&state, "move south", NULL, 0);
-    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR, "Returned South to Garrison Altar");
+    TEST_ASSERT(state.location == LOC_GARRISON_ALTAR,
+                "Returned South to Garrison Altar");
 
     printf("[PASS] Spatial topology invariants verified.\n");
 }
@@ -181,7 +197,7 @@ static void test_spatial_topology(void)
 
 static void test_diagnostic_tripwire_manifests(void)
 {
-    printf("[RUN] Testing diagnostic tripwires on artificially corrupted states...\n");
+    printf("[RUN] Testing diagnostic tripwires on corrupted states...\n");
     player_state_t state;
     game_init(&state);
 
