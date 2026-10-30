@@ -1,0 +1,107 @@
+= Engine Systems, Switches & Variables Directory (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document specifies the global state machines, monotonic time clock, morality engine,
+and the complete registry of all switches and variables governing demo logic.
+
+== 1. The Monotonic Time Engine
+
+The time system is driven by Common Events 1 and 2, updating a 24-hour cycle:
+* `Variable 1`: Seconds (0–59)
+* `Variable 2`: Minutes (0–59)
+* `Variable 3`: Hours (1–12)
+* `Variable 4`: 24-Hour Military Format (0–23)
+* `Variable 5`: Days (1–7: Sunday through Saturday)
+* `Variable 6`: Weeks
+* `Variable 7`: Months
+* `Variable 8`: Years
+
+In the modern C11 architecture, this corresponds to Layer 0 `time_utils` (`time_get_monotonic_ms`).
+
+== 2. The Moral Sway Continuum Engine
+
+The morality engine tracks the party's ethical orientation on an invariant scale:
+* `Variable 9`: **Moral (Overall)**: Continuum within `[-100, +100]`.
+* `Variable 10`: **Moral (Good)**: Cumulative points awarded for altruism, charity, and mercy.
+* `Variable 11`: **Moral (Evil)**: Cumulative points accrued for ruthless, self-serving, or thieving acts.
+* `Item 8`: **Compass of Morality**: Tool allowing the player to inspect their moral continuum in the field.
+
+== 3. Global Switches Directory
+
+[cols="^1,2,4", options="header"]
+|===
+| Switch ID | Name / Flag | Operational Role & Trigger
+| `1` | **Walk of Fear** | State flag for quest / scenario progression
+| `2` | **Return to Cut Scene** | State flag for quest / scenario progression
+| `3` | **Walk of Fear 2** | State flag for quest / scenario progression
+| `4` | **Roté Enters the Castle** | State flag for quest / scenario progression
+| `5` | **The Priest Leave the Castle** | State flag for quest / scenario progression
+| `6` | **D. Jihad is Summoned** | State flag for quest / scenario progression
+| `7` | **??? Enters the Map** | State flag for quest / scenario progression
+| `8` | **Class Selected** | State flag for quest / scenario progression
+| `9` | **??? Leaves the Map** | State flag for quest / scenario progression
+| `10` | **??? Explains Puzzle** | State flag for quest / scenario progression
+| `11` | **(Story Plot) Remove Rocks** | State flag for quest / scenario progression
+| `12` | **Switch Active** | State flag for quest / scenario progression
+| `13` | **(Side Plot) Remove Rocks** | State flag for quest / scenario progression
+| `14` | **??? Disappears** | State flag for quest / scenario progression
+| `15` | **??? Weaken** | State flag for quest / scenario progression
+| `16` | **??? Final Words** | State flag for quest / scenario progression
+| `17` | **Boss Defeated** | State flag for quest / scenario progression
+| `18` | **Restart** | State flag for quest / scenario progression
+| `19` | **Remove Stone 1** | State flag for quest / scenario progression
+| `20` | **Remove Stone 2** | State flag for quest / scenario progression
+| `21` | **Remove Stone 3** | State flag for quest / scenario progression
+| `22` | **Remove Stone 4** | State flag for quest / scenario progression
+| `23` | **Treasure Remove** | State flag for quest / scenario progression
+| `24` | **Time** | State flag for quest / scenario progression
+| `25` | **Friendship Menu** | State flag for quest / scenario progression
+| `26` | **Quest 1 (Grandma's Request)** | State flag for quest / scenario progression
+| `27` | **Grandma (Idle)** | State flag for quest / scenario progression
+| `28` | **Exit Location** | State flag for quest / scenario progression
+| `29` | **Monica Event On** | State flag for quest / scenario progression
+| `30` | **Final Conversation Before Map is Out** | State flag for quest / scenario progression
+| `31` | **Quest 1 (Give Grandma Here Watch)** | State flag for quest / scenario progression
+| `32` | **The Great Sage** | State flag for quest / scenario progression
+| `33` | **More Battle Mechanics** | State flag for quest / scenario progression
+| `34` | **Monica Quest Switch** | State flag for quest / scenario progression
+| `35` | **Unlock Dio Village-Lower** | State flag for quest / scenario progression
+| `36` | **Idle Monica** | State flag for quest / scenario progression
+| `37` | **Petty Thief** | State flag for quest / scenario progression
+| `38` | **Morality** | State flag for quest / scenario progression
+| `39` | **Give to the Poor** | State flag for quest / scenario progression
+| `40` | **A Noble Thief** | State flag for quest / scenario progression
+| `41` | **Angry John** | State flag for quest / scenario progression
+|===
+
+== 4. Global Variables Directory
+
+[cols="^1,2,4", options="header"]
+|===
+| Variable ID | Name | Subsystem Allocation
+| `1` | **Seconds** | Global numerical state accumulator
+| `2` | **Minutes** | Global numerical state accumulator
+| `3` | **Hours** | Global numerical state accumulator
+| `4` | **24 Hours** | Global numerical state accumulator
+| `5` | **Days** | Global numerical state accumulator
+| `6` | **Weeks** | Global numerical state accumulator
+| `7` | **Months** | Global numerical state accumulator
+| `8` | **Years** | Global numerical state accumulator
+| `9` | **Moral (Overall)** | Global numerical state accumulator
+| `10` | **Moral (Good)** | Global numerical state accumulator
+| `11` | **Moral (Evil)** | Global numerical state accumulator
+| `12` | **Region ID** | Global numerical state accumulator
+| `13` | **Currency** | Global numerical state accumulator
+| `14` | **Pot Amount** | Global numerical state accumulator
+| `15` | **Deposit Amount** | Global numerical state accumulator
+|===

@@ -37,12 +37,17 @@
 // =============================================================================
 
 #include "sim/game.h"
+#include "sim/sim_state.h"
+#include "sim/combat.h"
+#include "sim/world.h"
+#include "sim/dispatcher.h"
 #include "gui/gui.h"
 #include "util/manifest.h"
 #include "util/math_utils.h"
 #include "util/string_utils.h"
 #include "util/geom_utils.h"
 #include "util/time_utils.h"
+#include "util/log.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -57,9 +62,10 @@
  *
  * ### Machine Role & Mission
  * Populates the central manifest registry with all Layer 0 utilities (manifest,
- * time, math, geom, string), Layer 1 simulation engine (game), and Layer 2
- * presentation viewport (gui). Enables boot-time loose-bolts invariant checks
- * and dependency graph resolution before any game loop execution begins.
+ * time, math, geom, string, log), Layer 1 simulation engine (state, combat,
+ * world, dispatcher, game), and Layer 2 presentation viewport (gui). Enables
+ * boot-time loose-bolts invariant checks and dependency graph resolution
+ * before any game loop execution begins.
  *
  * ### Ontological Classification
  * - Stratum: Layer 3 (Application Entry & Presentation Router)
@@ -85,8 +91,13 @@ static void init_engine_manifest(manifest_registry_t *registry)
     manifest_register(registry, &math_utils_manifest);
     manifest_register(registry, &geom_utils_manifest);
     manifest_register(registry, &string_utils_manifest);
+    manifest_register(registry, &log_manifest);
 
-    /* Step 3: Register Layer 1 Simulation Engine */
+    /* Step 3: Register Layer 1 Simulation Engine Subsystems */
+    manifest_register(registry, &sim_state_manifest);
+    manifest_register(registry, &combat_manifest);
+    manifest_register(registry, &world_manifest);
+    manifest_register(registry, &dispatcher_manifest);
     manifest_register(registry, &game_manifest);
 
     /* Step 4: Register Layer 2 Presentation Viewport */
@@ -192,6 +203,9 @@ static void print_version(void)
  */
 static int run_full_subsystem_audit(void)
 {
+    log_init(NULL);
+    LOG_INFO(LOG_CAT_LOG, "Audit", 0.0f, "Starting comprehensive diagnostic self-audit");
+
     /* Step 1: Initialize central manifest and run pre-flight diagnostics */
     manifest_registry_t registry;
     init_engine_manifest(&registry);
@@ -200,31 +214,46 @@ static int run_full_subsystem_audit(void)
 
     /* Step 2: Evaluate pre-flight outcome for fatal loose-bolts */
     if (registry.status == PREFLIGHT_STATUS_HALT_FATAL) {
+        LOG_FATAL(LOG_CAT_LOG, "Audit", -1.0f, "Pre-flight failed due to loose bolts!");
         fprintf(stderr, "[FATAL] Pre-flight failed due to loose bolts!\n");
+        log_shutdown();
         return 1;
     }
 
-    printf("\n============================================================\n");
-    printf("      Tenebris and Lux - Comprehensive Subsystem Audit      \n");
-    printf("============================================================\n");
+    /* Step 2b: Run telemetry subsystem diagnostic audit */
+    diag_result_t log_diag = log_audit(false);
+    if (!log_diag.passed) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Core telemetry audit failed: %s", log_diag.details);
+        fprintf(stderr, "[FAIL] Core telemetry subsystem audit failed: %s\n", log_diag.details);
+        log_shutdown();
+        return 1;
+    }
+    printf("[PASS] Test 0: Telemetry subsystem & grade invariants verified.\n");
 
     /* Step 3: Run simulation engine invariant audit */
     if (game_run_self_audit() != 0) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Core game simulation audit failed");
         fprintf(stderr, "[FAIL] Core game simulation audit failed.\n");
+        log_shutdown();
         return 1;
     }
 
     /* Step 4: Run GUI layout bounds and collision audit */
     if (!gui_audit_layout()) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "GUI viewport layout bounds exceeded");
         fprintf(stderr, "[FAIL] GUI viewport layout bounds exceeded!\n");
+        log_shutdown();
         return 1;
     }
     printf("[PASS] Test 5: GUI viewport layout invariants verified.\n");
 
     /* Step 5: Report comprehensive pass summary */
     printf("============================================================\n");
-    printf("Audit Result: ALL INVARIANT CHECKS PASSED (5/5 + Pre-Flight)\n");
+    printf("Audit Result: ALL INVARIANT CHECKS PASSED (6/6 + Pre-Flight)\n");
     printf("============================================================\n");
+
+    LOG_INFO(LOG_CAT_LOG, "Audit", 1.0f, "All invariant checks passed successfully (6/6 + Pre-Flight)");
+    log_shutdown();
     return 0;
 }
 
@@ -293,48 +322,67 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* Step 3: Run Pre-Flight ("Don't start machine with loose bolts") */
+    /* Step 3: Initialize forensic logging & telemetry */
+    log_init(NULL);
+    LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Tenebris and Lux boot initialized (mode: %s)",
+             force_cli ? "CLI" : (force_gui ? "GUI" : "Auto"));
+
+    /* Step 4: Run Pre-Flight ("Don't start machine with loose bolts") */
     manifest_registry_t registry;
     init_engine_manifest(&registry);
     preflight_status_t preflight = manifest_run_preflight(&registry);
 
     if (preflight == PREFLIGHT_STATUS_HALT_FATAL) {
+        LOG_FATAL(LOG_CAT_LOG, "Engine", -1.0f, "Engine startup halted due to loose bolts!");
         fprintf(stderr,
                 "\n[FATAL ERROR] Engine startup halted due to loose bolts!\n");
         manifest_print_report(&registry);
+        log_shutdown();
         return 1;
     }
 
-    /* Step 4: Initialize simulation player state */
+    /* Step 5: Initialize simulation player state */
     player_state_t state;
     game_init(&state);
 
-    /* Step 5: Route explicit CLI launch request */
+    /* Step 6: Route explicit CLI launch request */
     if (force_cli) {
+        LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Entering terminal CLI game loop");
         game_loop_cli(&state);
+        log_shutdown();
         return 0;
     }
 
-    /* Step 6: Route explicit GUI launch request */
+    /* Step 7: Route explicit GUI launch request */
     if (force_gui) {
         if (!gui_is_available()) {
+            LOG_ERROR(LOG_CAT_LOG, "Engine", -0.5f, "No graphical X11 display available for --gui");
             fprintf(stderr,
                     "Error: No graphical X11 display available for --gui.\n");
+            log_shutdown();
             return 1;
         }
-        return gui_run(&state);
+        LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Launching native X11 GUI");
+        int rc = gui_run(&state);
+        log_shutdown();
+        return rc;
     }
 
-    /* Step 7: Graded policy fallback: downgrade to CLI if display missing */
+    /* Step 8: Graded policy fallback: downgrade to CLI if display missing */
     if (preflight == PREFLIGHT_STATUS_DOWNGRADED || !gui_is_available()) {
+        LOG_WARN(LOG_CAT_LOG, "Engine", -0.2f, "Graphical display unavailable, downgrading to CLI");
         printf("[Notice] Graphical display unavailable. "
                "Downgrading to CLI safe mode.\n\n");
         game_loop_cli(&state);
+        log_shutdown();
         return 0;
     }
 
-    /* Step 8: Default presentation: launch native GUI */
-    return gui_run(&state);
+    /* Step 9: Default presentation: launch native GUI */
+    LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Launching native X11 GUI default presentation");
+    int rc = gui_run(&state);
+    log_shutdown();
+    return rc;
 }
 
 // End of main.c

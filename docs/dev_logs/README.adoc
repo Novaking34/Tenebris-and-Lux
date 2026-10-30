@@ -57,9 +57,16 @@ thematically (`architecture/`, `lore_and_design/`).
    - Enforced strict 80-column line width discipline across 100% of the C codebase (0 lines exceeding 80 columns across all 18 files).
    - Reorganized developer logs into chronological and topical directory trees (`YYYY/MM/<topic>/`).
 
-6. **[devlog_006_source_and_root_pedagogical_commenting.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc)**  
-   *Source Implementation & Root Pedagogical Commenting* (2026-10-27 | Architecture):
-   - Expanded Ontological Documentation Architecture and LSP hover docstrings across 100% of C source files (`src/**/*.c`).
-   - Added numbered step-by-step procedural comments inside all functions.
-   - Upgraded root configuration files (`CMakeLists.txt`, `.gitignore`, `README.md`) with pedagogical commentary and OmniCode 5-block structure.
-   - Confirmed 100% strict 80-column line width compliance across all 18 repository files.
+60: 6. **[devlog_006_source_and_root_pedagogical_commenting.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc)**  
+61:    *Source Implementation & Root Pedagogical Commenting* (2026-10-27 | Architecture):
+62:    - Expanded Ontological Documentation Architecture and LSP hover docstrings across 100% of C source files (`src/**/*.c`).
+63:    - Added numbered step-by-step procedural comments inside all functions.
+64:    - Upgraded root configuration files (`CMakeLists.txt`, `.gitignore`, `README.md`) with pedagogical commentary and OmniCode 5-block structure.
+65:    - Confirmed 100% strict 80-column line width compliance across all 18 repository files.
+66: 
+67: 7. **[devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc)**  
+68:    *Archival Extraction & The 2017–2018 Demo Baseline* (2026-10-29 | Lore & Design):
+69:    - Recovered and extracted raw JSON datasets across `Old Game Data` and `Old_Game_Data_2/data`.
+70:    - Built automated extraction toolchain (`docs/tools/extract_demo_data.py`).
+71:    - Generated 10-volume canonical demo baseline documentation suite in `docs/game_design/demo_baseline/`.
+72:    - Formalized the C11 reconstruction roadmap across simulation, GUI presentation, and invariant test suites.

@@ -1,0 +1,51 @@
+= Dio Village: The Provincial Heartland & Class Divide
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-28
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Dio Village** is the historic starting settlement in the southwestern province
+of the **Kingdom of Sacyra**. A provincial community once teeming with trade and
+prosperity, the village has fallen into economic stagnation as the central Crown
+focuses resources on the capital. Dio Village is sharply divided into the
+pastoral **Upper Ward** and the impoverished, exploited **Lower Ward**.
+
+== Topographical & Social Strata
+
+* **Upper Ward (Dio Upper)**:
+  - *Main Square & Plaza*: Community gathering place, bordered by ancestral homes.
+  - *Grandma's House*: Home of Grandma Magolia, keeper of *Grandma's Watch*.
+  - *Monica's Grove*: Sanctuary of Monica the Mystic and her elemental familiar Lyri.
+  - *Eric's Hearth*: Modest dwelling of Eric, former lumberjack.
+* **Lower Ward (Dio Lower)**:
+  - *Shopping District*: Local shops struggling under crushing taxes.
+  - *The St. Baron's Estate*: Lavish residence of the exploitative baron.
+  - *The Thief's Den*: Shadows where John the Thief operates.
+
+== Dossier Index
+
+1. **[grandma_magolia.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/grandma_magolia.adoc)**  
+   *The Village Matriarch*: Grandma Magolia, grandmother to Elijah, guardian of
+   the heirloom timepiece *Grandma's Watch*, and longtime friend of Monica.
+
+2. **[monica_and_lyri.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/monica_and_lyri.adoc)**  
+   *The Mystic & The Familiar*: Monica, sharp-tongued hedge-sage, and Lyri, her
+   whispering elemental spirit who detects the approach of the Void.
+
+3. **[eric_the_lumberjack.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/eric_the_lumberjack.adoc)**  
+   *The Displaced Woodman*: Eric, former lumberjack whose livelihood was broken
+   by the appearance of an abyssal portal; giver of the *Ring of Fire*.
+
+4. **[st_baron.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/st_baron.adoc)**  
+   *The Aristocratic Usurper*: The wealthiest landowner in Dio Village, whose
+   monopolies and extortion create deep social unrest in the Lower Ward.
+
+5. **[john_the_thief.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/john_the_thief.adoc)**  
+   *The Shadow Fixer*: Rogue underworld operative in Lower Dio who aids the
+   downtrodden while enlisting heroes in covert operations.

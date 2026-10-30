@@ -1,0 +1,61 @@
+= Character Dossier: Grandma Magolia (The Village Matriarch)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-28
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Grandma Magolia** (Magolia Ro-enheart) is the beloved matriarch of Dio
+Village, mother to Commander Gareth Ro-enheart, and grandmother to Elijah
+Ro-enheart. Providing warmth, historical perspective, and the family heirloom
+(*Grandma's Watch*), Grandma Magolia anchors the heroes to the human heart
+of Sacyra.
+
+== 1. Identity & Family Ties
+
+* **Full Name**: Magolia Ro-enheart ("Grandma Magolia")
+* **Residence**: Grandma's House (Two-story timber cottage, Dio Upper Ward)
+* **Family Lineage**:
+  - **Son**: Commander Gareth Ro-enheart (Vanished Head of the Royal Guard)
+  - **Grandson**: Elijah Ro-enheart (Bearer of the Shield of Lux)
+  - **Surrogate Charge**: Lady Katrina Jaren (who sought haven with Magolia
+    during her rebellion against House Jaren court tutors)
+  - **Lifelong Friend**: Monica the Mystic (companion since youth)
+
+== 2. Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+
+Grandma Magolia speaks with gentle affection, nostalgic wisdom, and quiet
+sadness regarding the decline of provincial Sacyra.
+
+* *The Heirloom Quest*:
+  [quote, Grandma Magolia, Map 21 / Map 7]
+  "Hello sweetie, could you please go upstairs and search in the chest and grab
+  what's inside? It's something that has great significance."
+* *Reflections on the Kingdom's Neglect*:
+  [quote, Grandma Magolia, Map 21 / Map 7]
+  "This town used to be full of life. *sighs* The kingdom doesn't pay much
+  attention to this place anymore..."
+* *Passing Down the Heirloom Watch*:
+  [quote, Grandma Magolia, Map 21 / Map 7]
+  "Thank you honey. This watch has been in the family for a long time. Oh, how
+  it brings back memories of better days. I think you should keep it. It's my
+  gift to you. And here's a bit of money. I know that you'll need it more than
+  little ol' me."
+* *A Lifelong Bond with Monica*:
+  [quote, Grandma Magolia, Map 21 / Map 7]
+  "Oh me and Monica go way back. She was such a wild child, always getting into
+  mischief. You'll love her."
+
+== 3. The Heirloom Timepiece: Grandma's Watch
+
+Grandma Magolia bequeaths **Grandma's Watch** to the party. In the original
+2017–2018 RPG Maker project, this item activated the global calendar and
+monotonic time engine (Seconds, Minutes, Hours, Days, Weeks, Months, and
+Seasons). In the modern C11 architecture, this lore item corresponds directly
+to the Layer 0 `time_utils` subsystem, tracking monotonic game ticks and frame
+budgets.

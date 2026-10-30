@@ -1,0 +1,93 @@
+= Game Design Curation & Triaging Matrix (2017–2018 Demo vs C11 Engine)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document formalizes the architectural triage of the 2017–2018 RPG Maker MV
+demo datasets. It separates generic RPG Maker Runtime Package (RTP) boilerplate
+from temporary testing experiments and identifies the authentic, fleshed-out
+canonical systems to be reconstructed in the native C11 game engine.
+
+== 1. Triage Categorization Taxonomy
+
+To prevent technical debt from legacy game engine defaults from contaminating
+our custom C11 engine, all extracted game data is triaged into three strict
+analytical categories:
+
+[cols="1,2,3", options="header"]
+|===
+| Category | Definition | Architectural Policy
+| **Tier 1: RTP Defaults & Boilerplate** | Stock RPG Maker MV assets, generic items, placeholder sounds, and default formulas. | **Discard / Re-architect**. Never port verbatim into C11.
+| **Tier 2: Prototype & Testing Sketches** | Ad-hoc test maps, sandbox battlers, debug switches, and experimental scripts. | **Review & Evolve**. Extract mechanical concepts but redesign within clean strata.
+| **Tier 3: Fleshed-Out Canonical Pillars** | Core story scripts, dual-protagonist dialogue dynamics, moral dilemma quests, LeTBS grid tactics, and key relics. | **Preserve & Reconstruct**. Faithfully implement as axiomatic invariants in C11.
+|===
+
+== 2. Tier 1: RPG Maker RTP Defaults (To Discard or Re-Architect)
+
+[cols="2,2,3", options="header"]
+|===
+| Element | Historical Manifest | Why It Must Be Discarded / Replaced
+| **Basic Consumables** | Potion (50G), Magic Water (100G), Dispel Herb (20G), Stimulant (50G) | Generic RTP recovery items. In C11, consumables must tie directly to Sacyran herbalism, relic alchemy, and stance restoration.
+| **Generic Armaments** | Standard Sword (100G), Axe (100G), Cane (100G), Bow (100G), Shield (100G), Cloth (100G) | Default placeholder inventory without distinct tactical affinities or stance interactions.
+| **Stock Sound Effects** | `Attack2`, `Buzzer1`, `Damage4`, `Collapse1-4`, `Shop1` | Generic MV sound library. C11 audio subsystem will support custom soundscapes.
+| **Placeholder Bestiary** | Bat (`HP: 80`), Slime (`HP: 250`), Rabbit (`HP: 55`), Orc (`HP: 300`) | Standard MV demo monsters used for basic stat checks. Replaced by Sacyran fauna and Malakor void aberrations.
+| **Default Title Theme** | `Theme6` / `CrossedSwords` title screen graphic | Default MV asset packaging. Replaced by bespoke Sacyran coat of arms and twin relic artwork.
+|===
+
+== 3. Tier 2: Prototype & Testing Sketches (Concepts to Evolve)
+
+[cols="2,2,3", options="header"]
+|===
+| Element | Historical Location | Tactical / Design Value to Evolve
+| **Sandbox Test Maps** | `Map006 Test Areas`, `Map043 Event Map` | Used to test event triggers, movement paths, and sprite coordinates. Demonstrates intent for environmental puzzle mechanics.
+| **Debug Enemies & Troops** | `Enemy 14 Test`, `Troop 10 Test`, `Enemy 32 Invincible Neutral` | Proved that neutral, invincible obstacles and destructible props function well on the tactical grid.
+| **Explosive Chickens** | Fire Chicken (`Actor 13`), Bomb (`Skill 136`) | Humorous prototype mechanic demonstrating combat summons and dynamic decoy units on the tactical field.
+| **Plugin Experiments** | `LeTBS/firestorm.json`, `LeTBS/test.json`, `QMaps/` | Initial experiments with Lecode's Tactical Battle System and Quasi Movement plugins. Proves grid-based TRPG was the true target genre.
+|===
+
+== 4. Tier 3: Fleshed-Out Canonical Pillars (Core Invariants to Reconstruct)
+
+The following systems represent the authentic creative vision of *Tenebris and Lux*
+and must be preserved and reconstructed in C11:
+
+=== 1. Dual-Protagonist Dynamics & Narrative Branching
+* **Elijah Ro-enheart (`\n[1]`)**: Son of vanished Commander Gareth Ro-enheart.
+  Dutiful, protective vanguard bearer of the Shield of Lux. Dialogue reflects
+  reverence for duty, family loyalty, and hesitation to violate laws.
+* **Lady Katrina Jaren (`\n[2]`)**: Daughter of noble House Jaren escaping courtly
+  politics to join the Adventurers' Guild. Agile outrider wielder of the Sword of
+  Tenebris. Dialogue features sardonic wit, impatience with provincial stagnation,
+  and fierce defense of the vulnerable.
+
+=== 2. The Moral Sway Continuum Engine
+* **Ethical Mechanics**: Discrete moral choices tracking across `Moral (Good)`
+  and `Moral (Evil)` within the invariant continuum `[-100, +100]`.
+* **The Test of Honesty (Eric's House, Map 28)**:
+  - Stealing Eric's life savings (10G) rewards quick cash but plunges morality.
+  - Donating 500G to cover Eric's rent saves a desperate worker and earns the *Ring of Fire*.
+* **The Struggle of Dio Village (John the Thief vs. St. Baron, Map 30/31)**:
+  - Feudal exploitation vs. outrider rebellion, forcing the heroes to choose
+    between legal compliance and moral justice.
+
+=== 3. Lecode Tactical Battle System (LeTBS) Mechanics
+* **Grid Movement & Range Geometries**:
+  - Movement Points (4 MP baseline), modified by skills like *Light Steps* (+1) and *Heavy Hit* (-3).
+  - Scope shapes: `circle(r)`, `circle(max, min)` (annular), `line(n)`, `square(r)`.
+* **Terrain Hazards & Obstacles**:
+  - *Ice Wall* and *Ice Prison* creating physical destructible barriers (`HP: 20`).
+  - *Volcano Ground* and *Burning Tile Spread* (`spread: 100% circle(1)`).
+* **Turn Timeline Manipulation**:
+  - *Accelerate*, *Decelerate*, and *Emergency Turn* altering the turn queue.
+
+=== 4. The Monotonic 24-Hour Time Engine
+* **Grandma's Watch**: Family heirloom activating real-time calendar and clock
+  tracking (Seconds, Minutes, Hours, Days, Weeks, Months, Years), corresponding
+  directly to Layer 0 `time_utils`.

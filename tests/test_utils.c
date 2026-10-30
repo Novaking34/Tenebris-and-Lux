@@ -38,6 +38,7 @@
 #include "util/string_utils.h"
 #include "util/geom_utils.h"
 #include "util/time_utils.h"
+#include "util/log.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -200,6 +201,11 @@ static void test_all_utilities(void)
     TEST_ASSERT(time_utils_audit(), "time_utils audit passed");
     printf("[PASS] time_utils verified.\n");
 
+    printf("[RUN] Auditing log...\n");
+    diag_result_t log_res = log_audit(true);
+    TEST_ASSERT(log_res.passed, "log audit passed");
+    printf("[PASS] log verified.\n");
+
     test_manifest_and_preflight();
 }
 
@@ -222,7 +228,7 @@ int main(void)
     test_all_utilities();
 
     printf("============================================================\n");
-    printf("ALL UTILITY & PREFLIGHT TESTS PASSED (5/5 Subsystems Succeeded)\n");
+    printf("ALL UTILITY & PREFLIGHT TESTS PASSED (6/6 Subsystems Succeeded)\n");
     printf("============================================================\n");
     return 0;
 }

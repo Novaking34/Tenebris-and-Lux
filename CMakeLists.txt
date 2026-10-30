@@ -105,6 +105,24 @@ set(UTIL_SOURCES
     src/util/string_utils.c
     src/util/geom_utils.c
     src/util/time_utils.c
+    src/util/log.c
+)
+
+set(SIM_SOURCES
+    src/sim/sim_state.c
+    src/sim/combat.c
+    src/sim/world.c
+    src/sim/dispatcher.c
+    src/sim/game.c
+)
+
+set(SIM_HEADERS
+    include/sim/sim_types.h
+    include/sim/sim_state.h
+    include/sim/combat.h
+    include/sim/world.h
+    include/sim/dispatcher.h
+    include/sim/game.h
 )
 
 # ------------------------------------------------------------------------------
@@ -114,16 +132,17 @@ set(UTIL_SOURCES
 
 add_executable(tenebris-lux
     src/main.c
-    src/sim/game.c
     src/gui/gui.c
+    ${SIM_SOURCES}
     ${UTIL_SOURCES}
-    include/sim/game.h
+    ${SIM_HEADERS}
     include/gui/gui.h
     include/util/manifest.h
     include/util/math_utils.h
     include/util/string_utils.h
     include/util/geom_utils.h
     include/util/time_utils.h
+    include/util/log.h
 )
 
 # Private include paths: internal headers and X11 system display headers
@@ -167,9 +186,9 @@ if(BUILD_TESTING)
     # --------------------------------------------------------------------------
     add_executable(test_game_invariants
         tests/test_game_invariants.c
-        src/sim/game.c
+        ${SIM_SOURCES}
         ${UTIL_SOURCES}
-        include/sim/game.h
+        ${SIM_HEADERS}
     )
     target_include_directories(test_game_invariants PRIVATE include)
     target_compile_options(test_game_invariants PRIVATE ${GAME_WARNING_FLAGS})
@@ -180,9 +199,9 @@ if(BUILD_TESTING)
     # --------------------------------------------------------------------------
     add_executable(test_gameplay_scenarios
         tests/test_gameplay_scenarios.c
-        src/sim/game.c
+        ${SIM_SOURCES}
         ${UTIL_SOURCES}
-        include/sim/game.h
+        ${SIM_HEADERS}
     )
     target_include_directories(test_gameplay_scenarios PRIVATE include)
     target_compile_options(test_gameplay_scenarios

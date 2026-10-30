@@ -1,0 +1,274 @@
+= Combat Classes, Stat Matrices & Growth Progressions (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document details the 7 primary player and NPC classes plus 4 auxiliary summon/guard
+classes from `Classes.json`. It includes base stat formulas across 8 core attributes
+(MHP, MMP, ATK, DEF, MAT, MDF, AGI, LUK) and skill learning progressions.
+
+== Class 1: Warrior
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 100 | 30 | 12 | 8 | 3 | 8 | 27 | 32
+| 5 | 145 | 46 | 17 | 12 | 5 | 11 | 27 | 42
+| 10 | 202 | 64 | 23 | 17 | 8 | 15 | 27 | 55
+| 20 | 314 | 102 | 35 | 26 | 13 | 22 | 27 | 80
+| 50 | 650 | 215 | 71 | 54 | 27 | 44 | 27 | 155
+| 99 | 1200 | 400 | 130 | 100 | 50 | 80 | 27 | 277
+|===
+
+=== Skill Learnings for Warrior
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Repulsive Blow** (`ID: 11`) | Innate class technique
+| Lv 1 | **Flash Jump** (`ID: 12`) | Innate class technique
+| Lv 1 | **Rush** (`ID: 13`) | Innate class technique
+| Lv 1 | **Intimidating Aura** (`ID: 14`) | Innate class technique
+| Lv 1 | **Heavy Hit** (`ID: 15`) | Innate class technique
+| Lv 1 | **Provoke** (`ID: 16`) | Innate class technique
+| Lv 1 | **Phantom Slash** (`ID: 17`) | Innate class technique
+|===
+
+== Class 2: Mage
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 60 | 90 | 2 | 7 | 13 | 8 | 26 | 32
+| 5 | 83 | 130 | 4 | 10 | 18 | 12 | 26 | 42
+| 10 | 110 | 180 | 6 | 13 | 24 | 17 | 26 | 55
+| 20 | 165 | 280 | 10 | 20 | 36 | 26 | 26 | 80
+| 50 | 330 | 580 | 21 | 39 | 72 | 54 | 26 | 155
+| 99 | 600 | 1070 | 40 | 70 | 130 | 100 | 26 | 277
+|===
+
+=== Skill Learnings for Mage
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Fire** (`ID: 42`) | Innate class technique
+| Lv 1 | **Sparkle** (`ID: 43`) | Innate class technique
+| Lv 1 | **Lightning Storm** (`ID: 44`) | Innate class technique
+| Lv 1 | **Fire Storm** (`ID: 45`) | Innate class technique
+| Lv 1 | **Fire Support** (`ID: 46`) | Innate class technique
+| Lv 1 | **Volcano Ground** (`ID: 47`) | Innate class technique
+| Lv 1 | **Ice Fury** (`ID: 49`) | Innate class technique
+| Lv 1 | **Walking Fire** (`ID: 50`) | Innate class technique
+| Lv 1 | **Ice Wall** (`ID: 51`) | Innate class technique
+| Lv 1 | **Ice Prison** (`ID: 52`) | Innate class technique
+| Lv 1 | **Whitch's Escape** (`ID: 53`) | Innate class technique
+| Lv 1 | **Fire Chickens** (`ID: 54`) | Innate class technique
+| Lv 1 | **Water (charged)** (`ID: 55`) | Innate class technique
+| Lv 1 | **Mega Sparkle** (`ID: 56`) | Innate class technique
+| Lv 1 | **Multi Fire** (`ID: 57`) | Innate class technique
+|===
+
+== Class 3: Priest
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 65 | 60 | 6 | 8 | 10 | 7 | 32 | 32
+| 5 | 95 | 87 | 10 | 13 | 15 | 11 | 32 | 42
+| 10 | 133 | 119 | 15 | 18 | 20 | 16 | 32 | 55
+| 20 | 208 | 185 | 25 | 28 | 31 | 26 | 32 | 80
+| 50 | 433 | 380 | 53 | 59 | 63 | 54 | 32 | 155
+| 99 | 800 | 700 | 100 | 110 | 115 | 100 | 32 | 277
+|===
+
+=== Skill Learnings for Priest
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Heal** (`ID: 72`) | Innate class technique
+| Lv 1 | **Teleportation** (`ID: 73`) | Innate class technique
+| Lv 1 | **Salvation** (`ID: 74`) | Innate class technique
+| Lv 1 | **Teleportation II** (`ID: 75`) | Innate class technique
+| Lv 1 | **Explosive Mark** (`ID: 76`) | Innate class technique
+| Lv 1 | **Light Steps** (`ID: 78`) | Innate class technique
+| Lv 1 | **Ghost Arrow** (`ID: 79`) | Innate class technique
+| Lv 1 | **Magic Trap** (`ID: 80`) | Innate class technique
+| Lv 1 | **Fire Arrows** (`ID: 82`) | Innate class technique
+| Lv 1 | **Wind Spirit** (`ID: 83`) | Innate class technique
+| Lv 1 | **Summon Pixie** (`ID: 84`) | Innate class technique
+| Lv 1 | **Shamanism** (`ID: 85`) | Innate class technique
+| Lv 1 | **Extra Turn** (`ID: 86`) | Innate class technique
+| Lv 1 | **Accelerate** (`ID: 87`) | Innate class technique
+| Lv 1 | **Emergency Turn** (`ID: 89`) | Innate class technique
+| Lv 1 | **Ally Teleport.** (`ID: 90`) | Innate class technique
+| Lv 1 | **Mana Ball** (`ID: 92`) | Innate class technique
+|===
+
+== Class 4: Summoner
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 450 | 90 | 16 | 16 | 16 | 16 | 32 | 32
+| 5 | 650 | 130 | 21 | 21 | 21 | 21 | 42 | 42
+| 10 | 900 | 180 | 28 | 28 | 28 | 28 | 55 | 55
+| 20 | 1400 | 280 | 40 | 40 | 40 | 40 | 80 | 80
+| 50 | 2900 | 580 | 77 | 77 | 77 | 77 | 155 | 155
+| 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
+|===
+
+=== Skill Learnings for Summoner
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Sentinel Totem** (`ID: 102`) | Innate class technique
+|===
+
+== Class 5: Hero
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 300 | 90 | 16 | 16 | 16 | 16 | 32 | 32
+| 5 | 507 | 130 | 21 | 21 | 21 | 21 | 42 | 42
+| 10 | 764 | 180 | 28 | 28 | 28 | 28 | 55 | 55
+| 20 | 1280 | 280 | 40 | 40 | 40 | 40 | 80 | 80
+| 50 | 2825 | 580 | 77 | 77 | 77 | 77 | 155 | 155
+| 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
+|===
+
+=== Skill Learnings for Hero
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Heal** (`ID: 72`) | Innate class technique
+| Lv 5 | **Repulsive Blow** (`ID: 11`) | Innate class technique
+|===
+
+== Class 6: Thief
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 450 | 90 | 16 | 16 | 16 | 16 | 32 | 32
+| 5 | 650 | 130 | 21 | 21 | 21 | 21 | 42 | 42
+| 10 | 900 | 180 | 28 | 28 | 28 | 28 | 55 | 55
+| 20 | 1400 | 280 | 40 | 40 | 40 | 40 | 80 | 80
+| 50 | 2900 | 580 | 77 | 77 | 77 | 77 | 155 | 155
+| 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
+|===
+
+== Class 7: Start
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 1 | 0 | 1 | 999 | 1 | 999 | 1 | 1
+| 5 | 1 | 1 | 1 | 999 | 1 | 999 | 1 | 1
+| 10 | 1 | 1 | 1 | 999 | 1 | 999 | 1 | 1
+| 20 | 1 | 1 | 1 | 999 | 1 | 999 | 1 | 1
+| 50 | 1 | 1 | 1 | 999 | 1 | 999 | 1 | 1
+| 99 | 1 | 1 | 1 | 999 | 1 | 999 | 1 | 1
+|===
+
+== Class 10: ---Special---
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 450 | 90 | 16 | 16 | 16 | 16 | 32 | 32
+| 5 | 650 | 130 | 21 | 21 | 21 | 21 | 42 | 42
+| 10 | 900 | 180 | 28 | 28 | 28 | 28 | 55 | 55
+| 20 | 1400 | 280 | 40 | 40 | 40 | 40 | 80 | 80
+| 50 | 2900 | 580 | 77 | 77 | 77 | 77 | 155 | 155
+| 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
+|===
+
+== Class 11: Guard
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 100 | 30 | 12 | 8 | 3 | 8 | 27 | 32
+| 5 | 145 | 46 | 17 | 12 | 5 | 11 | 27 | 42
+| 10 | 202 | 64 | 23 | 17 | 8 | 15 | 27 | 55
+| 20 | 314 | 102 | 35 | 26 | 13 | 22 | 27 | 80
+| 50 | 650 | 215 | 71 | 54 | 27 | 44 | 27 | 155
+| 99 | 1200 | 400 | 130 | 100 | 50 | 80 | 27 | 277
+|===
+
+=== Skill Learnings for Guard
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Heavy Hit** (`ID: 15`) | Innate class technique
+|===
+
+== Class 12: Wind Spirit
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 1 | 50 | 1 | 1 | 1 | 1 | 1 | 1
+| 5 | 1 | 79 | 1 | 1 | 1 | 1 | 1 | 1
+| 10 | 1 | 115 | 1 | 1 | 1 | 1 | 1 | 1
+| 20 | 1 | 186 | 1 | 1 | 1 | 1 | 1 | 1
+| 50 | 1 | 400 | 1 | 1 | 1 | 1 | 1 | 1
+| 99 | 1 | 750 | 1 | 1 | 1 | 1 | 1 | 1
+|===
+
+=== Skill Learnings for Wind Spirit
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Air Compression** (`ID: 132`) | Innate class technique
+| Lv 1 | **Great Wind** (`ID: 133`) | Innate class technique
+| Lv 1 | **Transposition** (`ID: 134`) | Innate class technique
+|===
+
+== Class 13: Pixie
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 1 | 50 | 1 | 1 | 1 | 1 | 1 | 1
+| 5 | 1 | 79 | 1 | 1 | 1 | 1 | 1 | 1
+| 10 | 1 | 115 | 1 | 1 | 1 | 1 | 1 | 1
+| 20 | 1 | 186 | 1 | 1 | 1 | 1 | 1 | 1
+| 50 | 1 | 400 | 1 | 1 | 1 | 1 | 1 | 1
+| 99 | 1 | 750 | 1 | 1 | 1 | 1 | 1 | 1
+|===
+
+=== Skill Learnings for Pixie
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Healing Wave** (`ID: 135`) | Innate class technique
+|===
+
+== Class 14: Fire Chicken
+
+[cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
+|===
+| Level | MHP | MMP | ATK | DEF | MAT | MDF | AGI | LUK
+| 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1
+| 5 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1
+| 10 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1
+| 20 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1
+| 50 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1
+| 99 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1
+|===
+
+=== Skill Learnings for Fire Chicken
+[cols="^1,2,3", options="header"]
+|===
+| Level | Skill Name | Strategic Role
+| Lv 1 | **Bomb** (`ID: 136`) | Innate class technique
+|===

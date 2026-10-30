@@ -63,6 +63,8 @@
 bin/
 out/
 dist/
+target/
+tools/target/
 
 # ==============================================================================
 # BLOCK 3: BODY / BUILD SYSTEM ARTIFACTS BLOCK
@@ -111,6 +113,7 @@ _deps/
 # Engine diagnostic runtime traces and crash logs
 *.log
 *.audit
+logs/
 
 # Temporary scratch and experiment worktrees
 scratch/

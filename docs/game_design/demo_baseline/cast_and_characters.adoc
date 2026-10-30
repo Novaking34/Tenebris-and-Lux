@@ -1,0 +1,119 @@
+= Dramatis Personae & Cast Compendium (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This compendium catalogues every character, party companion, village elder, court
+antagonist, and mystical summon present in the 2017–2018 demo archives, detailing
+their combat statistics, class associations, sprite bindings, and narrative significance.
+
+== 1. Dual Protagonists
+
+=== Elijah Ro-enheart (The Steadfast Vanguard)
+* **ID**: `Actor 1`
+* **Class**: Hero (`Class 5`) / Knight (`Class 1`)
+* **Relic Affinity**: Bearer of the **Shield of Lux**
+* **Initial Level**: Lv 5 (Folder 1) / Lv 1 (Folder 2)
+* **Movement Points**: 4 MP
+* **Sprite / Battler**: `Actor1_1` / `MainCharacter` (custom generator)
+* **Profile & Personality**:
+  Son of the vanished Commander Gareth Ro-enheart (former Head of the Royal Guard).
+  Earnest, chivalric, deeply burdened by his father's mysterious disappearance on his
+  10th birthday. Elijah seeks answers through service and duty, instinctively stepping
+  forward to protect the weak and uphold the light of Sacyra.
+* **Canonical LeTBS Specification**:
+[source,text]
+----
+<letbs>
+move_points: 4
+auto_turn_order_face
+auto_status_sprite
+</letbs>
+----
+
+=== Lady Katrina Jaren (The Outrider Blade)
+* **ID**: `Actor 2`
+* **Class**: Hero (`Class 5`) / Start (`Class 7`)
+* **Relic Affinity**: Wielder of the **Sword of Tenebris**
+* **Initial Level**: Lv 5 (Folder 1) / Lv 1 (Folder 2)
+* **Movement Points**: 4 MP
+* **Initial Equipment**: Weapon 1 (Sword), Armor 2 (Hat), Armor 3 (Cloth)
+* **Sprite / Battler**: `Actor1_8`
+* **Profile & Personality**:
+  Noble daughter of aristocratic House Jaren. Rebellious, razor-sharp, pragmatic, and
+  fiercely independent. Refusing a cloistered aristocratic marriage or court seat, Katrina
+  escaped to Dio Village with eyes on joining the independent Adventurers' Guild. Her
+  caustic wit masks a deep empathy for ordinary folk crushed by royal neglect.
+* **Canonical LeTBS Specification**:
+[source,text]
+----
+<letbs>
+move_points: 4
+auto_turn_order_face
+auto_status_sprite
+</letbs>
+----
+
+== 2. Extended Tactical Party Companions (Folder 2 Additions)
+
+In `Old_Game_Data_2`, three specialized tactical party members were integrated to expand the grid-based TRPG party:
+
+=== Sebastien (The Infiltrator Outlaw)
+* **ID**: `Actor 4`
+* **Class**: Thief (`Class 6`)
+* **Initial Level**: Lv 4
+* **Sprite / Battler**: `Actor3_7`
+* **Tactical AI & Role**: Outrider flanker equipped with `ranged_fighter` AI, trap disarmament, and precision critical strikes.
+
+=== Angela (The Evoker Elementalist)
+* **ID**: `Actor 5`
+* **Class**: Mage (`Class 2`)
+* **Initial Level**: Lv 4
+* **Movement Scope**: `square(2)` (4 MP)
+* **Sprite / Battler**: `Actor3_8` (custom cast, atk, hit, victory animations)
+* **Action Palette**: Full tactical command set (`Move`, `Skill[42]`, `Items`, `Scan`, `Pass`).
+* **Tactical Role**: Long-range elemental artillery, crowd control, and battlefield terrain modification (ice walls, volcano ground).
+
+=== Lucius (The Battle Priest)
+* **ID**: `Actor 6`
+* **Class**: Priest (`Class 3`)
+* **Initial Level**: Lv 4
+* **Sprite / Battler**: `Actor2_7`
+* **Tactical Role**: Turn order manipulation (`Accelerate`, `Decelerate`, `Emergency Turn`), long-distance allied teleportation, and barrier restoration.
+
+== 3. Summoned Celestial Entities
+
+=== Wind Spirit (Actor 11)
+* **Class**: `Class 12` | **Sprite**: `Nature` (Index 4)
+* **Skills**: Air Compression (`Skill 132`), Great Wind (`Skill 133` - pushback), Transposition (`Skill 134` - swap places).
+
+=== Pixie (Actor 12)
+* **Class**: `Class 13` | **Sprite**: `Nature` (Index 5)
+* **Skills**: Healing Wave (`Skill 135` - AOE restoration).
+
+=== Fire Chicken (Actor 13)
+* **Class**: `Class 14` | **Sprite**: `Nature` (Index 2)
+* **Characteristics**: Explosive combat decoy (`loop_animation: 262`), Bomb (`Skill 136`), Fire Arrow (`Skill 137`).
+
+== 4. Key Lore Figures & NPCs
+
+[cols="1,2,4", options="header"]
+|===
+| Name | Role & Allegiance | Historical Significance
+| **Grandma Magolia** | Matriarch of Dio Village | Mother of vanished Commander Gareth Ro-enheart; grandmother to Elijah. Bestows *Grandma's Watch* and *Compass of Morality*.
+| **Monica the Mystic** | Former Royal Battlemage | Eccentric hermit and priestess of Goddess Lyri. Guides protagonists in awakening relic powers through ritual offerings.
+| **Eric the Lumberjack** | Impoverished Dio Laborer | Loses his livelihood to monster raids; serves as the moral litmus test for player empathy in the *Test of Honesty*. Bestows the *Ring of Fire*.
+| **John the Thief** | Local Outlaw Leader | Operates in Lower Dio; plots to unseat the predatory St. Baron to return wealth to the villagers.
+| **The St. Baron** | Aristocratic Landowner | Feudal aristocrat bleeding Dio Village dry; symbol of court corruption and moral decay.
+| **Chrono** | Archival Sage & Guardian | Guide of the Dream Chamber / Ancient Archives. Oversees archetype stone selection and mechanics trials.
+| **High Priest Roté** | Royal Advisor | Court prelate who witnesses the cosmic omens and hastens to warn King Jihad.
+| **King Jihad** | Monarch of Sacyra | Feigns royal mobilization while secretly coveting the returned primordial darkness to surpass Dark Lord Malakor.
+|===

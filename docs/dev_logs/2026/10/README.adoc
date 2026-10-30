@@ -40,3 +40,7 @@ Logs are categorized into thematic subdirectories based on their focus:
 1. **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)** (2026-10-26)  
    *The Sacyra Chronicles, Dual Protagonists & TRPG Evolution*  
    Documents the 2014–2018 RPG Maker roots of the project, establishes the chivalric Kingdom of Sacyra, details dual protagonists Elijah Ro-enheart and Katrina Jaren, and outlines the Tactical Strategy RPG (TRPG) genre specification.
+
+2. **[devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc)** (2026-10-29)  
+   *Archival Extraction & The 2017–2018 Demo Baseline*  
+   Documents the recovery and automated Python extraction of the original 2017–2018 RPG Maker MV demo datasets (`Old Game Data` & `Old_Game_Data_2/data`), establishing a verified 10-volume baseline covering the 43-map scenario, cast compendium, LeTBS tactical mechanics, grimoire, and systems.

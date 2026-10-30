@@ -1,0 +1,49 @@
+= Character Dossier: Commander Gareth Ro-enheart (The Vanished Vanguard)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-28
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Commander Gareth Ro-enheart** was the renowned Head of the Royal Guard, hero
+of the Sunken Citadel, and father to Elijah Ro-enheart. His unexplained
+disappearance under sealed royal orders following Elijah's 10th birthday forms
+the primary personal catalyst driving Elijah's journey across Sacyra.
+
+== 1. Identity & Lineage
+
+* **Full Name**: Commander Gareth Ro-enheart
+* **Title**: Former Head of the Sacyran Royal Guard; Knight-Commander of Sacyra
+* **Kinship**:
+  - **Son**: Elijah Ro-enheart (Cadet Vanguard, bearer of the Shield of Lux)
+  - **Mother**: Magolia Ro-enheart ("Grandma Magolia", matriarch of Dio Village)
+* **Status**: Missing in Action / Sealed Royal Dispatch (Presumed Alive)
+
+== 2. Legend & Martial Legacy
+
+Gareth Ro-enheart is remembered throughout Sacyra as an incorruptible paragon
+of chivalric virtue. Decades prior, when an allied barbarian host breached the
+frontier palisades, Commander Gareth anchored the Sunken Citadel for seven days
+without relief, personally deflecting siege bolts with his reinforced tower shield.
+
+He passed this philosophy to his young son Elijah:
+[quote, Gareth Ro-enheart]
+"A shield is not a wall to hide behind, but a promise made to the people standing
+behind you."
+
+== 3. The 10th Birthday Vanishing & Royal Intrigue
+
+On the morning following Elijah's **10th birthday**, Commander Gareth received
+a direct royal summons from King Jihad and departed the capital with an elite
+retinue for the southern frontier. Neither he nor his men ever returned.
+
+* **Official Crown Statement**: Gareth was lost during a classified border survey.
+* **The Reality**: Clues uncovered by Elijah and Katrina reveal that Gareth
+  discovered King Jihad's clandestine expeditions to unearth the Abyssal Vaults.
+  Refusing to participate in forbidden dark alchemy, Gareth was either imprisoned
+  in a subterranean redoubt or went into deep exile to protect the realm.

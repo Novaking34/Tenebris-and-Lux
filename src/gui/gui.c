@@ -19,7 +19,8 @@
 //   rendering the tactical viewport with 32-bit color geometry and typography.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: sim.engine.core, core.util.geom, core.util.time
+//   - Upstream Dependencies: sim.engine.core, core.util.geom, core.util.time,
+//                            core.util.log
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (Static layout, zero heap).
 //   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Main thread event loop).
 //   - Latency Budget:        < 16,666 microseconds per frame (60 FPS budget).
@@ -38,6 +39,7 @@
 #include "gui/gui.h"
 #include "sim/game.h"
 #include "util/geom_utils.h"
+#include "util/log.h"
 #include "util/math_utils.h"
 #include "util/time_utils.h"
 
@@ -531,9 +533,15 @@ int gui_run(player_state_t *state)
     /* Step 1: Open X11 display connection */
     Display *display = XOpenDisplay(NULL);
     if (display == NULL) {
+        LOG_ERROR(LOG_CAT_LOG, "GUIViewport", -0.5f,
+            "Failed to open X11 display connection.");
         fprintf(stderr, "GUI Error: Failed to open X11 display.\n");
         return 1;
     }
+
+    LOG_INFO(LOG_CAT_LOG, "GUIViewport", 0.0f,
+        "Initialized X11 desktop viewport (%dx%d double-buffered).",
+        GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT);
 
     int screen = DefaultScreen(display);
     Window root = RootWindow(display, screen);
@@ -596,6 +604,8 @@ int gui_run(player_state_t *state)
 
             if (ev.type == ClientMessage) {
                 if ((Atom)ev.xclient.data.l[0] == wm_delete) {
+                    LOG_INFO(LOG_CAT_LOG, "GUIViewport", 0.0f,
+                        "Window close received via WM_DELETE_WINDOW protocol.");
                     running = false;
                     state->is_running = false;
                     break;
@@ -604,6 +614,9 @@ int gui_run(player_state_t *state)
                 const gui_button_t *btn =
                     find_clicked_button(ev.xbutton.x, ev.xbutton.y);
                 if (btn != NULL) {
+                    LOG_DEBUG(LOG_CAT_DEBUG, "GUIViewport", 0.0f,
+                        "Button click '%s' at (%d, %d) -> '%s'.",
+                        btn->label, ev.xbutton.x, ev.xbutton.y, btn->command);
                     char out_msg[GUI_LOG_ENTRY_LEN];
                     out_msg[0] = '\0';
                     game_process_command(state, btn->command, out_msg,
@@ -627,6 +640,9 @@ int gui_run(player_state_t *state)
                 if (key != 0) {
                     const gui_button_t *btn = find_button_by_hotkey(key);
                     if (btn != NULL) {
+                        LOG_DEBUG(LOG_CAT_DEBUG, "GUIViewport", 0.0f,
+                            "Hotkey '%c' triggered action '%s'.",
+                            key, btn->command);
                         char out_msg[GUI_LOG_ENTRY_LEN];
                         out_msg[0] = '\0';
                         game_process_command(state, btn->command, out_msg,
@@ -651,6 +667,8 @@ int gui_run(player_state_t *state)
     }
 
     /* Step 7: Teardown display resources and backbuffer */
+    LOG_INFO(LOG_CAT_LOG, "GUIViewport", 0.0f,
+        "Tearing down X11 display resources and releasing pixmap backbuffer.");
     XFreePixmap(display, backbuffer);
     XFreeGC(display, gc);
     XDestroyWindow(display, window);
@@ -683,8 +701,8 @@ const module_metadata_t gui_manifest = {
     1,                          // interface_rev
     "2026-10-26",               // last_updated
     "Native X11 double-buffered presentation viewport and event dispatcher",
-    3,                          // dependency_count
-    { "sim.engine.core", "core.util.geom", "core.util.time", NULL },
+    4,                          // dependency_count
+    { "sim.engine.core", "core.util.geom", "core.util.time", "core.util.log" },
     ALLOC_ZERO_HEAP,            // alloc_policy
     CONCURRENCY_MAIN_THREAD,    // concurrency
     16666,                      // max_budget_us
