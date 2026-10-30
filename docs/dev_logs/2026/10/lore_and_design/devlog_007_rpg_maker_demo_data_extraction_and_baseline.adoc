@@ -1,0 +1,114 @@
+= Developer Log 007: Archival Extraction & The 2017–2018 Demo Baseline
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Abstract
+
+This developer log chronicles the successful recovery, automated extraction,
+and architectural documentation of the original **2017–2018 RPG Maker MV demo**
+datasets for *Tenebris and Lux* (`Old Game Data` and `Old_Game_Data_2/data`).
+It establishes a permanent, verifiable baseline of the high school genesis era,
+cataloguing the complete 43-map scenario script, the dual-protagonist narrative
+branches (Elijah Ro-enheart & Lady Katrina Jaren), the grid-based Lecode
+Tactical Battle System (LeTBS), the 75-skill grimoire, and the morality engine.
+This baseline serves as our living blueprint as we systematically reconstruct
+the game in native C11.
+
+== 1. Historical Context: Rediscovery of the Genesis Datasets
+
+In DevLog 002, our initial architectural chronicles operated under the premise
+that legacy digital assets from the 2014–2018 high school inception were lost
+to time. On October 29, 2026, the complete archival datasets were introduced
+into the repository across two distinct historical directories:
+
+1. **`Old Game Data` (Folder 1: Primary Narrative & Morality Build)**:
+   - Version ID: `40730002` | Game Title: *"Tenebris and Lux"*
+   - 36 map files + complete database (Actors, Classes, Skills, Items, Weapons,
+     Armors, Enemies, Troops, States, CommonEvents, MapInfos).
+   - Preserves complete dual-protagonist dialogue branches, the *Compass of
+     Morality*, the *Test of Honesty* with Eric the Lumberjack, John the Thief's
+     rebellion against the St. Baron, and the monotonic 24-hour clock.
+
+2. **`Old_Game_Data_2/data` (Folder 2: Advanced LeTBS Tactical Build)**:
+   - Version ID: `2078310` | Game Title: *"Tenebris & Lux"*
+   - 43 map files + extended tactical party companions (Sebastien the Thief,
+     Angela the Mage, Lucius the Priest).
+   - Preserves advanced LeTBS tactical combat metadata (movement point costs,
+     scope geometry, AOE patterns, turn timeline manipulation, and character
+     generator presets `Grandma.json` and `TheKing.json`).
+
+== 2. The Extraction Toolchain: `docs/tools/extract_demo_data.py`
+
+To prevent manual transcription errors and guarantee absolute fidelity to
+the original 2017–2018 records, an automated Python extraction engine was
+developed:
+
+[source,bash]
+----
+python3 docs/tools/extract_demo_data.py
+----
+
+=== Core Functions of the Extraction Engine
+* **Cross-Dataset Reconciliation**: Ingests both `Old Game Data` and
+  `Old_Game_Data_2/data`, cross-referencing actors, classes, skills, and map
+  events to capture both the rich narrative branches of Folder 1 and the
+  expanded tactical combat systems of Folder 2.
+* **Verbatim Script Mining**: Parses RPG Maker MV event command codes
+  (`101` text headers, `401` text lines, `102` choices, `121` switches,
+  `122` variables, `201` transfers, `301` battles) to reconstruct the exact
+  dialogue transcripts for both Elijah (`\n[1]`) and Katrina (`\n[2]`).
+* **Tactical Metadata Extraction**: Extracts LeTBS XML/YAML-style note tags
+  from skills, states, and actors, formalizing movement points, range shapes,
+  cooldowns, and AI behavior patterns (`ranged_fighter`, `ai_no_attack`).
+
+== 3. The 10-Volume Baseline Documentation Compendium
+
+The extraction toolchain populates `docs/game_design/demo_baseline/` with ten
+comprehensive AsciiDoc technical manuals:
+
+[cols="1,2,3", options="header"]
+|===
+| Document | Primary File | Core Contents
+| **Master Index** | xref:../../game_design/demo_baseline/README.adoc[README.adoc] | Provenance, dataset taxonomy, and reconstruction methodology.
+| **Scenario Script** | xref:../../game_design/demo_baseline/scenario_and_walkthrough.adoc[scenario_and_walkthrough.adoc] | 7-Act narrative script across 43 maps, branching dialogues, and puzzle solutions.
+| **Dramatis Personae** | xref:../../game_design/demo_baseline/cast_and_characters.adoc[cast_and_characters.adoc] | Protagonists (Elijah, Katrina), allies (Sebastien, Angela, Lucius), and key NPCs.
+| **Tactical Mechanics** | xref:../../game_design/demo_baseline/combat_and_letbs_mechanics.adoc[combat_and_letbs_mechanics.adoc] | LeTBS 2D grid rules, MP economy, scope geometry, and terrain hazards.
+| **Class Progressions** | xref:../../game_design/demo_baseline/classes_and_growth.adoc[classes_and_growth.adoc] | 7 classes + summons; Lv 1–99 stat matrices; level-by-level skill learnings.
+| **Grimoire** | xref:../../game_design/demo_baseline/grimoire_and_skills.adoc[grimoire_and_skills.adoc] | 75+ active techniques, damage formulas, and LeTBS sequence tags.
+| **Bestiary & Troops** | xref:../../game_design/demo_baseline/bestiary_and_troops.adoc[bestiary_and_troops.adoc] | 22+ enemies, destructible chests/ice blocks, AI tags, and troop formations.
+| **Armory & Items** | xref:../../game_design/demo_baseline/armory_and_inventory.adoc[armory_and_inventory.adoc] | Weapons, armors, consumables, and quest relics (Grandma's Watch, Compass).
+| **Systems & Switches** | xref:../../game_design/demo_baseline/systems_switches_variables.adoc[systems_switches_variables.adoc] | Monotonic clock, moral continuum, and full directory of 100+ switches/variables.
+| **Evolution Delta** | xref:../../game_design/demo_baseline/dataset_evolution_delta.adoc[dataset_evolution_delta.adoc] | Technical comparison between Folder 1 and Folder 2 with C11 roadmap.
+|===
+
+== 4. C11 Engine Rebuilding Roadmap
+
+With the historical baseline fully documented, the path forward for our native
+C11 implementation is clear, disciplined, and rigorous:
+
+1. **Layer 0 Core Expansion (`include/util/`, `src/util/`)**:
+   - Align `time_utils` to faithfully model the 24-hour calendar cycle driven by
+     *Grandma's Watch*.
+   - Expand `geom_utils` to support discrete grid-cell raycasting and LeTBS
+     range shapes (`circle`, `line`, `square`, `through_obstacles`).
+2. **Layer 1 Simulation Expansion (`include/sim/`, `src/sim/`)**:
+   - Reconstruct the tactical battle state machine supporting 5-member party
+     formations and enemy AI routines.
+   - Implement the moral sway continuum engine (`[-100, +100]`) tracked by the
+     *Compass of Morality*.
+3. **Layer 2 Viewport & Presentation (`include/gui/`, `src/gui/`)**:
+   - Render the 2D tactical grid with movement overlays, Zone of Control, and
+     turn order timelines.
+   - Implement the dialogue presentation window capable of rendering branching
+     scripts with character portraits.
+4. **Layer 4 Automated Verification (`tests/`)**:
+   - Author invariant test suites verifying deterministic grid movement,
+     damage formula parity, and softlock immunity under all quest choice trees.

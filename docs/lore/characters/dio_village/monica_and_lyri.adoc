@@ -1,0 +1,55 @@
+= Character Dossier: Monica & Lyri (The Mystic & Familiar)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-28
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Monica the Mystic** (known as *The Sage* in village folklore) and her
+elemental familiar **Lyri** reside in an arcane grove on the outskirts of
+Upper Dio Village. Sarcastic, sharp-tongued, yet deeply attuned to the metaphysical
+currents of Sacyra, Monica is the first local authority to confirm that the
+forces of Darkness have re-awakened.
+
+== 1. Identity & Mystical Lineage
+
+* **Name**: Monica (*The Mystic / The Sage*)
+* **Companion Familiar**: **Lyri**, an ethereal nature spirit who perceives
+  metaphysical fluctuations and whispers warnings into Monica's ear.
+* **Residence**: Monica's House & Mystic Grove (Dio Upper Ward)
+* **Alliances**: Lifelong confidante of Grandma Magolia; contact of Chrono the Sage.
+
+== 2. Canonical Voice & Demeanor (2017–2018 RPG Maker Origin)
+
+Monica possesses a biting, irreverent wit, greeting newcomers with playful
+insults before demonstrating profound arcane knowledge.
+
+* *Blunt First Impressions*:
+  [quote, Monica to Elijah, Map 27 / Map 29]
+  "And who in the blaze are YOU! ... So you are Magolia's grandson. She made you
+  sound more handsome than you are."
+* *Clashing with Katrina*:
+  [quote, Monica to Katrina, Map 27 / Map 29]
+  "So you are Magolia's granddaughter. She made you sound prettier than you are." +
+  *Katrina*: "LISTEN HERE YOU OLD-!" +
+  *Monica*: "Tis only a joke. Now why have you come here? Do you have some milk?"
+* *Lyri's Whispers & The Darkness*:
+  [quote, Monica, Map 27 / Map 29]
+  "A wise woman she is. Lyri has been whispering in me ear about the forces of
+  darkness. I'll help, but first, get that hooligan from the city limits. Not
+  only is he preventing folks from leaving, he's also messing with me business."
+
+== 3. Arcane Role in the Campaign
+
+1. **Attunement to the Void**: Through Lyri, Monica senses the breaking of the
+   ancient seals on the Abyssal Threshold long before the Royal Court admits it.
+2. **The City Limits Obstacle**: Directs the heroes to clear the town boundary
+   (confronting the "Fighter Kid" blocking the pass) to prove their tactical
+   readiness.
+3. **Bridge to the Sages**: Connects Elijah and Katrina with the ancient scholar
+   **Chrono**, guiding them toward their destiny with the twin relics.

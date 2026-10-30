@@ -1,0 +1,2666 @@
+= Canonical Scenario & Narrative Walkthrough (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document preserves the complete chronological story script, scene transitions,
+puzzle structures, and verbatim dialogues of the 2017–2018 demo. It documents both
+the shared story progression and the distinct dual-protagonist narrative branches
+between **Elijah Ro-enheart** (`\n[1]`) and **Lady Katrina Jaren** (`\n[2]`).
+
+
+== Act I: The Castle Prophecy & Dark Ambition
+
+=== Start-Up / Walk of Fear
+
+Roté's urgent arrival as dark omens rise.
+
+*Associated Maps*: Map 002
+
+==== Map 002: Start-Up
+
+* **Speaker/Source: `The Walk of Fear `**
+[listing]
+----
+\n<Roté>It has been years since I was needed here.<br>The king...<br>The king must know of these strange events!
+----
+
+=== The Castle (Outside)
+
+Roté observes the rising island and eerie storm prior to the Festival.
+
+*Associated Maps*: Map 003, Map 008
+
+==== Map 003: The Castle (Outside)
+
+* **Speaker/Source: `Roté Observation`**
+[listing]
+----
+\n<Roté>The storm... The rising island...
+All of these events...
+All before the Festival of Heroes. 
+The king will know how to stop this, he must know...
+----
+
+==== Map 008: Battle Tutorial
+
+* **Speaker/Source: `Dream Eaters`**
+[listing]
+----
+\n<[Elijah]>I have to do. If this..thing
+beats us....no. I can do this!
+\n<[Elijah]>That old guy might be dead
+because of that...thing, but
+that doesn't matter. I can't die here, not
+like this, not by that thing!
+The illusion of the dream breaks. Dream Eaters
+reveal themselves!
+\n<[Elijah]>Wh..wha...wha...what are those
+things!
+\n<[Katrina]>WHAT EVEN ARE YOU!
+\n<Dream Eater>Foolish mortal! We are the
+Dream Eaters, servants of our Dark Lord.
+We will comsume, we will devour, we will 
+feast! Our lord commands us too!
+----
+
+* **Speaker/Source: `Dream Eaters`**
+[listing]
+----
+\n<Dream Eater>Foolish mortal. We will
+return. Our lord demands it! We will
+return!
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+\n<???>pant pant pant
+I wasn't...I wasn't ready. We cannot talk 
+here. You must defeat them...the
+The man passes out.
+\n<[Elijah]>...
+\n<[Katrina]>...
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+\n<???>[Elijah] our time here has come to an
+end. If you have any business you need to
+take care, take care of it. Talk to me when
+you are ready.
+\n<???>[Katrina] our time here has come to an
+end. If you have any business you need to
+take care, take care of it. Talk to me when
+you are ready.
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+Are you ready to leave?
+\n<???>It is time. You must be brave, you
+must be willing, and most of all...you
+must trust your own path. Until we meet
+again. AWAKEN!
+----
+
+* **Speaker/Source: `Start Final Tutorial`**
+[listing]
+----
+\n<[Elijah]>Wh..wha...what...no... I just
+met him... mister....minster!
+\n<[Katrina]>Wh..wha...what...come on old man!
+You haven't told me anything!
+----
+
+=== The Castle (Inside) - The Throne Room
+
+Roté warns King Jihad; King Jihad's treasonous conspiracy against the Dark Lord.
+
+*Associated Maps*: Map 004, Map 009
+
+==== Map 004: The Castle (Inside)
+
+* **Speaker/Source: `The King`**
+[listing]
+----
+\n<D.Jihad>The fools...that power...that wicked power! 
+Soon I will rule over this land, and not even the Dark Lord
+will have power over me!
+----
+
+* **Speaker/Source: `The Meeting`**
+[listing]
+----
+\n<Roté>King Jihad, I am here to inform you today... 
+It's here...
+The darkness... it has returned
+\n<Jihad>...Thank you Roté, what would I do without your 
+careful watch...
+\n<Jihad>Gather up the guard! We need to prepare! 
+Darkness will soon return to this land. And don't tell the people of 
+this discovery...
+\n<Roté>Y...Y...Yes my king...
+\n<Jihad>You all are dismissed.
+Yes my king.
+----
+
+==== Map 009: Secret Map
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+All crystals in position
+The crystal begins to disappear...
+All crystals are not in postition
+All crystals are not in postition
+All crystals are not in postition
+All crystals are not in postition
+----
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+A shield with a heart-crest was in the chest 
+along with 100\G
+----
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+The chest is empty
+----
+
+* **Speaker/Source: `Moving Crystal Blue`**
+[listing]
+----
+The Blue Crystal is in place
+----
+
+* **Speaker/Source: `Restart Switch`**
+[listing]
+----
+Restart puzzle?
+----
+
+* **Speaker/Source: `Moving Crystal Yellow`**
+[listing]
+----
+The Yellow crystal is in place
+----
+
+* **Speaker/Source: `Moving Crystal Green`**
+[listing]
+----
+The Green Crystal is in place
+----
+
+* **Speaker/Source: `Moving Crystal Red`**
+[listing]
+----
+The Red Crystal is in place
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Strange magic blocks off the main crystal. Find a
+way to move the rocks.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Strange magic blocks off the main crystal. Move 
+the outer crystals to remove the rocks. If you make a
+mistake, use the red button
+----
+
+
+== Act II: The Dream Realm & The Ancient Archives
+
+=== Intro / The Void
+
+The cosmic darkness and threshold.
+
+*Associated Maps*: Map 001, Map 002
+
+==== Map 002: Start-Up
+
+* **Speaker/Source: `The Walk of Fear `**
+[listing]
+----
+\n<Roté>It has been years since I was needed here.<br>The king...<br>The king must know of these strange events!
+----
+
+=== Character Select & The Room of Sages
+
+Meeting Chrono; selecting archetype crystals; reviewing ancient archives.
+
+*Associated Maps*: Map 006, Map 011
+
+==== Map 006: Character Select
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>So...a new hero is to be chosen.
+I have seen this when the sages spoke of the darkness returning. 
+But...who did the sage's say again?
+\n<???>A young man. The sages spoke 
+of a young man that would help us. Now, if 
+I just look in the archives...
+\n<???>His name, his name, what was his 
+name?
+\n<???>Ah yes! His name was [Elijah]. The
+sages said that they will decide their 
+fate, what will they become I wonder...
+Click on the objects in the room to select a class.
+When you pick a class, talk to the old man once again.
+\n<???>A young woman. The sages 
+spoke of a young woman that would help us. 
+Now, if I just look in the archives...
+\n<???>Her name, her name, what was her 
+name?
+\n<???>Ah yes! Her name was [Katrina]. The
+sages said that they will decide their 
+fate, what will they become I wonder...
+Click on the objects in the room to select a class.
+When you pick a class, talk to the old man once again.
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>[Elijah], did you pick your fate?
+\n<???>[Katrina], did you pick your fate?
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>That is perfect! Now, we need to
+prepare...[Elijah], follow me.
+\n<???>That is perfect! Now, we need to
+prepare...[Katrina], follow me.
+----
+
+* **Speaker/Source: `Warrior's Stone`**
+[listing]
+----
+The crystal began to glow
+The Warrior. Tactical and strong, the warrior is known
+to lead troops into victory. With various command
+formation and tactics, they can turn the tide of a 
+battle!
+Do you wish to be a Warrior?
+Speak to the old man once more.
+Take your time. This is an important choice.
+----
+
+* **Speaker/Source: `Warrior's Stone`**
+[listing]
+----
+The crystal stopped glowing.
+----
+
+* **Speaker/Source: `Mage's Stone`**
+[listing]
+----
+The crystal began to glow
+The Mage. Wise and creative, they rely on the powers
+of the magical arts to handle problems and to aid 
+others Wielding a staff and wearing cloaks and robes, 
+they assist in battle with magic of various elements
+and keep the battle flowing.
+Do you wish to be a Mage?
+Speak to the old man once more.
+Take your time. This is an important choice.
+----
+
+* **Speaker/Source: `Mage's Stone`**
+[listing]
+----
+The crystal stopped glowing.
+----
+
+* **Speaker/Source: `Hero's Stone`**
+[listing]
+----
+The crystal began to glow
+The Hero. The one who's fate is to save the world from
+darkness. The hero fights with valor and truth, using 
+various skills and magic to restore balance to the 
+world!
+Do you wish to be the Hero?
+Speak to the old man once more.
+Take your time. This is an important choice.
+----
+
+* **Speaker/Source: `Hero's Stone`**
+[listing]
+----
+The crystal stopped glowing.
+----
+
+* **Speaker/Source: `Thief's Stone`**
+[listing]
+----
+The crystal began to glow
+The Thief. Sly and lurking in the shadows, the thief
+takes what they want in order to survive. They are 
+great at setting up traps and gathering information 
+that everyone can't find on their own.
+Do you wish to be a Thief?
+Speak to the old man once more.
+Take your time. This is an important choice.
+----
+
+* **Speaker/Source: `Thief's Stone`**
+[listing]
+----
+The crystal stopped glowing.
+----
+
+* **Speaker/Source: `Priest's Stone`**
+[listing]
+----
+The crystal began to glow
+The Priest. With the power of the church and holy
+intervention, the priest using holy magic to purify
+lands, obejcts, and even people. They also use their
+magic to heal and protect others.
+Do you wish to be a Priest?
+Speak to the old man once more.
+Take your time. This is an important choice.
+----
+
+* **Speaker/Source: `Priest's Stone`**
+[listing]
+----
+The crystal stopped glowing.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Elijah]. That's... me.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Katrina]. That's... me.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Katrina]. That's... me.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Katrina]. That's... me.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Elijah]. That's... me.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Elijah]. That's... me.
+----
+
+* **Speaker/Source: `Hero's Stone`**
+[listing]
+----
+The crystal began to glow
+The Summoner. A being of many mystery. With the great 
+ablilty to summon beings from other worlds, the 
+Summoner does his best to maintain a balance between 
+the worlds and often knows that world's culture
+Do you wish to be the Hero?
+Speak to the old man once more.
+Take your time. This is an important choice.
+----
+
+* **Speaker/Source: `Hero's Stone`**
+[listing]
+----
+The crystal stopped glowing.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+You're not done here.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+You're not done here.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+You're not done here.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+You're not done here.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+You're not done here.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Elijah]. That's... me.
+----
+
+* **Speaker/Source: `Ancient Book`**
+[listing]
+----
+I can't read what this book says!
+This book says [Elijah]. That's... me.
+----
+
+
+== Act III: The Trial of Mechanisms & The Dream Eaters
+
+=== The Switches Puzzle Chamber
+
+Boulders, pressure plates, jumping ledges with 'Z', and knowledge gates.
+
+*Associated Maps*: Map 007, Map 040
+
+==== Map 007: Switches
+
+* **Speaker/Source: `Special Room Switch`**
+[listing]
+----
+Press the button?
+The strange stones to the big room was removed!
+----
+
+* **Speaker/Source: `Bonus Gold`**
+[listing]
+----
+100\G were found!
+----
+
+* **Speaker/Source: `Restart Switch`**
+[listing]
+----
+Restart puzzle?
+----
+
+* **Speaker/Source: `Moving Stone`**
+[listing]
+----
+The boulder is in position. The rocks move.
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>Come, we have much to do.
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>Let us continue. I fear our time 
+here is coming to a close.
+\n<???>You must move the stone so we can
+access the Room of the Great Sage. It
+should provide us with knowledge.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+By clicking Z, you can jump across certain ledges.
+----
+
+==== Map 040: Switches
+
+* **Speaker/Source: `Special Room Switch`**
+[listing]
+----
+Press the button?
+The strange stones to the big room was removed!
+----
+
+* **Speaker/Source: `Bonus Gold`**
+[listing]
+----
+100\G were found!
+----
+
+* **Speaker/Source: `Restart Switch`**
+[listing]
+----
+Restart puzzle?
+----
+
+* **Speaker/Source: `Moving Stone`**
+[listing]
+----
+The boulder is in position. The rocks move.
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>Come [Elijah], we have much to do.
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>Let us continue. I fear our time 
+here is coming to a close.
+\n<???>You must move the stone so we can
+access the Room of the Great Sage. It
+should provide us with knowledge.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+By clicking Z, you can jump across certain ledges.
+----
+
+=== The Secret Crystal Chamber
+
+Elemental alignment (Blue, Yellow, Green, Red) to unlock the Heart Shield.
+
+*Associated Maps*: Map 009, Map 039
+
+==== Map 009: Secret Map
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+All crystals in position
+The crystal begins to disappear...
+All crystals are not in postition
+All crystals are not in postition
+All crystals are not in postition
+All crystals are not in postition
+----
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+A shield with a heart-crest was in the chest 
+along with 100\G
+----
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+The chest is empty
+----
+
+* **Speaker/Source: `Moving Crystal Blue`**
+[listing]
+----
+The Blue Crystal is in place
+----
+
+* **Speaker/Source: `Restart Switch`**
+[listing]
+----
+Restart puzzle?
+----
+
+* **Speaker/Source: `Moving Crystal Yellow`**
+[listing]
+----
+The Yellow crystal is in place
+----
+
+* **Speaker/Source: `Moving Crystal Green`**
+[listing]
+----
+The Green Crystal is in place
+----
+
+* **Speaker/Source: `Moving Crystal Red`**
+[listing]
+----
+The Red Crystal is in place
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Strange magic blocks off the main crystal. Find a
+way to move the rocks.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Strange magic blocks off the main crystal. Move 
+the outer crystals to remove the rocks. If you make a
+mistake, use the red button
+----
+
+==== Map 039: Secret Map
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+All crystals in position
+The crystal begins to disappear...
+All crystals are not in postition
+All crystals are not in postition
+All crystals are not in postition
+All crystals are not in postition
+----
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+A shield with a heart-crest was in the chest 
+along with 100\G
+----
+
+* **Speaker/Source: `Treasure Glow`**
+[listing]
+----
+The chest is empty
+----
+
+* **Speaker/Source: `Moving Crystal Blue`**
+[listing]
+----
+The Blue Crystal is in place
+----
+
+* **Speaker/Source: `Restart Switch`**
+[listing]
+----
+Restart puzzle?
+----
+
+* **Speaker/Source: `Moving Crystal Yellow`**
+[listing]
+----
+The Yellow crystal is in place
+----
+
+* **Speaker/Source: `Moving Crystal Green`**
+[listing]
+----
+The Green Crystal is in place
+----
+
+* **Speaker/Source: `Moving Crystal Red`**
+[listing]
+----
+The Red Crystal is in place
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Strange magic blocks off the main crystal. Find a
+way to move the rocks.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Strange magic blocks off the main crystal. Move 
+the outer crystals to remove the rocks. If you make a
+mistake, use the red button
+----
+
+=== The Battle Tutorial & Dream Eater Ambush
+
+Dream illusion shatters; Dream Eaters assault; Chrono passes out; 'AWAKEN!'
+
+*Associated Maps*: Map 008, Map 041, Map 012, Map 042
+
+==== Map 008: Battle Tutorial
+
+* **Speaker/Source: `Dream Eaters`**
+[listing]
+----
+\n<[Elijah]>I have to do. If this..thing
+beats us....no. I can do this!
+\n<[Elijah]>That old guy might be dead
+because of that...thing, but
+that doesn't matter. I can't die here, not
+like this, not by that thing!
+The illusion of the dream breaks. Dream Eaters
+reveal themselves!
+\n<[Elijah]>Wh..wha...wha...what are those
+things!
+\n<[Katrina]>WHAT EVEN ARE YOU!
+\n<Dream Eater>Foolish mortal! We are the
+Dream Eaters, servants of our Dark Lord.
+We will comsume, we will devour, we will 
+feast! Our lord commands us too!
+----
+
+* **Speaker/Source: `Dream Eaters`**
+[listing]
+----
+\n<Dream Eater>Foolish mortal. We will
+return. Our lord demands it! We will
+return!
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+\n<???>pant pant pant
+I wasn't...I wasn't ready. We cannot talk 
+here. You must defeat them...the
+The man passes out.
+\n<[Elijah]>...
+\n<[Katrina]>...
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+\n<???>[Elijah] our time here has come to an
+end. If you have any business you need to
+take care, take care of it. Talk to me when
+you are ready.
+\n<???>[Katrina] our time here has come to an
+end. If you have any business you need to
+take care, take care of it. Talk to me when
+you are ready.
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+Are you ready to leave?
+\n<???>It is time. You must be brave, you
+must be willing, and most of all...you
+must trust your own path. Until we meet
+again. AWAKEN!
+----
+
+* **Speaker/Source: `Start Final Tutorial`**
+[listing]
+----
+\n<[Elijah]>Wh..wha...what...no... I just
+met him... mister....minster!
+\n<[Katrina]>Wh..wha...what...come on old man!
+You haven't told me anything!
+----
+
+==== Map 041: Battle Tutorial
+
+* **Speaker/Source: `Dream Eaters`**
+[listing]
+----
+\n<[Elijah]>I have to do. If this..thing
+beats us....no. I can do this!
+\n<[Elijah]>That old guy might be dead
+because of that...thing, but
+that doesn't matter. I can't die here, not
+like this, not by that thing!
+The illusion of the dream breaks. Dream Eaters
+reveal themselves!
+\n<[Elijah]>Wh..wha...wha...what are those
+things!
+\n<[Katrina]>WHAT EVEN ARE YOU!
+\n<Dream Eater>Foolish mortal! We are the
+Dream Eaters, servants of our Dark Lord.
+We will comsume, we will devour, we will 
+feast! Our lord commands us too!
+----
+
+* **Speaker/Source: `Dream Eaters`**
+[listing]
+----
+\n<Dream Eater>Foolish mortal. We will
+return. Our lord demands it! We will
+return!
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+\n<???>pant pant pant
+I wasn't...I wasn't ready. We cannot talk 
+here. You must defeat them...the
+The man passes out.
+\n<[Elijah]>...
+\n<[Katrina]>...
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+\n<???>[Elijah] our time here has come to an
+end. If you have any business you need to
+take care, take care of it. Talk to me when
+you are ready.
+\n<???>[Katrina] our time here has come to an
+end. If you have any business you need to
+take care, take care of it. Talk to me when
+you are ready.
+----
+
+* **Speaker/Source: `Tutorial Complete`**
+[listing]
+----
+Are you ready to leave?
+\n<???>It is time. You must be brave, you
+must be willing, and most of all...you
+must trust your own path. Until we meet
+again. AWAKEN!
+----
+
+* **Speaker/Source: `Start Final Tutorial`**
+[listing]
+----
+\n<[Elijah]>Wh..wha...what...no... I just
+met him... mister....minster!
+\n<[Katrina]>Wh..wha...what...come on old man!
+You haven't told me anything!
+----
+
+
+== Act IV: Awakening in Dio Village & Family Roots
+
+=== Grandma's House Upstairs
+
+Awakening from the dream; opening Grandma's chest for Grandma's Watch & Compass of Morality.
+
+*Associated Maps*: Map 020, Map 004
+
+==== Map 020: Grandma's House Upstairs
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+\n<[Elijah]>I shouldn't go in this chest. I 
+need to talk to Grandma first.
+She's very particular about her things.
+\n<[Katrina]>I shouldn't go in this chest. I 
+need to talk to Grandma first.
+Batty old woman seems to remind that chest.
+----
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+An old watch was in the chest.
+\n<[Elijah]>Oh.. it's an old watch.
+What's so special about it anyway?
+\n<[Katrina]>She made me....grab...an 
+OLD WATCH! I thought it was
+something important like her will!
+----
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+There is still something inside of the chest
+OBTAINED THE COMPASS OF MORALITY
+----
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+It's all empty now.
+----
+
+* **Speaker/Source: `Wierd Dream`**
+[listing]
+----
+\n<[Elijah]>That dream....what did it mean...
+It could just be my imagination but...It 
+felt like...something more. A hero
+... Me...?
+\n<[Katrina]>WHAT! WHAT THE...ME. Man, my mind
+needs to get out of lala land and settle 
+into reality. I can't be a hero, 
+I won't be a hero...
+----
+
+==== Map 004: The Castle (Inside)
+
+* **Speaker/Source: `The King`**
+[listing]
+----
+\n<D.Jihad>The fools...that power...that wicked power! 
+Soon I will rule over this land, and not even the Dark Lord
+will have power over me!
+----
+
+* **Speaker/Source: `The Meeting`**
+[listing]
+----
+\n<Roté>King Jihad, I am here to inform you today... 
+It's here...
+The darkness... it has returned
+\n<Jihad>...Thank you Roté, what would I do without your 
+careful watch...
+\n<Jihad>Gather up the guard! We need to prepare! 
+Darkness will soon return to this land. And don't tell the people of 
+this discovery...
+\n<Roté>Y...Y...Yes my king...
+\n<Jihad>You all are dismissed.
+Yes my king.
+----
+
+=== Grandma's House Downstairs
+
+Conversation with Grandma Magolia; memories of Commander Gareth Ro-enheart; errand to Monica.
+
+*Associated Maps*: Map 021, Map 007
+
+==== Map 021: Grandma's House Downstairs
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+\n<Grandma>Hello sweetie, could you please
+go upstairs and search in the chest
+and grab what's inside? It's something that
+has great signifinance.
+\n<[Katrina]>The will. I love you gran,
+but a girl gotta get out of this dead-end
+town.
+\n<[Elijah]>Maybe is is something
+about dad! I haven't seen him since my 
+10th birthday.
+\n<[Elijah]>Sure thing. This might
+be my chance to get answers!
+\n<[Katrina]>Why not! Crazy old woman...
+That will is mine!
+\n<[Elijah]>Well...uhh...but... 
+But if it is about him...
+\n<[Katrina]>Gran, why can't you do it? 
+Why doesn't she do it?
+If she wants it she can get it.
+----
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+It's been a while since we've talk. 
+What do you want to talk about?
+\n<Grandma>Oh me and Monica go way back.
+She was such a wild child, always getting
+into mischief. You'll love her.
+\n<Grandma>This town used to be full of
+life. sighs The kingdom doesn't
+pay much attention to this place anymore...
+\c[5]Not avalible in the demo
+\n<Grandma>Have you been upstairs yet?
+The chest should still be there.
+----
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+\n<Grandma>Thank you honey. This watch has 
+been in the family for a long time. Oh, 
+how it brings back memories of better days.
+\n<Grandma>I think you should keep it. It's
+my gift to you. And here's a bit of money.
+I know that you'll need it more than little
+ol' me.
+----
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+\n<Grandma>[Katrina] could you do me a favor?
+Lately, the people have been stirred up
+about people being attacked by monsters.
+\n<Grandma>[Elijah] could you do me a favor?
+Lately, the people have been stirred up
+about people being attacked by monsters.
+\n<Grandma>My friend, Monica, 
+would know what is causing these strange 
+rumors. Can you go to her house and see 
+what she has to say about all of this?
+\n<[Elijah]>Sure thing. It will be nice to
+finally leave the house. I might even
+get to leave town!
+\n<[Katrina]>Why not! I would love to~ 
+I'm out of this poor slum of a town!
+\n<[Elijah]>Well..are you sure you can't?
+I don't even know her...
+\n<[Katrina]>Gran, I'm not your errand girl! 
+ This is YOUR friend.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+I should say something to Grandma before I go.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+Grandma still seems worried. Maybe I can talk to
+her one more time.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+I should say something to Grandma before I go.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+Grandma still seems worried. Maybe I can talk to
+her one more time.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+I should say something to Grandma before I go.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+Grandma still seems worried. Maybe I can talk to
+her one more time.
+----
+
+==== Map 007: Switches
+
+* **Speaker/Source: `Special Room Switch`**
+[listing]
+----
+Press the button?
+The strange stones to the big room was removed!
+----
+
+* **Speaker/Source: `Bonus Gold`**
+[listing]
+----
+100\G were found!
+----
+
+* **Speaker/Source: `Restart Switch`**
+[listing]
+----
+Restart puzzle?
+----
+
+* **Speaker/Source: `Moving Stone`**
+[listing]
+----
+The boulder is in position. The rocks move.
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>Come, we have much to do.
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Chrono`**
+[listing]
+----
+\n<???>Let us continue. I fear our time 
+here is coming to a close.
+\n<???>You must move the stone so we can
+access the Room of the Great Sage. It
+should provide us with knowledge.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+Move the stone onto the green switch so
+we can remove the rocks. The red switches
+has their own ablities.
+One red switch opens another door, the other will
+fix your mistakes.
+----
+
+* **Speaker/Source: `Aura`**
+[listing]
+----
+By clicking Z, you can jump across certain ledges.
+----
+
+
+== Act V: Dio Village Upper & The Outskirts Crisis
+
+=== Dio Village Upper / Main Square
+
+The town in disrepair; Fighter Kid blocking the lower gate; visiting Monica.
+
+*Associated Maps*: Map 022, Map 023, Map 010, Map 012, Map 013
+
+==== Map 023: Main Square
+
+* **Speaker/Source: `Fighter Kid`**
+[listing]
+----
+... He's just ignoring you
+----
+
+* **Speaker/Source: `Fighter Kid`**
+[listing]
+----
+You want me to move? I'm blocking the way for others?
+Big woop! No one can stop me so I'm staying!
+----
+
+* **Speaker/Source: `Fighter Kid`**
+[listing]
+----
+You're no fun! I'm going home!
+----
+
+* **Speaker/Source: `Mystic's Home`**
+[listing]
+----
+The door is locked.
+----
+
+* **Speaker/Source: `Leave Town`**
+[listing]
+----
+I should see if Monica needs anything else.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Monica!`**
+[listing]
+----
+\n<[Elijah]>This is great! The town is still
+sad with the storm but it's my home. I 
+need to stay focus and find Monica's house.
+Grandma said her house is in front of ours.
+\n<[Katrina]>Ugghh. I can't believe we still
+live in this dump. Doesn't help that storm
+destoryed everything. Now Gran said Monica
+live in the house in front of us. Peachy...
+----
+
+* **Speaker/Source: `Leave Town`**
+[listing]
+----
+I should see if Monica needs anything else.
+----
+
+* **Speaker/Source: `Leave Town`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+STAY AWAY FROM ME!
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+STAY AWAY FROM ME!
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+STAY AWAY FROM ME!
+----
+
+=== Monica's House & The Mystic's Brew
+
+Meeting Monica; the fallen soldiers totem; offering for Goddess Lyri; errand for a Potion.
+
+*Associated Maps*: Map 027, Map 029
+
+==== Map 027: Monica's House
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>And who in the blaze are YOU!
+\n<Monica>...
+...
+...
+\n<Monica>So you are Magolia's grandson.
+She made you sound more handsome that
+you are.
+\n<[Elijah]>HEY! That's not a nice thing
+to say!
+\n<Monica>Tis only a joke. Now why have 
+you came here? Do you have some milk?
+\n<[Elijah]>Nn-...I'm here because my grandma
+thinks that evil has returned.
+\n<Monica>A wise woman she is. Lyri has
+been whispering in me ear about the forces
+of darkness. I'll help but first, get that
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+\n<Monica>Good. I'll see you when you
+return.
+\n<Monica>I'll explain it once more.
+\n<Monica>I'll help you if you get that 
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+\n<Monica>So you are Magolia's 
+granddaughter. She made you sound prettier 
+that you are.
+\n<[Katrina]>LISTEN HER YOU OLD-!
+\n<Monica>Tis only a joke. Now why have 
+you came here? Do you have some milk?
+\n<[Katrina]>What is wrong with you... I'm
+just here because my grandma is crazy.
+She's babbling about evil forces and all
+that nonsense.
+\n<Monica>A wise woman she is. Lyri has
+been whispering in me ear about the forces
+of darkness. I'll help but first, get that
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+\n<Monica>Good. I'll see you when you
+return.
+\n<Monica>I'll explain it once more.
+\n<Monica>I'll help you if you get that 
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>You have to stop that kid! Our 
+village will be more devastated than
+even with him blocking the road!
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>Good job! I think I have an idea.
+Now that the people can, residences and
+newcomers have arrived. I notice that a 
+shopkeeper has came into our town as well.
+\n<Monica>I need you to go a buy a potion.
+I will use this as a base for my offering
+to Lyri. She'll be able to help us in this
+dark hour.
+Obtained the Book of Monsters
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>Oh yes. This is exactly what I
+need for my offering.
+\n<Monica>There is one more thing that I
+need in order to make this brew suitable
+for Lyri. Go out of the town to the west 
+path. A man has what I need. Get it please.
+\n<Monica>If you want to get the potion,
+you'll need to go to the lower parts of the
+town.
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>Do you need something?
+\n<Monica>Me? Why, I'm one of the original
+mages for the King. The kingdom was not as
+peaceful as is it now. But then, the 
+Dark Lord tried to take the kingdom.
+\n<Monica>He was born from the darkness
+that this world had. He planned to take 
+over this world and fill it with darkness.
+The Hero saved this world and brought us
+\n<Monica>our peace. The shield and sword.
+Oh don't mind this old hag's ranmbling.
+Not avalible in demo
+Not avalible in demo
+----
+
+* **Speaker/Source: `The Secret Room`**
+[listing]
+----
+Get your snooping nose away from me room!
+This room is currently unavalible for the demo
+----
+
+* **Speaker/Source: `The Secret Room`**
+[listing]
+----
+Get your snooping nose away from me room!
+This room is currently unavalible for the demo
+----
+
+* **Speaker/Source: `The Secret Room`**
+[listing]
+----
+Get your snooping nose away from me room!
+This room is currently unavalible for the demo
+----
+
+* **Speaker/Source: `Lyri`**
+[listing]
+----
+It is the deity Lyri, the Goddess of Peace.
+----
+
+* **Speaker/Source: `Totem`**
+[listing]
+----
+The totem has the names of fallen soldiers. One
+name has a heart by it and it reads "Miss you".
+\n<[Elijah]>Did Monica have a husband?
+\n<[Katrina]>Someone married that crazy bat!
+----
+
+* **Speaker/Source: `Totem`**
+[listing]
+----
+The totem is full of offerings.
+----
+
+=== The Secret Sword Cache
+
+Discovering Medusa's Sword in the hidden glade.
+
+*Associated Maps*: Map 024, Map 025, Map 017
+
+==== Map 024: The Sword Map
+
+* **Speaker/Source: `Medusa's Sword`**
+[listing]
+----
+A strange sword was in the chest.
+\n<[Elijah]>I wonder who this sword 
+belongs to.
+\n<[Katrina]>Free sword for your girl~
+----
+
+==== Map 025: The Sword Map
+
+* **Speaker/Source: `Medusa's Sword`**
+[listing]
+----
+A strange sword was in the chest.
+\n<[Elijah]>I wonder who this sword 
+belongs to.
+\n<[Katrina]>Free sword for your girl~
+----
+
+
+== Act VI: Moral Crossroads of Dio Lower Ward
+
+=== Eric the Lumberjack's House
+
+Self-Aware Pot; Test of Honesty: 10G life savings vs 500G rent donation; Ring of Fire reward.
+
+*Associated Maps*: Map 028
+
+==== Map 028: Eric's House
+
+* **Speaker/Source: `Eric`**
+[listing]
+----
+We've been seeing a lot of monster appear near the 
+recently. I wonder what's that all about. And with
+jobs being tight, money is hard to come by.
+----
+
+* **Speaker/Source: `Eric`**
+[listing]
+----
+\n<[Elijah]>I think that that should be 
+enough to help you.
+Thank you. Thank you so much, here I believe that 
+this will be more useful to you than me.
+\n<[Elijah]>Thank you sir, but I...
+\n<Eric>Don't mention it, and by the way, the name
+is Eric. I used to be a lumberjack until that weird
+portal appeared. I found this ring and held on to it
+every since.
+\n<n[1]>Thank you. Thank you so much!
+\n<[Katrina]>I think that that should be 
+enough to help you.
+Thank you. Thank you so much, here I believe that 
+this will be more useful to you than me.
+\n<[Katrina]>Woah! This is a cool ring dude!
+\n<Eric>The name is Eric and that ring has a story.
+I used to be a lumberjack until that weird
+portal appeared. I found this ring and held on to it
+every since.
+\n<n[2]>Thanks dude.
+----
+
+* **Speaker/Source: `Eric`**
+[listing]
+----
+\n<Eric>I'm sure that ring's fire power will come in 
+handy if you plan on leaving the village
+----
+
+* **Speaker/Source: `Self-Aware Pot`**
+[listing]
+----
+What kind of game do you think this is! You can't
+just steal whatever you want! How rude!
+----
+
+* **Speaker/Source: `Test of Honesty`**
+[listing]
+----
+Something is glowing in the pot. Take the pots content?
+You recieve 10G
+THAT'S ALL MY MONEY! GET OUT NOW!
+\n<\n1>I am so sorry! Please, I am not 
+trying to...
+\n<n[2]>AH!
+\n<n[2]>Hey, where did you even...
+\n<n[2]>AH!
+\n<[Elijah]>..steal all your money.
+\n<n[1]>I'm sorry...
+\n<n[2]>...come from...
+\n<n[2]>It was just a few coins anyway.
+That guy definately overreacted
+You decide to leave the pot alone.
+\n<n[1]>I can be quick, discret maybe
+Elijah slowly reaches into the jar, stopping when
+he saw how little money he had.
+\n<n[1]>Maybe I should't...
+\n<n[1]>I would be wrong of me to take this
+money. But why does he only have a little 
+money...
+Hey want are you doing!
+\n<n[1]>I am so sorry, I wasn't trying to
+take your money, I was just looking at the 
+pot.
+It's fine kid... I just have stumble one hard
+time every since the monster began showing up. 
+It makes working hard and I can't afford to 
+live here anymore.
+\n<n[1]>Maybe... Maybe I can help!
+Don't worry about it, it's not for you to worry about.
+Just make sure you become something.
+\n<n[1]>Is this what the voice meant,
+to be a hero...How much do you need.
+Just 500G, that will be enough for me to make it for 
+the month.
+\n<n[1]>I'll leave the money in the pot, 
+that way you'll have it.
+Tha-tha-thank you!
+\n<n[1]>I would be wrong of me to take this
+money. But why does he only have a little 
+money...
+Hey want are you doing!
+\n<n[1]>I am so sorry, I wasn't trying to
+take your money, I was just looking at the 
+pot.
+It's fine kid... I just have stumble one hard
+time every since the monster began showing up. 
+It makes working hard and I can't afford to 
+live here anymore.
+\n<n[1]>Maybe... Maybe I can help!
+Don't worry about it, it's not for you to worry about.
+Just make sure you become something
+\n<n[1]>I have to help him somehow...
+How much do you need.
+Just 500G, that will be enough for me to make it for 
+the month
+\n<n[1]>I'll leave the money in the pot, 
+that way you'll have it
+Tha-tha-thank you!
+\n<n[2]>The money is right there! This 
+guy won't see it coming.
+As Katrina was about to take the money, she stopped
+for just a moment
+\n<n[2]>Ugghhh, I can't do it.
+\n<n[2]>Come on [Katrina], its just a few bucks,
+you can give him some more when you get 
+more.
+Hey want are you doing!
+\n<n[2]>Look man, I was just looking at
+the stupid thing and saw some pocket change
+in the pot. I was going to give you 
+something back...eventually.
+That would've been all of my money, my life savings!
+That's my money for the whole week!
+\n<n[2]>Hold on, you mean to tell me that
+you only have 10G to your name. Dude, how
+can you afford to live here!
+Don't worry about that, the monster attacks have made
+living in town alot cheaper...even without my job...
+\n<n[2]>Is this what the voice meant,
+to be a hero...How much do rent here
+cost...
+500G, but I won't be able to make that kind of money
+in time to pay the rent
+\n<n[2]>sigh I'll get the 
+money, just don't do...anything
+Really? Thanks...who are you?
+\n<n[2]>The girl next door...actually no,
+just someone who understands hard times
+\n<n[2]>Come on [Katrina], its just a few bucks,
+you can give him some more when you get 
+more.
+Hey want are you doing!
+\n<n[2]>Look man, I was just looking at
+the stupid thing and saw some pocket change
+in the pot. I was going to give you 
+something back...eventually.
+That would've been all of my money, my life savings!
+That's my money for the whole week!
+\n<n[2]>Hold on, you mean to tell me that
+you only have 10G to your name. Dude, how
+can you afford to live here!
+Don't worry about that, the monster attacks have made
+living in town alot cheaper...even without my job...
+\n<n[2]>I have to help him somehow...
+How much do rent here cost...
+500G, but I won't be able to make that kind of money
+in time to pay the rent
+\n<n[2]>sigh I'll get the 
+money, just don't do...anything
+Really? Thanks...who are you?
+\n<n[2]>The girl next door...actually no,
+just someone who understands hard times
+----
+
+* **Speaker/Source: `Test of Honesty`**
+[listing]
+----
+Would you like to add to the pot?
+You have given \v[14] to the man.
+How much will you add?
+You have given \v[14] to the man.
+You have filled the pot! Talk to the man once more.
+The pot isn't full yet.
+You don't have that much to give
+You leave the pot alone.
+----
+
+* **Speaker/Source: `Test of Honesty`**
+[listing]
+----
+The pot is filled with gold. It can cover rent for 
+2 months!
+----
+
+* **Speaker/Source: `Empty Pot`**
+[listing]
+----
+The pot is empty
+----
+
+* **Speaker/Source: `Empty Pot`**
+[listing]
+----
+The pot is empty
+----
+
+=== Shopping District & Lower Village
+
+Buying the offering potion; the shopkeeper's note; St. Baron's locked mansion.
+
+*Associated Maps*: Map 029, Map 030, Map 016
+
+==== Map 030: Shopping District
+
+* **Speaker/Source: `St. Baron's Home`**
+[listing]
+----
+\n<[Elijah]>I can't believe that I am doing
+this,...the baron is the richest 
+man in the villiage...but he's been 
+using the town! This is for the good!
+\n<[Katrina]>Ok...here we go...let's do this. I 
+have to do at least one good thing today.
+\n<[Elijah]>I can believe the baron
+would take all this money for himself! Not
+anymore!
+\n<[Elijah]>So the baron can still
+keep a house while the rest of just 
+struggle. This is gonna be fun.
+The door is locked. Mayhbe you should come back at
+a different time
+----
+
+* **Speaker/Source: `Shop Menu`**
+[listing]
+----
+Welcoem to my shop! How can I help you today?
+Thanks for coming! See you later!
+----
+
+* **Speaker/Source: `Shopkeeper's Wife Dialouge`**
+[listing]
+----
+We've just got into town so we are still working 
+on getting the funds for a bed. But my hubby
+will not rest until we have that bed!
+----
+
+* **Speaker/Source: `Got the Potion`**
+[listing]
+----
+\n<[Elijah]>I wonder why she needs a 
+potion. Could she be a witch?
+\n<[Katrina]>I can't believe she made me 
+waste my money...
+----
+
+=== John the Thief's Hideout
+
+John's sidequest proposal to overthrow the corrupt Baron.
+
+*Associated Maps*: Map 031
+
+==== Map 031: John the Thief (Sidequest)
+
+* **Speaker/Source: `John the Thief`**
+[listing]
+----
+\n<John>What do you want kid! Can't you
+see that I'm busy!
+\n<John>What do you want kid! Can't you
+see that I'm busy!
+\n<John>So you're the one that's helping the little
+people of this village out.<br>I have a little task 
+for you.<br>You see, the Baron has outlived his
+welcome.<br>Think you can help with this...issue
+\n<John>So you're the one that's helping the little
+people of this village out.<br>I have a little task 
+for you.<br>You see, the Baron has outlived his
+welcome.<br>Think you can help with this...issue
+\n<John>So you're the one that's helping the little
+people of this village out.<br>I have a little task 
+for you.<br>You see, the Baron has outlived his
+welcome.<br>Think you can help with this...issue
+\n<John>So you're the one that's helping the little
+people of this village out.<br>I have a little task 
+for you.<br>You see, the Baron has outlived his
+welcome.<br>Think you can help with this...issue
+\n<John>What do you want kid! Can't you
+see that I'm busy!
+----
+
+
+== Act VII: The Frontier, Wilderness & Final Dungeon
+
+=== World Map Frontier
+
+Demo completion gateway; thank-you message; frontier exits.
+
+*Associated Maps*: Map 033, Map 034, Map 035, Map 005, Map 018
+
+=== Wilderness Battle Zones (Demo Areas 3 & 4)
+
+Combat zones featuring bats, slimes, magos, and bandits.
+
+*Associated Maps*: Map 014, Map 015, Map 016, Map 034, Map 035, Map 036, Map 019, Map 020, Map 021, Map 022, Map 033
+
+==== Map 020: Grandma's House Upstairs
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+\n<[Elijah]>I shouldn't go in this chest. I 
+need to talk to Grandma first.
+She's very particular about her things.
+\n<[Katrina]>I shouldn't go in this chest. I 
+need to talk to Grandma first.
+Batty old woman seems to remind that chest.
+----
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+An old watch was in the chest.
+\n<[Elijah]>Oh.. it's an old watch.
+What's so special about it anyway?
+\n<[Katrina]>She made me....grab...an 
+OLD WATCH! I thought it was
+something important like her will!
+----
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+There is still something inside of the chest
+OBTAINED THE COMPASS OF MORALITY
+----
+
+* **Speaker/Source: `Grandma's Chest`**
+[listing]
+----
+It's all empty now.
+----
+
+* **Speaker/Source: `Wierd Dream`**
+[listing]
+----
+\n<[Elijah]>That dream....what did it mean...
+It could just be my imagination but...It 
+felt like...something more. A hero
+... Me...?
+\n<[Katrina]>WHAT! WHAT THE...ME. Man, my mind
+needs to get out of lala land and settle 
+into reality. I can't be a hero, 
+I won't be a hero...
+----
+
+==== Map 021: Grandma's House Downstairs
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+\n<Grandma>Hello sweetie, could you please
+go upstairs and search in the chest
+and grab what's inside? It's something that
+has great signifinance.
+\n<[Katrina]>The will. I love you gran,
+but a girl gotta get out of this dead-end
+town.
+\n<[Elijah]>Maybe is is something
+about dad! I haven't seen him since my 
+10th birthday.
+\n<[Elijah]>Sure thing. This might
+be my chance to get answers!
+\n<[Katrina]>Why not! Crazy old woman...
+That will is mine!
+\n<[Elijah]>Well...uhh...but... 
+But if it is about him...
+\n<[Katrina]>Gran, why can't you do it? 
+Why doesn't she do it?
+If she wants it she can get it.
+----
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+It's been a while since we've talk. 
+What do you want to talk about?
+\n<Grandma>Oh me and Monica go way back.
+She was such a wild child, always getting
+into mischief. You'll love her.
+\n<Grandma>This town used to be full of
+life. sighs The kingdom doesn't
+pay much attention to this place anymore...
+\c[5]Not avalible in the demo
+\n<Grandma>Have you been upstairs yet?
+The chest should still be there.
+----
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+\n<Grandma>Thank you honey. This watch has 
+been in the family for a long time. Oh, 
+how it brings back memories of better days.
+\n<Grandma>I think you should keep it. It's
+my gift to you. And here's a bit of money.
+I know that you'll need it more than little
+ol' me.
+----
+
+* **Speaker/Source: `Grandma`**
+[listing]
+----
+\n<Grandma>[Katrina] could you do me a favor?
+Lately, the people have been stirred up
+about people being attacked by monsters.
+\n<Grandma>[Elijah] could you do me a favor?
+Lately, the people have been stirred up
+about people being attacked by monsters.
+\n<Grandma>My friend, Monica, 
+would know what is causing these strange 
+rumors. Can you go to her house and see 
+what she has to say about all of this?
+\n<[Elijah]>Sure thing. It will be nice to
+finally leave the house. I might even
+get to leave town!
+\n<[Katrina]>Why not! I would love to~ 
+I'm out of this poor slum of a town!
+\n<[Elijah]>Well..are you sure you can't?
+I don't even know her...
+\n<[Katrina]>Gran, I'm not your errand girl! 
+ This is YOUR friend.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+I should say something to Grandma before I go.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+Grandma still seems worried. Maybe I can talk to
+her one more time.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+I should say something to Grandma before I go.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+Grandma still seems worried. Maybe I can talk to
+her one more time.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+I should say something to Grandma before I go.
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+Grandma still seems worried. Maybe I can talk to
+her one more time.
+----
+
+=== The Final Dungeon & Boss Threshold
+
+Multi-level dungeon fortress leading to the ultimate demo boss confrontation.
+
+*Associated Maps*: Map 017, Map 018, Map 023, Map 024, Map 025, Map 026, Map 027, Map 028, Map 037, Map 038
+
+==== Map 023: Main Square
+
+* **Speaker/Source: `Fighter Kid`**
+[listing]
+----
+... He's just ignoring you
+----
+
+* **Speaker/Source: `Fighter Kid`**
+[listing]
+----
+You want me to move? I'm blocking the way for others?
+Big woop! No one can stop me so I'm staying!
+----
+
+* **Speaker/Source: `Fighter Kid`**
+[listing]
+----
+You're no fun! I'm going home!
+----
+
+* **Speaker/Source: `Mystic's Home`**
+[listing]
+----
+The door is locked.
+----
+
+* **Speaker/Source: `Leave Town`**
+[listing]
+----
+I should see if Monica needs anything else.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Lower Dio`**
+[listing]
+----
+I still have to talk to Monica first.
+----
+
+* **Speaker/Source: `Monica!`**
+[listing]
+----
+\n<[Elijah]>This is great! The town is still
+sad with the storm but it's my home. I 
+need to stay focus and find Monica's house.
+Grandma said her house is in front of ours.
+\n<[Katrina]>Ugghh. I can't believe we still
+live in this dump. Doesn't help that storm
+destoryed everything. Now Gran said Monica
+live in the house in front of us. Peachy...
+----
+
+* **Speaker/Source: `Leave Town`**
+[listing]
+----
+I should see if Monica needs anything else.
+----
+
+* **Speaker/Source: `Leave Town`**
+[listing]
+----
+I have to stop that kid first!
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+STAY AWAY FROM ME!
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+STAY AWAY FROM ME!
+----
+
+* **Speaker/Source: `Block`**
+[listing]
+----
+STAY AWAY FROM ME!
+----
+
+==== Map 024: The Sword Map
+
+* **Speaker/Source: `Medusa's Sword`**
+[listing]
+----
+A strange sword was in the chest.
+\n<[Elijah]>I wonder who this sword 
+belongs to.
+\n<[Katrina]>Free sword for your girl~
+----
+
+==== Map 025: The Sword Map
+
+* **Speaker/Source: `Medusa's Sword`**
+[listing]
+----
+A strange sword was in the chest.
+\n<[Elijah]>I wonder who this sword 
+belongs to.
+\n<[Katrina]>Free sword for your girl~
+----
+
+==== Map 026: Start Up Area
+
+* **Speaker/Source: `The Beginning`**
+[listing]
+----
+It was a month before the Festival...<br>The tower...<br>The terror...
+----
+
+* **Speaker/Source: `The Beginning`**
+[listing]
+----
+The darkness...<br>The darkness...<br>The darkness returned once more.
+----
+
+==== Map 027: Monica's House
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>And who in the blaze are YOU!
+\n<Monica>...
+...
+...
+\n<Monica>So you are Magolia's grandson.
+She made you sound more handsome that
+you are.
+\n<[Elijah]>HEY! That's not a nice thing
+to say!
+\n<Monica>Tis only a joke. Now why have 
+you came here? Do you have some milk?
+\n<[Elijah]>Nn-...I'm here because my grandma
+thinks that evil has returned.
+\n<Monica>A wise woman she is. Lyri has
+been whispering in me ear about the forces
+of darkness. I'll help but first, get that
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+\n<Monica>Good. I'll see you when you
+return.
+\n<Monica>I'll explain it once more.
+\n<Monica>I'll help you if you get that 
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+\n<Monica>So you are Magolia's 
+granddaughter. She made you sound prettier 
+that you are.
+\n<[Katrina]>LISTEN HER YOU OLD-!
+\n<Monica>Tis only a joke. Now why have 
+you came here? Do you have some milk?
+\n<[Katrina]>What is wrong with you... I'm
+just here because my grandma is crazy.
+She's babbling about evil forces and all
+that nonsense.
+\n<Monica>A wise woman she is. Lyri has
+been whispering in me ear about the forces
+of darkness. I'll help but first, get that
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+\n<Monica>Good. I'll see you when you
+return.
+\n<Monica>I'll explain it once more.
+\n<Monica>I'll help you if you get that 
+holigan from the city limits.
+\n<Monica>Not only is he preventing folks
+from leaving, he's also messing with me
+business. Can you handle that?
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>You have to stop that kid! Our 
+village will be more devastated than
+even with him blocking the road!
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>Good job! I think I have an idea.
+Now that the people can, residences and
+newcomers have arrived. I notice that a 
+shopkeeper has came into our town as well.
+\n<Monica>I need you to go a buy a potion.
+I will use this as a base for my offering
+to Lyri. She'll be able to help us in this
+dark hour.
+Obtained the Book of Monsters
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>Oh yes. This is exactly what I
+need for my offering.
+\n<Monica>There is one more thing that I
+need in order to make this brew suitable
+for Lyri. Go out of the town to the west 
+path. A man has what I need. Get it please.
+\n<Monica>If you want to get the potion,
+you'll need to go to the lower parts of the
+town.
+----
+
+* **Speaker/Source: `Monica`**
+[listing]
+----
+\n<Monica>Do you need something?
+\n<Monica>Me? Why, I'm one of the original
+mages for the King. The kingdom was not as
+peaceful as is it now. But then, the 
+Dark Lord tried to take the kingdom.
+\n<Monica>He was born from the darkness
+that this world had. He planned to take 
+over this world and fill it with darkness.
+The Hero saved this world and brought us
+\n<Monica>our peace. The shield and sword.
+Oh don't mind this old hag's ranmbling.
+Not avalible in demo
+Not avalible in demo
+----
+
+* **Speaker/Source: `The Secret Room`**
+[listing]
+----
+Get your snooping nose away from me room!
+This room is currently unavalible for the demo
+----
+
+* **Speaker/Source: `The Secret Room`**
+[listing]
+----
+Get your snooping nose away from me room!
+This room is currently unavalible for the demo
+----
+
+* **Speaker/Source: `The Secret Room`**
+[listing]
+----
+Get your snooping nose away from me room!
+This room is currently unavalible for the demo
+----
+
+* **Speaker/Source: `Lyri`**
+[listing]
+----
+It is the deity Lyri, the Goddess of Peace.
+----
+
+* **Speaker/Source: `Totem`**
+[listing]
+----
+The totem has the names of fallen soldiers. One
+name has a heart by it and it reads "Miss you".
+\n<[Elijah]>Did Monica have a husband?
+\n<[Katrina]>Someone married that crazy bat!
+----
+
+* **Speaker/Source: `Totem`**
+[listing]
+----
+The totem is full of offerings.
+----
+
+==== Map 028: Eric's House
+
+* **Speaker/Source: `Eric`**
+[listing]
+----
+We've been seeing a lot of monster appear near the 
+recently. I wonder what's that all about. And with
+jobs being tight, money is hard to come by.
+----
+
+* **Speaker/Source: `Eric`**
+[listing]
+----
+\n<[Elijah]>I think that that should be 
+enough to help you.
+Thank you. Thank you so much, here I believe that 
+this will be more useful to you than me.
+\n<[Elijah]>Thank you sir, but I...
+\n<Eric>Don't mention it, and by the way, the name
+is Eric. I used to be a lumberjack until that weird
+portal appeared. I found this ring and held on to it
+every since.
+\n<n[1]>Thank you. Thank you so much!
+\n<[Katrina]>I think that that should be 
+enough to help you.
+Thank you. Thank you so much, here I believe that 
+this will be more useful to you than me.
+\n<[Katrina]>Woah! This is a cool ring dude!
+\n<Eric>The name is Eric and that ring has a story.
+I used to be a lumberjack until that weird
+portal appeared. I found this ring and held on to it
+every since.
+\n<n[2]>Thanks dude.
+----
+
+* **Speaker/Source: `Eric`**
+[listing]
+----
+\n<Eric>I'm sure that ring's fire power will come in 
+handy if you plan on leaving the village
+----
+
+* **Speaker/Source: `Self-Aware Pot`**
+[listing]
+----
+What kind of game do you think this is! You can't
+just steal whatever you want! How rude!
+----
+
+* **Speaker/Source: `Test of Honesty`**
+[listing]
+----
+Something is glowing in the pot. Take the pots content?
+You recieve 10G
+THAT'S ALL MY MONEY! GET OUT NOW!
+\n<\n1>I am so sorry! Please, I am not 
+trying to...
+\n<n[2]>AH!
+\n<n[2]>Hey, where did you even...
+\n<n[2]>AH!
+\n<[Elijah]>..steal all your money.
+\n<n[1]>I'm sorry...
+\n<n[2]>...come from...
+\n<n[2]>It was just a few coins anyway.
+That guy definately overreacted
+You decide to leave the pot alone.
+\n<n[1]>I can be quick, discret maybe
+Elijah slowly reaches into the jar, stopping when
+he saw how little money he had.
+\n<n[1]>Maybe I should't...
+\n<n[1]>I would be wrong of me to take this
+money. But why does he only have a little 
+money...
+Hey want are you doing!
+\n<n[1]>I am so sorry, I wasn't trying to
+take your money, I was just looking at the 
+pot.
+It's fine kid... I just have stumble one hard
+time every since the monster began showing up. 
+It makes working hard and I can't afford to 
+live here anymore.
+\n<n[1]>Maybe... Maybe I can help!
+Don't worry about it, it's not for you to worry about.
+Just make sure you become something.
+\n<n[1]>Is this what the voice meant,
+to be a hero...How much do you need.
+Just 500G, that will be enough for me to make it for 
+the month.
+\n<n[1]>I'll leave the money in the pot, 
+that way you'll have it.
+Tha-tha-thank you!
+\n<n[1]>I would be wrong of me to take this
+money. But why does he only have a little 
+money...
+Hey want are you doing!
+\n<n[1]>I am so sorry, I wasn't trying to
+take your money, I was just looking at the 
+pot.
+It's fine kid... I just have stumble one hard
+time every since the monster began showing up. 
+It makes working hard and I can't afford to 
+live here anymore.
+\n<n[1]>Maybe... Maybe I can help!
+Don't worry about it, it's not for you to worry about.
+Just make sure you become something
+\n<n[1]>I have to help him somehow...
+How much do you need.
+Just 500G, that will be enough for me to make it for 
+the month
+\n<n[1]>I'll leave the money in the pot, 
+that way you'll have it
+Tha-tha-thank you!
+\n<n[2]>The money is right there! This 
+guy won't see it coming.
+As Katrina was about to take the money, she stopped
+for just a moment
+\n<n[2]>Ugghhh, I can't do it.
+\n<n[2]>Come on [Katrina], its just a few bucks,
+you can give him some more when you get 
+more.
+Hey want are you doing!
+\n<n[2]>Look man, I was just looking at
+the stupid thing and saw some pocket change
+in the pot. I was going to give you 
+something back...eventually.
+That would've been all of my money, my life savings!
+That's my money for the whole week!
+\n<n[2]>Hold on, you mean to tell me that
+you only have 10G to your name. Dude, how
+can you afford to live here!
+Don't worry about that, the monster attacks have made
+living in town alot cheaper...even without my job...
+\n<n[2]>Is this what the voice meant,
+to be a hero...How much do rent here
+cost...
+500G, but I won't be able to make that kind of money
+in time to pay the rent
+\n<n[2]>sigh I'll get the 
+money, just don't do...anything
+Really? Thanks...who are you?
+\n<n[2]>The girl next door...actually no,
+just someone who understands hard times
+\n<n[2]>Come on [Katrina], its just a few bucks,
+you can give him some more when you get 
+more.
+Hey want are you doing!
+\n<n[2]>Look man, I was just looking at
+the stupid thing and saw some pocket change
+in the pot. I was going to give you 
+something back...eventually.
+That would've been all of my money, my life savings!
+That's my money for the whole week!
+\n<n[2]>Hold on, you mean to tell me that
+you only have 10G to your name. Dude, how
+can you afford to live here!
+Don't worry about that, the monster attacks have made
+living in town alot cheaper...even without my job...
+\n<n[2]>I have to help him somehow...
+How much do rent here cost...
+500G, but I won't be able to make that kind of money
+in time to pay the rent
+\n<n[2]>sigh I'll get the 
+money, just don't do...anything
+Really? Thanks...who are you?
+\n<n[2]>The girl next door...actually no,
+just someone who understands hard times
+----
+
+* **Speaker/Source: `Test of Honesty`**
+[listing]
+----
+Would you like to add to the pot?
+You have given \v[14] to the man.
+How much will you add?
+You have given \v[14] to the man.
+You have filled the pot! Talk to the man once more.
+The pot isn't full yet.
+You don't have that much to give
+You leave the pot alone.
+----
+
+* **Speaker/Source: `Test of Honesty`**
+[listing]
+----
+The pot is filled with gold. It can cover rent for 
+2 months!
+----
+
+* **Speaker/Source: `Empty Pot`**
+[listing]
+----
+The pot is empty
+----
+
+* **Speaker/Source: `Empty Pot`**
+[listing]
+----
+The pot is empty
+----

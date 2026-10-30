@@ -1,0 +1,60 @@
+= Tactical Battle System (LeTBS) Specification (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document formalizes the grid-based Tactical Strategy RPG combat architecture
+implemented via Lecode's Tactical Battle System (LeTBS) in the 2017–2018 demo.
+It details movement costs, action economy, scope geometries, terrain manipulation,
+and turn manipulation invariants.
+
+== 1. Battle Field Architecture & Action Economy
+
+* **Grid Structure**: 2D tile-based tactical grid mapped over encounter maps.
+* **Movement Points (MP)**: Consumable per-turn budget determining movement range:
+  - Baseline Protagonists & Allies: `move_points: 4`.
+  - Heavy Impact Reductions: Heavy Hit reduces target MP by 3 (`move_points+: -3`).
+  - Outrider Haste: Light Steps increases target MP by 1 (`move_points+: 1`).
+* **Turn Timeline**: Monotonic timeline ordering turns by entity agility (`auto_turn_order_face`).
+* **Directional Facing**: Facing impacts defense and positional abilities (e.g., *Phantom Slash* teleports directly behind the target before striking).
+
+== 2. Scope & Area of Effect (AOE) Geometries
+
+The demo configured rich geometric targeting parameters across skills:
+
+[cols="2,2,3", options="header"]
+|===
+| Scope Pattern | Example Skill | Geometric Definition
+| `circle(r)` | *Fire* (`Skill 42`), *Heal* (`Skill 72`) | Manhattan or Chebyshev circle of radius `r` centered on the caster.
+| `circle(max_r, min_r)` | *Ghost Arrow* (`Skill 79`), *Dagger Throw* (`Skill 169`) | Annular targeting ring; cannot target adjacent cells within `min_r`.
+| `line(n)` | *Explosive Mark* (`Skill 76`), *Great Wind* (`Skill 133`) | Cardinal linear projection up to `n` cells from caster.
+| `square(r)` | *Angela Move Scope* (`Actor 5`) | Full square grid extent of radius `r`.
+| `custom(pattern)` | *Fire Arrows* (`Skill 82`) | Scripted multi-target projectile pattern hitting all visible adversaries.
+| `through_obstacles` | *Teleportation* (`Skill 73`) | Ignores intermediate terrain obstacles, requiring only a free destination cell.
+|===
+
+== 3. Terrain State Modifications & Dynamic Hazards
+
+Combat encounters feature active environmental manipulation:
+
+* **Volcano Ground (`Skill 47`)**: Lays hazardous fiery embers across multiple ground cells dealing continuous fire damage.
+* **Ice Wall / Ice Prison (`Skill 51`, `Skill 52`)**: Summons physical destructible barricades (`HP: 20`) that obstruct enemy line-of-sight and movement corridors.
+* **Explosive Mark & Magic Trap (`Skill 76`, `Skill 80`)**: Proximity-triggered grid landmines that detonate upon enemy entry.
+* **Burning Tile Spread (`State 110`)**: Dynamic fire propagation expanding with `spread: 100% circle(1) all`.
+
+== 4. Turn Timeline Manipulation
+
+Unique priest techniques alter the flow of tactical battle:
+
+* **Accelerate (`Skill 87`)**: Advances target position along the turn timeline by 100%.
+* **Decelerate (`Skill 88`)**: Delays target position along the turn timeline by 100%.
+* **Emergency Turn (`Skill 89`)**: Instantly grants an immediate action turn to an allied battler.
+* **Extra Turn (`Skill 86`)**: Grants the caster or target an additional action cycle upon turn conclusion.

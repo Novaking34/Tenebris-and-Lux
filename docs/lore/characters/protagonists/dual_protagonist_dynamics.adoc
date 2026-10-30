@@ -1,0 +1,76 @@
+= Dual-Protagonist Dynamics: The Wielders of Harmony
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-28
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+The narrative core and mechanical heartbeat of *Tenebris and Lux* is the
+interplay between **Elijah Ro-enheart** and **Katrina Jaren**. Contrasting in
+social caste, philosophical outlook, and combat rhythm, their evolving
+partnership mirrors the cosmic relationship between Light and Darkness.
+
+== 1. Thematic & Social Contrast Matrix
+
+[cols="1,2,2", options="header"]
+|===
+| Dimension | Elijah Ro-enheart | Katrina Jaren
+
+| **Social Caste**
+| Military Lineage / Son of the Guard Head
+| High Aristocracy / House Jaren
+
+| **Institutional Allegiance**
+| Royal Army (Structure, Law, Duty)
+| Adventurers' Guild Aspirant (Freedom, Merit)
+
+| **Relic Affinity**
+| **The Shield of Lux** (Defense, Preservation)
+| **The Sword of Tenebris** (Offense, Severance)
+
+| **Temperament**
+| Courteous, methodical, law-abiding
+| Irreverent, sharp-tongued, opportunistic
+
+| **Moral Trajectory**
+| From rigid obedience to moral conscience
+| From cynical detachment to noble sacrifice
+|===
+
+== 2. Interpersonal Chemistry & Banter
+
+Elijah and Katrina embody the classic dramatic friction between an earnest,
+rule-following guardian and an irreverent, sharp-witted rogue. Where Elijah
+pauses to consult protocol or verify authority, Katrina acts impulsively,
+cutting through bureaucratic red tape with sarcastic practicality.
+
+=== Narrative Evolution Across the Campaign
+1. **Act I (The Provincial Divide)**: Initial friction in Dio Village. Katrina
+   mocks Elijah's military formality; Elijah cautions against Katrina's
+   cynical disregard for property and propriety.
+2. **Act II (The Capital Conspiracy)**: Arrival at Sacyra Castle. Katrina's
+   insight into aristocratic deception exposes King Jihad's corruption,
+   forcing Elijah to choose between his oaths to the throne and his duty to
+   the kingdom.
+3. **Act III (The Sovereign Eclipse)**: Total metaphysical synchronization.
+   Facing Dark Lord Malakor, the two heroes overcome their individual biases,
+   passing relics fluidly between each other to unlock the Stance of Equilibrium.
+
+== 3. Tactical Synergy on the TRPG Battlefield
+
+On the tactical grid, Elijah and Katrina form a mutually dependent combat pair:
+
+1. **The Phalanx Pivot**: Elijah pins enemy vanguards with his Shield of Lux
+   ZOC aura. Katrina uses high mobility to circle the battle line and strike
+   flanked enemies.
+2. **Warded Severance**: Katrina lures high-threat enemies into charging toward
+   her, stepping back onto Elijah's tile perimeter as Elijah executes a
+   staggering shield deflection.
+3. **The Stance of Equilibrium**: In moments of ultimate synchronization,
+   both relics resonance counters combine, unlocking unified abilities where
+   radiant starlight and abyssal void strike in a single coordinated turn.

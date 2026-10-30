@@ -1,0 +1,107 @@
+# =============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# =============================================================================
+# @project       Tenebris and Lux
+# @file          tools/Cargo.toml
+# @id            tools.manifest.cargo
+# @layer         Developer Tooling & Document Compilers
+# @version       0.1.0
+# @interface_rev Rev 1
+# @date          2026-10-29
+# @updated       2026-10-29
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+#
+# PURPOSE & ARCHITECTURAL ROLE:
+#   Root Cargo manifest for the Tenebris and Lux developer toolchain. Manages
+#   the compiled developer utilities: historical RPG Maker MV demo extraction,
+#   game design curation, and master guide publishing for NotebookLM and Google
+#   Gemini chat feedback loops.
+#
+# DEPENDENCY & RESOURCE CONTRACTS:
+#   - Upstream Dependencies: Rust 2024 Edition standard library, serde, serde_json
+#   - Downstream Consumers:  CI/CD pipelines, docs generation, release packaging
+#   - Memory Allocation:     Standard heap allocations during compilation/extraction
+#   - Concurrency / Safety:  Thread-safe file I/O and process execution
+#   - Latency Budget:        Native compilation speed; master guide generated < 2s
+#
+# AXIOMATIC INVARIANTS:
+#   1. Strict conformance to Rust 2024 Edition standard.
+#   2. Zero dynamic runtime interpreter dependencies (native static binaries).
+#   3. Strict <= 80-column line width discipline across all documentation.
+#   4. Reentrant, pure serialization models for game metadata.
+# =============================================================================
+
+# =============================================================================
+# BLOCK 2: OPENING BLOCK / PACKAGE SPECIFICATION
+# Stratum: Developer Tooling | Machine: tools.manifest.cargo
+# =============================================================================
+
+[package]
+name = "tl_tools"
+version = "0.1.0"
+edition = "2024"
+authors = ["CreativeWorkzStudio LLC / ProfessorSeanEX"]
+description = "Developer tooling, archival extraction, and master guide generator for Tenebris and Lux"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# =============================================================================
+# BLOCK 3: BODY BLOCK / DEPENDENCY GRAPH
+# Stratum: Developer Tooling | Machine: tools.manifest.cargo
+# =============================================================================
+
+[dependencies]
+# Serialization engine for RPG Maker MV JSON databases and master manifests
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+
+# =============================================================================
+# BLOCK 4: AUDIT PROCEDURES BLOCK / PROFILES & COMPILER LINTS
+# Stratum: Developer Tooling | Machine: tools.manifest.cargo
+# =============================================================================
+
+[lints.rust]
+warnings = "deny"
+missing_docs = "allow"
+non_snake_case = "allow"
+
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# =============================================================================
+# BLOCK 5: CLOSING BLOCK / BINARY TARGETS & CLI DISPATCH
+# Stratum: Developer Tooling | Machine: tools.manifest.cargo
+# =============================================================================
+
+# Core developer tooling library (Runner engine, extractors, compilers)
+[lib]
+name = "tl_tools"
+path = "src/lib.rs"
+
+# Central multi-tool CLI dispatcher & runner
+[[bin]]
+name = "tl_tools"
+path = "src/main.rs"
+
+# Archival RPG Maker MV demo extraction & reconciliation utility
+[[bin]]
+name = "demo_extractor"
+path = "src/bin/demo_extractor.rs"
+
+# Master Guide compiler for NotebookLM & Google Gemini feedback loops
+[[bin]]
+name = "master_guide"
+path = "src/bin/master_guide.rs"
+
+

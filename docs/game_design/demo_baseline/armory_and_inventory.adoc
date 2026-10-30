@@ -1,0 +1,55 @@
+= Armory, Equipment & Inventory Registry (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document details all weapons, protective armors, restorative items, and key relics
+defined in `Weapons.json`, `Armors.json`, and `Items.json`.
+
+== 1. Weapons & Relic Armaments
+
+[cols="^1,2,^1,^1,^1,^1,^1,4", options="header"]
+|===
+| ID | Weapon Name | Type | Price | ATK | DEF | AGI | Lore & Characteristics
+| `1` | **Sword** | Sword | 500\G | +10 | +0 | +0 | 
+| `2` | **Axe** | Axe | 500\G | +10 | +0 | +0 | 
+| `3` | **Cane** | Cane | 500\G | +10 | +0 | +0 | 
+| `4` | **Bow** | Bow | 500\G | +10 | +0 | +0 | 
+| `5` | **Medusa's Sword** | Sword | 1600\G | +17 | +0 | +0 | The sword used to slay Medusa. It is said to have her petrifying powers.
+|===
+
+== 2. Defensive Armor & Relic Wards
+
+[cols="^1,2,^1,^1,^1,^1,^1,4", options="header"]
+|===
+| ID | Armor Name | Type | Price | DEF | MDF | MHP | Lore & Characteristics
+| `1` | **Shield** | Small Shield | 300\G | +10 | +0 | +0 | 
+| `2` | **Hat** | General Armor | 300\G | +10 | +0 | +0 | 
+| `3` | **Cloth** | General Armor | 300\G | +10 | +0 | +0 | 
+| `4` | **Ring** | General Armor | 300\G | +0 | +0 | +0 | 
+| `5` | **Heart Shield** | Small Shield | 300\G | +10 | +5 | +0 | 
+| `6` | **Ring of Fire** | General Armor | 0\G | +0 | +5 | +0 | 
+|===
+
+== 3. Consumable Items & Quest Relics
+
+[cols="^1,2,^1,^1,4", options="header"]
+|===
+| ID | Item Name | Price | Consumable | Description & Architectural Mapping
+| `1` | **Potion** | 10\G | Yes | 
+| `2` | **Magic Water** | 100\G | Yes | 
+| `3` | **Dispel Herb** | 200\G | Yes | 
+| `4` | **Stimulant** | 300\G | Yes | 
+| `5` | **Grandma's Watch** | 0\G | No (Key Relic) | This was Grandma's Watch. Its a family heirloom that keeps perfect time.
+| `6` | **Book of Monsters** | 0\G | No (Key Relic) | This is a big with all the enemies you've encountered
+| `7` | **Book of Items** | 0\G | No (Key Relic) | This book describes all the various items
+| `8` | **Compass of Morality** | 0\G | No (Key Relic) | 
+|===

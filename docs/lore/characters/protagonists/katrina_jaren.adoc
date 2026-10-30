@@ -1,0 +1,78 @@
+= Character Dossier: Katrina Jaren (The Blade of Freedom)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-28
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Lady Katrina Jaren** is the high-mobility skirmisher of *Tenebris and Lux*
+and the initial wielder of the **Sword of Tenebris**. Born to high aristocracy
+yet repulsed by the deceit and stagnation of the Royal Court, Katrina seeks
+autonomy within the meritocratic ranks of the Adventurers' Guild.
+
+== 1. Identity & Heritage
+
+* **Full Name**: Lady Katrina Jaren
+* **Title / Standing**: Noble Court Aspirant (Estranged); Guild Novice
+* **Affiliation**: House Jaren (Eastern Aristocracy); Adventurers' Guild
+* **Family Lineage**:
+  - **House Jaren**: One of the wealthiest noble lineages in Sacyra, controlling
+    lucrative vineyard estates and mountain silver mines. They hold significant
+    patronage leverage on the Royal Court.
+  - **Kinship with Dio Village**: Despite her family's high status in the
+    capital, Katrina spent formative rebellious seasons under the watchful eye
+    of Grandma Magolia in Dio Village, seeking respite from court etiquette.
+* **Visual Profile**: Agile, athletic build, sharp amber eyes, and unbound
+  chestnut hair tied in a practical combat braid. Clad in tailored lightweight
+  leather arming doublets over noble-weave tunic, with rapier and long-dagger
+  scabbards balanced for rapid unsheathing.
+
+== 2. Psychological Profile & Demeanor
+
+Katrina is quick-witted, irreverent, opportunistic, and intensely independent.
+She detests empty aristocratic pretension and speaks with an unvarnished,
+sarcastic candor that often unnerves formal soldiers like Elijah. Beneath her
+cynical exterior lies a fierce loyalty to those she deems genuine.
+
+=== Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+* *Impatience with Stagnation & Cynicism*:
+  [quote, Katrina, Dio Village - Grandma's House]
+  "The will. I love you gran, but a girl gotta get out of this dead-end town.
+  Batty old woman seems to mind that chest... Crazy old woman, that will is mine!"
+* *Pragmatic Opportunism*:
+  [quote, Katrina, The Sword Shrine]
+  "Free sword for your girl~!"
+* *Fiery Independence & Temper*:
+  [quote, Katrina, Monica's Grove]
+  "LISTEN HERE YOU OLD-! What is wrong with you... Gran, I'm not your errand
+  girl! This is YOUR friend."
+* *Reluctant Heroism*:
+  [quote, Katrina, Lower Village Heist]
+  "Ok... here we go... let's do this. I have to do at least one good thing today."
+
+== 3. Martial Doctrine & TRPG Grid Mechanics
+
+Katrina excels at rapid battlefield repositioning, flanking maneuvers, and
+armor-piercing critical strikes.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Specification
+| **TRPG Grid Role** | High-Mobility Skirmisher / Flanking Striker
+| **Movement Budget** | 4–5 Cells (Light Scout / Infiltrator)
+| **Zone of Control (ZOC)**| Evasive Infiltration: Ignores basic enemy ZOC delays
+| **Primary Relic** | **The Sword of Tenebris** (Edge Sharpness `[0, 100]`)
+| **Tactical Signature** | `Phantom Slash`: Teleports behind target cell to strike
+| **Evasion & Stealth** | Gains 25% evasion when ending turn on obscured tiles
+|===
+
+=== Tactical Synergies
+1. **Flanking Tandem**: Moves across enemy flanks while Elijah holds attention,
+   landing backstab criticals with the abyssal edge of Tenebris.
+2. **Hit-and-Run Decoupling**: Uses remaining move points to disengage after
+   striking, retreating behind Elijah's protective barrier dome.

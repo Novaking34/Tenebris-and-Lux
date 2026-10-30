@@ -1,0 +1,56 @@
+= 2017–2018 Historical Demo Baseline & Extraction Compendium
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This documentation module establishes the comprehensive, verified baseline of the original **2017–2018 RPG Maker MV demo** for *Tenebris and Lux* ("Darkness and Light"). Extracted directly from the archival data directories (`Old Game Data` and `Old_Game_Data_2/data`), this repository anchors our modern C11 reimplementation to its authentic gameplay mechanics, narrative scripts, character arcs, and tactical systems.
+
+== 1. Historical Provenance & Dataset Strata
+
+Between 2014 and 2018, *Tenebris and Lux* was conceived as an ambitious Tactical Strategy RPG (TRPG) combining top-down exploration, puzzle mechanics, and grid-based turn strategy powered by Lecode's Tactical Battle System (LeTBS).
+
+The historical game data is preserved across two distinct repository strata:
+
+[cols="1,2,4", options="header"]
+|===
+| Dataset | Directory Anchor | Architectural Role & Characteristics
+| **Folder 1: Primary Narrative & Morality Build** | `Old Game Data/` | Contains 37 maps, complete dual-protagonist dialogue branches, the morality engine (Compass of Morality, moral sway continuum, honesty tests), and the core Dio Village quest line (`versionId: 40730002`).
+| **Folder 2: Advanced LeTBS Tactical Build** | `Old_Game_Data_2/data/` | Contains 43 maps, extended party members (Sebastien the Thief, Angela the Mage, Lucius the Priest), advanced LeTBS action parameters, full tactical state routines, and character generator assets (`versionId: 2078310`).
+|===
+
+== 2. Documentation Taxonomy
+
+This baseline compendium is partitioned into specialized manuals covering every facet of the historical demo:
+
+[cols="2,4", options="header"]
+|===
+| Document | Focus & Coverage
+| **[scenario_and_walkthrough.adoc](scenario_and_walkthrough.adoc)** | Chronological narrative walkthrough, scene-by-scene script, branching dialogue for Elijah vs Katrina, Map 001 through Map 043, puzzle mechanics, and transfer topologies.
+| **[cast_and_characters.adoc](cast_and_characters.adoc)** | Comprehensive character dossiers for protagonists (Elijah & Katrina), extended party members (Sebastien, Angela, Lucius), village elders (Grandma Magolia, Monica, Eric), court figures (King Jihad, Roté), and summons.
+| **[combat_and_letbs_mechanics.adoc](combat_and_letbs_mechanics.adoc)** | Grid-based battle architecture, movement point costs, directional facing, line-of-sight scopes, AOE shapes (`circle`, `line`, `square`), LeTBS action sequences, and tactical states.
+| **[classes_and_growth.adoc](classes_and_growth.adoc)** | 7 combat classes (Warrior/Knight, Mage, Priest, Summoner, Hero, Thief, Guard) plus Summons; complete stat growth matrices (Lv 1–99) and level-by-level skill learnings.
+| **[grimoire_and_skills.adoc](grimoire_and_skills.adoc)** | Complete grimoire of all 75+ historical spells, martial techniques, movement abilities, MP/TP costs, damage formulas, and LeTBS sequence tags.
+| **[bestiary_and_troops.adoc](bestiary_and_troops.adoc)** | Bestiary of all 22+ enemies and neutral entities (Dream Eaters, Magos, Bandits, Chests, Ice Blocks), stat parameters, AI behavior routines, and troop encounter formations.
+| **[armory_and_inventory.adoc](armory_and_inventory.adoc)** | Weapons (Medusa's Sword), Armors (Heart Shield, Ring of Fire), Items (Potions, Magic Water), and Key Lore Relics (Grandma's Watch, Compass of Morality, Book of Monsters, Book of Items).
+| **[systems_switches_variables.adoc](systems_switches_variables.adoc)** | Global game engines: Monotonic Time System / Day-Night Cycle, Morality System, and an exhaustive directory of all 100+ switches and variables.
+| **[dataset_evolution_delta.adoc](dataset_evolution_delta.adoc)** | Side-by-side comparative delta analysis between `Old Game Data` and `Old_Game_Data_2/data`, detailing version discrepancies and modern C11 reconciliation strategies.
+|===
+
+== 3. Architectural Extraction Script
+
+The entire documentation suite is fully reproducible from source data using our automated Python extraction pipeline:
+
+[source,bash]
+----
+python3 docs/tools/extract_demo_data.py
+----
+
+This ensures absolute fidelity to the original 2017–2018 records as we rebuild the game in native C11.

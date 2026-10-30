@@ -7,23 +7,39 @@ v0.0.1, 2026-10-26
 [abstract]
 == Overview
 
-This directory houses the foundational game design pillars, combat mechanics, spatial topography,
-and testing philosophy for *Tenebris and Lux* in the **Kingdom of Sacyra**.
+This directory houses the foundational game design pillars, combat mechanics,
+spatial topography, testing philosophy, and historical baseline records for
+*Tenebris and Lux* in the **Kingdom of Sacyra**.
 
 == Game Design Manifest
 
-1. **[tactical_trpg_system.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/tactical_trpg_system.adoc)**  
-   *Tactical Strategy RPG (TRPG) System Specification*: Comprehensive blueprint of the dual-layer combat system:
-   - Phase 1: Grid-based tactical battlefield (tile movement, terrain, directional facing, Zone of Control).
-   - Phase 2: Cinematic combat resolution (traditional side-scroll / action-based battle clashes).
-   - Dual-protagonist synergy (Elijah Ro-enheart's frontline defense & Katrina Jaren's outrider skirmishing).
+1. xref:tactical_trpg_system.adoc[*tactical_trpg_system.adoc*]::
+   *Tactical Strategy RPG (TRPG) System Specification*: Comprehensive
+   blueprint of the dual-layer combat system:
+   - Phase 1: Grid-based tactical battlefield (tile movement, terrain, facing).
+   - Phase 2: Cinematic combat resolution (traditional side-scroll / action).
+   - Dual-protagonist synergy (Elijah's frontline defense & Katrina's outrider
+     skirmishing).
    - Tandem linked combat arts and moral sway integration.
 
-2. **[relics_and_combat.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/relics_and_combat.adoc)**  
-   *The Twin Relics, Combat Stances & Moral Sway*: Detailed specifications of the Shield of Lux, Sword of Tenebris, the 4-stance state machine, and the `[-100, +100]` moral continuum.
+2. xref:relics_and_combat.adoc[*relics_and_combat.adoc*]::
+   *The Twin Relics, Combat Stances & Moral Sway*: Detailed specifications of
+   the Shield of Lux, Sword of Tenebris, the 4-stance state machine, and the
+   `[-100, +100]` moral continuum.
 
-3. **[world_topography.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/world_topography.adoc)**  
-   *World Topography & Tactical Encounter Design*: The geography of the Kingdom of Sacyra, defensive provinces, battlefield terrain modifiers, and threat scaling.
+3. xref:world_topography.adoc[*world_topography.adoc*]::
+   *World Topography & Tactical Encounter Design*: The geography of the Kingdom
+   of Sacyra, defensive provinces, battlefield terrain modifiers, and threat
+   scaling.
 
-4. **[game_testing.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/game_testing.adoc)**  
-   *Game Dev Testing vs Software Testing*: Deep dive into continuous state invariants, golden master replay parity, softlock immunity stress tests, and 60 FPS frame-budget latency headroom.
+4. xref:game_testing.adoc[*game_testing.adoc*]::
+   *Game Dev Testing vs Software Testing*: Deep dive into continuous state
+   invariants, golden master replay parity, softlock immunity stress tests,
+   and 60 FPS frame-budget latency headroom.
+
+5. xref:demo_baseline/README.adoc[*demo_baseline/README.adoc*]::
+   *2017–2018 Historical Demo Baseline & Extraction Compendium*: Verified
+   baseline extracted from the original RPG Maker MV datasets (`Old Game Data`
+   and `Old_Game_Data_2/data`), detailing the complete 43-map scenario
+   walkthrough, full cast compendium, LeTBS tactical grid mechanics, grimoire,
+   bestiary, and system switches/variables.

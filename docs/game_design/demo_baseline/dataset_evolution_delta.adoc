@@ -1,0 +1,40 @@
+= Dataset Evolution & Delta Analysis (Folder 1 vs Folder 2)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document provides a comparative delta between `Old Game Data` (Folder 1) and
+`Old_Game_Data_2/data` (Folder 2), detailing the evolution from narrative prototype
+to advanced LeTBS tactical simulation, and establishing modern C11 reconciliation strategies.
+
+== 1. Dataset Characteristics & Metrics
+
+[cols="2,^2,^2", options="header"]
+|===
+| Subsystem Metric | Folder 1 (Old Game Data) | Folder 2 (Old_Game_Data_2/data)
+| Game Title | `Tenebris and Lux` | `Tenebris & Lux`
+| Version Identifier | `40730002` | `2078310`
+| Map Count | 36 maps | 43 maps
+| Active Player Actors | 2 (Elijah, Katrina) | 5 (Elijah, Katrina, Sebastien, Angela, Lucius)
+| Enemies Defined | 21 enemies | 22 enemies
+| States Defined | 11 states | 30 states (extensive LeTBS configurations)
+| Morality Engine Items | Compass of Morality, Ring of Fire | Omitted / shifted to LeTBS combat
+|===
+
+== 2. Core Differences & Evolution Strategy
+
+1. **Narrative vs. Tactical Pivot**:
+   - **Folder 1** represents the *narrative-complete* edition of the demo. It contains all dialogue branches, the Dio Village moral tests (Eric's Honesty Pot, John the Thief vs St. Baron), and key relics like the *Compass of Morality*.
+   - **Folder 2** represents the *tactical engine expansion*. It introduces full party combat with Angela, Sebastien, and Lucius, 6 extra dungeon maps, and rich LeTBS states (e.g. *Burning Tile Spread*, *Charging*, *Intimidating Aura*).
+
+2. **C11 Reconstruction Recommendation**:
+   - **Layer 1 Simulation Engine**: Combine the narrative quest topology and moral continuum from Folder 1 with the rich 5-character tactical class abilities and LeTBS movement/scope geometry from Folder 2.
+   - **Layer 2 Presentation**: Maintain the authentic dialog scripts, dual-protagonist branch voices, and environmental puzzles.

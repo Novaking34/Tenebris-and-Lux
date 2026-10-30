@@ -1,0 +1,80 @@
+= Dramatis Personae: Factions & Figures of Sacyra
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.0.1, 2026-10-28
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+This directory preserves the canonical biographical dossiers, martial doctrines,
+psychological profiles, and socio-political affiliations for all figures within
+the **Kingdom of Sacyra** across *Tenebris and Lux*. Grounded in the original
+2014–2018 RPG Maker foundations and refined for the custom C11 Tactical Strategy
+RPG (TRPG) engine, this archive details heroes, court officials, provincial
+citizens, ancient sages, and void adversaries.
+
+== 1. Socio-Political Faction Matrix
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                        THE KINGDOM OF SACYRA                           │
+│                                                                        │
+│   ┌───────────────────────┐             ┌──────────────────────────┐   │
+│   │   THE ROYAL COURT     │             │     THE PROVINCES        │   │
+│   │ King Jihad (Monarch)  │             │ Dio Village (Upper/Lower)│   │
+│   │ Sir Roté (Scout/Guard)│◄───────────►│ Grandma Magolia          │   │
+│   │ Gareth Ro-enheart*    │             │ Monica the Mystic & Lyri │   │
+│   └──────────┬────────────┘             │ Eric the Lumberjack      │   │
+│              │                          │ St. Baron (Aristocrat)   │   │
+│              ▼                          │ John the Thief (Rogue)   │   │
+│   ┌───────────────────────┐             └─────────────┬────────────┘   │
+│   │   THE PROTAGONISTS    │                           │                │
+│   │ Elijah Ro-enheart     │◄──────────────────────────┘                │
+│   │   (Shield of Lux)     │                                            │
+│   │ Katrina Jaren         │◄───────────┐                               │
+│   │   (Sword of Tenebris) │            │                               │
+│   └──────────┬────────────┘            ▼                               │
+│              │                  ┌──────────────────────────┐           │
+│              │                  │   SAGES & ANCIENTS       │           │
+│              │                  │ Chrono the Archivist     │           │
+│              │                  │ The Sacred Archives      │           │
+│              ▼                  └──────────────────────────┘           │
+│   ┌────────────────────────────────────────────────────────┐           │
+│   │                  THE EXISTENTIAL VOID                  │           │
+│   │ Dark Lord Malakor (Void Sovereign)                     │           │
+│   │ Abyssal Vanguard (Centurions, Automata, Dream Eaters)  │           │
+│   └────────────────────────────────────────────────────────┘           │
+└────────────────────────────────────────────────────────────────────────┘
+* Gareth Ro-enheart: Former Head of the Royal Guard; missing since Elijah's 10th birthday.
+```
+
+== 2. Character Directory Strata
+
+[cols="1,2,2", options="header"]
+|===
+| Sub-Directory | Primary Focus | Key Dossiers
+
+| **[protagonists/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/README.adoc)**
+| The dual wielders of Lux and Tenebris
+| **[Elijah Ro-enheart](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/elijah_ro_enheart.adoc)**, **[Katrina Jaren](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/katrina_jaren.adoc)**, **[Dual Dynamics](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/dual_protagonist_dynamics.adoc)**
+
+| **[kingdom_and_court/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/README.adoc)**
+| Crown authority, military hierarchy, and court intrigue
+| **[King Jihad](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/king_jihad.adoc)**, **[Commander Gareth Ro-enheart](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/commander_gareth_ro_enheart.adoc)**, **[Sir Roté](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/sir_rote.adoc)**
+
+| **[dio_village/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/README.adoc)**
+| Provincial heartland, local customs, and class tensions
+| **[Grandma Magolia](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/grandma_magolia.adoc)**, **[Monica & Lyri](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/monica_and_lyri.adoc)**, **[Eric](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/eric_the_lumberjack.adoc)**, **[St. Baron](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/st_baron.adoc)**, **[John the Thief](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/john_the_thief.adoc)**
+
+| **[sages_and_ancients/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/sages_and_ancients/README.adoc)**
+| Cosmic observers, library custodians, and relic guardians
+| **[Chrono the Sage](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/sages_and_ancients/chrono_the_sage.adoc)**
+
+| **[antagonists/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/antagonists/README.adoc)**
+| The Void invasion force and abyssal thralls
+| **[Dark Lord Malakor](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/antagonists/dark_lord_malakor.adoc)**, **[Abyssal Vanguard](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/antagonists/abyssal_vanguard.adoc)**
+|===

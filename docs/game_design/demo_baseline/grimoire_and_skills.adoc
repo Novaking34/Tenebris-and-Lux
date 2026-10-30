@@ -1,0 +1,200 @@
+= Grimoire & Complete Skill Compendium (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-29
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document records the complete grimoire of all 75+ active techniques, spells,
+and summon abilities defined in `Skills.json`. It provides mathematical damage
+formulas, MP/TP costs, scope parameters, and tactical LeTBS sequences.
+
+
+== Basic Martial Maneuvers
+
+[cols="^1,2,^1,^1,3,4", options="header"]
+|===
+| ID | Skill Name | MP | TP | Damage Formula | Description & Tactical Note
+| `1` | **Attack** | 0 | 0 | `a.atk * 4 - b.def * 2` |  + 
+_Note_: `Skill #1 will be used when you select the Attack command.`
+| `2` | **Guard** | 0 | 0 | `0` |  + 
+_Note_: `Skill #2 will be used when you select the Guard command.`
+| `3` | **Dual Attack** | 0 | 0 | `a.atk * 4 - b.def * 2` | 
+| `4` | **Double Attack** | 0 | 0 | `a.atk * 4 - b.def * 2` | 
+| `5` | **Triple Attack** | 0 | 0 | `a.atk * 4 - b.def * 2` | 
+| `6` | **Escape** | 0 | 0 | `0` | 
+| `7` | **Wait** | 0 | 0 | `0` | 
+|===
+
+
+== Knight Martial Techniques
+
+[cols="^1,2,^1,^1,3,4", options="header"]
+|===
+| ID | Skill Name | MP | TP | Damage Formula | Description & Tactical Note
+| `11` | **Repulsive Blow** | 0 | 0 | `this.phyDmg(120)` | Hits and push the target for two cell. + 
+_Note_: `<letbs> scope: circle(1) sequence: atk_push(2) scope_color: #FFF </letbs>  <l...`
+| `12` | **Flash Jump** | 0 | 0 | `this.phyDmg(110) + this.magDmg(10)` | Jumps to an available position in the scope and invoke  a thunder to damage nearby fighters. + 
+_Note_: `<letbs> scope: circle(3,1) aoe: circle(1) scope_options: need_free_cell aoe_o...`
+| `13` | **Rush** | 0 | 0 | `this.phyDmg(80)` | Rushes toward the target. + 
+_Note_: `<letbs> scope: custom(rush) sequence: rush </letbs>  <letbs_AI> type: offense...`
+| `14` | **Intimidating Aura** | 0 | 0 | `(a.atk * 4 - b.def * 2) * 1.2` | Casts an aura that reduce enemies' ATK by 15%. Grants as well 70% counter attack chance. + 
+_Note_: `<letbs> scope: circle(0) scope_options: include_center </letbs>  <letbs_AI> t...`
+| `15` | **Heavy Hit** | 0 | 0 | `this.phyDmg(135)` | Hits the target and remove 3 move points. + 
+_Note_: `<letbs> scope: circle(1) sequence: atk </letbs>  <Learn Require Level: 5>  <l...`
+| `16` | **Provoke** | 0 | 0 | `(a.atk * 4 - b.def * 2) * 1.2` | Draw the attention of enemies upon the user. Can use another action after this skill. + 
+_Note_: `<letbs> scope: circle(0) scope_options: include_center extra_action </letbs> ...`
+| `17` | **Phantom Slash** | 0 | 0 | `this.phyDmg(60)` | Use dark arts to reach the back of the target. + 
+_Note_: `<letbs> scope: line(4) sequence: phantom_slash </letbs>  <Learn Require Level...`
+|===
+
+
+== Mage Elemental Spells
+
+[cols="^1,2,^1,^1,3,4", options="header"]
+|===
+| ID | Skill Name | MP | TP | Damage Formula | Description & Tactical Note
+| `42` | **Fire** | 0 | 0 | `this.magDmg(105)` | Deals fire damages to a single target in a medium range. + 
+_Note_: `<letbs> scope: circle(3);line(4) </letbs>  <letbs_AI> type: offense </letbs_A...`
+| `43` | **Sparkle** | 0 | 0 | `this.magDmg(80)` | Deals thunder damages to targets in a small area. + 
+_Note_: `<letbs> scope: circle(4) aoe: circle(1) sequence: spark </letbs> <Learn Requi...`
+| `44` | **Lightning Storm** | 0 | 0 | `this.magDmg(60)` | Attacks 3 times a random battler in the area. + 
+_Note_: `<letbs> scope: line(4) aoe: circle(2) sequence: lightning_storm </letbs> <Lea...`
+| `45` | **Fire Storm** | 0 | 0 | `this.magDmg(200)` | Attacks 6 times randomly in the area. + 
+_Note_: `<letbs> scope: circle(4,2) aoe: square(1) sequence: fire_storm </letbs> <Lear...`
+| `46` | **Fire Support** | 0 | 0 | `this.magDmg(80)` | Deals fire damages to a single target in a medium range with the help of close allies. + 
+_Note_: `<letbs> scope: circle(4) sequence: fire_support </letbs> <Learn Require Level...`
+| `47` | **Volcano Ground** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*2` | Lays multiple fire spots on the ground. + 
+_Note_: `<letbs> scope: circle(0) scope_options: include_center aoe: custom(volcano_gr...`
+| `48` | **Volcano Ground (dmg)** | 0 | 0 | `this.magDmg(25)` | 
+| `49` | **Ice Fury** | 0 | 0 | `this.magDmg(115)` | Deals ice damages in a row. + 
+_Note_: `<letbs> scope: line(4) aoe: custom(ice_fury) sequence: skill </letbs> <Learn ...`
+| `50` | **Walking Fire** | 0 | 0 | `this.magDmg(105)` | Deals fire damages in a medium path. + 
+_Note_: `<letbs> scope: circle(4) scope_options:through_obstacles aoe: path sequence: ...`
+| `51` | **Ice Wall** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.15` | Summon a wall of ice. + 
+_Note_: `<letbs> scope: line(3) scope_options: need_free_cell aoe: custom(ice_wall) ao...`
+| `52` | **Ice Prison** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.15` | Summon a prison of ice. + 
+_Note_: `<letbs> scope: circle(4) aoe: custom(ice_prison) aoe_options: need_free_cell ...`
+| `53` | **Whitch's Escape** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.20` | Teleports then casts Spark at the old location. The scope is based on current move points. + 
+_Note_: `<letbs> scope: circle(e.getMovePoints()+1) scope_options: need_free_cell sequ...`
+| `54` | **Fire Chickens** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.15` | Summon explosive chickens + 
+_Note_: `<letbs> scope: circle(2) aoe: circle(1) scope_options: need_free_cell aoe_opt...`
+| `55` | **Water (charged)** | 0 | 0 | `this.magDmg(135)` |  + 
+_Note_: `<letbs> scope: circle(4) sequence: map_skill charge: 2, 261 </letbs> <Learn R...`
+| `56` | **Mega Sparkle** | 0 | 0 | `this.magDmg(60)` | Deals thunder damage on 3 different areas. + 
+_Note_: `<letbs> scope: circle(4) aoe: circle(1) sequence: mega_spark 3 selections: di...`
+| `57` | **Multi Fire** | 0 | 0 | `this.magDmg(105)` | Invoke 3 columns of fire. + 
+_Note_: `<letbs> scope_select: enemies scope: circle(3); 2 selections: append; Select ...`
+|===
+
+
+== Priest Holy Arts & Turn Manipulation
+
+[cols="^1,2,^1,^1,3,4", options="header"]
+|===
+| ID | Skill Name | MP | TP | Damage Formula | Description & Tactical Note
+| `72` | **Heal** | 0 | 0 | `50 + a.mat` | Heals a single target and ends the turn. + 
+_Note_: `<letbs> scope: circle(4,2) sequence: heal pass_on_use scope_options: include_...`
+| `73` | **Teleportation** | 0 | 0 | `0` | Teleports the caster in a medium range. + 
+_Note_: `<letbs> scope: circle(4) sequence: teleportation scope_options:through_obstac...`
+| `74` | **Salvation** | 0 | 0 | `25 + a.mat` | Attracts allies and heals them in all directions. + 
+_Note_: `<letbs> scope: circle(0) aoe: line(3) sequence: salvation scope_options: incl...`
+| `75` | **Teleportation II** | 0 | 0 | `0` | Teleports the battler in front of the caster in  a medium range. + 
+_Note_: `<letbs> scope: circle(3) sequence: teleportation_sup scope_options: through_o...`
+| `76` | **Explosive Mark** | 0 | 0 | `None` | Lays a mark on the ground that deals fire damages to enemies on it. + 
+_Note_: `<letbs> scope: line(5) aoe: square(1) sequence: explosive_mark </letbs> <Lear...`
+| `77` | **Explosive Mark (dmg)** | 0 | 0 | `this.magDmg(50)` | 
+| `78` | **Light Steps** | 0 | 0 | `50 + a.mat` | Increases target's move points for 2 turns. + 
+_Note_: `<letbs> scope_options: include_center </letbs> <Learn Require Level: 5> <letb...`
+| `79` | **Ghost Arrow** | 0 | 0 | `this.magDmg(75)` | Deals light damages to a single target in a medium range, ignoring any obstacle, and remove one move point. + 
+_Note_: `<letbs> scope: circle(5,2) sequence: ghost_arrow scope_options: through_obsta...`
+| `80` | **Magic Trap** | 0 | 0 | `None` | Lays a magic trap who deals light damage while blinding the target with 60% rate. + 
+_Note_: `<letbs> scope: circle(5) scope_options:through_obstacles, need_free_cell aoe:...`
+| `81` | **Magic Trap (dmg)** | 0 | 0 | `this.magDmg(160)` | 
+| `82` | **Fire Arrows** | 0 | 0 | `this.magDmg(105)` | Launch a fire arrow for every enemy in the scope. + 
+_Note_: `<letbs> scope: line(2) aoe: custom(fire_arrows) aoe_options: line_of_sight se...`
+| `83` | **Wind Spirit** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.15` | Summon a wind spirit that help the party with the power of wind. + 
+_Note_: `<letbs> scope: circle(2) scope_options: need_free_cell sequence: summon(wind_...`
+| `84` | **Summon Pixie** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.15` | Summon a pixie that can heal the party. + 
+_Note_: `<letbs> scope: circle(1) scope_options: need_free_cell </letbs> <Learn Requir...`
+| `85` | **Shamanism** | 0 | 0 | `a.mhp * 0.1` | All allies recover 10% of their MHP for each dead battler in the area. + 
+_Note_: `<letbs> sequence: shamanism scope: circle(3) aoe: circle(2) scope_options: in...`
+| `86` | **Extra Turn** | 0 | 0 | `50 + a.mat` | Add an extra turn. + 
+_Note_: `<letbs> scope: circle(2) scope_options: include_center extra_turn: 100% </let...`
+| `87` | **Accelerate** | 0 | 0 | `50 + a.mat` | Accelerate the turn order of the target. + 
+_Note_: `<letbs> scope: circle(2) scope_options: include_center accelerate_turn: 100% ...`
+| `88` | **Decelerate** | 0 | 0 | `50 + a.mat` | Accelerate the turn order of the target. + 
+_Note_: `<letbs> scope: circle(2) scope_options: include_center decelerate_turn: 100% ...`
+| `89` | **Emergency Turn** | 0 | 0 | `50 + a.mat` | Give an instant turn to the target. + 
+_Note_: `<letbs> scope: circle(3) pass_on_use scope_options: include_center instant_tu...`
+| `90` | **Ally Teleport.** | 0 | 0 | `0` | Teleports an ally in a medium range. + 
+_Note_: `<letbs> scope_select: allies scope: circle(4) sequence: ally_teleport scope_o...`
+| `91` | **Ally Teleport. (Scope)** | 0 | 0 | `0` |  + 
+_Note_: `<letbs> scope: circle(4) scope_options:through_obstacles, need_free_cell </le...`
+| `92` | **Mana Ball** | 0 | 0 | `this.magDmg(80)` | Launch a bouncing mana ball + 
+_Note_: `<letbs> scope: circle(3) sequence: mana_ball </letbs> <Learn Require Level: 5...`
+|===
+
+
+== Summoner Totems & Rites
+
+[cols="^1,2,^1,^1,3,4", options="header"]
+|===
+| ID | Skill Name | MP | TP | Damage Formula | Description & Tactical Note
+| `102` | **Sentinel Totem** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.15` | Summon a totem that strike enemies as soon as they enter the range of action. + 
+_Note_: `<letbs> scope: circle(3) scope_options: need_free_cell sequence: summon(senti...`
+| `103` | **Transform.** | 0 | 0 | `50 + a.mat` |  + 
+_Note_: `<letbs> scope: circle(0) scope_options: include_center </letbs> <letbs_AI> ty...`
+| `104` | **Devour** | 0 | 0 | `this.magDmg(105)` |  + 
+_Note_: `<letbs> scope: circle(1) fusion_effect </letbs> <letbs_AI> type: offense </le...`
+|===
+
+
+== Summon Beast Techniques
+
+[cols="^1,2,^1,^1,3,4", options="header"]
+|===
+| ID | Skill Name | MP | TP | Damage Formula | Description & Tactical Note
+| `132` | **Air Compression** | 0 | 0 | `this.magDmg(135)` | Deals wind damages in a medium range with 15% of chance to blind the target. + 
+_Note_: `<letbs> scope: circle(4) </letbs> <letbs_AI> type: offense </letbs_AI> <Learn...`
+| `133` | **Great Wind** | 0 | 0 | `this.magDmg(140)` | Deals wind damages and push the target. The collision damage of this skill is greatly increased. + 
+_Note_: `<letbs> scope: line(4) sequence: great_wind collision_formula: 2 * b.mhp * 0....`
+| `134` | **Transposition** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.35` | Switch place with a target in a medium range. + 
+_Note_: `<letbs> scope: circle(6) sequence: transposition scope_options:through_obstac...`
+| `135` | **Healing Wave** | 0 | 0 | `10 + a.mat` | Heals in small area + 
+_Note_: `<letbs> scope: circle(3) aoe: circle(1) scope_options: include_center sequenc...`
+| `136` | **Bomb** | 4 | 0 | `a.mhp` |  + 
+_Note_: `<letbs> scope: circle(1) </letbs> <letbs_AI> type: offense </letbs_AI> <letbs...`
+| `137` | **Fire Arrow** | 0 | 0 | `this.phyDmg(100) + this.magDmg(100)` | Launch a fire arrow. + 
+_Note_: `<letbs> scope: circle(3) sequence: projectile(fire_arrow) </letbs> <Learn Req...`
+|===
+
+
+== Enemy Bestial & Void Techniques
+
+[cols="^1,2,^1,^1,3,4", options="header"]
+|===
+| ID | Skill Name | MP | TP | Damage Formula | Description & Tactical Note
+| `162` | **Poisonous Bite** | 3 | 0 | `(a.atk * 4 - b.def * 2)*0.8` |  + 
+_Note_: `<letbs> scope: circle(1) </letbs> <letbs_AI> type: offense </letbs_AI>`
+| `163` | **Fire Surge** | 4 | 0 | `this.magDmg(105)` | Deals fire damages to a single target in a medium range. + 
+_Note_: `<letbs> scope: circle(4) </letbs> <letbs_AI> type: offense </letbs_AI>`
+| `164` | **Summon Pyra** | 0 | 0 | `(a.mat * 2 - b.mdf * 2)*1.15` |  + 
+_Note_: `<letbs> scope: circle(1) scope_options: need_free_cell sequence: summon_pyra ...`
+| `165` | **Evil Healing** | 0 | 0 | `15 + a.mat` |  + 
+_Note_: `<letbs> scope: circle(4) scope_options: include_center </letbs> <letbs_AI> ty...`
+| `166` | **Mago's Mark** | 0 | 0 | `None` |  + 
+_Note_: `<letbs> scope: line(5) aoe: square(1) sequence: mago_mark </letbs> <Cooldown:...`
+| `167` | **Evil Protection** | 0 | 0 | `15 + a.mat` |  + 
+_Note_: `<letbs> scope: circle(4) scope_options: include_center </letbs> <letbs_AI> ty...`
+| `168` | **Rabbit's Jump** | 0 | 0 | `(a.atk * 4 - b.def * 2) * 1.10 + a.mat` |  + 
+_Note_: `<letbs> scope: line(3) aoe: circle(1) scope_options: need_free_cell sequence:...`
+| `169` | **Dagger Throw** | 3 | 0 | `this.phyDmg(115)` | Throw a little but sharp dagger toward the target. + 
+_Note_: `<letbs> scope: circle(4,2) sequence: projectile(dagger) </letbs>  <letbs_AI> ...`
+|===
