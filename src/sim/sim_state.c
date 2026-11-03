@@ -43,6 +43,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 
 static const char *const s_state_invariants[4] = {
     "Shield of Lux resonance bounded: [0, MAX_RESONANCE]",
@@ -92,6 +93,93 @@ const char *sim_state_get_sway_desc(int sway)
 }
 
 /**
+ * Configures the protagonist according to canonical identity or custom Observer creation.
+ */
+void sim_state_configure_protagonist(player_state_t *state,
+                                     protagonist_id_t protagonist_id,
+                                     const char *custom_name,
+                                     sim_gender_t gender,
+                                     class_id_t starting_class)
+{
+    if (state == NULL) return;
+
+    state->protagonist = protagonist_id;
+    state->gender = gender;
+
+    switch (protagonist_id) {
+        case PROTAGONIST_ELIJAH:
+            str_safe_copy(state->name, (custom_name != NULL && custom_name[0] != '\0')
+                                       ? custom_name : "Elijah", sizeof(state->name));
+            str_safe_copy(state->title, "The Steadfast Vanguard", sizeof(state->title));
+            state->former_tutelage[0] = '\0';
+            state->gender = GENDER_MALE;
+            state->active_class = CLASS_WARRIOR;
+            state->relic = RELIC_LUX;
+            state->movement_points = 4;
+            state->hp = INITIAL_MAX_HP;
+            state->max_hp = INITIAL_MAX_HP;
+            state->atk = INITIAL_BASE_ATK;
+            state->def = INITIAL_BASE_DEF;
+            state->mat = INITIAL_BASE_MAT;
+            state->mdf = INITIAL_BASE_MDF;
+            state->shield_power = INITIAL_SHIELD_POWER;
+            state->sword_edge = INITIAL_SWORD_EDGE;
+            state->moral_sway = INITIAL_MORAL_SWAY;
+            break;
+
+        case PROTAGONIST_KATRINA:
+            str_safe_copy(state->name, (custom_name != NULL && custom_name[0] != '\0')
+                                       ? custom_name : "Katrina", sizeof(state->name));
+            str_safe_copy(state->title, "The Outrider Blade", sizeof(state->title));
+            str_safe_copy(state->former_tutelage, "Court Mage of House Jaren", sizeof(state->former_tutelage));
+            state->gender = GENDER_FEMALE;
+            state->active_class = CLASS_ROGUE; // Rebelled against noble Mage tutelage!
+            state->relic = RELIC_TENEBRIS;
+            state->movement_points = 5;
+            state->hp = INITIAL_MAX_HP;
+            state->max_hp = INITIAL_MAX_HP;
+            state->atk = INITIAL_BASE_ATK;
+            state->def = INITIAL_BASE_DEF;
+            state->mat = INITIAL_BASE_MAT;
+            state->mdf = INITIAL_BASE_MDF;
+            state->shield_power = INITIAL_SHIELD_POWER;
+            state->sword_edge = INITIAL_SWORD_EDGE;
+            state->moral_sway = INITIAL_MORAL_SWAY;
+            break;
+
+        case PROTAGONIST_OBSERVER:
+        default:
+            str_safe_copy(state->name, (custom_name != NULL && custom_name[0] != '\0')
+                                       ? custom_name : "<Observer>", sizeof(state->name));
+            str_safe_copy(state->title, "The Awakening Bearer", sizeof(state->title));
+            state->former_tutelage[0] = '\0';
+            state->gender = (gender != GENDER_UNSPECIFIED) ? gender : GENDER_NON_BINARY;
+            state->relic = RELIC_EQUILIBRIUM;
+            state->hp = INITIAL_MAX_HP;
+            state->max_hp = INITIAL_MAX_HP;
+            state->atk = INITIAL_BASE_ATK;
+            state->def = INITIAL_BASE_DEF;
+            state->mat = INITIAL_BASE_MAT;
+            state->mdf = INITIAL_BASE_MDF;
+            state->shield_power = INITIAL_SHIELD_POWER;
+            state->sword_edge = INITIAL_SWORD_EDGE;
+            state->moral_sway = INITIAL_MORAL_SWAY;
+
+            if (starting_class == CLASS_MAGE) {
+                state->active_class = CLASS_MAGE;
+                state->movement_points = 4;
+            } else if (starting_class == CLASS_ROGUE) {
+                state->active_class = CLASS_ROGUE;
+                state->movement_points = 5;
+            } else {
+                state->active_class = CLASS_WARRIOR;
+                state->movement_points = 4;
+            }
+            break;
+    }
+}
+
+/**
  * Configures the protagonist's identity name.
  */
 void sim_state_set_name(player_state_t *state, const char *new_name)
@@ -99,18 +187,30 @@ void sim_state_set_name(player_state_t *state, const char *new_name)
     if (state == NULL) return;
 
     if (new_name != NULL && new_name[0] != '\0') {
-        str_safe_copy(state->name, new_name, sizeof(state->name));
+        if (strcasecmp(new_name, "Katrina") == 0) {
+            sim_state_configure_protagonist(state, PROTAGONIST_KATRINA, "Katrina",
+                                            GENDER_FEMALE, CLASS_ROGUE);
+        } else if (strcasecmp(new_name, "Elijah") == 0) {
+            sim_state_configure_protagonist(state, PROTAGONIST_ELIJAH, "Elijah",
+                                            GENDER_MALE, CLASS_WARRIOR);
+        } else {
+            sim_state_configure_protagonist(state, PROTAGONIST_OBSERVER, new_name,
+                                            GENDER_NON_BINARY, CLASS_WARRIOR);
+        }
         str_trim_inplace(state->name);
     } else {
-        str_safe_copy(state->name, DEFAULT_PROTAGONIST_NAME, sizeof(state->name));
+        sim_state_configure_protagonist(state, PROTAGONIST_ELIJAH, DEFAULT_PROTAGONIST_NAME,
+                                        GENDER_MALE, CLASS_WARRIOR);
     }
 
     LOG_INFO(
         LOG_CAT_LOG,
         "GameSim",
         log_percent_to_grade(state->moral_sway),
-        "Protagonist designated as: %s",
-        state->name
+        "Protagonist designated as: %s (Class: %d, Relic: %d)",
+        state->name,
+        state->active_class,
+        state->relic
     );
 }
 
@@ -123,22 +223,14 @@ void sim_state_init(player_state_t *state)
         return;
     }
 
-    str_safe_copy(state->name, DEFAULT_PROTAGONIST_NAME, sizeof(state->name));
-    state->hp = INITIAL_MAX_HP;
-    state->max_hp = INITIAL_MAX_HP;
+    /* Configure starting protagonist: Elijah Ro-enheart (Warrior / Shield of Lux) */
+    sim_state_configure_protagonist(state, PROTAGONIST_ELIJAH, DEFAULT_PROTAGONIST_NAME,
+                                    GENDER_MALE, CLASS_WARRIOR);
+
     state->mp = INITIAL_MAX_MP;
     state->max_mp = INITIAL_MAX_MP;
     state->tp = INITIAL_MAX_TP;
     state->max_tp = INITIAL_MAX_TP;
-
-    state->atk = INITIAL_BASE_ATK;
-    state->def = INITIAL_BASE_DEF;
-    state->mat = INITIAL_BASE_MAT;
-    state->mdf = INITIAL_BASE_MDF;
-
-    state->shield_power = INITIAL_SHIELD_POWER;
-    state->sword_edge = INITIAL_SWORD_EDGE;
-    state->moral_sway = INITIAL_MORAL_SWAY;
 
     state->lux_barrio_turns = 0;
     state->charm_turns = 0;

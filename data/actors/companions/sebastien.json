@@ -1,0 +1,37 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/companions/sebastien.json",
+    "id": "data.actors.companion.sebastien",
+    "actor_id": 4,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Actor 4: Sebastien"
+  },
+  "actor": {
+    "id": 4,
+    "name": "Sebastien",
+    "gender": "male",
+    "title": "The Infiltrator Outlaw",
+    "class_id": 3,
+    "class_key": "rogue",
+    "job_key": "infiltrator",
+    "base_level": 4,
+    "base_stats": {
+      "hp": 380,
+      "max_hp": 380,
+      "rp": 0,
+      "max_rp": 0,
+      "atk": 18,
+      "def": 12,
+      "mat": 6,
+      "mdf": 10,
+      "agi": 36,
+      "luk": 45
+    },
+    "movement_points": 5,
+    "moral_sway": -5,
+    "class_actions": ["strike", "flank", "sprint", "disarm"],
+    "tactical_role": "High-mobility scout and flanker bypassing enemy ZOC."
+  }
+}

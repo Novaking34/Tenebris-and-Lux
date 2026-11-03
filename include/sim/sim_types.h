@@ -96,10 +96,76 @@ typedef enum {
 } special_skill_t;
 
 /**
+ * Character biological / cosmic gender identity.
+ */
+typedef enum {
+    GENDER_UNSPECIFIED = 0,
+    GENDER_MALE,
+    GENDER_FEMALE,
+    GENDER_NON_BINARY
+} sim_gender_t;
+
+/**
+ * Class progression tier taxonomy.
+ */
+typedef enum {
+    CLASS_TIER_BASIC = 1,  /**< Warrior, Mage, Rogue. */
+    CLASS_TIER_UPGRADED,   /**< Priest (First unlocked upgrade). */
+    CLASS_TIER_ADVANCED,   /**< Hero, Summoner. */
+    CLASS_TIER_NPC,        /**< Royal Guard. */
+    CLASS_TIER_SUMMON      /**< Wind Spirit, Pixie, Fire Chicken. */
+} class_tier_t;
+
+/**
+ * Combat Class identifiers mapping directly to data/classes/ catalog.
+ */
+typedef enum {
+    CLASS_NONE = 0,
+    CLASS_WARRIOR = 1,       /**< Basic Tier: Melee frontline, HP/DEF. */
+    CLASS_MAGE    = 2,       /**< Basic Tier: Arcane/planar channeling, MAT. */
+    CLASS_ROGUE   = 3,       /**< Basic Tier: Speed, flanking, 5 MP. */
+    CLASS_PRIEST  = 4,       /**< Upgraded Tier: First unlock; healing/wards. */
+    CLASS_HERO    = 5,       /**< Advanced Tier: Sovereign dual harmonics. */
+    CLASS_SUMMONER = 6,      /**< Advanced Tier: Field totems & spirits. */
+    CLASS_GUARD   = 11,      /**< NPC Tier: Sacyran military guards. */
+    CLASS_WIND_SPIRIT = 12,  /**< Summon Tier: Aerial kinetic displacement. */
+    CLASS_PIXIE   = 13,      /**< Summon Tier: Regenerative healing pulse. */
+    CLASS_FIRE_CHICKEN = 14, /**< Summon Tier: Explosive tactical minion. */
+    CLASS_COUNT
+} class_id_t;
+
+/**
+ * Canonical Protagonist perspective identity.
+ */
+typedef enum {
+    PROTAGONIST_ELIJAH = 1,  /**< Elijah Ro-enheart (Warrior / Shield of Lux). */
+    PROTAGONIST_KATRINA = 2, /**< Lady Katrina Jaren (Rogue / ex-Mage / Sword of Tenebris). */
+    PROTAGONIST_OBSERVER = 3 /**< <Observer> Custom Bearer (Custom Name/Gender/Class). */
+} protagonist_id_t;
+
+/**
+ * Cosmic Relic Attunement bindings.
+ */
+typedef enum {
+    RELIC_NONE = 0,
+    RELIC_LUX,               /**< Shield of Lux (Barrier, Defense). */
+    RELIC_TENEBRIS,          /**< Sword of Tenebris (Severance, Edge). */
+    RELIC_EQUILIBRIUM        /**< Dual Relic Harmonics. */
+} relic_affinity_t;
+
+/**
  * Encapsulated player state representing chosen hero and relic balance.
  */
 typedef struct {
-    char name[32];          /**< Protagonist name (canonical: Elijah/Katrina). */
+    char name[32];          /**< Protagonist name (canonical: Elijah/Katrina/Custom). */
+    char title[32];         /**< Heroic narrative title (e.g. "The Steadfast Vanguard"). */
+    char former_tutelage[32]; /**< Background origin (e.g. "Court Mage" for Katrina). */
+    sim_gender_t gender;    /**< Gender identity. */
+    protagonist_id_t protagonist; /**< Active protagonist identity. */
+    class_id_t active_class; /**< Active primary combat class. */
+    relic_affinity_t relic; /**< Bound cosmic relic. */
+    int movement_points;    /**< Tactical grid movement points (MP). */
+
     int hp;                 /**< Current health points. */
     int max_hp;             /**< Maximum health pool. */
     int mp;                 /**< Mana points for magic abilities. */

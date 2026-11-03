@@ -1,0 +1,29 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/classes/basic/mage.json",
+    "id": "data.classes.basic.mage",
+    "class_id": 2,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Class 2: Mage"
+  },
+  "class": {
+    "id": 2,
+    "key": "mage",
+    "name": "Mage",
+    "tier": "basic",
+    "description": "Scholarly practitioner channeling elemental forces and planar energy across wide tactical radiuses.",
+    "movement_points": 4,
+    "equippable_weapons": ["staff", "wand", "grimoire"],
+    "innate_actions": ["focus", "channel", "ward", "ranged_burst"],
+    "stat_milestones": {
+      "lv1":  { "mhp": 60,  "mmp": 90,   "atk": 2,  "def": 7,  "mat": 13,  "mdf": 8,   "agi": 26, "luk": 32 },
+      "lv5":  { "mhp": 83,  "mmp": 130,  "atk": 4,  "def": 10, "mat": 18,  "mdf": 12,  "agi": 26, "luk": 42 },
+      "lv10": { "mhp": 110, "mmp": 180,  "atk": 6,  "def": 13, "mat": 24,  "mdf": 17,  "agi": 26, "luk": 55 },
+      "lv20": { "mhp": 165, "mmp": 280,  "atk": 10, "def": 20, "mat": 36,  "mdf": 26,  "agi": 26, "luk": 80 },
+      "lv50": { "mhp": 330, "mmp": 580,  "atk": 21, "def": 39, "mat": 72,  "mdf": 54,  "agi": 26, "luk": 155 },
+      "lv99": { "mhp": 600, "mmp": 1070, "atk": 40, "def": 70, "mat": 130, "mdf": 100, "agi": 26, "luk": 277 }
+    }
+  }
+}

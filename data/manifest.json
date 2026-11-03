@@ -65,6 +65,22 @@
       "category": "core_engine"
     },
     {
+      "id": "classes",
+      "title": "Combat Classes & Growth Subsystem",
+      "description": "Basic classes (Warrior, Mage, Rogue), first upgrade Priest, advanced classes, NPC guards, and summons.",
+      "manifest_path": "classes/manifest.json",
+      "status": "active",
+      "category": "simulation"
+    },
+    {
+      "id": "actors",
+      "title": "Protagonists, Companions & Adversaries",
+      "description": "Elijah, Katrina (ex-Mage Rogue), Observer custom bearer, Sebastien, Angela, and bestiary.",
+      "manifest_path": "actors/manifest.json",
+      "status": "active",
+      "category": "narrative"
+    },
+    {
       "id": "combat",
       "title": "Tactical Combat & Stance Mechanics",
       "description": "Grid formations, action point economy, and relic stance transitions.",
@@ -81,14 +97,6 @@
       "category": "simulation"
     },
     {
-      "id": "actors",
-      "title": "Protagonists, Court Nobles & Adversaries",
-      "description": "Elijah, Katrina, Royal Guard, and Abyssal Vanguard entities.",
-      "manifest_path": "actors/manifest.json",
-      "status": "planned",
-      "category": "narrative"
-    },
-    {
       "id": "world",
       "title": "Kingdom of Sacyra & Dreamscape Topology",
       "description": "Regional node graph, travel vigor consumption, and realm threat tiers.",
@@ -98,8 +106,8 @@
     }
   ],
   "_audit": {
-    "manifest_count": 9,
-    "active_subsystems": 5,
+    "manifest_count": 10,
+    "active_subsystems": 7,
     "integrity_check": "All paths relative to data root"
   },
   "_navigation": {

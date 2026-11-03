@@ -1,0 +1,30 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/classes/upgraded/priest.json",
+    "id": "data.classes.upgraded.priest",
+    "class_id": 4,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Class 3: Priest"
+  },
+  "class": {
+    "id": 4,
+    "key": "priest",
+    "name": "Priest",
+    "tier": "upgraded",
+    "description": "First upgraded class type unlocked during the journey. Specializes in restorative arts, status purification, and protective metaphysical shielding.",
+    "unlock_condition": "First class promotion milestone or clearing the Dreamscape trial.",
+    "movement_points": 4,
+    "equippable_weapons": ["mace", "staff", "relic_tome"],
+    "innate_actions": ["heal", "purify", "barrier_brace", "salvation"],
+    "stat_milestones": {
+      "lv1":  { "mhp": 65,  "mmp": 60,  "atk": 6,   "def": 8,   "mat": 10,  "mdf": 7,   "agi": 32, "luk": 32 },
+      "lv5":  { "mhp": 95,  "mmp": 87,  "atk": 10,  "def": 13,  "mat": 15,  "mdf": 11,  "agi": 32, "luk": 42 },
+      "lv10": { "mhp": 133, "mmp": 119, "atk": 15,  "def": 18,  "mat": 20,  "mdf": 16,  "agi": 32, "luk": 55 },
+      "lv20": { "mhp": 208, "mmp": 185, "atk": 25,  "def": 28,  "mat": 31,  "mdf": 26,  "agi": 32, "luk": 80 },
+      "lv50": { "mhp": 433, "mmp": 380, "atk": 53,  "def": 59,  "mat": 63,  "mdf": 54,  "agi": 32, "luk": 155 },
+      "lv99": { "mhp": 800, "mmp": 700, "atk": 100, "def": 110, "mat": 115, "mdf": 100, "agi": 32, "luk": 277 }
+    }
+  }
+}

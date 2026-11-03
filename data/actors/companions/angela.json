@@ -1,0 +1,37 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/companions/angela.json",
+    "id": "data.actors.companion.angela",
+    "actor_id": 5,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Actor 5: Angela"
+  },
+  "actor": {
+    "id": 5,
+    "name": "Angela",
+    "gender": "female",
+    "title": "The Evoker Elementalist",
+    "class_id": 2,
+    "class_key": "mage",
+    "job_key": "elementalist",
+    "base_level": 4,
+    "base_stats": {
+      "hp": 280,
+      "max_hp": 280,
+      "rp": 0,
+      "max_rp": 0,
+      "atk": 5,
+      "def": 9,
+      "mat": 22,
+      "mdf": 18,
+      "agi": 24,
+      "luk": 35
+    },
+    "movement_points": 4,
+    "moral_sway": 5,
+    "class_actions": ["focus", "channel", "ward", "ranged_burst"],
+    "tactical_role": "Ranged elementalist providing grid zone denial."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/classes/npc/guard.json",
+    "id": "data.classes.npc.guard",
+    "class_id": 11,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Class 11: Guard"
+  },
+  "class": {
+    "id": 11,
+    "key": "guard",
+    "name": "Guard",
+    "tier": "npc",
+    "description": "Standardized military discipline of the Kingdom of Sacyra. Deployed in provincial garrisons and frontier patrols with disciplined formation holding.",
+    "movement_points": 4,
+    "equippable_weapons": ["halberd", "broadsword", "shield"],
+    "innate_actions": ["strike", "heavy_hit", "guard"],
+    "stat_milestones": {
+      "lv1":  { "mhp": 100,  "mmp": 30,  "atk": 12,  "def": 8,   "mat": 3,  "mdf": 8,  "agi": 27, "luk": 32 },
+      "lv5":  { "mhp": 145,  "mmp": 46,  "atk": 17,  "def": 12,  "mat": 5,  "mdf": 11, "agi": 27, "luk": 42 },
+      "lv10": { "mhp": 202,  "mmp": 64,  "atk": 23,  "def": 17,  "mat": 8,  "mdf": 15, "agi": 27, "luk": 55 },
+      "lv20": { "mhp": 314,  "mmp": 102, "atk": 35,  "def": 26,  "mat": 13, "mdf": 22, "agi": 27, "luk": 80 },
+      "lv50": { "mhp": 650,  "mmp": 215, "atk": 71,  "def": 54,  "mat": 27, "mdf": 44, "agi": 27, "luk": 155 },
+      "lv99": { "mhp": 1200, "mmp": 400, "atk": 130, "def": 100, "mat": 50, "mdf": 80, "agi": 27, "luk": 277 }
+    }
+  }
+}

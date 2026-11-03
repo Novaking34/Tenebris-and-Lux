@@ -1,0 +1,29 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/classes/summon/pixie.json",
+    "id": "data.classes.summon.pixie",
+    "class_id": 13,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Class 13: Pixie"
+  },
+  "class": {
+    "id": 13,
+    "key": "pixie",
+    "name": "Pixie",
+    "tier": "summon",
+    "description": "Luminescent nature spirit providing turn-based regenerative healing waves and status cleansing to allied party members.",
+    "movement_points": 5,
+    "equippable_weapons": [],
+    "innate_actions": ["healing_wave"],
+    "stat_milestones": {
+      "lv1":  { "mhp": 1, "mmp": 50,  "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv5":  { "mhp": 1, "mmp": 79,  "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv10": { "mhp": 1, "mmp": 115, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv20": { "mhp": 1, "mmp": 186, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv50": { "mhp": 1, "mmp": 400, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv99": { "mhp": 1, "mmp": 750, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 }
+    }
+  }
+}

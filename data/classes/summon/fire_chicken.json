@@ -1,0 +1,29 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/classes/summon/fire_chicken.json",
+    "id": "data.classes.summon.fire_chicken",
+    "class_id": 14,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Class 14: Fire Chicken"
+  },
+  "class": {
+    "id": 14,
+    "key": "fire_chicken",
+    "name": "Fire Chicken",
+    "tier": "summon",
+    "description": "Volatile pyrotechnic decoy summoned to rush hostile clusters and detonate on impact, creating area-of-effect collateral damage.",
+    "movement_points": 4,
+    "equippable_weapons": [],
+    "innate_actions": ["bomb"],
+    "stat_milestones": {
+      "lv1":  { "mhp": 1, "mmp": 1, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv5":  { "mhp": 1, "mmp": 1, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv10": { "mhp": 1, "mmp": 1, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv20": { "mhp": 1, "mmp": 1, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv50": { "mhp": 1, "mmp": 1, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 },
+      "lv99": { "mhp": 1, "mmp": 1, "atk": 1, "def": 1, "mat": 1, "mdf": 1, "agi": 1, "luk": 1 }
+    }
+  }
+}

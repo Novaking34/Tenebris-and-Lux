@@ -55,6 +55,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 static const char *const s_dispatcher_invariants[4] = {
     "Pure stack buffer tokenization with zero heap allocations",
@@ -110,12 +111,46 @@ void dispatcher_print_intro(void)
     printf("Type 'help' for tactical commands, or 'quit' to yield.\n\n");
 }
 
+static const char *dispatcher_get_class_name(class_id_t cls)
+{
+    switch (cls) {
+        case CLASS_WARRIOR: return "Warrior [Basic Tier - Martial Frontline]";
+        case CLASS_MAGE:    return "Mage [Basic Tier - Planar Channeling]";
+        case CLASS_ROGUE:   return "Rogue [Basic Tier - Mobility & Flanking]";
+        case CLASS_PRIEST:  return "Priest [Upgraded Tier 1 - Warding & Restoration]";
+        case CLASS_HERO:    return "Hero [Advanced Tier - Sovereign Harmony]";
+        case CLASS_SUMMONER:return "Summoner [Advanced Tier - Field Totems]";
+        case CLASS_GUARD:   return "Guard [Allied NPC Tier]";
+        default:            return "Warrior [Basic Tier]";
+    }
+}
+
+static const char *dispatcher_get_relic_name(relic_affinity_t relic)
+{
+    switch (relic) {
+        case RELIC_LUX:         return "Shield of Lux (Barrier Protection & Deflection)";
+        case RELIC_TENEBRIS:    return "Sword of Tenebris (Abyssal Edge & Severance)";
+        case RELIC_EQUILIBRIUM: return "Twin Relics Harmonized (Equilibrium Balance)";
+        default:                return "Unbound / Free Bearer";
+    }
+}
+
 void dispatcher_print_status(const player_state_t *state)
 {
     if (state == NULL) return;
 
     printf("\n--- Bearer Covenant & Relic Status ---\n");
-    printf("Bearer:        %s\n", state->name);
+    if (state->title[0] != '\0') {
+        printf("Bearer:        %s (%s)\n", state->name, state->title);
+    } else {
+        printf("Bearer:        %s\n", state->name);
+    }
+    printf("Combat Class:  %s\n", dispatcher_get_class_name(state->active_class));
+    if (state->former_tutelage[0] != '\0') {
+        printf("Background:    Former %s (Chose path of Rogue)\n", state->former_tutelage);
+    }
+    printf("Bound Relic:   %s\n", dispatcher_get_relic_name(state->relic));
+    printf("Grid Movement: %d tiles (MP)\n", (state->movement_points > 0) ? state->movement_points : 4);
     printf("Vitals:        HP: %d/%d | MP: %d/%d | TP: %d/%d\n",
            state->hp, state->max_hp, state->mp, state->max_mp,
            state->tp, state->max_tp);
@@ -330,6 +365,43 @@ void dispatcher_process_command(player_state_t *state, const char *raw_input,
         uint64_t snap_id = game_record_debug_snapshot(state, "manual_snap", arg);
         printf("Recorded manual snapshot #%lu at Turn %d.\n", (unsigned long)snap_id, state->turns_taken);
         if (out_msg) snprintf(out_msg, msg_len, "Snapshot #%lu recorded.", (unsigned long)snap_id);
+        return;
+    }
+
+    /* Class Selection & Promotion Verb: class <warrior|mage|rogue|priest> */
+    if (strcmp(command, "class") == 0) {
+        if (arg == NULL || strlen(arg) == 0) {
+            printf("Current Combat Class: %s\n", dispatcher_get_class_name(state->active_class));
+            printf("Available Basic Classes: warrior, mage, rogue\n");
+            printf("First Upgraded Class:   priest (Unlocked Upgrade)\n");
+            if (out_msg) snprintf(out_msg, msg_len, "Current class: %s", dispatcher_get_class_name(state->active_class));
+            return;
+        }
+
+        if (strcasecmp(arg, "warrior") == 0) {
+            state->active_class = CLASS_WARRIOR;
+            state->movement_points = 4;
+            printf("Switched Combat Class to: Warrior [Basic Tier - Martial Frontline]\n");
+            if (out_msg) snprintf(out_msg, msg_len, "Class shifted to Warrior.");
+        } else if (strcasecmp(arg, "mage") == 0) {
+            state->active_class = CLASS_MAGE;
+            state->movement_points = 4;
+            printf("Switched Combat Class to: Mage [Basic Tier - Planar Channeling]\n");
+            if (out_msg) snprintf(out_msg, msg_len, "Class shifted to Mage.");
+        } else if (strcasecmp(arg, "rogue") == 0 || strcasecmp(arg, "thief") == 0) {
+            state->active_class = CLASS_ROGUE;
+            state->movement_points = 5;
+            printf("Switched Combat Class to: Rogue [Basic Tier - Mobility & Flanking]\n");
+            if (out_msg) snprintf(out_msg, msg_len, "Class shifted to Rogue.");
+        } else if (strcasecmp(arg, "priest") == 0) {
+            state->active_class = CLASS_PRIEST;
+            state->movement_points = 4;
+            printf("Promoted Combat Class to: Priest [Upgraded Tier 1 - Warding & Restoration]\n");
+            if (out_msg) snprintf(out_msg, msg_len, "Class promoted to Priest.");
+        } else {
+            printf("Unrecognized class '%s'. Available: warrior, mage, rogue, priest\n", arg);
+            if (out_msg) snprintf(out_msg, msg_len, "Unknown class '%s'.", arg);
+        }
         return;
     }
 
