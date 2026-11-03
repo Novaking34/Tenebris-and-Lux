@@ -1,0 +1,94 @@
+{
+  "subsystem": "sim.items.consumables",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Consumables, curatives, and field draughts for Tenebris and Lux",
+  "count": 6,
+  "items": [
+    {
+      "id": 1,
+      "code": "SACYRAN_HERB",
+      "name": "Sacyran Herb",
+      "type": "consumable",
+      "consumable_type": "restorative",
+      "max_stack": 99,
+      "description": "A fragrant wild medicinal leaf gathered from the Dio foothills. Restores 30 Vitality (HP).",
+      "effects": {
+        "hp_restore": 30,
+        "resonance_restore": 0,
+        "cures_states": []
+      }
+    },
+    {
+      "id": 2,
+      "code": "PHIAL_OF_LIGHT",
+      "name": "Phial of Light",
+      "type": "consumable",
+      "consumable_type": "restorative",
+      "max_stack": 99,
+      "description": "A concentrated vial of luminous mineral water. Restores 25 Shield Resonance.",
+      "effects": {
+        "hp_restore": 0,
+        "resonance_restore": 25,
+        "cures_states": []
+      }
+    },
+    {
+      "id": 3,
+      "code": "DISPEL_HERB",
+      "name": "Dispel Herb",
+      "type": "consumable",
+      "consumable_type": "cleanse",
+      "max_stack": 99,
+      "description": "A bitter dried root that purges negative tactical statuses such as burning, bleeding, and stasis.",
+      "effects": {
+        "hp_restore": 0,
+        "resonance_restore": 0,
+        "cures_states": [11, 14, 15]
+      }
+    },
+    {
+      "id": 4,
+      "code": "TENEBROUS_DRAUGHT",
+      "name": "Tenebrous Draught",
+      "type": "consumable",
+      "consumable_type": "elixir",
+      "max_stack": 99,
+      "description": "An invigorating bitter tonic distilled from deep-cavern moss. Restores 20 Sword Edge Resonance and clears exhaustion.",
+      "effects": {
+        "hp_restore": 10,
+        "resonance_restore": 20,
+        "cures_states": [12]
+      }
+    },
+    {
+      "id": 5,
+      "code": "ELIXIR_OF_EQUILIBRIUM",
+      "name": "Elixir of Equilibrium",
+      "type": "consumable",
+      "consumable_type": "harmonic",
+      "max_stack": 50,
+      "description": "A pristine dual-phase brew of light essence and shadowy loam. Restores 50 HP, 25 Shield, and 25 Sword Edge.",
+      "effects": {
+        "hp_restore": 50,
+        "resonance_restore": 25,
+        "cures_states": [11, 12, 14]
+      }
+    },
+    {
+      "id": 6,
+      "code": "DAWN_TEAR",
+      "name": "Dawn Tear Salve",
+      "type": "consumable",
+      "consumable_type": "revival",
+      "max_stack": 20,
+      "description": "A sanctified resin blessed at the Church of the Sovereign. Revives a fallen ally with 50% Vitality.",
+      "effects": {
+        "revives_ally": true,
+        "hp_restore_pct": 50,
+        "resonance_restore": 10,
+        "cures_states": [1]
+      }
+    }
+  ]
+}

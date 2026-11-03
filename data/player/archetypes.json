@@ -1,0 +1,148 @@
+{
+  "subsystem": "sim.player.archetypes",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Protagonist character archetypes and base stats",
+  "archetypes": [
+    {
+      "id": 1,
+      "code": "ELIJAH_ROENHEART",
+      "name": "Elijah Ro-enheart",
+      "class": "Hero / Knight",
+      "title": "Son of Gareth",
+      "base_stats": {
+        "level": 1,
+        "max_hp": 120,
+        "base_atk": 14,
+        "base_def": 12,
+        "base_mat": 6,
+        "base_mdf": 8,
+        "base_ap": 4,
+        "base_movement": 3,
+        "base_poise": 40
+      },
+      "affinities": {
+        "preferred_stance": "STANCE_EQUILIBRIUM",
+        "shield_aptitude": 1.2,
+        "sword_aptitude": 1.1
+      },
+      "starter_equipment": {
+        "weapon_id": 105,
+        "shield_id": 103,
+        "accessory_id": 0
+      }
+    },
+    {
+      "id": 2,
+      "code": "KATRINA_JAREN",
+      "name": "Lady Katrina Jaren",
+      "class": "Tactical Rogue / ex-Mage",
+      "title": "Renounced Aristocrat",
+      "base_stats": {
+        "level": 1,
+        "max_hp": 90,
+        "base_atk": 11,
+        "base_def": 7,
+        "base_mat": 15,
+        "base_mdf": 10,
+        "base_ap": 5,
+        "base_movement": 4,
+        "base_poise": 25
+      },
+      "affinities": {
+        "preferred_stance": "STANCE_STRIKING",
+        "shield_aptitude": 0.8,
+        "sword_aptitude": 1.3
+      },
+      "starter_equipment": {
+        "weapon_id": 102,
+        "shield_id": 0,
+        "accessory_id": 104
+      }
+    },
+    {
+      "id": 3,
+      "code": "PRINCE_CASATTI",
+      "name": "Prince Casatti",
+      "class": "Outrider Prince",
+      "title": "The Wilderness Walker",
+      "base_stats": {
+        "level": 1,
+        "max_hp": 110,
+        "base_atk": 16,
+        "base_def": 9,
+        "base_mat": 8,
+        "base_mdf": 7,
+        "base_ap": 4,
+        "base_movement": 4,
+        "base_poise": 35
+      },
+      "affinities": {
+        "preferred_stance": "STANCE_STRIKING",
+        "shield_aptitude": 0.9,
+        "sword_aptitude": 1.4
+      },
+      "starter_equipment": {
+        "weapon_id": 105,
+        "shield_id": 0,
+        "accessory_id": 101
+      }
+    },
+    {
+      "id": 4,
+      "code": "PRINCE_MIREN",
+      "name": "Prince Mi-ren",
+      "class": "Founding Architect",
+      "title": "The Four-Year Vigilant",
+      "base_stats": {
+        "level": 1,
+        "max_hp": 130,
+        "base_atk": 10,
+        "base_def": 15,
+        "base_mat": 10,
+        "base_mdf": 12,
+        "base_ap": 4,
+        "base_movement": 3,
+        "base_poise": 50
+      },
+      "affinities": {
+        "preferred_stance": "STANCE_WARDING",
+        "shield_aptitude": 1.5,
+        "sword_aptitude": 0.9
+      },
+      "starter_equipment": {
+        "weapon_id": 0,
+        "shield_id": 103,
+        "accessory_id": 104
+      }
+    },
+    {
+      "id": 5,
+      "code": "CUSTOM_BEARER",
+      "name": "The Bearer",
+      "class": "Witness Protagonist",
+      "title": "The Dream Chamber Awakened",
+      "base_stats": {
+        "level": 1,
+        "max_hp": 100,
+        "base_atk": 12,
+        "base_def": 10,
+        "base_mat": 10,
+        "base_mdf": 10,
+        "base_ap": 4,
+        "base_movement": 3,
+        "base_poise": 30
+      },
+      "affinities": {
+        "preferred_stance": "STANCE_EQUILIBRIUM",
+        "shield_aptitude": 1.0,
+        "sword_aptitude": 1.0
+      },
+      "starter_equipment": {
+        "weapon_id": 0,
+        "shield_id": 0,
+        "accessory_id": 0
+      }
+    }
+  ]
+}

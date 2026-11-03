@@ -1,0 +1,72 @@
+{
+  "subsystem": "sim.states",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Tactical combat states, grid movement modifiers, and aura states from LeTBS",
+  "states": [
+    {
+      "id": 11,
+      "name": "Paralyze",
+      "priority": 85,
+      "type": "ailment_stun",
+      "turns": 1,
+      "description": "The unit is paralyzed by kinetic or electrical shock, skipping their active turn."
+    },
+    {
+      "id": 31,
+      "name": "Intimidating Aura",
+      "priority": 40,
+      "type": "stance_aura",
+      "turns": 3,
+      "atk_pct": -15,
+      "counter_rate_pct": 70,
+      "description": "Vanguard presence radiating kinetic threat. Adjacent enemies suffer -15% ATK; wielder gains 70% counter-attack chance."
+    },
+    {
+      "id": 33,
+      "name": "Heavy Strike",
+      "priority": 50,
+      "type": "tactical_snare",
+      "turns": 2,
+      "move_points_mod": -3,
+      "description": "Target is staggered by a crushing blow, reducing grid movement points by 3."
+    },
+    {
+      "id": 34,
+      "name": "Focused",
+      "priority": 45,
+      "type": "tactical_taunt",
+      "turns": 2,
+      "ai_threat_weight": 100,
+      "description": "Forces enemy combatants to focus offensive actions upon the vanguard."
+    },
+    {
+      "id": 62,
+      "name": "Light Steps",
+      "priority": 30,
+      "type": "tactical_mobility",
+      "turns": 3,
+      "move_points_mod": 1,
+      "description": "Grants agility and unencumbered stride, increasing grid movement budget by +1 point."
+    },
+    {
+      "id": 63,
+      "name": "Ghost Arrow",
+      "priority": 35,
+      "type": "tactical_snare",
+      "turns": 2,
+      "move_points_mod": -1,
+      "description": "An ethereal spectral arrow anchors the target's shadow, reducing movement points by 1."
+    },
+    {
+      "id": 110,
+      "name": "Burning",
+      "priority": 60,
+      "type": "hazard_dot",
+      "turns": 3,
+      "turn_dmg_pct": 8,
+      "spread_behavior": "100% circle(1)",
+      "description": "Target or grid tile is enveloped in flames. Damages occupants and spreads to adjacent flammable tiles."
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "subsystem": "sim.skills",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Tactical Grimoire of martial maneuvers, elemental spells, support arts, and tandem relic strikes",
+  "skills": [
+    {
+      "id": 11,
+      "name": "Repulsive Blow",
+      "class": "Knight",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(1)",
+      "sequence": "atk_push(2)",
+      "formula": "phyDmg(120)",
+      "description": "Delivers a heavy shield bash that strikes the target and pushes them back 2 cells on the tactical grid."
+    },
+    {
+      "id": 12,
+      "name": "Flash Jump",
+      "class": "Knight",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(3,1)",
+      "aoe": "circle(1)",
+      "formula": "phyDmg(110) + magDmg(10)",
+      "description": "Leaps to an unoccupied tile within range, invoking a lightning shockwave that damages surrounding foes."
+    },
+    {
+      "id": 13,
+      "name": "Rush",
+      "class": "Knight",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "custom(rush)",
+      "formula": "phyDmg(80)",
+      "description": "Charges directly toward an enemy along a linear path, closing distance and initiating vanguard engagement."
+    },
+    {
+      "id": 15,
+      "name": "Heavy Hit",
+      "class": "Knight",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(1)",
+      "formula": "phyDmg(135)",
+      "inflicts_state": 33,
+      "description": "Strikes the target with crushing kinetic force, inflicting Heavy Strike and stripping 3 grid movement points."
+    },
+    {
+      "id": 16,
+      "name": "Provoke",
+      "class": "Knight",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(0)",
+      "formula": "0",
+      "inflicts_state": 34,
+      "extra_action": true,
+      "description": "Draws the aggressive attention of all nearby enemies upon the vanguard. Grants an immediate follow-up action."
+    },
+    {
+      "id": 20,
+      "name": "Lux Barrio",
+      "class": "Knight",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(0)",
+      "formula": "ward_mitigation(25)",
+      "relic_affinity": "Lux",
+      "description": "Projects a geometric radiant barrier of pure light. Reduces incoming damage by 25% for 2 to 5 turns, staggers attackers for 25 damage, restores 20 Shield power, and nudges moral sway +3."
+    },
+    {
+      "id": 42,
+      "name": "Fire",
+      "class": "Mage",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(3);line(4)",
+      "formula": "magDmg(105)",
+      "description": "Channels ambient thermal energy, launching a searing bolt of fire at a single target across medium range."
+    },
+    {
+      "id": 43,
+      "name": "Sparkle",
+      "class": "Mage",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(4)",
+      "aoe": "circle(1)",
+      "formula": "magDmg(80)",
+      "description": "Unleashes crackling electrical bolts that strike the target and arc into an area of effect."
+    },
+    {
+      "id": 47,
+      "name": "Volcano Ground",
+      "class": "Mage",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "circle(0)",
+      "aoe": "custom(volcano_ground)",
+      "formula": "(a.mat * 2 - b.mdf * 2) * 2",
+      "inflicts_state": 110,
+      "description": "Erupts magma beneath the ground, laying multiple burning hazard tiles that damage units crossing them."
+    },
+    {
+      "id": 51,
+      "name": "Ice Wall",
+      "class": "Mage",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "line(3)",
+      "formula": "0",
+      "summons_prop": 34,
+      "description": "Constructs a crystalline barrier of solid ice (HP 20) across 3 tiles, blocking enemy line of sight and passage."
+    },
+    {
+      "id": 60,
+      "name": "Cuttatio Tenebris",
+      "class": "Mage",
+      "mp_cost": 0,
+      "tp_cost": 0,
+      "scope": "line(4)",
+      "formula": "abyssal_severance(45)",
+      "splash_pct": 20,
+      "relic_affinity": "Tenebris",
+      "description": "A sweeping crescent slash infused with dark mist. Slices the primary target and deals 20% splash damage to surrounding foes. Consumes 8 to 12 edge points."
+    },
+    {
+      "id": 72,
+      "name": "Heal",
+      "class": "Priest",
+      "mp_cost": 8,
+      "tp_cost": 0,
+      "scope": "circle(4,2)",
+      "formula": "b.mhp * 0.35 + a.mat * 1.5",
+      "description": "Weaves restorative light, recovering substantial health for an injured ally within range."
+    },
+    {
+      "id": 78,
+      "name": "Light Steps",
+      "class": "Priest",
+      "mp_cost": 6,
+      "tp_cost": 0,
+      "scope": "circle(0)",
+      "formula": "0",
+      "inflicts_state": 62,
+      "description": "Lightens the burden of armor and footfalls, granting +1 movement point across the grid for 3 turns."
+    },
+    {
+      "id": 86,
+      "name": "Extra Turn",
+      "class": "Priest",
+      "mp_cost": 12,
+      "tp_cost": 0,
+      "scope": "circle(2)",
+      "formula": "0",
+      "timeline_manipulation": "grant_action",
+      "description": "Manipulates temporal flow in the tactical queue, granting an allied combatant an immediate extra turn."
+    },
+    {
+      "id": 99,
+      "name": "Duo-Loca Bashin n Slash",
+      "class": "Hero",
+      "mp_cost": 12,
+      "tp_cost": 0,
+      "scope": "circle(1)",
+      "formula": "adaptive_twilight_strike()",
+      "relic_affinity": "Equilibrium",
+      "description": "The signature tandem art uniting the Shield of Lux and Sword of Tenebris. Channels into the foe's weakest defensive attribute (DEF vs MDF), restores +15 Shield and +15 Edge, and harmonizes moral sway toward 0."
+    }
+  ]
+}

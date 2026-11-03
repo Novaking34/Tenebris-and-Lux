@@ -62,30 +62,31 @@ It serves as a high-density, context-rich reference for AI engineering workflows
   - Chapter 44: The Complete Grimoire (75+ Skills & Formulas)
   - Chapter 45: Bestiary, Destructible Props & Troop Formations
   - Chapter 46: Armory, Inventory & Key Lore Relics
-  - Chapter 47: Engine Systems, Time Clock & Switch/Variable Index
-  - Chapter 48: Historical Dataset Evolution & Delta Analysis
+  - Chapter 47: Tactical States & Status Ailments Directory
+  - Chapter 48: Engine Systems, Time Clock & Switch/Variable Index
+  - Chapter 49: Historical Dataset Evolution & Delta Analysis
 - **Volume V: Software Architecture & The 5-Block Invariant Protocol**
-  - Chapter 49: OmniCode 5-Block Architectural Framework
-  - Chapter 50: Dual-Frontend Presentation Layer (CLI + Native X11)
-  - Chapter 51: Central Manifest & Pre-Flight Diagnostic Integrity
-  - Chapter 52: Layer 0 Core Utilities Code Tour
-  - Chapter 53: Layer 0 Debugging System & State Rewind
-  - Chapter 54: Layer 1 Simulation Engine Code Tour
-  - Chapter 55: Layer 2 Presentation Viewport Code Tour
-  - Chapter 56: Layer 4 Verification & Test Suite Code Tour
+  - Chapter 50: OmniCode 5-Block Architectural Framework
+  - Chapter 51: Dual-Frontend Presentation Layer (CLI + Native X11)
+  - Chapter 52: Central Manifest & Pre-Flight Diagnostic Integrity
+  - Chapter 53: Layer 0 Core Utilities Code Tour
+  - Chapter 54: Layer 0 Debugging System & State Rewind
+  - Chapter 55: Layer 1 Simulation Engine Code Tour
+  - Chapter 56: Layer 2 Presentation Viewport Code Tour
+  - Chapter 57: Layer 4 Verification & Test Suite Code Tour
 - **Volume VI: Engineering Chronology & Development Logs**
-  - Chapter 57: DevLog 001: Genesis, Paradigm Pivot & Invariants
-  - Chapter 58: DevLog 003: Central Manifest & Pre-Flight Spec
-  - Chapter 59: DevLog 004: Pedagogical Metadata & Active DAG Contracts
-  - Chapter 60: DevLog 005: Ontological Sub-Assemblies & 80-Column Discipline
-  - Chapter 61: DevLog 006: Source Implementation & Root Pedagogical Commenting
-  - Chapter 62: DevLog 007: Archival Extraction & The 2017–2018 Demo Baseline
-  - Chapter 63: DevLog 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing
-  - Chapter 64: DevLog 009: Macro-History, Thematic Triad & Multi-Ending Architecture
-  - Chapter 65: DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture
-  - Chapter 66: DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
-  - Chapter 67: DevLog 012: Interactive Debugging System & State Rewind Architecture
-  - Chapter 68: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
+  - Chapter 58: DevLog 001: Genesis, Paradigm Pivot & Invariants
+  - Chapter 59: DevLog 003: Central Manifest & Pre-Flight Spec
+  - Chapter 60: DevLog 004: Pedagogical Metadata & Active DAG Contracts
+  - Chapter 61: DevLog 005: Ontological Sub-Assemblies & 80-Column Discipline
+  - Chapter 62: DevLog 006: Source Implementation & Root Pedagogical Commenting
+  - Chapter 63: DevLog 007: Archival Extraction & The 2017–2018 Demo Baseline
+  - Chapter 64: DevLog 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing
+  - Chapter 65: DevLog 009: Macro-History, Thematic Triad & Multi-Ending Architecture
+  - Chapter 66: DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture
+  - Chapter 67: DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
+  - Chapter 68: DevLog 012: Interactive Debugging System & State Rewind Architecture
+  - Chapter 69: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
 
 ---
 
@@ -4097,7 +4098,9 @@ This baseline compendium is partitioned into specialized manuals covering every 
 | **[grimoire_and_skills.adoc](grimoire_and_skills.adoc)** | Complete grimoire of all 75+ historical spells, martial techniques, movement abilities, MP/TP costs, damage formulas, and LeTBS sequence tags.
 | **[bestiary_and_troops.adoc](bestiary_and_troops.adoc)** | Bestiary of all 22+ enemies and neutral entities (Dream Eaters, Magos, Bandits, Chests, Ice Blocks), stat parameters, AI behavior routines, and troop encounter formations.
 | **[armory_and_inventory.adoc](armory_and_inventory.adoc)** | Weapons (Medusa's Sword), Armors (Heart Shield, Ring of Fire), Items (Potions, Magic Water), and Key Lore Relics (Grandma's Watch, Compass of Morality, Book of Monsters, Book of Items).
+| **[states_and_statuses.adoc](states_and_statuses.adoc)** | 30 tactical states, LeTBS grid modifiers (Intimidating Aura, Heavy Strike, Light Steps, Burning, Tile Regen), and status ailments.
 | **[systems_switches_variables.adoc](systems_switches_variables.adoc)** | Global game engines: Monotonic Time System / Day-Night Cycle, Morality System, and an exhaustive directory of all 100+ switches and variables.
+| **[game_design_curation.adoc](game_design_curation.adoc)** | Triaging matrix: RTP defaults (discard/re-architect) vs. prototype sketches (review/evolve) vs. authentic canonical pillars (reconstruct in C11).
 | **[dataset_evolution_delta.adoc](dataset_evolution_delta.adoc)** | Side-by-side comparative delta analysis between `Old Game Data` and `Old_Game_Data_2/data`, detailing version discrepancies and modern C11 reconciliation strategies.
 |===
 
@@ -7544,7 +7547,149 @@ defined in `Weapons.json`, `Armors.json`, and `Items.json`.
 
 ---
 
-## Chapter 47: Engine Systems, Time Clock & Switch/Variable Index
+## Chapter 47: Tactical States & Status Ailments Directory
+
+> **Source**: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/states_and_statuses.adoc`
+
+[abstract]
+## Overview
+
+This document catalogs all 30 status ailments, tactical combat states, aura modifiers,
+and battlefield terrain effects defined in `States.json` across Folder 1 and Folder 2 (LeTBS).
+It distinguishes generic RPG Maker MV Runtime Package (RTP) boilerplate from authentic
+tactical grid modifiers and stance dynamics.
+
+## 1. Triage: RTP Boilerplate States vs. Authentic Tactical Grid States
+
+[cols="1,2,3", options="header"]
+|===
+| Category | State IDs | Architectural Policy
+
+| **Tier 1: RTP Default States**
+| `1`–`10` (Knockout, Guard, Immortal, Poison, Blind, Silence, Rage, Confusion, Fascination, Sleep)
+| Stock RPG Maker MV status conditions. Re-architect in C11 to tie directly into Sacyran relic affinities, posture break, and elemental resistances.
+
+| **Tier 3: Authentic LeTBS Grid States**
+| `11`, `31`–`34`, `46`, `62`–`63`, `78`–`79`, `94`–`95`, `109`–`110`
+| Authentic tactical modifiers altering grid movement points (MP), turn order priority, damage mitigation, and tile propagation.
+|===
+
+## 2. Standard Status Conditions (Tier 1 Boilerplate)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Priority | Restriction / Description
+
+| `1` | **Knockout** | 100 | Cannot move; unit is felled upon reaching 0 HP.
+| `2` | **Guard** | 0 | Damage taken reduced by 50%; expires at start of next turn.
+| `3` | **Immortal** | 0 | Unit cannot drop below 1 HP; used for critical NPC story anchors.
+| `4` | **Poison** | 50 | Loses 10% max HP at end of combat turn.
+| `5` | **Blind** | 60 | Hit rate reduced by 50%.
+| `6` | **Silence** | 70 | Magic skills cannot be cast.
+| `7` | **Rage** | 80 | Attacks nearest enemy or ally indiscriminately.
+| `8` | **Confusion** | 75 | Actions randomized between foes and friends.
+| `9` | **Fascination** | 70 | Charmed unit attacks allies.
+| `10` | **Sleep** | 90 | Cannot take turns; wakes up upon taking damage.
+| `11` | **Paralyze** | 85 | Stunned; skip turn (`loop_animation: 64`).
+|===
+
+## 3. Knight & Vanguard Tactical States (Tier 3 LeTBS)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Affected Stat | Tactical Mechanism & LeTBS Meta
+
+| `31`
+| **Intimidating Aura**
+| ATK -15%
+| Passive aura cast via Skill 14 (`auras: intimidating_aura`). Reduces adjacent enemy physical attack and grants 70% counter-attack chance.
+
+| `32`
+| **Intimidated**
+| ATK -15%
+| Status inflicted on foes caught within the Intimidating Aura boundary.
+
+| `33`
+| **Heavy Strike**
+| Move Points: -3
+| Tactical stagger inflicted by Heavy Hit (Skill 15). Severely impedes enemy mobility on the grid.
+
+| `34`
+| **Focused**
+| AI Threat
+| Cast by Provoke (Skill 16). Forces enemy AI to prioritize the vanguard (`focused_by_ai_for_offense: 100`).
+|===
+
+## 4. Mage & Priest Arcane States (Tier 3 LeTBS)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Affected Stat | Tactical Mechanism & LeTBS Meta
+
+| `46`
+| **Charging**
+| Spell Delay
+| Channeling visual state for high-tier spells like Water (charged) (`loop_animation: 184`).
+
+| `62`
+| **Light Steps**
+| Move Points: +1
+| Mobility buff cast via Skill 78. Expands grid traversal budget for outriders and rogues.
+
+| `63`
+| **Ghost Arrow**
+| Move Points: -1
+| Tactical snare inflicted by Ghost Arrow (Skill 79). Reduces movement allowance.
+|===
+
+## 5. Summoner & Environmental Grid States (Tier 3 LeTBS)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Affected Stat | Tactical Mechanism & LeTBS Meta
+
+| `78`
+| **Transformation**
+| Form Shift
+| Active metamorphosis into astral beast (`character_name: Monster`).
+
+| `79`
+| **Fusion**
+| Unit Merge
+| Fuses summoner with tactical summon (`sprite_name: Rabbit`).
+
+| `94`
+| **Rabbit's Jump**
+| Mobility
+| Leap mechanics allowing clearance over terrain obstacles.
+
+| `95`
+| **Evil Protection**
+| DEF/MDF Buff
+| Damage shield cast by enemy warlocks (Skill 167).
+
+| `109`
+| **Tile Regen**
+| Periodic Heal
+| Restores health to units occupying consecrated ground.
+
+| `110`
+| **Burning**
+| Fire Dot / Spread
+| Fire hazard state (`spread: 100% circle(1)`). Expands dynamically to adjacent flammable tiles.
+|===
+
+## 6. Modern C11 Architectural Mapping
+
+In the C11 simulation engine, tactical states are decoupled from engine internals:
+1. **Zero-Heap State Mask**: Active states on an actor are tracked via a bitmask and static array (`active_states[MAX_ACTIVE_STATES]`).
+2. **Move Point Clamping**: `move_points` modifiers directly feed into Layer 0 spatial pathing routines.
+3. **Data-Driven Configuration**: State durations, stat multipliers, and tile spread rules are loaded from `data/states/*.json`.
+
+
+---
+
+## Chapter 48: Engine Systems, Time Clock & Switch/Variable Index
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/systems_switches_variables.adoc`
 
@@ -7649,7 +7794,7 @@ The morality engine tracks the party's ethical orientation on an invariant scale
 
 ---
 
-## Chapter 48: Historical Dataset Evolution & Delta Analysis
+## Chapter 49: Historical Dataset Evolution & Delta Analysis
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/dataset_evolution_delta.adoc`
 
@@ -7691,7 +7836,7 @@ to advanced LeTBS tactical simulation, and establishing modern C11 reconciliatio
 
 _System boundaries, layered strata, dual-frontend GUI/CLI, and pre-flight zero-heap diagnostic manifests._
 
-## Chapter 49: OmniCode 5-Block Architectural Framework
+## Chapter 50: OmniCode 5-Block Architectural Framework
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/architecture/ARCHITECTURE.adoc`
 
@@ -7781,7 +7926,7 @@ In alignment with the OmniCode framework, all C source code, headers, and build 
 
 ---
 
-## Chapter 50: Dual-Frontend Presentation Layer (CLI + Native X11)
+## Chapter 51: Dual-Frontend Presentation Layer (CLI + Native X11)
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/architecture/dual_frontend_architecture.adoc`
 
@@ -7978,7 +8123,7 @@ The dual-frontend architecture serves as the foundation for a 4-phase engine roa
 
 ---
 
-## Chapter 51: Central Manifest & Pre-Flight Diagnostic Integrity
+## Chapter 52: Central Manifest & Pre-Flight Diagnostic Integrity
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/architecture/preflight_and_manifest_spec.adoc`
 
@@ -8220,7 +8365,7 @@ env -u DISPLAY ./build/tenebris-lux --audit
 
 ---
 
-## Chapter 52: Layer 0 Core Utilities Code Tour
+## Chapter 53: Layer 0 Core Utilities Code Tour
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/core_utilities.adoc`
 
@@ -8420,7 +8565,7 @@ All 14 registered modules execute automated pre-flight self-audits before runtim
 
 ---
 
-## Chapter 53: Layer 0 Debugging System & State Rewind
+## Chapter 54: Layer 0 Debugging System & State Rewind
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/debug_system.adoc`
 
@@ -8543,7 +8688,7 @@ The debugger provides two automated audit entry points:
 
 ---
 
-## Chapter 54: Layer 1 Simulation Engine Code Tour
+## Chapter 55: Layer 1 Simulation Engine Code Tour
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/simulation_engine.adoc`
 
@@ -8616,7 +8761,7 @@ enabling automated continuous integration testing without relying on crude proce
 
 ---
 
-## Chapter 55: Layer 2 Presentation Viewport Code Tour
+## Chapter 56: Layer 2 Presentation Viewport Code Tour
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/presentation_gui.adoc`
 
@@ -8682,7 +8827,7 @@ Block 4 implements mathematical layout verification using Layer 0 `geom_utils`:
 
 ---
 
-## Chapter 56: Layer 4 Verification & Test Suite Code Tour
+## Chapter 57: Layer 4 Verification & Test Suite Code Tour
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/test_suite.adoc`
 
@@ -8855,7 +9000,7 @@ ctest --test-dir build -C Debug --output-on-failure
 
 _Living chronological engineering logs recording every architectural milestone and paradigm evolution._
 
-## Chapter 57: DevLog 001: Genesis, Paradigm Pivot & Invariants
+## Chapter 58: DevLog 001: Genesis, Paradigm Pivot & Invariants
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc`
 
@@ -8983,7 +9128,7 @@ phases will focus on:
 
 ---
 
-## Chapter 58: DevLog 003: Central Manifest & Pre-Flight Spec
+## Chapter 59: DevLog 003: Central Manifest & Pre-Flight Spec
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc`
 
@@ -9060,7 +9205,7 @@ With the pre-flight verification subsystem and central manifest complete, future
 
 ---
 
-## Chapter 59: DevLog 004: Pedagogical Metadata & Active DAG Contracts
+## Chapter 60: DevLog 004: Pedagogical Metadata & Active DAG Contracts
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc`
 
@@ -9307,7 +9452,7 @@ With foundational Layer 0 utilities and Layer 1 simulation mechanics now protect
 
 ---
 
-## Chapter 60: DevLog 005: Ontological Sub-Assemblies & 80-Column Discipline
+## Chapter 61: DevLog 005: Ontological Sub-Assemblies & 80-Column Discipline
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc`
 
@@ -9494,7 +9639,7 @@ With complete ontological layering, IDE-optimized docstrings, strict 80-column l
 
 ---
 
-## Chapter 61: DevLog 006: Source Implementation & Root Pedagogical Commenting
+## Chapter 62: DevLog 006: Source Implementation & Root Pedagogical Commenting
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc`
 
@@ -9658,7 +9803,7 @@ Total bad lines across 17 files: 0
 
 ---
 
-## Chapter 62: DevLog 007: Archival Extraction & The 2017–2018 Demo Baseline
+## Chapter 63: DevLog 007: Archival Extraction & The 2017–2018 Demo Baseline
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc`
 
@@ -9769,7 +9914,7 @@ C11 implementation is clear, disciplined, and rigorous:
 
 ---
 
-## Chapter 63: DevLog 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing
+## Chapter 64: DevLog 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc`
 
@@ -9834,7 +9979,7 @@ The native simulation sub-assemblies were updated under the OmniCode 5-Block Pro
 
 ---
 
-## Chapter 64: DevLog 009: Macro-History, Thematic Triad & Multi-Ending Architecture
+## Chapter 65: DevLog 009: Macro-History, Thematic Triad & Multi-Ending Architecture
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc`
 
@@ -9920,7 +10065,7 @@ All specifications strictly conform to the repository's C11 architectural constr
 
 ---
 
-## Chapter 65: DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture
+## Chapter 66: DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc`
 
@@ -10093,7 +10238,7 @@ subsequent gameplay expansions without risking architectural context drift.
 
 ---
 
-## Chapter 66: DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
+## Chapter 67: DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc`
 
@@ -10296,7 +10441,7 @@ Internal self-audit (`./build/tenebris-lux --audit`) reported:
 
 ---
 
-## Chapter 67: DevLog 012: Interactive Debugging System & State Rewind Architecture
+## Chapter 68: DevLog 012: Interactive Debugging System & State Rewind Architecture
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc`
 
@@ -10447,7 +10592,7 @@ With this milestone, the verification suite achieves 100% green status across al
 
 ---
 
-## Chapter 68: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
+## Chapter 69: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc`
 

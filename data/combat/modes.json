@@ -1,0 +1,51 @@
+{
+  "subsystem": "sim.combat.modes",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Battle paradigm configurations for Tenebris and Lux",
+  "modes": [
+    {
+      "id": 1,
+      "code": "TRADITIONAL_TURN_BASED",
+      "name": "Traditional Turn-Based",
+      "description": "Classic JRPG command-driven battle system with initiative order, resource pools, and deterministic relic resonance attrition.",
+      "properties": {
+        "menu_driven": true,
+        "grid_enabled": false,
+        "action_timing_enabled": false,
+        "actions_per_turn": 1,
+        "commands": ["attack", "defend", "special", "stance", "item"]
+      }
+    },
+    {
+      "id": 2,
+      "code": "TACTICAL_GRID",
+      "name": "Tactical Grid-Based (TRPG)",
+      "description": "Isometric/orthogonal grid strategy battles featuring movement budgets (MP), facing, flanking bonuses, tile hazards, and zone of control.",
+      "properties": {
+        "menu_driven": false,
+        "grid_enabled": true,
+        "action_timing_enabled": false,
+        "flank_damage_bonus_pct": 20,
+        "rear_damage_bonus_pct": 40,
+        "zone_of_control": true,
+        "tile_hazards": ["burning", "sanctified", "abyssal_miasma"]
+      }
+    },
+    {
+      "id": 3,
+      "code": "ACTION_RESOLUTION",
+      "name": "Cinematic Action Skirmish",
+      "description": "Real-time action combat resolution featuring active kinetic deflection windows with Shield of Lux and poise severance strings with Sword of Tenebris.",
+      "properties": {
+        "menu_driven": false,
+        "grid_enabled": false,
+        "action_timing_enabled": true,
+        "parry_window_ms": 200,
+        "dodge_invulnerability_ms": 300,
+        "poise_break_stun_ms": 2000,
+        "combos_enabled": true
+      }
+    }
+  ]
+}

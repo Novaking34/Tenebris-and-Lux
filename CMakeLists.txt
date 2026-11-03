@@ -114,11 +114,22 @@ set(UTIL_SOURCES
 )
 
 set(SIM_SOURCES
-    src/sim/sim_state.c
-    src/sim/combat.c
-    src/sim/world.c
-    src/sim/dispatcher.c
-    src/sim/game.c
+    src/sim/core/sim_state.c
+    src/sim/core/game.c
+    src/sim/combat/combat.c
+    src/sim/combat/combat_loader.c
+    src/sim/combat/stances.c
+    src/sim/combat/turn_based.c
+    src/sim/combat/tactical.c
+    src/sim/combat/action_resolve.c
+    src/sim/world/world.c
+    src/sim/items/items.c
+    src/sim/items/item_loader.c
+    src/sim/items/relics.c
+    src/sim/items/catalysts.c
+    src/sim/items/consumables.c
+    src/sim/items/inventory.c
+    src/sim/dispatch/dispatcher.c
 )
 
 set(SIM_HEADERS
@@ -128,6 +139,25 @@ set(SIM_HEADERS
     include/sim/world.h
     include/sim/dispatcher.h
     include/sim/game.h
+    include/sim/core/sim_types.h
+    include/sim/core/sim_state.h
+    include/sim/core/game.h
+    include/sim/combat/combat_types.h
+    include/sim/combat/combat_loader.h
+    include/sim/combat/stances.h
+    include/sim/combat/turn_based.h
+    include/sim/combat/tactical.h
+    include/sim/combat/action_resolve.h
+    include/sim/combat/combat.h
+    include/sim/world/world.h
+    include/sim/items/item_types.h
+    include/sim/items/item_loader.h
+    include/sim/items/relics.h
+    include/sim/items/catalysts.h
+    include/sim/items/consumables.h
+    include/sim/items/inventory.h
+    include/sim/items/items.h
+    include/sim/dispatch/dispatcher.h
 )
 
 # ------------------------------------------------------------------------------

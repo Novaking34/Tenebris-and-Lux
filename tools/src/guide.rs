@@ -181,6 +181,7 @@ impl MasterGuideBuilder {
                     make_ch("The Complete Grimoire (75+ Skills & Formulas)", "game_design/demo_baseline/grimoire_and_skills.adoc"),
                     make_ch("Bestiary, Destructible Props & Troop Formations", "game_design/demo_baseline/bestiary_and_troops.adoc"),
                     make_ch("Armory, Inventory & Key Lore Relics", "game_design/demo_baseline/armory_and_inventory.adoc"),
+                    make_ch("Tactical States & Status Ailments Directory", "game_design/demo_baseline/states_and_statuses.adoc"),
                     make_ch("Engine Systems, Time Clock & Switch/Variable Index", "game_design/demo_baseline/systems_switches_variables.adoc"),
                     make_ch("Historical Dataset Evolution & Delta Analysis", "game_design/demo_baseline/dataset_evolution_delta.adoc"),
                 ],

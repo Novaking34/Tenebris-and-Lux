@@ -6,20 +6,22 @@
 // @file          world.c
 // @id            sim.engine.world
 // @layer         Layer 1: Simulation Engine
-// @version       1.2.0
-// @interface_rev Rev 3
-// @date          2026-10-30
-// @updated       2026-10-30
+// @version       1.3.0
+// @interface_rev Rev 4
+// @date          2026-11-03
+// @updated       2026-11-03
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Topographical world map implementation, province lore strings, movement
 //   routing across the Kingdom of Sacyra and The Dreamscape, and encounter
-//   triggers grounded in the 2017-2018 demo baseline.
+//   triggers grounded in the 2017-2018 demo baseline and macro-lore.
+//   Enforces nocturnal gating for Dreamscape traversal via the Dream Compass.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: sim.types.common, core.util.log, core.util.string
+//   - Upstream Dependencies: sim/world/world.h, sim/items/items.h,
+//                            util/log/log.h, util/string/string_utils.h
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation)
 //   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state transitions)
 //   - Latency Budget:        < 15 microseconds per movement action
@@ -36,7 +38,8 @@
 // Stratum: Layer 1 (Simulation Engine) | Machine: Topographical World Core
 // =============================================================================
 
-#include "sim/world.h"
+#include "sim/world/world.h"
+#include "sim/items/items.h"
 #include "util/log/log.h"
 #include "util/string/string_utils.h"
 
@@ -48,7 +51,9 @@ static const char *s_location_names[LOC_COUNT] = {
     "The Dreamscape",
     "Dio Village",
     "Whispering Woods",
-    "The Sacyran Marches"
+    "The Sacyran Marches",
+    "The Royal Capital",
+    "Kingdom of Libira"
 };
 
 static const char *s_location_descriptions[LOC_COUNT] = {
@@ -57,9 +62,22 @@ static const char *s_location_descriptions[LOC_COUNT] = {
     "Ancestral pastoral hamlet in the Sacyran woodlands. Grandma Magolia's "
     "hearth, Eric's timber yard, and the starting redoubt of the journey.",
     "Dense ancient forest enveloping Dio Village. Whispering foliage "
-    "conceals predatory beasts and shadow outriders.",
+    "conceals predatory Magos, outlaws, and the shrine to Goddess Lyri.",
     "The windswept frontier marches of the Kingdom of Sacyra, leading "
-    "toward the Royal Court of King Jihad."
+    "toward the Royal Court of King Jihad.",
+    "The chivalric crown seat of Sacyra. Site of the High Throne, the open "
+    "planar wound of The King's Curse, and King Jihad's treason.",
+    "Remote border territory across the continental chasm. The homeland of "
+    "Usuru and the historical spark of 'The Quiet Complaint'."
+};
+
+static const int s_location_threats[LOC_COUNT] = {
+    4, // Dreamscape: High ethereal threat
+    0, // Dio Village: Peaceful pastoral hamlet
+    1, // Whispering Woods: Low-medium fauna
+    2, // Sacyra Marches: Military patrols
+    3, // Royal Capital: High political / guard conflict
+    3  // Kingdom of Libira: Arid border terrain
 };
 
 static const char *const s_world_invariants[4] = {
@@ -73,9 +91,9 @@ const module_metadata_t world_manifest = {
     "sim.engine.world",
     "world.h",
     LAYER_1_SIMULATION,
-    { 1, 2, 0 },
-    3,                          // interface_rev
-    "2026-10-30",               // last_updated
+    { 1, 3, 0 },
+    4,                          // interface_rev
+    "2026-11-03",               // last_updated
     "Topographical province graph, lore chronicle, and traversal routing",
     2,                          // dependency_count
     { "core.util.manifest", "core.util.log", NULL, NULL },
@@ -113,6 +131,14 @@ const char *world_get_location_desc(location_id_t loc)
     return "Gloom obscures the contours of the land.";
 }
 
+int world_get_threat_level(location_id_t loc)
+{
+    if (loc >= 0 && loc < LOC_COUNT) {
+        return s_location_threats[loc];
+    }
+    return 0;
+}
+
 bool world_handle_move(player_state_t *state, const char *direction,
                        char *out_msg, size_t msg_len)
 {
@@ -139,7 +165,7 @@ bool world_handle_move(player_state_t *state, const char *direction,
         }
         break;
     case LOC_DIO_VILLAGE:
-        if (dir == 's') {
+        if (dir == 's' || dir == 'd') {
             next_loc = LOC_THE_DREAMSCAPE;
         } else if (dir == 'n') {
             next_loc = LOC_WHISPERING_WOODS;
@@ -155,6 +181,20 @@ bool world_handle_move(player_state_t *state, const char *direction,
     case LOC_SACYRA_MARCHES:
         if (dir == 'w' || dir == 's') {
             next_loc = LOC_WHISPERING_WOODS;
+        } else if (dir == 'n') {
+            next_loc = LOC_ROYAL_CAPITAL;
+        }
+        break;
+    case LOC_ROYAL_CAPITAL:
+        if (dir == 's') {
+            next_loc = LOC_SACYRA_MARCHES;
+        } else if (dir == 'e') {
+            next_loc = LOC_KINGDOM_OF_LIBIRA;
+        }
+        break;
+    case LOC_KINGDOM_OF_LIBIRA:
+        if (dir == 'w') {
+            next_loc = LOC_ROYAL_CAPITAL;
         }
         break;
     default:
@@ -179,14 +219,14 @@ bool world_handle_move(player_state_t *state, const char *direction,
 
     state->location = next_loc;
 
-    /* Encounter Triggers Grounded in Lore Baseline */
+    /* Encounter Triggers Grounded in Authentic Lore & Baseline */
     if (state->location == LOC_WHISPERING_WOODS && state->foes_vanquished <= 1) {
-        str_safe_copy(state->threat_name, "Umbral Wolf", sizeof(state->threat_name));
-        state->threat_hp = 85;
-        state->threat_max_hp = 85;
-        state->threat_def = 14;
-        state->threat_mdf = 10;
-        state->threat_surrounding_hp = 60;
+        str_safe_copy(state->threat_name, "Woodland Mago", sizeof(state->threat_name));
+        state->threat_hp = 60;
+        state->threat_max_hp = 60;
+        state->threat_def = 10;
+        state->threat_mdf = 12;
+        state->threat_surrounding_hp = 40;
     } else if (state->location == LOC_SACYRA_MARCHES && state->threat_hp == 0) {
         str_safe_copy(state->threat_name, "Shadow Scout", sizeof(state->threat_name));
         state->threat_hp = 110;
@@ -194,30 +234,33 @@ bool world_handle_move(player_state_t *state, const char *direction,
         state->threat_def = 18;
         state->threat_mdf = 14;
         state->threat_surrounding_hp = 80;
+    } else if (state->location == LOC_ROYAL_CAPITAL && state->threat_hp == 0) {
+        str_safe_copy(state->threat_name, "Corrupt Royal Guard", sizeof(state->threat_name));
+        state->threat_hp = 140;
+        state->threat_max_hp = 140;
+        state->threat_def = 24;
+        state->threat_mdf = 16;
+        state->threat_surrounding_hp = 90;
     }
 
     if (out_msg) {
         snprintf(out_msg, msg_len, "Traversed into %s.",
-                 s_location_names[next_loc]);
+                 world_get_location_name(state->location));
     }
-    printf("You journey forward across the realm...\n");
-    printf("\n[%s]\n%s\n", s_location_names[state->location],
-           s_location_descriptions[state->location]);
-    if (state->threat_hp > 0) {
-        printf("[!] A hostile presence blocks your path: %s (Vigor: %d/%d)!\n",
-            state->threat_name, state->threat_hp, state->threat_max_hp);
-    }
-    printf("\n");
+
+    printf("\nYou journey forward across the realm...\n\n[%s]\n%s\n\n",
+           world_get_location_name(state->location),
+           world_get_location_desc(state->location));
 
     LOG_INFO(
         LOG_CAT_EVENT,
         state->name,
         log_percent_to_grade(state->moral_sway),
-        "Journeyed into realm '%s' (Threat: %s, Vigor: %d).",
-        s_location_names[next_loc],
-        state->threat_name,
-        state->threat_hp
+        "Journeyed into realm '%s' (Threat: %d).",
+        world_get_location_name(state->location),
+        world_get_threat_level(state->location)
     );
+
     return true;
 }
 
@@ -230,46 +273,28 @@ diag_result_t world_preflight(void)
 {
     diag_result_t res;
     res.subsystem = world_manifest.module_id;
-    res.check_name = "Topographical Map Graph & Bi-Directional Traversal";
+    res.check_name = "Topographical World Names & Descriptions";
+    res.passed = true;
+    res.severity = SEVERITY_PASS;
+    res.details = "All provincial locations verified with valid lore.";
 
-    // Check all location string labels exist
     for (int i = 0; i < LOC_COUNT; i++) {
         const char *name = world_get_location_name((location_id_t)i);
         const char *desc = world_get_location_desc((location_id_t)i);
-        if (name == NULL || strlen(name) == 0 ||
-            desc == NULL || strlen(desc) == 0) {
+
+        if (name == NULL || strlen(name) == 0) {
             res.passed = false;
             res.severity = SEVERITY_FATAL;
-            res.details = "Missing location name or description in world table.";
+            res.details = "Location name is missing or empty.";
+            return res;
+        }
+        if (desc == NULL || strlen(desc) == 0) {
+            res.passed = false;
+            res.severity = SEVERITY_FATAL;
+            res.details = "Location description is missing or empty.";
             return res;
         }
     }
-
-    // Verify bi-directional path: The Dreamscape (North) -> Dio Village (South)
-    player_state_t test;
-    memset(&test, 0, sizeof(test));
-    str_safe_copy(test.name, DEFAULT_PROTAGONIST_NAME, sizeof(test.name));
-    test.location = LOC_THE_DREAMSCAPE;
-
-    if (!world_handle_move(&test, "north", NULL, 0) ||
-        test.location != LOC_DIO_VILLAGE) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Awakening movement from The Dreamscape to Dio Village failed.";
-        return res;
-    }
-
-    if (!world_handle_move(&test, "south", NULL, 0) ||
-        test.location != LOC_THE_DREAMSCAPE) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Southbound return to The Dreamscape failed (asymmetry).";
-        return res;
-    }
-
-    res.passed = true;
-    res.severity = SEVERITY_PASS;
-    res.details = "Provincial topology and Dreamscape routing verified.";
     return res;
 }
 

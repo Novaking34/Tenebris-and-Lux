@@ -1,0 +1,39 @@
+{
+  "subsystem": "sim.player",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Master player tracking specification and data manifest for Tenebris and Lux",
+  "data_files": [
+    {
+      "module": "archetypes",
+      "path": "data/player/archetypes.json",
+      "description": "Protagonist character archetypes, base stats, and starter gear"
+    },
+    {
+      "module": "morality_matrix",
+      "path": "data/player/morality_matrix.json",
+      "description": "Moral sway continuum, Bystander Corridor (-50 to +50), and micro-verb telemetry weights"
+    },
+    {
+      "module": "progression",
+      "path": "data/player/progression.json",
+      "description": "Level progression curves, attribute ceilings, and resource bounds"
+    },
+    {
+      "module": "inventory_spec",
+      "path": "data/player/inventory_spec.json",
+      "description": "Player inventory capacity, equipment slots, and quick-use limits"
+    }
+  ],
+  "invariants": {
+    "hp_min": 0,
+    "hp_max": 9999,
+    "resonance_min": 0,
+    "resonance_max": 100,
+    "sway_min": -100,
+    "sway_max": 100,
+    "bystander_corridor_min": -50,
+    "bystander_corridor_max": 50,
+    "gold_max": 999999
+  }
+}

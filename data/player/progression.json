@@ -1,0 +1,30 @@
+{
+  "subsystem": "sim.player.progression",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Player progression curves, level caps, and resource boundaries",
+  "limits": {
+    "max_level": 50,
+    "max_hp_ceiling": 9999,
+    "max_resonance_ceiling": 100,
+    "max_ap_ceiling": 10,
+    "max_movement_tiles": 8,
+    "max_poise_ceiling": 100,
+    "max_gold_ceiling": 999999
+  },
+  "scaling_per_level": {
+    "hp_gain_base": 15,
+    "atk_gain_base": 2,
+    "def_gain_base": 2,
+    "mat_gain_base": 2,
+    "mdf_gain_base": 2,
+    "poise_gain_base": 1
+  },
+  "resonance_conservation": {
+    "shield_decay_per_turn_outside_warding": 2,
+    "sword_edge_wear_per_strike": 5,
+    "equilibrium_recovery_per_turn": 3,
+    "tempering_amplification_multiplier": 1.5,
+    "dissipation_exhaustion_rate": 2.0
+  }
+}

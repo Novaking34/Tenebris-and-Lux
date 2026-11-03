@@ -1,0 +1,129 @@
+{
+  "subsystem": "sim.items.catalysts",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Tactical armaments, equipment, and catalysts for Tenebris and Lux",
+  "count": 6,
+  "items": [
+    {
+      "id": 101,
+      "code": "RING_OF_FIRE",
+      "name": "Ring of Fire",
+      "type": "catalyst",
+      "catalyst_type": "elemental",
+      "slot": "accessory",
+      "description": "A crimson ring awarded for altruistically donating 500 Gold to cover Eric the Lumberjack's rent. Imbues strikes and barriers with thermal retaliation and ignites burning grid tiles.",
+      "stats": {
+        "atk_bonus": 0,
+        "def_bonus": 0,
+        "mat_bonus": 4,
+        "mdf_bonus": 5,
+        "resonance_rate": 10
+      },
+      "properties": {
+        "skill_grant": 42,
+        "retaliation_element": "fire",
+        "ignites_tiles": true
+      }
+    },
+    {
+      "id": 102,
+      "code": "MEDUSAS_SWORD",
+      "name": "Medusa's Sword",
+      "type": "catalyst",
+      "catalyst_type": "weapon",
+      "slot": "weapon",
+      "description": "The ancient blade said to have severed the Gorgon. Infuses strikes with petrifying stasis and high kinetic poise severance.",
+      "stats": {
+        "atk_bonus": 17,
+        "def_bonus": 0,
+        "mat_bonus": 0,
+        "mdf_bonus": 0,
+        "poise_damage": 15
+      },
+      "properties": {
+        "inflicts_state": 11,
+        "stasis_chance_pct": 25
+      }
+    },
+    {
+      "id": 103,
+      "code": "HEART_SHIELD",
+      "name": "Heart Shield",
+      "type": "catalyst",
+      "catalyst_type": "armor",
+      "slot": "shield",
+      "description": "A tempered small shield etched with royal filigree. Grants vital defense and enhances defensive guard efficiency.",
+      "stats": {
+        "atk_bonus": 0,
+        "def_bonus": 10,
+        "mat_bonus": 0,
+        "mdf_bonus": 5,
+        "poise_defense": 20
+      },
+      "properties": {
+        "skill_grant": 2,
+        "guard_efficiency_pct": 30
+      }
+    },
+    {
+      "id": 104,
+      "code": "LYRIS_OFFERING",
+      "name": "Lyri's Offering",
+      "type": "catalyst",
+      "catalyst_type": "mystic",
+      "slot": "accessory",
+      "description": "An attunement talisman offered to the Goddess of Peace at Monica's shrine. Enhances magical attack and resonance recovery.",
+      "stats": {
+        "atk_bonus": 0,
+        "def_bonus": 2,
+        "mat_bonus": 8,
+        "mdf_bonus": 4,
+        "resonance_rate": 15
+      },
+      "properties": {
+        "sanctuary_aura": true
+      }
+    },
+    {
+      "id": 105,
+      "code": "LIGHT_INFUSED_BLADE",
+      "name": "Light-Infused Blade",
+      "type": "catalyst",
+      "catalyst_type": "weapon",
+      "slot": "weapon",
+      "description": "A refined steel sword bathed in the radiant glow of the Shield of Lux. Channels light severance.",
+      "stats": {
+        "atk_bonus": 12,
+        "def_bonus": 0,
+        "mat_bonus": 6,
+        "mdf_bonus": 2,
+        "poise_damage": 10
+      },
+      "properties": {
+        "element": "light",
+        "bonus_vs_shadow_pct": 20
+      }
+    },
+    {
+      "id": 106,
+      "code": "ABYSSAL_MANTLE",
+      "name": "Abyssal Mantle",
+      "type": "catalyst",
+      "catalyst_type": "armor",
+      "slot": "armor",
+      "description": "A shadowed cloak woven from abyssal mist. Dissipates kinetic shocks and cloaks the bearer in gloom.",
+      "stats": {
+        "atk_bonus": 0,
+        "def_bonus": 8,
+        "mat_bonus": 4,
+        "mdf_bonus": 8,
+        "poise_defense": 15
+      },
+      "properties": {
+        "element": "shadow",
+        "knockback_resistance_pct": 50
+      }
+    }
+  ]
+}
