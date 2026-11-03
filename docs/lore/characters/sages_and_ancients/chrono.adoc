@@ -1,0 +1,103 @@
+= Character Dossier: Chrono (Sage of the Ancient Archives & Dream Guardian)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Chrono** is the eternal archival sage and guardian of **The Dream Chamber**
+within the ethereal substrate of **The Dreamscape** (`LOC_THE_DREAMSCAPE`).
+Witness to the 3,000-year dynastic wave and the catastrophic snapping of the planar
+tether during the 11th Festival of Peoples, Chrono serves as the guide, mentor,
+and mechanic instructor for the newly awakened Relic Bearer.
+
+[quote, Chrono, The Dream Chamber - Tutorial Trial]
+____
+Time is neither a line nor a river, child of Sacyra. It is a loom of resonance.
+When the First King attempted to hold the veil open, the shuttle broke. What you call
+monsters are merely the untethered threads of that unbroken night seeking form.
+Raise your ward. Let us see if your spirit remembers how to hold the dawn.
+____
+
+== 1. Identity & Provenance
+
+* **Full Designation**: Chrono, Keeper of the Monoliths and Primordial Archives.
+* **Affiliation**: Pre-Dynastic Sacyran Order of Scribes; Guardian of the Dream Veil.
+* **Sanctuary Domain**: **The Dream Chamber** (Subterranean astral vault within the Dreamscape).
+* **Physical Manifestation**: An ethereal figure draped in celestial silver-grey robes lined
+  with rotating astrolabe embroidery. His hair shifts between shades of starlight, and his
+  eyes glow with muted amber luminescence. He holds the *Codex of Eras*, an unwritten ledger
+  of potential futures.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Specification
+| **Age / Lifespan** | Ageless; active since the dawn of the First Dynasty (>3,000 years).
+| **Primary Relic** | **The Chrono Astrolabe** (Attunes pocket dimensions and temporal flow).
+| **Tone & Register** | Measured, archaic, compassionate yet unsentimental; philosophical.
+| **Mechanical Role** | Archetype Stone Selection, Combat Tutorial Arbiter, Dream Compass Attuner.
+|===
+
+== 2. Archival Purpose & Historical Memory
+
+Chrono was present when Prince Mi-ren held his vigil in the capital and when Prince Casatti
+fell into the four-year coma. He witnessed Usuru the Wanderer arrive as a nameless pilgrim,
+and documented the exact instant the 11th-year ritual collapsed beneath the High Throne.
+
+[IMPORTANT]
+====
+Chrono does not intervene directly in the mortal wars of Sacyra. The Laws of the Veil
+forbid an Archival Sage from taking up arms against the living or the void. His duty is
+solely to ensure that the chosen Relic Bearer understands the consequences of moral intent.
+====
+
+=== The Three Archival Directives
+1. **Preserve the Blueprint of Balance**: Record the deeds of each monarch across the 3,000-year
+   dynastic wave, tracking the accumulation of stasis residue beneath the capital.
+2. **Attune the Relic Bearer**: Test the newly awakened soul against the *Dream Eaters* to verify
+   that they can command both Lux deflection and Tenebris severance without succumbing to madness.
+3. **Calibrate The Dream Compass**: Awaken the dormant temporal gearwork within *Grandma's Watch*,
+   transforming a rustic heirloom into an instrument capable of navigating nocturnal planar shifts.
+
+== 3. Canonical Voice & Dialogue
+
+* *The Philosophy of Stance*:
+  [quote, Chrono, Combat Mechanics Initiation]
+  "To wield only Lux is to become a frozen statue, impervious yet inert. To wield only
+  Tenebris is to become a devouring blade, sharp yet hollow. True mastery lies in the
+  threshold where the two kiss and do not consume one another."
+
+* *Warning of The King's Curse*:
+  [quote, Chrono, Midpoint Revelation]
+  "King Jihad is not evil, bearer. He is thirsty. And a thirsty man standing over an open
+  well of liquid night will drink until his belly bursts and his soul turns black."
+
+* *The Fate of Usuru*:
+  [quote, Chrono, The Planar Threshold]
+  "Do not despise the Dark Lord. Mourn him. For before he was a sovereign of ruin, he was a
+  lonely boy whose quiet complaint went unheard by a court blinded by its own radiance."
+
+== 4. Ludological Role in the TRPG Engine
+
+[cols="1,2", options="header"]
+|===
+| Gameplay Phase | Systemic Interaction
+| **Prologue (Awakening)** | Guides archetype stone interaction; spawns initial Dream Eater combatants.
+| **Act I Interludes** | Re-encountered during rest at campfires when the player falls into dream meditation.
+| **Act II (Midpoint)** | Deciphers the runes carved into *Grandma's Watch*, unlocking the Dream Compass.
+| **Act III (Endgame)** | Unlocks the *Sanctum of Forgotten Memories*, revealing Usuru's uncorrupted dialogue.
+|===
+
+****
+**Sidebar: Chrono's Codex & Invariant Validation**
+
+Within the C11 simulation engine, Chrono serves as the diagnotic voice of the
+subsystem self-audit routines (`core.util.manifest`, `sim.engine.state`). When the engine
+performs an invariant check, the telemetry trace reflects Chrono's unyielding standard:
+zero heap corruption, bounded moral sway, and deterministic state transitions.
+****

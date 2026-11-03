@@ -1,0 +1,50 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/debug/trace.json",
+    "id": "data.debug.profile.trace",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Deep tracing profile capturing micro-step state snapshots for cog-level inspection.",
+    "invariants": [
+      "Every action and state modification generates a persistent snapshot",
+      "Full verbose channel tracing enabled without console flooding",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.debug_profile.v1",
+    "target_struct": "debug_config_t",
+    "header_binding": "include/util/debug/debug.h"
+  },
+  "profile": {
+    "id": "trace",
+    "display_name": "Deep Micro-Step Tracing Profile",
+    "description": "Verbose cog-level tracing across all channels with full snapshot history.",
+    "enabled": true,
+    "break_on_error": false,
+    "break_on_tripwire": true,
+    "break_on_sway_breach": true,
+    "break_on_resonance_breach": true,
+    "break_on_hp_zero": false,
+    "break_on_stance_change": false,
+    "max_snapshots": 64,
+    "snapshot_interval_turns": 1,
+    "auto_dump_on_tripwire": true,
+    "interactive_repl": true,
+    "ansi_color": true,
+    "trace_channels": "all"
+  },
+  "_audit": {
+    "snapshot_capacity": 64,
+    "trap_guards_active": 3,
+    "verified_zero_heap": true
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 3
+  }
+}

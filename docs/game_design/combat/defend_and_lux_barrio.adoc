@@ -1,0 +1,36 @@
+= Combat Game Note: Defend Action & Lux Barrio
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+:sectnums:
+:icons: font
+
+== 1. Design Intent & Gameplay Philosophy
+
+In tactical RPG design, standard "Guard" or "Defend" commands often feel like wasted turns or passive stalls. In *Tenebris and Lux*, the **Defend** action is an active tactical commitment that interfaces with the metaphysical resonance of the **Shield of Lux**:
+
+* **Basic Defend (`defend` / `ward`)**:
+  - The wielder braces behind the celestial aegis.
+  - **Mechanics**: Absorbs incoming kinetic force, boosts `shield_power` by $+10 \dots +15$ (saturating at $100$), and staggers attacking threats for $10 \dots 15$ HP of poise recoil.
+  - **Moral Resonance**: Positively shifts moral sway ($+1$ virtue).
+
+* **The Basic Skill: `Lux Barrio` (`barrio` / `lux barrio`)**:
+  - Rather than a flat shield block, `Lux Barrio` erects a radiant, geometric light barrier that deflects the incoming assault while mitigating subsequent trauma over multiple combat turns.
+  - **Damage Mitigation**: Reduces incoming damage by **$25\%$** across all damage types.
+  - **Turn Duration Roll**: Injects tactile variance into battle planning. The duration is rolled within $[2, 5]$ turns (`2 + (turns_taken % 4)`).
+  - **Resonance Surge**: Surges Shield of Lux charge by $+20$ points and awards $+3$ virtue.
+  - **Offensive Counter-Stagger**: When used against an attacking foe, deals $15 \dots 25$ HP of reflective shockwave damage, capable of routing low-vigor skirmishers directly.
+
+== 2. Numerical Invariants & Formulas
+
+[cols="1,2,2", options="header"]
+|===
+| Parameter | Standard Defend | Lux Barrio
+| **Action Type** | Basic Tactical Guard | Relic Core Skill
+| **Resource Cost** | $0$ MP / $0$ TP | $0$ MP (Consumes active turn)
+| **Shield Resonance** | $+10$ (Neutral) / $+15$ (Warding) | $+20$ (Capped at $100$)
+| **Stagger Recoil** | $10 \dots 15$ HP | $15 \dots 25$ HP
+| **Damage Mitigation** | Flat deflection | **$-25\%$ incoming damage**
+| **Buff Duration** | Immediate turn only | **$2 \dots 5$ turns**
+| **Moral Sway Effect** | $+1$ Virtue | $+3$ Virtue
+|===

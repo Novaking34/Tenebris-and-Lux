@@ -17,7 +17,7 @@ Set within the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/s�
 **Tactical Strategy RPG (TRPG)** centered on dual protagonists—**Elijah Ro-enheart** (son of the former
 Head of the Royal Guard) and **Katrina Jaren** (noble court aspirant seeking the Adventurers' Guild)—who
 wield the primordial **Shield of Lux** and **Sword of Tenebris** against the encroaching dread legions of
-**Dark Lord Malakor**.
+**The Dark Lord**.
 
 The engine strictly separates **simulation state** from the **presentation layer**:
 
@@ -88,5 +88,5 @@ In alignment with the OmniCode framework, all C source code, headers, and build 
 | **Phase 1 (Current)** | `v0.0.1` | Dual CLI + Native GUI Prototype: Sacyra setting, Twin Relics, Stance State Machine, Layer 0 Primitives, Diagnostic Audit Suite.
 | **Phase 2** | `v0.1.0` | Tactical Strategy RPG Grid Engine: Discrete 2D grid coordinates, unit movement budgets, terrain modifiers, Zone-of-Control (ZOC), and dual-protagonist data models.
 | **Phase 3** | `v0.2.0` | Cinematic Combat Resolution: Transition from grid to traditional 2D side-view action duels, timed ward/strike inputs, and poise meters.
-| **Phase 4** | `v1.0.0` | Full TRPG Campaign of Sacyra: Dynamic party management, story branching, and final confrontation against Dark Lord Malakor.
+| **Phase 4** | `v1.0.0` | Full TRPG Campaign of Sacyra: Dynamic party management, story branching, and final confrontation against The Dark Lord.
 |===

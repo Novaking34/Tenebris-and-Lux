@@ -1,0 +1,45 @@
+= Realm Chronicle: The Dreamscape (The Ethereal Substrate)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.1.0, 2026-11-02
+:doctype: article
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview & Metaphysical Essence
+
+**The Dreamscape** (also known as the Astral Substrate or Room of Sages) is an ethereal plane
+of consciousness, ancestral memory, and timeless trials existing between waking reality and slumber.
+Grounded in the recovered 2017–2018 demo script (Maps 006, 008, 011, 041, 042) and verified in the
+ISO C11 engine architecture as `LOC_THE_DREAMSCAPE`, it serves as the cosmological origin point
+where the protagonist awakens before entering the temporal Kingdom of Sacyra.
+
+== 1. Historical & Metaphysical Provenance
+
+* **The Coma of the First King:** Following the inaugural Festival of Peoples 3,000 years ago,
+  the First King collapsed into a coma. His spirit was found fully lucid and awake inside The Dreamscape.
+  While Prince Mi-ren and Prince Casatti sustained projections for ten festivals, the 11th Festival
+  tampering by Usuru snapped the ethereal tether, permanently sealing the First King's soul here.
+* **The Annual Thinning of the Veil:** For one week each year—coinciding with the Festival of Heroes—the
+  boundary ("the Veil") separating the temporal world from The Dreamscape thins to gossamer, allowing
+  mortals to project desires across the threshold.
+* **The Three Laws of Crossing the Veil:**
+  1. *The Mirror of Intent:* The ether reflects mortal intent. Pure devotion projects harmony; terror,
+     spite, or megalomania (such as King Jihad's treason) inverts the conduit into waking nightmares.
+  2. *The Severed Tether:* Sustaining a long bridge across the veil carries fatal risk. Violent
+     interruption snaps spiritual tethers, marooning consciousness permanently.
+  3. *The Dream Eater Infiltration:* Tearing or weakening the veil attracts **Dream Eaters**—parasitic
+     entities native to the deep astral voids that devour mortal memories, dreams, and ancestral records.
+
+== 2. Mechanical Integration in the C11 Engine
+
+* **Engine Enumeration:** Registered in `include/sim/sim_types.h` as `LOC_THE_DREAMSCAPE`.
+* **Opening Trial:** The protagonist awakens in the Hall of Sages with **Chrono the Sage**, attuning
+  to class archetype stones and testing `Lux Barrio` and `Cuttatio Tenebris` against Dream Eaters before
+  Chrono's command (*"AWAKEN!"*) transports consciousness to Grandma Magolia's hearth in Dio Village.
+* **Terrestrial Gating:** Throughout Chapter 1 (the demo), return to The Dreamscape is barred, anchoring
+  the player in terrestrial human stakes.
+* **The Dream Compass & Nocturnal Phasing:** Upgraded from Grandma's Watch, the Dream Compass allows
+  entry to The Dreamscape exclusively during nocturnal hours (`20:00 <= hour || hour <= 04:00`).
+* **Tactical LeTBS Environments:** Comprises floating platform grids, shifting crystal leylines,
+  and astral mechanisms that restore MP while exposing units to planar shear.

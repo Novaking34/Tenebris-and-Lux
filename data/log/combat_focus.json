@@ -1,0 +1,59 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/log/combat_focus.json",
+    "id": "data.log.setting.combat_focus",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-10-30",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Combat and stance telemetry focus profile for balancing tactical mechanics.",
+    "invariants": [
+      "Prioritizes CHARACTER and EVENT categories for tactical stance logging",
+      "Retains high detail on Lux Barrio, Cuttatio Tenebris, and Duo-Loca resolution",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.log_setting.v1",
+    "target_struct": "log_config_t",
+    "header_binding": "include/util/log/log.h"
+  },
+  "setting": {
+    "id": "combat_focus",
+    "display_name": "Combat & Relic Stance Telemetry Focus",
+    "description": "Specialized profile routing combat stance shifts (Warding, Striking, Equilibrium) and skill calculations (Lux Barrio, Cuttatio) to priority streams.",
+    "log_dir": "logs",
+    "base_filename": "tenebris_lux_combat.log",
+    "max_file_size_bytes": 2097152,
+    "max_rotated_files": 20,
+    "min_severity": "DEBUG",
+    "save_by_category": true,
+    "echo_to_console": true,
+    "use_colors": true,
+    "telemetry": {
+      "track_sequence_ids": true,
+      "track_monotonic_us": true,
+      "track_iso_timestamps": true,
+      "track_moral_grades": true,
+      "detailed_combat_calculations": true,
+      "detailed_stance_transitions": true,
+      "active_categories": [
+        "EVENT",
+        "CHARACTER",
+        "LOG"
+      ]
+    }
+  },
+  "_audit": {
+    "rotation_threshold_kb": 2048,
+    "retention_policy": "Retain 20 timestamped rotated archives",
+    "stance_machine_auditing": true,
+    "relic_resonance_tracking": true
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 6
+  }
+}

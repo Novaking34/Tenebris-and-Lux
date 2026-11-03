@@ -1,0 +1,124 @@
+= Interactive State Debugger & Time-Travel Rewind Subsystem
+:author: CreativeWorkzStudio LLC / ProfessorSeanEX
+:revnumber: 1.0.0
+:revdate: 2026-11-02
+:experimental:
+:source-highlighter: rouge
+:toc: left
+:toclevels: 3
+
+== 1. Architectural Philosophy & Mission
+
+The *Interactive State Debugger & Time-Travel Rewind Subsystem* (`util/debug/`)
+forms a critical zero-heap component of the Layer 0 Core Utilities. Conceived to
+provide deterministic state inspection, non-invasive telemetry tracing, and historical
+state restoration, the debugger enables developers and test harnesses to observe game
+evolution turn-by-turn.
+
+=== Key Architectural Pillars
+
+* *Decoupled State Representation*: Layer 0 declares `debug_state_fields_t` composed
+  entirely of primitive integer and string fields. Layer 1 simulation engine
+  (`sim/game.c`) provides bidirectional conversion adapters, ensuring strict unidirectional
+  dependency boundaries (Layer 0 never depends on Layer 1).
+* *Zero-Heap Allocation Guarantee (`ALLOC_ZERO_HEAP`)*: The entire state snapshot history
+  lives in a static circular ring buffer with a default capacity of 64 snapshots,
+  guaranteeing deterministic execution without runtime dynamic memory allocation.
+* *Deterministic State Hashing*: Evaluates an FNV-1a 32-bit hash across all simulation
+  fields to verify state conservation and detect data corruption or unexpected state drift.
+* *Bi-Directional Time-Travel*: Allows instantaneous rewinding of the live player
+  simulation to any historical snapshot index, facilitating automated replay validation
+  and breakpoint debugging.
+* *Quarantined Emergency Fallback*: If `data/debug/` JSON configurations are missing or
+  corrupt, the system falls back to an immutable monolithic fallback code page
+  (`debug_fallback.c`), avoiding crashes or loose-bolt failures.
+
+== 2. Subsystem Layout & Strata
+
+[source,text]
+----
+include/util/debug/
+├── debug.h              // Public OmniCode 5-Block Debugger Interface
+└── debug_fallback.h     // Quarantined Emergency Monolith Fallback Header
+
+src/util/debug/
+├── debug.c              // Core Debugger Implementation & Ring Buffer Engine
+└── debug_fallback.c     // Quarantined Emergency Monolith Code Page
+
+data/debug/
+├── manifest.json        // Debug Catalog & Active Profile Pointer
+├── default.json         // Balanced Developer Debugging Baseline Profile
+├── strict.json          // Rigid Invariant Enforcement & Break-on-Error Profile
+└── trace.json           // Verbose Cog-Level Telemetry Tracing Profile
+----
+
+== 3. Core Mechanics & Invariants
+
+=== 3.1 Frozen State Snapshot Ring Buffer
+
+State snapshots capture the full state of the simulation at turn or action
+boundaries. Each snapshot records:
+
+* `snapshot_id`: Monotonically increasing 64-bit integer.
+* `timestamp_ms`: High-resolution monotonic millisecond timestamp.
+* `state`: Decoupled `debug_state_fields_t` containing turn, hero identity, HP, MP,
+  TP, twin relic resonance (Shield of Lux, Sword of Tenebris), stance ID, moral sway,
+  and provincial location.
+* `last_command` and `last_arg`: Textual representation of the verb and parameter.
+* `state_hash`: 32-bit FNV-1a checksum of the state fields.
+* `log_sequence_id`: Sequence counter from the forensic logging engine, binding
+  snapshots directly to telemetry traces.
+
+=== 3.2 Dynamic Breakpoints & Tripwire Traps
+
+The debugger supports dynamic breakpoint registration across 7 distinct condition types:
+
+[cols="1,2,2", options="header"]
+|===
+| Breakpoint Type | Target Parameter | Trigger Condition
+| `DEBUG_BREAK_TURN` | Target Turn Number | Turn counter equals target value.
+| `DEBUG_BREAK_STANCE` | Target Stance ID | Combat stance matches target.
+| `DEBUG_BREAK_SWAY_RANGE` | Target Sway Bound | Absolute sway exceeds threshold.
+| `DEBUG_BREAK_RESONANCE_BREACH` | Target Resonance | Relic exceeds target limit.
+| `DEBUG_BREAK_HP_THRESHOLD` | Target HP Floor | Player health drops below value.
+| `DEBUG_BREAK_LOCATION` | Target Province ID | Player enters target province.
+| `DEBUG_BREAK_TRIPWIRE` | Tripwire State | Any engine tripwire activates.
+|===
+
+=== 3.3 State Differential Analysis (`debug_diff_snapshots`)
+
+The differential engine evaluates two arbitrary snapshots in time and generates a
+human-readable diff table highlighting exact numerical deltas:
+
+[source,text]
+----
+Snapshot Diff: #1 (Turn 1) -> #2 (Turn 2)
+--------------------------------------------------
+  HP:           100 -> 90 (-10)
+  Shield (Lux): 50 -> 45 (-5)
+  Sword (Ten):  50 -> 55 (+5)
+  Moral Sway:   0 -> 5 (+5)
+  State Hash:   0xAA851EE1 -> 0xB79D3C20
+----
+
+== 4. Interactive CLI Integration
+
+When launched with the `--debug` (or `-d`) flag, the engine activates interactive
+debug commands during gameplay:
+
+* `inspect`: Emits a formatted ASCII diagnostic card displaying hero stats, relic
+  resonance, active stance, moral sway, state hash, and latched tripwires.
+* `history`: Displays a tabular timeline of recorded snapshots across the circular buffer.
+* `snap <reason>`: Forces the immediate capture of a named state snapshot.
+* `rewind <index>`: Restores player simulation state to a previous snapshot index.
+* `debug help`: Displays syntax and documentation for debug commands.
+
+== 5. Verification & Audit Contract
+
+The debugger provides two automated audit entry points:
+
+1. `debug_preflight()`: Evaluates pre-flight loose bolts (zero-heap memory bounds,
+   hash determinism, and fallback readiness) for central manifest registration.
+2. `debug_audit(verbose)`: Comprehensive self-audit executing 6 invariant checks
+   covering snapshot capture, state hashing, time-travel rewind, diffing, and
+   breakpoint evaluation.

@@ -1,28 +1,55 @@
 = World-Building & Lore Index: The Chronicles of Sacyra
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v1.1.0, 2026-11-02
 :doctype: article
 :icons: font
 
 [abstract]
 == Overview
 
-This directory contains the canonical world bible, cosmology, character dossiers,
-and socio-political history of the **Kingdom of Sacyra** in *Tenebris and Lux*.
+This directory contains the canonical world bible, macro-chronology, storyboard sequences,
+character dossiers, and socio-political history of the **Kingdom of Sacyra** in *Tenebris and Lux*.
 
 == Canonical Manifest
 
 1. **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**  
    *The Chronicles of Sacyra*: The foundational world bible detailing:
-   - The primordial neutrality of Lux (Radiance) and Tenebris (Darkness).
-   - The genesis and mechanics of the Shield of Lux and Sword of Tenebris.
-   - The Kingdom of Sacyra (Crown, Royal Guard, Noble Houses, Adventurers' Guild).
-   - The existential invasion of Dark Lord Malakor from the Abyssal Threshold.
-   - The moral sway continuum of mortal wielders.
+   - Primordial neutrality of Lux (Radiance) and Tenebris (Darkness).
+   - Law of Tempering and Dissipation.
+   - Mundane inception of the twin symbols under the First King and the two sons (Mi-ren and Casatti).
+   - The 11th Festival rupture, Usuru, the 7-Year Great War, and the 3,000-year dynastic wave.
+   - Tri-perspective protagonist architecture and the TRPG combat paradigm.
 
-2. **[characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc)**  
-   *Dramatis Personae*: Complete character dossiers, lineage, and TRPG doctrines:
-   - **Elijah Ro-enheart**: Son of the former Royal Guard Head; stalwart defender of Sacyra; bearer of the Shield of Lux.
-   - **Katrina Jaren**: Noble-born daughter of House Jaren; Adventurers' Guild aspirant; swift wielder of the Sword of Tenebris.
-   - Dual-protagonist synergy, social conflicts, and tactical battlefield dynamics.
-   - **Dark Lord Malakor** and the void-blighted vanguard.
+2. **[genesis_and_historical_canon.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/genesis_and_historical_canon.adoc)**  
+   *Chronicles of Antiquity & Macro-History*:
+   - Eras I–VI: Founding, Coma, Silent Vigil, Meaning of "Of Age", Libira's quiet complaint.
+   - The 11th Festival catastrophe, Usuru's naming, the 7-Year Great War across 6 powers.
+   - Casatti's infusion of Tenebris (Absolute Justice) and Mi-ren's discovery of Lux (Reconciliation).
+   - The 3,000-year dynastic wave (30–50 kings) and the five axioms of established dynastic order.
+
+3. **[master_storyboard_chronicle.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/master_storyboard_chronicle.adoc)**  
+   *Master Storyboard Sequence (Scenes 01–20)*:
+   - 20-scene cinematic walkthrough from the founding forges to the Prophecy of Kings.
+   - Setting & tone, visual focus, and narrative/thematic beats.
+
+4. **[thematic_triad.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/thematic_triad.adoc)**  
+   *Thematic Architecture: Past, Present & Future Triad*:
+   - "Trauma is Inherited, Destiny is Chosen".
+   - Usuru / Elijah Ro-enheart (The Frontier Wound / Redemptive Grace).
+   - Prince Casatti / Lady Katrina Jaren (The Renouncing Blade / Truth & Merit).
+   - Prince Mi-ren / The Custom Bearer (The Steward of Balance / Synthesis).
+
+5. **[characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc)**  
+   *Dramatis Personae*: Complete character dossiers, lineages, and TRPG doctrines:
+   - **Elijah Ro-enheart**: Heavy vanguard anchor; bearer of the Shield of Lux.
+   - **Lady Katrina Jaren**: Agile skirmisher; wielder of the Sword of Tenebris.
+   - **The Custom Bearer**: The Secret Chronicler holding The Dream Compass.
+   - **King Jihad**: Monarch of ambition; grotesque inverse of the founding dynasty.
+   - **The Dark Lord**: Usuru's 3,000-year descent in the abyssal vaults.
+
+6. **[realms/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/realms/README.adoc)**  
+   *Topographical Realms*: Detailed geographic dossiers for **The Dreamscape**, **Dio Village**,
+   and **Whispering Woods**.
+
+7. **[threats/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/threats/README.adoc)**  
+   *Threat Dossiers*: Overarching antagonists including **The Dark Lord** and **Dream Eaters**.

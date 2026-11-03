@@ -1,0 +1,102 @@
+= Realm Chronicle: The Kingdom of Libira (The Arid Frontier of the Quiet Complaint)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+The **Kingdom of Libira** is a remote, windswept, and arid frontier realm situated far to the
+west across the Great Salt Basin, a full seven-day courier journey from the **Royal Capital of Sacyra**.
+Lacking a fortified relay outpost system throughout the founding era, Libira became the birthplace
+of the simmering socio-political grievance known historically as **"The Quiet Complaint"**.
+It was here that a nameless boy was born to a humble shepherd family, traveled the continent as the
+Three-Day Wanderer, and returned across the warped desert passes as **Usuru**, sovereign of the
+broken crown and the future **Dark Lord**.
+
+[quote, Old Libiran Nomad Proverb, Inscribed upon an Adobe Cistern]
+____
+The sun burns the rocks by day, and the wind freezes the sands by night. Sacyra has water,
+gold, and songs for its kings. Libira has only stone, salt, and the memory of every empty
+wagon that never returned from the capital.
+____
+
+== 1. Geography, Climate & The 7-Day Courier Chasm
+
+* **Geographical Classification**: High-altitude arid plateau, red sandstone mesas, salt flats, and canyon wadis.
+* **The Communication Gap**:
+  - Distance: A full week (seven days) of hard riding by swift couriers across barren terrain.
+  - Absence of Infrastructure: Because Libira was historically treated as an unestablished border territory,
+    the Sacyran crown never invested in a chain of relay watchtowers or horse stations.
+  - The Warped Rift: When the 11th Festival ritual collapsed, the spatial fabric between Libira and the
+    capital expanded violently, turning a week-long journey into an impassable spatial wasteland.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Specification
+| **Terrain Profile** | Crimson sand dunes, deep sandstone ravines, dry limestone dry-washes.
+| **Settlement Pattern** | Clustered adobe townships built around subterranean aquifers and ancient cisterns.
+| **Key Settlements** | **The Assembly of Libira** (Central adobe council citadel); **Wadi Usuru**.
+| **Strategic Resources** | Saltpeter, red iron ore, draught lizards, subterranean aquifer water.
+|===
+
+== 2. Socio-Political Philosophy: The "Quiet Complaint"
+
+Unlike open rebellions driven by greedy warlords, Libira's grievance was born of profound, generational neglect:
+
+* **The Disconnect**: The capital celebrated annual harvests and imperial festivals, issuing royal
+  edicts that arrived in Libira weeks after decrees were signed. Libiran citizens suffered under
+  droughts and border raids without receiving imperial military reinforcement.
+* **The "Quiet Complaint"**: A cultural attitude of stoic, bitter endurance. Libirans learned never to
+  expect salvation from the Crown, fostering fierce communal solidarity and deep suspicion of
+  ceremonial authority.
+* **Modern Parallels in Dio Village**: The same dynamic repeats in the present era in **Dio Village**,
+  where Grandma Magolia sighs over the Crown's neglect and the St. Baron taxes commoners without
+  providing protection from monster raids.
+
+[IMPORTANT]
+====
+In the narrative architecture of *Tenebris and Lux*, Libira represents the raw root of all conflict.
+Had the First King's court listened to the nameless boy's petition and built a simple relay road,
+the Seven-Year Great War would never have occurred.
+====
+
+== 3. The Tragedy of Usuru's Assembly
+
+When Usuru returned from the capital with his skin burned by radiant energy and his eyes alight
+with abyssal fury, the Libiran Assembly Hall became the focal point of continental history:
+
+1. **The Gathering of Elders**: Tribal elders, weary of decades of unanswered petitions, wept as the
+   youth recounted how the Sacyran guards struck him down simply for asking for roads.
+2. **The Acclamation of the Sovereign**: For the first time in their history, the disparate nomadic
+   clans united, placing the iron circlet upon Usuru's brow and naming him their young King.
+3. **The Call to the 6 Powers**: Leveraging trade routes across the salt flats, Usuru sent emissaries
+   to Great Mau, Old Sacyra, and the Yun-yin Provinces, turning a localized frontier petition into
+   a world-spanning coalition war.
+
+== 4. Tactical Grid Battlefield: The Red Sandstone Wadi
+
+[source,text]
+----
+  [0]   [1]   [2]   [3]   [4]   [5]   [6]   [7]
+┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│MESA │MESA │     │CSTN │CSTN │     │MESA │MESA │ [0] Ancient Cistern (`CSTN`) / High Mesa
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│MESA │SAND │SAND │USURU│LIBR1│LIBR2│SAND │MESA │ [1] Libiran Skirmishers & Camel Cavalry
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│     │SAND │DUNE │DUNE │DUNE │SAND │     │     │ [2] Shifting Sand Dunes (Movement Penalty)
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│     │HERO1│HERO2│HERO3│ALLY │     │     │     │ [3] Sacyran Expeditionary Force
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│CANYN│CANYN│     │ROAD │ROAD │     │CANYN│CANYN│ [4] Canyon Gorge Chokepoint
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+----
+
+=== Battlefield Invariants
+1. **Shifting Dunes (`DUNE`)**: Reduces movement range by $1$ tile for heavy armor units (e.g. Elijah).
+2. **Canyon Gorges (`CANYN`)**: Impassable chasms; units knocked back into chasms suffer instant fall defeat.
+3. **High Sandstone Mesas (`MESA`)**: High ground granting $+25\%$ critical chance to Libiran bowmen.

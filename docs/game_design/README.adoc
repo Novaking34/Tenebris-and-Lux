@@ -1,45 +1,57 @@
 = Game Design & Ludology Index: The Kingdom of Sacyra
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v1.1.0, 2026-11-02
 :doctype: article
 :icons: font
 
 [abstract]
 == Overview
 
-This directory houses the foundational game design pillars, combat mechanics,
-spatial topography, testing philosophy, and historical baseline records for
-*Tenebris and Lux* in the **Kingdom of Sacyra**.
+This directory houses the foundational game design pillars, combat mechanics, campaign progression,
+spatial topography, testing philosophy, and historical baseline records for *Tenebris and Lux*
+in the **Kingdom of Sacyra** and **The Dreamscape**.
 
 == Game Design Manifest
 
 1. xref:tactical_trpg_system.adoc[*tactical_trpg_system.adoc*]::
-   *Tactical Strategy RPG (TRPG) System Specification*: Comprehensive
-   blueprint of the dual-layer combat system:
+   *Tactical Strategy RPG (TRPG) System Specification*: Comprehensive blueprint of the dual-layer combat system:
    - Phase 1: Grid-based tactical battlefield (tile movement, terrain, facing).
-   - Phase 2: Cinematic combat resolution (traditional side-scroll / action).
-   - Dual-protagonist synergy (Elijah's frontline defense & Katrina's outrider
-     skirmishing).
-   - Tandem linked combat arts and moral sway integration.
+   - Phase 2: Cinematic combat resolution (traditional side-scroll / action duels).
+   - Dual-protagonist synergy and moral sway integration.
 
 2. xref:relics_and_combat.adoc[*relics_and_combat.adoc*]::
-   *The Twin Relics, Combat Stances & Moral Sway*: Detailed specifications of
-   the Shield of Lux, Sword of Tenebris, the 4-stance state machine, and the
-   `[-100, +100]` moral continuum.
+   *The Twin Relics, Combat Stances & Tactical Abilities*:
+   - Specifications of the Shield of Lux, Sword of Tenebris, the 4-stance state machine, and the `[-100, +100]` moral continuum.
+   - Core skills: `Lux Barrio`, `Cuttatio Tenebris`, and `Duo-Loca Bashin n Slash`.
+   - The Law of Tempering and Dissipation.
+   - The Relic Embellishment System (Ring of Fire, Book of Monsters, Medusa's Sword).
 
-3. xref:world_topography.adoc[*world_topography.adoc*]::
-   *World Topography & Tactical Encounter Design*: The geography of the Kingdom
-   of Sacyra, defensive provinces, battlefield terrain modifiers, and threat
-   scaling.
+3. xref:campaign_structure_and_endings.adoc[*campaign_structure_and_endings.adoc*]::
+   *Campaign Architecture, The King's Curse & Multi-Ending Specification*:
+   - The Two-Half Campaign Structure (Act I King Jihad, Act II The Dark Lord).
+   - The Origin of "The King's Curse" (open planar wound under the High Throne) and King Jihad's possession.
+   - The Midpoint Fork: Neutral Path vs. True Ending Path ("The Ugly Truth").
+   - Player consent to know the deeper lore and missable nocturnal trials.
+   - The Complete 5-Route Ending Matrix (Canonical Harmony, Benevolent Stasis, Calcified Tyrant, Abyssal Usurper, Secret Chronicler).
 
-4. xref:game_testing.adoc[*game_testing.adoc*]::
-   *Game Dev Testing vs Software Testing*: Deep dive into continuous state
-   invariants, golden master replay parity, softlock immunity stress tests,
-   and 60 FPS frame-budget latency headroom.
+4. xref:dreamscape_and_temporal_architecture.adoc[*dreamscape_and_temporal_architecture.adoc*]::
+   *The Dreamscape & Temporal Architecture*:
+   - Engine integration (`LOC_THE_DREAMSCAPE`), LeTBS platform battlefields, and Dream Eaters.
+   - Opening astral rite with Chrono the Sage and the "AWAKEN!" transition.
+   - Chapter 1 demo gating as a terrestrial anchor in Dio Village.
+   - Grandma's Watch evolving into The Dream Compass (Layer 0 monotonic clock).
+   - Nighttime synchronization and event-driven temporal phasing.
 
-5. xref:demo_baseline/README.adoc[*demo_baseline/README.adoc*]::
-   *2017–2018 Historical Demo Baseline & Extraction Compendium*: Verified
-   baseline extracted from the original RPG Maker MV datasets (`Old Game Data`
-   and `Old_Game_Data_2/data`), detailing the complete 43-map scenario
-   walkthrough, full cast compendium, LeTBS tactical grid mechanics, grimoire,
-   bestiary, and system switches/variables.
+5. xref:world_topography.adoc[*world_topography.adoc*]::
+   *World Topography & Tactical Encounter Design*: The geography of the Kingdom of Sacyra,
+   defensive provinces, battlefield terrain modifiers, and threat scaling.
+
+6. xref:game_testing.adoc[*game_testing.adoc*]::
+   *Game Dev Testing vs Software Testing*: Deep dive into continuous state invariants,
+   golden master replay parity, softlock immunity stress tests, and 60 FPS frame-budget latency headroom.
+
+7. xref:demo_baseline/README.adoc[*demo_baseline/README.adoc*]::
+   *2017–2018 Historical Demo Baseline & Extraction Compendium*: Verified baseline extracted
+   from the original RPG Maker MV datasets (`Old Game Data` and `Old_Game_Data_2/data`), detailing
+   the complete 43-map scenario walkthrough, full cast compendium, LeTBS tactical grid mechanics,
+   grimoire, bestiary, and system switches/variables.

@@ -1,0 +1,68 @@
+= Developer Log 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Abstract
+
+This developer log chronicles the ludological re-alignment of the native C11 simulation
+engine with the authentic 2017–2018 demo baseline. It details the transition from generic
+combat verbs to concrete tactical skills: Defend (*Lux Barrio* with turn duration rolls
+and $25\%$ damage mitigation), Attack (*Cuttatio Tenebris* with $20\%$ area splash cleave),
+and Special (*Basic Magic*, *Basic Ward*, *Basic Charm*, and *Duo-Loca Bashin n Slash* with
+adaptive defense targeting). Furthermore, it documents the critical correction of the
+antagonist identity to **"The Dark Lord"** (the overarching background "A Plot"), the
+reinstatement of **The Dreamscape** opening trial, and protagonist customization.
+
+== 1. Lessons Learned: Game Developer vs. Software CRUD Thinking
+
+In conventional software development, refactoring often centers on abstracting functions,
+reducing duplication, and piping data. In game development, however, every mechanical
+choice carries immediate ludological weight:
+
+1. **Mechanical Texture Over Generic Verbs**:
+   - Generic commands like "ward" and "strike" felt mechanically hollow without distinct
+     tactical identities.
+   - Transforming "Ward" into **`Lux Barrio`** introduces active damage mitigation ($-25\%$)
+     and tactical duration rolls ($2 \dots 5$ turns). Defending ceases to be a passive stall
+     and becomes a strategic barrier phase.
+   - Transforming "Strike" into **`Cuttatio Tenebris`** with $20\%$ flank splash damage
+     solves the issue of target tunneling, rewarding spatial positioning against swarms.
+
+2. **Ground Truth Over Synthetic Assumptions**:
+   - In earlier drafts, the antagonist was arbitrarily labeled "Dark Lord Malakor".
+     Forensic inspection of the original 2017–2018 demo revealed that in canon he was
+     consistently referred to as **"The Dark Lord"**.
+   - The Dark Lord is an omnipresent cosmic presence ("The A Plot") menacing from afar,
+     while immediate gameplay focuses on regional factions, village survival, and
+     ancient trials. Rushing into the final boss ruins narrative pacing.
+
+3. **Narrative Pacing & The Dreamscape**:
+   - The game does not begin in a high-stakes fortress war; it begins in **The Dreamscape**
+     (guided by Chrono facing Dream Eaters), allowing the player to awaken spiritually
+     before physically waking up in Dio Village at Grandma Magolia's hearth.
+
+== 2. Implementation Telemetry & Invariant Verification
+
+The native simulation sub-assemblies were updated under the OmniCode 5-Block Protocol:
+
+* **Layer 1 Simulation**:
+  - `src/sim/sim_types.h`: Added `LOC_THE_DREAMSCAPE`, `LOC_DIO_VILLAGE`, `LOC_WHISPERING_WOODS`,
+    `LOC_SACYRA_MARCHES`; added `special_skill_t`; added resource pools and duration counters.
+  - `src/sim/combat.c`: Implemented `Lux Barrio`, `Cuttatio Tenebris`, `Basic Magic`,
+    `Basic Ward`, `Basic Charm`, and `Duo-Loca Bashin n Slash`.
+  - `src/sim/dispatcher.c`: Tokenizes new commands, handles turn progression, decrements
+    buff durations, and supports protagonist customization (`name <str>`).
+* **Layer 4 Verification**:
+  - `tests/test_game_invariants.c`: 7/7 suites passing.
+  - `tests/test_gameplay_scenarios.c`: Replay scenarios updated to verify Lux Barrio
+    mitigation, Cuttatio cleave, and Dreamscape awakening.
+  - `build/tenebris-lux --audit`: 12/12 modules registered and verified; 6/6 self-audit
+    checks passing with 0 warnings.

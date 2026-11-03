@@ -111,22 +111,37 @@ impl MasterGuideBuilder {
         vec![
             VolumeSpec {
                 roman: "I",
-                title: "World Canon, Metaphysics & Sacyran Lore",
-                description: "Cosmic neutrality of Lux and Tenebris, chivalric Kingdom of Sacyra, and the existential menace of Dark Lord Malakor.",
+                title: "World Canon, Metaphysics & Continental Topography",
+                description: "Cosmic neutrality of Lux and Tenebris, chivalric Kingdom of Sacyra, continental realms, and the existential menace of The Dark Lord.",
                 chapters: vec![
                     make_ch("The Primordial Neutrality of Lux and Tenebris", "lore/world_and_lore.adoc"),
+                    make_ch("Historical Canon & Macro-Chronology", "lore/genesis_and_historical_canon.adoc"),
+                    make_ch("Master Storyboard Sequence (Scenes 01–20)", "lore/master_storyboard_chronicle.adoc"),
+                    make_ch("The Past, Present & Future Thematic Triad", "lore/thematic_triad.adoc"),
                     make_ch("Socio-Political Strata of the Kingdom of Sacyra", "lore/characters.adoc"),
+                    make_ch("The Six Powers of the Continent", "lore/realms/the_six_powers.adoc"),
+                    make_ch("Realm Chronicle: The Kingdom of Libira", "lore/realms/kingdom_of_libira.adoc"),
+                    make_ch("Realm Chronicle: The Royal Capital of Sacyra", "lore/realms/the_royal_capital.adoc"),
+                    make_ch("Realm Chronicle: The Sacyran Marches", "lore/realms/sacyra_marches.adoc"),
+                    make_ch("Realm Chronicle: The Whispering Woods", "lore/realms/whispering_woods.adoc"),
+                    make_ch("Realm Chronicle: Dio Village", "lore/realms/dio_village.adoc"),
+                    make_ch("Realm Chronicle: The Dreamscape", "lore/realms/the_dreamscape.adoc"),
                     make_ch("High School Inception & TRPG Genesis", "dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc"),
                 ],
             },
             VolumeSpec {
                 roman: "II",
                 title: "Dramatis Personae & Dual Protagonist Dynamics",
-                description: "Comprehensive character dossiers, dual protagonist synergies, and regional faction leaders.",
+                description: "Comprehensive character dossiers, founding princes, dual protagonist synergies, and regional faction leaders.",
                 chapters: vec![
-                    make_ch("Dual Protagonist Dynamics & Moral Continuum", "lore/characters/protagonists/dual_protagonist_dynamics.adoc"),
+                    make_ch("Dual Protagonist Dynamics & Tri-Perspective Architecture", "lore/characters/protagonists/dual_protagonist_dynamics.adoc"),
                     make_ch("Elijah Ro-enheart: Vanguard of Lux", "lore/characters/protagonists/elijah_ro_enheart.adoc"),
                     make_ch("Lady Katrina Jaren: The Outrider Blade", "lore/characters/protagonists/katrina_jaren.adoc"),
+                    make_ch("The Custom Bearer: Steward of Balance", "lore/characters/protagonists/custom_bearer.adoc"),
+                    make_ch("Prince Mi-ren: Sovereign of the Vigil", "lore/characters/founders/prince_mi_ren.adoc"),
+                    make_ch("Prince Casatti: The Outrider Blade of Truth", "lore/characters/founders/prince_casatti.adoc"),
+                    make_ch("Usuru the Wanderer: Sovereign of Grief", "lore/characters/founders/usuru_the_wanderer.adoc"),
+                    make_ch("Chrono: Sage of the Ancient Archives & Dream Guardian", "lore/characters/sages_and_ancients/chrono.adoc"),
                     make_ch("Grandma Magolia: Matriarch of Dio Village", "lore/characters/dio_village/grandma_magolia.adoc"),
                     make_ch("Monica the Mystic & Goddess Lyri", "lore/characters/dio_village/monica_and_lyri.adoc"),
                     make_ch("Eric the Lumberjack & The Moral Litmus", "lore/characters/dio_village/eric_the_lumberjack.adoc"),
@@ -135,6 +150,8 @@ impl MasterGuideBuilder {
                     make_ch("High Priest Roté & The Royal Omens", "lore/characters/kingdom_and_court/sir_rote.adoc"),
                     make_ch("King Jihad & The Treasonous Ambition", "lore/characters/kingdom_and_court/king_jihad.adoc"),
                     make_ch("Commander Gareth Ro-enheart & The Vanished Guard", "lore/characters/kingdom_and_court/commander_gareth_ro_enheart.adoc"),
+                    make_ch("Threat Dossier: The Dark Lord", "lore/threats/the_dark_lord.adoc"),
+                    make_ch("Threat Dossier: Dream Eaters", "lore/threats/dream_eaters.adoc"),
                 ],
             },
             VolumeSpec {
@@ -144,6 +161,8 @@ impl MasterGuideBuilder {
                 chapters: vec![
                     make_ch("Dual-Layer TRPG Combat Architecture", "game_design/tactical_trpg_system.adoc"),
                     make_ch("The Twin Relics, Combat Stances & Moral Sway", "game_design/relics_and_combat.adoc"),
+                    make_ch("Campaign Architecture, The King's Curse & Multi-Ending Specification", "game_design/campaign_structure_and_endings.adoc"),
+                    make_ch("The Dreamscape & Temporal Architecture", "game_design/dreamscape_and_temporal_architecture.adoc"),
                     make_ch("World Topography, Provinces & Battlefield Terrain", "game_design/world_topography.adoc"),
                     make_ch("Continuous Invariant Testing Philosophy", "game_design/game_testing.adoc"),
                     make_ch("Game Design Curation & Triaging Matrix", "game_design/demo_baseline/game_design_curation.adoc"),
@@ -175,6 +194,7 @@ impl MasterGuideBuilder {
                     make_ch("Dual-Frontend Presentation Layer (CLI + Native X11)", "architecture/dual_frontend_architecture.adoc"),
                     make_ch("Central Manifest & Pre-Flight Diagnostic Integrity", "architecture/preflight_and_manifest_spec.adoc"),
                     make_ch("Layer 0 Core Utilities Code Tour", "code/core_utilities.adoc"),
+                    make_ch("Layer 0 Debugging System & State Rewind", "code/debug_system.adoc"),
                     make_ch("Layer 1 Simulation Engine Code Tour", "code/simulation_engine.adoc"),
                     make_ch("Layer 2 Presentation Viewport Code Tour", "code/presentation_gui.adoc"),
                     make_ch("Layer 4 Verification & Test Suite Code Tour", "code/test_suite.adoc"),
@@ -191,9 +211,15 @@ impl MasterGuideBuilder {
                     make_ch("DevLog 005: Ontological Sub-Assemblies & 80-Column Discipline", "dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc"),
                     make_ch("DevLog 006: Source Implementation & Root Pedagogical Commenting", "dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc"),
                     make_ch("DevLog 007: Archival Extraction & The 2017–2018 Demo Baseline", "dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc"),
+                    make_ch("DevLog 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing", "dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc"),
+                    make_ch("DevLog 009: Macro-History, Thematic Triad & Multi-Ending Architecture", "dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc"),
+                    make_ch("DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture", "dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc"),
+                    make_ch("DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework", "dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc"),
+                    make_ch("DevLog 012: Interactive Debugging System & State Rewind Architecture", "dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc"),
                 ],
             },
         ]
+
     }
 
     /// Compiles all three formats of the Master Guide.

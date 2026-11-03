@@ -1,0 +1,104 @@
+= Realm Chronicle: The Sacyran Marches (The Frontier Bastion)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+The **Sacyran Marches** (`LOC_SACYRA_MARCHES`) encompass the windswept limestone hills,
+fortified military outposts, and ancient battlefields stretching between the **Whispering Woods**
+and the white-stone bastions of the **Royal Capital**. Established during the Seven-Year Great
+War as the kingdom's primary defensive perimeter, the Marches serve as the tactical proving ground
+where the player transitions from local woodland skirmishes to large-scale military engagements.
+
+[quote, Commander Gareth Ro-enheart, Field Dispatch - Frontier Fortress Redoubt]
+____
+The Marches are where boyish dreams of glory die and real soldiers are forged. The wind here
+carries no warmth—only dust, iron, and the perpetual vigilance of men who know that if these
+ridges fall, nothing stands between the abyss and our homes.
+____
+
+== 1. Geography & Strategic Topology
+
+* **Location Identifier**: `LOC_SACYRA_MARCHES` (Integer index `3` in `location_id_t`).
+* **Territorial Domain**: Central border province linking southern farmlands with the high plateaus.
+* **Topographical Neighbors**:
+  - **West / South**: Slopes gently downward into the canopy of the **Whispering Woods**.
+  - **North / East**: Connects directly to the grand paved highway leading to the **Royal Capital**.
+* **Terrain Features**: Terraced limestone plateaus, fortified palisades, stone watchtowers,
+  and deep defensive trenches left behind by centuries of border warfare.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Specification
+| **Ambient Threat Level** | High ($110–140$ Threat Rating).
+| **Weather Phenomena** | High-altitude gale winds, dry squalls, sudden dust storms reducing vision.
+| **Strategic Redoubts** | **Tower of the Sunken Citadel** (Gareth Ro-enheart's former garrison).
+| **Factional Influence** | Royal Guard Vanguard, Frontier Mercenary Guild, Shadow Host Infiltrators.
+|===
+
+== 2. Lore & The Legacy of the 7-Year Great War
+
+During the Seven-Year Great War (approximately 3,000 years ago), Usuru's coalition forces launched their primary
+armored spearhead across these very hills. The earth of the Marches remains soaked in residual
+abyssal and radiant energies:
+
+* **The Trenches of the First 30 Kings**: Deep geometric trenches dug into the chalk hills to funnel
+  void automata into kill zones.
+* **The Sunken Citadel**: A subterranean fortress carved into the limestone bedrock where Commander
+  Gareth Ro-enheart made his legendary stand before his mysterious disappearance following Elijah's
+  10th birthday.
+* **The Broken Standards**: Decaying heraldic banners of ancient kingdoms (Great Mau, Libira, Old Sacyra)
+  still flutter from iron spires atop the limestone ridges.
+
+[NOTE]
+====
+The Marches are the first location where the player encounters organized military opposition rather
+than mindless wild beasts. Enemies employ tactical formations, archery volleys, and coordinated
+flanking maneuvers.
+====
+
+== 3. Field Bestiary & Combat Formations
+
+[cols="1,1,1,2", options="header"]
+|===
+| Hostile Unit | HP / DEF | Flank Vigor | Tactical Discipline & Threat Profile
+| **Shadow Scout** | $110$ HP / $18$ DEF | $80$ Vigor | High speed outrider; marks targets for ranged volleys.
+| **Vanguard Patrol** | $160$ HP / $26$ DEF | $90$ Vigor | Heavy shield infantry; projects Zone of Control.
+| **Abyssal Ballista**| $220$ HP / $30$ DEF | $20$ Vigor | Siege construct; fires armor-piercing void bolts.
+|===
+
+[IMPORTANT]
+====
+Vanguard Patrols utilize *Phalanx Formations* that reduce frontal physical damage by $40\%$.
+Players must utilize Katrina's high movement mobility or the Custom Bearer's *Edge Striking* stance
+to maneuver behind their line for decisive backstabs.
+====
+
+== 4. Tactical Grid Battlefield: The Palisade Ridge
+
+[source,text]
+----
+  [0]   [1]   [2]   [3]   [4]   [5]   [6]   [7]
+┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│TWR_N│WALL │GATE │GATE │WALL │WALL │TWR_E│HILL │ [0] North -> High Road to Capital
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│RAMP │RAMP │SCOUT│VANG1│VANG2│SCOUT│RAMP │HILL │ [1] Defensive Line
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│TRENCH     │     │     │     │     │TRENCH     │ [2] Muddy Trench (Movement Penalty)
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│     │HERO1│HERO2│ALLY1│ALLY2│     │     │     │ [3] Player Assault Vanguard
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│     │ROAD │ROAD │ROAD │ROAD │     │     │     │ [4] South -> Whispering Woods
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+----
+
+=== Battlefield Mechanics
+1. **Elevated Ramparts (`RAMP`)**: Grants ranged units $+1$ Attack Range and $+20\%$ Physical Defense.
+2. **Muddy Trench (`TRENCH`)**: Costs $2.5\times$ movement points to traverse and prevents defensive parries.
+3. **Iron Gate (`GATE`)**: Destructible obstacle ($150$ HP) that must be breached or bypassed via flanking ladders.

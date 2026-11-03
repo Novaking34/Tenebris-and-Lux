@@ -1,0 +1,61 @@
+= Threat Dossier: The Dark Lord (Usuru's Descent)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.1.0, 2026-11-02
+:doctype: article
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+In the authentic 2017–2018 demo script and canonical narrative architecture, the ultimate
+antagonist is designated strictly as **The Dark Lord**. He is not a generic cardboard demon,
+but the tragic culmination of three millennia of festering bitterness born from the catastrophe
+of the 11th Festival: the ancient Libiran youth **Usuru**.
+
+== 1. Ground-Truth Canonical Identity & Origin
+
+* **The Nameless Wanderer of Libira:** Born on the remote southern frontier of Libira during
+  the First King's reign, he grew up as a restless three-day wanderer whose sole enduring devotion
+  was his annual week-long pilgrimage to the Capital for the Festival of Peoples.
+* **The 11th Year Rupture:** Seeking an audience with the sovereign during the rumored "plague,"
+  the eleven-year-old boy discovered the First King's mummified corpse and Prince Mi-ren's
+  protective projection ritual. Viewing the vigil as a monstrous deception, his terror triggered
+  an accidental collision with the ritual array.
+* **The Birth of Tenebris:** The catastrophic collapse of the boy's innocent faith produced an
+  anomalous metaphysical surge that birthed raw **Tenebris** into reality. Taking the name
+  **Usuru**, he rallied Libira and border kingdoms to wage the 7-Year Great War of annexation.
+* **The 3,000-Year Descent:** Following his armistice with Prince Mi-ren under the Accord of Kings,
+  Usuru refused spiritual reconciliation. He retreated into the subterranean abyssal vaults, where
+  his unresolved grief and fury curdled over three thousand years until his mortal name was lost
+  to history, remembered only with terror as **The Dark Lord**.
+
+== 2. Narrative Function: The Overarching "A Plot"
+
+* **Existential Backdrop:** The Dark Lord is not an early-game hallway encounter. He represents
+  the overarching existential shadow ("The A Plot") looming over Sacyra.
+* **Foreground vs. Background:** While provincial survival (Dio Village), noble exploitation
+  (St. Baron), and King Jihad's treason form the active foreground ("B Plot" and "C Plot"),
+  the awakening of The Dark Lord informs the dread of the entire continent.
+* **The Metaphysical Siege Window:** The Dark Lord strategically aligns his vanguard strikes
+  with the annual **Festival of Heroes**, knowing that the boundary to the Dreamscape thins to
+  gossamer during that week, providing a planar bridge to reclaim the surface world.
+
+== 3. "The King's Curse" & Possession of King Jihad
+
+* **The Planar Rift:** When Usuru shattered the First King's stasis array 3,000 years ago, he left
+  a jagged planar wound directly beneath the dias of the High Throne.
+* **Psychic Conduit:** For three millennia, sovereigns were exposed to ethereal backwash. When
+  King Jihad attempted to harness void power to usurp the Dark Lord, Jihad's megalomania inverted
+  the conduit, allowing a dormant remnant of Usuru's consciousness to possess the reigning monarch.
+* **Two-Half Campaign Resolution:** In Act I, heroes confront the possessed King Jihad; in Act II,
+  they must travel into the deep abyssal threshold to face The Dark Lord himself.
+
+== 4. Metaphysical Neutrality & True Resolution
+
+* **Not Elemental Evil:** Darkness (Tenebris) is a cosmic apex force of rest, mystery, and severance.
+  The Dark Lord represents Tenebris corrupted by an unhealed heart of vengeance.
+* **The Ugly Truth:** Defeating The Dark Lord through violence alone (Neutral Ending) leaves the First
+  King marooned and the cycle dormant. Only by confronting "The Ugly Truth"—acknowledging Usuru's
+  valid childhood pain and achieving the **Stance of Equilibrium**—can heroes permanently release
+  Usuru's tortured soul and heal the realm.

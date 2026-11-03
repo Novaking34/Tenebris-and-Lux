@@ -1,0 +1,59 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/log/production.json",
+    "id": "data.log.setting.production",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-10-30",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Production release logging configuration profile optimized for clean player execution.",
+    "invariants": [
+      "Minimum severity set to INFO to prevent disk bloating on customer systems",
+      "Console echo disabled to maintain pure graphical or CLI presentation",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.log_setting.v1",
+    "target_struct": "log_config_t",
+    "header_binding": "include/util/log/log.h"
+  },
+  "setting": {
+    "id": "production",
+    "display_name": "Production / Shipping Release",
+    "description": "Optimized release profile suppressing low-level debug spam, silencing terminal console echo, and enforcing clean 5 MB rotated archives.",
+    "log_dir": "logs",
+    "base_filename": "tenebris_lux.log",
+    "max_file_size_bytes": 5242880,
+    "max_rotated_files": 10,
+    "min_severity": "INFO",
+    "save_by_category": true,
+    "echo_to_console": false,
+    "use_colors": false,
+    "telemetry": {
+      "track_sequence_ids": true,
+      "track_monotonic_us": false,
+      "track_iso_timestamps": true,
+      "track_moral_grades": true,
+      "active_categories": [
+        "SYSTEM",
+        "LOG",
+        "EVENT",
+        "MESSAGE",
+        "CHARACTER"
+      ]
+    }
+  },
+  "_audit": {
+    "rotation_threshold_kb": 5120,
+    "retention_policy": "Retain 10 timestamped rotated archives",
+    "static_ring_buffer_slots": 64,
+    "disk_io_budget": "Minimal I/O overhead per gameplay turn"
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 3
+  }
+}

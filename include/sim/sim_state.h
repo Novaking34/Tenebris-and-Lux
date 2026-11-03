@@ -6,8 +6,8 @@
 // @file          sim_state.h
 // @id            sim.engine.state
 // @layer         Layer 1: Simulation Engine
-// @version       1.0.0
-// @interface_rev Rev 1
+// @version       1.2.0
+// @interface_rev Rev 3
 // @date          2026-10-30
 // @updated       2026-10-30
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -15,8 +15,8 @@
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Core simulation state lifecycle, canonical reset, moral sway formatting,
-//   and state invariant audit tripwires. Ensures player state remains
-//   bounded and deterministic across turns.
+//   customizable protagonist identity, and state invariant audit tripwires.
+//   Guarantees all state values adhere to authentic demo baseline bounds.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: sim.types.common, core.util.manifest, core.util.log
@@ -25,7 +25,7 @@
 //   - Latency Budget:        < 10 microseconds per state audit / initialization
 //
 // AXIOMATIC INVARIANTS:
-//   1. Canonical initial state: Lux 80, Tenebris 80, Sway 0, Garrison Altar.
+//   1. Canonical initial state: The Dreamscape, Lux 80, Tenebris 80, Sway 0.
 //   2. Resonance bounds strictly enforced: [0, MAX_RESONANCE].
 //   3. Moral sway continuum strictly bounded: [-100, +100].
 //   4. Stance and location enumerations verified against discrete valid ranges.
@@ -55,6 +55,14 @@ extern const module_metadata_t sim_state_manifest;
  * @param[out] state Pointer to caller-allocated player state struct.
  */
 void sim_state_init(player_state_t *state);
+
+/**
+ * Configures the protagonist's identity name.
+ *
+ * @param[in,out] state    Pointer to player state.
+ * @param[in]     new_name Chosen hero name (defaults to "Elijah" if NULL/empty).
+ */
+void sim_state_set_name(player_state_t *state, const char *new_name);
 
 /**
  * Returns narrative description of moral sway alignment.

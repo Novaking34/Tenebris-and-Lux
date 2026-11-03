@@ -48,12 +48,15 @@ frontier passes, and battlegrounds of the **Kingdom of Sacyra**.
 === 1. Grid Topography & Spatial Invariants
 
 * **Coordinate Space**: Discrete integer grid `(grid_x, grid_y)`.
-* **Unit Footprint**: Standard units occupy a $1 \times 1$ grid tile; major boss constructs (such as Malakor's Siege Automata) occupy $2 \times 2$ or $3 \times 3$ footprints.
+* **Unit Footprint**: Standard units occupy a $1 \times 1$ grid tile; major boss constructs
+  (such as The Dark Lord's Siege Automata) occupy $2 \times 2$ or $3 \times 3$ footprints.
 * **Terrain Types & Modifiers**:
   - **Stone Flagstones / Road**: $1.0\times$ movement cost, $+0\%$ evasion.
-  - **Ramparts / Elevated Battlement**: $1.5\times$ movement cost, $+20\%$ physical defense, $+1$ attack range for ranged skills.
+  - **Ramparts / Elevated Battlement**: $1.5\times$ movement cost, $+20\%$ physical defense,
+    $+1$ attack range for ranged skills.
   - **Frontier Thicket / Rubble**: $2.0\times$ movement cost, $+15\%$ evasion, blocks cavalry charge.
-  - **Void Mire (Malakor's Blight)**: $2.5\times$ movement cost, inflicts $-5$ HP decay per turn on non-void units.
+  - **Void Mire (Abyssal Blight)**: $2.5\times$ movement cost, inflicts $-5$ HP decay
+    per turn on non-void units.
 
 === 2. Movement & Zone of Control (ZOC)
 

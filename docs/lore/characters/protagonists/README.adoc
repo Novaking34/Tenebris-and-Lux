@@ -18,14 +18,18 @@ equilibrium of the Kingdom of Sacyra.
 
 == Dossier Index
 
-1. **[elijah_ro_enheart.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/elijah_ro_enheart.adoc)**
+1. **xref:elijah_ro_enheart.adoc[elijah_ro_enheart.adoc]**
    *The Aegis of Lineage*: Soldier of the Royal Army, son of the vanished Head
    of the Royal Guard Gareth Ro-enheart, frontline guardian, and bearer of the Shield of Lux.
 
-2. **[katrina_jaren.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/katrina_jaren.adoc)**  
+2. **xref:katrina_jaren.adoc[katrina_jaren.adoc]**
    *The Blade of Freedom*: Rebellious daughter of House Jaren, Adventurers' Guild
    aspirant, agile shadow skirmisher, and wielder of the Sword of Tenebris.
 
-3. **[dual_protagonist_dynamics.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/dual_protagonist_dynamics.adoc)**
-   *Tandem Warfare & Metaphysical Balance*: Tactical synergy, dual-wield mechanics,
-   the Stance of Equilibrium, and interpersonal chemistry.
+3. **xref:custom_bearer.adoc[custom_bearer.adoc]**
+   *The Steward of Balance*: The unwritten bearer who awakens in the Dream Chamber
+   under Chrono's guidance, free from ancestral trauma and choosing their own archetype stone.
+
+4. **xref:dual_protagonist_dynamics.adoc[dual_protagonist_dynamics.adoc]**
+   *Tandem Warfare & Tri-Perspective Architecture*: Tactical synergy, dual-wield mechanics,
+   the Stance of Equilibrium, and interpersonal chemistry across all three perspectives.

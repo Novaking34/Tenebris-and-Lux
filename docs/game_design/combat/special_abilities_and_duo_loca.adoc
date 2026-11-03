@@ -1,0 +1,38 @@
+= Combat Game Note: Special Abilities & Duo-Loca Bashin n Slash
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+:sectnums:
+:icons: font
+
+== 1. Design Intent & The Four-Fold Special Suite
+
+The **Special** action suite expands the former "Balance" command into a versatile toolkit that balances resource expenditure (Mana Points / Tactical Points) against tactical problem-solving:
+
+1. **`Basic Magic` (`magic`)**:
+   - Represents neutral elemental magic damage unbound by strict Light or Dark alignment.
+   - **Formula**: `(eff_MAT * 2) - Enemy_MDF`.
+   - **Mana Cost**: $10$ MP.
+   - **Synergy**: Scales dynamically with `Basic Charm`. If Charm is active, effective `MAT` increases by $+20\%$.
+
+2. **`Basic Ward` (`ward` under special)**:
+   - Arcane-based defensive warding.
+   - Rather than purely relying on heavy armor and physical poise, the wielder constructs a shimmering lattice of runes.
+   - **Mana Cost**: $6$ MP.
+   - **Effect**: Staggers incoming assault ($12$ HP) and reinforces the Shield of Lux ($+15$ resonance).
+
+3. **`Basic Charm` (`charm`)**:
+   - An astral focus enchantment that attunes the mind to mystical resonance.
+   - **Buff Effect**: Increases Magic Attack (`MAT`) by **$+20\%$**.
+   - **Duration Roll**: Deterministically rolled for **$1 \dots 3$ turns** (`1 + (turns_taken % 3)`).
+   - **Mana Cost**: $8$ MP.
+
+4. **`Duo-Loca Bashin n Slash` (`duo`)**:
+   - The signature synthesis technique of the twin relics.
+   - **Adaptive Damage Intelligence**: Solves a common tactical RPG frustration where a physical fighter encounters heavily armored units or a spellcaster encounters magic-immune foes:
+     * Evaluates `Physical_Potential = (ATK * 2) - Enemy_DEF`.
+     * Evaluates `Magical_Potential = (eff_MAT * 2) - Enemy_MDF`.
+     * If the enemy is more vulnerable to magic (`MDF < DEF`), or if the player's magical output is superior (`eff_MAT > ATK`): channels **Magical Twilight Slash**.
+     * Otherwise: channels **Physical Radiant Bash**.
+   - **Relic Harmonization**: Simultaneously replenishes $+15$ Shield of Lux and $+15$ Sword of Tenebris, while nudging moral sway by $3$ points toward cosmic equilibrium ($0$).
+   - **Cost**: $12$ MP.

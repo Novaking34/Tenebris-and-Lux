@@ -1,0 +1,85 @@
+= Historical Dossier: Prince Mi-ren (The Sovereign of the Vigil & Architect of Sacyra)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Prince Mi-ren** was the elder founding prince of the Kingdom of Sacyra during Era I
+(The Primordial Dawn & The Accord of Kings). While his younger brother, Prince Casatti,
+ventured into the untamed frontier, Mi-ren anchored the capital, established the administrative
+institutions of the Crown, and held the legendary **Four-Year Vigil** over his brother's
+mysterious slumber. In the narrative triad of *Tenebris and Lux*, Prince Mi-ren represents
+the archetype of **The Steward of Order** and the philosophical progenitor of the Custom Bearer.
+
+[quote, Prince Mi-ren, Royal Archive Tablet - The Founding Accord]
+____
+A wall does not exist to lock men in, but to ensure that what we plant inside may grow
+without fear of the winter gale. If my brother must walk the dark wild, then I shall build
+a hearth warm enough to guide his spirit home.
+____
+
+== 1. Identity & Lineage
+
+* **Full Title**: Prince Mi-ren the Steadfast, First Warden of the High Court, Architect of Sacyra.
+* **Dynastic Era**: Era I–II (Founding Epoch, approximately 3,000 Years Before the Main Campaign).
+* **Affiliation**: First Royal House of Sacyra; Founder of the Royal Garrison and Courier Corps.
+* **Familial Ties**:
+  - **Brother**: **Prince Casatti**, the younger outrider prince who walked the Path of Darkness.
+  - **Successor Lineage**: His bloodline formed the foundational dynasty of the First 30 Kings,
+    eventually degenerating millennia later into the hollow reign of King Jihad.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Characteristic Specification
+| **Martial Discipline** | Classical Phalanx & Warding Architecture; heavy royal shieldbearer.
+| **Metaphysical Affinity** | **The Shield of Lux** (Resonance with warding, preservation, and structure).
+| **Thematic Anchor** | Institutional Duty, Self-Sacrifice, Bureaucratic Order.
+|===
+
+== 2. Historical Chronicle & The Four-Year Vigil
+
+When the two founding princes completed their training, they faced a philosophical fork:
+the untamed frontier required exploration, while the nascent kingdom required permanent
+governance and defensible walls.
+
+[cols="1,3", options="header"]
+|===
+| Event Phase | Historical Deed & Chronicle
+| **The Division of Labor** | Mi-ren took responsibility for the Crown, founding the Royal Guard,
+  designing the granaries, and codifying Sacyran civil law.
+| **The Slumber of Casatti** | When Prince Casatti collapsed into a four-year coma during his
+  wilderness campaign, Mi-ren refused to abandon his brother, maintaining a continuous daily vigil
+  at his bedside while governing the kingdom through sleepless devotion.
+| **The Festival of Peoples**| Established the international gathering in the capital, inviting
+  surrounding realms to exchange culture, technology, and mutual peace every spring.
+| **The Tragic Rupture** | In the 11th year, when the planar tether snapped beneath the High Throne,
+  Mi-ren threw his own life-force into the warding perimeter to shield the capital's populace from
+  abyssal incineration.
+|===
+
+[NOTE]
+====
+Prince Mi-ren's great tragedy was his belief that systemic perfection could eliminate human suffering.
+By focusing entirely on the capital's defense, his administrative network failed to recognize the
+desperation building in frontier outposts like Libira, inadvertently sowing the seeds of Usuru's revolt.
+====
+
+== 3. Thematic Mirror: The Custom Bearer & Prince Mi-ren
+
+In the **Past / Present / Future Thematic Triad**, Prince Mi-ren serves as the historical
+touchstone for the **Custom Bearer**:
+
+1. **The Burden of Stewardship**: Just as Mi-ren held the kingdom together through sheer discipline,
+   the Custom Bearer is called upon to arbitrate between the competing factions of modern Sacyra.
+2. **Transcending Institutional Rigidity**: Where Mi-ren prioritized legalistic structure over
+   emotional grievance, the Custom Bearer must learn from Mi-ren's failure—listening to the
+   "quiet complaints" of commoners in Dio Village and the frontier before they curdle into war.
+3. **Equilibrium Mastery**: Historical records indicate that Mi-ren was the first to realize that
+   the Shield of Lux could not withstand endless kinetic pressure without venting force through
+   the severance of a blade—laying the conceptual groundwork for the *Equilibrium Stance*.

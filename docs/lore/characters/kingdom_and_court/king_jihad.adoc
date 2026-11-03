@@ -1,6 +1,6 @@
 = Character Dossier: King Jihad (The Monarch of Ambition)
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-28
+v1.1.0, 2026-11-02
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -14,7 +14,7 @@ v0.0.1, 2026-10-28
 monarch of the **Kingdom of Sacyra**. Outwardly a dignified sovereign presiding
 over the chivalric traditions and the **Festival of Heroes**, King Jihad secretly
 harbors a perilous ambition: to seize and harness the forbidden abyssal power of
-the returning Dark Lord Malakor to establish absolute dominion.
+the returning **Dark Lord** to establish absolute dominion over the realm.
 
 == 1. Identity & Sovereign Office
 
@@ -24,34 +24,55 @@ the returning Dark Lord Malakor to establish absolute dominion.
 * **Political Standing**: Balances the aristocratic Noble Houses against the
   meritocratic Adventurers' Guild while commanding the elite Royal Guard.
 
-== 2. Psychological Profile & Secret Ambition
+== 2. The Grotesque Inversion of the Founding Dynasty
 
-King Jihad is calculating, authoritative, and outwardly composed. While his
-subjects view him as a protector against chaos, he views the resurgence of the
-ancient Darkness not as a tragedy to be repelled, but as an apex weapon to be
-claimed. Believing himself superior to both holy creeds and dark lords, he
-seeks to subvert the cosmic void to overthrow all limits on his crown.
+King Jihad stands as the exact moral and structural inverse of the First King and Prince Mi-ren:
 
-=== Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
-* *The Secret Soliloquy*:
+[cols="1,2,2", options="header"]
+|===
+| Dimension | The Founding Dynasty (First King & Mi-ren) | The Modern Inversion (King Jihad)
+
+| **State of the Monarch**
+| Physical body comatose/dead during festival week, while his **spirit remained pure and lucid** in The Dreamscape to guide the realm.
+| Physical body healthy upon the throne, while his **heart is thoroughly corrupted** by greed for void power.
+
+| **Purpose of Secrecy**
+| Concealed the First King's passing out of filial duty and preservation until teenage Mi-ren officially came of age.
+| Imposes a gag order (`"don't tell the people"`) so heroes do not interfere before Jihad can usurp void power for himself.
+
+| **Relation to Prophecy**
+| Forged Lux and Tenebris to enact justice, protect life, and seek forgiveness.
+| Covets the **Prophecy of Kings**, seeking to hijack void supremacy without understanding that Lux dissipates in a corrupt heart.
+|===
+
+== 3. "The King's Curse" & Abyssal Possession
+
+* **The Planar Hazard:** For 3,000 years, Sacyran monarchs were exposed to residual spiritual shear
+  from the open planar rift beneath the High Throne dias, left when Usuru shattered the First King's
+  stasis ritual.
+* **The Fatal Gamble:** Coveting the Dark Lord's power, King Jihad intentionally opened the conduit
+  beneath his throne prior to the Festival of Heroes. Because the ethereal medium mirrors mortal intent,
+  Jihad's arrogance inverted the flow, allowing a dormant remnant of Usuru's consciousness (**The Dark Lord**)
+  to possess him.
+* **Act I Midpoint Climax:** Defeating King Jihad at Sacyra Castle exposes this possession, revealing that
+  the true threat lies deep in the subterranean Abyssal Vaults where the ancient soul of Usuru still waits.
+
+== 4. Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+
+* *The Secret Soliloquy:*
   [quote, D. Jihad, High Throne Room]
   "The fools... that power... that wicked power! Soon I will rule over this land,
   and not even the Dark Lord will have power over me!"
-* *Suppressing the Truth*:
+* *Suppressing the Truth:*
   [quote, King Jihad to Sir Roté]
   "Thank you Roté, what would I do without your careful watch... Gather up the
   guard! We need to prepare! Darkness will soon return to this land. And don't
   tell the people of this discovery... You all are dismissed."
 
-== 3. Socio-Political Role in the Sacyra Campaign
+== 5. Socio-Political Role in the Campaign
 
-1. **State Censorship & Denial**: When the mysterious storm and rising island
-   manifest along the frontier, King Jihad silences border outposts and
-   forbids the public from learning the truth before the Festival of Heroes.
-2. **The Disappearance of Commander Gareth**: Historical records suggest
-   Gareth Ro-enheart's sudden departure under sealed royal orders was
-   connected to King Jihad's clandestine investigations into the Abyssal Vaults.
-3. **The Catalyst for Rebellion**: When Elijah and Katrina uncover that the
-   Crown is actively pursuing void corruption rather than safeguarding the
-   realm, Elijah is forced into open defiance against the very throne his family
-   swore to protect.
+1. **State Censorship:** Enforces an information blackout along the border, ignoring Sir Roté's warnings.
+2. **Gareth's Disappearance:** Dispatched Commander Gareth Ro-enheart on a suicide mission into the
+   Abyssal Threshold on Elijah's 10th birthday to scout void portals, leaving the Ro-enhearts fractured.
+3. **The Catalyst for Rebellion:** When Elijah and Katrina expose King Jihad's corruption, Elijah is forced
+   to choose between his sworn oath to the throne and his true moral duty to the living people of Sacyra.

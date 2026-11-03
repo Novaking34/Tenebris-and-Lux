@@ -1,0 +1,108 @@
+= Realm Chronicle: The Royal Capital of Sacyra (The Citadel of the High Throne)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+The **Royal Capital of Sacyra** is the administrative, spiritual, and military apex of the
+kingdom. Crowned by the gleaming white-stone bastions of the **High Throne Citadel**, the
+city embodies the architectural zenith of Era I's founding dynasties. Yet beneath its
+ceremonial grandeur, opulent marble halls, and courtly pageantry lies a festering metaphysical
+wound: **The King's Curse**, an unhealed planar rupture beneath the throne room floor that
+has leaked abyssal corruption for three millennia, steadily eroding the sanity of **King Jihad**.
+
+[quote, High Priest Roté, Royal Sanctum Secret Journal]
+____
+We wash the marble with lavender and rosewater, but the stones remember the blood.
+When the sun reaches its zenith, the shadow of the throne does not fall toward the door—it
+falls inward, pooling like dark oil around the King's feet. He smiles at the envoys,
+but his teeth are gray. Sacyra is dancing upon the lid of a tomb.
+____
+
+== 1. Geography, Architecture & Urban Districts
+
+* **Topographical Location**: Built upon the central continental plateau overlooking the Sacyran river basin.
+* **Access Routes**: Reached via the Grand Imperial Causeway traversing the **Sacyran Marches**.
+* **Architectural Style**: Monolithic white limestone, soaring arched flying buttresses, gilded
+  radiant domes, and deep subterranean catacombs dating back to the Accord of Kings.
+
+[cols="1,2", options="header"]
+|===
+| District | Description & Socio-Political Function
+| **The Citadel Ward** | The innermost fortress housing the High Throne, the Royal Council Chambers,
+  and the private quarters of King Jihad.
+| **The Aristocratic Quarter** | Palatial townhouse estates of the Great Noble Houses (including House Jaren);
+  seat of courtly intrigue and political scheming.
+| **The Grand Cathedral of Lux** | Spiritual center governed by High Priest Roté, where the sacred
+  relics are celebrated and celestial portents are interpreted.
+| **The Lower River Ward** | Densely packed commoner quarter, guildhalls, iron forges, and the local
+  headquarters of the **Adventurers' Guild**.
+| **The Subterranean Vaults** | Forbidden pre-dynastic catacombs directly beneath the throne, site of the 11th Festival Rupture.
+|===
+
+== 2. Lore & The King's Curse Planar Wound
+
+During the 11th Festival of Peoples, the young Libiran wanderer Usuru accidentally struck the
+ritual focus stone during the First King's communion ritual. The resulting explosion severed the
+First King's soul and cracked the bedrock beneath the dais:
+
+1. **The Hidden Rupture**: The First 30 Kings sealed the physical chamber beneath massive basalt
+   slabs inscribed with warding runes, building the High Throne directly over the scar to mask its presence.
+2. **The 3,000-Year Dynastic Wave**: Every monarch who sat upon the High Throne was bathed in the
+   slow, imperceptible radiation of the planar breach. While strong-willed sovereigns resisted its
+   whispers, weak or ambitious rulers inevitably succumbed to paranoia and tyrannical megalomania.
+3. **The Possession of King Jihad**: In the present era, King Jihad's obsession with matching the
+   legendary military feats of his ancestors drove him to open the basalt seal. Tenebrous vapor
+   now directly commands the monarch's nervous system, transforming him into an unwitting puppet
+   of **The Dark Lord**.
+
+[WARNING]
+====
+The planar wound beneath the High Throne is not merely a narrative backdrop—it serves as the
+**Midpoint Campaign Fork** in the ludological engine. Entering the throne room without the
+*Dream Compass* triggers the tragic *Neutral Path*, whereas possessing the calibrated compass
+allows the party to expose the curse and enter the *True Ending Path*.
+====
+
+== 3. Factions & Urban Intrigue
+
+The Capital is torn between four competing power structures:
+
+* **The Royal Guard**: Commanded by hardline royalists loyal to the throne, increasingly bewildered
+  by King Jihad's erratic and tyrannical decrees.
+* **House Jaren & The High Nobles**: Aristocratic court faction maneuvering to consolidate tax
+  monopolies and replace the Ro-enhearts' military influence.
+* **The High Priesthood**: Church hierarchy caught between religious dogma and High Priest Roté's
+  terrifying revelations regarding the cosmic corruption of the Crown.
+* **The Adventurers' Guild**: Underground network of commoner veterans and sympathizers (including
+  Katrina Jaren) operating outside royal law to protect the citizenry from unexplained void manifestations.
+
+== 4. Tactical Grid Battlefield: The High Throne Chamber
+
+[source,text]
+----
+  [0]   [1]   [2]   [3]   [4]   [5]   [6]   [7]
+┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│PILLR│DAIS │THRNE│VOIDC│THRNE│DAIS │PILLR│WALL │ [0] High Dais / The Planar Wound (`VOIDC`)
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│STEPS│STEPS│JIHAD│GUARD│GUARD│STEPS│STEPS│     │ [1] Royal Guard Phalanx
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│CARP │CARP │CARP │CARP │CARP │CARP │CARP │CARP │ [2] Crimson Carpet Center Aisle
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│PILLR│     │HERO1│HERO2│HERO3│     │PILLR│     │ [3] Player Party Infiltration Entry
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│DOOR │DOOR │DOOR │DOOR │DOOR │DOOR │DOOR │DOOR │ [4] Grand Audience Chamber Entrance
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+----
+
+=== Battlefield Invariants
+1. **The Planar Wound (`VOIDC`)**: Generates an aura of $-15$ HP decay per turn to all units
+   standing within a 2-cell radius unless protected by *Lux Barrio*.
+2. **Marble Pillars (`PILLR`)**: Provide heavy cover ($+30\%$ evasion against ranged magic).
+3. **Royal Dais Steps (`STEPS`)**: Units attacking upward suffer a $-15\%$ accuracy penalty.

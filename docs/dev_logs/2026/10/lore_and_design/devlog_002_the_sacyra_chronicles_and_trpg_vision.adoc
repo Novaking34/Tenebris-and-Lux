@@ -45,7 +45,7 @@ stripping away these synthetic factions to reveal the true world:
   1. **The Crown & Royal Guard**: Guardians of legal order, national defense, and the ancestral throne.
   2. **The Noble Houses & Royal Court**: High aristocracy governing regional fiefs and vying for political dominance on the royal council.
   3. **The Adventurers' Guild**: A pragmatic, frontier-based brotherhood operating beyond courtly vanity, answering commoner monster distress calls and exploring untamed ruins.
-* **The Existential Threat**: The ancient necromantic sovereign **Dark Lord Malakor** breaking through the Abyssal Vaults, threatening to extinguish all mortal agency.
+* **The Existential Threat**: The ancient sovereign **The Dark Lord** breaking through the Abyssal Vaults, threatening to extinguish all mortal agency.
 
 === 2. The Dual Protagonists
 
@@ -91,4 +91,4 @@ Knowing this was originally an RPG Maker project gives us clear architectural di
 1. **Phase 1 (Complete)**: Established OmniCode 5-block layering, Layer 0 utilities, CTest verification suite, and canonical documentation.
 2. **Phase 2 (Active)**: Expand simulation state to model dual protagonists (Elijah & Katrina), party data structures, and the foundational 2D tactical grid.
 3. **Phase 3**: Implement the cinematic side-scroll combat transition in the presentation layer.
-4. **Phase 4**: Expand the tactical campaign across the provinces of Sacyra to confront the vanguard of Dark Lord Malakor.
+4. **Phase 4**: Expand the tactical campaign across the provinces of Sacyra to confront the vanguard of The Dark Lord.

@@ -1,0 +1,205 @@
+= DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Executive Summary
+
+This development log documents the architectural expansion and ontological formalization
+of the automated game development verification suite in *Tenebris and Lux*. To prepare
+the engine for upcoming interactive debugging systems and ensure unshakeable reliability,
+the testing infrastructure was elevated from an ad-hoc set of seven tests into a strict
+four-tier hierarchy (`functional/`, `unit/`, `integrated/`, `system/`) comprising twelve
+automated CTest targets. Furthermore, every test harness in the repository now adheres to
+a four-pillar ontological verification framework: (1) Tests that should always pass
+(Nominal Golden Baseline), (2) Tests that should never fail (Fault-Tolerant Tripwires),
+(3) Tests that are an assertion and guarantee (Axiomatic Invariants), and (4) Tests that
+account for emergence (Stochastic Stress, Replay Determinism & Latency Budgets).
+
+[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
+____
+Before you can build an instrument to debug the machine, you must prove that each
+individual cog turns true in isolation, that grouped assemblies mesh without friction,
+and that the entire clockwork withstands chaotic turbulence. A test suite is not a
+hurdle; it is the mathematical guarantee of reality.
+____
+
+== 1. Architectural Motivation & The Problem of Amorphous Testing
+
+In earlier milestones, Layer 4 (Verification Suite) maintained a basic distinction between
+`tests/unit/` (which housed `test_utils.c` and `test_log.c`) and `tests/integrated/`
+(which housed `test_game_invariants.c` and `test_gameplay_scenarios.c`). While this
+prevented crude regressions, it suffered from three fundamental structural shortcomings:
+
+1. **Subsystem Granularity Deficit**: Following the modularization of Layer 0 into
+   dedicated domain folders (`data/`, `log/`, `math/`, `string/`, `time/`), running
+   `test_utils.c` tested all utilities simultaneously. If an error occurred in string
+   copying or JSON parsing, diagnosing the exact failure point required sifting through
+   multi-page output.
+2. **Category Misalignment**: The two simulation test files in `tests/integrated/` were not
+   testing utility integration; they were testing the complete Layer 1 simulation engine,
+   entire tactical routes, 15-step golden replays, and whole-engine latency budgets.
+   Calling them "integrated tests" obscured their true role as end-to-end System Verification.
+3. **Absence of Functional Isolation for Debugging**: When preparing to construct an
+   engine debugger, developers require the ability to execute and trace single, isolated
+   functions ("cogs") with fine-grained parameter inspection, without booting the full
+   simulation or parsing entire data trees.
+
+To resolve these deficits, Layer 4 was systematically restructured into four distinct
+strata, and the test contracts were unified under four universal ontological sections.
+
+== 2. The Four-Tier Testing Strata
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│                   TIER 4: SYSTEM VERIFICATION                          │
+│  tests/system/test_game_invariants.c & test_gameplay_scenarios.c       │
+│  Full simulation invariants, golden replays & sub-50µs tick budgets    │
+├────────────────────────────────────────────────────────────────────────┤
+│                 TIER 3: INTEGRATED UTILITIES HARNESS                   │
+│  tests/integrated/test_utils.c                                         │
+│  Cross-subsystem coordination, central manifest & multi-profile boot   │
+├────────────────────────────────────────────────────────────────────────┤
+│                   TIER 2: SUBSYSTEM UNIT HARNESSES                     │
+│  tests/unit/ (test_math, test_data, test_time, test_string, test_log)  │
+│  1:1 subsystem domain verification, buffer sizing, and tripwires       │
+├────────────────────────────────────────────────────────────────────────┤
+│                  TIER 1: FUNCTIONAL DEBUGGING HARNESS                  │
+│  tests/functional/test_functional.c                                    │
+│  Granular cog-by-cog execution with step-by-step trace telemetry       │
+└────────────────────────────────────────────────────────────────────────┘
+----
+
+=== Tier 1: Functional Debugging (`tests/functional/test_functional.c`)
+
+The functional test harness serves as an interactive diagnostic workbench. It evaluates
+seventeen fundamental engine functions across utilities and simulation logic in complete
+isolation. Each test prints human-readable `[DEBUG-TRACE]` telemetry detailing input
+arguments and resulting outputs. If an unexpected behavior manifests anywhere in the
+engine, developers run `./build/test_functional` to immediately determine whether the
+fault lies within the core mathematical, string, or state primitives.
+
+=== Tier 2: Subsystem Unit Harnesses (`tests/unit/`)
+
+Provides 1:1 parity with the Layer 0 domain directories:
+
+* **`test_math.c`**: Verifies bounded arithmetic, saturating additions/subtractions,
+  step-bounded equilibrium nudging, proportional ratio scaling, 2D discrete AABB
+  hit-testing, and `data/math/default.json` profile deserialization.
+* **`test_data.c`**: Verifies zero-heap filesystem I/O (`fs_utils.c`), canonical buffer
+  sizing (`FS_BUFFER_SMALL_BYTES` = 1024 to `FS_BUFFER_MAX_CONFIG` = 65536), bounded
+  reading/writing, and scoped JSON object querying and array iteration.
+* **`test_time.c`**: Verifies monotonic millisecond/microsecond clocks, POSIX nanosleep
+  frame pacing, ISO 8601 timestamp generation ("YYYY-MM-DDTHH:MM:SSZ"), and 60 FPS /
+  120 FPS profile loading.
+* **`test_string.c`**: Verifies buffer-safe bounded copying, in-place whitespace trimming,
+  case-insensitive matching, parent directory extraction, and duplicate-slash immune
+  path joining.
+* **`test_log.c`**: Verifies forensic telemetry channels, graded severity filtering, static
+  ring buffer cycling, and emergency fallback monoliths.
+
+=== Tier 3: Integrated Utilities Harness (`tests/integrated/test_utils.c`)
+
+Validates the multi-subsystem coordination of all Layer 0 utilities. Exercises the central
+manifest registry (`manifest.c`), validates upstream DAG dependency resolution, enforces
+diagnostic escalation policies (WARNING -> `PREFLIGHT_STATUS_WARNINGS`, CRITICAL ->
+`PREFLIGHT_STATUS_DOWNGRADED`, FATAL -> `PREFLIGHT_STATUS_HALT_FATAL`), and benchmarks
+multi-profile synchronous boot latency (< 5 milliseconds).
+
+=== Tier 4: System Verification Harnesses (`tests/system/`)
+
+* **`test_game_invariants.c`**: Validates Layer 1 simulation engine state invariants: twin
+  relic power bounds ([0, 100]), moral sway continuum boundaries ([-100, +100]), protagonist
+  name customization, and bidirectional provincial map topology.
+* **`test_gameplay_scenarios.c`**: Simulates end-to-end tactical combat routes (Righteous
+  Warden and Umbral Striker paths), 15-step golden deterministic replay parity, 1,000 chaotic
+  command fuzzing for softlock immunity, and 10,000-turn simulation latency benchmarking
+  (< 50 microseconds per turn).
+
+== 3. The Four Ontological Testing Sections
+
+Every test file in the engine now implements the four-section ontological model:
+
+[cols="1,2,3", options="header"]
+|===
+| Section | Category | Mission & Verification Scope
+| **Section 1** | **Always Pass**
+| Valid inputs, nominal parameters, default configuration loading, standard state
+initialization, well-formed JSON, normal gameplay actions. Proves the golden baseline.
+
+| **Section 2** | **Never Fail**
+| Inviolability under error. Injects NULL pointers, zero capacities, missing files, corrupted
+JSON, and unknown stances. Proves tripwire activation and safe fallback without OS traps.
+
+| **Section 3** | **Assertion & Guarantee**
+| Axiomatic mathematical laws and structural contracts: bounded clamping, non-decreasing
+monotonic clocks, strict null-termination under truncation, and deterministic stance completeness.
+
+| **Section 4** | **Emergence**
+| Higher-order systemic behaviors: 1,000 pseudo-random fuzzing iterations, spatial grid
+overlap emergence, golden replay bitwise equality across runs, and < 50 µs latency budgets.
+|===
+
+== 4. Preparing for the Interactive Debugger
+
+The restructuring of Layer 4 is the necessary prerequisite for building the upcoming
+interactive engine debugger. Specifically:
+
+1. **Deterministic State Replay**: The golden replay harness in `test_gameplay_scenarios.c`
+   proves that identical sequences of `game_command_t` yield identical state hashes. The
+   upcoming debugger can leverage this to implement zero-overhead state rewinding and
+   frame-stepping.
+2. **Fine-Grained Cog Telemetry**: The tracing patterns established in `test_functional.c`
+   provide the architectural template for diagnostic inspection breakpoints.
+3. **Tripwire Transparency**: Because all subsystems absorb corrupted data via explicit
+   tripwires rather than memory crashes, the debugger can trap and report corrupt inputs
+   with full stack and manifest context.
+
+== 5. Verification Telemetry & Verification Matrix
+
+Compilation under GCC 11 with `-Wall -Wextra -Wpedantic` compiled with zero warnings.
+Automated CTest execution verified all twelve test targets:
+
+[source,text]
+----
+Test project /home/professorseanex/Tenebris and Lux/build
+      Start  1: cli_help_test
+ 1/12 Test  #1: cli_help_test ....................   Passed    0.00 sec
+      Start  2: cli_version_test
+ 2/12 Test  #2: cli_version_test .................   Passed    0.00 sec
+      Start  3: subsystem_audit_test
+ 3/12 Test  #3: subsystem_audit_test .............   Passed    0.00 sec
+      Start  4: functional_cogs_test
+ 4/12 Test  #4: functional_cogs_test .............   Passed    0.00 sec
+      Start  5: unit_math_test
+ 5/12 Test  #5: unit_math_test ...................   Passed    0.00 sec
+      Start  6: unit_data_test
+ 6/12 Test  #6: unit_data_test ...................   Passed    0.00 sec
+      Start  7: unit_time_test
+ 7/12 Test  #7: unit_time_test ...................   Passed    0.00 sec
+      Start  8: unit_string_test
+ 8/12 Test  #8: unit_string_test .................   Passed    0.00 sec
+      Start  9: unit_log_test
+ 9/12 Test  #9: unit_log_test ....................   Passed    0.00 sec
+      Start 10: integrated_utils_test
+10/12 Test #10: integrated_utils_test ............   Passed    0.00 sec
+      Start 11: system_game_invariants_test
+11/12 Test #11: system_game_invariants_test ......   Passed    0.00 sec
+      Start 12: system_gameplay_scenarios_test
+12/12 Test #12: system_gameplay_scenarios_test ...   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 12
+Total Test time (real) =   0.02 sec
+----
+
+Internal self-audit (`./build/tenebris-lux --audit`) reported:
+* 14 registered subsystem modules passed pre-flight audit with status `OPTIMAL`.
+* 6 game simulation invariant checks passed with 100% compliance.
+* Rust toolchain tests (`cargo test --manifest-path tools/Cargo.toml`): 10/10 passed.

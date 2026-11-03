@@ -114,6 +114,8 @@ pub fn audit_library_invariants() -> Result<(), &'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::path::Path;
 
     #[test]
     fn test_library_invariants_pass() {
@@ -128,4 +130,67 @@ mod tests {
         let engine = create_default_runner(ctx);
         assert_eq!(engine.context().repo_root, repo);
     }
+
+    #[test]
+    fn test_data_driven_log_manifest_integrity() {
+        let manifest_path = Path::new("../data/log/manifest.json");
+        if !manifest_path.exists() {
+            // Test might be running from repo root or tools/ directory
+            let alt_path = Path::new("data/log/manifest.json");
+            if !alt_path.exists() {
+                return; // Non-blocking if running outside repo root context
+            }
+        }
+        let resolved = if manifest_path.exists() {
+            manifest_path
+        } else {
+            Path::new("data/log/manifest.json")
+        };
+
+        let content = fs::read_to_string(resolved).expect("Failed to read log manifest");
+        let val: serde_json::Value =
+            serde_json::from_str(&content).expect("Log manifest is not valid JSON");
+
+        let default_setting = val["menu"]["default_setting"]
+            .as_str()
+            .expect("Missing default_setting");
+        let settings = val["menu"]["settings"]
+            .as_array()
+            .expect("Settings must be an array");
+        assert!(!settings.is_empty(), "Settings menu cannot be empty");
+
+        let mut found_default = false;
+        let base_dir = resolved.parent().unwrap();
+
+        for item in settings {
+            let id = item["id"].as_str().expect("Setting must have an id");
+            let file = item["file"].as_str().expect("Setting must have a file");
+            if id == default_setting {
+                found_default = true;
+            }
+
+            let setting_path = base_dir.join(file);
+            assert!(
+                setting_path.exists(),
+                "Setting file {:?} does not exist",
+                setting_path
+            );
+            let setting_content =
+                fs::read_to_string(&setting_path).expect("Failed to read setting file");
+            let setting_val: serde_json::Value = serde_json::from_str(&setting_content)
+                .expect("Setting file is not valid JSON");
+            assert!(
+                setting_val["setting"].is_object(),
+                "Missing 'setting' payload in {:?}",
+                setting_path
+            );
+        }
+
+        assert!(
+            found_default,
+            "Default setting '{}' was not found in registered settings",
+            default_setting
+        );
+    }
 }
+

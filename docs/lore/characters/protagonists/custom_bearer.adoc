@@ -1,0 +1,104 @@
+= Character Dossier: The Custom Bearer (The Steward of Balance)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+The **Custom Bearer** (designated within the simulation engine as `<chosen_name>`)
+represents the third sovereign axis of the *Tenebris and Lux* tri-perspective narrative
+architecture. Serving as the thematic and ludological pillar of **The Future**, the Custom
+Bearer enters the world through the ethereal **Dream Chamber** under the stewardship of
+**Chrono**, unencumbered by the heavy generational trauma that binds both Elijah Ro-enheart
+and Katrina Jaren.
+
+[quote, Chrono, The Dream Chamber - Awakening of the Relic Bearer]
+____
+You are not bound to the grief of what was broken, nor the cynicism of what remains.
+Touch the stone of your choosing, bearer. The twin relics will answer to your intent,
+and the dawn or dusk of Sacyra will bear the shape of your resolve.
+____
+
+== 1. Identity & Narrative Axis
+
+* **Canonical Designation**: `<chosen_name>` (User-defined; defaults to `Elijah` if skipped).
+* **Narrative Archetype**: The Steward of Balance / The Unwritten Destiny.
+* **Thematic Alignment**: **The Future** (Transcending the 3,000-year cycle of inherited trauma).
+* **Starting Realm**: **The Dreamscape** (`LOC_THE_DREAMSCAPE`), transitioning into **Dio Village**.
+* **Spiritual Lineage**: Spiritual successor to **Prince Mi-ren**, who held the sacred vigil
+  and sought institutional equilibrium across the founding era.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Characteristic Specification
+| **Moral Sway Potential** | Completely unbound: dynamic range `[-100, +100]`.
+| **Relic Mastery** | Dual-wield fluency: simultaneous mastery of *Lux Barrio* and *Cuttatio Tenebris*.
+| **Dialogue Register** | Inquisitive, perceptive, pragmatic, and unswayed by courtly protocol.
+| **Ending Affinity** | Unique accessibility to *The Sovereign Accord* and *The Cycle Shattered*.
+|===
+
+== 2. Archetype Stone Awakening (The Four Disciplines)
+
+Upon awakening within the Dream Chamber, the Custom Bearer approaches the four primordial
+archetype monoliths under Chrono's observation. Selecting an archetype configures the
+starting base parameter profile:
+
+[cols="1,1,2,2", options="header"]
+|===
+| Archetype Stone | Class Designation | Starting Stat Profile | Tactical Grid Role
+| **Aegis Monolith** | *Vanguard* | HP: 480, DEF: 28, ATK: 24, MAT: 18 | Frontline fortress; barrier interception.
+| **Shadow Monolith** | *Outrider* | HP: 380, DEF: 18, ATK: 32, MAT: 22 | High mobility; flank severance strikes.
+| **Aether Monolith** | *Mystic* | HP: 340, DEF: 16, ATK: 20, MAT: 36 | Elemental burst; area-of-effect zoning.
+| **Equilibrium Monolith**| *Steward* | HP: 420, DEF: 22, ATK: 26, MAT: 26 | Balanced hybrid; stance chaining.
+|===
+
+[NOTE]
+====
+Unlike fixed protagonists whose relic bias is established by lineage, the Custom Bearer
+accumulates *Resonance Charges* dynamically. Channeling defense builds Lux resonance,
+while initiating offensive flanks charges Tenebris edge.
+====
+
+== 3. Psychological Dynamic: The Unburdened Gaze
+
+While Elijah sees the world through the lens of military honor and his father's mystery,
+and Katrina views society through betrayal and aristocratic corruption, the Custom Bearer
+approaches the crisis with empirical curiosity:
+
+* **In Dio Village**: Questions the St. Baron's authority not out of defiance, but by
+  exposing the mathematical absurdity of his exorbitant grain tithes.
+* **In the Whispering Woods**: Discerns the abnormal migratory patterns of the Umbral Wolves,
+  recognizing the abyssal corruption spreading from the Royal Capital.
+* **Before King Jihad**: Detects the rhythmic harmonic distortion of *The King's Curse*
+  leaking from beneath the High Throne before the royal court notices the monarch's decay.
+
+****
+**Thematic Invariant: Inherited Trauma vs. Chosen Destiny**
+
+The Custom Bearer embodies the second clause of the overarching narrative axiom:
+*"Trauma is Inherited; Destiny is Chosen."* By refusing to allow ancient grudges between
+Libira and Sacyra to dictate their actions, the Custom Bearer can forge alliances that
+neither historical faction believed possible.
+****
+
+== 4. TRPG Grid Mechanics & Signature Abilities
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Specification
+| **Base Movement** | 4 Tiles (Variable by chosen Archetype Stone: 3 to 5 tiles).
+| **Zone of Control** | Dynamic projection based on active combat stance.
+| **Signature Stance** | *Harmonic Equilibrium* (`STANCE_EQUILIBRIUM`): $+15\%$ to both DEF and ATK.
+| **Ultimate Skill** | *Duo-Loca Bashin n Slash* (Twilight Magic Slash combining Lux and Tenebris).
+|===
+
+=== Tactical Synergies
+1. **Adaptive Stance Shifting**: Can shift stances without consuming action points once per turn,
+   allowing instant transition from defensive warding to aggressive edge severance.
+2. **Moral Sway Polarization**: Can align with either light or dark embellishments at the
+   Altar of the Twin Relics, or forge the *Equilibrium Crown* to dissolve the planar wound.

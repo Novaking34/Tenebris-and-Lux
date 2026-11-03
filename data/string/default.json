@@ -1,0 +1,63 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/string/default.json",
+    "id": "data.string.profile.default",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Default lexical buffer limits, stance tokens, and command verb dictionary matching Layer 0 string_utils contracts.",
+    "invariants": [
+      "All buffer capacity constants must be strictly positive",
+      "Stance and verb token arrays must contain valid strings",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.string_profile.v1",
+    "target_struct": "string_config_t",
+    "header_binding": "include/util/string/string_utils.h"
+  },
+  "profile": {
+    "id": "default",
+    "display_name": "Standard Continental Lexical Profile",
+    "description": "Standard buffer capacities, stance tokens, and canonical action verb dictionaries.",
+    "max_path_length": 512,
+    "max_name_length": 64,
+    "max_command_length": 128,
+    "max_line_length": 80,
+    "ellipsis": "...",
+    "stances": [
+      "NEUTRAL",
+      "WARDING",
+      "STRIKING",
+      "EQUILIBRIUM"
+    ],
+    "action_verbs": [
+      "help",
+      "version",
+      "audit",
+      "cli",
+      "gui",
+      "barrio",
+      "cuttatio",
+      "duo",
+      "stance",
+      "journey",
+      "inspect",
+      "name",
+      "quit"
+    ]
+  },
+  "_audit": {
+    "stance_count": 4,
+    "verb_count": 13,
+    "max_line_discipline": 80
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 1
+  }
+}

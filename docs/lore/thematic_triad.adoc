@@ -1,0 +1,129 @@
+= Thematic Architecture: The Past, Present & Future Psychological Triad
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Overview & Core Thesis
+
+Rather than mapping protagonists solely by the physical armaments they carry, the narrative architecture
+of *Tenebris and Lux* links the ancient genesis era to the modern campaign through a psychological triad:
+**Elijah is to Usuru**, **Katrina is to Prince Casatti**, and **The Custom Bearer (`<chosen_name>`) is to Prince Mi-ren**.
+Governed by the foundational axiom **"Trauma is Inherited, Destiny is Chosen,"** this document establishes
+how ancient grievances echo into the modern campaign and how player agency determines whether history repeats
+its tragedies or achieves cosmic reconciliation.
+
+== 1. The Thematic Triad Matrix
+
+[cols="1,2,2,2", options="header"]
+|===
+| Era | The Frontier Wound (Heart & Shield/Wrath) | The Renouncing Blade (Truth & Severance) | The Steward of Balance (Veil & Synthesis)
+
+| **PAST (Genesis Era)**
+| **Usuru** +
+• Neglected Libiran boy +
+• 10 years of peace; shattered in year 11 +
+• Birthed Tenebris; became The Dark Lord
+| **Prince Casatti** +
+• Renounced the High Throne +
+• Founded The Academy +
+• Infused Sword of Tenebris for Justice
+| **Prince Mi-ren** +
+• Bore the burden of statecraft +
+• Sustained the Dreamscape projection +
+• Discovered Lux for reconciliation
+
+| **PRESENT (Campaign)**
+| **Elijah Ro-enheart** +
+• Neglected Dio Village vanguard +
+• Father vanished on 10th birthday +
+• Wields Shield of Lux against court rot
+| **Lady Katrina Jaren** +
+• Fled aristocratic House Jaren +
+• Seeks the Adventurers' Guild +
+• Wields Sword of Tenebris with candor
+| **The Custom Bearer (`<chosen_name>`)** +
+• Emergent champion in the Archives +
+• Wields the Dream Compass at night +
+• Synthesizes both perspectives
+
+| **FUTURE (Resolution)**
+| **Redemption or Ruin** +
+• Protects the realm with conscience, or succumbs to disillusionment.
+| **Liberation or Cynicism** +
+• Cuts the planar bindings of the past, or embraces ruthless severance.
+| **Stasis or Equilibrium** +
+• Repeats the comfortable lie, or confronts the Ugly Truth.
+|===
+
+== 2. Elijah Ro-enheart as Usuru (The Frontier Wound & Redemptive Counterpoint)
+
+Although Elijah wields the **Shield of Lux** like Prince Mi-ren, his internal wound and psychological
+arc directly mirror **Usuru**:
+
+=== 2.1. The Child of the Forgotten Frontier
+Usuru grew up on the neglected periphery of Libira, where royal couriers required seven days to arrive
+and no imperial outposts existed. Elijah grows up in **Dio Village**, an isolated border settlement where
+Grandma Magolia laments: _"This town used to be full of life... The kingdom doesn't pay much attention to
+this place anymore"_. Both youths embody the quiet complaint of the forgotten border.
+
+=== 2.2. The Tenth-Year Fracture
+Usuru experienced ten years of innocent pilgrimage to the Festival of Peoples before his eleventh visit
+shattered his faith in the Crown. Elijah’s childhood similarly froze on his **10th birthday**—the morning
+his father, **Commander Gareth Ro-enheart**, vanished under King Jihad's sealed royal orders. When Grandma
+Magolia asks Elijah to inspect the upstairs chest in Dio Village, Elijah immediately clings to that decade-old
+wound: _"Maybe it is something about dad! I haven't seen him since my 10th birthday. Sure thing. This might
+be my chance to get answers!"_.
+
+=== 2.3. The Redemptive Choice
+When Usuru discovered the First King's mummified body and the secret stasis projection, his innocent faith
+collapsed into bitter wrath, birthing Tenebris and sparking a war of vengeance. Elijah begins with unquestioning
+faith in the Royal Guard, but is forced to uncover King Jihad's treason in the throne room. Rather than
+succumbing to destructive malice, Elijah chooses to raise the **Shield of Lux** to protect the vulnerable,
+serving as Usuru granted a second chance at moral redemption.
+
+== 3. Lady Katrina Jaren as Prince Casatti (The Renouncing Blade of Truth)
+
+Lady Katrina Jaren carries the **Sword of Tenebris**, but her ideological kinship belongs to **Prince Casatti**:
+
+=== 3.1. Renouncing Aristocratic Privilege
+Just as Prince Casatti voluntarily renounced his royal birthright to the High Throne to pursue empirical truth,
+Katrina actively flees her aristocratic heritage in **House Jaren**—one of the wealthiest noble families on the
+Royal Court. She refuses to be bartered as a diplomatic pawn in court intrigues.
+
+=== 3.2. Merit Over Pedigree
+Casatti founded The Academy because he believed understanding the cosmos required objective observation rather
+than imperial decree. Katrina seeks the **Adventurers' Guild**, a frontier brotherhood where practical grit,
+swordsmanship, and survival skills outweigh bloodlines and heraldic crests.
+
+=== 3.3. Surgical Severance for Justice
+Casatti infused the Sword of Tenebris to execute **Absolute Justice**—slicing through entrenched siege engines
+to end a seven-year stalemate. Katrina wields the Sword of Tenebris with cynical, irreverent pragmatism,
+slicing through aristocratic hypocrisy, feudal exploitation (the St. Baron), and provincial inertia.
+
+== 4. The Custom Bearer as Prince Mi-ren (The Steward of Balance)
+
+When the player selects a custom name (`<chosen_name>`), the relics decouple from fixed protagonists,
+placing the player into the ideological position of **Prince Mi-ren**:
+
+=== 4.1. The Overarching Macro-Steward
+While Elijah focuses on the military/institutional conspiracy of the Royal Guard, and Katrina navigates
+the underground rebellion of the Guild, the Custom Bearer holds **The Dream Compass**, navigating the
+astral tides of The Dreamscape exclusively at night.
+
+=== 4.2. Bearing the Weight of Synthesis
+To achieve completion, the Custom Bearer must perform the "double work" along the `[-100, +100]` **Moral Sway**
+continuum, catching fragments of both Elijah's and Katrina's paths. They stand where Mi-ren stood during the
+7-Year Great War: attempting to hold a fracturing world together through reconciliation.
+
+=== 4.3. The Burden of Stasis vs. True Equilibrium
+The Custom Bearer faces Mi-ren's original dilemma. They can succumb to the **Benevolent Stasis** ending—freezing
+Sacyra in a protective golden barrier where no growth can occur—or they can transcend Mi-ren's mistake by
+mending the planar tear in the Room of Sages, reconciling the ancient wound of Usuru, and unlocking the
+**Secret Chronicler True Ending**.

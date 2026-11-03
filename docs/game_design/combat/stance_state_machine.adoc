@@ -1,0 +1,35 @@
+= Combat Game Note: Tactical Stance State Machine
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+:sectnums:
+:icons: font
+
+== 1. State Machine Completeness
+
+The tactical stance machine governs the battle posture of the bearer across four discrete, strongly-connected states:
+
+[source,text]
+----
+                   ┌───────────────────┐
+                   │  STANCE_NEUTRAL   │
+                   └─────────┬─────────┘
+                             │
+         ┌───────────────────┼───────────────────┐
+         ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ STANCE_WARDING  │ │ STANCE_STRIKING │ │STANCE_EQUILIBRIUM
+│ (Shield Guard)  │ │ (Sword Drawn)   │ │ (Twin Harmony)  │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+----
+
+1. **`STANCE_NEUTRAL` (At Ease)**:
+   - Balanced recovery posture. Baseline movement, balanced defenses.
+2. **`STANCE_WARDING` (Shield High Guard)**:
+   - Reinforces front-line presence. Lux Barrio stagger damage increases from $15$ to $25$ HP.
+   - Standard defend boosts shield by $+15$ (vs $+10$).
+3. **`STANCE_STRIKING` (Sword Drawn)**:
+   - Aggressive forward stance. Primary melee attacks gain $+15$ flat damage bonus.
+   - Attack edge consumption drops from $10$ to $6$ points.
+4. **`STANCE_EQUILIBRIUM` (Twin Harmonized)**:
+   - Balances both relics simultaneously. Enhances Duo-Loca execution and parry/riposte dynamics.

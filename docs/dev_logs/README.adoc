@@ -57,16 +57,32 @@ thematically (`architecture/`, `lore_and_design/`).
    - Enforced strict 80-column line width discipline across 100% of the C codebase (0 lines exceeding 80 columns across all 18 files).
    - Reorganized developer logs into chronological and topical directory trees (`YYYY/MM/<topic>/`).
 
-60: 6. **[devlog_006_source_and_root_pedagogical_commenting.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc)**  
-61:    *Source Implementation & Root Pedagogical Commenting* (2026-10-27 | Architecture):
-62:    - Expanded Ontological Documentation Architecture and LSP hover docstrings across 100% of C source files (`src/**/*.c`).
-63:    - Added numbered step-by-step procedural comments inside all functions.
-64:    - Upgraded root configuration files (`CMakeLists.txt`, `.gitignore`, `README.md`) with pedagogical commentary and OmniCode 5-block structure.
-65:    - Confirmed 100% strict 80-column line width compliance across all 18 repository files.
-66: 
-67: 7. **[devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc)**  
-68:    *Archival Extraction & The 2017–2018 Demo Baseline* (2026-10-29 | Lore & Design):
-69:    - Recovered and extracted raw JSON datasets across `Old Game Data` and `Old_Game_Data_2/data`.
-70:    - Built automated extraction toolchain (`docs/tools/extract_demo_data.py`).
-71:    - Generated 10-volume canonical demo baseline documentation suite in `docs/game_design/demo_baseline/`.
-72:    - Formalized the C11 reconstruction roadmap across simulation, GUI presentation, and invariant test suites.
+6. **[devlog_006_source_and_root_pedagogical_commenting.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc)**  
+   *Source Implementation & Root Pedagogical Commenting* (2026-10-27 | Architecture):
+   - Expanded Ontological Documentation Architecture and LSP hover docstrings across 100% of C source files (`src/**/*.c`).
+   - Added numbered step-by-step procedural comments inside all functions.
+   - Upgraded root configuration files (`CMakeLists.txt`, `.gitignore`, `README.md`) with pedagogical commentary and OmniCode 5-block structure.
+   - Confirmed 100% strict 80-column line width compliance across all 18 repository files.
+
+7. **[devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc)**  
+   *Archival Extraction & The 2017–2018 Demo Baseline* (2026-10-29 | Lore & Design):
+   - Recovered and extracted raw JSON datasets across `Old Game Data` and `Old_Game_Data_2/data`.
+   - Built automated extraction toolchain (`docs/tools/extract_demo_data.py`).
+   - Generated 10-volume canonical demo baseline documentation suite in `docs/game_design/demo_baseline/`.
+   - Formalized the C11 reconstruction roadmap across simulation, GUI presentation, and invariant test suites.
+
+8. **[devlog_008_canonical_skills_and_dreamscape_baseline.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc)**  
+   *Canonical Skills, The Dreamscape & Ground-Truth Pacing* (2026-10-30 | Lore & Design):
+   - Re-aligned simulation engine with authentic 2017–2018 demo baseline.
+   - Transitioned from generic verbs to tactical skills: Lux Barrio, Cuttatio Tenebris, and special abilities.
+   - Corrected antagonist identity strictly to "The Dark Lord" (the overarching background "A Plot").
+   - Reinstated The Dreamscape opening trial and protagonist customization.
+
+9. **[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc)**  
+   *Macro-History, Thematic Triad & Multi-Ending Architecture* (2026-11-02 | Lore & Design):
+   - Codified the 3,000-year dynastic wave from the First King to King Jihad across 30–50 monarchs.
+   - Formalized the 20-scene Master Storyboard Sequence of the Genesis Chronicle.
+   - Established the Past, Present, and Future Thematic Triad ("Trauma is Inherited, Destiny is Chosen").
+   - Defined "The King's Curse" as the open planar wound beneath the High Throne and King Jihad's possession.
+   - Articulated the Midpoint Fork, nocturnal Dream Compass temporal architecture, and 5-route ending matrix.
+

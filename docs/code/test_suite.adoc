@@ -1,6 +1,6 @@
-= Codebase Tour: Game Dev Testing Suite & CTest Integration
+= Codebase Tour: Four-Tier Game Dev Verification Strata & CTest Integration
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v1.1.0, 2026-11-02
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -11,45 +11,161 @@ v0.0.1, 2026-10-24
 [abstract]
 == Overview
 
-This document provides a technical walkthrough of the automated game development test suite
-located in `tests/test_utils.c`, `tests/test_game_invariants.c`, and `tests/test_gameplay_scenarios.c`.
-It explains how these tests integrate into CMake/CTest, the invariant assertions, golden replays, softlock
-immunity stress testing, and microsecond latency benchmarking.
+This document provides a comprehensive technical walkthrough of the automated game development
+verification architecture in *Tenebris and Lux*. Organized into strict hierarchical strata across
+`tests/`, the test suite mirrors the Layer 0-4 engine ontology and enforces four distinct
+ontological verification sections within every test harness:
 
-== 1. CMake & CTest Test Targets
+1. **Always Pass (Nominal Golden Baseline)**: Verifies nominal parameters, default
+   asset loading, and canonical execution paths.
+2. **Never Fail (Fault-Tolerant Tripwires)**: Injects boundary breaches, NULL pointers,
+   missing files, and corrupt states to prove that the engine never crashes or invokes
+   undefined behavior.
+3. **Assertion & Guarantee (Axiomatic Invariants)**: Mathematical guardrails, energy
+   conservation, monotonic clocks, and DAG dependencies guaranteed by engine contracts.
+4. **Emergence (Stochastic Stress & Chained Pipelines)**: Emergent combinatorial state
+   spaces, 1,000 chaotic command fuzzing, bitwise golden replay determinism, and
+   sub-50-microsecond simulation latency budgets.
 
-The project registers six distinct test targets within `CMakeLists.txt`:
+== 1. The Four-Tier Testing Hierarchy
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                   TIER 4: SYSTEM VERIFICATION                          │
+│  tests/system/test_game_invariants.c & test_gameplay_scenarios.c       │
+│  Full simulation engine invariants, golden replays & 60 FPS budgets   │
+├────────────────────────────────────────────────────────────────────────┤
+│                 TIER 3: INTEGRATED UTILITIES HARNESS                   │
+│  tests/integrated/test_utils.c                                         │
+│  Cross-subsystem coordination, central manifest & multi-profile boot   │
+├────────────────────────────────────────────────────────────────────────┤
+│                   TIER 2: SUBSYSTEM UNIT HARNESSES                     │
+│  tests/unit/ (test_math, test_data, test_time, test_string, test_log)  │
+│  Isolated subsystem contracts, buffer sizing, and tripwire fallbacks   │
+├────────────────────────────────────────────────────────────────────────┤
+│                  TIER 1: FUNCTIONAL DEBUGGING HARNESS                  │
+│  tests/functional/test_functional.c                                    │
+│  Granular function-by-function execution with step-by-step telemetry   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+=== Tier 1: Functional Debugging (`tests/functional/`)
+Designed specifically for interactive debugging and pinpointing anomalies in isolated functions.
+Emits explicit `[DEBUG-TRACE]` entries showing arguments before and after execution for each
+individual cog (e.g. `math_clamp_int`, `math_saturating_add`, `str_safe_copy`,
+`str_trim_inplace`, `json_get_string`, `combat_get_stance_name`).
+
+=== Tier 2: Subsystem Unit Harnesses (`tests/unit/`)
+Provides 1:1 test coverage for each dedicated Layer 0 utility subsystem folder:
+* **`test_math.c`**: Bounded arithmetic, saturating additions/subtractions, step-bounded
+  equilibrium nudging, proportional ratio scaling, 2D discrete AABB hit-testing, and
+  `data/math/default.json` profile loading.
+* **`test_data.c`**: Zero-heap filesystem I/O (`fs_utils.c`), canonical buffer sizing
+  (`FS_BUFFER_SMALL_BYTES` = 1024 to `FS_BUFFER_MAX_CONFIG` = 65536), bounded file
+  reading/writing, scoped JSON object querying, and array iteration.
+* **`test_time.c`**: Monotonic millisecond/microsecond clocks, POSIX nanosleep frame pacing,
+  ISO 8601 timestamp generation ("YYYY-MM-DDTHH:MM:SSZ"), and 60 FPS / 120 FPS profile loading.
+* **`test_string.c`**: Buffer-safe bounded copying, in-place whitespace trimming,
+  case-insensitive equality/substring matching, parent directory extraction, and
+  duplicate-slash immune path joining.
+* **`test_log.c`**: Forensic telemetry, graded severity filtering, categorized logging
+  channels, in-memory static ring buffer, and emergency monolithic code page fallbacks.
+* **`test_debug.c`**: Interactive state debugger, frozen snapshot ring buffer, FNV-1a
+  checksum determinism, time-travel state rewind, state diffing, dynamic breakpoints,
+  and emergent chaotic stress.
+
+=== Tier 3: Integrated Utilities Harness (`tests/integrated/`)
+* **`test_utils.c`**: Validates cross-subsystem coordination of all Layer 0 utilities.
+  Exercises the central manifest registry (`manifest.c`), validates upstream DAG dependency
+  resolution, enforces diagnostic escalation policies (WARNING -> `PREFLIGHT_STATUS_WARNINGS`,
+  CRITICAL -> `PREFLIGHT_STATUS_DOWNGRADED`, FATAL -> `PREFLIGHT_STATUS_HALT_FATAL`), and
+  benchmarks multi-profile synchronous boot latency (< 5 milliseconds).
+
+=== Tier 4: System Verification (`tests/system/`)
+* **`test_game_invariants.c`**: Validates Layer 1 simulation engine state invariants: twin
+  relic power bounds ($[0, 100]$), moral sway continuum boundaries ($[-100, +100]$),
+  protagonist name customization, and bidirectional provincial map topology.
+* **`test_gameplay_scenarios.c`**: Simulates end-to-end tactical combat routes (Righteous
+  Warden and Umbral Striker paths), 15-step golden deterministic replay parity, 1,000 chaotic
+  command fuzzing for softlock immunity, and 10,000-turn simulation latency benchmarking
+  (< 50 microseconds per turn).
+
+== 2. The Four Ontological Testing Sections
+
+Every test harness in the repository implements the four-section ontological model:
+
+[cols="1,2,3", options="header"]
+|===
+| Section | Category | Mission & Verification Scope
+| **Section 1** | **Always Pass**
+| Valid inputs, nominal parameters, default configuration loading, standard state
+initialization, well-formed JSON, normal gameplay actions.
+
+| **Section 2** | **Never Fail**
+| Inviolability under error. Injects NULL pointers, zero capacities, missing files, corrupted
+JSON, and unknown stances. Proves tripwire activation and safe fallback without OS traps.
+
+| **Section 3** | **Assertion & Guarantee**
+| Axiomatic mathematical laws and structural contracts: bounded clamping,
+non-decreasing monotonic clocks, strict null-termination under truncation, and
+deterministic stance completeness.
+
+| **Section 4** | **Emergence**
+| Higher-order systemic behaviors: 1,000 pseudo-random fuzzing iterations, spatial grid
+overlap emergence, golden replay bitwise equality across runs, and < 50 us latency budgets.
+|===
+
+== 3. CMake & CTest Test Targets
+
+The build configuration registers twelve automated test targets within `CMakeLists.txt`:
 
 [source,cmake]
 ----
-# CLI Contract & Smoke Tests
+# CLI Interface Contract Verification Tests
 add_test(NAME cli_help_test COMMAND tenebris-lux --help)
 add_test(NAME cli_version_test COMMAND tenebris-lux --version)
 add_test(NAME subsystem_audit_test COMMAND tenebris-lux --audit)
 
-# Dedicated Game Development Test Executables
-add_test(NAME core_utils_test COMMAND test_utils)
-add_test(NAME game_invariants_test COMMAND test_game_invariants)
-add_test(NAME gameplay_scenarios_test COMMAND test_gameplay_scenarios)
+# Tier 1: Functional Debugging Harness
+add_test(NAME functional_cogs_test COMMAND test_functional)
+
+# Tier 2: Subsystem Unit Harnesses (Isolated Subsystems)
+add_test(NAME unit_math_test COMMAND test_math)
+add_test(NAME unit_data_test COMMAND test_data)
+add_test(NAME unit_time_test COMMAND test_time)
+add_test(NAME unit_string_test COMMAND test_string)
+add_test(NAME unit_log_test COMMAND test_log)
+add_test(NAME unit_debug_test COMMAND test_debug)
+
+# Tier 3: Integrated Utilities Harness (Multi-Subsystem Coordination)
+add_test(NAME integrated_utils_test COMMAND test_utils)
+
+# Tier 4: System Verification Harnesses (Full Game Simulation)
+add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
+add_test(NAME system_gameplay_scenarios_test COMMAND test_gameplay_scenarios)
 ----
 
-== 2. State Invariant Suite (`tests/test_game_invariants.c`)
+== 4. Execution & Verification Commands
 
-This executable verifies the mathematical boundaries of the simulation without presentation overhead:
+Developers and CI/CD pipelines can invoke the complete suite or isolate specific tiers:
 
-1. **`test_initial_state_invariants`**: Verifies initial power levels (Shield 80, Sword 80, Moral Sway 0, Garrison Altar).
-2. **`test_relic_energy_bounds`**: Spams actions 20 times to prove relic energies are clamped at $100$ and never drop below $0$.
-3. **`test_stance_state_machine`**: Verifies transitions between `STANCE_WARDING`, `STANCE_STRIKING`, `STANCE_EQUILIBRIUM`, and `STANCE_NEUTRAL`, proving invalid inputs reject safely.
-4. **`test_moral_sway_boundaries`**: Verifies the $[-100 \dots +100]$ moral continuum.
-5. **`test_spatial_topology`**: Asserts that every province path is bidirectional and non-existent directions are cleanly rejected.
-6. **`test_diagnostic_tripwire_manifests`**: Intentionally injects corrupt values into `player_state_t` to verify that `game_audit_state()` detects failures.
+[source,bash]
+----
+# Compile all binaries and test targets under strict zero-warning policy
+cmake --build build --config Debug
 
-== 3. Gameplay Scenarios & Replay Suite (`tests/test_gameplay_scenarios.c`)
+# Execute all 13 automated verification suites
+ctest --test-dir build -C Debug --output-on-failure
 
-This executable simulates real gameplay sessions, softlock stresses, and performance benchmarks:
-
-1. **`test_scenario_righteous_warden`**: Simulates a defensive player who moves to the Citadel Gates, adopts `STANCE_WARDING`, and successfully staggers and blinds the vanguard using the Shield of Lux.
-2. **`test_scenario_umbral_striker`**: Simulates an offensive player who shifts to `STANCE_STRIKING` and cleaves the vanguard using the Sword of Tenebris.
-3. **`test_scenario_deterministic_golden_replay`**: Runs a 17-step scripted play session across two independent runs, asserting bitwise equality across all state telemetry (Shield, Sword, Sway, HP, Turns).
-4. **`test_softlock_and_stress_invariance`**: Fires 1,000 rapid chaotic commands (empty strings, malformed syntax, rapid stance shifts) to prove that the engine never deadlocks or leaks memory.
-5. **`test_simulation_latency_and_headroom`**: Benchmarks 10,000 turns of simulation dispatch. Proves that turns execute in **$16\,\mu\text{s}$**, consuming less than $0.1\%$ of the 60 FPS ($16.6\,\text{ms}$) frame budget.
+# Run individual tier harnesses directly for step-by-step debugging
+./build/test_functional         # Granular cog trace output
+./build/test_math               # Math & geometry unit verification
+./build/test_data               # Filesystem & JSON unit verification
+./build/test_time               # Timing & clock unit verification
+./build/test_string             # Safe string unit verification
+./build/test_log                # Forensic telemetry unit verification
+./build/test_debug              # State debugger & rewind unit verification
+./build/test_utils              # Integrated utilities verification
+./build/test_game_invariants    # Simulation state invariants
+./build/test_gameplay_scenarios # Gameplay scenarios & latency benchmark
+----

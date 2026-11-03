@@ -1,0 +1,475 @@
+= Tenebris and Lux: Definitive Narrative Architecture, Historical Canon, Metaphysics & Ludological Design Compendium
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Overview & Architectural Scope
+
+This compendium establishes the definitive narrative architecture, macro-historical canon,
+cosmic metaphysics, master storyboard chronicle, and ludological design principles for
+*Tenebris and Lux*. Synthesizing the 2017–2018 RPG Maker MV archives (Folder 1 and Folder 2)
+with the native ISO C11 engine architecture, it formalizes the genesis of the Kingdom of Sacyra,
+the tragedy of Usuru, the awakening of the twin relics, and the multi-ending campaign structure.
+
+== 1. World-Building & Game Development Philosophy
+
+=== 1.1. Pre-Production, Technical Foundations & AI Collaboration
+
+The foundational first step in game development is **Pre-Production and Conceptualization**,
+where core gameplay loops, narrative pillars, and technical architecture are locked in before
+production assets or gameplay scripts are written. In *Tenebris and Lux*, this phase was executed
+by stripping the repository down to standard ISO C11 with zero external downloads and enforcing
+the **OmniCode Universal 5-Block Lifecycle Protocol** (Metadata, Opening/Types, Body, Audit Procedures,
+Closing/Test & CLI). By establishing a zero-allocation **Central Manifest Registry** (`ALLOC_ZERO_HEAP`)
+and pre-flight diagnostic tripwires under the axiom _"Don't start a machine you know has loose bolts,"_
+the engine guarantees mathematical and state integrity prior to runtime simulation.
+
+Within this workflow, an AI collaborator functions as an information-bounded external compiler and documentation accelerator:
+
+* **Eliminating Transcription Drag:** Translating a complete, fluid mental model into 80-column AsciiDoc manuals, comparative triage matrices, and C11 data structures removes hundreds of hours of clerical friction while preserving creative bandwidth for high-level direction.
+* **Acting as a "Dry-Run Compiler":** Because the AI only knows what has been explicitly provided in context, any predictive guess immediately highlights where an unwritten assumption resides in the creator's head, allowing that rule to be formally codified.
+* **Cross-Dataset Triage & Extraction:** Automated tooling (`extract_demo_data.py`) and structured analysis reconcile the 2017–2018 RPG Maker MV archives—combining **Folder 1** (`Old Game Data`, Version 40730002, 36 maps, complete narrative/morality branches) and **Folder 2** (`Old_Game_Data_2/data`, Version 2078310, 43 maps, 5-unit LeTBS tactical combat)—while triaging out Tier 1 RTP boilerplate, evolving Tier 2 sandbox prototypes, and preserving Tier 3 canonical pillars.
+
+=== 1.2. Why the Shape of the Overarching World Matters
+
+Establishing the macro-shape of the overarching world is just as vital as detailing individual people, places, and cultures because the macro-structure acts as the architectural mold that dictates the pressures, physics, and emotional gravity of every micro-detail inside it:
+
+* **Systemic Causality Over Narrative Contrivance:** When macro-rules are defined first—such as a seven-day courier delay to a frontier kingdom or an ethereal veil that thins for one week a year—character motivations emerge as inevitable consequences of their environment rather than artificial plot devices.
+* **Negative Space Defines the Inhabitants:** Charting the geopolitical fault lines between the six powers of The Great War creates predefined societal currents. Every future village, merchant, or scholar automatically inherits historical weight based on where they sit along those fault lines.
+* **Ludonarrative Cohesion Between Canon and Code:** The overarching metaphysical rules translate directly into deterministic C11 mathematical invariants. The lore rule that *Lux tempers Tenebris, but dissipates under violent emotional shifts* directly governs the simulation engine's `[-100, +100]` Moral Sway clamping, *Lux Barrio* duration rolls ($2 \dots 5$ turns), and *Cuttatio Tenebris* splash cleaves ($20\%$).
+* **Fractal Storytelling (The Micro Mirrors the Macro):** Small, local interactions in the opening village naturally echo ancient continental history. When Elijah hesitates before Grandma Magolia's chest out of respect for family rules, or Katrina opens it immediately looking for a will, their domestic choices mirror the ancient ideological split between Prince Mi-ren and Prince Casatti.
+
+'''
+
+== 2. Core Metaphysics, Power Systems & The Ethereal Veil
+
+=== 2.1. The Primordial Motif: Morality in the Heart, Not the Element
+
+Good and evil exist as real moral absolutes within the world, yet neither Light (**Lux**) nor Darkness (**Tenebris**) carries an inherent ethical charge. Both are morally neutral cosmic forces; morality is determined strictly by the **actions, conscience, and intentions of the heart behind the weapon**, tracked mechanically along the `[-100, +100]` **Moral Sway** continuum via the **Compass of Morality**:
+
+[cols="1,2,2,2", options="header"]
+|===
+| Cosmic Force | Ontological Essence | Virtuous Manifestation (Heart of Mercy / Justice) | Corrupted Manifestation (Heart of Tyranny / Malice)
+
+| **Lux** (Radiance)
+| Cohesion, illumination, temporal anchoring, and preservation.
+| Projects protective golden barriers (*Lux Barrio*), wards the vulnerable, and preserves peace through reconciliation.
+| Enforces calcifying stasis, denies natural mortality, blinds dissenters, and traps the world in inflexible order.
+
+| **Tenebris** (Darkness)
+| Severance, dissolution, finality, and the fertile void.
+| Cuts through tyrant armor (*Cuttatio Tenebris*), severs corrupt bindings, and enacts swift, surgical **Absolute Justice**.
+| Spreads entropic rot, feeds bitter vengeance, dissolves conscience, and fuels destructive conquest.
+|===
+
+=== 2.2. The Metaphysical Dynamic: Tempering vs. Dissipation
+
+The interaction between Lux and Tenebris is governed by a strict law of equilibrium:
+
+[source,text]
+----
+                     TEMPERING LOOP
+        ┌──────────────────────────────────────┐
+        ▼                                      │
+  [ LUX (Cohesion) ] ──────────────► [ TENEBRIS (Severance) ]
+  Stabilizes, holds, &               Prevents cold stasis;
+  tempers destructive void           grants decisive motion
+        ▲                                      │
+        └──────────────────────────────────────┘
+                           │
+       VIOLENT MORAL OR EMOTIONAL SHIFT (Instability)
+                           │
+                           ▼
+                  LUX DISSIPATES
+     Tenebris runs unchecked into devouring void;
+     Lux collapses just as it did during the 11th Festival.
+----
+
+1. **Lux as the Singular Tempering Agent:** Raw Tenebris is entropic and severing; left unchecked, it erodes everything it touches. Lux is the only force capable of containing and tempering Tenebris, providing structural cohesion so that the void's cutting edge can be wielded safely.
+2. **The Fragility of Radiance (Dissipation):** While Lux can temper Tenebris, it requires emotional and ethical stability to hold its form. Any sudden, violent shift in the heart—such as terror, betrayal, panic, or malice—causes Lux to **dissipate immediately**, collapsing protective barriers and leaving Tenebris unbridled.
+
+=== 2.3. The Power System Schism: Magic vs. Science
+
+Following the discovery of Tenebris and Lux during the crisis of the First King, an ideological conflict emerged regarding the nature of power in the world:
+
+* **The Academic Rationalists ("Science"):** Championed by **The Academy**, this camp views Lux, Tenebris, and elemental properties as measurable, reproducible natural laws governed by resonance geometries and leyline mathematics.
+* **The Traditional Mystics & Prelates ("Magic"):** Championed by provincial mystics and religious orders (such as followers of **Lyri, the Goddess of Peace**), this camp views these forces as spiritual miracles, blessings, or curses channeled through faith and offerings.
+
+=== 2.4. The Ethereal Substrate: The Dreamscape & Legends of Crossing the Veil
+
+Alongside the waking physical world exists **The Dreamscape**, an ethereal plane of consciousness, ancestral memory, and timeless trials watched over by **Chrono** in the Room of Sages.
+
+* **The Annual Thinning of the Veil:** For one week each year—coinciding with the grand annual festival—the boundary ("the Veil") between the temporal world and the Dreamscape thins to gossamer, creating a window where mortals can "make their dreams come true."
+* **Legends of Old Regarding "Crossing the Veil":**
+** *The Mirror of Intent:* The ethereal medium reflects the heart of whoever touches it. Collective joy and reverence manifest benevolent projections, whereas sudden shock or spite inverts the ether into waking nightmares.
+** *The Severed Tether:* Channeling the thinned veil in short bursts is stable, but sustaining a bridge across an entire week carries extreme peril. If a ritual is violently interrupted while a spirit bridges the veil, the tether snaps—permanently sealing the consciousness inside the Dreamscape.
+** *The Infiltration of the Dream Eaters:* Widening or tearing the veil attracts **Dream Eaters**—parasitic entities native to the deep ether that feast upon mortal memories, hopes, and unresolved grief.
+
+'''
+
+== 3. Complete Chronological History of the Realm
+
+[source,text]
+----
+                  ERA I: THE FOUNDING OF SACYRA
+     The First King's Golden Peace & Self-Running Systems
+     Mundane Shield (Peace) & Mundane Sword (War) Forged
+                             │
+         ┌───────────────────┴───────────────────┐
+         ▼                                       ▼
+   Prince Mi-ren                           Prince Casatti
+ (Heir to the Throne)                  (Renounces Crown; Begins
+                                             The Academy)
+         │                                       │
+         └───────────────────┬───────────────────┘
+                             ▼
+          ERA II & III: THE COMA & THE SILENT VIGIL
+ • Festival 1: First King falls comatose after the 1st Festival;
+   his spirit remains lucid and awake inside The Dreamscape.
+ • Festivals 1–4: The annual festival week is the surest window
+   to access him while Mi-ren & Casatti try to pull him out of the coma.
+ • Festival 5: The First King's physical body dies.
+ • Festivals 5–10: Because the realm's systems run smoothly,
+   audiences are rarely needed. The festival continues because that
+   week is now the ONLY way to access the King's spirit in short
+   bursts until teenager Mi-ren officially comes "of age."
+                             │
+                             ▼
+          ERA IV: THE 11TH YEAR & THE SHATTERED RITUAL
+ • A nameless boy from remote Libira (1-week travel gap; no outpost
+   system) is a restless wanderer (never stays >3 days anywhere
+   except the week-long Festival of Peoples).
+ • Year 11: A "plague" keeps the King unseen. The boy sneaks into
+   the castle for an audience, discovers the truth, and in his shock
+   accidentally tampers with the ritual.
+                             │
+     ┌───────────────────────┼───────────────────────┐
+     ▼                       ▼                       ▼
+First King Sealed      Devastating Sway        The Rise of Usuru
+in The Dreamscape      Spawns TENEBRIS &       Boy takes name "Usuru",
+Forever                Warps Distance Between  becomes young ruler of
+                       Libira & The Capital    Libira, & rallies border
+                                               kingdoms to annex Sacyra
+                                                     │
+                                                     ▼
+                                       ERA V: THE 7-YEAR GREAT WAR
+                                      (6 Powers Torn in Conflict)
+                                                     │
+                             ┌───────────────────────┴───────────────────────┐
+                             ▼                                               ▼
+               CASATTI INFUSES TENEBRIS                         MI-REN DISCOVERS LUX
+         Channels the ritual's anomalous energy          Uses knowledge from projecting the
+         spike into the Sword for "Absolute              King into the temporal world to ward
+         Justice" & a swift end to the war.              armies & seek Usuru's forgiveness.
+                             │                                               │
+                             └───────────────────────┬───────────────────────┘
+                                                     ▼
+                                    THE ACCORD OF KINGS (7 Years)
+                         • Lux tempers Tenebris (dissipates on violent shifts).
+                         • Establishes "Joint Realm, Separate Kingdoms" politics.
+                         • Births the "Prophecy of Kings" around the twin relics.
+----
+
+=== Era I: The Founding of Sacyra, Self-Running Systems & The Two Princes
+
+1. **The Mundane Armaments of Inception:** At the beginning of the creation of the **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`), the **Shield of Lux** and the **Sword of Tenebris** were forged as ordinary, non-magical weapons acting as civic symbols for **Peace** and **War**.
+2. **A Reign So Peaceful War Was Merely an Idea:** The First King was deeply beloved by his people. Under his leadership, the kingdom's administrative, legal, and civic systems were so well-engineered that the realm practically governed itself. Citizens did not lack access to the King because he was aloof, but because the systems functioned so smoothly that a personal royal audience was only needed "once in a blue moon".
+3. **The Two Sons (Mi-ren and Casatti):** The First King had two sons who chose distinct paths while still young teenagers:
+* **Prince Mi-ren:** The elder son and heir to the throne, raised to carry on his father's governance.
+* **Prince Casatti:** The younger son, who chose to begin **The Academy** rather than accepting the birthright of the throne, dedicating himself to studying the Dreamscape and the elemental properties of the world.
+
+=== Era II: The International Festival of Peoples & The Four-Year Coma
+
+1. **Why the Festival Lasted a Full Week:** Every year, the Capital hosted the **Festival of Peoples**—an international celebration used to build out borders, negotiate major kingdom projects, and give all peoples a chance to celebrate together. Rather than holding a single-day event after gather days, the First King designed it as a full week-long festival out of deep consideration for distant subjects: those who needed to leave early for harvest or travel obligations could still attend, and delegations traveling from remote corners of the known world were guaranteed meaningful participation.
+2. **The Coma Following the First Festival & Discovery of the Dreamscape:** Immediately after the very first major Festival of Peoples, the First King fell into a coma. However, the King was not unconscious; his spirit was fully awake and aware inside **The Dreamscape**. By tracking his father's displaced consciousness, Casatti and the Academy discovered and mapped the Dreamscape in full.
+3. **Festivals 1 Through 4 (The Rescue Effort):** During the first four years of the King's coma, he was not completely inaccessible during the rest of the year, but the week of the festival—when the veil thinned—was the **surest, strongest window** to access him. Throughout those four festivals, Mi-ren, Casatti, and the Castle worked tirelessly to pull the First King out of his coma and back into his waking body.
+
+=== Era III: The 5th Festival Passing, The Vigil & What "Of Age" Meant
+
+1. **The Death at the 5th Festival:** During the **5th Festival of Peoples**, the First King's physical body died, while his consciousness remained lucid on the other side of the veil.
+2. **Why the Festival Continued (Festivals 6–10):** Once the King's body passed away, pulling him out of the coma was no longer possible. However, the annual festival continued because that thinned-veil week was now the **only reliable lifeline** left for Mi-ren and the Castle to commune with the First King's spirit and project him into the temporal world in short bursts when rare royal audiences were required. Everyone in the Castle knew the truth; concealing his passing was not a malicious lie, but a protective vigil to allow the Festival of Peoples to continue and keep the peace until Mi-ren was officially "of age."
+3. **The Meaning of "Of Age" in the First Royal Succession:** Although princes are normally crowned immediately upon a monarch's death, Sacyra had never experienced a royal succession before. The entire international peace was anchored to the First King's personal covenant, and no legal precedent existed for a regency. Furthermore, Mi-ren and Casatti were still teenagers; in Sacyra's chivalric tradition, being "of age" required full physical and martial adulthood to lead the Royal Guard, alongside mastery of the Academy's statecraft systems so the self-running realm would not fracture under surrounding kingdoms.
+
+=== Era IV: Usuru the Wanderer, Libira's "Quiet Complaint" & The 11th Year Tragedy
+
+1. **The Kingdom of Libira & The "Quiet Complaint":** Far from the Capital lay the **Kingdom of Libira**, a remote, sparsely populated kingdom that was a full week's travel away just to deliver announcements from the Capital. Because Libira was not yet established enough as a kingdom to support a relay outpost system, this seven-day delay created a simmering **"quiet complaint"** among Libirans regarding the gap between what was known in the Capital and what remained unknown on the periphery.
+2. **The Three-Day Wanderer:** During the First King's peaceful reign, a boy was born in Libira to a humble family without being given a name. For ten years, he grew up in Libira and traveled the world as a restless wanderer who **never visited any place for more than three days**—except for the annual week-long Festival of Peoples in the Capital, which was a sacred time for him to celebrate and see the King he revered.
+3. **The 11th Visitation & The Accidental Interruption:** During the boy's eleventh year visiting the festival, a "plague" was announced as having struck the First King, leaving him unseen for the entire festival. Concerned because he had not seen the King, the unnamed eleven-year-old boy went into the castle to seek an audience. Inside, he discovered the secret: the First King had passed away years ago, and Mi-ren had been using knowledge from the Academy each year to keep this at bay until he came of age.
+4. **The Devastating Sway & The Birth of Tenebris:** From the boy's frontier perspective—knowing nothing of the Castle's protective vigil—the Capital's entire promise looked like a monstrous fraud. In his shock, he accidentally tampered with the ritual array, triggering four catastrophic consequences:
+* **The Eternal Seal:** The First King was permanently sealed inside **The Dreamscape**.
+* **The Discovery of Tenebris:** The shift in that one boy's heart was so devastating that it caused a violent metaphysical sway—an anomalous energy spike that birthed **Tenebris** into the waking world that very day.
+* **The Warped Distance:** The backlash physically warped the distance between Libira and the Capital, which the boy perceived as an intentional, hostile separation imposed by the Crown.
+* **The Naming of Usuru & Call to War:** Taking the name **Usuru**, the boy returned to Libira, tapped into the people's long-standing grievances, and convinced the Libirans not only to crown him as their young ruler, but to declare war and annexation against the Capital—pushing the surrounding kingdoms to do the same.
+
+=== Era V: The 7-Year Great War, Dual Infusion & The Joint Realm Settlement
+
+1. **The Six Fractured Powers:** Usuru's uprising ignited **The Great War**, tearing six major powers and territories into open conflict:
+* **The Libira Kingdom** (led by young ruler Usuru)
+* **The Capital** (defended by Prince Mi-ren)
+* **The Great Mau Kingdom**
+* **Old Sacyra**
+* **The Academy** (led by Prince Casatti)
+* **The Yun-yin Provinces**
+2. **Casatti's Infusion of Tenebris (The Sword of War):** Driven by the sword, Prince Casatti wanted to put a swift end to Usuru's campaign to return the kingdom to peace. Combining his years of studying the Dreamscape, the elemental properties of the world, and the strange energy spike released during the ritual interruption, Casatti learned how to channel **Tenebris** and carefully infused it into the mundane sword of War to enact **Absolute Justice**.
+3. **Mi-ren's Discovery of Lux (The Shield of Peace):** Prince Mi-ren had to take command of an army, but his goal was to restore peace to the realm and earn **forgiveness from Usuru** for the unintended betrayal of trust. Drawing upon what he had learned from the ritual used to project the First King into the temporal world, Mi-ren discovered a new form of energy—**Lux**—and channeled it into the mundane shield of Peace.
+4. **Why the War Lasted Only 7 Years & The Political Settlement:** Lux possessed a unique property: it was the only energy capable of tempering Tenebris, though any violent emotional shift would cause Lux to dissipate just as it did on the day the ritual broke. Paired together, Lux and Tenebris brought The Great War to a close in just **seven years**, solidifying the **"Joint Realm, Separate Kingdoms"** political structure seen throughout the game—where autonomous provinces and kingdoms share a federated realm while retaining distinct local rule.
+
+=== Era VI: The Prophecy of Kings
+
+Because the Shield and the Sword were the original symbols of Peace and War chosen by the First King—whose sons' ideologies manifested into the cosmic artifacts of the **Shield of Lux** and **Sword of Tenebris**—their pairing became known throughout history as the **Prophecy of Kings**. Over the centuries following his defeat, Usuru's unhealed bitterness festered in the abyss until he became known to history simply as **The Dark Lord**.
+
+'''
+
+== 4. Master Storyboard Sequence: The Genesis Chronicle (Scenes 01–20)
+
+[cols="1,2,2,3,4", options="header"]
+|===
+| Scene | Title | Setting & Tone | Visual Focus | Narrative & Thematic Action
+
+| **01**
+| **Symbols of Iron**
+| Royal Forges of Sacyra (Warm hearth amber)
+| Smiths quenching an unadorned steel kite-shield and broadsword.
+| The Kingdom of Sacyra is founded. Two ordinary weapons are presented to the First King as civic symbols of **Peace** and **War**.
+
+| **02**
+| **The Crown and the Scroll**
+| Sacyra Throne Room (Sunlit marble)
+| The First King with his teenage sons, Mi-ren and Casatti.
+| Mi-ren accepts his birthright as heir; Casatti declines the throne to establish **The Academy**.
+
+| **03**
+| **The Self-Running Realm**
+| Capital Courtyards & Provincial Towns (Golden calm)
+| Civic courts and markets running smoothly without royal interference.
+| Establishes a reign of peace so well-engineered that war is merely an idea and royal audiences are needed only once in a blue moon.
+
+| **04**
+| **The First Festival & The Coma**
+| Grand Festival Grounds / Royal Bedchamber
+| The known world celebrating for a full week; the First King collapsing into a coma as his spirit awakens in the Dreamscape.
+| The week-long Festival of Peoples accommodates distant travelers. Afterward, the King falls comatose; Casatti discovers the Dreamscape in full while tracking his father's lucid spirit.
+
+| **05**
+| **The Four-Year Rescue Effort**
+| Academy Conduit Chamber (Festivals 1–4)
+| Teenage Mi-ren and Casatti working across the thinned festival veil to reach their father.
+| For four years, the festival week serves as the surest window to access the King while his sons attempt to pull him out of his coma.
+
+| **06**
+| **The Passing at the Fifth**
+| Royal Sanctum (Festival 5, solemn candlelight)
+| The First King's physical body expiring while his golden silhouette remains across the veil.
+| The King dies during the 5th Festival. Because Mi-ren is not yet "of age" for the first succession, the Castle keeps the secret; the festival continues as the only way left to access the King in short bursts.
+
+| **07**
+| **The Quiet Complaint of Libira**
+| Frontier Kingdom of Libira (Windy, sparse roads)
+| A lone courier riding for seven days without a single relay outpost; a nameless boy born to a humble family.
+| Highlights the week-long travel gap and lack of an outpost system in Libira, breeding a "quiet complaint" over the Capital's distance.
+
+| **08**
+| **The Three-Day Wanderer**
+| Continental Roads & Capital Gates
+| Montage of the boy wandering from town to town (never staying past 3 days), except for his annual week at the Festival of Peoples.
+| For 10 years, the humble wanderer visits the Capital every festival week to celebrate and honor the First King.
+
+| **09**
+| **The Plague Year**
+| Festival Concourse — Year 11 (Somber crowd)
+| Heralds announcing a "plague" has struck the King; the 11-year-old boy looking at the empty royal balcony.
+| Unseen for the entire 11th festival, the King's absence worries the boy, prompting him to sneak into the castle for an audience.
+
+| **10**
+| **Behind the Veil**
+| Inner Castle Sanctum (Arcane glyphs, mist)
+| The boy discovering Mi-ren using Academy knowledge to commune with the long-dead First King.
+| From the boy's perspective, the Capital's golden peace is exposed as a years-long deception.
+
+| **11**
+| **The Shattered Ritual & Birth of Tenebris**
+| Inner Sanctum (Violent violet and gold shockwave)
+| Shocked, the boy accidentally tampers with the ritual; the tether snaps and a dark energy spike erupts.
+| The First King is sealed forever in **The Dreamscape**. The devastating shift in the boy's heart spawns **Tenebris** and warps the physical distance between Libira and the Capital.
+
+| **12**
+| **The Rise of Sovereign Usuru**
+| Libira Assembly Hall (Torchlight, raised spears)
+| The boy takes the name **Usuru**, rallying Libira's quiet complaints into open fury.
+| Seeing the warped distance as intentional malice, Usuru convinces Libira to crown him young ruler and declare a war of annexation against the Capital, inciting neighboring kingdoms to join.
+
+| **13**
+| **The Six-Power Conflagration**
+| Continental War Map (Six burning fronts)
+| Armies clashing across Libira, the Capital, Great Mau, Old Sacyra, the Academy, and the Yun-yin Provinces.
+| **The Great War** engulfs the known world.
+
+| **14**
+| **The Infusion of Tenebris**
+| Academy Arcane Forge (Deep twilight violet)
+| Prince Casatti channeling the anomalous energy spike from the interrupted ritual into the mundane Sword of War.
+| Synthesizing his study of the Dreamscape, world elements, and the rupture spike, Casatti creates the **Sword of Tenebris** to enact swift **Absolute Justice**.
+
+| **15**
+| **The General of Reconciliation**
+| Capital Command Tent (Warm lantern light)
+| Prince Mi-ren taking command of the army, vowing to seek Usuru's forgiveness.
+| Mi-ren leads the defense not for conquest, but to restore peace and mend the broken trust with Usuru.
+
+| **16**
+| **The Discovery of Lux**
+| Academy Spire & Battlefield (Golden radiance)
+| Mi-ren adapting the temporal projection ritual into a golden defensive barrier (**Lux**), sparking the Magic vs. Science debate.
+| Using what he learned from projecting the King into the temporal world, Mi-ren infuses the mundane Shield of Peace into the **Shield of Lux**.
+
+| **17**
+| **Tempering the Void**
+| Frontlines of the Great War (Gold & violet clash)
+| Mi-ren's Lux barrier containing and stabilizing Casatti's Tenebris strikes against coalition lines.
+| Demonstrates that Lux is the only force able to temper Tenebris, bringing the continental war to a decisive end in just **7 years**.
+
+| **18**
+| **The Dissipation at Parley**
+| Border Truce Grounds (Thick mist)
+| Mi-ren offering reconciliation to Usuru; Usuru's violent surge of hatred causing the ambient Lux to dissolve.
+| Proves the metaphysical law: any violent emotional shift causes Lux to dissipate instantly, just as it did on the day of the ritual rupture.
+
+| **19**
+| **The Joint Realm Accord**
+| Grand Council Chamber (Six regional banners)
+| Leaders ratifying the treaty establishing the "Joint Realm, Separate Kingdoms" political order.
+| Solidifies the federated geopolitical structure that persists into the modern era of Sacyra.
+
+| **20**
+| **The Prophecy of Kings**
+| Room of Sages / Royal Archives
+| Chrono recording the legend of the twin artifacts awaiting a bearer of true Equilibrium.
+| The First King's symbols of Peace and War are enshrined in the **Prophecy of Kings**, while Usuru retreats into the dark to become **The Dark Lord**.
+|===
+
+'''
+
+== 5. Continuity Bridge: Historical Parallels & Inversions in the 2017–2018 Demo
+
+=== 5.1. Usuru's Strategic Calculus: The Festival as a Metaphysical Siege Window
+
+In Act I of the demo (`Map 002: Start-Up / Walk of Fear` and `Map 003`), Senior Outrider **Sir Roté** rushes to Sacyra Castle in terror: _"The storm... The rising island... All of these events... All before the Festival of Heroes. The king will know how to stop this, he must know..."_.
+
+* **Exploiting the Thinned Veil:** The modern **Festival of Heroes** is the direct descendant of the ancient **Festival of Peoples**. Usuru (**The Dark Lord**) was defeated years ago, as **Monica the Mystic** recalls in Dio Village, but he purposefully times his new manifestation to coincide with the festival week when the veil to the Dreamscape is at its thinnest.
+* **The Dream Eater Vanguard:** In the opening tutorial (`Map 006` / `Map 008`), **Dream Eaters** invade the Dreamscape crying _"feast! Our lord commands us too!"_ and _"Foolish mortal. We will return. Our lord demands it!"_. They are Usuru's advance scouts sent across the thinning veil to overwhelm **Chrono** and devour the ancestral records before the festival begins.
+
+=== 5.2. King Jihad as the Grotesque Inverse of the Founding Dynasty
+
+In `Map 004: The Throne Room`, **King Jihad** listens to Sir Roté's warning and issues a strict gag order: _"Gather up the guard! We need to prepare! Darkness will soon return to this land. And don't tell the people of this discovery... You all are dismissed."_. Once alone, Jihad reveals his treasonous ambition: _"The fools... that power... that wicked power! Soon I will rule over this land, and not even the Dark Lord will have power over me!"_.
+
+[cols="1,2,2", options="header"]
+|===
+| Dimension | The Founding Dynasty (First King & Mi-ren) | The Modern Inversion (King Jihad)
+
+| **State of the Monarch**
+| Physical body comatose/dead during the festival, while his **spirit remained pure and lucid** in the Dreamscape to guide the realm.
+| Physical body healthy on the throne before the festival, while his **heart is thoroughly corrupted** by greed for void power.
+
+| **Purpose of Castle Secrecy**
+| Concealed the King's passing out of filial duty and preservation so the festival could continue until teenage Mi-ren came of age.
+| Imposes a gag order (`"don't tell the people"`) so no heroes interfere before Jihad can usurp the Dark Lord's wicked power for himself.
+
+| **Relation to the Prophecy of Kings**
+| Forged Lux and Tenebris to enact justice, protect life, and seek forgiveness.
+| Knows the **Prophecy of Kings**, but seeks to hijack the dark power for total dominion without understanding that Lux dissipates in a corrupt heart.
+|===
+
+=== 5.3. Direct Parallels Between Ancient History and Demo Dialogue
+
+1. **Teenage Protagonists & The Burden of the Tenth Year:** Just as Mi-ren, Casatti, and Usuru were teenagers/youths when history fractured on the 11th festival after 10 years of peace, **Elijah Ro-enheart** (`\n[1]`) and **Lady Katrina Jaren** (`\n[2]`) are teenagers thrust into an existential crisis. When Grandma Magolia asks Elijah to check the chest upstairs (`Map 021`), Elijah immediately connects it to his tenth year: _"Maybe is is something about dad! I haven't seen him since my 10th birthday. Sure thing. This might be my chance to get answers!"_. **John the Thief** (`Map 031`) likewise addresses the protagonist as a youth: _"What do you want kid! Can't you see that I'm busy!"_.
+2. **Dio Village as the Modern Libira ("The Quiet Complaint"):** Just as ancient Libira suffered from a week-long communication delay and lacked an outpost system, modern **Dio Village** suffers from royal neglect under the "Joint Realm, Separate Kingdoms" structure. In `Map 021`, **Grandma Magolia** sighs: _"This town used to be full of life. *sighs* The kingdom doesn't pay much attention to this place anymore..."_. Meanwhile, **Eric the Lumberjack** (`Map 028`) struggles to survive monster outbreaks near the woods (_"We've been seeing a lot of monster appear near the recently... And with jobs being tight, money is hard to come by"_), and the **St. Baron** (`Map 030`) exploits the locals.
+3. **Mi-ren / Casatti Mirrored in Elijah / Katrina:**
+* **Elijah (Echo of Mi-ren):** Dutiful vanguard bearer of the **Shield of Lux**, hesitant to break laws or family protocol. Before breaking into the St. Baron's mansion (`Map 030`), Elijah agonizes over the morality of the act: _"I can't believe that I am doing this,...the baron is the richest man in the villiage...but he's been using the town! This is for the good!"_.
+* **Katrina (Echo of Casatti & Usuru's Wanderlust):** Sardonic noble outrider wielding the **Sword of Tenebris**, impatient with stagnation and eager to cut through hypocrisy. In Grandma's house (`Map 021`), she looks for _"The will. I love you gran, but a girl gotta get out of this dead-end town"_ and remarks outside (`Map 007`): _"Ugghh. I can't believe we still live in this dump."_.
+
+'''
+
+== 6. Ludological Architecture: Relics, Side Quests & Ending Routes
+
+=== 6.1. Tri-Perspective Narrative Architecture
+
+The canonical story of *Tenebris and Lux* is an unfolding mystery that requires synthesis across perspectives:
+
+1. **Elijah Ro-enheart (`\n[1]` — Vanguard of Lux):** Investigates the military and institutional conspiracy surrounding his vanished father, **Commander Gareth Ro-enheart**, and King Jihad's Royal Guard.
+2. **Lady Katrina Jaren (`\n[2]` — Outrider of Tenebris):** Investigates the aristocratic, societal, and underground corruption alongside the Adventurers' Guild and figures like John the Thief.
+3. **The Custom Bearer (`<chosen_name>` — Secret Chronicler Route):** Using the engine's `name <str>` customization, the player can decouple the relics from the default protagonists. While playing both Elijah and Katrina unlocks the canonical **True Ending**, a custom bearer who puts in the "double work" along the `[-100, +100]` Moral Sway continuum weaves along the canonical timeline, catching fragments of both stories to unlock the **Secret True Ending**.
+
+=== 6.2. Early Relic Acquisition & The Embellishment System
+
+Elijah and Katrina acquire the ancient relics—the **Shield of Lux** and the **Sword of Tenebris**—at the very beginning of the game alongside **Grandma's Watch** (which activates the Layer 0 `time_utils` 24-hour monotonic clock across Seconds, Minutes, Hours, Days, Weeks, Months, and Seasons) and the **Compass of Morality**.
+
+Just as Mi-ren and Casatti infused the original mundane weapons with their convictions, players choose how to **embellish** their relics through side quests, elemental weaves, and moral choices:
+
+* **Canonical Core Combat Verbs (DevLog 008 Baseline):**
+** **Defend (`Lux Barrio`):** Rolls a deterministic $2 \dots 5$ turn duration, granting $25\%$ incoming damage mitigation and shifting moral alignment toward virtue.
+** **Attack (`Cuttatio Tenebris`):** Strikes primary target and deals $20\%$ area splash cleave to adjacent enemies.
+** **Special (`Basic Magic`, `Basic Ward`, `Basic Charm`, and `Duo-Loca Bashin n Slash`):** *Duo-Loca Bashin n Slash* harmonizes both relics in **Stance of Equilibrium**, dynamically targeting the enemy's lower defensive stat (`DEF` vs. `MDF`).
+* **Provincial Side Quests as Relic Embellishments:**
+** **Eric's Test of Honesty (`Map 028`):** Filling Eric's pot to cover two months of rent rather than stealing from it shifts Moral Sway positively and rewards the **Ring of Fire** (_"I used to be a lumberjack until that weird portal appeared. I found this ring and held on to it every since"_), embellishing the relics with fire-weave properties (connecting to Folder 2's *Burning Tile Spread* LeTBS state).
+** **Monica's Offering to Goddess Lyri (`Map 027` / `Map 029`):** Stopping the kid blocking the road (`Troop 5: Random Kid / Fire Mago`) and purchasing a base potion from the newly arrived shopkeeper for **Lyri, the Goddess of Peace**, grants the **Book of Monsters** and attunes the relics to spiritual/arcane resonance.
+** **John the Thief vs. The St. Baron (`Map 030` / `Map 031`):** Helping John confront the greedy St. Baron (_"the Baron has outlived his welcome. Think you can help with this...issue"_) versus upholding feudal property laws shapes the stealth/penetration or bastion/authority embellishments of the weapons.
+** **Armory Relics:** Discovering **Medusa's Sword** and the **Heart Shield** provides further optional material infusions for petrification/stasis or vitality warding.
+
+=== 6.3. Complete Ending Matrix & Player Agency Over Lore
+
+By design, the main story is linear from start to finish so that any player can complete a coherent tactical campaign, while **Dreamscape side quests** remain optional, time-sensitive (tied to the monotonic clock), and missable. You cannot achieve $100\%$ completion without the Dreamscape quests, giving the player full agency to decide *whether they want to know the deeper story*:
+
+[cols="1,2,2,3", options="header"]
+|===
+| Ending Route | Playable Requirement | Relic Embellishment & Moral Sway Profile | Narrative & Metaphysical Resolution
+
+| **1. Neutral Ending** _(Basic Linear Completion)_
+| Complete the main campaign as Elijah or Katrina while skipping the optional Dreamscape side quests.
+| Standard combat progression; relics used as martial tools without unlocking deep planar synthesis.
+| King Jihad's plot is halted and the Dark Lord's physical manifestation is defeated, saving Sacyra in the present. However, the First King remains sealed in the Dreamscape and Usuru's ancient wound goes unhealed, leaving the cycle dormant.
+
+| **2. True Canonical Ending** _(Stance of Equilibrium)_
+| Play through **both** Elijah's and Katrina's perspectives and complete the Dreamscape trials.
+| Balanced embellishments; Moral Sway harmonized so Lux tempers Tenebris without dissipating.
+| Unlocks the full truth of the 11th Festival. During the Festival of Heroes, Jihad's treason is exposed, Usuru is granted the reconciliation Mi-ren tried to give him centuries ago, and the First King's spirit is finally laid to rest.
+
+| **3. Secret True Ending** _(The Chronicler's Path)_
+| Play as the non-default custom protagonist (`<chosen_name>`) and perform the "double work" across all moral and nocturnal branches.
+| Complete mastery of all relic embellishments, Magic vs. Science synthesis, and $100\%$ Dreamscape completion.
+| The custom bearer weaves through the canonical path, witnessing fragments of both Elijah's and Katrina's stories. With Chrono in the Room of Sages, they heal the planar rift and reform the realm's outpost and governance systems.
+
+| **4. Benevolent Stasis Ending** _(The Mi-ren Fallacy)_
+| Extreme Lux focus with high preservation choices, rejecting Tenebris severance.
+| Pure Lux barrier embellishments; excessive defensive stasis.
+| Repeat of the ancient mistake on a continental scale: to prevent destruction, the wielder seals Sacyra inside a timeless, comatose golden barrier where nothing can harm—or grow in—the realm.
+
+| **5. Abyssal Usurper Ending** _(The Cycle of Usuru)_
+| Extreme Tenebris focus with negative Moral Sway ($-100$, theft, ruthless slaughter).
+| Pure Tenebris severance embellishments; Lux completely dissipated by malice.
+| The wielder strikes down King Jihad and absorbs the Dark Lord's void power, taking the throne as a new Dark Sovereign and repeating Usuru's war of vengeance against the Capital.
+|===
+
+'''
+
+== 7. Current Project Status & Remaining Outlines to Define
+
+=== 7.1. Fully Outlined & Verified in Repository
+
+* **Layer 0, 1, 2 & 4 C11 Architecture:** 12/12 pre-flight modules registered, `ALLOC_ZERO_HEAP` static memory guarantees, ISO 8601 (`2026-10-26`) temporal stamping, active DAG dependency enforcement, 80-column LSP hover docstrings, and CTest verification suites passing in $\sim 0.02\text{--}0.05\,\text{s}$.
+* **Genesis & Great War Lore Bible:** Founding of Sacyra, the First King's coma and death across Festivals 1–10, Usuru's 11th-year interruption, the birth of Tenebris and Lux, the 7-Year Great War across the six powers, the "Joint Realm, Separate Kingdoms" settlement, and the Prophecy of Kings.
+* **2017–2018 Demo Baseline (Acts I–IV):** Complete extraction of the 43 maps, dialogue transcripts for Elijah and Katrina, Dio Village moral tests, and canonical combat skills.
+
+=== 7.2. Next Areas Ready to Be Outlined
+
+1. **The Post-War Era & The Immediate Past:** What happened to Prince Mi-ren, Prince Casatti, and Usuru immediately after the 7-Year Great War, and the exact truth behind **Commander Gareth Ro-enheart's** disappearance on Elijah's 10th birthday.
+2. **Cultural & Regional Profiles of the Six Powers:** Detailed cultural, architectural, and societal profiles for **The Capital**, **The Kingdom of Libira**, **The Great Mau Kingdom**, **Old Sacyra**, **The Academy**, and **The Yun-yin Provinces**.
+3. **Extended Tactical Party Integration (Folder 2 Synthesis):** Full narrative backstories, recruitment scenes, and 5-unit LeTBS grid synergies for **Sebastien the Thief**, **Angela the Mage**, and **Lucius the Priest**.
+4. **Mid-to-Late Campaign Progression & Phase 2–3 Engine Specs:** Detailed act outlines beyond Dio Village (`LOC_WHISPERING_WOODS`, `LOC_SACYRA_MARCHES`, and the Capital siege) alongside the mathematical specifications for the Phase 2 2D tactical grid and Phase 3 side-scroll action duel transitions.
+5. **Documentation Harmonization:** Sweeping early Master Guide chapters (Chapters 1, 15, 20) to replace lingering references to the deprecated placeholder name `"Malakor"` with the strictly canonical title **"The Dark Lord"** established in DevLog 008.

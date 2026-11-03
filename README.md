@@ -9,11 +9,16 @@ license: "MIT"
 
 # Tenebris and Lux
 
-> **"The Shield protects and confines; the Sword severs and defends. The metal knows neither virtue nor malice—only the hand that grips the hilt."**
+> **"The Shield protects and confines; the Sword severs and defends. The metal knows neither virtue nor malice—only the hand that grips the hilt."**  
+> *"Trauma is Inherited; Destiny is Chosen."*
 
-*Tenebris and Lux* ("Darkness and Light") is a custom-engineered **Tactical Strategy RPG (TRPG)** and C11 game engine architecture. Conceived between 2014–2018 in RPG Maker as the foundational project of **CreativeWorkzStudio**, the story chronicles the defense of the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`) against the re-awakened **Dark Lord Malakor**.
+*Tenebris and Lux* ("Darkness and Light") is a custom-engineered **Tactical Strategy RPG (TRPG)** and C11 game engine architecture. Conceived between 2014–2018 in RPG Maker as the foundational project of **CreativeWorkzStudio**, the story chronicles the defense of the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`) and its neighboring continental powers against the re-awakened **Dark Lord** (the ancient Libiran sovereign Usuru).
 
-The journey is anchored by two protagonists: **Elijah Ro-enheart**, son of the former Head of the Royal Guard, and **Katrina Jaren**, a noble court aspirant drawn to the Adventurers' Guild. Together they awaken and wield two primordial, morally neutral relics—**The Shield of Lux** and **The Sword of Tenebris**—whose power shapes the destiny of the realm through player choices, tactical positioning, and moral sway.
+The campaign features a **Tri-Perspective Narrative Architecture** exploring three interconnected temporal axes:
+
+* **The Past (Healing the Frontier Wound)**: **Elijah Ro-enheart**, frontline heavy vanguard of the Royal Defense Corps bearing the **Shield of Lux**, seeking truth behind the disappearance of his father, Commander Gareth Ro-enheart.
+* **The Present (Severing Complacency)**: **Lady Katrina Jaren**, noble court aspirant renouncing aristocratic privilege for the **Adventurers' Guild**, wielding the **Sword of Tenebris** to cut through courtly decay.
+* **The Future (The Steward of Balance)**: **The Custom Bearer** (`<chosen_name>`), an unburdened soul awakening within the ethereal **Dream Chamber** under the guidance of **Chrono**, free from ancestral grudges to forge an unwritten destiny.
 
 ---
 
@@ -21,28 +26,40 @@ The journey is anchored by two protagonists: **Elijah Ro-enheart**, son of the f
 
 | Attribute | Specification |
 | :--- | :--- |
-| **Engine Version** | `0.0.1` (Early Prototype Milestone) |
+| **Engine Version** | `0.0.1` (Interactive Prototype Milestone) |
 | **Genre** | Tactical Strategy RPG (TRPG) — 2D Grid Battlefield + Cinematic Side-View Duels |
 | **Organization** | CreativeWorkzStudio LLC |
 | **Repository** | [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux) |
-| **Core Standard** | ISO C11 (`-std=c11`, zero external dependencies) |
-| **Build System** | CMake 3.24+ (and direct C11 compiler support) |
+| **Core Standard** | ISO C11 (`-std=c11`, zero heap allocations in Layer 0/1, zero external runtime dependencies) |
+| **Build System** | CMake 3.24+ (C11 engine) & Rust 2021 (Master Guide compilation toolchain) |
 | **Structural Paradigm** | OmniCode Universal 5-Block Code Lifecycle Protocol |
-| **Layered Strata** | Layer 0 (Util), Layer 1 (Sim), Layer 2 (GUI), Layer 3 (Entry), Layer 4 (Tests) |
+| **Layered Strata** | Layer 0 (Core Util), Layer 1 (Sim Engine), Layer 2 (GUI), Layer 3 (Entry), Layer 4 (Tests) |
 | **Author / Lead** | ProfessorSeanEX / CreativeWorkzStudio LLC |
+| **Documentation** | 63-Chapter Unified Compendium ([`MASTER_GUIDE.adoc`](docs/MASTER_GUIDE.adoc), [`MASTER_GUIDE.md`](docs/MASTER_GUIDE.md), [`MASTER_GUIDE.pdf`](docs/MASTER_GUIDE.pdf)) |
 | **License** | MIT License |
 
 ---
 
-## 1. Project Vision & Canonical Setting
+## 1. Project Vision, Metaphysics & Continental Lore
 
-In *Tenebris and Lux*, Light and Darkness are not moral absolutes of good and evil; they are primal cosmic forces personified.
+In *Tenebris and Lux*, Light (Lux) and Darkness (Tenebris) are not moral absolutes of good and evil; they are primal cosmic forces personified. Morality exists solely in the **intent of the wielder** (`moral_sway` in `[-100, +100]`).
 
-* **The Kingdom of Sacyra (`/sɔːˈkiːrə/`)**: A historic kingdom governed by the Crown and the legendary **Royal Guard**, balanced against competing regional **Noble Houses** on the Royal Court, and the independent, meritocratic **Adventurers' Guild**.
-* **Dual Protagonists**:
-  * **Elijah Ro-enheart**: Lineage of royal army service; son of the former Head of the Royal Guard. Frontline heavy vanguard bearer of the Shield of Lux.
-  * **Katrina Jaren**: Daughter of noble House Jaren; groomed for a seat on the Royal Court while longing for the freedom of the Adventurers' Guild. Agile outrider wielder of the Sword of Tenebris.
-* **The Existential Threat**: **Dark Lord Malakor** breaking through the ancient Abyssal Vaults along Sacyra's frontier.
+### The Three Thematic Pillars
+
+* **The Past**: Parallels between ancient **Usuru the Wanderer** and **Elijah Ro-enheart**—examining how unattended generational neglect on the frontier curdles into volcanic grief.
+* **The Present**: Parallels between founding **Prince Casatti** and **Lady Katrina Jaren**—demonstrating the necessity of decisive severance against aristocratic hypocrisy.
+* **The Future**: Parallels between founding **Prince Mi-ren** and **The Custom Bearer**—bridging institutional order with individual agency to heal the 3,000-year dynastic chasm.
+
+### Geopolitical Landscape & The Six Powers
+
+The game is set across the continental expanse governed by the historic **Accord of Kings** (*"Joint Realm, Separate Kingdoms"*):
+
+1. **The Royal Capital of Sacyra**: Central white-stone citadel of the High Throne, spiritual center of Lux.
+2. **The Kingdom of Libira**: Arid western frontier, birthplace of Usuru, home of "The Quiet Complaint".
+3. **The Great Mau Kingdom**: Eastern river merchant empire and mercenary banking cartels.
+4. **Old Sacyra**: Highland ancestral cradle of pureblood Sacyran traditionalists.
+5. **The Academy**: Northern glacial spire dedicated to arcanotech and empirical science.
+6. **The Yun-yin Provinces**: Southeastern misty archipelago mastering spiritual balance and ki flow.
 
 ---
 
@@ -56,7 +73,7 @@ Inheriting the structural discipline of the **OmniCode** framework, every source
 │  Identity, Provenance, Invariant Boundary Contracts & System Anchors   │
 ├────────────────────────────────────────────────────────────────────────┤
 │                    BLOCK 2: OPENING / TYPES BLOCK                      │
-│  Imports, Preconditions, Enums, State Structures & Global Constants   │
+│  Includes, Preconditions, Enums, State Structures & Global Constants   │
 ├────────────────────────────────────────────────────────────────────────┤
 │                         BLOCK 3: BODY BLOCK                            │
 │  Core Logic, State Transitions, Execution Routines & Gameplay Loop     │
@@ -69,32 +86,47 @@ Inheriting the structural discipline of the **OmniCode** framework, every source
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-For in-depth architectural specifications, see [ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc) and [dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc).
+For in-depth architectural specifications, see [ARCHITECTURE.adoc](docs/architecture/ARCHITECTURE.adoc) and [dual_frontend_architecture.adoc](docs/architecture/dual_frontend_architecture.adoc).
 
 ---
 
-## 3. Roadmap: From Prototype to Custom TRPG Engine
+## 3. Campaign Structure & The 5-Route Ending Matrix
+
+* **Two-Half Campaign Architecture**:
+  * **Act I (The Frontier of Whispers)**: Awakening in the Dreamscape, Dio Village, Whispering Woods, and Sacyran Marches.
+  * **Midpoint Campaign Fork**: Confronting **The King's Curse** (the open planar wound beneath the High Throne). Entering without the calibrated *Dream Compass* triggers the tragic *Neutral Path*; possessing the Compass unlocks the *True Ending Paths*.
+* **The 5 Deterministic Ending Routes**:
+  1. *Path of Radiance (Lux Overload)*: Total moral sway $\ge +75$; light crystallization.
+  2. *Path of the Abyssal Sovereign (Tenebrous Eclipse)*: Total moral sway $\le -75$; absolute dominion over shadow.
+  3. *The Sovereign Accord (Dual Harmonic Balance)*: Equilibrium maintained `[-25, +25]`; renewal of the Accord of Kings.
+  4. *The Cycle Shattered (Planar Dissolution)*: Transcending both relics; healing the 3,000-year rift forever.
+  5. *The Forgotten Stasis (The King's Slumber)*: Default neutral closure; perpetuation of the dynastic cycle.
+
+---
+
+## 4. Roadmap & Development Milestones
 
 * [x] **Phase 1: Dual-Frontend Prototype (Current - v0.0.1)**
-  * Pure C11 interactive simulation with zero external downloads.
-  * Native double-buffered X11 GUI and terminal CLI running side-by-side.
-  * Sacyra setting, Twin Relics, Stances, Moral Sway continuum `[-100, +100]`.
-  * Layer 0 Core Utilities (`manifest`, `math_utils`, `string_utils`, `geom_utils`, `time_utils`).
-  * Central Manifest Registry and Pre-Flight Subsystem Integrity Check (`--audit`) with loose-bolts tripwire and graceful degradation.
-  * Automated diagnostic audits and CTest integration (6/6 tests passing in 0.02s).
+  * Pure C11 interactive simulation with zero dynamic heap allocations in core layers.
+  * Native double-buffered X11 GUI and headless/terminal CLI running side-by-side.
+  * Tri-perspective state modeling (Elijah, Katrina, Custom Bearer).
+  * Layer 0 Core Utilities (`manifest`, `math_utils`, `string_utils`, `geom_utils`, `time_utils`, `log`).
+  * 12-Module Pre-Flight Subsystem Integrity Check (`--audit`) reporting graded telemetry manifests.
+  * Automated diagnostic audit suite and CTest integration (7/7 test suites passing).
+  * Standalone Rust developer tooling (`tools/src/guide.rs`) compiling 63 chapters into PDF, AsciiDoc, and Markdown.
 * [ ] **Phase 2: Tactical Strategy RPG Grid Engine**
-  * Discrete 2D grid coordinates, movement budgets, terrain defense bonuses, Zone-of-Control (ZOC).
-  * Dual-protagonist party state modeling (Elijah Ro-enheart & Katrina Jaren).
+  * Discrete 2D grid coordinates, movement budgets, terrain defense modifiers, Zone-of-Control (ZOC).
+  * Party formation management across Sacyran provinces.
 * [ ] **Phase 3: Cinematic Side-View Combat Resolution**
-  * Grid-to-duel scene transition, 2D side-scroll action clashes, timed warding/strikes, stagger meters.
-* [ ] **Phase 4: Full Sacyra Campaign**
-  * Tactical campaign across the provinces of Sacyra against Dark Lord Malakor.
+  * Grid-to-duel scene transition, 2D side-scroll action clashes, timed warding/strikes, poise meters.
+* [ ] **Phase 4: Full Continental Campaign**
+  * Tactical campaign across the Six Powers culminating in the planar convergence against The Dark Lord.
 
 ---
 
-## 4. Quickstart: Build & Play
+## 5. Quickstart: Build, Play & Compile Docs
 
-For detailed prerequisites, operating system setup, and troubleshooting, refer to [INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc).
+For detailed prerequisites, operating system setup, and troubleshooting, refer to [INSTALL.adoc](docs/INSTALL.adoc).
 
 ### Quick Build with CMake
 
@@ -102,10 +134,10 @@ For detailed prerequisites, operating system setup, and troubleshooting, refer t
 # 1. Configure the build directory
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
-# 2. Compile the game and test suites
+# 2. Compile the game engine and verification test suites
 cmake --build build --config Debug
 
-# 3. Launch the game (auto-detects native GUI, or fallback to CLI)
+# 3. Launch the game (auto-detects native GUI, or falls back to CLI)
 ./build/tenebris-lux
 
 # Launch explicitly in terminal CLI mode
@@ -115,40 +147,48 @@ cmake --build build --config Debug
 ./build/tenebris-lux --gui
 ```
 
+### Compile the Unified Master Guide (63 Chapters)
+
+```bash
+# Requires Rust toolchain (cargo) and asciidoctor-pdf
+cargo run --manifest-path tools/Cargo.toml --bin master_guide
+```
+
 ### In-Game Commands & Hotkeys
 
 * `look` / **(L)**: Inspect current location, faction tensions, and surroundings.
 * `status` / **(I)**: Inspect the Shield of Lux, Sword of Tenebris, Stance, and Moral Sway.
-* `ward` / **(W)**: Raise the Shield of Lux to establish a radiant barrier or reveal hidden truths.
-* `strike` / **(S)**: Unleash the Sword of Tenebris to sever enemy defenses or cloak in shadow.
-* `balance` / **(B)**: Seek harmony between the twin relics to restore equilibrium.
-* `stance <ward|strike|equilibrium>` / **(T)**: Shift tactical and metaphysical stance.
-* `move <n|s|e|w>` / **(N, S, R, W)**: Travel across the fractured Kingdom provinces.
-* `help`: View all available actions.
+* `ward` / **(W)**: Raise the Shield of Lux to establish a radiant barrier dome (*Lux Barrio*).
+* `strike` / **(S)**: Unleash the Sword of Tenebris to execute sweeping arcs (*Cuttatio Tenebris*).
+* `balance` / **(B)**: Seek harmony between the twin relics (*Duo-Loca Bashin n Slash*).
+* `stance <ward|strike|equilibrium>` / **(T)**: Shift combat and metaphysical stance.
+* `move <n|s|e|w>` / **(N, S, R, W)**: Travel across realms (Dreamscape, Dio Village, Woods, Marches).
+* `name <bearer>`: Designate bearer identity (Elijah, Katrina, or Custom).
+* `help`: View all available commands.
 * `quit` / **(Q)**: Exit the game.
 
 ### Automated Diagnostics & Testing
 
 ```bash
-# Run pre-flight inspection and internal self-audit (7 registered modules + 5 invariant checks)
+# Run pre-flight inspection and internal self-audit (12 registered modules + 6 invariant tests)
 ./build/tenebris-lux --audit
 
-# Run standalone Layer 0 core utilities and preflight test suite
-./build/test_utils
-
-# Run full CTest verification suite (6/6 passing in 0.02s)
+# Run full CTest automated verification suite (7/7 tests pass)
 ctest --test-dir build -C Debug --output-on-failure
 ```
 
 ---
 
-## 5. Repository Documentation Index
+## 6. Repository Documentation Index
 
-* **[docs/README.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/README.adoc)**: Central documentation portal and index.
-* **[docs/INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc)**: Comprehensive compilation, installation, and troubleshooting guide.
-* **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)**: System design, 5-block lifecycle, TRPG architecture, and dual-frontend engine.
-* **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)**: Canonical chronicles of Sacyra, the Shield and Sword, and [characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc) (Elijah Ro-enheart & Katrina Jaren).
-* **[docs/game_design/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/README.adoc)**: [tactical_trpg_system.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/tactical_trpg_system.adoc) (Grid + Cinematic Side-View), relics, topography, and testing philosophy.
-* **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)**: Living engineering chronology ([October 2026 Monthly Chronicle](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/README.adoc) with DevLogs 001–005).
-* **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)**: Subsystem implementation tours for utilities, simulation, GUI, and test suites.
-* **[AGENTS.md](file:///home/professorseanex/Tenebris%20and%20Lux/AGENTS.md)**: Contributor and AI agent coding guidelines, style rules, and commit discipline.
+* **[docs/MASTER_GUIDE.adoc](docs/MASTER_GUIDE.adoc)**: The complete 63-chapter unified AsciiDoc compendium.
+* **[docs/MASTER_GUIDE.pdf](docs/MASTER_GUIDE.pdf)**: Production PDF publication book compiled via `asciidoctor-pdf`.
+* **[docs/README.adoc](docs/README.adoc)**: Central documentation portal and index.
+* **[docs/INSTALL.adoc](docs/INSTALL.adoc)**: Comprehensive compilation, installation, and troubleshooting guide.
+* **[docs/architecture/](docs/architecture/README.adoc)**: System design, 5-block lifecycle, and dual-frontend engine.
+* **[docs/lore/](docs/lore/README.adoc)**: Macro-chronology, 20-scene master storyboard, thematic triad, character dossiers, and realm chronicles.
+* **[docs/game_design/](docs/game_design/README.adoc)**: TRPG grid mechanics, campaign structure, relics, and 2017–2018 demo baseline.
+* **[docs/dev_logs/](docs/dev_logs/README.adoc)**: Living engineering chronology (DevLogs 001–009 across October and November 2026).
+* **[docs/code/](docs/code/README.adoc)**: Subsystem implementation tours for Layer 0, Layer 1, Layer 2, and Layer 4.
+* **[docs/offline_work/](docs/offline_work/README.adoc)**: Archived genesis notes, storyboard transcriptions, and macro-architecture drafts.
+* **[AGENTS.md](AGENTS.md)**: Repository guidelines, OmniCode invariants, and cognitive anchor standards.

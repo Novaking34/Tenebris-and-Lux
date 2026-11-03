@@ -1,6 +1,6 @@
-= Game Design Specification: The Twin Relics, Combat Stances & Moral Sway
+= Game Design Specification: The Twin Relics, Combat Stances & Tactical Abilities
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v1.2.0, 2026-10-30
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -11,25 +11,27 @@ v0.0.1, 2026-10-26
 [abstract]
 == Overview
 
-This document specifies the core ludological mechanics of *Tenebris and Lux* in the **Kingdom of Sacyra**:
-the twin primordial relics (**The Shield of Lux** and **The Sword of Tenebris**), the dynamic combat stance
-state machine, the moral sway continuum (`[-100, +100]`), and their integration into the Tactical Strategy RPG
-system featuring grid maneuvering and cinematic side-view combat resolution.
+This document specifies the core ludological mechanics of *Tenebris and Lux* in the **Kingdom of Sacyra**
+and **The Dreamscape**: the twin primordial relics (**The Shield of Lux** and **The Sword of Tenebris**),
+the dynamic combat stance state machine, the moral sway continuum (`[-100, +100]`), and the tactical action
+skills: **Defend** (Lux Barrio), **Attack** (Cuttatio Tenebris), and **Special** (Basic Magic, Basic Ward,
+Basic Charm, and Duo-Loca Bashin n Slash).
 
 == 1. Primordial Neutrality & Relic Mechanics
 
 Neither relic is inherently good nor evil. They are manifestations of cosmic apex forces whose morality is
-dictated solely by the intentions and choices of their wielders—**Elijah Ro-enheart** and **Katrina Jaren**:
+dictated solely by the intentions and choices of their wielders—canonically **Elijah Ro-enheart** and
+**Katrina Jaren**, or a customizable bearer chosen by the player:
 
 [cols="1,2,2", options="header"]
 |===
 | Relic | The Shield of Lux | The Sword of Tenebris
 | **Aspect** | Apex Radiance & Cohesion | Apex Entropy & Dissolution
 | **Energy Gauge** | `shield_power` ($0 \dots 100$) | `sword_edge` ($0 \dots 100$)
-| **Primary Bearer** | **Elijah Ro-enheart** (Vanguard Defense) | **Katrina Jaren** (Agile Severance)
+| **Canonical Bearer** | **Elijah Ro-enheart** (Vanguard Defense) | **Katrina Jaren** (Agile Severance)
 | **Grid Role** | Zone-of-Control denial, sanctuary aura, ally protection | High-mobility flanking, armor penetration, mist evasion
 | **Cinematic Action** | Timed kinetic blocks, shield-bashes, radiant shockwaves | Rapid dash strikes, armor severance, twilight blade waves
-| **Resource Dynamics** | Regenerates $+20$ on ward; absorbs incoming assault | Consumes edge on strikes; hones $+15$ outside combat
+| **Resource Dynamics** | Regenerates on guard; absorbs incoming assault | Consumes edge on strikes; hones outside combat
 |===
 
 == 2. The Combat Stance State Machine
@@ -54,13 +56,13 @@ The battle posture shifts dynamically across four discrete combat stances:
    - Standard movement on the tactical grid; baseline attack parameters.
 2. **`STANCE_WARDING`**: Shield raised in protective vanguard high-guard.
    - Grid Effect: Increases allied defense within adjacent tiles by $+25\%$.
-   - Cinematic Duel: Boosts Shield power recovery ($+15$), increases stagger damage against attacking foes ($25$ HP), and wards against incoming status curses.
+   - Combat Effect: Boosts Shield power recovery ($+15$), increases stagger damage against attacking foes ($25$ HP), and wards against incoming status curses.
 3. **`STANCE_STRIKING`**: Greatsword held in aggressive two-handed assault posture.
    - Grid Effect: Increases unit movement by $+1$ tile and grants armor-piercing flank bonuses.
-   - Cinematic Duel: Increases strike severance from $30$ to $45$ damage; reduces edge cost from $12$ to $8$ points.
+   - Combat Effect: Increases strike damage from $30$ to $45$ (or base $+15$ bonus); reduces edge cost from $12$ to $8$ points.
 4. **`STANCE_EQUILIBRIUM`**: Harmonized twin-relic synchronization.
    - Grid Effect: Immunity to positioning debuffs and void mire terrain penalties.
-   - Cinematic Duel: Simultaneously restores $+15$ Shield power and $+15$ Sword edge; parries incoming strikes while counter-attacking for $20$ damage; nudges moral sway toward center ($0$).
+   - Combat Effect: Simultaneously restores $+15$ Shield power and $+15$ Sword edge; parries incoming strikes while counter-attacking for $20$ damage; nudges moral sway toward center ($0$).
 
 == 3. The Moral Sway Continuum
 
@@ -80,3 +82,79 @@ The moral trajectory of Sacyra's champions is tracked along a continuous bounded
 * **Equilibrium ($0$)**:
   - Maintained by balancing the blade and the aegis; recognizing that light without shadow is a calcified wasteland, and shadow without light is an endless void.
   - Unlocks the ultimate secret synthesis arts of ancient Sacyra.
+
+== 4. Tactical Actions & Combat Skills
+
+In the revised, authentic combat framework, basic actions expand into dedicated martial and arcane skills:
+
+=== 4.1. Defend (`defend` / `ward`)
+* **Standard Defend**: Braces behind the Shield of Lux, regenerating $+10 \dots +15$ shield power and mitigating incoming damage.
+* **Basic Skill: `Lux Barrio` (`barrio`)**:
+  - Manifests a radiant, geometric barrier of pure light.
+  - **Effect**: Blocks incoming attack and reduces subsequent incoming damage by **$25\%$** for a rolled turn duration.
+  - **Duration Roll**: Deterministically rolls for **$2 \dots 5$ turns** (`2 + (turns % 4)`).
+  - **Resonance**: Saturates Shield of Lux by $+20$ points (capped at $100$) and awards $+3$ moral virtue.
+
+=== 4.2. Attack (`attack` / `strike`)
+* **Standard Attack**: Strikes the target enemy using the Sword of Tenebris, consuming edge points and dealing physical damage (`(ATK * 2) - DEF`).
+* **Basic Skill: `Cuttatio Tenebris` (`cuttatio`)**:
+  - A sweeping abyssal crescent slash infused with dark mist.
+  - **Direct Damage**: Deals full primary severance damage to the selected target.
+  - **Splash Damage**: Deals **$20\%$ splash damage** to surrounding and flanking foes (`threat_surrounding_hp`).
+  - **Edge Dynamic**: Consumes $8 \dots 12$ edge points.
+
+=== 4.3. Special (`special` / `balance`)
+Replaces balance with a four-fold technique tree honoring the twin relics and arcane arts:
+
+1. **`Basic Magic` (`magic`)**:
+   - Neutral elemental magic damage attacking enemy Magic Defense (`(MAT * 2) - MDF`).
+   - Costs $10$ MP. Pure, unaligned cosmic energy.
+2. **`Basic Ward` (`ward` under special)**:
+   - Magic-based defend weaving an arcane barrier.
+   - Restores $+15$ Shield power and staggers incoming assault without relying purely on physical bracing.
+   - Costs $6$ MP.
+3. **`Basic Charm` (`charm`)**:
+   - Enhances astral focus, granting **$+20\%$ Magic Attack (MAT)** for **$1 \dots 3$ turns** (`1 + (turns % 3)`).
+   - Costs $8$ MP.
+4. **`Duo-Loca Bashin n Slash` (`duo`)**:
+   - The signature dual-relic strike uniting the Shield of Lux and Sword of Tenebris.
+   - **Adaptive Damage**: Intelligently evaluates whether the player's Magic Attack or Physical Attack is superior, or whichever enemy defense (DEF vs MDF) is lower, channeling into the foe's weakest resistance:
+     * If enemy MDF < DEF or MAT > ATK: executes as **Magical Twilight Slash**.
+     * Otherwise: executes as **Physical Radiant Bash**.
+   - **Relic Harmony**: Simultaneously restores $+15$ Shield power and $+15$ Sword edge, while nudging moral sway toward absolute cosmic equilibrium ($0$).
+   - Costs $12$ MP.
+
+=== 4.4. Hero Customization & Protagonist Lore
+* While **Elijah Ro-enheart** and **Katrina Jaren** remain the canonical dual protagonists representing the Shield of Lux and Sword of Tenebris, the player can dynamically designate their own hero identity using the `name <chosen_name>` command.
+* All narrative chronicle logs, character severity tags, and telemetry traces adapt cleanly to the bearer's active name.
+
+== 5. The Metaphysical Law of Tempering & Dissipation
+
+The interaction between the Shield of Lux and the Sword of Tenebris is governed by the ancient law established during the 7-Year Great War:
+
+* **Lux as the Singular Tempering Agent:** Raw Tenebris is entropic and severing; left unchecked, it erodes both target and wielder. Lux is the only force capable of containing and tempering Tenebris, providing structural cohesion so that void strikes can be directed safely.
+* **The Fragility of Radiance (Dissipation):** While Lux tempers Tenebris, it requires emotional and ethical stability. Any sudden surge of terror, malice, or panic causes Lux to **dissipate immediately**, collapsing protective barriers and leaving Tenebris unbridled.
+* **Ludonarrative Impact:** In combat, executing dark commands with negative moral sway degrades Lux Barrio duration rolls, while maintaining Equilibrium (`0` sway) maximizes barrier resilience and tandem skill execution.
+
+== 6. The Relic Embellishment System
+
+Throughout the campaign, the Shield of Lux and Sword of Tenebris are actively embellished through quest outcomes, moral choices, and auxiliary relics:
+
+1. **Eric's Test of Honesty (Map 028) $\to$ The Ring of Fire:**
+   - Donating rent to Eric rewards the **Ring of Fire**, imbuing strikes and barriers with flame-weave properties, connecting directly to the LeTBS *Burning Tile Spread* tactical state.
+2. **Monica's Offering (Maps 027/029) $\to$ The Book of Monsters:**
+   - Sponsoring an offering to **Lyri, Goddess of Peace**, attunes the relics to arcane resonance and awards the **Book of Monsters**, unlocking advanced MDF-targeting formulas.
+3. **John the Thief vs. St. Baron (Maps 030/031):**
+   - Aiding John enhances critical severance and stealth penetration; upholding feudal property law reinforces kinetic poise and bastion authority.
+4. **Armory Relics (Medusa's Sword & Heart Shield):**
+   - Optional material infusions granting petrification stasis or passive HP vitality warding.
+
+== 7. Relic Profiles & Ending Correlation
+
+The final state of relic embellishments along the `[-100, +100]` Moral Sway continuum determines which of the five ending routes resolves the campaign:
+* **Route A (Canonical Harmony):** Balanced embellishments, Stance of Equilibrium, True Ending.
+* **Route B (Benevolent Stasis):** Pure Lux embellishment, `+100` sway, continental comatose barrier.
+* **Route C (Calcified Tyrant):** Lux embellishment, `-100` sway, inquisitorial solar tyranny.
+* **Route D (Abyssal Usurper):** Pure Tenebris embellishment, `-100` sway, Dark Sovereign ascension.
+* **Route E (Secret Chronicler):** Custom bearer, 100% relic synthesis, planar tear healed.
+

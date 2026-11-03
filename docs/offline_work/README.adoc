@@ -1,0 +1,42 @@
+= Offline Work Archive: Genesis Notes, World-Building & Macro Architecture
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+This directory preserves the raw narrative, ludological, and metaphysical working papers
+transcribed during offline design sessions. These documents served as the primary source
+material for formalizing the 63-chapter Master Guide compendium, establishing the 20-Scene
+Master Storyboard sequence, the 3,000-year dynastic wave, the Past/Present/Future thematic triad,
+and the multi-ending campaign architecture.
+
+== Archived Working Documents
+
+[cols="1,1,3", options="header"]
+|===
+| Document | Format | Scope & Core Deliverables
+
+| **xref:Offline-Work-1.adoc[Offline-Work-1.adoc]** +
+  (and `Offline-Work-1.md`)
+| AsciiDoc / Markdown
+| • Macro-Historical Epochs (Eras I–VI) & 6-Power Conflict +
+  • 20-Scene Master Storyboard Sequence +
+  • Tragedy of Sovereign Usuru & 11th Festival Rupture +
+  • The 7-Year Great War & Accord of Kings +
+  • Early Relic Embellishment & 5-Route Ending Matrix
+
+| **xref:Offline-Work-2.adoc[Offline-Work-2.adoc]** +
+  (and `Offline-Work-2.md`)
+| AsciiDoc / Markdown
+| • 3,000-Year Dynastic Wave (30–50 Kings, Stasis Crests & Tether Troughs) +
+  • Past / Present / Future Thematic Triad (*"Trauma is Inherited, Destiny is Chosen"*) +
+  • Dreamscape Temporal Mechanics & Nocturnal Phasing +
+  • The King's Curse Planar Wound & Midpoint Campaign Fork +
+  • LLM Architecture Biases vs. Creator Mental Model Grounding
+|===

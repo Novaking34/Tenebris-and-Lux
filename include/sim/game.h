@@ -63,6 +63,11 @@ extern const module_metadata_t game_manifest;
 void game_init(player_state_t *state);
 
 /**
+ * Configures the protagonist identity name.
+ */
+void game_set_protagonist_name(player_state_t *state, const char *name);
+
+/**
  * Returns human-readable name of a kingdom location.
  */
 const char *game_get_location_name(location_id_t loc);
@@ -112,6 +117,28 @@ void game_process_command(player_state_t *state, const char *raw_input,
  * Executes interactive terminal text loop.
  */
 void game_loop_cli(player_state_t *state);
+
+/* --- Debugger State Adaptation & Time-Travel Rewind --- */
+
+/**
+ * Converts a player simulation state into Layer 0 decoupled debug fields.
+ */
+void game_state_to_debug_fields(const player_state_t *state, void *out_fields);
+
+/**
+ * Restores a player simulation state from Layer 0 decoupled debug fields.
+ */
+void game_state_from_debug_fields(const void *fields, player_state_t *out_state);
+
+/**
+ * Captures and records a debugger snapshot from player state.
+ */
+uint64_t game_record_debug_snapshot(const player_state_t *state, const char *cmd, const char *arg);
+
+/**
+ * Rewinds the simulation state to a historical snapshot.
+ */
+bool game_rewind_debug_snapshot(size_t index, player_state_t *out_state);
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK

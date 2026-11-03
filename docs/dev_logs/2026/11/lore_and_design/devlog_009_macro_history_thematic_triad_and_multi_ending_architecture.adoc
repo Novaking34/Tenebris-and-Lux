@@ -1,0 +1,89 @@
+= Developer Log 009: Macro-History, Thematic Triad & Multi-Ending Architecture
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Abstract
+
+This developer log documents the codification and formalization of the definitive macro-historical
+architecture, thematic psychological triad, and multi-ending campaign structure of *Tenebris and Lux*.
+Synthesizing the recovered 2017–2018 RPG Maker MV demo baseline (Folders 1 & 2) with the native ISO C11
+simulation engine, this milestone formalizes the 3,000-year dynastic wave from the First King to King Jihad,
+the psychological triad linking past (Usuru, Casatti, Mi-ren) to present (Elijah, Katrina, Custom Bearer),
+the etiology of "The King's Curse," the evolution of Grandma's Watch into The Dream Compass, and the
+five-route ending matrix.
+
+== 1. Macro-Historical Canon: The 3,000-Year Dynastic Wave
+
+Following the grounding of combat skills and "The Dark Lord" antagonist in DevLog 008, the overarching
+chronology was formalized to eliminate narrative contrivance and anchor the simulation in systemic causality:
+
+1. **The Inception of Sacyra (Era I–III):**
+   - The Shield of Lux and Sword of Tenebris were originally forged as ordinary, non-magical symbols of
+     Peace and War under the First King's golden reign.
+   - Following the inaugural week-long Festival of Peoples, the First King collapsed into a coma, his spirit
+     lucid across the gossamer veil in The Dreamscape.
+   - His physical death during the 5th Festival inaugurated a protective vigil by teenage sons Mi-ren and
+     Casatti, sustaining ethereal projections during festival week until Mi-ren officially came "of age."
+2. **The 11th Year Rupture & The 7-Year Great War (Era IV–V):**
+   - An eleven-year-old wanderer from remote, communication-starved Libira accidentally tampered with the
+     projection ritual, permanently sealing the First King in The Dreamscape.
+   - The shock birthed raw **Tenebris** into reality. Taking the name **Usuru**, the youth led a six-power
+     coalition war against the Capital.
+   - Prince Casatti infused Tenebris into the Sword of War for **Absolute Justice**; Prince Mi-ren discovered
+     **Lux** to defend the realm and seek Usuru's forgiveness.
+   - Demonstrating that Lux tempers Tenebris but dissipates under violent emotional shifts, the war concluded
+     in seven years under the federated **"Joint Realm, Separate Kingdoms"** accord and the **Prophecy of Kings**.
+3. **The 3,000-Year Dynastic Wave:**
+   - Spanning 30 to 50 monarchs across three millennia, the succession oscillates between Long Stasis Crests
+     (60–90+ years), Tether-Sickness Troughs (5–20 years), and Bureaucratic Consolidations (35–50 years).
+   - This established order exposes frontier neglect (Dio Village) as systemic apathy and transforms
+     King Jihad from a petty villain into an existential traitor.
+
+== 2. The Thematic Triad: "Trauma is Inherited, Destiny is Chosen"
+
+Characters are mapped not merely by their weapons, but by an enduring psychological triad:
+
+* **The Frontier Wound:** **Usuru** (Past) mirrors **Elijah Ro-enheart** (Present). Both endure ten years
+  of childhood reverence before experiencing a fracture in their tenth/eleventh year. While Usuru succumbed
+  to wrath, Elijah raises the Shield of Lux with independent conscience, achieving redemptive grace.
+* **The Renouncing Blade:** **Prince Casatti** (Past) mirrors **Lady Katrina Jaren** (Present). Both renounce
+  high aristocratic privilege (the High Throne / House Jaren) in pursuit of empirical truth and meritocratic
+  brotherhood (The Academy / The Adventurers' Guild), wielding the Sword of Tenebris to slice through hypocrisy.
+* **The Steward of Balance:** **Prince Mi-ren** (Past) mirrors **The Custom Bearer (`<chosen_name>`)** (Present).
+  Both bear the burden of holding a fractured world together across the veil, synthesizing both perspectives
+  to achieve true Equilibrium.
+
+== 3. Ludological Architecture & Multi-Ending Specification
+
+1. **The King's Curse as a Planar Wound:**
+   - Court madness is revealed not as a demonic hex, but as the open planar wound beneath the High Throne
+     left when Usuru shattered the stasis ritual. King Jihad's megalomania inverted the conduit, leading to
+     possession by the Dark Lord's psychic remnant.
+2. **The Midpoint Fork & Player Consent:**
+   - Defeating King Jihad triggers the campaign fork. Players skipping missable nocturnal Dreamscape quests
+     reach the **Neutral Ending** (saving Sacyra while leaving the First King marooned and the cycle dormant).
+   - Players completing nocturnal Dream Compass trials unlock **The True Ending ("The Ugly Truth")**, which
+     dismantles the comfortable propaganda of both factions and reconciles the realm.
+3. **The Five Ending Routes:**
+   - *Route A:* The Canonical Harmony (True Equilibrium Ending — Elijah + Katrina tandem).
+   - *Route B:* The Benevolent Stasis (Neutral-Good / The Mi-ren Fallacy — `+100` Moral Sway).
+   - *Route C:* The Calcified Tyrant (Neutral-Bad / Inquisitorial Stasis — `-100` Moral Sway).
+   - *Route D:* The Abyssal Usurper (Neutral-Bad / The Cycle of Usuru — `-100` Moral Sway).
+   - *Route E:* The Secret Chronicler Ending (Custom Bearer 100% Route).
+
+== 4. Verification Telemetry
+
+All specifications strictly conform to the repository's C11 architectural constraints:
+* Zero heap allocations (`ALLOC_ZERO_HEAP`).
+* Layer 0 monotonic clock tracking seconds, minutes, hours, weekdays, weeks, and seasons.
+* Layer 1 bounded simulation invariants: `player_state_t` moral sway `[-100, +100]`, shield power `[0, 100]`,
+  and edge sharpness `[0, 100]`.
+* 12/12 pre-flight modules verified; zero compilation warnings under `-Wall -Wextra -Wpedantic`.

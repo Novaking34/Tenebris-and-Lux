@@ -1,0 +1,49 @@
+= Realm Chronicle: Dio Village (Libira 2.0 & The Frontier Hearth)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.1.0, 2026-11-02
+:doctype: article
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview & Pastoral Heritage
+
+**Dio Village** is a pastoral woodland settlement situated in the southwestern valley frontier of the
+**Kingdom of Sacyra**. Functioning as the physical inception of the hero's journey upon awakening
+from **The Dreamscape**, Dio Village serves as the terrestrial anchor of Chapter 1, embodying the modern
+continuation of ancient Libira's systemic neglect under the 3,000-year dynastic order.
+
+== 1. Socio-Political Role: "The Quiet Complaint" of Modern Sacyra
+
+* **Mirror of Ancient Libira:** Just as ancient Libira suffered a 7-day communication delay and lacked
+  imperial relay outposts, modern Dio Village is neglected under the "Joint Realm, Separate Kingdoms"
+  bureaucracy. As Grandma Magolia sighs in Map 021: _"This town used to be full of life. *sighs*
+  The kingdom doesn't pay much attention to this place anymore..."_.
+* **Economic Fragility & Class Exploitation:** While the Capital enjoys insulated peace, Dio Village
+  faces monster outbreaks near the timber lines. **Eric the Lumberjack** faces ruin because monsters block
+  the woods, while the predatory **St. Baron** exploits commoners through exorbitant rents and usury.
+* **Gareth Ro-enheart's Shadow:** Dio Village is where Commander Gareth Ro-enheart placed his son Elijah
+  under Grandma Magolia's care before his mysterious disappearance on Elijah's 10th birthday.
+
+== 2. Key Landmarks & Dual-Perspective Quest Hubs
+
+* **Grandma Magolia's Cottage (Maps 020 & 021):** The warm stone hearth where the protagonist awakens.
+  Contains the upstairs chest housing **Grandma's Watch** (activating the Layer 0 monotonic clock).
+  - *Elijah's Approach:* Hesitates out of filial respect and family etiquette.
+  - *Katrina's Approach:* Seeks the will immediately to escape the dead-end town.
+* **Eric's Timber Yard & Test of Honesty (Map 028):** Filling Eric's rent pot shifts Moral Sway positively
+  and rewards the **Ring of Fire**, enabling flame-weave relic embellishments.
+* **Monica's Mystic Grove & Lyri's Offering (Maps 023, 027, 029):** Former Royal Battlemage Monica guards
+  the memorial totem of fallen soldiers. Stopping the bandit kid and buying an offering potion for **Lyri,
+  the Goddess of Peace**, attunes the relics to arcane resonance and awards the **Book of Monsters**.
+* **The St. Baron's Estate & John the Thief (Maps 030 & 031):** Deciding whether to aid **John the Thief**
+  in robbing the corrupt baron versus upholding feudal property law shapes the penetration or bastion
+  embellishments of the relics.
+
+== 3. Mechanical Role in the C11 Simulation Engine
+
+* **Engine Enumeration:** Registered in `include/sim/sim_types.h` as `LOC_DIO_VILLAGE`.
+* **Sanctuary Province:** Zero hostile vigor during standard state; permits inventory management,
+  dialogue interactions, moral compass calibration, and Layer 0 monotonic time passage.
+* **Terrestrial Lockout:** Gated throughout Chapter 1, preventing return to The Dreamscape until
+  the acquisition and awakening of **The Dream Compass**.

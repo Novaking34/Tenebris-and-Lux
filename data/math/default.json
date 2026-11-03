@@ -1,0 +1,49 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/math/default.json",
+    "id": "data.math.profile.default",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Default mathematical bounds and continuum constants matching Layer 0 math_utils contracts.",
+    "invariants": [
+      "Resonance must remain strictly bounded within [resonance_min, resonance_max]",
+      "Moral sway continuum must remain symmetric within [moral_sway_min, moral_sway_max]",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.math_profile.v1",
+    "target_struct": "math_config_t",
+    "header_binding": "include/util/math/math_utils.h"
+  },
+  "profile": {
+    "id": "default",
+    "display_name": "Standard Continental Continuum Baseline",
+    "description": "Standard numerical parameters governing relic resonance, moral continuum, and HUD scaling.",
+    "resonance_min": 0,
+    "resonance_max": 100,
+    "moral_sway_min": -100,
+    "moral_sway_max": 100,
+    "equilibrium_anchor": 0,
+    "equilibrium_band": 25,
+    "radiance_overload_threshold": 75,
+    "abyssal_eclipse_threshold": -75,
+    "viewport_width": 800,
+    "viewport_height": 600,
+    "percent_ceiling": 100
+  },
+  "_audit": {
+    "resonance_span": 100,
+    "moral_sway_span": 200,
+    "equilibrium_span": 50,
+    "symmetry_verified": true
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 1
+  }
+}

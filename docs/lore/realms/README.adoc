@@ -1,0 +1,51 @@
+= Topographical Compendium: Realms, Provinces & Kingdoms of Sacyra
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.2.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+This archive details the complete topographical, geopolitical, and environmental
+geography of *Tenebris and Lux*, bridging the physical realm of the **Kingdom of Sacyra**
+with the ethereal substrates of **The Dreamscape** and the wider continental expanse of
+the **Six Powers**.
+
+== Topographical Strata & Realm Index
+
+[cols="1,2,2", options="header"]
+|===
+| Realm / Province | Geographical Classification | Key Strategic Features
+
+| **xref:the_dreamscape.adoc[The Dreamscape]**
+| Ethereal Astral Substrate
+| Chrono's Dream Chamber, Archetype Monoliths, Three Laws of the Veil, Dream Eater incursions.
+
+| **xref:dio_village.adoc[Dio Village]**
+| Pastoral Hearthland & Starting Valley
+| Grandma Magolia's Hearth, Eric's Timber Yard, St. Baron's Manor, Libira 2.0 ("The Quiet Complaint").
+
+| **xref:whispering_woods.adoc[The Whispering Woods]**
+| Primeval Canopy Chokepoint
+| Rustling ironwood boughs, Forester's Shrine, Umbral Wolf pack ambushes, brier entanglements.
+
+| **xref:sacyra_marches.adoc[The Sacyran Marches]**
+| Fortified Limestone Frontier
+| Sunken Citadel trenches, palisades, Shadow Scout outriders, Vanguard Patrol phalanxes.
+
+| **xref:the_royal_capital.adoc[The Royal Capital]**
+| Citadel of the High Throne
+| White-stone bastions, High Court intrigue, Grand Cathedral of Lux, and **The King's Curse** planar wound.
+
+| **xref:kingdom_of_libira.adoc[The Kingdom of Libira]**
+| Western Arid Desert Frontier
+| Sandstone canyons, 7-day courier gap, cradle of Usuru the Wanderer, birthplace of "The Quiet Complaint".
+
+| **xref:the_six_powers.adoc[The Six Powers]**
+| Continental Geopolitical Alliance
+| Sacyra, Libira, Great Mau Realm, Old Sacyra, The Academy, and Yun-yin Provinces under the *Accord of Kings*.
+|===

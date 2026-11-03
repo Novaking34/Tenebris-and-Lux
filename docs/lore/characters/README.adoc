@@ -45,8 +45,8 @@ citizens, ancient sages, and void adversaries.
 │              ▼                  └──────────────────────────┘           │
 │   ┌────────────────────────────────────────────────────────┐           │
 │   │                  THE EXISTENTIAL VOID                  │           │
-│   │ Dark Lord Malakor (Void Sovereign)                     │           │
-│   │ Abyssal Vanguard (Centurions, Automata, Dream Eaters)  │           │
+│   │ The Dark Lord (Usuru's Descent / Void Sovereign)       │           │
+│   │ Abyssal Vanguard (Dream Eaters & Void Remnants)        │           │
 │   └────────────────────────────────────────────────────────┘           │
 └────────────────────────────────────────────────────────────────────────┘
 * Gareth Ro-enheart: Former Head of the Royal Guard; missing since Elijah's 10th birthday.
@@ -58,23 +58,28 @@ citizens, ancient sages, and void adversaries.
 |===
 | Sub-Directory | Primary Focus | Key Dossiers
 
-| **[protagonists/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/README.adoc)**
-| The dual wielders of Lux and Tenebris
-| **[Elijah Ro-enheart](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/elijah_ro_enheart.adoc)**, **[Katrina Jaren](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/katrina_jaren.adoc)**, **[Dual Dynamics](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/protagonists/dual_protagonist_dynamics.adoc)**
+| **xref:protagonists/README.adoc[protagonists/]**
+| The dual wielders of Lux and Tenebris & the Custom Bearer
+| **xref:protagonists/elijah_ro_enheart.adoc[Elijah Ro-enheart]**, **xref:protagonists/katrina_jaren.adoc[Katrina Jaren]**, **xref:protagonists/custom_bearer.adoc[Custom Bearer]**, **xref:protagonists/dual_protagonist_dynamics.adoc[Dual Dynamics]**
 
-| **[kingdom_and_court/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/README.adoc)**
+| **xref:founders/README.adoc[founders/]**
+| Pre-dynastic pioneers, founding princes & the origin of the Great War
+| **xref:founders/prince_mi_ren.adoc[Prince Mi-ren]**, **xref:founders/prince_casatti.adoc[Prince Casatti]**, **xref:founders/usuru_the_wanderer.adoc[Usuru the Wanderer]**
+
+| **xref:kingdom_and_court/README.adoc[kingdom_and_court/]**
 | Crown authority, military hierarchy, and court intrigue
-| **[King Jihad](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/king_jihad.adoc)**, **[Commander Gareth Ro-enheart](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/commander_gareth_ro_enheart.adoc)**, **[Sir Roté](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/kingdom_and_court/sir_rote.adoc)**
+| **xref:kingdom_and_court/king_jihad.adoc[King Jihad]**, **xref:kingdom_and_court/commander_gareth_ro_enheart.adoc[Commander Gareth Ro-enheart]**, **xref:kingdom_and_court/sir_rote.adoc[Sir Roté]**
 
-| **[dio_village/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/README.adoc)**
+| **xref:dio_village/README.adoc[dio_village/]**
 | Provincial heartland, local customs, and class tensions
-| **[Grandma Magolia](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/grandma_magolia.adoc)**, **[Monica & Lyri](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/monica_and_lyri.adoc)**, **[Eric](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/eric_the_lumberjack.adoc)**, **[St. Baron](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/st_baron.adoc)**, **[John the Thief](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/dio_village/john_the_thief.adoc)**
+| **xref:dio_village/grandma_magolia.adoc[Grandma Magolia]**, **xref:dio_village/monica_and_lyri.adoc[Monica & Lyri]**, **xref:dio_village/eric_the_lumberjack.adoc[Eric]**, **xref:dio_village/st_baron.adoc[St. Baron]**, **xref:dio_village/john_the_thief.adoc[John the Thief]**
 
-| **[sages_and_ancients/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/sages_and_ancients/README.adoc)**
+| **xref:sages_and_ancients/README.adoc[sages_and_ancients/]**
 | Cosmic observers, library custodians, and relic guardians
-| **[Chrono the Sage](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/sages_and_ancients/chrono_the_sage.adoc)**
+| **xref:sages_and_ancients/chrono.adoc[Chrono the Archival Sage]**
 
-| **[antagonists/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/antagonists/README.adoc)**
-| The Void invasion force and abyssal thralls
-| **[Dark Lord Malakor](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/antagonists/dark_lord_malakor.adoc)**, **[Abyssal Vanguard](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/antagonists/abyssal_vanguard.adoc)**
+| **xref:../threats/README.adoc[threats/]**
+| Overarching existential threats and astral entities
+| **xref:../threats/the_dark_lord.adoc[The Dark Lord]**, **xref:../threats/dream_eaters.adoc[Dream Eaters]**
 |===
+

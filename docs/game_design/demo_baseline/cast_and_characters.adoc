@@ -115,5 +115,5 @@ In `Old_Game_Data_2`, three specialized tactical party members were integrated t
 | **The St. Baron** | Aristocratic Landowner | Feudal aristocrat bleeding Dio Village dry; symbol of court corruption and moral decay.
 | **Chrono** | Archival Sage & Guardian | Guide of the Dream Chamber / Ancient Archives. Oversees archetype stone selection and mechanics trials.
 | **High Priest Roté** | Royal Advisor | Court prelate who witnesses the cosmic omens and hastens to warn King Jihad.
-| **King Jihad** | Monarch of Sacyra | Feigns royal mobilization while secretly coveting the returned primordial darkness to surpass Dark Lord Malakor.
+| **King Jihad** | Monarch of Sacyra | Feigns royal mobilization while falling victim to the King's Curse, secretly coveting the returned primordial darkness to surpass The Dark Lord.
 |===
