@@ -1,0 +1,11 @@
+= Combat Design Notes Directory
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+
+This directory contains focused, modular game design notes specifying the combat subsystems of *Tenebris and Lux*:
+
+* link:defend_and_lux_barrio.adoc[Defend Action & Lux Barrio]: Defensive barrier mechanics, 25% damage mitigation, and turn roll duration.
+* link:attack_and_cuttatio_tenebris.adoc[Attack Action & Cuttatio Tenebris]: Melee severance formulas and 20% area splash cleave.
+* link:special_abilities_and_duo_loca.adoc[Special Abilities & Duo-Loca Bashin n Slash]: Basic Magic, Basic Ward, Basic Charm, and adaptive defense targeting.
+* link:stance_state_machine.adoc[Tactical Stance State Machine]: Deterministic transition graph and stance stat bonuses.

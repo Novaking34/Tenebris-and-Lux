@@ -38,10 +38,10 @@
 
 #include "gui/gui.h"
 #include "sim/game.h"
-#include "util/geom_utils.h"
-#include "util/log.h"
-#include "util/math_utils.h"
-#include "util/time_utils.h"
+#include "util/math/geom_utils.h"
+#include "util/log/log.h"
+#include "util/math/math_utils.h"
+#include "util/time/time_utils.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -592,7 +592,7 @@ int gui_run(player_state_t *state)
     log.count = 0;
     log_append(&log, "Awakened at The Garrison Altar in Sacyra.");
     log_append(&log, "You bear the Shield of Lux and the Sword of Tenebris.");
-    log_append(&log, "The Dark Lord Malakor stirs in the deep abyss.");
+    log_append(&log, "The Dark Lord stirs in the deep abyss.");
 
     bool running = true;
 

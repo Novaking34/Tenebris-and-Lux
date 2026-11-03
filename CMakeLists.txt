@@ -101,11 +101,16 @@ endif()
 
 set(UTIL_SOURCES
     src/util/manifest.c
-    src/util/math_utils.c
-    src/util/string_utils.c
-    src/util/geom_utils.c
-    src/util/time_utils.c
-    src/util/log.c
+    src/util/data/fs_utils.c
+    src/util/data/json_utils.c
+    src/util/math/math_utils.c
+    src/util/math/geom_utils.c
+    src/util/string/string_utils.c
+    src/util/time/time_utils.c
+    src/util/log/log.c
+    src/util/log/log_fallback.c
+    src/util/debug/debug.c
+    src/util/debug/debug_fallback.c
 )
 
 set(SIM_SOURCES
@@ -138,11 +143,16 @@ add_executable(tenebris-lux
     ${SIM_HEADERS}
     include/gui/gui.h
     include/util/manifest.h
-    include/util/math_utils.h
-    include/util/string_utils.h
-    include/util/geom_utils.h
-    include/util/time_utils.h
-    include/util/log.h
+    include/util/data/fs_utils.h
+    include/util/data/json_utils.h
+    include/util/math/math_utils.h
+    include/util/math/geom_utils.h
+    include/util/string/string_utils.h
+    include/util/time/time_utils.h
+    include/util/log/log.h
+    include/util/log/log_fallback.h
+    include/util/debug/debug.h
+    include/util/debug/debug_fallback.h
 )
 
 # Private include paths: internal headers and X11 system display headers
@@ -161,8 +171,9 @@ target_link_libraries(tenebris-lux PRIVATE
 target_compile_options(tenebris-lux PRIVATE ${GAME_WARNING_FLAGS})
 
 # ==============================================================================
+# ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES & GAME DEV TESTING BLOCK
-# ( Game Dev Verification Suites: Utilities, Invariants & Scenarios )
+# ( Game Dev Verification Suites: Functional, Unit, Integrated, & System Strata )
 # Stratum: Verification | Machine: build.tests.ctest
 # ==============================================================================
 
@@ -170,22 +181,89 @@ include(CTest)
 if(BUILD_TESTING)
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.1: LAYER 0 UTILITIES VERIFICATION HARNESS ]
-    # Mission: Verify math clamping, bounding box AABB, strings, and timers.
+    # [ SUB-ASSEMBLY 4.1: FUNCTIONAL DEBUGGING HARNESS ]
+    # Mission: Isolate and debug individual cogs with step-by-step telemetry.
+    # --------------------------------------------------------------------------
+    add_executable(test_functional
+        tests/functional/test_functional.c
+        ${UTIL_SOURCES}
+        ${SIM_SOURCES}
+    )
+    target_include_directories(test_functional PRIVATE include)
+    target_compile_options(test_functional PRIVATE ${GAME_WARNING_FLAGS})
+
+    # --------------------------------------------------------------------------
+    # [ SUB-ASSEMBLY 4.2: LAYER 0 SUBSYSTEM UNIT HARNESSES ]
+    # Mission: Verify isolated subsystem contracts across four ontological sections.
+    # --------------------------------------------------------------------------
+
+    # Math & Geometry Subsystem Unit Test
+    add_executable(test_math
+        tests/unit/test_math.c
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_math PRIVATE include)
+    target_compile_options(test_math PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Data & Filesystem Subsystem Unit Test
+    add_executable(test_data
+        tests/unit/test_data.c
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_data PRIVATE include)
+    target_compile_options(test_data PRIVATE ${GAME_WARNING_FLAGS})
+
+    # High-Resolution Timing Subsystem Unit Test
+    add_executable(test_time
+        tests/unit/test_time.c
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_time PRIVATE include)
+    target_compile_options(test_time PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Safe String Subsystem Unit Test
+    add_executable(test_string
+        tests/unit/test_string.c
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_string PRIVATE include)
+    target_compile_options(test_string PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Forensic Telemetry & Logging Subsystem Unit Test
+    add_executable(test_log
+        tests/unit/test_log.c
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_log PRIVATE include)
+    target_compile_options(test_log PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Interactive State Debugger & Rewind Subsystem Unit Test
+    add_executable(test_debug
+        tests/unit/test_debug.c
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_debug PRIVATE include)
+    target_compile_options(test_debug PRIVATE ${GAME_WARNING_FLAGS})
+
+    # --------------------------------------------------------------------------
+    # [ SUB-ASSEMBLY 4.3: LAYER 0 INTEGRATED UTILITIES HARNESS ]
+    # Mission: Verify cross-subsystem coordination, DAG dependencies, and profiles.
     # --------------------------------------------------------------------------
     add_executable(test_utils
-        tests/test_utils.c
+        tests/integrated/test_utils.c
         ${UTIL_SOURCES}
     )
     target_include_directories(test_utils PRIVATE include)
     target_compile_options(test_utils PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.2: LAYER 1 SIMULATION INVARIANTS HARNESS ]
-    # Mission: Verify stance transitions, moral sway bounds, and relic limits.
+    # [ SUB-ASSEMBLY 4.4: LAYER 1 SIMULATION SYSTEM HARNESSES ]
+    # Mission: Verify state limits, stance state machine, scenarios & latency.
     # --------------------------------------------------------------------------
+
+    # System State Invariants Harness
     add_executable(test_game_invariants
-        tests/test_game_invariants.c
+        tests/system/test_game_invariants.c
         ${SIM_SOURCES}
         ${UTIL_SOURCES}
         ${SIM_HEADERS}
@@ -193,12 +271,9 @@ if(BUILD_TESTING)
     target_include_directories(test_game_invariants PRIVATE include)
     target_compile_options(test_game_invariants PRIVATE ${GAME_WARNING_FLAGS})
 
-    # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.3: GAMEPLAY SCENARIOS & 60 FPS HEADROOM HARNESS ]
-    # Mission: Verify chaotic stress immunity and < 50 us simulation latency.
-    # --------------------------------------------------------------------------
+    # System Gameplay Scenarios & Replay Determinism Harness
     add_executable(test_gameplay_scenarios
-        tests/test_gameplay_scenarios.c
+        tests/system/test_gameplay_scenarios.c
         ${SIM_SOURCES}
         ${UTIL_SOURCES}
         ${SIM_HEADERS}
@@ -217,10 +292,23 @@ if(BUILD_TESTING)
     add_test(NAME cli_version_test COMMAND tenebris-lux --version)
     add_test(NAME subsystem_audit_test COMMAND tenebris-lux --audit)
 
-    # Subsystem Verification Harness Tests
-    add_test(NAME core_utils_test COMMAND test_utils)
-    add_test(NAME game_invariants_test COMMAND test_game_invariants)
-    add_test(NAME gameplay_scenarios_test COMMAND test_gameplay_scenarios)
+    # Functional Tests (Individual Cog Debugging)
+    add_test(NAME functional_cogs_test COMMAND test_functional)
+
+    # Unit Tests (Subsystems & Modules in Isolation)
+    add_test(NAME unit_math_test COMMAND test_math)
+    add_test(NAME unit_data_test COMMAND test_data)
+    add_test(NAME unit_time_test COMMAND test_time)
+    add_test(NAME unit_string_test COMMAND test_string)
+    add_test(NAME unit_log_test COMMAND test_log)
+    add_test(NAME unit_debug_test COMMAND test_debug)
+
+    # Integrated Tests (Cross-Subsystem Coordination)
+    add_test(NAME integrated_utils_test COMMAND test_utils)
+
+    # System Tests (Full Simulation Invariants & Scenarios)
+    add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
+    add_test(NAME system_gameplay_scenarios_test COMMAND test_gameplay_scenarios)
 endif()
 
 # End of CMakeLists.txt

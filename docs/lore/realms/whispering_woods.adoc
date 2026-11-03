@@ -1,0 +1,105 @@
+= Realm Chronicle: The Whispering Woods (The Ancient Canopy of Sacyra)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.2.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+The **Whispering Woods** (`LOC_WHISPERING_WOODS`) form an ancient, dense primeval canopy
+encircling **Dio Village**, separating the peaceful hamlet from the windswept frontier of
+the **Sacyran Marches**. Named for the haunting acoustic phenomenon produced by autumn winds
+filtering through hollow ironwood boughs, the forest serves as the player's first physical
+wilderness trial after awakening from **The Dreamscape**.
+
+[quote, Eric the Lumberjack, Dio Village Timber Yard]
+____
+Those woods were quiet when my grandfather worked the timber. Now, you can't walk twenty
+paces off the road without hearing shadows moving in the thicket. Something deep in the
+capital is leaking into the roots.
+____
+
+== 1. Geography & Environmental Atmosphere
+
+* **Location Identifier**: `LOC_WHISPERING_WOODS` (Integer index `2` in `location_id_t`).
+* **Territorial Domain**: Southwestern province of the Kingdom of Sacyra.
+* **Topographical Neighbors**:
+  - **South**: Borders the agricultural plots and timber yards of **Dio Village**.
+  - **North & East**: Ascends into the crags and signal hills of the **Sacyran Marches**.
+* **Flora & Terrain**: Gnarled ironwood trunks, glowing amber fungi, thick moss carpets,
+  and narrow cobblestone paths choked by invasive briers and fallen timber.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Realm Specification
+| **Ambient Threat Level** | Moderate ($70–90$ Threat Rating).
+| **Weather Phenomena** | Morning autumn mist; nocturnal veil thinning; ambient whisper reverberation.
+| **Sanctuary Nodes** | The Forester's Shrine (Campfire rest point; restores $100\%$ MP).
+| **Resource Harvest** | Ironwood logs, Sacyran belladonna herbs, glowing resonant spores.
+|===
+
+== 2. Lore & Ancient Secrets
+
+Local Sacyran folklore claims the woods were planted by Prince Casatti during his frontier
+expeditions to serve as a natural barrier shielding the commoners from imperial court politics.
+Beneath the dense root network lie forgotten stone markers from Era I, indicating that the forest
+grew atop an ancient tectonic fault line directly connected to the abyssal fissure beneath the
+Royal Capital.
+
+****
+**Archival Marginalia: The Soughing Boughs**
+
+When night falls across the canopy, travelers report hearing murmurs that sound like voices
+debating in the archaic dialect of Era IV. Scholars from The Academy believe these are acoustic
+reflections of the First King's sealed court, vibrating along ley lines from the Dreamscape.
+****
+
+== 3. Bestiary & Field Encounters
+
+Corrupted by ambient abyssal miasma leaking outward from the capital's planar wound, the native
+fauna of the woods has mutated into predatory shadow beasts:
+
+[cols="1,1,1,2", options="header"]
+|===
+| Hostile Entity | HP / DEF | Flank Vigor | Combat Behavior & Threat Profile
+| **Umbral Wolf** | $85$ HP / $14$ DEF | $60$ Vigor | Pack hunter; attempts coordinated flanking sprints.
+| **Brier Lurker** | $120$ HP / $18$ DEF | $40$ Vigor | Concealed in brambles; inflicts poison and entangle.
+| **Twilight Raven** | $45$ HP / $8$ DEF | $80$ Vigor | High evasion; dives to disrupt casting stances.
+|===
+
+[CAUTION]
+====
+Umbral Wolves receive a $+25\%$ attack bonus when attacking from an adjacent flanking tile.
+Players must anchor their formation using *Lux Barrio* to prevent fragile party members from
+being isolated.
+====
+
+== 4. Tactical Grid Map Architecture
+
+Combat within the Whispering Woods utilizes dense environmental obstacles and restrictive
+chokepoints:
+
+[source,text]
+----
+  [0]   [1]   [2]   [3]   [4]   [5]   [6]   [7]
+┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+│ TREE│ TREE│     │PATH │PATH │     │ TREE│ TREE│ [0] North -> Sacyran Marches
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│ TREE│BRIER│     │     │WOLF1│     │BRIER│ TREE│ [1]
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│     │     │ROCK │     │     │WOLF2│     │     │ [2] Chokepoint Corridor
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│PATH │PATH │     │HERO1│HERO2│     │PATH │PATH │ [3] Player Vanguard Deployment
+├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+│ TREE│     │SHRN │PATH │PATH │     │     │ TREE│ [4] South -> Dio Village
+└─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+----
+
+=== Environmental Grid Invariants
+1. **Tree & Granite Rock Obstacles**: Completely block line-of-sight and unit transit.
+2. **Dense Brier Patches**: Inflict $2.0\times$ movement cost and $-10$ HP per step for non-flying units.
+3. **Forester's Shrine (`SHRN`)**: Standing adjacent to the shrine grants $+15\%$ Lux warding efficiency.

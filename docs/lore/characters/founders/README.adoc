@@ -1,0 +1,35 @@
+= The Historical Founders: Princes, Sovereigns & Pioneers of Sacyra
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+Three millennia prior to the awakening of the Relic Bearer in Dio Village, the Kingdom of
+Sacyra and its neighboring realms were shaped by three pivotal historical figures whose
+choices laid the foundations of the current world: **Prince Mi-ren**, **Prince Casatti**,
+and **Usuru the Wanderer**. Their deeds, philosophies, and tragic conflicts establish the
+thematic spine of the *Tenebris and Lux* overarching canon.
+
+== Historical Dossier Index
+
+1. **xref:prince_mi_ren.adoc[prince_mi_ren.adoc]**
+   *The Sovereign of the Vigil & Architect of Sacyra*: The elder founding prince who walked
+   the Path of Light, founded the Royal Guard and civil administration, and held the legendary
+   Four-Year Vigil over his brother. Progenitor of the Custom Bearer's *Steward of Balance* axis.
+
+2. **xref:prince_casatti.adoc[prince_casatti.adoc]**
+   *The Outrider Prince & Blade of Truth*: The younger founding prince who walked the Path of
+   Darkness, awakened from a four-year coma with transfigured vision, and forged the Sword of
+   Tenebris to sever corruption. Spiritual ancestor to Lady Katrina Jaren.
+
+3. **xref:usuru_the_wanderer.adoc[usuru_the_wanderer.adoc]**
+   *The Sovereign of Grief & The First Broken Crown*: Born nameless in remote Libira, he walked
+   the world as the Three-Day Wanderer seeking royal aid for his people. Corrupted by the 11th
+   Festival planar rupture, he crowned himself King of Libira and ignited the Seven-Year Great
+   War, ultimately falling to darkness to become The Dark Lord.

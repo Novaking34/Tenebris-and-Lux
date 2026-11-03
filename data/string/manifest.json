@@ -1,0 +1,39 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/string/manifest.json",
+    "id": "data.string.manifest",
+    "layer": "Layer 0 Data / Catalog",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Manifest and menu for all lexical, buffer sizing, and command token profiles.",
+    "invariants": [
+      "Every registered profile file must exist in data/string/",
+      "Profiles must declare unique IDs",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.string_menu.v1",
+    "target_subsystem": "core.util.string"
+  },
+  "active_profile": "default",
+  "profiles": [
+    {
+      "id": "default",
+      "display_name": "Standard Continental Lexical Profile",
+      "file": "default.json",
+      "description": "Buffer limits, stance tokens, and canonical action verb dictionaries."
+    }
+  ],
+  "_audit": {
+    "profile_count": 1,
+    "active_valid": true
+  },
+  "_navigation": {
+    "parent_menu": "../manifest.json",
+    "current_directory": "data/string"
+  }
+}

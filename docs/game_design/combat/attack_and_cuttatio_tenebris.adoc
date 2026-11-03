@@ -1,0 +1,36 @@
+= Combat Game Note: Attack Action & Cuttatio Tenebris
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+:sectnums:
+:icons: font
+
+== 1. Design Intent & Gameplay Philosophy
+
+The **Attack** action channels the entropy and severance aspects of the **Sword of Tenebris**. Rather than generic single-target chipping, offensive melee strikes in *Tenebris and Lux* embody high-risk severance and crowd-cleaving outrider tactics:
+
+* **Basic Attack (`attack` / `strike`)**:
+  - Direct physical slash with the obsidian edge.
+  - **Mechanics**: Computes primary physical damage based on player attack attribute and target physical defense:
+    `Damage = (ATK * 2) - Enemy_DEF`.
+  - **Edge Consumption**: Consumes $6 \dots 10$ points of blade sharpness (`sword_edge`).
+  - **Out-of-Combat Attunement**: Outside of combat, channeling the blade hones its edge by $+15$ points as abyssal mist condenses along the blade.
+
+* **The Basic Skill: `Cuttatio Tenebris` (`cuttatio`)**:
+  - An abyssal sword slash that releases a crescent wave of twilight mist across the battlefield.
+  - **Primary Severance**: Delivers full direct physical damage to the primary target (`(ATK * 2) - Enemy_DEF + Stance_Bonus`). In `STANCE_STRIKING`, an additional $+15$ flat damage bonus is applied.
+  - **20% Area Splash Damage**: In tactical combat with multiple enemy formations or surrounding reinforcements, **$20\%$ of the primary damage** cascades onto adjacent flanking targets (`threat_surrounding_hp`).
+  - **Minimum Splash Threshold**: Guarantees at least $1$ damage to flanking targets if any primary damage is dealt, preventing armor-rounding deadzones.
+
+== 2. Numerical Invariants & Formulas
+
+[cols="1,2,2", options="header"]
+|===
+| Parameter | Standard Attack | Cuttatio Tenebris
+| **Action Type** | Basic Melee Strike | Blade Cleave Skill
+| **Formula** | `(ATK * 2) - DEF` | `(ATK * 2) - DEF + Bonus`
+| **Stance Scaling** | Standard damage | $+15$ bonus in `STANCE_STRIKING`
+| **Edge Cost** | $6 \dots 10$ Edge | $8 \dots 12$ Edge
+| **Splash Cleave** | None ($0\%$) | **$20\%$ of primary damage**
+| **Moral Sway Effect** | $+0$ (Neutral) / $+1$ on kill | $+2$ (Controlled Severance)
+|===

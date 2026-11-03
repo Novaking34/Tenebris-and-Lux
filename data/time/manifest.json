@@ -1,0 +1,45 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/time/manifest.json",
+    "id": "data.time.manifest",
+    "layer": "Layer 0 Data / Catalog",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Manifest and menu for all monotonic timing, frame pacing, and latency budget profiles.",
+    "invariants": [
+      "Every registered profile file must exist in data/time/",
+      "Profiles must declare unique IDs",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.time_menu.v1",
+    "target_subsystem": "core.util.time"
+  },
+  "active_profile": "default",
+  "profiles": [
+    {
+      "id": "default",
+      "display_name": "Standard 60 FPS Engine Timing Profile",
+      "file": "default.json",
+      "description": "60 FPS (16.67 ms) with 50 us turn budget."
+    },
+    {
+      "id": "high_refresh",
+      "display_name": "High-Refresh 120 FPS Gaming Profile",
+      "file": "high_refresh.json",
+      "description": "120 FPS (8.33 ms) with 25 us turn budget."
+    }
+  ],
+  "_audit": {
+    "profile_count": 2,
+    "active_valid": true
+  },
+  "_navigation": {
+    "parent_menu": "../manifest.json",
+    "current_directory": "data/time"
+  }
+}

@@ -1,0 +1,115 @@
+= Technical Specification: Data-Driven Architecture & Manifest System
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.1.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Abstract & Architectural Mandate
+
+This specification establishes the **Data-Driven Subsystem** for *Tenebris and Lux*.
+Transitioning from hardcoded compile-time values to externalized, validated data files,
+this architecture enforces the **"Manifest as Main Menu" and "Files as Settings"** ontological
+pattern. This pattern enables live configuration hot-swapping, deterministic testing,
+and seamless integration between C11 Layer 0 engine utilities and high-level tools.
+It encompasses logging profiles (`data/log/`), mathematical continuum boundaries (`data/math/`),
+frame pacing budgets (`data/time/`), and lexical token disciplines (`data/string/`).
+
+== 1. System Philosophy: Manifest as Main Menu
+
+=== 1.1 The Menu-to-Settings Ontological Pattern
+
+Traditional game configuration often conflates cataloguing with concrete configuration.
+Under the *Tenebris and Lux* architecture, a clean structural boundary is maintained:
+
+* **The Manifest (`manifest.json`)**: Operates as the **"Main Menu"**. It catalogs, describes,
+  indexes, and exposes selectable configuration entries (`menu_items`). It enforces invariants
+  governing which settings are available, provides default selections, and maps hotkey shortcuts.
+* **The Data Files (`*.json`)**: Operate as the concrete **"Settings"**. Each file represents a
+  fully-formed, isolated configuration state conforming directly to the underlying engine structures
+  (e.g., `log_config_t`, `math_config_t`, `time_config_t`, `string_config_t`).
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                   DATA ROOT CATALOG (data/manifest.json)               │
+│               Master index across all engine data subsystems           │
+└───────┬───────────────────┬────────────────────┬───────────────────┬───┘
+        │                   │                    │                   │
+        ▼                   ▼                    ▼                   ▼
+┌───────────────┐   ┌───────────────┐    ┌───────────────┐   ┌───────────────┐
+│    LOGGING    │   │     MATH      │    │     TIME      │   │    STRING     │
+│ data/log/     │   │ data/math/    │    │ data/time/    │   │ data/string/  │
+│ manifest.json │   │ manifest.json │    │ manifest.json │   │ manifest.json │
+└───────┬───────┘   └───────┬───────┘    └───────┬───────┘   └───────┬───────┘
+        │                   │                    │                   │
+        ▼                   ▼                    ▼                   ▼
+  - default.json      - default.json       - default.json      - default.json
+  - development.json                       - high_refresh.json
+  - production.json
+  - quiet.json
+  - combat_focus.json
+  - forensic_telemetry.json
+```
+
+=== 1.2 OmniCode 5-Block Conformance in JSON Serialization
+
+In accordance with the repository standard, every JSON data asset strictly adheres
+to the **Universal 5-Block Lifecycle Protocol**:
+
+1. **Block 1: `_metadata`**: Identity tags (`@project`, `@file`, `@id`, `@version`, `@author`, `@invariants`).
+2. **Block 2: `_types`**: Schema specification, target C struct bindings, enum sets.
+3. **Block 3: `menu` / `profile` / `setting`**: Operational payload containing menu entries or profile parameters.
+4. **Block 4: `_audit`**: Diagnostic limits, rotation caps, and memory footprint contracts (`ALLOC_ZERO_HEAP`).
+5. **Block 5: `_navigation`**: Upstream parent manifest links and fallback targets.
+
+== 2. Active Data-Driven Subsystems
+
+=== 2.1 Logging & Telemetry (`data/log/`)
+
+Defines six distinct configuration profiles (`default`, `development`, `production`,
+`forensic_telemetry`, `quiet`, `combat_focus`) controlling min severity, console ANSI echoing,
+file rotation limits, and telemetry tracking categories.
+
+=== 2.2 Mathematical Continuum (`data/math/`)
+
+Defines canonical bounds and continuum limits governing game metaphysics:
+
+* **Resonance Limits**: `[0, 100]` strictly preventing relic over-saturation or underflow.
+* **Moral Sway Continuum**: Symmetric `[-100, +100]` with equilibrium anchor at `0`.
+* **Equilibrium Stance Band**: `[-25, +25]` threshold for dual relic synergy.
+* **Overload / Eclipse Thresholds**: `+75` (Radiance) and `-75` (Abyssal Eclipse).
+* **Viewport Dimensions**: Default desktop presentation bounds (`800 x 600`).
+
+=== 2.3 Monotonic Timing & Frame Pacing (`data/time/`)
+
+Defines latency budgets and frame sleep targets:
+
+* **`default.json`**: 60 FPS profile (`16.666667 ms` frame budget, `50.0 us` simulation turn budget).
+* **`high_refresh.json`**: 120 FPS profile (`8.333333 ms` frame budget, `25.0 us` simulation turn budget).
+
+=== 2.4 Lexical Buffers & Token Dictionary (`data/string/`)
+
+Defines textual safety limits and canonical identifiers:
+
+* **Buffer Capacities**: Max path (512 B), max name (64 B), max command (128 B), line discipline (80 chars).
+* **Stance Tokens**: `NEUTRAL`, `WARDING`, `STRIKING`, `EQUILIBRIUM`.
+* **Action Verbs**: `help`, `version`, `audit`, `cli`, `gui`, `barrio`, `cuttatio`, `duo`, `stance`, `journey`, `inspect`, `name`, `quit`.
+
+== 3. The Fallback Tripwire Protocol
+
+A central invariant of the data-driven architecture is **Fault-Tolerant Determinism**:
+
+1. **Attempt Data Load**: Subsystems first attempt to deserialize settings from their respective `data/` JSON file.
+2. **Tripwire Detection**: If the path does not exist, file permissions fail, or JSON formatting is invalid, the engine detects this condition immediately without crashing or memory corruption.
+3. **Hardcoded Fallback Activation**: The subsystem loads its compile-time fallback baseline (e.g. `math_get_default_config()`, `time_get_default_config()`, `string_get_default_config()`, `log_get_default_config()`).
+4. **Diagnostic Telemetry**: A warning trace is emitted to the diagnostic log detailing the fallback event and preserving system stability.
+
+== 4. Verification & Diagnostic Testing
+
+All data files in `data/` and its subsystem folders are validated for syntactic correctness,
+schema compliance, and referential integrity by CTest suites (`test_utils`, `test_log`, `test_game_invariants`)
+and developer tooling (`tl_tools`).

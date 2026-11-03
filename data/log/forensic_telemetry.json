@@ -1,0 +1,62 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/log/forensic_telemetry.json",
+    "id": "data.log.setting.forensic_telemetry",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-10-30",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Forensic telemetry and pre-flight audit flight recorder profile.",
+    "invariants": [
+      "Full TRACE severity recording microsecond delta monotonic clocks",
+      "Ring buffer telemetry recorded and preserved across rotating archives",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.log_setting.v1",
+    "target_struct": "log_config_t",
+    "header_binding": "include/util/log/log.h"
+  },
+  "setting": {
+    "id": "forensic_telemetry",
+    "display_name": "Forensic Telemetry & Flight Recorder",
+    "description": "Exhaustive instrumentation mode recording monotonic clock drift, moral sway gradient percentages, and 64-slot circular ring buffer dumps.",
+    "log_dir": "logs",
+    "base_filename": "tenebris_lux_telemetry.log",
+    "max_file_size_bytes": 10485760,
+    "max_rotated_files": 25,
+    "min_severity": "TRACE",
+    "save_by_category": true,
+    "echo_to_console": true,
+    "use_colors": true,
+    "telemetry": {
+      "track_sequence_ids": true,
+      "track_monotonic_us": true,
+      "track_iso_timestamps": true,
+      "track_moral_grades": true,
+      "detailed_file_anchors": true,
+      "detailed_func_anchors": true,
+      "detailed_line_anchors": true,
+      "active_categories": [
+        "SYSTEM",
+        "LOG",
+        "EVENT",
+        "MESSAGE",
+        "CHARACTER"
+      ]
+    }
+  },
+  "_audit": {
+    "rotation_threshold_kb": 10240,
+    "retention_policy": "Retain 25 timestamped rotated archives",
+    "static_ring_buffer_slots": 64,
+    "telemetry_clock_accuracy": "Microsecond precision via CLOCK_MONOTONIC"
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 4
+  }
+}

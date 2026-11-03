@@ -42,8 +42,11 @@
 #include "sim/combat.h"
 #include "sim/world.h"
 #include "sim/dispatcher.h"
+#include "util/debug/debug.h"
+#include "util/string/string_utils.h"
 
 #include <stdio.h>
+#include <string.h>
 
 static const char *const s_game_invariants[4] = {
     "Shield of Lux resonance bounded: [0, MAX_RESONANCE]",
@@ -88,6 +91,11 @@ const module_metadata_t game_manifest = {
 void game_init(player_state_t *state)
 {
     sim_state_init(state);
+}
+
+void game_set_protagonist_name(player_state_t *state, const char *name)
+{
+    sim_state_set_name(state, name);
 }
 
 const char *game_get_location_name(location_id_t loc)
@@ -139,6 +147,66 @@ void game_process_command(player_state_t *state, const char *raw_input,
 void game_loop_cli(player_state_t *state)
 {
     dispatcher_loop_cli(state);
+}
+
+void game_state_to_debug_fields(const player_state_t *state, void *out_fields)
+{
+    if (state == NULL || out_fields == NULL) return;
+    debug_state_fields_t *f = (debug_state_fields_t *)out_fields;
+    memset(f, 0, sizeof(debug_state_fields_t));
+    f->turn = state->turns_taken;
+    str_safe_copy(f->hero_name, state->name, sizeof(f->hero_name));
+    f->hp = state->hp;
+    f->max_hp = state->max_hp;
+    f->mp = state->mp;
+    f->tp = state->tp;
+    f->shield_power = state->shield_power;
+    f->sword_edge = state->sword_edge;
+    f->stance = (int)state->stance;
+    f->moral_sway = state->moral_sway;
+    f->location = (int)state->location;
+    f->lux_barrio_turns = state->lux_barrio_turns;
+    f->charm_turns = state->charm_turns;
+    f->threat_hp = state->threat_hp;
+    f->foes_vanquished = state->foes_vanquished;
+}
+
+void game_state_from_debug_fields(const void *fields, player_state_t *out_state)
+{
+    if (fields == NULL || out_state == NULL) return;
+    const debug_state_fields_t *f = (const debug_state_fields_t *)fields;
+    out_state->turns_taken = f->turn;
+    str_safe_copy(out_state->name, f->hero_name, sizeof(out_state->name));
+    out_state->hp = f->hp;
+    out_state->max_hp = f->max_hp;
+    out_state->mp = f->mp;
+    out_state->tp = f->tp;
+    out_state->shield_power = f->shield_power;
+    out_state->sword_edge = f->sword_edge;
+    out_state->stance = (combat_stance_t)f->stance;
+    out_state->moral_sway = f->moral_sway;
+    out_state->location = (location_id_t)f->location;
+    out_state->lux_barrio_turns = f->lux_barrio_turns;
+    out_state->charm_turns = f->charm_turns;
+    out_state->threat_hp = f->threat_hp;
+    out_state->foes_vanquished = f->foes_vanquished;
+}
+
+uint64_t game_record_debug_snapshot(const player_state_t *state, const char *cmd, const char *arg)
+{
+    if (state == NULL || !debug_is_active()) return 0;
+    debug_state_fields_t f;
+    game_state_to_debug_fields(state, &f);
+    return debug_record_snapshot(&f, cmd, arg);
+}
+
+bool game_rewind_debug_snapshot(size_t index, player_state_t *out_state)
+{
+    if (out_state == NULL || !debug_is_active()) return false;
+    debug_state_fields_t f;
+    if (!debug_rewind_to_snapshot(index, &f)) return false;
+    game_state_from_debug_fields(&f, out_state);
+    return true;
 }
 
 // =============================================================================
@@ -204,13 +272,13 @@ int game_run_self_audit(void)
     }
     printf("[PASS] Test 1: Initial twin relic state verified.\n");
 
-    game_process_command(&state, "ward", NULL, 0);
+    game_process_command(&state, "barrio", NULL, 0);
     if (state.shield_power != MAX_RESONANCE) {
         fprintf(stderr, "[FAIL] Test 2: Shield did not reach ceiling! (%d)\n",
             state.shield_power);
         return 2;
     }
-    printf("[PASS] Test 2: Shield of Lux ceiling invariant verified.\n");
+    printf("[PASS] Test 2: Lux Barrio & Shield ceiling invariant verified.\n");
 
     game_process_command(&state, "stance striking", NULL, 0);
     if (state.stance != STANCE_STRIKING) {

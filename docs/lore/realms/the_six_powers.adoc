@@ -1,0 +1,125 @@
+= Realm Chronicle: The Six Powers of the Continent (The Geopolitical Strata of the Great War)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+The historical landscape of *Tenebris and Lux* was shaped by the clash and eventual reconciliation
+of **The Six Powers** during Eras IV through VI. When the planar rupture during the 11th Festival of
+Peoples shattered the First King's Pax Sacyrana, Usuru rallied these disparate sovereign nations
+into the catastrophic **Seven-Year Great War**. Understanding the cultural, architectural, and
+military profile of each power is essential to comprehending the ancestral factions, regional
+alliances, and diplomatic endings available within the TRPG campaign.
+
+[quote, The Accord of Kings, Preamble - Inscribed upon the Six Obelisks of Unity]
+____
+No single crown shall claim the sun, and no lone throne shall command the shadows.
+Six thrones bled upon the salt and marble; six thrones shall swear that the realm shall
+be joint in peace, yet separate in kingdom, so long as the stars circle the spindle.
+____
+
+== 1. Geopolitical Map & Sovereign Overview
+
+[source,text]
+----
+                      ┌──────────────────────┐
+                      │     THE ACADEMY      │
+                      │  (Northern Glaciers) │
+                      └──────────▲───────────┘
+                                 │
+     ┌──────────────────┐        │        ┌──────────────────┐
+     │KINGDOM OF LIBIRA │◄───────┼───────►│ GREAT MAU REALM  │
+     │  (Western Arid)  │        │        │ (Eastern Deltas) │
+     └────────▲─────────┘        │        └────────▲─────────┘
+              │                  │                 │
+              │       ┌──────────▼───────────┐     │
+              └──────►│ THE ROYAL CAPITAL    │◄────┘
+                      │  (Central White Rim) │
+                      └──────────▲───────────┘
+                                 │
+     ┌──────────────────┐        │        ┌──────────────────┐
+     │   OLD SACYRA     │◄───────┴───────►│YUN-YIN PROVINCES │
+     │ (Highland Crags) │                 │  (Misty Valleys) │
+     └──────────────────┘                 └──────────────────┘
+----
+
+== 2. Comprehensive Profiles of the Six Powers
+
+=== 1. The Royal Capital of Sacyra (The Radiant Center)
+* **Domain & Geography**: The fertile central plains and plateaus surrounding the White Rim Citadel.
+* **Cultural Philosophy**: Monarchy, institutional duty, legalism, and devotion to the light of the First King.
+* **Military Doctrine**: Heavy vanguard infantry, phalanx formations, and divine warding priests wielding
+  the techniques of the *Shield of Lux*.
+* **Key Figure**: King Jihad (Present Era); Prince Mi-ren (Founding Era).
+
+=== 2. The Kingdom of Libira (The Arid Frontier)
+* **Domain & Geography**: The harsh western desert canyons, sandstone mesas, and salt flats.
+* **Cultural Philosophy**: Radical communal self-reliance, stoic endurance, and fierce resentment of
+  centralized royal arrogance ("The Quiet Complaint").
+* **Military Doctrine**: Agile camel skirmishers, desert outriders, and shadow assassins who pioneered
+  the early stances of the *Sword of Tenebris*.
+* **Key Figure**: Usuru the Wanderer (The Dark Lord).
+
+=== 3. The Great Mau Kingdom (The Merchant Empire of the East)
+* **Domain & Geography**: The sprawling eastern river deltas, rich alluvial floodplains, and bustling port cities.
+* **Cultural Philosophy**: Mercantilism, contract law, civic guilds, and wealth accumulation.
+  To the Mau, war is an economic calculation rather than an ideological crusade.
+* **Military Doctrine**: Mercenary phalanxes, river ironclad barges, and repeating crossbowmen funded
+  by the grand banking cartels.
+* **Role in the Great War**: Financed Usuru's coalition armies in exchange for mining rights in Libira,
+  switching sides at the midpoint when Sacyra offered trade tariff exemptions.
+
+=== 4. Old Sacyra (The Highland Ancestral Cradle)
+* **Domain & Geography**: The sheer mountain peaks and pine forests north of the Sacyran river valley.
+* **Cultural Philosophy**: Strict aristocratic traditionalism, ancestral veneration, and genealogical pride.
+  View the modern Royal Capital as degenerate upstarts who diluted pure Sacyran blood.
+* **Military Doctrine**: Mountain rangers, greatsword shock troops, and heavy cavalry capable of fighting
+  on steep inclines.
+* **Role in the Great War**: Joined Usuru early to punish the Capital, but broke away when Usuru
+  unleashed uncontrollable void constructs into mortal villages.
+
+=== 5. The Academy (The Spire of Pure Reason)
+* **Domain & Geography**: The frozen northern tundras and geothermal volcanic springs.
+* **Cultural Philosophy**: Scientism, arcanotech experimentation, and the empirical dissection of cosmic forces.
+  Reject both religious worship of Lux and superstitious fear of Tenebris.
+* **Military Doctrine**: Alchemical siege engines, elemental clockwork automata, and crystal-resonance artillery.
+* **Role in the Great War**: Remained neutral for five years before joining the coalition to study the
+  abyssal tear firsthand, later contributing the mathematical formulas used to draft the *Accord of Kings*.
+
+=== 6. The Yun-yin Provinces (The Valleys of Mist & Wind)
+* **Domain & Geography**: The subtropical southeastern archipelago and bamboo cloud forests.
+* **Cultural Philosophy**: Spiritual harmony, ki manipulation, cyclical flow, and the balance of dualities.
+  Understood the metaphysical neutrality of darkness long before Sacyran theologians.
+* **Military Doctrine**: Martial artists, wind-runners, and agile spear masters using evasion and
+  counter-poise redirection.
+* **Role in the Great War**: Sided with Usuru to restore balance against Sacyra's overbearing expansionism,
+  ultimately brokering the peace conference that created the *Joint Realm, Separate Kingdoms* doctrine.
+
+== 3. The Accord of Kings: "Joint Realm, Separate Kingdoms"
+
+Following seven years of devastating continental slaughter, the exhausted sovereigns met upon the
+neutral plains of the Central Marches to sign the historic **Accord of Kings**:
+
+[cols="1,3", options="header"]
+|===
+| Article | Diplomatic Covenant & Systemic Law
+| **Article I: Mutual Sovereignty** | Each of the Six Powers maintains complete legislative, military,
+  and economic autonomy within their borders.
+| **Article II: The Joint Ward** | Sacyra's Royal Guard is legally entrusted with guarding the
+  central rift beneath the High Throne, but may never station troops within foreign realms without consent.
+| **Article III: The Free Caravan** | Courier and trade routes between all six nations are declared
+  sacrosanct, guaranteeing that no province may be starved through communication blockade.
+|===
+
+[NOTE]
+====
+In the modern era, King Jihad's clandestine efforts to annex the frontier and resurrect the
+centralized empire violate the fundamental tenets of the Accord of Kings, providing the political
+justification for the party's multi-ending divergence.
+====

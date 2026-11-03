@@ -1,0 +1,51 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/debug/manifest.json",
+    "id": "data.debug.manifest",
+    "layer": "Layer 0 Data / Catalog",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Manifest and menu for all interactive debugger profiles, snapshot settings, and tripwire traps.",
+    "invariants": [
+      "Every registered profile file must exist in data/debug/",
+      "Profiles must declare unique IDs",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.debug_menu.v1",
+    "target_subsystem": "core.util.debug"
+  },
+  "active_profile": "default",
+  "profiles": [
+    {
+      "id": "default",
+      "display_name": "Standard Developer Debugging Baseline",
+      "file": "default.json",
+      "description": "Standard state snapshot ring buffer, tripwire traps, and balanced turn tracing."
+    },
+    {
+      "id": "strict",
+      "display_name": "Strict Invariant & Assertion Trap Profile",
+      "file": "strict.json",
+      "description": "Halts immediately on any state breach, stance violation, or warning/error telemetry."
+    },
+    {
+      "id": "trace",
+      "display_name": "Deep Micro-Step Tracing Profile",
+      "file": "trace.json",
+      "description": "Verbose cog-level tracing across all channels with full snapshot history."
+    }
+  ],
+  "_audit": {
+    "profile_count": 3,
+    "active_valid": true
+  },
+  "_navigation": {
+    "parent_menu": "../manifest.json",
+    "current_directory": "data/debug"
+  }
+}

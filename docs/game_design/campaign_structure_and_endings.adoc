@@ -1,0 +1,158 @@
+= Campaign Architecture, The King's Curse & Multi-Ending Specification
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Overview & Ludological Philosophy
+
+This specification articulates the structural macro-architecture of the campaign in *Tenebris and Lux*,
+including the two-half campaign progression, the metaphysical etiology of "The King's Curse," the midpoint
+narrative fork, player agency over lore discovery, and the complete five-route ending matrix. Built upon
+the premise of ludonarrative consent, the engine allows casual players to experience a coherent linear
+tactical campaign, while reserving the mythological truth for players who actively engage with nocturnal
+Dreamscape trials.
+
+== 1. The Two-Half Campaign Structure
+
+The overarching campaign is organized into two distinct dramatic and mechanical halves:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│                   ACT I: THE SACYRAN SUCCESSION CRISIS                 │
+│  • Setting: Dio Village, Whispering Woods, Capital Outposts            │
+│  • Antagonist Focus: King Jihad & Corrupt Royal Court                  │
+│  • Themes: Provincial neglect, family mysteries, state censorship     │
+│  • Climax: The Festival of Heroes & Siege of Sacyra Castle             │
+├────────────────────────────────────────────────────────────────────────┤
+│                   MIDPOINT FORK: THE KING'S CURSE                      │
+│  • Defeat of King Jihad reveals possession by The Dark Lord's remnant  │
+│  • Structural branching based on nocturnal Dream Compass completion    │
+├────────────────────────────────────────────────────────────────────────┤
+│                   ACT II: THE COSMIC RECKONING                         │
+│  • Setting: Sacyra Marches, Abyssal Vaults, The Dreamscape Core        │
+│  • Antagonist Focus: The Dark Lord (Usuru's Ancient Void Essence)      │
+│  • Themes: Severance vs. Cohesion, Atonement, Planar Reconciliation   │
+│  • Climax: Confrontation at the Cosmic Threshold & Ending Resolution   │
+└────────────────────────────────────────────────────────────────────────┘
+----
+
+=== 1.1. Act I: Stopping King Jihad (The Sovereign of Ambition)
+Act I centers on terrestrial, socio-political conflict. Operating from Dio Village through the Whispering
+Woods and Capital marches, the party uncovers King Jihad's treasonous suppression of border alerts. The
+act culminates during the **Festival of Heroes** at Sacyra Castle, where King Jihad is confronted and defeated.
+
+=== 1.2. The Etiology of "The King's Curse" & Royal Possession
+Court superstition long spoke of a hereditary madness afflicting monarchs of Sacyra. Forensic narrative
+architecture reveals that "The King's Curse" is not a demonic hex, but an active **metaphysical hazard**:
+
+* **The Open Planar Wound:** When eleven-year-old Usuru shattered the First King's stasis projection ritual
+  3,000 years ago, a jagged planar rift tore open directly beneath the dias of the **High Throne**.
+* **Psychic Backwash:** For three millennia, reigning monarchs sitting upon the High Throne were subjected
+  to perpetual psychic shear and planar backwash from across the veil.
+* **Jihad's Fatal Gambit:** Seeking to usurp the Dark Lord's void power during the thinned veil of the
+  Festival of Heroes, King Jihad intentionally opened the conduit beneath his throne. Because the ethereal
+  medium mirrors mortal intent, Jihad's megalomania inverted the flow, allowing a dormant psychic remnant
+  of Usuru (**The Dark Lord**) to possess his body.
+
+== 2. The Midpoint Fork: Neutral Path vs. True Ending Path
+
+Defeating King Jihad reveals the void possession, forcing the narrative into its primary structural fork:
+
+[source,text]
+----
+                         ACT I CLIMAX: DEFEAT OF KING JIHAD
+                   Possession Revealed via "The King's Curse"
+                                       │
+            ┌──────────────────────────┴──────────────────────────┐
+            ▼                                                     ▼
+   THE NEUTRAL PATH (Basic Completion)                   THE TRUE ENDING PATH (100% Synthesis)
+   • Dreamscape side quests missed/skipped.              • Nocturnal Dream Compass quests completed.
+   • Treats possession as an external demon hex.         • Recognizes the severed ritual's energy signature.
+   • Marches to slay or supplant The Dark Lord.          • Uncovers the First King's seal & Usuru's grief.
+            │                                                     │
+     ┌──────┴──────┐                                       ┌──────┴──────┐
+     ▼             ▼                                       ▼             ▼
+"Good" Ending  "Bad" Ending                        Canonical Harmony  Secret Chronicler
+(Heroic Myth)  (Tyrant/Usurper)                    (Elijah + Katrina) (Custom Bearer)
+----
+
+=== 2.1. Why Basic Completion Is the Neutral Ending
+By design, any player who simply plays the main story linearly from start to finish will reach the end
+of the campaign. However, skipping the missable nocturnal **Dream Compass** trials produces the **Neutral Ending**:
+
+* The player defeats King Jihad and destroys The Dark Lord's physical manifestation.
+* The kingdom is saved in the present, but the **First King remains permanently marooned** in The Dreamscape.
+* Usuru's ancient wound of betrayal is left unhealed, and the systemic neglect between the Capital and frontier
+  provinces remains unchanged, ensuring the cycle will repeat.
+
+=== 2.2. Player Consent to Know the Deeper Lore
+Video games are distinguished by interactive agency. Forcing forty minutes of historical exposition down the
+player's throat violates ludic pacing. By gating the full mythological truth behind optional, nocturnal
+Dreamscape trials, the game honors the player's agency: players who desire a fast-paced tactical campaign
+can enjoy a satisfying heroic conclusion, while players who actively investigate the mystery are rewarded
+with the full mythological reality.
+
+=== 2.3. Why the True Ending Is "The Ugly Truth"
+The canonical True Ending is neither a simplistic fairy-tale triumph nor a dark nihilistic collapse. It is
+**"The Ugly Truth"** that dismantles the self-serving propaganda of both sides:
+
+* It exposes that Prince Mi-ren's loving preservation created a catastrophic institutional lie that deceived
+  a continent for six festivals.
+* It acknowledges that Usuru's childhood outrage was entirely valid before his unguided fury curdled into
+  monstrous destruction.
+* It reveals that Sacyra's three millennia of golden peace were bought at the cost of deliberate neglect
+  toward frontier provinces like Libira and Dio Village.
+
+== 3. Relic Embellishment & The Five-Route Ending Matrix
+
+Throughout both acts, the player's choices, side quests, and stance preferences actively **embellish**
+the Shield of Lux and Sword of Tenebris along the `[-100, +100]` **Moral Sway** continuum:
+
+[cols="1,2,2,3", options="header"]
+|===
+| Ending Route | Playable Requirement | Relic Embellishment & Moral Sway Profile | Narrative & Metaphysical Resolution
+
+| **Route A: The Canonical Harmony** _(True Equilibrium Ending)_
+| Complete the campaign playing through **both** Elijah's and Katrina's perspectives; finish all Dreamscape trials.
+| Balanced embellishments; Moral Sway harmonized at Equilibrium (`0`); master the Stance of Equilibrium (*Duo-Loca Bashin n Slash*).
+| Exposes King Jihad's corruption; severs Usuru's abyssal tether while the Shield absorbs the fallout without dissipating; grants Usuru the reconciliation Mi-ren sought 3,000 years ago; releases the First King's soul to final rest.
+
+| **Route B: The Benevolent Stasis** _(Neutral-Good / The Mi-ren Fallacy)_
+| High Lux focus with pure preservation choices; reject Tenebris severance; ignore Dreamscape truth.
+| Pure Lux barrier embellishments; Moral Sway pinned at `+100`.
+| Terrified of void destruction, the wielder repeats Mi-ren's ancient error on a continental scale, sealing Sacyra inside a comatose golden barrier where nothing can harm—and no living being can grow.
+
+| **Route C: The Calcified Tyrant** _(Neutral-Bad / Corrupted Order)_
+| High Lux embellishments paired with authoritarian, merciless choices; negative moral sway (`-100`).
+| Petrifying solar embellishments; high stasis lockdown.
+| Overthrows King Jihad only to establish an inquisitorial police state, using blinding radiance to enforce absolute compliance and extinguish personal dissent.
+
+| **Route D: The Abyssal Usurper** _(Neutral-Bad / The Cycle of Usuru)_
+| High Tenebris focus with ruthless malice (`-100`); endorse theft and indiscriminate executions.
+| Pure Tenebris severance embellishments; Lux completely dissipated by wrath.
+| Agreeing that Sacyra's court is irredeemably hypocritical, the wielder slays King Jihad, absorbs The Dark Lord's void essence, razes the Capital, and ascends the High Throne as the new Dark Sovereign.
+
+| **Route E: The Secret Chronicler Ending** _(Custom Bearer 100% Route)_
+| Complete the campaign as `<chosen_name>`; perform the "double work" across both protagonists' questlines; achieve $100\%$ Dreamscape nocturnal trials.
+| Full mastery of all relic embellishments, Magic vs. Science synthesis, and complete planar harmony.
+| The custom bearer bridges the Magic vs. Science schism, dissolves royal secrecy, establishes an egalitarian relay outpost network for frontier settlements, and permanently mends the planar wound in the Room of Sages.
+|===
+
+== 4. Systemic Invariants & Engine Triggers
+
+All ending routes and campaign forks are evaluated through deterministic engine invariants in Layer 1:
+
+1. **`player_state_t` Integrity:** The moral sway value (`int16_t moral_sway`) is clamped strictly
+   within `[-100, +100]` via `math_clamp_int`.
+2. **Dream Compass Nocturnal Flag:** Entry into `LOC_THE_DREAMSCAPE` requires `hour >= 20 || hour <= 4`
+   from the Layer 0 monotonic clock.
+3. **Equilibrium State Check:** Unlocking Route A requires `abs(moral_sway) <= 15` and both
+   `shield_power >= 80` and `sword_edge >= 80` during the final turn sequence.

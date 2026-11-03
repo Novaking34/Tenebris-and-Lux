@@ -6,8 +6,8 @@
 // @file          world.h
 // @id            sim.engine.world
 // @layer         Layer 1: Simulation Engine
-// @version       1.0.0
-// @interface_rev Rev 1
+// @version       1.2.0
+// @interface_rev Rev 3
 // @date          2026-10-30
 // @updated       2026-10-30
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -15,7 +15,8 @@
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Topographical map model, province descriptions, movement routing, and
-//   encounter triggers within the Kingdom of Sacyra.
+//   encounter triggers anchored in the authentic demo baseline: The Dreamscape,
+//   Dio Village, Whispering Woods, and Sacyran Marches.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: sim.types.common, core.util.manifest, core.util.log
@@ -49,7 +50,7 @@ extern const module_metadata_t world_manifest;
 // =============================================================================
 
 /**
- * Returns human-readable name of a kingdom location.
+ * Returns human-readable name of a kingdom location or realm.
  *
  * @param[in] loc Location enum identifier.
  * @return Null-terminated static string name.
@@ -57,7 +58,7 @@ extern const module_metadata_t world_manifest;
 const char *world_get_location_name(location_id_t loc);
 
 /**
- * Returns descriptive narrative overview of a kingdom location.
+ * Returns descriptive narrative overview of a kingdom location or realm.
  *
  * @param[in] loc Location enum identifier.
  * @return Null-terminated static string description.
@@ -65,10 +66,10 @@ const char *world_get_location_name(location_id_t loc);
 const char *world_get_location_desc(location_id_t loc);
 
 /**
- * Executes spatial movement across Sacyran provinces.
+ * Executes spatial movement across Sacyran provinces or the Dreamscape.
  *
  * @param[in,out] state     Mutable player state.
- * @param[in]     direction Target heading string ("north", "south", etc.).
+ * @param[in]     direction Target heading string ("north", "south", "awaken", etc.).
  * @param[out]    out_msg   Buffer receiving narrative feedback.
  * @param[in]     msg_len   Capacity of out_msg buffer in bytes.
  * @return True if moved successfully, false if blocked or invalid heading.

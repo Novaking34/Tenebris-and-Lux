@@ -1,0 +1,56 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/log/quiet.json",
+    "id": "data.log.setting.quiet",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-10-30",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Ultra-low overhead quiet profile for headless simulation benchmarking and automated CI/CD.",
+    "invariants": [
+      "Minimum severity set to WARNING to eliminate I/O latency bottlenecks",
+      "Per-turn latency overhead capped strictly under 50 microseconds",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.log_setting.v1",
+    "target_struct": "log_config_t",
+    "header_binding": "include/util/log/log.h"
+  },
+  "setting": {
+    "id": "quiet",
+    "display_name": "Quiet Headless CI & Benchmark",
+    "description": "Minimal overhead (< 50µs tick target) for automated CTest runs. Suppresses console echoing and captures only WARNING, ERROR, and FATAL events.",
+    "log_dir": "logs",
+    "base_filename": "tenebris_lux_ci.log",
+    "max_file_size_bytes": 1048576,
+    "max_rotated_files": 10,
+    "min_severity": "WARNING",
+    "save_by_category": false,
+    "echo_to_console": false,
+    "use_colors": false,
+    "telemetry": {
+      "track_sequence_ids": true,
+      "track_monotonic_us": false,
+      "track_iso_timestamps": false,
+      "track_moral_grades": false,
+      "active_categories": [
+        "SYSTEM",
+        "LOG"
+      ]
+    }
+  },
+  "_audit": {
+    "rotation_threshold_kb": 1024,
+    "retention_policy": "Retain 10 timestamped rotated archives",
+    "latency_budget_target_us": 50,
+    "headless_safe": true
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 5
+  }
+}

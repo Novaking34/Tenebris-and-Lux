@@ -17,7 +17,7 @@ watching the cycles of light and darkness across the centuries.
 
 == Dossier Index
 
-1. **[chrono_the_sage.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters/sages_and_ancients/chrono_the_sage.adoc)**  
+1. **xref:chrono.adoc[chrono.adoc]**
    *The Master of the Sacred Archives*: Chrono, the ancient sage who oversees the
-   chamber of fate, consults the records of destiny, and tests the resolve of
-   Elijah and Katrina before granting access to martial disciplines.
+   chamber of fate, consults the records of destiny, tests the resolve of the Relic Bearer,
+   and guides archetype selection within the Dream Chamber.

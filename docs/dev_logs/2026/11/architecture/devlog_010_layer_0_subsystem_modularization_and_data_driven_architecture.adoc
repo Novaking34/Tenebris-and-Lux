@@ -1,0 +1,175 @@
+= DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Executive Summary
+
+This development log documents the architectural reorganization and data-driven
+elevation of Layer 0 (Core Utilities) within the *Tenebris and Lux* engine.
+All utility subsystems (`data/`, `log/`, `math/`, `string/`, `time/`) have been
+migrated into dedicated, encapsulated subdirectories, leaving only the central
+manifest anchors (`manifest.h` and `manifest.c`) at the root of `include/util/`
+and `src/util/`. Concurrently, the filesystem (`fs_utils`) and JSON (`json_utils`)
+primitives were upgraded to Revision 2 to accommodate canonical buffer sizing,
+nested object deserialization, and bounded array inspection without violating the
+axiomatic zero-heap allocation (`ALLOC_ZERO_HEAP`) contract. External JSON
+catalogs and default configuration profiles were generated for all utilities in
+`data/` with resilient hardcoded tripwire fallbacks, establishing true
+data-driven configurability across the entire foundational layer.
+
+[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
+____
+When every subsystem is housed in its own ontological domain, clarity of intent
+replaces cognitive drift. Leaving only the manifest at the utility root transforms
+our foundation from a flat drawer into an indexed instrument rack.
+____
+
+== 1. Architectural Motivation & The Problem of Flat Foundations
+
+Prior to this milestone, Layer 0 suffered from structural asymmetry. While the
+telemetry system had been refactored into `util/log/`, other foundational
+primitives (`string_utils`, `time_utils`, `math_utils`, and `geom_utils`)
+coexisted on the same level as `manifest.h` and `manifest.c`.
+
+Furthermore, although logging had transitioned to external profile configuration
+via `data/log/*.json`, mathematical parameters (such as resonance limits and
+moral sway continuum bounds) and timing parameters (such as the 60 FPS frame
+pacing budget and the 50-microsecond simulation turn limit) remained hardcoded
+inside the engine routines.
+
+=== 1.1 Structural Hygiene Objectives
+
+1. **Root Directory Cleanliness**: Maintain only `manifest.h` and `manifest.c` at
+   the root of `include/util/` and `src/util/`.
+2. **Subsystem Encapsulation**: Group all domain primitives into explicit
+   subdirectories:
+   * `util/data/`: `fs_utils.h`, `json_utils.h`, `fs_utils.c`, `json_utils.c`
+   * `util/log/`: `log.h`, `log_fallback.h`, `log.c`, `log_fallback.c`
+   * `util/math/`: `math_utils.h`, `geom_utils.h`, `math_utils.c`, `geom_utils.c`
+   * `util/string/`: `string_utils.h`, `string_utils.c`
+   * `util/time/`: `time_utils.h`, `time_utils.c`
+3. **Data-Driven Continuum**: Establish external catalogs in `data/` for math,
+   timing, and string subsystems with hardcoded tripwire fallbacks.
+4. **Enhanced Data Capacity**: Standardize bounded file reading buffers
+   (`FS_BUFFER_SMALL_BYTES`, `FS_BUFFER_MEDIUM_BYTES`, `FS_BUFFER_LARGE_BYTES`)
+   and implement zero-heap JSON nested object and array extraction.
+
+== 2. Subsystem Stratification & Pathing Standards
+
+Strict include pathing rules enforce explicit stratum and domain declarations
+across the codebase:
+
+[source,c]
+----
+#include "util/manifest.h"
+#include "util/data/fs_utils.h"
+#include "util/data/json_utils.h"
+#include "util/log/log.h"
+#include "util/math/math_utils.h"
+#include "util/math/geom_utils.h"
+#include "util/string/string_utils.h"
+#include "util/time/time_utils.h"
+----
+
+Lazy forwarders at the `include/` root remain strictly forbidden, guaranteeing
+that every translation unit explicitly documents its upstream stratum bindings.
+
+== 3. Revision 2 Filesystem & JSON Engines
+
+=== 3.1 Zero-Heap Filesystem Engine (`core.util.fs` Rev 2)
+
+To accommodate larger external configuration catalogs without heap allocation,
+`fs_utils.h` establishes canonical buffer sizing constants:
+
+[cols="1,1,3", options="header"]
+|===
+| Buffer Constant | Capacity | Intended Machine Role
+| `FS_BUFFER_SMALL_BYTES` | 1,024 B | Headers, status lines, and short tokens
+| `FS_BUFFER_MEDIUM_BYTES` | 8,192 B | Standard profile configurations (< 8 KB)
+| `FS_BUFFER_LARGE_BYTES` | 32,768 B | Aggregate catalogs and world node graphs
+| `FS_BUFFER_MAX_CONFIG` | 65,536 B | Upper limit ceiling for configuration files
+| `FS_PATH_MAX` | 512 B | Maximum supported filepath length
+|===
+
+The module exposes safe bounded file reading (`fs_read_file_bounded`), recursive
+directory creation (`fs_ensure_directory`), and atomic file writing
+(`fs_write_file_contents`) with parent directory provisioning.
+
+=== 3.2 Zero-Heap JSON Engine (`core.util.json` Rev 2)
+
+`json_utils` has been expanded to support nested object navigation and array
+inspection while adhering strictly to `ALLOC_ZERO_HEAP`:
+
+* `json_get_object_string()`: Deserializes scoped keys inside parent objects.
+* `json_get_object_int()`: Deserializes scoped signed integers.
+* `json_get_object_float()`: Deserializes scoped floating-point numbers.
+* `json_get_object_bool()`: Deserializes scoped boolean flags.
+* `json_find_array()`: Discovers `[ ... ]` boundaries with bracket balance.
+* `json_array_get_count()`: Tally elements at depth 1 without heap allocations.
+* `json_array_get_string()`: Extracts the *i*-th string element safely.
+
+== 4. External Data Menus & Fallback Tripwires
+
+Mirroring the architecture established for the logging subsystem, new structured
+data folders have been created in `data/`:
+
+=== 4.1 Mathematical Continuum (`data/math/`)
+
+* `manifest.json`: Menu catalog registering active profile `default`.
+* `default.json`: Canonical limits grounding game metaphysics:
+** Resonance limits: `[0, 100]`
+** Moral sway continuum: `[-100, +100]`
+** Equilibrium band: `25` (sway in `[-25, +25]`)
+** Overload / eclipse thresholds: `+75` and `-75`
+** Viewport dimensions: `800 x 600`
+
+=== 4.2 Timing & Frame Pacing (`data/time/`)
+
+* `manifest.json`: Menu catalog registering `default` and `high_refresh`.
+* `default.json`: 60 FPS profile (`16.666667 ms` frame budget, `50.0 us` turn budget).
+* `high_refresh.json`: 120 FPS profile (`8.333333 ms` frame budget, `25.0 us` turn budget).
+
+=== 4.3 Lexical & Buffer Disciplines (`data/string/`)
+
+* `manifest.json`: Menu catalog registering `default`.
+* `default.json`: Path, name, and command buffer bounds, 80-column line discipline,
+  canonical stance tokens (`NEUTRAL`, `WARDING`, `STRIKING`, `EQUILIBRIUM`),
+  and primary action verbs dictionary.
+
+=== 4.4 The Fallback Tripwire Protocol
+
+When loading configurations, each subsystem first probes external JSON files.
+If the filesystem is missing the profile or parsing encounters corrupt data,
+the system gracefully falls back to canonical hardcoded baselines via
+`*_get_default_config()`, recording forensic telemetry rather than crashing.
+
+== 5. Verification & Telemetry Results
+
+All modifications underwent rigorous automated verification:
+
+1. **Compilation**: Built with `-Wall -Wextra -Wpedantic` yielding zero warnings.
+2. **Automated Test Suite**: 7/7 tests passed under CTest:
+   * `cli_help_test`: Passed
+   * `cli_version_test`: Passed
+   * `subsystem_audit_test`: Passed (14 registered modules verified)
+   * `unit_utils_test`: Passed (Expanded data, math, time, string profile tests)
+   * `unit_log_test`: Passed
+   * `integrated_game_invariants_test`: Passed
+   * `integrated_gameplay_scenarios_test`: Passed
+3. **Master Compendium Compilation**: All 64 chapters compiled across AsciiDoc,
+   GitHub Markdown, and publication PDF via `asciidoctor-pdf`.
+
+== 6. Conclusion & Architectural Reflection
+
+By reorganizing Layer 0 into domain subdirectories, isolating `manifest.h` and
+`manifest.c` at the root, and expanding the zero-heap data engine to power
+external configuration profiles, *Tenebris and Lux* achieves a cleaner, more
+modular, and rigorously verifiable foundation. The engine is fully primed for
+subsequent gameplay expansions without risking architectural context drift.

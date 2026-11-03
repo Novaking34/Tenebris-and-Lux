@@ -1,0 +1,126 @@
+= Ludological System Specification: The Dreamscape & Temporal Architecture
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Overview & Engine Integration
+
+This document specifies the technical, mechanical, and temporal architecture of **The Dreamscape**
+in *Tenebris and Lux*. Grounded in the recovered 2017–2018 RPG Maker MV demo baseline (Maps 006, 008,
+011, 041, 042) and integrated into the ISO C11 engine architecture, it formalizes the planar opening
+sequence with Chrono the Sage, the terrestrial demo gating, the evolution of **Grandma's Watch** into
+**The Dream Compass**, and nocturnal event-driven temporal phasing.
+
+== 1. Engine Architecture & Topological Verification
+
+The Dreamscape is not an ephemeral cutscene or narrative metaphor; it is an active, fully integrated
+subsystem registered within the Layer 1 simulation engine:
+
+=== 1.1. Explicit Province Registration
+The plane is codified as an explicit topological enumeration in `include/sim/sim_types.h`:
+
+[source,c]
+----
+typedef enum {
+    LOC_THE_DREAMSCAPE    = 0,  /* Astral origin, ancestral archive, planar rift */
+    LOC_DIO_VILLAGE       = 1,  /* Pastoral woodland hamlet; Grandma's hearth    */
+    LOC_WHISPERING_WOODS  = 2,  /* Outlying frontier timberlands; beast paths    */
+    LOC_SACYRA_MARCHES    = 3,  /* Fortified royal road to the capital citadel   */
+    LOC_COUNT             = 4
+} location_id_t;
+----
+
+=== 1.2. Tactical LeTBS Battlefields
+The Dreamscape encompasses five dedicated grid environments extracted from the historical archives:
+
+* **Map 006 (Chrono's Archive / The Hall of Sages):** Archetype stone pedestals, floating crystal
+  columns, and ancestral book pedestals.
+* **Map 008 (The Astral Crucible):** Tutorial grid where the bearer tests `Lux Barrio` and
+  `Cuttatio Tenebris` against encroaching void scouts.
+* **Map 011 (The Shifting Leyline Bridges):** Dynamic tactical grid featuring floating platforms
+  and crystal floor switches that alter terrain heights.
+* **Maps 041 & 042 (The Deep Astral Depths):** High-level nocturnally phased battlefields featuring
+  astral leyline conduits that replenish MP while inflicting planar shear.
+
+=== 1.3. Parameterized Combatants: The Dream Eaters
+The Dreamscape is populated by **Dream Eaters**—parasitic entities dispatched across the thinning veil
+by The Dark Lord to devour ancestral records prior to the Festival of Heroes:
+
+[source,text]
+----
+Threat Profile: Dream Eater
+├── Threat HP: 70
+├── Physical Defense (DEF): 11
+├── Arcane Defense (MDF): 8
+├── Flank Vigor: 70
+└── Tactical AI: Rushes fragile casters; vulnerable to radiant deflection (Lux Barrio).
+----
+
+=== 1.4. Bidirectional Topology
+The spatial graph connects seamlessly between the metaphysical and physical planes:
+* Northward: `Awaken` $\to$ `LOC_DIO_VILLAGE` (Grandma Magolia's Hearth).
+* Southward: `Slumber Meditation` $\to$ `LOC_THE_DREAMSCAPE` (Requires Dream Compass nighttime flag).
+
+== 2. Narrative Inception: The Astral Rite of Awakening
+
+=== 2.1. Unformed Potential in the Astral Archive
+The game opens not in a mundane tavern or military camp, but inside the timeless ether of **The Dreamscape**.
+Because this plane houses 3,000 years of ancestral memory—and the marooned soul of the First King—having
+**Chrono the Sage** guide the player through class archetype stones elevates character creation into
+a canonical ritual of spiritual attunement.
+
+=== 2.2. Tri-Perspective Adaptability
+Opening in unformed ether allows the simulation to cleanly accommodate any of the three playable vantage
+points—**Elijah Ro-enheart**, **Lady Katrina Jaren**, or a custom-named bearer (`<chosen_name>`)—before
+their identity crystallizes into physical form.
+
+=== 2.3. The Ludonarrative Shock of "AWAKEN!"
+After proving tactical mastery against Dream Eaters in the abstract void, Chrono banishes the player
+with an urgent command: _"AWAKEN!"_. The immediate cut to Grandma Magolia's crackling birch hearth in
+Dio Village shocks the player into physical reality, establishing a stark contrast between cosmic
+destiny and human vulnerability.
+
+== 3. Terrestrial Gating & The Dream Compass
+
+=== 3.1. Chapter 1 Demo Gating as a Terrestrial Anchor
+Throughout Chapter 1 (the entire demo narrative), the player is strictly locked out of returning to
+The Dreamscape. This design rule prevents premature cosmic dilution, forcing the player to invest
+emotionally in the grounded human stakes of Dio Village:
+* Grandma Magolia's failing health and maternal wisdom.
+* Eric the Lumberjack's economic ruin from monster-infested logging trails.
+* John the Thief's moral crusade against the predatory St. Baron.
+* Monica the Mystic's grief beside the totem of fallen border soldiers.
+
+=== 3.2. From Grandma's Watch to The Dream Compass
+In the opening sequence, the player retrieves **Grandma's Watch** from the upstairs chest in Dio Village
+(Map 020). Mechanically, this initializes the Layer 0 `time_utils` 24-hour monotonic clock:
+
+[source,text]
+----
+Layer 0 Monotonic Clock Subsystem
+├── Seconds / Minutes
+├── Hours (00:00 to 23:59)
+├── Weekdays (1: Sol, 2: Luna, 3: Ignis, 4: Aqua, 5: Terra, 6: Ventus, 7: Aether)
+├── Weeks / Months
+└── Calendar Countdown to The Festival of Heroes
+----
+
+Upon concluding the Chapter 1 demo introduction, Grandma's Watch undergoes its first metaphysical
+transmutation, evolving into **The Dream Compass**.
+
+=== 3.3. Nocturnal Synchronization & Scarcity
+The Dream Compass acts as a dimensional resonant tuning fork with strict activation criteria:
+* **Nighttime Window Only:** The Dream Compass functions exclusively during nocturnal hours
+  (`20:00 <= hour || hour <= 04:00`). During daylight hours, the compass needle spins aimlessly.
+* **Event-Driven Astral Windows:** Nocturnal side quests and main story trials in The Dreamscape
+  manifest only during specific astrological alignments and calendar milestones.
+* **Scarcity and Sacred Weight:** By restricting access to nocturnal windows, The Dreamscape is
+  prevented from becoming a trivial grinding hub, preserving its sacred mystery and directly linking
+  quest availability to the monotonic clock's relentless countdown toward the Festival of Heroes.

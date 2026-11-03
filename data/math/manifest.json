@@ -1,0 +1,39 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/math/manifest.json",
+    "id": "data.math.manifest",
+    "layer": "Layer 0 Data / Catalog",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Manifest and menu for all mathematical continuum and numerical profiles.",
+    "invariants": [
+      "Every registered profile file must exist in data/math/",
+      "Profiles must declare unique IDs",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.math_menu.v1",
+    "target_subsystem": "core.util.math"
+  },
+  "active_profile": "default",
+  "profiles": [
+    {
+      "id": "default",
+      "display_name": "Standard Continental Continuum Baseline",
+      "file": "default.json",
+      "description": "Canonical limits: Resonance [0, 100], Moral Sway [-100, +100], Screen 800x600."
+    }
+  ],
+  "_audit": {
+    "profile_count": 1,
+    "active_valid": true
+  },
+  "_navigation": {
+    "parent_menu": "../manifest.json",
+    "current_directory": "data/math"
+  }
+}

@@ -6,8 +6,8 @@
 // @file          world.c
 // @id            sim.engine.world
 // @layer         Layer 1: Simulation Engine
-// @version       1.0.0
-// @interface_rev Rev 1
+// @version       1.2.0
+// @interface_rev Rev 3
 // @date          2026-10-30
 // @updated       2026-10-30
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -15,10 +15,11 @@
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Topographical world map implementation, province lore strings, movement
-//   routing across the Kingdom of Sacyra, and encounter triggers.
+//   routing across the Kingdom of Sacyra and The Dreamscape, and encounter
+//   triggers grounded in the 2017-2018 demo baseline.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: sim.types.common, core.util.log
+//   - Upstream Dependencies: sim.types.common, core.util.log, core.util.string
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation)
 //   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state transitions)
 //   - Latency Budget:        < 15 microseconds per movement action
@@ -36,29 +37,29 @@
 // =============================================================================
 
 #include "sim/world.h"
-#include "util/log.h"
+#include "util/log/log.h"
+#include "util/string/string_utils.h"
 
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
 static const char *s_location_names[LOC_COUNT] = {
-    "The Garrison Altar",
-    "The Sunken Citadel Gates",
-    "The Fractured Marches",
-    "The Abyssal Threshold"
+    "The Dreamscape",
+    "Dio Village",
+    "Whispering Woods",
+    "The Sacyran Marches"
 };
 
 static const char *s_location_descriptions[LOC_COUNT] = {
-    "Ancestral redoubt of the Wardens. Twin pedestals of solar silver and "
-    "star-quenched obsidian stand ready to channel the Shield of Lux and "
-    "Sword of Tenebris.",
-    "White granite battlements scorched by void-fire. Beyond the fractured "
-    "portcullis, the vanguard legions of the Dark Lord Malakor gather.",
-    "A windswept highland where Solar Order knights and Umbral Covenant "
-    "partisans clash in civil strife, blind to the true encroaching terror.",
-    "The shattered monolith gates of the Dark Lord Malakor. Reality bends "
-    "as shadow tendrils strike against the radiant barrier of starlight."
+    "The ethereal realm of trials where the illusion of the dream shatters "
+    "and Dream Eaters gather under the command of The Dark Lord.",
+    "Ancestral pastoral hamlet in the Sacyran woodlands. Grandma Magolia's "
+    "hearth, Eric's timber yard, and the starting redoubt of the journey.",
+    "Dense ancient forest enveloping Dio Village. Whispering foliage "
+    "conceals predatory beasts and shadow outriders.",
+    "The windswept frontier marches of the Kingdom of Sacyra, leading "
+    "toward the Royal Court of King Jihad."
 };
 
 static const char *const s_world_invariants[4] = {
@@ -72,8 +73,8 @@ const module_metadata_t world_manifest = {
     "sim.engine.world",
     "world.h",
     LAYER_1_SIMULATION,
-    { 1, 0, 0 },
-    1,                          // interface_rev
+    { 1, 2, 0 },
+    3,                          // interface_rev
     "2026-10-30",               // last_updated
     "Topographical province graph, lore chronicle, and traversal routing",
     2,                          // dependency_count
@@ -122,7 +123,7 @@ bool world_handle_move(player_state_t *state, const char *direction,
     if (direction == NULL || strlen(direction) == 0) {
         if (out_msg) {
             snprintf(out_msg, msg_len,
-                     "Specify a direction (north, south, east, west).");
+                     "Specify a direction (north, south, east, west, awaken).");
         }
         printf("Travel where? Specify a direction (e.g. 'move north').\n");
         return false;
@@ -132,19 +133,29 @@ bool world_handle_move(player_state_t *state, const char *direction,
     char dir = (char)tolower((unsigned char)direction[0]);
 
     switch (state->location) {
-    case LOC_GARRISON_ALTAR:
-        if (dir == 'n') next_loc = LOC_CITADEL_GATES;
+    case LOC_THE_DREAMSCAPE:
+        if (dir == 'n' || dir == 'a') {
+            next_loc = LOC_DIO_VILLAGE;
+        }
         break;
-    case LOC_CITADEL_GATES:
-        if (dir == 's') next_loc = LOC_GARRISON_ALTAR;
-        else if (dir == 'n') next_loc = LOC_DIVIDED_MARCHES;
+    case LOC_DIO_VILLAGE:
+        if (dir == 's') {
+            next_loc = LOC_THE_DREAMSCAPE;
+        } else if (dir == 'n') {
+            next_loc = LOC_WHISPERING_WOODS;
+        }
         break;
-    case LOC_DIVIDED_MARCHES:
-        if (dir == 's') next_loc = LOC_CITADEL_GATES;
-        else if (dir == 'e') next_loc = LOC_ABYSSAL_THRESHOLD;
+    case LOC_WHISPERING_WOODS:
+        if (dir == 's') {
+            next_loc = LOC_DIO_VILLAGE;
+        } else if (dir == 'e' || dir == 'n') {
+            next_loc = LOC_SACYRA_MARCHES;
+        }
         break;
-    case LOC_ABYSSAL_THRESHOLD:
-        if (dir == 'w') next_loc = LOC_DIVIDED_MARCHES;
+    case LOC_SACYRA_MARCHES:
+        if (dir == 'w' || dir == 's') {
+            next_loc = LOC_WHISPERING_WOODS;
+        }
         break;
     default:
         break;
@@ -152,13 +163,13 @@ bool world_handle_move(player_state_t *state, const char *direction,
 
     if (next_loc == state->location) {
         if (out_msg) {
-            snprintf(out_msg, msg_len, "Path blocked in that direction.");
+            snprintf(out_msg, msg_len, "Path blocked or impassable in that direction.");
         }
         printf("The path is impassable or contested in that direction.\n");
 
         LOG_WARN(
             LOG_CAT_EVENT,
-            "Protagonists",
+            state->name,
             log_percent_to_grade(state->moral_sway),
             "Movement blocked or impassable toward direction: '%s'.",
             direction
@@ -168,32 +179,43 @@ bool world_handle_move(player_state_t *state, const char *direction,
 
     state->location = next_loc;
 
-    if (state->location == LOC_CITADEL_GATES && state->foes_vanquished == 0) {
-        state->threat_hp = 50;
-    } else if (state->location == LOC_ABYSSAL_THRESHOLD &&
-               state->threat_hp == 0) {
-        state->threat_hp = 90;
+    /* Encounter Triggers Grounded in Lore Baseline */
+    if (state->location == LOC_WHISPERING_WOODS && state->foes_vanquished <= 1) {
+        str_safe_copy(state->threat_name, "Umbral Wolf", sizeof(state->threat_name));
+        state->threat_hp = 85;
+        state->threat_max_hp = 85;
+        state->threat_def = 14;
+        state->threat_mdf = 10;
+        state->threat_surrounding_hp = 60;
+    } else if (state->location == LOC_SACYRA_MARCHES && state->threat_hp == 0) {
+        str_safe_copy(state->threat_name, "Shadow Scout", sizeof(state->threat_name));
+        state->threat_hp = 110;
+        state->threat_max_hp = 110;
+        state->threat_def = 18;
+        state->threat_mdf = 14;
+        state->threat_surrounding_hp = 80;
     }
 
     if (out_msg) {
-        snprintf(out_msg, msg_len, "Marched into %s.",
+        snprintf(out_msg, msg_len, "Traversed into %s.",
                  s_location_names[next_loc]);
     }
-    printf("You march forward across the Kingdom...\n");
+    printf("You journey forward across the realm...\n");
     printf("\n[%s]\n%s\n", s_location_names[state->location],
            s_location_descriptions[state->location]);
     if (state->threat_hp > 0) {
-        printf("[!] A vanguard patrol blocks your path (Vigor: %d/100)!\n",
-            state->threat_hp);
+        printf("[!] A hostile presence blocks your path: %s (Vigor: %d/%d)!\n",
+            state->threat_name, state->threat_hp, state->threat_max_hp);
     }
     printf("\n");
 
     LOG_INFO(
         LOG_CAT_EVENT,
-        "Protagonists",
+        state->name,
         log_percent_to_grade(state->moral_sway),
-        "Marched into provincial region '%s' (Threat HP: %d).",
+        "Journeyed into realm '%s' (Threat: %s, Vigor: %d).",
         s_location_names[next_loc],
+        state->threat_name,
         state->threat_hp
     );
     return true;
@@ -223,30 +245,31 @@ diag_result_t world_preflight(void)
         }
     }
 
-    // Verify bi-directional path: Garrison Altar (North) -> Citadel Gates (South)
+    // Verify bi-directional path: The Dreamscape (North) -> Dio Village (South)
     player_state_t test;
     memset(&test, 0, sizeof(test));
-    test.location = LOC_GARRISON_ALTAR;
+    str_safe_copy(test.name, DEFAULT_PROTAGONIST_NAME, sizeof(test.name));
+    test.location = LOC_THE_DREAMSCAPE;
 
     if (!world_handle_move(&test, "north", NULL, 0) ||
-        test.location != LOC_CITADEL_GATES) {
+        test.location != LOC_DIO_VILLAGE) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Northbound movement from Garrison Altar failed.";
+        res.details = "Awakening movement from The Dreamscape to Dio Village failed.";
         return res;
     }
 
     if (!world_handle_move(&test, "south", NULL, 0) ||
-        test.location != LOC_GARRISON_ALTAR) {
+        test.location != LOC_THE_DREAMSCAPE) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Southbound return to Garrison Altar failed (asymmetry).";
+        res.details = "Southbound return to The Dreamscape failed (asymmetry).";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "Provincial topology and bi-directional routing verified.";
+    res.details = "Provincial topology and Dreamscape routing verified.";
     return res;
 }
 

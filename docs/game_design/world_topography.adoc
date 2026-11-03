@@ -1,6 +1,6 @@
-= World Topography & Encounter Design: The Kingdom of Sacyra
+= World Topography & Encounter Design: The Kingdom of Sacyra & The Dreamscape
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v1.2.0, 2026-10-30
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -11,67 +11,83 @@ v0.0.1, 2026-10-26
 [abstract]
 == Overview
 
-This document specifies the spatial geography, province layouts, environmental encounters,
-and tactical grid battlefields governing the **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*)
-as Elijah Ro-enheart and Katrina Jaren defend the realm from Dark Lord Malakor.
+This document specifies the authentic spatial geography, province layouts, environmental encounters,
+and tactical grid battlefields governing the **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`)
+and **The Dreamscape**, grounded in the recovered 2017–2018 demo baseline.
+While **The Dark Lord** looms as the overarching existential threat in the background ("A Plot"),
+the narrative begins within the ethereal trials of **The Dreamscape** before awakening into the pastoral
+hamlet of **Dio Village**. Players may guide the canonical champions (**Elijah Ro-enheart** and
+**Katrina Jaren**) or customize their chosen bearer's designation.
 
-== 1. Spatial Structure: The Provinces of Sacyra
+== 1. Spatial Structure: The Realm Topology
 
-The Tactical Strategy RPG campaign progresses across the major defensive tiers of the Kingdom:
+The campaign begins in the trial realm of slumber and transitions into the physical topology of Sacyra:
 
 [source,text]
 ----
 ┌───────────────────────────────────────┐
-│         The Abyssal Threshold         │
-│  (Dark Lord Malakor's Dread Monolith) │
+│          The Sacyran Marches          │
+│  (Royal Frontier towards the Capital) │
 └───────────────────▲───────────────────┘
-                    │ West
+                    │ East / North
 ┌───────────────────┴───────────────────┐
-│         The Fractured Marches         │
-│ (Contested Borderlands & Guild Camp)  │
-└───────────────────▲───────────────────┘
-                    │ North / South
-┌───────────────────┴───────────────────┐
-│        Sunken Citadel Ramparts        │
-│     (Outer Royal Bastion & Gates)     │
+│           Whispering Woods            │
+│  (Ancient Forest Surrounding Hamlet)  │
 └───────────────────▲───────────────────┘
                     │ North / South
 ┌───────────────────┴───────────────────┐
-│          The Garrison Altar           │
-│  (Royal Guard Ancestral Headquarters) │
+│              Dio Village              │
+│  (Grandma Magolia's Hearth & Timber)  │
+└───────────────────▲───────────────────┘
+                    │ Awaken / North
+┌───────────────────┴───────────────────┐
+│            The Dreamscape             │
+│   (Trial Realm & Dream Eater Combat)  │
 └───────────────────────────────────────┘
 ----
 
-=== 1. The Garrison Altar (`LOC_GARRISON_ALTAR`)
-* **Role**: The ancestral redoubt of Sacyra's Royal Guard and the starting staging ground.
-* **Environment**: High-vaulted halls of carved silver-white granite and polished obsidian pedestals where Elijah's father once held council.
-* **Significance**: Here, Elijah Ro-enheart and Katrina Jaren first awaken the dormant Shield of Lux and Sword of Tenebris as reports of Malakor's vanguard arrive.
-* **Grid Battlefield**: Smooth stone flags, defensive pillars providing $+15\%$ cover, training dummies, weapon racks.
-* **Threat Vigor**: $0$ (Sanctified safe zone; tactical deployment and stance tutorial).
-* **Connections**: North $\to$ Sunken Citadel Ramparts.
+=== 1. The Dreamscape (`LOC_THE_DREAMSCAPE`)
+* **Role**: The ethereal realm of ancient trials guided by Chrono where the illusion of the dream shatters.
+* **Environment**: Floating crystal archways, shifting astral mist, and mechanism trial chambers.
+* **Significance**: The hero awakens here to learn the fundamentals of combat and relic resonance.
+  Dream Eaters gather under the distant influence of **The Dark Lord**.
+* **Encounter**: **Dream Eater** ($70$ Threat HP, $11$ DEF, $8$ MDF, $70$ Flank Vigor).
+* **Grid Battlefield**: Astral tiles, floating platforms, and ethereal leylines granting MP regeneration.
+* **Connections**: North / Awaken $\to$ Dio Village.
 
-=== 2. Sunken Citadel Ramparts (`LOC_CITADEL_GATES`)
-* **Role**: The primary fortified bastion guarding the central valleys of Sacyra.
-* **Environment**: Colossal stone ramparts scorched by void-fire; fractured portcullises and smoking ballista batteries.
-* **Encounter**: **Malakor's Void Vanguard Captain** ($50$ Threat HP) commanding shock troops and blighted footmen.
-* **Tactical Grid Elements**:
-  - Narrow stone choke-points where Elijah's *Royal Intercept* and Shield of Lux can hold off numerical superiority.
-  - Rampart parapets offering Katrina elevated flanking routes and line-of-sight plunging strikes.
-* **Connections**: South $\to$ Garrison Altar; North $\to$ Fractured Marches.
+=== 2. Dio Village (`LOC_DIO_VILLAGE`)
+* **Role**: Pastoral ancestral hamlet in Sacyra; the true awakening point of the physical journey.
+* **Environment**: Cozy stone cottages with thatched roofs, Grandma Magolia's welcoming hearth,
+  Eric the lumberjack's timber yard, and the local general trading post.
+* **Significance**: Here the hero recovers Grandma's Watch and the *Compass of Morality*, encountering
+  village folk before venturing into the perilous wilds.
+* **Threat Vigor**: $0$ (Sanctified village sanctuary; recovery, dialogue, and lore exchange).
+* **Connections**: South $\to$ The Dreamscape (slumber meditation); North $\to$ Whispering Woods.
 
-=== 3. The Fractured Marches (`LOC_DIVIDED_MARCHES`)
-* **Role**: The windswept highlands along the Kingdom's frontier, home to forward outposts of the **Adventurers' Guild** and noble house estates.
-* **Environment**: Rolling rocky hills, abandoned watchtowers, and misty ravines where royal army patrols and guild outriders clash with vanguard skirmishers.
-* **Encounter**: **Corrupted Golem Vanguard & Shadow Stalkers** ($70$ Threat HP).
+=== 3. Whispering Woods (`LOC_WHISPERING_WOODS`)
+* **Role**: Dense ancient forest enveloping Dio Village, separating the hamlet from the kingdom's interior.
+* **Environment**: Towering ironwood boughs, rustling autumn canopy, and hidden woodland trails.
+* **Encounter**: **Umbral Wolf** ($85$ Threat HP, $14$ DEF, $10$ MDF, $60$ Flank Vigor).
 * **Tactical Grid Elements**:
-  - Uneven terrain, forest thickets granting $+20\%$ evasion, and muddy ditches that slow heavy armor.
-  - Katrina's knowledge of local guild ranger paths allows the party to surprise enemy artillery from the rear.
-* **Connections**: South $\to$ Sunken Citadel Ramparts; West $\to$ Abyssal Threshold.
+  - Forest thickets providing $+20\%$ evasion against ranged physical assault.
+  - Tree root chokepoints where *Lux Barrio* shields flanking allies from pack ambushes.
+* **Connections**: South $\to$ Dio Village; East / North $\to$ The Sacyran Marches.
 
-=== 4. The Abyssal Threshold (`LOC_DARK_LORD_THRESHOLD`)
-* **Role**: The dark frontier where the fabric of reality bends into the subterranean vaults of Dark Lord Malakor.
-* **Environment**: Jagged obsidian monoliths, boiling void-mist chasms, and anti-radiant storms.
-* **Encounter**: **Dread Lord Vanguard Commander** ($90 \dots 100$ Threat HP).
+=== 4. The Sacyran Marches (`LOC_SACYRA_MARCHES`)
+* **Role**: The windswept frontier marches leading toward the Royal Court of King Jihad and the Capital.
+* **Environment**: Craggy hills, fortified signal towers, and military encampments.
+* **Encounter**: **Shadow Scout & Vanguard Patrol** ($110$ Threat HP, $18$ DEF, $14$ MDF, $80$ Flank Vigor).
 * **Tactical Grid Elements**:
-  - Void Mire tiles causing $-5$ HP per turn, demanding strict stance management and the Shield of Lux's purifying aura to cross safely.
-  - Multi-tile boss presence demanding coordinated tandem strikes between Elijah and Katrina to shatter dread shields.
+  - Trenches, palisades, and elevated ramparts where *Cuttatio Tenebris* cleaves through enemy formations.
+  - Broad fields allowing full maneuverability of twin-relic equilibrium strikes.
+* **Connections**: West / South $\to$ Whispering Woods.
+
+== 2. The Overarching Menace: The Dark Lord
+
+In the authentic 2017–2018 canonical script, the ultimate antagonist is designated strictly as **The Dark Lord**:
+* He is never named "Malakor" or burdened with synthetic titles in canon.
+* The Dark Lord represents the primordial threat looming in the distance ("The A Plot"), while regional
+  intrigues—such as King Jihad's political maneuvers, Noble House power struggles, and the Adventurers' Guild
+  missions—unfold on the active stage.
+* The wielder's mastery of the Shield of Lux and Sword of Tenebris prepares them for this looming confrontation
+  without rushing directly into the final battle.

@@ -1,0 +1,44 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/time/default.json",
+    "id": "data.time.profile.default",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Default 60 FPS timing and latency budget configuration profile matching Layer 0 time_utils contracts.",
+    "invariants": [
+      "Target FPS must be strictly positive",
+      "Frame budget in ms must equal 1000.0 / target_fps",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.time_profile.v1",
+    "target_struct": "time_config_t",
+    "header_binding": "include/util/time/time_utils.h"
+  },
+  "profile": {
+    "id": "default",
+    "display_name": "Standard 60 FPS Engine Timing Profile",
+    "description": "Standard 60 Hz frame pacing with 50 us simulation turn latency budget.",
+    "target_fps": 60,
+    "frame_budget_ms": 16.666667,
+    "turn_latency_budget_us": 50.0,
+    "preflight_latency_budget_us": 1000.0,
+    "disk_query_budget_us": 500.0,
+    "token_extraction_budget_us": 50.0,
+    "tick_rate_hz": 60
+  },
+  "_audit": {
+    "expected_ms_per_frame": 16.666667,
+    "max_simulation_turn_cost_pct": 0.3,
+    "monotonic_clock_source": "CLOCK_MONOTONIC"
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 1
+  }
+}

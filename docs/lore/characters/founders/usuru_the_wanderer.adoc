@@ -1,0 +1,93 @@
+= Historical Dossier: Usuru the Wanderer (The Sovereign of Grief & The First Broken Crown)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+Before he was feared across the ages as **The Dark Lord**, he was a nameless boy born to an
+impoverished family on the arid borders of the **Kingdom of Libira** during Era IV. Known
+as the **Three-Day Wanderer** because he could never bear to settle in any settlement for
+more than three sunsets, he held an unyielding, reverent devotion to the First King and the
+splendor of the Capital. Driven by the "Quiet Complaint" of his neglected homeland and
+catastrophically altered by the snapping of the planar tether during the 11th Festival of Peoples,
+Usuru chose his name in defiance, crowned himself sovereign of Libira, and declared the
+devastating **Seven-Year Great War**.
+
+[quote, Sovereign Usuru, Speech to the Assembly of Libira - Dawn of the Great War]
+____
+We waited seven days for their riders to tell us if our children were allowed to starve.
+We bowed when their golden heralds told us that peace demanded our silence. But when I
+reached out to touch the King's light, it burned my skin and sealed our skies. They did
+not leave us behind by mistake—they left us behind because we were quiet. Libira will be
+quiet no longer.
+____
+
+== 1. Identity & Origin
+
+* **Birth Identity**: Nameless Boy of Libira (Born to a frontier shepherd family).
+* **Chosen Name**: **Usuru** (Ancient Libiran root meaning *"He Who Remembers What Was Buried"*).
+* **Historical Era**: Era IV–V (approximately 3,000 Years Ago, Pre-Dynastic Wave).
+* **Titles**: The Three-Day Wanderer; Sovereign of the Red Desert; Vanguard of the Broken Crown;
+  later corrupted across the millennia into **The Dark Lord**.
+* **Affiliation**: Kingdom of Libira; Supreme Commander of the 6-Power Coalition against Sacyra.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Specification
+| **Defining Trait** | Restlessness; profound observational empathy curdling into volcanic resentment.
+| **Original Motivation**| Yearning to bridge the geographic and communication gulf between Libira and Sacyra.
+| **Thematic Axis** | **The Past** (The unhealed frontier wound, mirrored by Elijah Ro-enheart).
+|===
+
+== 2. The Wanderer's Pilgrimage & The "Quiet Complaint"
+
+Due to the lack of an outpost relay system, a message sent from the Royal Capital took seven
+grueling days of desert riding to reach Libira. While the capital feasted, Libira struggled
+against drought, bandit raids, and forgotten infrastructure.
+
+1. **The Three-Day Law**: Growing up, the boy walked the breadth of the continent, staying no more
+   than three days in any village. He listened to commoners, blacksmiths, and outriders, cataloging
+   the quiet complaints of the forgotten provinces.
+2. **The Annual Pilgrimage**: The sole exception to his three-day rule was the annual **Festival of
+   Peoples** in the capital, where he stayed an entire week, gazing with awe at the High Throne and
+   the First King.
+3. **The 11th Year Catastrophe**: During the 11th festival, determined to deliver a petition for a
+   Libiran relay road, the boy slipped into the Inner Sanctum beneath the High Throne. Startled by
+   guards, he accidentally struck the ritual focus stone. The planar tether snapped, venting primordial
+   abyssal energy that sealed the First King in the Dreamscape and violently warped the distance
+   between Libira and Sacyra into an impenetrable spatial rift.
+
+[WARNING]
+====
+Believing the sudden spatial expansion was a deliberate imperial curse cast by the Sacyran court
+to permanently exile Libira, the boy's devotion inverted into pure, consuming hatred.
+====
+
+== 3. Ascension, War & Metaphysical Corruption
+
+Returning across the warped desert passes, the youth took the name **Usuru**, mounted the dais
+of the Libiran assembly hall, and proclaimed the end of subservience:
+
+* **The Crown of Libira**: Libirans, enraged by generations of neglect and royal silence, crowned
+  Usuru by unanimous acclamation.
+* **The 6-Power Conflagration**: Forging military alliances with the Great Mau Kingdom, Old Sacyra,
+  and the Yun-yin Provinces, Usuru ignited the **Seven-Year Great War**.
+* **Descent into Ruin**: To match the invulnerable barrier of the *Shield of Lux*, Usuru dipped his
+  soul repeatedly into the abyssal breach beneath the battlefield, forging void constructs and
+  commanding *Dream Eaters*. By the war's end, his humanity had burned away, leaving behind the
+  eternal, brooding sovereign now remembered only as **The Dark Lord**.
+
+== 4. Thematic Mirror: Elijah Ro-enheart & Usuru
+
+Usuru serves as the tragic historical negative to **Elijah Ro-enheart**:
+
+* Both originate from the marginalized periphery (frontier Libira vs. neglected Dio Village).
+* Both suffer from the abrupt disappearance of a revered paternal figure (The First King vs. Commander Gareth).
+* Where Usuru allowed his frontier grievance to consume him into becoming a monster of vengeance,
+  Elijah must learn to acknowledge his family's pain without repeating Usuru's destructive crusade.

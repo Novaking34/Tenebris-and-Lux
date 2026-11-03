@@ -1,0 +1,9 @@
+= Sacyran Threats & Antagonists Compendium
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+
+This directory archives dossiers on the hostile entities, void forces, and overarching antagonists of *Tenebris and Lux*:
+
+* link:the_dark_lord.adoc[The Dark Lord]: The unnamed overarching existential threat looming across Sacyra ("A Plot").
+* link:dream_eaters.adoc[Dream Eaters]: Astral parasites inhabiting The Dreamscape trial chamber.

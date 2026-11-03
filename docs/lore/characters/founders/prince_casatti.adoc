@@ -1,0 +1,78 @@
+= Historical Dossier: Prince Casatti (The Outrider Prince & Blade of Truth)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+
+[abstract]
+== Overview
+
+**Prince Casatti** was the younger founding prince of Sacyra during Era I. Rejecting the
+ceremonial comforts of the royal palace, Casatti rode into the frontier wilderness to chart
+the uncharted reaches of the continent. Falling into a mysterious **Four-Year Coma** after
+contacting an ethereal boundary stone, Casatti awakened with transfigured perception,
+wielding the **Sword of Tenebris** as an instrument of decisive severance and unvarnished truth.
+In the overarching narrative of *Tenebris and Lux*, Casatti serves as the direct historical
+predecessor and spiritual mirror to **Lady Katrina Jaren**.
+
+[quote, Prince Casatti, Fragmented Journal Recovered from the Whispering Caverns]
+____
+My brother measures safety by the thickness of a parapet. He does not understand that
+stone can rot from within while looking immaculate to the sun. There are times when peace
+is simply another word for cowardice. When the branch turns gangrenous, you do not bless
+it with oil—you strike it from the trunk.
+____
+
+== 1. Identity & Provenance
+
+* **Full Title**: Prince Casatti the Swift, The Frontier Ranger, Bearer of the First Edge.
+* **Dynastic Era**: Era I–II (Founding Epoch, approximately 3,000 Years Before the Main Campaign).
+* **Affiliation**: Royal House of Sacyra; Spiritual Patron of the Outrider Scouts and Adventurers' Guild.
+* **Familial Ties**:
+  - **Brother**: **Prince Mi-ren**, the elder sovereign who held the capital vigil.
+  - **Spiritual Heir**: **Lady Katrina Jaren**, who inherits his martial mindset, defiance of
+    aristocratic complacency, and razor-sharp swordsmanship.
+
+[cols="1,2", options="header"]
+|===
+| Dimension | Characteristic Specification
+| **Martial Discipline** | High-mobility skirmishing, critical edge strikes, flank severance.
+| **Metaphysical Affinity** | **The Sword of Tenebris** (Resonance with severance, decisive truth, shadow).
+| **Thematic Anchor** | Radical Truth, Severing Stagnation, Rejection of Hypocrisy.
+|===
+
+== 2. The Four-Year Slumber & The Ethereal Transfiguration
+
+While exploring the frontier passes bordering the ancient realm of Libira, Casatti touched
+an anomalous obsidian monolith vibrating with abyssal frequency. The contact thrust him into
+a deep suspended animation that lasted four full years:
+
+1. **The Slumber**: For forty-eight months, his body rested unaging in the capital while his
+   consciousness traversed the deeper strata of **The Dreamscape**.
+2. **The Awakening**: Upon awakening, Casatti no longer viewed darkness as an evil force to be
+   feared, but as the quiet, necessary soil from which all life and truth spring.
+3. **The Sword of Tenebris**: Crafting the ancestral blade that would become the counterpart
+   to the Shield of Lux, Casatti demonstrated that light without darkness produces blinding
+   arrogance, while darkness tempered by discipline brings clarity.
+
+[IMPORTANT]
+====
+Casatti's critique of the royal court's decadence was violently rejected by the conservative
+nobles of Sacyra. Frustrated by courtly hypocrisy, he spent his remaining years defending
+the frontier peasantry, establishing the traditions later adopted by the **Adventurers' Guild**.
+====
+
+== 3. Thematic Mirror: Katrina Jaren & Prince Casatti
+
+The narrative parallels between Prince Casatti and Lady Katrina Jaren are exact:
+
+* **Aristocratic Renunciation**: Just as Casatti abandoned the throne room to live among frontier
+  scouts, Katrina abandons her aristocratic seat on the Royal Court to join the commoners of the
+  Adventurers' Guild.
+* **The Blade of Severance**: Both wield the Sword of Tenebris not to conquer, but to cut through
+  political lies, aristocratic complacency, and ideological self-deception.
+* **The Present Axis**: In the narrative triad, both embody **The Present**—the urgent necessity
+  to take decisive action against immediate injustice rather than hiding behind royal procedure.

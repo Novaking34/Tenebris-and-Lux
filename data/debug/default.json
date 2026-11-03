@@ -1,0 +1,50 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/debug/default.json",
+    "id": "data.debug.profile.default",
+    "layer": "Layer 0 Data / Configuration",
+    "version": "1.0.0",
+    "date": "2026-11-02",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Default debugger configuration profile balancing snapshot frequency, inspection dumps, and tripwires.",
+    "invariants": [
+      "Snapshot ring buffer capacity must not exceed DEBUG_MAX_SNAPSHOTS (64)",
+      "Tripwire traps must latch deterministically without crashing the engine",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.debug_profile.v1",
+    "target_struct": "debug_config_t",
+    "header_binding": "include/util/debug/debug.h"
+  },
+  "profile": {
+    "id": "default",
+    "display_name": "Standard Developer Debugging Baseline",
+    "description": "Balanced state snapshot ring buffer, tripwire traps, and balanced turn tracing.",
+    "enabled": true,
+    "break_on_error": false,
+    "break_on_tripwire": true,
+    "break_on_sway_breach": true,
+    "break_on_resonance_breach": true,
+    "break_on_hp_zero": true,
+    "break_on_stance_change": false,
+    "max_snapshots": 64,
+    "snapshot_interval_turns": 1,
+    "auto_dump_on_tripwire": true,
+    "interactive_repl": true,
+    "ansi_color": true,
+    "trace_channels": "sim,combat,world,dispatcher"
+  },
+  "_audit": {
+    "snapshot_capacity": 64,
+    "trap_guards_active": 4,
+    "verified_zero_heap": true
+  },
+  "_navigation": {
+    "parent_menu": "manifest.json",
+    "menu_index": 1
+  }
+}

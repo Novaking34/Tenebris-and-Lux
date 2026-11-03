@@ -1,0 +1,109 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/manifest.json",
+    "id": "data.root.manifest",
+    "layer": "Data-Driven Subsystem Root",
+    "version": "1.0.0",
+    "date": "2026-10-30",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Root data manifest acting as the master menu for all data-driven game subsystems.",
+    "invariants": [
+      "All registered subsystem paths must point to valid subdirectories containing their own manifest.json",
+      "Subsystem identifiers must be unique across the entire data catalog",
+      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.root_catalog.v1",
+    "subsystem_status_types": [
+      "active",
+      "in_development",
+      "planned"
+    ]
+  },
+  "subsystems": [
+    {
+      "id": "log",
+      "title": "Logging & Diagnostic Telemetry Subsystem",
+      "description": "Log runtime configurations, telemetry depth, and console output settings.",
+      "manifest_path": "log/manifest.json",
+      "status": "active",
+      "category": "core_engine"
+    },
+    {
+      "id": "math",
+      "title": "Mathematical Continuum & Invariant Subsystem",
+      "description": "Resonance limits, moral sway continuum, equilibrium bands, and HUD scaling.",
+      "manifest_path": "math/manifest.json",
+      "status": "active",
+      "category": "core_engine"
+    },
+    {
+      "id": "time",
+      "title": "Monotonic Timing & Frame Pacing Subsystem",
+      "description": "60/120 FPS frame budgets, simulation turn latency, and monotonic clock.",
+      "manifest_path": "time/manifest.json",
+      "status": "active",
+      "category": "core_engine"
+    },
+    {
+      "id": "string",
+      "title": "Lexical Buffer & Command Tokens Subsystem",
+      "description": "Buffer limits, stance tokens, and canonical action verb dictionaries.",
+      "manifest_path": "string/manifest.json",
+      "status": "active",
+      "category": "core_engine"
+    },
+    {
+      "id": "debug",
+      "title": "Interactive Engine Debugger & State Rewind Subsystem",
+      "description": "State snapshots, time-travel rewind, breakpoint watchpoints, tripwire traps, and trace telemetry.",
+      "manifest_path": "debug/manifest.json",
+      "status": "active",
+      "category": "core_engine"
+    },
+    {
+      "id": "combat",
+      "title": "Tactical Combat & Stance Mechanics",
+      "description": "Grid formations, action point economy, and relic stance transitions.",
+      "manifest_path": "combat/manifest.json",
+      "status": "planned",
+      "category": "simulation"
+    },
+    {
+      "id": "relics",
+      "title": "Twin Relics Continuum (Lux & Tenebris)",
+      "description": "Shield of Lux and Sword of Tenebris resonance thresholds and affinity curves.",
+      "manifest_path": "relics/manifest.json",
+      "status": "planned",
+      "category": "simulation"
+    },
+    {
+      "id": "actors",
+      "title": "Protagonists, Court Nobles & Adversaries",
+      "description": "Elijah, Katrina, Royal Guard, and Abyssal Vanguard entities.",
+      "manifest_path": "actors/manifest.json",
+      "status": "planned",
+      "category": "narrative"
+    },
+    {
+      "id": "world",
+      "title": "Kingdom of Sacyra & Dreamscape Topology",
+      "description": "Regional node graph, travel vigor consumption, and realm threat tiers.",
+      "manifest_path": "world/manifest.json",
+      "status": "planned",
+      "category": "world"
+    }
+  ],
+  "_audit": {
+    "manifest_count": 9,
+    "active_subsystems": 5,
+    "integrity_check": "All paths relative to data root"
+  },
+  "_navigation": {
+    "home_dir": "data",
+    "primary_menu": "log/manifest.json"
+  }
+}

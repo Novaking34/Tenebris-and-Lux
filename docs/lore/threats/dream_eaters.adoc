@@ -1,0 +1,18 @@
+= Threat Dossier: Dream Eaters
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-10-30
+:doctype: article
+:sectnums:
+:icons: font
+
+== 1. Astral Parasites of the Slumber Realm
+
+**Dream Eaters** are shifting metaphysical entities native to the borders of The Dreamscape.
+
+* **Nature**: Astral parasites that feed on unresolved regrets, fears, and psychic vulnerabilities.
+* **Combat Role**:
+  - Manifesting during Chrono's trial, they serve as the opening combat challenge in the game.
+  - **Base Vigor**: $70$ Threat HP.
+  - **Defensive Attributes**: $11$ Physical Defense (DEF), $8$ Magic Defense (MDF).
+  - **Flank Vigor**: $70$ HP representing flanking swarms susceptible to *Cuttatio Tenebris* splash damage.
+* **Significance**: Defeating the Dream Eaters demonstrates the bearer's ability to maintain mental fortitude and twin-relic resonance, breaking free of the dream's illusions.

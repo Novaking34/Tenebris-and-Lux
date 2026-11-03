@@ -1,24 +1,25 @@
 = World-Building & Lore Canon: The Chronicles of Sacyra
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v1.1.0, 2026-11-02
 :doctype: book
 :toc: left
 :toclevels: 3
 :sectnums:
 :icons: font
 :source-highlighter: rouge
+:experimental:
 
 [abstract]
 == Canonical Introduction
 
-This document establishes the living world-building canon, cosmological ontology,
-and historical epic of *Tenebris and Lux* ("Darkness and Light"). 
-Conceived in 2014–2018 as the foundational game project of **CreativeWorkzStudio**, 
-this is the epic of two primordial relics—**The Shield of Lux** and 
-**The Sword of Tenebris**—set within the storied **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*).
-The story is driven by two central protagonists: **Elijah Ro-enheart**, son of a former head
-of the Royal Guard, and **Katrina Jaren**, a noble-born daughter navigating royal court expectations
-while yearning for the Adventurers' Guild, as the re-awakening **Dark Lord Malakor** rises from the abyss.
+This document establishes the living world-building canon, cosmological ontology, and historical
+epic of *Tenebris and Lux* ("Darkness and Light"). Conceived between 2014–2018 in RPG Maker as the
+premier game of **CreativeWorkzStudio**, this is the epic of two primordial relics—**The Shield of Lux**
+and **The Sword of Tenebris**—set within the storied **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*,
+`/sɔːˈkiːrə/`). The story is driven by a tri-perspective narrative architecture: **Elijah Ro-enheart**,
+son of a former head of the Royal Guard; **Lady Katrina Jaren**, an aristocratic daughter seeking autonomy
+in the Adventurers' Guild; and the customizable **Bearer** (`<chosen_name>`), as the re-awakening
+**Dark Lord** rises from the subterranean abyss and **King Jihad** plots treason on the High Throne.
 
 == 1. The Primordial Cosmology: Neutrality of the Apex Forces
 
@@ -28,104 +29,144 @@ Shadow without light is a suffocating void where purpose drowns.
 The Shield preserves and confines; the Sword severs and liberates.
 The relics know neither virtue nor malice—only the soul that wields them."
 
-In the cosmology of *Tenebris and Lux*, the cosmos is governed by two apex forces that
-transcend human morality. Neither is inherently good nor evil:
+In the cosmology of *Tenebris and Lux*, the cosmos is governed by two apex forces that transcend mortal morality.
+Neither is inherently good nor evil:
 
-=== Lux (The Apex of Radiance)
+=== 1.1. Lux (The Apex of Radiance & Cohesion)
+* **Ontological Essence:** Manifestation, illumination, cohesion, preservation, temporal anchoring, and structure.
+* **The Dual Nature of Light:**
+  - **Virtuous Manifestation:** Projects golden protective barriers (*Lux Barrio*), wards the vulnerable,
+    preserves cultural heritage, and seeks peace through reconciliation.
+  - **Tyrannical Manifestation:** Scorches the earth in unyielding glare, blinding dissenters, enforcing
+    calcifying stasis, denying natural growth and mortality, and petrifying living will into stone.
 
-* **Ontological Essence**: Manifestation, illumination, cohesion, preservation, and structure.
-* **The Dual Nature of Light**:
-  - **Virtuous Manifestation**: Wards the vulnerable with impenetrable golden barriers, unmasks dark deceits, preserves cultural knowledge, and inspires steadfast courage.
-  - **Tyrannical Manifestation**: Scorches the earth in unyielding glare, blinds those seeking mercy, enforces inflexible order, and petrifies living will into stone.
+=== 1.2. Tenebris (The Apex of Darkness & Severance)
+* **Ontological Essence:** Mystery, dissolution, rest, severance, finality, and the fertile void.
+* **The Dual Nature of Darkness:**
+  - **Virtuous Manifestation:** Cuts through tyrant armor (*Cuttatio Tenebris*), severs corrupt bindings,
+    veils the oppressed from predators, and executes swift, surgical **Absolute Justice**.
+  - **Malevolent Manifestation:** Spreads entropic rot, dissolves conscience into nihilism, feeds bitter
+    vengeance, and fuels tyrannical conquest.
 
-=== Tenebris (The Apex of Darkness)
+=== 1.3. The Law of Tempering and Dissipation
+The relationship between Lux and Tenebris is governed by a strict metaphysical law:
+* **Lux as the Singular Tempering Agent:** Raw Tenebris is entropic and severing; left unchecked, it erodes
+  everything it touches. Lux is the only force capable of containing and tempering Tenebris, providing
+  structural cohesion so that the void's cutting edge can be safely directed.
+* **The Fragility of Radiance (Dissipation):** While Lux tempers Tenebris, it requires steadfast emotional
+  and ethical harmony. Any sudden, violent surge of fear, wrath, or malice causes Lux to **dissipate immediately**,
+  collapsing protective barriers and leaving Tenebris unbridled.
 
-* **Ontological Essence**: Mystery, dissolution, rest, severance, and the fertile void.
-* **The Dual Nature of Darkness**:
-  - **Virtuous Manifestation**: Veils the oppressed from predators, cuts through unholy bonds and tyrant armor, grants restful oblivion to the weary, and pierces through arrogant illusions.
-  - **Malevolent Manifestation**: Spreads creeping rot, feeds paranoia, dissolves conscience into nihilism, and serves the destructive malice of the Dark Lord.
+=== 1.4. The Moral Sway Continuum (`[-100, +100]`)
+Neither Lux nor Tenebris dictates a character's morality. Good and evil belong entirely to the **intent,
+conscience, and choices of the heart behind the weapon**, tracked along the `[-100, +100]` **Moral Sway**
+axis via the **Compass of Morality**. A knight channeling blinding radiance can act as a calcified tyrant,
+while an outrider wielding the void-edged blade of Tenebris can stand as the people's ultimate savior.
 
-=== The Moral Sway of the Wielders
+== 2. Genesis: The Mundane Inception & The Two Princes
 
-Neither Lux nor Tenebris dictates a character's morality. Good and evil belong entirely to the
-**intent, conscience, and actions of the wielder**. In the Kingdom of Sacyra, a knight channeling
-the blinding radiance of Lux can act as a cold oppressor, while a warrior wielding the void-quenched
-blade of Tenebris can stand as the people's ultimate protector.
+=== 2.1. The Mundane Armaments of Inception
+At the founding of the Kingdom of Sacyra, the Shield of Lux and Sword of Tenebris were forged as ordinary,
+non-magical weapons of steel and silver by royal smiths, presented to the First King as civic emblems:
+* **The Mundane Shield:** Represented **Peace**, communal defense, and internal harmony.
+* **The Mundane Sword:** Represented **War**, territorial justice, and border vigilance.
 
-== 2. The Twin Relics: Shield of Lux & Sword of Tenebris
+=== 2.2. The Self-Running Systems
+The First King was deeply beloved by his subjects across all provinces. Under his leadership, the realm's
+civic, legal, and municipal systems were engineered so effectively that the kingdom practically governed
+itself. Personal royal audiences were required only "once in a blue moon".
 
-Before the crowning of Sacyra's first monarch, primordial celestial smiths forged two sovereign
-armaments to anchor the realm against cosmic oblivion:
+=== 2.3. The Ideological Fork
+The First King had two teenage sons who divided the responsibilities of civilization:
+* **Prince Mi-ren:** The elder son and heir to the High Throne, raised in statecraft to preserve his father's peace.
+* **Prince Casatti:** The younger son, who voluntarily renounced the throne to establish **The Academy**,
+  an independent institution dedicated to natural philosophy, elemental sciences, and mapping **The Dreamscape**.
 
-[cols="1,2,2", options="header"]
-|===
-| Relic | The Shield of Lux | The Sword of Tenebris
-| **Aspect** | The Sovereign Aegis of Radiance | The Sovereign Blade of the Abyss
-| **Physical Form** | A towering kite-shield of burnished solar silver, centered with a living celestial sunstone that pulses with warm golden resonance. | A two-handed greatsword forged from star-quenched obsidian, its edge rippling with deep twilight violet mist and void-tempered steel.
-| **Primal Function** | Warding, kinetic deflection, barrier projection, illumination, and stasis shielding. | Severance, armor piercing, shadow manipulation, reality-edge slicing, and mist cloaking.
-| **Virtuous Wielding** | Wards allies, shields innocents from siege engines, and unmasks lurking infiltrators. | Slices through corrupted war machines, cuts captive chains, and strikes from the dark to liberate.
-| **Corrupted Wielding** | Blinds subjects into terrified compliance; traps souls in eternal petrified stasis. | Indiscriminate butchery; feeding the blade's hunger on mortal dread; total subjugation.
-|===
+== 3. The 11th Festival Rupture & The 7-Year Great War
 
-=== Harmonized Equilibrium
+=== 3.1. The Coma and the Silent Vigil (Festivals 1–10)
+Following the first week-long **Festival of Peoples**, the First King fell into a coma, though his consciousness
+remained awake across the gossamer veil in **The Dreamscape**. When his physical body passed away during the
+5th Festival, teenage Mi-ren and Casatti maintained a protective vigil: using the annual thinned-veil festival
+week to commune with the First King's spirit and project him into the temporal world in short bursts until
+Mi-ren was officially "of age."
 
-The Shield and Sword were never intended to war against one another; they are complementary halves
-of a cosmic balance:
-- When wielded in tandem or in synchronized coordination by trusted companions (**The Stance of Equilibrium**), the Shield deflects kinetic onslaught while the Sword opens devastating counter-attack avenues.
-- If one relic is wielded without the tempering influence of the other, its bearer risks succumbing to either calcifying stasis or devouring void-sickness.
+=== 3.2. Usuru and the 11th Year Catastrophe
+In the 11th year, an eleven-year-old wanderer from remote Libira (a frontier kingdom suffering from a seven-day
+courier delay and no relay outposts) snuck into the royal sanctum to see the "plagued" king. Discovering the
+mummified corpse and projection array, the shocked boy accidentally tampered with the ritual:
+1. The spiritual tether snapped, permanently sealing the First King in The Dreamscape.
+2. The violent shift in the boy's heart caused an unprecedented metaphysical surge that birthed **Tenebris**
+   into waking reality.
+3. The planar backlash physically warped continental distances between Libira and the Capital.
+4. Taking the name **Usuru**, the youth led Libira and neighboring border realms in a war of annexation
+   against the Capital.
 
-== 3. The Kingdom of Sacyra: Setting & Society
+=== 3.3. The 7-Year Great War & The Awakening of the Relics
+Usuru's uprising ignited **The Great War** across six fractured powers: The Capital, Libira, Great Mau,
+Old Sacyra, The Academy, and the Yun-yin Provinces:
+* **Casatti's Infusion of Tenebris:** Prince Casatti isolated the anomalous void energy and infused it into
+  the mundane Sword of War to execute **Absolute Justice** and end the war swiftly.
+* **Mi-ren's Discovery of Lux:** Prince Mi-ren adapted the temporal projection technique to discover **Lux**,
+  infusing it into the mundane Shield of Peace with a mandate of **atonement and forgiveness for Usuru**.
+* **The Accord of Kings:** Lux tempered Tenebris, bringing the war to an armistice in exactly **seven years**.
+  The six powers ratified the **"Joint Realm, Separate Kingdoms"** accord, solidifying autonomous regional rule
+  under the High Crown and enshrining the **Prophecy of Kings**. Refusing reconciliation, Usuru retreated
+  into the abyssal vaults, degenerating over three millennia into **The Dark Lord**.
 
-The **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`) is a grand, historic realm
-defined by stone bastions, sweeping borderlands, and deeply rooted chivalric traditions.
+== 4. The 3,000-Year Dynastic Wave & Modern Sacyra
 
-=== Governance and Courtly Politics
+Between the Great War and the modern campaign lies a three-thousand-year chasm ($3,000\text{ years}$)
+spanning between **30 and 50 monarchs** (averaging $60\text{ to }100\text{ years}$ per reign):
 
-* **The Crown & The Royal Guard**: Sacyra's royal palace commands the central citadel. The **Royal Guard** represents the pinnacle of martial honor and personal devotion to the throne, sworn to protect the realm against external ruin and internal treachery.
-* **The Noble Houses**: Hereditary aristocratic families hold vast regional fiefs, supply knights to the royal army, and compete for influence and appointed seats on the prestigious **Royal Court**.
-* **The Adventurers' Guild**: An independent, meritocratic brotherhood operating throughout Sacyra's frontier outposts and merchant crossroads. Unlike the rigid court or the ceremonial nobility, the Guild takes on perilous monster contracts, frontier patrols, and ancient ruin expeditions, valuing practical skill and personal freedom above noble pedigree.
+* **The Succession Wave:** The dynasty cycled between Long Stasis Crests (60–90+ years of high peace and
+  calcified bureaucracy), Tether-Sickness Troughs (5–20 years of royal paranoia and premature death near the
+  High Throne's planar wound), and Bureaucratic Consolidations (35–50 years).
+* **The Systemic Neglect:** Millennia of Capital stability fostered systemic apathy toward frontier settlements
+  like **Dio Village**, replicating ancient Libira's "quiet complaint."
+* **"The King's Curse" & King Jihad:** For three millennia, sovereigns on the High Throne were exposed to
+  psychic backwash from the planar wound left by Usuru. Coveting void power, **King Jihad** opened himself
+  to the abyss prior to the modern Festival of Heroes, resulting in possession by The Dark Lord's psychic remnant.
 
-=== The Crisis: The Re-Awakening of Dark Lord Malakor
+== 5. The Tri-Perspective Protagonists
 
-After centuries of dormancy sealed beneath the Abyssal Vaults along Sacyra's furthest borders,
-the ancient terror **Dark Lord Malakor** has broken free.
+The heart of *Tenebris and Lux* is an unfolding mystery navigated across three distinct vantage points:
 
-* Malakor is not a personification of Tenebris, but a corrupt mortal arch-sorcerer who twisted dark magic into a tool of catastrophic conquest.
-* Seeking to conquer Sacyra, Malakor commands legions of void-blighted fiends, corrupted constructs, and dread vanguard captains.
-* His vanguard has already shattered the outer border redoubts, threatening to overrun Sacyra unless heroes arise who can awaken and master the legendary Shield and Sword.
+=== 5.1. Elijah Ro-enheart (The Vanguard of Lux)
+* **Lineage & Heritage:** Son of legendary **Commander Gareth Ro-enheart**, former Head of the Royal Guard,
+  who vanished under King Jihad's sealed orders on Elijah's 10th birthday.
+* **Archetype & Role:** Frontline Heavy Vanguard / Fortress Anchor. Wields the **Shield of Lux**.
+* **Thematic Parallel:** Mirrors ancient **Usuru** (The Frontier Wound). Endured a childhood frozen on his
+  tenth year; raised with reverence for the Crown only to discover court betrayal. By choosing independent
+  moral conscience over vengeance, Elijah represents Usuru granted redemptive grace.
 
-== 4. The Dual Protagonists
+=== 5.2. Lady Katrina Jaren (The Outrider of Tenebris)
+* **Lineage & Heritage:** Estranged daughter of aristocratic **House Jaren**, one of the wealthiest noble
+  families on the Royal Court.
+* **Archetype & Role:** High-Mobility Skirmisher / Flanking Striker. Wields the **Sword of Tenebris**.
+* **Thematic Parallel:** Mirrors ancient **Prince Casatti** (The Renouncing Blade). Renounces aristocratic
+  birthright in favor of the meritocratic **Adventurers' Guild**, wielding the sharp edge of Tenebris with
+  cynical candor to slice through court hypocrisy and provincial stagnation.
 
-The heart of *Tenebris and Lux* is the intertwined journey of two young figures from opposite ends
-of Sacyra's social fabric:
+=== 5.3. The Custom Bearer (`<chosen_name>` — The Secret Chronicler)
+* **Archetype & Role:** Emergent champion in Chrono's astral archives. Holds **The Dream Compass**.
+* **Thematic Parallel:** Mirrors ancient **Prince Mi-ren** (The Steward of Balance). Decoupled from fixed
+  identities, the player navigates the nocturnal Dreamscape trials, performing the "double work" to synthesize
+  both Elijah's and Katrina's paths to unlock the **Secret Chronicler True Ending**.
 
-=== 1. Elijah Ro-enheart (The Vanguard of Duty)
+== 6. The Tactical Strategy RPG (TRPG) Paradigm
 
-* **Lineage**: Born into a proud line of soldiers who have served in Sacyra's royal army for generations. His father was a legendary former head of the **Royal Guard**.
-* **Role & Archetype**: Frontline combatant, tactician, and stalwart protector. Raised under a strict code of chivalric duty, martial conditioning, and sacrificial defense.
-* **Character Dilemma**: Strives to live up to the immense shadow of his father's legacy while questioning whether blind obedience to royal orders truly protects the people of Sacyra when court politics paralyze the realm.
-* **Relic Attunement**: Naturally drawn to the **Shield of Lux**, anchoring defensive formations, absorbing enemy assaults, and safeguarding his squad.
+*Tenebris and Lux* combines deep tactical planning with visceral action execution:
 
-=== 2. Katrina Jaren (The Free-Spirited Blade)
-
-* **Lineage**: A daughter of **House Jaren**, one of the most prominent noble families in the Kingdom of Sacyra.
-* **Role & Archetype**: Agile skirmisher, perceptive scout, and tactical striker. Possesses natural martial brilliance and a fiercely independent spirit.
-* **Character Dilemma**: Raised and groomed since childhood to take a ceremonial seat upon the Royal Court, Katrina suffocates under high-society diplomacy. She secretly longs to break free of courtly expectations and join the **local Adventurers' Guild**, seeking genuine adventure and frontline camaraderie.
-* **Relic Attunement**: Naturally resonates with the **Sword of Tenebris**, channeling its fluid, decisive severance to bypass armored juggernauts and cut through enemy flanks.
-
-=== Dynamic Interplay
-
-Together, Elijah and Katrina represent the living synthesis of Sacyra: military discipline paired with adventurer initiative; steadfast defense matched with decisive offense; the golden starlight of Lux intertwined with the twilight edge of Tenebris.
-
-== 5. The Tactical Strategy RPG (TRPG) Paradigm
-
-Unlike standard linear dungeon crawlers, *Tenebris and Lux* is built as a **Tactical Strategy RPG**:
-
-1. **Strategic Grid Battlefield**:
-   - Battles take place across multi-elevation grid maps (provinces, castle courtyards, bridges, and mountain passes).
-   - Units position according to terrain bonuses, line-of-sight, directional flanking, and movement budgets.
-2. **Cinematic Combat Resolution**:
-   - When a unit initiates combat against an enemy on the grid, the game transitions into a dynamic **traditional side-scroll / action-based cinematic duel**.
-   - Attacks, parries, spell wards, and severance slashes play out with visual weight and player agency before returning to the grid.
-3. **Moral Sway Influence**:
-   - Dialogue choices, tactical decisions (mercy vs. ruthless execution), and relic usage alter the party's **Moral Sway** (`[-100, +100]`), influencing recruitable companions, kingdom politics, and the story's ultimate conclusion.
+1. **Strategic 2D Grid Positioning:**
+   - Multi-elevation grid maps across provinces, bridges, castles, and Dreamscape leylines.
+   - Tactical movement budgets, Zone of Control (ZOC), flanking angles, and cover bonuses.
+2. **Cinematic Combat Resolution:**
+   - Initiating attacks transitions into dynamic traditional side-scroll / action duels.
+   - Core skills: **Lux Barrio** (barrier rolls $2\dots5$ turns, $25\%$ damage mitigation),
+     **Cuttatio Tenebris** ($20\%$ splash cleave), and **Duo-Loca Bashin n Slash** (adaptive defense targeting).
+3. **Ludonarrative Consent & Multi-Ending Resolution:**
+   - Act I focuses on defeating King Jihad; Act II focuses on stopping The Dark Lord.
+   - Players skipping nocturnal Dream Compass trials receive the **Neutral Ending** (saving Sacyra while
+     leaving the First King marooned). Players achieving full synthesis unlock the canonical **True Ending**
+     ("The Ugly Truth"), resolving three millennia of cosmic conflict.

@@ -38,7 +38,7 @@ analytical categories:
 | **Basic Consumables** | Potion (50G), Magic Water (100G), Dispel Herb (20G), Stimulant (50G) | Generic RTP recovery items. In C11, consumables must tie directly to Sacyran herbalism, relic alchemy, and stance restoration.
 | **Generic Armaments** | Standard Sword (100G), Axe (100G), Cane (100G), Bow (100G), Shield (100G), Cloth (100G) | Default placeholder inventory without distinct tactical affinities or stance interactions.
 | **Stock Sound Effects** | `Attack2`, `Buzzer1`, `Damage4`, `Collapse1-4`, `Shop1` | Generic MV sound library. C11 audio subsystem will support custom soundscapes.
-| **Placeholder Bestiary** | Bat (`HP: 80`), Slime (`HP: 250`), Rabbit (`HP: 55`), Orc (`HP: 300`) | Standard MV demo monsters used for basic stat checks. Replaced by Sacyran fauna and Malakor void aberrations.
+| **Placeholder Bestiary** | Bat (`HP: 80`), Slime (`HP: 250`), Rabbit (`HP: 55`), Orc (`HP: 300`) | Standard MV demo monsters used for basic stat checks. Replaced by Sacyran fauna and Abyssal void aberrations.
 | **Default Title Theme** | `Theme6` / `CrossedSwords` title screen graphic | Default MV asset packaging. Replaced by bespoke Sacyran coat of arms and twin relic artwork.
 |===
 

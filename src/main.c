@@ -43,11 +43,14 @@
 #include "sim/dispatcher.h"
 #include "gui/gui.h"
 #include "util/manifest.h"
-#include "util/math_utils.h"
-#include "util/string_utils.h"
-#include "util/geom_utils.h"
-#include "util/time_utils.h"
-#include "util/log.h"
+#include "util/data/fs_utils.h"
+#include "util/data/json_utils.h"
+#include "util/math/math_utils.h"
+#include "util/math/geom_utils.h"
+#include "util/string/string_utils.h"
+#include "util/time/time_utils.h"
+#include "util/log/log.h"
+#include "util/debug/debug.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -62,9 +65,9 @@
  *
  * ### Machine Role & Mission
  * Populates the central manifest registry with all Layer 0 utilities (manifest,
- * time, math, geom, string, log), Layer 1 simulation engine (state, combat,
- * world, dispatcher, game), and Layer 2 presentation viewport (gui). Enables
- * boot-time loose-bolts invariant checks and dependency graph resolution
+ * fs, json, time, math, geom, string, log, debug), Layer 1 simulation engine (state,
+ * combat, world, dispatcher, game), and Layer 2 presentation viewport (gui).
+ * Enables boot-time loose-bolts invariant checks and dependency graph resolution
  * before any game loop execution begins.
  *
  * ### Ontological Classification
@@ -87,11 +90,14 @@ static void init_engine_manifest(manifest_registry_t *registry)
 
     /* Step 2: Register Layer 0 Core Utilities */
     manifest_register(registry, &manifest_utils_manifest);
+    manifest_register(registry, &fs_utils_manifest);
+    manifest_register(registry, &json_utils_manifest);
     manifest_register(registry, &time_utils_manifest);
     manifest_register(registry, &math_utils_manifest);
     manifest_register(registry, &geom_utils_manifest);
     manifest_register(registry, &string_utils_manifest);
     manifest_register(registry, &log_manifest);
+    manifest_register(registry, &debug_manifest);
 
     /* Step 3: Register Layer 1 Simulation Engine Subsystems */
     manifest_register(registry, &sim_state_manifest);
@@ -140,6 +146,7 @@ static void print_usage(void)
     printf("  -h, --help     Show this help message and exit\n");
     printf("  -v, --version  Show version information and exit\n");
     printf("  -a, --audit    Run internal invariant audit and exit\n");
+    printf("  -d, --debug    Launch game with interactive debugger enabled\n");
     printf("  -c, --cli      Launch game in terminal CLI mode\n");
     printf("  -g, --gui      Launch game in native desktop GUI mode\n");
 }
@@ -228,12 +235,24 @@ static int run_full_subsystem_audit(void)
         log_shutdown();
         return 1;
     }
-    printf("[PASS] Test 0: Telemetry subsystem & grade invariants verified.\n");
+    printf("[PASS] Test 0a: Telemetry subsystem & grade invariants verified.\n");
+
+    /* Step 2c: Run debugger subsystem diagnostic audit */
+    diag_result_t debug_diag = debug_audit(false);
+    if (!debug_diag.passed) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Core debugger audit failed: %s", debug_diag.details);
+        fprintf(stderr, "[FAIL] Core debugger subsystem audit failed: %s\n", debug_diag.details);
+        debug_shutdown();
+        log_shutdown();
+        return 1;
+    }
+    printf("[PASS] Test 0b: Debugger subsystem & state rewind invariants verified.\n");
 
     /* Step 3: Run simulation engine invariant audit */
     if (game_run_self_audit() != 0) {
         LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Core game simulation audit failed");
         fprintf(stderr, "[FAIL] Core game simulation audit failed.\n");
+        debug_shutdown();
         log_shutdown();
         return 1;
     }
@@ -242,6 +261,7 @@ static int run_full_subsystem_audit(void)
     if (!gui_audit_layout()) {
         LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "GUI viewport layout bounds exceeded");
         fprintf(stderr, "[FAIL] GUI viewport layout bounds exceeded!\n");
+        debug_shutdown();
         log_shutdown();
         return 1;
     }
@@ -249,10 +269,11 @@ static int run_full_subsystem_audit(void)
 
     /* Step 5: Report comprehensive pass summary */
     printf("============================================================\n");
-    printf("Audit Result: ALL INVARIANT CHECKS PASSED (6/6 + Pre-Flight)\n");
+    printf("Audit Result: ALL INVARIANT CHECKS PASSED (7/7 + Pre-Flight)\n");
     printf("============================================================\n");
 
-    LOG_INFO(LOG_CAT_LOG, "Audit", 1.0f, "All invariant checks passed successfully (6/6 + Pre-Flight)");
+    LOG_INFO(LOG_CAT_LOG, "Audit", 1.0f, "All invariant checks passed successfully (7/7 + Pre-Flight)");
+    debug_shutdown();
     log_shutdown();
     return 0;
 }
@@ -296,6 +317,7 @@ int main(int argc, char *argv[])
     /* Step 1: Initialize presentation mode flags */
     bool force_cli = false;
     bool force_gui = false;
+    bool force_debug = false;
 
     /* Step 2: Parse command-line arguments */
     if (argc > 1) {
@@ -310,7 +332,10 @@ int main(int argc, char *argv[])
         if (strcmp(argv[1], "--audit") == 0 || strcmp(argv[1], "-a") == 0) {
             return run_full_subsystem_audit();
         }
-        if (strcmp(argv[1], "--cli") == 0 || strcmp(argv[1], "-c") == 0) {
+        if (strcmp(argv[1], "--debug") == 0 || strcmp(argv[1], "-d") == 0) {
+            force_debug = true;
+            force_cli = true;
+        } else if (strcmp(argv[1], "--cli") == 0 || strcmp(argv[1], "-c") == 0) {
             force_cli = true;
         } else if (strcmp(argv[1], "--gui") == 0 ||
                    strcmp(argv[1], "-g") == 0) {
@@ -322,10 +347,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    /* Step 3: Initialize forensic logging & telemetry */
+    /* Step 3: Initialize forensic logging & debugging */
     log_init(NULL);
-    LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Tenebris and Lux boot initialized (mode: %s)",
-             force_cli ? "CLI" : (force_gui ? "GUI" : "Auto"));
+    debug_init(NULL);
+    LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Tenebris and Lux boot initialized (mode: %s%s)",
+             force_cli ? "CLI" : (force_gui ? "GUI" : "Auto"),
+             force_debug ? " [DEBUG-ACTIVE]" : "");
 
     /* Step 4: Run Pre-Flight ("Don't start machine with loose bolts") */
     manifest_registry_t registry;
@@ -337,6 +364,7 @@ int main(int argc, char *argv[])
         fprintf(stderr,
                 "\n[FATAL ERROR] Engine startup halted due to loose bolts!\n");
         manifest_print_report(&registry);
+        debug_shutdown();
         log_shutdown();
         return 1;
     }
@@ -345,10 +373,26 @@ int main(int argc, char *argv[])
     player_state_t state;
     game_init(&state);
 
-    /* Step 6: Route explicit CLI launch request */
+    /* Record initial genesis snapshot */
+    game_record_debug_snapshot(&state, "init", "genesis");
+
+    /* Step 6: Route explicit Debug / CLI launch request */
+    if (force_debug) {
+        printf("============================================================\n");
+        printf("   TENEBRIS AND LUX - INTERACTIVE DEBUGGER ACTIVE\n");
+        printf("   Type 'debug help' or 'inspect' during gameplay\n");
+        printf("============================================================\n\n");
+        LOG_INFO(LOG_CAT_DEBUG, "Engine", 0.0f, "Entering interactive debug mode in CLI");
+        game_loop_cli(&state);
+        debug_shutdown();
+        log_shutdown();
+        return 0;
+    }
+
     if (force_cli) {
         LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Entering terminal CLI game loop");
         game_loop_cli(&state);
+        debug_shutdown();
         log_shutdown();
         return 0;
     }
@@ -359,11 +403,13 @@ int main(int argc, char *argv[])
             LOG_ERROR(LOG_CAT_LOG, "Engine", -0.5f, "No graphical X11 display available for --gui");
             fprintf(stderr,
                     "Error: No graphical X11 display available for --gui.\n");
+            debug_shutdown();
             log_shutdown();
             return 1;
         }
         LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Launching native X11 GUI");
         int rc = gui_run(&state);
+        debug_shutdown();
         log_shutdown();
         return rc;
     }
@@ -374,6 +420,7 @@ int main(int argc, char *argv[])
         printf("[Notice] Graphical display unavailable. "
                "Downgrading to CLI safe mode.\n\n");
         game_loop_cli(&state);
+        debug_shutdown();
         log_shutdown();
         return 0;
     }
@@ -381,6 +428,7 @@ int main(int argc, char *argv[])
     /* Step 9: Default presentation: launch native GUI */
     LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Launching native X11 GUI default presentation");
     int rc = gui_run(&state);
+    debug_shutdown();
     log_shutdown();
     return rc;
 }

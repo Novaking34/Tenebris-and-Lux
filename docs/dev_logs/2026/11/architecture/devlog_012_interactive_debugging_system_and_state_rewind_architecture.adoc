@@ -1,0 +1,153 @@
+= DevLog 012: Interactive Debugging System & State Rewind Architecture
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-02
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Executive Summary
+
+This development log chronicles the design, implementation, and verification of the
+*Interactive State Debugger & Time-Travel Rewind Architecture* in *Tenebris and Lux*.
+Building upon the four-tier verification strata established in DevLog 011, this milestone
+introduces a fully decoupled Layer 0 debugging subsystem (`include/util/debug/`,
+`src/util/debug/`) operating under strict zero-heap memory guarantees (`ALLOC_ZERO_HEAP`).
+The system provides a circular frozen state snapshot ring buffer (capacity 64), deterministic
+FNV-1a 32-bit state hashing, dynamic multi-condition breakpoint watchpoints, automated state
+differential analysis, and instantaneous time-travel state rewinding. Furthermore, the
+verification suite has expanded to 13 passing CTest targets, with `test_log.c` and
+`test_debug.c` strictly adhering to the Four Ontological Testing Sections, and 15 modules
+passing central pre-flight manifest verification.
+
+[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
+____
+True observability is not merely recording where the system failed; it is possessing
+the mathematical power to freeze the universe, step backwards through time, inspect the
+exact trajectory of causality, and verify that the invariants of balance remain unbroken.
+____
+
+== 1. Architectural Motivation & The Problem of Blind Mutation
+
+In complex tactical TRPG simulations featuring moral sway continuums, dual-relic resonance
+conservation, and branching multi-path endings, diagnosing subtle emergent phenomena
+(such as state desynchronization, illegal stance shifts, or drift in moral alignment)
+via standard print statements is inherently flawed:
+
+1. **Destructive Mutation**: Once a turn completes, state is mutated in-place. If an
+   invariant tripwire trips on turn 15, the precise historical trajectory that produced the
+   anomaly is irretrievably lost.
+2. **Layer Coupling Risks**: A debugger built directly inside Layer 1 risks coupling
+   presentation, inspection, and simulation logic together, breaking the strict unidirectional
+   strata of the engine.
+3. **Dynamic Memory Vulnerability**: Conventional debuggers allocate heap memory for event
+   queues and dynamic snapshots, introducing fragmentation and memory leaks that violate
+   our embedded C11 zero-heap discipline (`ALLOC_ZERO_HEAP`).
+
+To solve these challenges, we designed a zero-heap, decoupled state debugger in Layer 0
+complemented by simulation adapters in Layer 1 and presentation controls in Layer 3.
+
+== 2. Decoupled State Snapshot Ring Buffer Architecture
+
+The debugging engine models simulation history through an in-memory circular ring buffer
+residing in static BSS storage:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│               LAYER 0: ZERO-HEAP STATE DEBUGGER ENGINE                 │
+│  src/util/debug/debug.c <-> include/util/debug/debug.h                 │
+├────────────────────────────────────────────────────────────────────────┤
+│  debug_state_fields_t: Decoupled Fundamental State Fields               │
+│  ├── turn, hero_name, hp, max_hp, mp, tp                               │
+│  ├── shield_power (Lux), sword_edge (Tenebris)                         │
+│  ├── stance ID, moral_sway, location province ID                       │
+│  └── threat_hp, foes_vanquished                                        │
+├────────────────────────────────────────────────────────────────────────┤
+│  Circular Ring Buffer (Capacity: 64 Snapshots)                         │
+│  ├── snapshot_id (Monotonic 64-bit ID)                                 │
+│  ├── timestamp_ms (Monotonic Millisecond Clock)                        │
+│  ├── state (Decoupled Fields Copy)                                     │
+│  ├── last_command & last_arg ("barrio", "cuttatio", "stance striking") │
+│  ├── state_hash (FNV-1a 32-bit Checksum)                               │
+│  └── log_sequence_id (Binding Snapshot to Forensic Telemetry Entry)    │
+└────────────────────────────────────────────────────────────────────────┘
+----
+
+=== Strict Decoupling Invariant
+
+Layer 0 never includes Layer 1 simulation headers (`sim/sim_types.h` or `sim/game.h`).
+Instead:
+- `debug_state_fields_t` declares pure ISO C11 primitive fields.
+- Layer 1 (`src/sim/game.c`) implements bidirectional projection adapters:
+  * `game_state_to_debug_fields()` maps `player_state_t` into `debug_state_fields_t`.
+  * `game_state_from_debug_fields()` reconstructs `player_state_t` from `debug_state_fields_t`.
+  * `game_record_debug_snapshot()` captures turn-boundary snapshots.
+  * `game_rewind_debug_snapshot()` safely rewinds the live player simulation.
+
+== 3. Dynamic Breakpoints & Differential State Analysis
+
+=== Multi-Condition Breakpoint Engine
+
+Developers and automated harnesses can register watchpoints across 7 distinct condition types:
+
+1. `DEBUG_BREAK_TURN`: Triggers upon reaching a specific turn count.
+2. `DEBUG_BREAK_STANCE`: Triggers when combat stance shifts to a target stance ID.
+3. `DEBUG_BREAK_SWAY_RANGE`: Triggers when absolute moral sway breaches a threshold.
+4. `DEBUG_BREAK_RESONANCE_BREACH`: Triggers if Lux or Tenebris resonance exceeds limits.
+5. `DEBUG_BREAK_HP_THRESHOLD`: Triggers when HP drops below a critical floor.
+6. `DEBUG_BREAK_LOCATION`: Triggers upon journeying into a designated province.
+7. `DEBUG_BREAK_TRIPWIRE`: Triggers when any subsystem trips a latched diagnostic wire.
+
+=== State Differential Analysis (`debug_diff_snapshots`)
+
+Rather than inspecting raw memory, `debug_diff_snapshots()` computes formatted ASCII
+differential tables displaying exact deltas across turns:
+
+[source,text]
+----
+Snapshot Diff: #1 (Turn 1) -> #2 (Turn 2)
+--------------------------------------------------
+  HP:           100 -> 90 (-10)
+  Shield (Lux): 50 -> 45 (-5)
+  Sword (Ten):  50 -> 55 (+5)
+  Moral Sway:   0 -> 5 (+5)
+  State Hash:   0xAA851EE1 -> 0xB79D3C20
+----
+
+== 4. Data-Driven Debugger Profiles & Fallback Monoliths
+
+Following the data-driven architecture of `data/manifest.json`, the debugger catalog
+is maintained under `data/debug/`:
+
+* `data/debug/manifest.json`: Central catalog defining available profiles (`default`,
+  `strict`, `trace`) and active default pointer.
+* `data/debug/default.json`: Balanced profile (64 snapshots, tripwire traps enabled,
+  1-turn snapshot intervals, interactive REPL active).
+* `data/debug/strict.json`: Strict validation profile (break-on-error, break-on-stance-change,
+  rigid state boundary verification).
+* `data/debug/trace.json`: Fine-grained telemetry profile for deep engine debugging.
+* `src/util/debug/debug_fallback.c`: Quarantined emergency fallback code page guaranteeing
+  operational readiness even if external JSON assets are missing or corrupted.
+
+== 5. Verification Telemetry & Verification Expansion
+
+With this milestone, the verification suite achieves 100% green status across all tiers:
+
+* **13/13 Automated CTest Targets Pass**:
+  - `cli_help_test`, `cli_version_test`, `subsystem_audit_test`
+  - `functional_cogs_test`: Expanded from 17 to 20 granular isolated cogs
+  - `unit_math_test`, `unit_data_test`, `unit_time_test`, `unit_string_test`
+  - `unit_log_test`: Reorganized under the 4 Ontological Sections (2.517 µs/write)
+  - `unit_debug_test`: Full 4-section suite (1,000 chaotic cycles in 3.125 ms, 3.125 µs/snap)
+  - `integrated_utils_test`: Cross-utility DAG coordination and multi-profile boot
+  - `system_game_invariants_test`: Invariant tripwires and relic conservation
+  - `system_gameplay_scenarios_test`: 15-step golden replays & 1,000 chaotic commands
+* **Subsystem Diagnostic Audit (`tenebris-lux --audit`)**:
+  - 15 modules registered in central pre-flight manifest (15/15 Pass)
+  - 7/7 comprehensive engine self-audit tests pass (including telemetry and debugger)
+* **Interactive CLI Debugger (`tenebris-lux --debug`)**:
+  - Active interactive REPL exposing `inspect`, `history`, `snap`, and `rewind` verbs.
