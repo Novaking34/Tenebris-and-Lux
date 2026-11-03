@@ -75,7 +75,7 @@ extern const module_metadata_t time_utils_manifest;
 // -----------------------------------------------------------------------------
 
 /**
- * Queries current monotonic clock time in milliseconds.
+ * @brief Queries current monotonic clock time in milliseconds.
  *
  * ### Machine Role & Mission
  *
@@ -105,7 +105,7 @@ extern const module_metadata_t time_utils_manifest;
 double time_get_monotonic_ms(void);
 
 /**
- * Queries current monotonic clock time in microseconds.
+ * @brief Queries current monotonic clock time in microseconds.
  *
  * ### Machine Role & Mission
  *
@@ -135,7 +135,7 @@ double time_get_monotonic_ms(void);
 double time_get_monotonic_us(void);
 
 /**
- * Suspends execution for a specified duration in milliseconds.
+ * @brief Suspends execution for a specified duration in milliseconds.
  *
  * ### Machine Role & Mission
  *
@@ -168,7 +168,7 @@ void time_sleep_ms(double ms);
 // -----------------------------------------------------------------------------
 
 /**
- * Formats the current UTC calendar time as an ISO 8601 timestamp string.
+ * @brief Formats the current UTC calendar time as an ISO 8601 timestamp string.
  *
  * ### Machine Role & Mission
  *
@@ -204,14 +204,15 @@ bool time_get_iso_timestamp(char *buf, size_t buf_size);
 // -----------------------------------------------------------------------------
 
 /**
- * Returns hardcoded fallback frame timing configuration profile (60 FPS baseline).
+ * @brief Returns hardcoded fallback frame timing configuration profile (60 FPS baseline).
  *
  * @return Default baseline time_config_t with canonical limits.
  */
 time_config_t time_get_default_config(void);
 
 /**
- * Loads a frame timing configuration profile from a JSON file.
+ * @brief Loads a frame timing configuration profile from a JSON file.
+ *
  * Falls back to time_get_default_config() if file is inaccessible.
  *
  * @param[in]  filepath   Null-terminated path to profile JSON.
@@ -231,7 +232,7 @@ bool time_load_config_from_file(const char *filepath, time_config_t *out_config)
 // -----------------------------------------------------------------------------
 
 /**
- * Executes machine pre-flight diagnostic checks on timing invariants.
+ * @brief Executes machine pre-flight diagnostic checks on timing invariants.
  *
  * Verifies non-decreasing clock monotonicity across 100 consecutive queries,
  * and measures sub-millisecond sleep resolution.
@@ -241,7 +242,7 @@ bool time_load_config_from_file(const char *filepath, time_config_t *out_config)
 diag_result_t time_utils_preflight(void);
 
 /**
- * High-level boolean audit wrapper for standalone test harnesses.
+ * @brief High-level boolean audit wrapper for standalone test harnesses.
  *
  * @return `true` if all timing invariant tripwires pass cleanly;
  *         `false` otherwise.

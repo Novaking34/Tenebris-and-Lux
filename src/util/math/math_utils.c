@@ -85,23 +85,19 @@ const module_metadata_t math_utils_manifest = {
 // -----------------------------------------------------------------------------
 
 /**
- * Clamps a signed integer to a closed interval [min_val, max_val].
- *
- * ### Machine Role & Mission
+ * @brief Clamps a signed integer to a closed interval [min_val, max_val].
  *
  * Serves as a foundational mathematical guardrail preventing overflow,
  * underflow, or boundary corruption across player statistics, resonance
  * meters, and moral sway values. If min_val > max_val, boundaries swap.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.math (Bounded Arithmetic Engine)
  * - Assembly:   Integer Clamping & Saturation
  * - Cog:        Scalar Interval Clamp Primitive
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1) branching).
@@ -110,10 +106,10 @@ const module_metadata_t math_utils_manifest = {
  * @param[in] min_val Lower boundary limit (inclusive).
  * @param[in] max_val Upper boundary limit (inclusive).
  *
- * @return Clamped value satisfying `min_val <= result <= max_val`.
+ * @return Clamped value satisfying min_val <= result <= max_val.
  *
- * @pre  `min_val <= max_val` under normal operation.
- * @post Result resides strictly within `[min_val, max_val]`.
+ * @pre  min_val <= max_val under normal operation.
+ * @post Result resides strictly within [min_val, max_val].
  */
 int math_clamp_int(int val, int min_val, int max_val)
 {
@@ -139,22 +135,18 @@ int math_clamp_int(int val, int min_val, int max_val)
 }
 
 /**
- * Subtracts an integer value with saturation at zero (non-negative floor).
- *
- * ### Machine Role & Mission
+ * @brief Subtracts an integer value with saturation at zero (non-negative floor).
  *
  * Prevents negative resource anomalies when spending player stamina,
  * deducting relic resonance charges, or applying damage to enemy threat vigor.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.math (Bounded Arithmetic Engine)
  * - Assembly:   Integer Clamping & Saturation
  * - Cog:        Saturating Subtraction Primitive
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -162,7 +154,7 @@ int math_clamp_int(int val, int min_val, int max_val)
  * @param[in] val     Current base value (e.g., remaining hit points).
  * @param[in] sub_val Amount to subtract (negative values safely treated as 0).
  *
- * @return `max(0, val - sub_val)`.
+ * @return max(0, val - sub_val).
  *
  * @post Return value is guaranteed to be non-negative (>= 0).
  */
@@ -178,22 +170,18 @@ int math_saturating_sub(int val, int sub_val)
 }
 
 /**
- * Adds an integer value with saturation at an upper ceiling limit.
- *
- * ### Machine Role & Mission
+ * @brief Adds an integer value with saturation at an upper ceiling limit.
  *
  * Safely charges relic resonance, restores shield barrier power, and
  * accumulates progress counters without overflowing beyond max capacity.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.math (Bounded Arithmetic Engine)
  * - Assembly:   Integer Clamping & Saturation
  * - Cog:        Saturating Addition Primitive
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -202,9 +190,9 @@ int math_saturating_sub(int val, int sub_val)
  * @param[in] add_val Amount to add (negative values safely treated as 0).
  * @param[in] max_val Upper ceiling threshold (e.g., MAX_RESONANCE = 100).
  *
- * @return `min(max_val, val + add_val)`.
+ * @return min(max_val, val + add_val).
  *
- * @post Return value never exceeds `max_val`.
+ * @post Return value never exceeds max_val.
  */
 int math_saturating_add(int val, int add_val, int max_val)
 {
@@ -226,22 +214,18 @@ int math_saturating_add(int val, int add_val, int max_val)
 // -----------------------------------------------------------------------------
 
 /**
- * Nudges an integer toward a target value by at most a specified step size.
- *
- * ### Machine Role & Mission
+ * @brief Nudges an integer toward a target by at most a specified step size.
  *
  * Provides smooth convergence toward equilibrium states without overshoot.
  * Used to slowly decay heightened moral sway toward cosmic center (0).
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.math (Bounded Arithmetic Engine)
  * - Assembly:   Equilibrium & Ratio Scaling
  * - Cog:        Equilibrium Convergence Primitive
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -276,22 +260,18 @@ int math_nudge_toward(int val, int target, int step)
 }
 
 /**
- * Scales an integer value by a ratio safely mapped to a target pixel width.
- *
- * ### Machine Role & Mission
+ * @brief Scales an integer value by a ratio safely mapped to a target dimension.
  *
  * Converts numerical gameplay meters into pixel widths for HUD progress bars.
  * Includes explicit division-by-zero immunity and 64-bit overflow guardrails.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.math (Bounded Arithmetic Engine)
  * - Assembly:   Equilibrium & Ratio Scaling
  * - Cog:        Safe Ratio Scaling Primitive
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (64-bit temporary intermediate math).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -300,7 +280,7 @@ int math_nudge_toward(int val, int target, int step)
  * @param[in] max_val      Maximum meter capacity (safe if <= 0).
  * @param[in] target_scale Target pixel width or range.
  *
- * @return Scaled integer residing within `[0, target_scale]`.
+ * @return Scaled integer residing within [0, target_scale].
  */
 int math_scale_ratio(int val, int max_val, int target_scale)
 {
@@ -323,25 +303,43 @@ int math_scale_ratio(int val, int max_val, int target_scale)
 // Mission: Translate floating-point normalizations [0.0, 1.0] to integer percentages [0, 100].
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Converts a normalized float [0.0, 1.0] into an integer percent [0, 100].
+ *
+ * @param[in] norm Floating-point normalized factor.
+ * @return Clamped integer percentage in [0, 100].
+ */
 int math_normalized_to_percent(float norm)
 {
+    /* Step 1: Clamping lower and upper bounds */
     if (norm <= 0.0f) {
         return 0;
     }
     if (norm >= 1.0f) {
         return 100;
     }
+
+    /* Step 2: Rounded scaling */
     return (int)(norm * 100.0f + 0.5f);
 }
 
+/**
+ * @brief Converts an integer percentage [0, 100] into a normalized factor [0.0, 1.0].
+ *
+ * @param[in] percent Integer percentage.
+ * @return Clamped normalized float in [0.0, 1.0].
+ */
 float math_percent_to_normalized(int percent)
 {
+    /* Step 1: Clamping bounds */
     if (percent <= 0) {
         return 0.0f;
     }
     if (percent >= 100) {
         return 1.0f;
     }
+
+    /* Step 2: Floating-point normalization */
     return (float)percent / 100.0f;
 }
 
@@ -350,6 +348,11 @@ float math_percent_to_normalized(int percent)
 // Mission: Load continuum parameters from external JSON with hardcoded fallbacks.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Returns hardcoded fallback mathematical continuum configuration.
+ *
+ * @return Baseline math_config_t with canonical limits.
+ */
 math_config_t math_get_default_config(void)
 {
     math_config_t cfg;
@@ -370,6 +373,13 @@ math_config_t math_get_default_config(void)
     return cfg;
 }
 
+/**
+ * @brief Loads a mathematical configuration profile from a JSON file.
+ *
+ * @param[in]  filepath   Null-terminated path to profile JSON.
+ * @param[out] out_config Destination configuration structure.
+ * @return true if loaded from file; false if fallback was triggered.
+ */
 bool math_load_config_from_file(const char *filepath, math_config_t *out_config)
 {
     if (out_config == NULL) {

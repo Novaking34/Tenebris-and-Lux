@@ -90,68 +90,65 @@ const module_metadata_t fs_utils_manifest = {
 // Mission: Non-destructive path probing and file metadata inspection.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Tests whether a given file or directory path exists on the filesystem.
+ *
+ * @param[in] path Null-terminated file or directory path to test.
+ * @return true if path exists and is accessible; false otherwise (or if NULL).
+ */
 bool fs_file_exists(const char *path)
 {
+    /* Step 1: Validate input parameter resilience */
     if (path == NULL || path[0] == '\0') {
         return false;
     }
+
+    /* Step 2: Query POSIX stat metadata */
     struct stat st;
     return (stat(path, &st) == 0);
 }
 
+/**
+ * @brief Retrieves the total byte size of a regular file on the filesystem.
+ *
+ * @param[in] path Null-terminated file path to inspect.
+ * @return Positive byte size if regular file exists; -1 on error or non-regular.
+ */
 long fs_get_file_size(const char *path)
 {
+    /* Step 1: Validate input parameter */
     if (path == NULL || path[0] == '\0') {
         return -1;
     }
+
+    /* Step 2: Query file metadata */
     struct stat st;
     if (stat(path, &st) != 0) {
         return -1;
     }
+
+    /* Step 3: Verify path refers to regular file */
     if (!S_ISREG(st.st_mode)) {
         return -1;
     }
+
     return (long)st.st_size;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: BUFFERED I/O & DIRECTORY MANAGEMENT COGS ]
-// Mission: Read file text safely into fixed buffers and ensure directories exist.
-// -----------------------------------------------------------------------------
-
-bool fs_read_file_contents(const char *filepath, char *buf, size_t buf_size)
-{
-    if (filepath == NULL || buf == NULL || buf_size == 0) {
-        return false;
-    }
-
-    FILE *f = fopen(filepath, "r");
-    if (!f) {
-        buf[0] = '\0';
-        return false;
-    }
-
-    size_t read_bytes = fread(buf, 1, buf_size - 1, f);
-    buf[read_bytes] = '\0';
-
-    // Verify whether entire file fit inside buffer
-    int next_char = fgetc(f);
-    fclose(f);
-
-    if (next_char != EOF) {
-        // File exceeded caller's buffer capacity; truncate safely and report error
-        buf[buf_size - 1] = '\0';
-        return false;
-    }
-
-    return true;
-}
-
+/**
+ * @brief Checks if a given path is an accessible regular file.
+ *
+ * @param[in] path Null-terminated path to check.
+ * @return true if path exists and is S_ISREG; false otherwise.
+ */
 bool fs_is_regular_file(const char *path)
 {
+    /* Step 1: Precondition check */
     if (path == NULL || path[0] == '\0') {
         return false;
     }
+
+    /* Step 2: Query stat and evaluate S_ISREG */
     struct stat st;
     if (stat(path, &st) != 0) {
         return false;
@@ -159,11 +156,68 @@ bool fs_is_regular_file(const char *path)
     return S_ISREG(st.st_mode);
 }
 
-bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size, size_t *out_bytes_read)
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 3.2: BUFFERED I/O & DIRECTORY MANAGEMENT COGS ]
+// Mission: Read file text safely into fixed buffers and ensure directories exist.
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Reads entire text file contents into a bounded, caller-supplied buffer.
+ *
+ * @param[in]  filepath Null-terminated path to target file.
+ * @param[out] buf      Caller-supplied memory destination buffer.
+ * @param[in]  buf_size Byte capacity of caller buffer (including null terminator).
+ * @return true if read succeeded within bounds; false on error/overflow.
+ */
+bool fs_read_file_contents(const char *filepath, char *buf, size_t buf_size)
 {
+    /* Step 1: Precondition validation */
+    if (filepath == NULL || buf == NULL || buf_size == 0) {
+        return false;
+    }
+
+    /* Step 2: Open file in read mode */
+    FILE *f = fopen(filepath, "r");
+    if (!f) {
+        buf[0] = '\0';
+        return false;
+    }
+
+    /* Step 3: Read up to buf_size - 1 bytes */
+    size_t read_bytes = fread(buf, 1, buf_size - 1, f);
+    buf[read_bytes] = '\0';
+
+    /* Step 4: Verify whether entire file fit inside buffer */
+    int next_char = fgetc(f);
+    fclose(f);
+
+    if (next_char != EOF) {
+        /* File exceeded caller's buffer capacity; enforce null termination */
+        buf[buf_size - 1] = '\0';
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Reads file text and reports the exact count of bytes read into buffer.
+ *
+ * @param[in]  filepath       Null-terminated path to target file.
+ * @param[out] buf            Caller-supplied destination buffer.
+ * @param[in]  buf_size       Capacity of destination buffer in bytes.
+ * @param[out] out_bytes_read Optional pointer receiving bytes read.
+ * @return true if read completed without truncation; false otherwise.
+ */
+bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size,
+                          size_t *out_bytes_read)
+{
+    /* Step 1: Initialize output counter if provided */
     if (out_bytes_read) {
         *out_bytes_read = 0;
     }
+
+    /* Step 2: Precondition validation */
     if (filepath == NULL || buf == NULL || buf_size == 0) {
         if (buf && buf_size > 0) {
             buf[0] = '\0';
@@ -171,15 +225,18 @@ bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size, size
         return false;
     }
 
+    /* Step 3: Open file stream */
     FILE *f = fopen(filepath, "r");
     if (!f) {
         buf[0] = '\0';
         return false;
     }
 
+    /* Step 4: Read bounded content */
     size_t read_bytes = fread(buf, 1, buf_size - 1, f);
     buf[read_bytes] = '\0';
 
+    /* Step 5: Check for file truncation */
     int next_char = fgetc(f);
     fclose(f);
 
@@ -188,19 +245,30 @@ bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size, size
         return false;
     }
 
+    /* Step 6: Populate output byte count */
     if (out_bytes_read) {
         *out_bytes_read = read_bytes;
     }
     return true;
 }
 
-bool fs_write_file_contents(const char *filepath, const char *data, size_t data_len)
+/**
+ * @brief Safely writes or overwrites bounded text/data to a file on disk.
+ *
+ * @param[in] filepath Null-terminated target filepath.
+ * @param[in] data     Buffer of data to write.
+ * @param[in] data_len Number of bytes to write.
+ * @return true if all bytes were written successfully; false on error/NULL.
+ */
+bool fs_write_file_contents(const char *filepath, const char *data,
+                            size_t data_len)
 {
+    /* Step 1: Precondition check */
     if (filepath == NULL || filepath[0] == '\0' || data == NULL) {
         return false;
     }
 
-    // Ensure parent directory exists first
+    /* Step 2: Ensure parent directory exists first */
     char parent[FS_PATH_MAX];
     if (str_parent_dir(parent, sizeof(parent), filepath)) {
         if (strcmp(parent, ".") != 0) {
@@ -208,11 +276,13 @@ bool fs_write_file_contents(const char *filepath, const char *data, size_t data_
         }
     }
 
+    /* Step 3: Open file for writing */
     FILE *f = fopen(filepath, "w");
     if (!f) {
         return false;
     }
 
+    /* Step 4: Write payload if data_len > 0 */
     if (data_len > 0) {
         size_t written = fwrite(data, 1, data_len, f);
         fclose(f);
@@ -223,23 +293,31 @@ bool fs_write_file_contents(const char *filepath, const char *data, size_t data_
     return true;
 }
 
+/**
+ * @brief Ensures that a directory path exists, recursively creating parents.
+ *
+ * @param[in] dir_path Null-terminated directory path to create.
+ * @return true if directory exists or was created; false on error.
+ */
 bool fs_ensure_directory(const char *dir_path)
 {
+    /* Step 1: Precondition check */
     if (dir_path == NULL || dir_path[0] == '\0') {
         return false;
     }
 
+    /* Step 2: Copy to mutable buffer */
     char tmp[512];
     str_safe_copy(tmp, dir_path, sizeof(tmp));
     size_t len = strlen(tmp);
 
-    // Strip trailing slashes
+    /* Step 3: Strip trailing slashes */
     while (len > 1 && tmp[len - 1] == '/') {
         tmp[len - 1] = '\0';
         len--;
     }
 
-    // Traverse segments creating directories progressively
+    /* Step 4: Traverse segments creating directories progressively */
     for (char *p = tmp + 1; *p != '\0'; p++) {
         if (*p == '/') {
             *p = '\0';
@@ -255,7 +333,7 @@ bool fs_ensure_directory(const char *dir_path)
         }
     }
 
-    // Create leaf directory
+    /* Step 5: Create leaf directory */
     struct stat st;
     if (stat(tmp, &st) != 0) {
         if (mkdir(tmp, 0755) != 0 && errno != EEXIST) {

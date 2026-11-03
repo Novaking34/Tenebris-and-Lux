@@ -74,7 +74,7 @@ extern const module_metadata_t string_utils_manifest;
 // -----------------------------------------------------------------------------
 
 /**
- * Copies a source string into a destination buffer with bounded termination.
+ * @brief Copies a source string into a destination buffer with bounded termination.
  *
  * ### Machine Role & Mission
  *
@@ -106,7 +106,7 @@ extern const module_metadata_t string_utils_manifest;
 void str_safe_copy(char *dst, const char *src, size_t dst_size);
 
 /**
- * Strips leading and trailing whitespace from a string in-place.
+ * @brief Strips leading and trailing whitespace from a string in-place.
  *
  * ### Machine Role & Mission
  *
@@ -138,7 +138,7 @@ void str_trim_inplace(char *str);
 // -----------------------------------------------------------------------------
 
 /**
- * Compares two strings for equality ignoring ASCII case differences.
+ * @brief Compares two strings for equality ignoring ASCII case differences.
  *
  * ### Machine Role & Mission
  *
@@ -168,7 +168,7 @@ void str_trim_inplace(char *str);
 bool str_case_eq(const char *a, const char *b);
 
 /**
- * Searches for a case-insensitive substring occurrence within a haystack.
+ * @brief Searches for a case-insensitive substring occurrence within a haystack.
  *
  * ### Machine Role & Mission
  *
@@ -203,7 +203,7 @@ bool str_contains_nocase(const char *haystack, const char *needle);
 // -----------------------------------------------------------------------------
 
 /**
- * Extracts the directory component of a filepath into a destination buffer.
+ * @brief Extracts the directory component of a filepath into a destination buffer.
  *
  * ### Machine Role & Mission
  *
@@ -235,7 +235,7 @@ bool str_contains_nocase(const char *haystack, const char *needle);
 bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath);
 
 /**
- * Safely joins a directory path and filename with a single intervening separator.
+ * @brief Safely joins a directory path and filename with a single intervening separator.
  *
  * ### Machine Role & Mission
  *
@@ -272,14 +272,15 @@ bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *fi
 // -----------------------------------------------------------------------------
 
 /**
- * Returns hardcoded fallback lexical configuration profile.
+ * @brief Returns the hardcoded fallback lexical configuration profile.
  *
  * @return Default baseline string_config_t with canonical bounds.
  */
 string_config_t string_get_default_config(void);
 
 /**
- * Loads a lexical configuration profile from a JSON file.
+ * @brief Loads a lexical configuration profile from a JSON file.
+ *
  * Falls back to string_get_default_config() if file is inaccessible.
  *
  * @param[in]  filepath   Null-terminated path to profile JSON.
@@ -299,7 +300,7 @@ bool string_load_config_from_file(const char *filepath, string_config_t *out_con
 // -----------------------------------------------------------------------------
 
 /**
- * Executes machine pre-flight diagnostic checks on string safety invariants.
+ * @brief Executes machine pre-flight diagnostic checks on string safety invariants.
  *
  * Verifies bounded copying, null termination enforcement, in-place trimming,
  * and case-insensitive comparison correctness.
@@ -309,7 +310,7 @@ bool string_load_config_from_file(const char *filepath, string_config_t *out_con
 diag_result_t string_utils_preflight(void);
 
 /**
- * High-level boolean audit wrapper for standalone test harnesses.
+ * @brief High-level boolean audit wrapper for standalone test harnesses.
  *
  * @return `true` if all string invariant tripwires pass cleanly.
  */

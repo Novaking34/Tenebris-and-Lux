@@ -94,22 +94,18 @@ typedef struct {
 // -----------------------------------------------------------------------------
 
 /**
- * Constructs a validated 2D rectangle with non-negative dimensions.
- *
- * ### Machine Role & Mission
+ * @brief Constructs a validated 2D rectangle with non-negative dimensions.
  *
  * Primary constructor for layout boundaries and interactive regions.
  * Automatically clamps any negative width or height arguments to 0.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.geom (2D Spatial Geometry Engine)
  * - Assembly:   Rectangle Constructors & Hit-Testing
  * - Cog:        Normalized Bounding Box Factory
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Passed and returned by value on stack).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -119,30 +115,26 @@ typedef struct {
  * @param[in] w Desired width (negative inputs clamped to 0).
  * @param[in] h Desired height (negative inputs clamped to 0).
  *
- * @return Normalized `geom_rect_t` satisfying `w >= 0` and `h >= 0`.
+ * @return Normalized geom_rect_t satisfying w >= 0 and h >= 0.
  *
- * @post `return.w >= 0` and `return.h >= 0`.
+ * @post return.w >= 0 and return.h >= 0.
  */
 geom_rect_t geom_make_rect(int x, int y, int w, int h);
 
 /**
- * Tests whether a 2D screen-space point lies within a bounding box.
- *
- * ### Machine Role & Mission
+ * @brief Tests whether a 2D screen-space point lies within a bounding box.
  *
  * Evaluates cursor clicks and hover events against interactive GUI buttons
  * and tactical map grid tiles. Points on the top/left edges are included;
- * points on bottom/right edges are excluded (half-open interval `[x, x+w)`).
+ * points on bottom/right edges are excluded (half-open interval [x, x+w)).
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.geom (2D Spatial Geometry Engine)
  * - Assembly:   Rectangle Constructors & Hit-Testing
  * - Cog:        Point-in-Rectangle Hit Tester
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -151,7 +143,7 @@ geom_rect_t geom_make_rect(int x, int y, int w, int h);
  * @param[in] py Point vertical coordinate.
  * @param[in] r  Target bounding box rectangle.
  *
- * @return `true` if `(px, py)` resides inside `r`; `false` otherwise.
+ * @return true if (px, py) resides inside r; false otherwise.
  */
 bool geom_point_in_rect(int px, int py, geom_rect_t r);
 
@@ -161,23 +153,19 @@ bool geom_point_in_rect(int px, int py, geom_rect_t r);
 // -----------------------------------------------------------------------------
 
 /**
- * Tests whether two 2D bounding boxes overlap (Axis-Aligned Bounding Box).
- *
- * ### Machine Role & Mission
+ * @brief Tests whether two 2D bounding boxes overlap (Axis-Aligned Bounding Box).
  *
  * Used during GUI layout pre-flight audits to prove that UI buttons and cards
  * do not collide or obscure each other, and in combat grids to detect unit
  * proximity and collision boundaries.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.geom (2D Spatial Geometry Engine)
  * - Assembly:   AABB Collision & Bounds Audit
  * - Cog:        AABB Intersection Evaluator
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -185,29 +173,25 @@ bool geom_point_in_rect(int px, int py, geom_rect_t r);
  * @param[in] a First bounding box.
  * @param[in] b Second bounding box.
  *
- * @return `true` if `a` and `b` share any non-zero area; `false` otherwise.
+ * @return true if a and b share any non-zero area; false otherwise.
  *
- * @note Degenerate rectangles with width or height of zero return `false`.
+ * @note Degenerate rectangles with width or height of zero return false.
  */
 bool geom_rect_intersects(geom_rect_t a, geom_rect_t b);
 
 /**
- * Verifies that a bounding box resides entirely within viewport limits.
- *
- * ### Machine Role & Mission
+ * @brief Verifies that a bounding box resides entirely within viewport limits.
  *
  * Validates that desktop window elements do not clip, overflow, or render
- * beyond the window dimensions (e.g. `GUI_WINDOW_WIDTH` x `GUI_WINDOW_HEIGHT`).
+ * beyond the window dimensions (e.g. GUI_WINDOW_WIDTH x GUI_WINDOW_HEIGHT).
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.geom (2D Spatial Geometry Engine)
  * - Assembly:   AABB Collision & Bounds Audit
  * - Cog:        Viewport Extent Boundary Checker
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
  * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
  * - Latency Budget: < 1 microsecond execution time (O(1)).
@@ -216,7 +200,7 @@ bool geom_rect_intersects(geom_rect_t a, geom_rect_t b);
  * @param[in] max_w Maximum viewport width boundary.
  * @param[in] max_h Maximum viewport height boundary.
  *
- * @return `true` if `r` is completely inside `[0, max_w] x [0, max_h]`.
+ * @return true if r is completely inside [0, max_w] x [0, max_h].
  */
 bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h);
 
@@ -231,20 +215,20 @@ bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h);
 // -----------------------------------------------------------------------------
 
 /**
- * Executes machine pre-flight diagnostic checks on geometric invariants.
+ * @brief Executes machine pre-flight diagnostic checks on geometric invariants.
  *
  * Verifies non-negative dimension normalization, point-in-rect containment,
  * AABB intersection symmetry, and boundary checks.
  *
- * @return `diag_result_t` reporting SEVERITY_PASS or SEVERITY_FATAL.
+ * @return diag_result_t reporting SEVERITY_PASS or SEVERITY_FATAL.
  */
 diag_result_t geom_utils_preflight(void);
 
 /**
- * High-level boolean audit wrapper for standalone test harnesses.
+ * @brief High-level boolean audit wrapper for standalone test harnesses.
  *
- * @return `true` if all geometric invariant tripwires pass cleanly;
- *         `false` otherwise.
+ * @return true if all geometric invariant tripwires pass cleanly;
+ *         false otherwise.
  */
 bool geom_utils_audit(void);
 

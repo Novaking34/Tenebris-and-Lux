@@ -186,19 +186,25 @@ typedef struct {
 // -----------------------------------------------------------------------------
 
 /**
- * Initializes a central manifest registry to zeroed, pristine state.
+ * @brief Initializes a central manifest registry to zeroed, pristine state.
  *
- * @param[out] registry Pointer to uninitialized registry structure.
+ * Prepares the zero-heap registry storage prior to module registration.
+ * Wipes registered pointers and resets diagnostic tally counters.
+ *
+ * @param[out] registry Pointer to uninitialized caller-allocated registry structure.
  */
 void manifest_registry_init(manifest_registry_t *registry);
 
 /**
- * Registers an immutable module metadata node into the central registry.
+ * @brief Registers an immutable module metadata node into the central registry.
  *
- * @param[in,out] registry Target registry instance.
- * @param[in]     module   Pointer to static module metadata record.
+ * Collects compiled module records into the centralized pre-flight evaluation
+ * registry. Rejects duplicate module IDs and enforces MANIFEST_MAX_MODULES.
  *
- * @return `true` if registration succeeded; `false` on duplicate or overflow.
+ * @param[in,out] registry Target registry collecting module records.
+ * @param[in]     module   Pointer to static immutable module metadata record.
+ *
+ * @return true if registration succeeded; false on duplicate ID or overflow.
  */
 bool manifest_register(manifest_registry_t *registry,
                        const module_metadata_t *module);
@@ -209,15 +215,15 @@ bool manifest_register(manifest_registry_t *registry,
 // -----------------------------------------------------------------------------
 
 /**
- * Executes full pre-flight evaluation across all registered engine modules.
+ * @brief Executes full pre-flight evaluation across all registered engine modules.
  *
  * Step 1: Validates upstream DAG dependency graph. Missing modules yield FATAL.
- * Step 2: Executes each module's diagnostic `preflight_check` callback.
+ * Step 2: Executes each module's diagnostic preflight_check callback.
  * Step 3: Computes final system policy readiness state.
  *
  * @param[in,out] registry Initialized registry with registered modules.
  *
- * @return Overall preflight status (`OK`, `WARNINGS`, `DOWNGRADED`, `FATAL`).
+ * @return Overall preflight status (OK, WARNINGS, DOWNGRADED, HALT_FATAL).
  */
 preflight_status_t manifest_run_preflight(manifest_registry_t *registry);
 
@@ -227,7 +233,7 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry);
 // -----------------------------------------------------------------------------
 
 /**
- * Prints a formatted 80-column ASCII pre-flight audit report to stdout.
+ * @brief Prints a formatted 80-column ASCII pre-flight audit report to stdout.
  *
  * Displays build telemetry timestamp, target standard, and an inspection
  * matrix containing module ID, header file, revision, allocation model,
@@ -237,10 +243,44 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry);
  */
 void manifest_print_report(const manifest_registry_t *registry);
 
+/**
+ * @brief Converts a diagnostic severity code to a human-readable string.
+ *
+ * @param[in] severity Diagnostic severity level enum value.
+ * @return Null-terminated static string (e.g. "PASS", "WARNING", "FATAL").
+ */
 const char *manifest_severity_to_str(diag_severity_t severity);
+
+/**
+ * @brief Converts an aggregate preflight status code to a human-readable string.
+ *
+ * @param[in] status Aggregate preflight status enum value.
+ * @return Null-terminated static string (e.g. "READY", "WARNINGS", "HALTED").
+ */
 const char *manifest_status_to_str(preflight_status_t status);
+
+/**
+ * @brief Converts an architectural layer stratum code to a descriptive string.
+ *
+ * @param[in] layer Architectural layer stratum enum value.
+ * @return Null-terminated static string (e.g. "Layer 0: Core Utilities").
+ */
 const char *manifest_layer_to_str(module_layer_t layer);
+
+/**
+ * @brief Converts a memory allocation policy code to a human-readable string.
+ *
+ * @param[in] policy Memory allocation contract policy enum value.
+ * @return Null-terminated static string (e.g. "Zero-Heap", "Fixed-Pool").
+ */
 const char *manifest_alloc_policy_to_str(alloc_policy_t policy);
+
+/**
+ * @brief Converts a concurrency contract policy code to a human-readable string.
+ *
+ * @param[in] policy Concurrency and thread safety policy enum value.
+ * @return Null-terminated static string (e.g. "Reentrant", "Main-Thread").
+ */
 const char *manifest_concurrency_to_str(concurrency_policy_t policy);
 
 // =============================================================================
@@ -253,8 +293,25 @@ const char *manifest_concurrency_to_str(concurrency_policy_t policy);
 // Mission: Verify registry capacity bounds, duplicate rejection, and policies.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Manifest metadata record for the Central Manifest Registry module.
+ */
 extern const module_metadata_t manifest_utils_manifest;
+
+/**
+ * @brief Pre-flight diagnostic check evaluating manifest registry invariants.
+ *
+ * Verifies static capacity, duplicate rejection, and policy escalation rules.
+ *
+ * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
+ */
 diag_result_t manifest_utils_preflight(void);
+
+/**
+ * @brief Standalone boolean self-audit testing manifest invariants.
+ *
+ * @return true if all manifest tests pass cleanly; false on violation.
+ */
 bool manifest_audit(void);
 
 // =============================================================================

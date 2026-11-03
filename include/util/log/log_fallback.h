@@ -102,7 +102,7 @@
 // =============================================================================
 
 /**
- * Returns the monolithic static fallback configuration code page.
+ * @brief Returns the monolithic static fallback configuration code page.
  *
  * ### Machine Role & Mission
  *
@@ -135,8 +135,7 @@
 log_config_t log_get_monolith_fallback_config(void);
 
 /**
- * Explicitly initializes the logging engine using the emergency monolithic
- * default code page, bypassing external data requirements.
+ * @brief Explicitly initializes the logging engine using the emergency monolithic default code page.
  *
  * ### Machine Role & Mission
  *
@@ -168,8 +167,7 @@ bool log_init_emergency_monolith(void);
 // =============================================================================
 
 /**
- * Diagnostic verification routine asserting the integrity of the fallback
- * code page parameters against hardcoded invariant constants.
+ * @brief Diagnostic verification routine asserting the integrity of the fallback code page parameters.
  *
  * ### Machine Role & Mission
  *

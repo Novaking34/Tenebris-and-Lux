@@ -35,7 +35,7 @@ The campaign features a **Tri-Perspective Narrative Architecture** exploring thr
 | **Structural Paradigm** | OmniCode Universal 5-Block Code Lifecycle Protocol |
 | **Layered Strata** | Layer 0 (Core Util), Layer 1 (Sim Engine), Layer 2 (GUI), Layer 3 (Entry), Layer 4 (Tests) |
 | **Author / Lead** | ProfessorSeanEX / CreativeWorkzStudio LLC |
-| **Documentation** | 63-Chapter Unified Compendium ([`MASTER_GUIDE.adoc`](docs/MASTER_GUIDE.adoc), [`MASTER_GUIDE.md`](docs/MASTER_GUIDE.md), [`MASTER_GUIDE.pdf`](docs/MASTER_GUIDE.pdf)) |
+| **Documentation** | 67-Chapter Unified Compendium ([`MASTER_GUIDE.adoc`](docs/MASTER_GUIDE.adoc), [`MASTER_GUIDE.md`](docs/MASTER_GUIDE.md), [`MASTER_GUIDE.pdf`](docs/MASTER_GUIDE.pdf)) |
 | **License** | MIT License |
 
 ---
@@ -106,14 +106,15 @@ For in-depth architectural specifications, see [ARCHITECTURE.adoc](docs/architec
 
 ## 4. Roadmap & Development Milestones
 
-* [x] **Phase 1: Dual-Frontend Prototype (Current - v0.0.1)**
+* [x] **Phase 1: Dual-Frontend Prototype & Verification Strata (Current - v0.0.1)**
   * Pure C11 interactive simulation with zero dynamic heap allocations in core layers.
   * Native double-buffered X11 GUI and headless/terminal CLI running side-by-side.
   * Tri-perspective state modeling (Elijah, Katrina, Custom Bearer).
-  * Layer 0 Core Utilities (`manifest`, `math_utils`, `string_utils`, `geom_utils`, `time_utils`, `log`).
-  * 12-Module Pre-Flight Subsystem Integrity Check (`--audit`) reporting graded telemetry manifests.
-  * Automated diagnostic audit suite and CTest integration (7/7 test suites passing).
-  * Standalone Rust developer tooling (`tools/src/guide.rs`) compiling 63 chapters into PDF, AsciiDoc, and Markdown.
+  * Layer 0 Core Utilities (`manifest`, `data/`, `math/`, `string/`, `time/`, `log/`, `debug/`).
+  * 15-Module Pre-Flight Subsystem Integrity Check (`--audit`) reporting graded telemetry manifests.
+  * Automated diagnostic audit suite and 4-tier CTest integration (13/13 test suites passing).
+  * Interactive CLI State Debugger and Time-Travel Rewind (`--debug`, `inspect`, `history`, `rewind`).
+  * Standalone Rust developer tooling (`tools/src/guide.rs`) compiling 67 chapters into PDF, AsciiDoc, and Markdown.
 * [ ] **Phase 2: Tactical Strategy RPG Grid Engine**
   * Discrete 2D grid coordinates, movement budgets, terrain defense modifiers, Zone-of-Control (ZOC).
   * Party formation management across Sacyran provinces.
@@ -145,9 +146,12 @@ cmake --build build --config Debug
 
 # Launch explicitly in native desktop GUI mode
 ./build/tenebris-lux --gui
+
+# Launch with interactive CLI state debugger enabled
+./build/tenebris-lux --debug
 ```
 
-### Compile the Unified Master Guide (63 Chapters)
+### Compile the Unified Master Guide (67 Chapters)
 
 ```bash
 # Requires Rust toolchain (cargo) and asciidoctor-pdf
@@ -164,16 +168,20 @@ cargo run --manifest-path tools/Cargo.toml --bin master_guide
 * `stance <ward|strike|equilibrium>` / **(T)**: Shift combat and metaphysical stance.
 * `move <n|s|e|w>` / **(N, S, R, W)**: Travel across realms (Dreamscape, Dio Village, Woods, Marches).
 * `name <bearer>`: Designate bearer identity (Elijah, Katrina, or Custom).
+* `inspect`: Live ASCII diagnostic card of hero stats, relics, stance, sway, and tripwires.
+* `history`: Tabular timeline of recorded debugger state snapshots.
+* `snap <reason>`: Capture an immediate state snapshot into the ring buffer.
+* `rewind <idx>`: Rewind player simulation state to a historical snapshot index.
 * `help`: View all available commands.
 * `quit` / **(Q)**: Exit the game.
 
 ### Automated Diagnostics & Testing
 
 ```bash
-# Run pre-flight inspection and internal self-audit (12 registered modules + 6 invariant tests)
+# Run pre-flight inspection and internal self-audit (15 registered modules + 7 invariant tests)
 ./build/tenebris-lux --audit
 
-# Run full CTest automated verification suite (7/7 tests pass)
+# Run full CTest automated verification suite (13/13 tests pass)
 ctest --test-dir build -C Debug --output-on-failure
 ```
 
@@ -181,14 +189,14 @@ ctest --test-dir build -C Debug --output-on-failure
 
 ## 6. Repository Documentation Index
 
-* **[docs/MASTER_GUIDE.adoc](docs/MASTER_GUIDE.adoc)**: The complete 63-chapter unified AsciiDoc compendium.
+* **[docs/MASTER_GUIDE.adoc](docs/MASTER_GUIDE.adoc)**: The complete 67-chapter unified AsciiDoc compendium.
 * **[docs/MASTER_GUIDE.pdf](docs/MASTER_GUIDE.pdf)**: Production PDF publication book compiled via `asciidoctor-pdf`.
 * **[docs/README.adoc](docs/README.adoc)**: Central documentation portal and index.
 * **[docs/INSTALL.adoc](docs/INSTALL.adoc)**: Comprehensive compilation, installation, and troubleshooting guide.
-* **[docs/architecture/](docs/architecture/README.adoc)**: System design, 5-block lifecycle, and dual-frontend engine.
+* **[docs/architecture/](docs/architecture/README.adoc)**: System design, 5-block lifecycle, data-driven architecture, and dual-frontend engine.
 * **[docs/lore/](docs/lore/README.adoc)**: Macro-chronology, 20-scene master storyboard, thematic triad, character dossiers, and realm chronicles.
 * **[docs/game_design/](docs/game_design/README.adoc)**: TRPG grid mechanics, campaign structure, relics, and 2017–2018 demo baseline.
-* **[docs/dev_logs/](docs/dev_logs/README.adoc)**: Living engineering chronology (DevLogs 001–009 across October and November 2026).
-* **[docs/code/](docs/code/README.adoc)**: Subsystem implementation tours for Layer 0, Layer 1, Layer 2, and Layer 4.
+* **[docs/dev_logs/](docs/dev_logs/README.adoc)**: Living engineering chronology (DevLogs 001–012 across October and November 2026).
+* **[docs/code/](docs/code/README.adoc)**: Subsystem implementation tours for Layer 0 (Core Utils, Debugger), Layer 1, Layer 2, and Layer 4.
 * **[docs/offline_work/](docs/offline_work/README.adoc)**: Archived genesis notes, storyboard transcriptions, and macro-architecture drafts.
 * **[AGENTS.md](AGENTS.md)**: Repository guidelines, OmniCode invariants, and cognitive anchor standards.

@@ -53,7 +53,7 @@
 // =============================================================================
 
 /**
- * Constructs and returns the static fallback configuration structure.
+ * @brief Constructs and returns the static fallback configuration structure.
  *
  * ### Machine Role & Mission
  *
@@ -111,7 +111,7 @@ log_config_t log_get_monolith_fallback_config(void)
 }
 
 /**
- * Emergency initialization helper utilizing the monolithic code page.
+ * @brief Emergency initialization helper utilizing the monolithic code page.
  *
  * ### Machine Role & Mission
  *
@@ -141,8 +141,7 @@ bool log_init_emergency_monolith(void)
 // =============================================================================
 
 /**
- * Diagnostic self-audit verifying that the fallback code page satisfies all
- * Layer 0 structural and behavioral invariants.
+ * @brief Diagnostic self-audit verifying that the fallback code page satisfies all Layer 0 invariants.
  *
  * ### Machine Role & Mission
  *
