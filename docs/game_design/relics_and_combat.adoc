@@ -64,24 +64,29 @@ The battle posture shifts dynamically across four discrete combat stances:
    - Grid Effect: Immunity to positioning debuffs and void mire terrain penalties.
    - Combat Effect: Simultaneously restores $+15$ Shield power and $+15$ Sword edge; parries incoming strikes while counter-attacking for $20$ damage; nudges moral sway toward center ($0$).
 
-== 3. The Moral Sway Continuum
+== 3. The Moral Sway Continuum & Decoupled Elemental Expression
 
 The moral trajectory of Sacyra's champions is tracked along a continuous bounded integer axis:
 
 [source,text]
 ----
 [ -100: Sovereign of Ruin ] ◄──── [ 0: Equilibrium ] ────► [ +100: Saint of Mercy ]
+                 ▲                                ▲
+                 └─── [ -50 to +50: Bystander ] ──┘
 ----
 
-* **Virtue & Mercy ($+1 \dots +100$)**:
-  - Gained by shielding fleeing militia, sparing defeated enemy officers, resolving noble-court corruption through justice, and protecting the innocent with the Shield of Lux.
-  - Unlocks royal alliances, Knight Commander endorsements, and sanctuary miracles.
-* **Tyranny & Ruin ($-1 \dots -100$)**:
-  - Accumulated through ruthless executions, collateral damage in villages, using scorched-earth radiance to blind subjects, or giving in to the void's bloodlust.
-  - Unlocks forbidden void arts, mercenary enlistments, and intimidation tactics.
-* **Equilibrium ($0$)**:
-  - Maintained by balancing the blade and the aegis; recognizing that light without shadow is a calcified wasteland, and shadow without light is an endless void.
-  - Unlocks the ultimate secret synthesis arts of ancient Sacyra.
+=== 3.1. Decoupling Morality ("The Why") from Elemental Expression ("The How")
+Neither Lux nor Tenebris dictates a character's moral alignment:
+* **Virtuous Lux (`+1 ... +100`):** Selfless sanctuary, kinetic mitigation (*Lux Barrio*), and restorative peace.
+* **Tyrannical Lux (`-100 ... -1`):** Blinding glare, totalitarian enforcement of rigid order, and calcifying living will into petrified stasis (The Mi-ren Fallacy).
+* **Virtuous Tenebris (`+1 ... +100`):** Surgical severance (*Cuttatio Tenebris*), cutting corrupt bindings, and executing Absolute Justice without unnecessary bloodshed (The Casatti Ideal).
+* **Malevolent Tenebris (`-100 ... -1`):** Creeping entropic rot, nihilistic bloodlust, and devouring devastation (The Dark Lord).
+
+=== 3.2. The Bystander Corridor (`[-50, +50]`) as Net Moral Inertia
+The `[-50, +50]` band represents **Net Moral Inertia**, where opposing deeds cancel out into zero net displacement. Staying within this corridor traps the protagonists in 3,000 years of repeating cyclical tragedy. Breaking past $\pm 50$ through deliberate micro-choices (such as aiding Eric or John in Dio Village) asserts heroic agency: *"Trauma is Inherited, Destiny is Chosen."*
+
+=== 3.3. Equilibrium (`0`)
+Maintained by active discipline rather than passive fence-sitting; balancing the blade and the aegis so that radiant light tempers the void without collapsing into calcified stasis or entropic rot. Unlocks the tandem secret art *Duo-Loca Bashin n Slash*.
 
 == 4. Tactical Actions & Combat Skills
 
@@ -149,12 +154,17 @@ Throughout the campaign, the Shield of Lux and Sword of Tenebris are actively em
 4. **Armory Relics (Medusa's Sword & Heart Shield):**
    - Optional material infusions granting petrification stasis or passive HP vitality warding.
 
-== 7. Relic Profiles & Ending Correlation
+== 7. Relic Profiles & The Ten-Ending Campaign Matrix
 
-The final state of relic embellishments along the `[-100, +100]` Moral Sway continuum determines which of the five ending routes resolves the campaign:
-* **Route A (Canonical Harmony):** Balanced embellishments, Stance of Equilibrium, True Ending.
-* **Route B (Benevolent Stasis):** Pure Lux embellishment, `+100` sway, continental comatose barrier.
-* **Route C (Calcified Tyrant):** Lux embellishment, `-100` sway, inquisitorial solar tyranny.
-* **Route D (Abyssal Usurper):** Pure Tenebris embellishment, `-100` sway, Dark Sovereign ascension.
-* **Route E (Secret Chronicler):** Custom bearer, 100% relic synthesis, planar tear healed.
+The final profile of relic embellishments along the `[-100, +100]` Moral Sway continuum maps into the 3x3 matrix crowned by the 10th synthesis ending:
+* **Lux-Good (`[+50, +100]`):** *The Radiant Sanctuary* — Selfless protection without tyranny.
+* **Lux-Neutral (`[-50, +50]`):** *The Benevolent Stasis* — The Mi-ren Fallacy; golden crystal cocoon.
+* **Lux-Bad (`[-100, -50]`):** *The Calcified Tyrant* — Radiance weaponized into an inquisitorial police state.
+* **Tenebris-Good (`[+50, +100]`):** *Absolute Justice* — The Casatti Ideal; surgical severance of corruption.
+* **Tenebris-Neutral (`[-50, +50]`):** *The Cynical Outlaw* — Threat slain; realm abandoned to decay.
+* **Tenebris-Bad (`[-100, -50]`):** *The Abyssal Usurper* — The Cycle of Usuru; rules from obsidian ashes.
+* **Statera-Good (`[+50, +100]`):** *Harmonized Concord* — Both relics united in restorative justice.
+* **Statera-Neutral (`[-50, +50]`):** *Armed Deterrence* — Uneasy status quo; frontier rift unhealed.
+* **Statera-Bad (`[-100, -50]`):** *The Dual Despot* — Totalitarian martial hegemony.
+* **Synthesis (10th Route):** *The True Ending ("The Ugly Truth")* — Unlocked via Elijah, Katrina, and the Custom Bearer (`<chosen_name>`) alongside nocturnal Dreamscape trials, mending the 3,000-year planar tear.
 

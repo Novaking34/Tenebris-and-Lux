@@ -39,4 +39,19 @@ and the multi-ending campaign architecture.
   • Dreamscape Temporal Mechanics & Nocturnal Phasing +
   • The King's Curse Planar Wound & Midpoint Campaign Fork +
   • LLM Architecture Biases vs. Creator Mental Model Grounding
+
+| **xref:Offline-Work-3.adoc[Offline-Work-3.adoc]** +
+  (and `Offline-Work-3.md`)
+| AsciiDoc / Markdown
+| • Decoupling Morality ("The Why") from Elemental Expression ("The How") +
+  • Biblical Ontology of Good (*Tov*) and Evil (*Ra*) & Tempering vs. Dissipation +
+  • The Bystander Corridor (`[-50, +50]`) as Net Moral Inertia & Cyclic Stagnation +
+  • The Butterfly Effect & Micro-Choices as Fate-Breakers (Trauma is Inherited, Destiny is Chosen) +
+  • 13-Tier Canonical Nomenclature & Character Categorization Across `[-100, +100]` +
+  • 10-Ending Architecture: 3x3 Matrix + 10th Synthesis Route ("The Ugly Truth") +
+  • The Witness Protagonist, Keystone Route & Quantum Observer Effect +
+  • Diegetic Item Architecture (Grandma's Watch -> Dream Compass, Compass of Morality) +
+  • Save Systems, NG+ Timeline Tree (Chrono's Chronicle Ledger) & Speedrunner Routing +
+  • Historical Reconciliations across Folders 1 & 2 (Maps 002–004, 006, 008, 020–031) +
+  • Architectural Reflection on Philosophy and Low-Level Code Unity
 |===

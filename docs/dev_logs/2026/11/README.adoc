@@ -1,0 +1,40 @@
+= Developer Logs: November 2026 Monthly Chronicle
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-03
+:doctype: article
+:icons: font
+
+[abstract]
+== Overview
+
+This directory preserves the developer logs recorded during **November 2026** for *Tenebris and Lux*.
+Logs are categorized into thematic subdirectories based on their focus:
+`architecture/` for foundational engine design, verification strata, and interactive debugging; and
+`lore_and_design/` for macro-historical canon, thematic triads, and the morality architecture.
+
+== Thematic Index
+
+=== Architecture (`docs/dev_logs/2026/11/architecture/`)
+
+1. **link:architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc[devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc]** (2026-11-02) +
+   *Layer 0 Subsystem Modularization & Data-Driven Architecture* +
+   Decomposed utility monoliths into dedicated domain subsystems (`math/`, `data/`, `log/`, `debug/`), implemented bounded arithmetic and spatial hitboxes, zero-heap JSON parsing, and quarantine fallbacks.
+
+2. **link:architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc[devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc]** (2026-11-02) +
+   *Four-Tier Verification Strata & Ontological Testing Framework* +
+   Restructured test architecture into 4 strict strata (Functional, Unit, Integrated, System), introduced granular function-level cogs, and achieved 13/13 passing automated test suites with sub-microsecond latency.
+
+3. **link:architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc[devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc]** (2026-11-02) +
+   *Interactive Debugging System & State Rewind Architecture* +
+   Engineered interactive CLI state debugger, frozen state ring buffer, FNV-1a state hashing, time-travel rewind, and dynamic expression breakpoints.
+
+=== Lore & Game Design (`docs/dev_logs/2026/11/lore_and_design/`)
+
+1. **link:lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc]** (2026-11-02) +
+   *Macro-History, Thematic Triad & Multi-Ending Architecture* +
+   Codified the 3,000-year dynastic wave across 30–50 kings, the 20-scene Master Storyboard, the Past/Present/Future thematic triad, the etiology of The King's Curse, and the initial midpoint campaign fork.
+
+2. **link:lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc[devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc]** (2026-11-03) +
+   *Morality Architecture, Bystander Corridor & Ten-Ending Matrix* +
+   Decoupled moral conscience from elemental expression, established the $[-50, +50]$ Bystander Corridor as net moral inertia, formulated the Butterfly Effect of micro-verbs, expanded the ending topology to the 3x3 matrix plus 10th True Ending ("The Ugly Truth"), and detailed diegetic engine items.
+

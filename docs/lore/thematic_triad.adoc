@@ -127,3 +127,23 @@ The Custom Bearer faces Mi-ren's original dilemma. They can succumb to the **Ben
 Sacyra in a protective golden barrier where no growth can occur—or they can transcend Mi-ren's mistake by
 mending the planar tear in the Room of Sages, reconciling the ancient wound of Usuru, and unlocking the
 **Secret Chronicler True Ending**.
+
+== 5. The Butterfly Effect vs. The Bystander Corridor: Overriding Cyclic Fate
+
+The thematic axiom **"Trauma is Inherited, Destiny is Chosen"** is not merely a narrative motto; it is
+a systemic law operating across the `[-100, +100]` Moral Sway axis:
+
+=== 5.1. The Bystander Corridor (`[-50, +50]`) as Karmic Determinism
+Floating within `[-50, +50]` represents **Net Moral Inertia**, where opposing virtuous and selfish acts
+cancel out into zero displacement. In this corridor, diffusion of responsibility preserves the status quo:
+- Elijah is dragged into Usuru's bitter, disillusioned path upon discovering King Jihad's treason.
+- Katrina is locked into cynical detachment, abandoning Sacyra's rotting court to survive on the margins.
+- Sacyra's 3,000-year dynastic stasis repeats endlessly because ordinary citizens refuse to risk conviction.
+
+=== 5.2. The Butterfly Effect: Micro-Choices as Fate Breakers
+Derived from chaos theory, tiny perturbations in initial conditions compound nonlinearly into radically divergent macro-states:
+- Seemingly modest provincial choices in Dio Village—donating 500 Gold to cover Eric the Lumberjack's taxes,
+  intervening between John the Thief and the predatory St. Baron, or choosing non-lethal shield stagger (*Lux Barrio*)
+  over lethal execution—act as wings flapping against 3,000 years of karmic momentum.
+- By accumulating deliberate micro-interventions, the party crosses the $\pm 50$ conviction threshold,
+  overriding spiritual reincarnation and proving that while trauma is inherited, destiny is chosen.

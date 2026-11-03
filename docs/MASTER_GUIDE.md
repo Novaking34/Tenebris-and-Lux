@@ -85,6 +85,7 @@ It serves as a high-density, context-rich reference for AI engineering workflows
   - Chapter 65: DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture
   - Chapter 66: DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
   - Chapter 67: DevLog 012: Interactive Debugging System & State Rewind Architecture
+  - Chapter 68: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
 
 ---
 
@@ -144,11 +145,151 @@ The relationship between Lux and Tenebris is governed by a strict metaphysical l
   and ethical harmony. Any sudden, violent surge of fear, wrath, or malice causes Lux to **dissipate immediately**,
   collapsing protective barriers and leaving Tenebris unbridled.
 
-### 1.4. The Moral Sway Continuum (`[-100, +100]`)
+### 1.4. The Moral Sway Continuum (`[-100, +100]`) & 13-Tier Taxonomy
+
 Neither Lux nor Tenebris dictates a character's morality. Good and evil belong entirely to the **intent,
 conscience, and choices of the heart behind the weapon**, tracked along the `[-100, +100]` **Moral Sway**
 axis via the **Compass of Morality**. A knight channeling blinding radiance can act as a calcified tyrant,
 while an outrider wielding the void-edged blade of Tenebris can stand as the people's ultimate savior.
+
+The continuum is codified into a formal 13-tier canonical nomenclature:
+
+[cols="1,2,3", options="header"]
+|===
+| Integer Range / Point | Canonical Designation | Functional Definition
+
+| **`-100`**
+| **The Sovereign of Ruin**
+| Absolute negative terminus. Total surrender to abyssal nihilism or petrifying totalitarianism.
+
+| **`[-100, -50]`**
+| **Active Malice (The Tyrannical Sphere)**
+| Deliberate cruelty, ruthless execution, and despotic dominion.
+
+| **`[-50, 0]`**
+| **Cynical Pragmatism (Compliant Apathy)**
+| Lower bystander band. Self-serving opportunism, petty theft, and systemic complicity.
+
+| **`0`**
+| **The Stance of Equilibrium (Harmonic Zero)**
+| Active, disciplined synthesis where Lux and Tenebris temper one another without stasis or rot.
+
+| **`[0, +50]`**
+| **Conventional Decency (Uncommitted Virtue)**
+| Upper bystander band. Civic compliance that avoids personal risk to challenge corruption.
+
+| **`[+50, +100]`**
+| **Active Virtue (The Restorative Sphere)**
+| Self-sacrificing heroism, surgical liberation, and restorative justice breaking inertia.
+
+| **`+100`**
+| **The Saint of Mercy**
+| Absolute positive terminus. Unyielding altruism in protection (Lux) or pure Absolute Justice (Tenebris).
+
+| **`[-50, +50]`**
+| **The Bystander Corridor**
+| Net Moral Inertia; zone of mutual cancellation where history repeats itself.
+
+| **`[-100, 0]`**
+| **The Arc of Dissolution**
+| The deconstructive hemisphere of the world ledger (Tyranny & Ruin).
+
+| **`[0, +100]`**
+| **The Arc of Restoration**
+| The constructive hemisphere of the world ledger (Virtue & Mercy).
+
+| **`[-50, +100]`**
+| **The Transcending Mortal Arc**
+| Trajectory of overcoming cynicism or blind obedience to achieve heroic conviction.
+
+| **`[-100, +50]`**
+| **The Arc of Tragic Disillusionment**
+| Trajectory of a betrayed soul whose optimism is capped at cautious neutrality, plunging to the abyss.
+
+| **`[-100, +100]`**
+| **The Universal Ledger**
+| The complete canvas of mortal free will (The Compass of Morality).
+|===
+
+### 1.5. Character Categorization Across the Continuum
+
+[cols="1,2,2,2,3", options="header"]
+|===
+| Range / Point | Canonical Designation | Historical Figures (Past) | Campaign Figures (Present) | Ludonarrative Rationale
+
+| **`-100`**
+| **Sovereign of Ruin**
+| **Usuru (Late Era)**
+| **The Dark Lord**
+| Consumed by unhealed grief after discovering the 11th Festival stasis deception.
+
+| **`[-100, -50]`**
+| **Active Malice**
+| _Six-Faction Warlords_
+| **King Jihad** (\~ -85)
+| Issues royal gag orders and plots to usurp the Dark Lord's void essence behind a benevolent facade.
+
+| **`[-50, 0]`**
+| **Cynical Pragmatism**
+| _Ancient Court Bailiffs_
+| **The St. Baron** (\~ -45), +
+  **Katrina Jaren (Base)** (\~ -20)
+| The St. Baron exploits Lower Dio through debt bondage. Katrina begins here: sardonic, hunting for Grandma's will to escape Dio.
+
+| **`[-30, +30]`**
+| **The Provincial Swing**
+| _Border Smugglers_
+| **John the Thief**
+| Operates in Lower Dio's gray margins, balancing illegal theft against community survival.
+
+| **`0`**
+| **Stance of Equilibrium**
+| _The Sages of Old_
+| **Chrono the Sage**
+| Anchored outside temporal degradation in the Room of Sages within the Dreamscape.
+
+| **`[0, +50]`**
+| **Conventional Decency**
+| **Usuru (Youth)** (\~ +30)
+| **Eric the Lumberjack** (\~ +10), +
+  **Elijah Ro-enheart (Base)** (\~ +35)
+| Honest folk surviving day-to-day. Elijah starts as a polite, rule-bound soldier hesitant to violate protocol.
+
+| **`[+50, +100]`**
+| **Active Virtue**
+| **Prince Mi-ren**, +
+  **Prince Casatti**, +
+  **The First King**
+| **Grandma Magolia**, +
+  **Sir Roté**, +
+  **Monica the Mystic**
+| Figures defined by communal protection, sacrificial defense, and devotion to peace.
+
+| **`+100`**
+| **Saint of Mercy**
+| **Goddess Lyri** (Ideal)
+| _Endgame Player Potential_
+| Theoretical pinnacle of pure self-sacrifice and uncorrupted justice.
+
+| **`[-50, +100]`**
+| **Transcending Mortal Arc**
+| _Academy Reformers_
+| **Elijah Ro-enheart (Arc)**, +
+  **Katrina Jaren (Arc)**
+| Elijah transcends blind obedience into conscience; Katrina refines rebellious cynicism into noble sacrifice.
+
+| **`[-100, +50]`**
+| **Tragic Disillusionment**
+| **Usuru (Full Trajectory)**
+| _Compromised Playthrough_
+| Faith shattered in his 11th year, plunging from innocent reverence (+30) to the abyss (-100).
+
+| **`[-100, +100]`**
+| **The Unwritten Slate**
+| **Prince Mi-ren (Burden)**
+| **The Custom Bearer (`<chosen_name>`)**
+| Awakens at 0 in the Dreamscape; carries Mi-ren's macro-stewardship across the entire moral spectrum.
+|===
 
 ## 2. Genesis: The Mundane Inception & The Two Princes
 
@@ -929,6 +1070,26 @@ The Custom Bearer faces Mi-ren's original dilemma. They can succumb to the **Ben
 Sacyra in a protective golden barrier where no growth can occur—or they can transcend Mi-ren's mistake by
 mending the planar tear in the Room of Sages, reconciling the ancient wound of Usuru, and unlocking the
 **Secret Chronicler True Ending**.
+
+## 5. The Butterfly Effect vs. The Bystander Corridor: Overriding Cyclic Fate
+
+The thematic axiom **"Trauma is Inherited, Destiny is Chosen"** is not merely a narrative motto; it is
+a systemic law operating across the `[-100, +100]` Moral Sway axis:
+
+### 5.1. The Bystander Corridor (`[-50, +50]`) as Karmic Determinism
+Floating within `[-50, +50]` represents **Net Moral Inertia**, where opposing virtuous and selfish acts
+cancel out into zero displacement. In this corridor, diffusion of responsibility preserves the status quo:
+- Elijah is dragged into Usuru's bitter, disillusioned path upon discovering King Jihad's treason.
+- Katrina is locked into cynical detachment, abandoning Sacyra's rotting court to survive on the margins.
+- Sacyra's 3,000-year dynastic stasis repeats endlessly because ordinary citizens refuse to risk conviction.
+
+### 5.2. The Butterfly Effect: Micro-Choices as Fate Breakers
+Derived from chaos theory, tiny perturbations in initial conditions compound nonlinearly into radically divergent macro-states:
+- Seemingly modest provincial choices in Dio Village—donating 500 Gold to cover Eric the Lumberjack's taxes,
+  intervening between John the Thief and the predatory St. Baron, or choosing non-lethal shield stagger (*Lux Barrio*)
+  over lethal execution—act as wings flapping against 3,000 years of karmic momentum.
+- By accumulating deliberate micro-interventions, the party crosses the $\pm 50$ conviction threshold,
+  overriding spiritual reincarnation and proving that while trauma is inherited, destiny is chosen.
 
 
 ---
@@ -1822,16 +1983,27 @@ cutting through bureaucratic red tape with sarcastic practicality.
    cosmic threshold, the heroes overcome individual biases, passing relics fluidly between each other to
    unlock the **Stance of Equilibrium** (*Duo-Loca Bashin n Slash*).
 
-## 3. The Tri-Perspective Secret Chronicler Architecture
+## 3. The Tri-Perspective Architecture: Witness Protagonist & Keystone Route
 
-When a player selects a custom name via the engine's `name <str>` command, the game decouples the relics
-from fixed protagonists:
+Requiring the player to experience Elijah, Katrina, and finally the customizable Bearer (`<chosen_name>`)
+utilizes three formal narrative game design structures:
 
-* **The Third Eye:** The Custom Bearer acts as an emergent champion guided by **Chrono the Sage** in
-  The Dreamscape, holding **The Dream Compass**.
-* **Synthesizing Both Tales:** While playing both Elijah and Katrina unlocks the canonical **True Ending**,
-  the Custom Bearer performs the "double work" along the `[-100, +100]` Moral Sway axis, catching fragments
-  of both investigations to unlock the **Secret Chronicler True Ending**.
+1. **The Witness Protagonist (Internal vs. External Focalization):**
+   - **Internal Focalization (Elijah & Katrina):** Elijah and Katrina live inside the terrestrial world of
+     Dio Village and the Capital. Their perceptions are clouded by personal trauma, military duty, and aristocratic
+     rebellion.
+   - **External Focalization (The Custom Bearer):** Guided by **Chrono the Sage** in the Room of Sages within
+     The Dreamscape, the Custom Bearer holds **The Dream Compass**, acting as an objective, unaligned Observer
+     capable of perceiving the full 3,000-year board without inherited prejudice.
+2. **The Keystone Route (Synthesis Scenario):**
+   - Elijah uncovers the military conspiracy surrounding Commander Gareth and King Jihad.
+   - Katrina uncovers aristocratic corruption and underworld resistance with John the Thief.
+   - The Custom Bearer's campaign functions as the architectural keystone that locks both partial perspectives
+     together into a single unified truth.
+3. **The Quantum Observer Effect:**
+   - Left to themselves, Sacyra's historical factions remain trapped in a cyclical 3,000-year loop of trauma.
+   - The outside Observer's conscious choice collapses the tragic wavefunction, unlocking the 10th True Ending
+     (**"The Ugly Truth"**) and permanently mending the planar tear.
 
 ## 4. Tactical Synergy on the TRPG Battlefield
 
@@ -3168,24 +3340,29 @@ The battle posture shifts dynamically across four discrete combat stances:
    - Grid Effect: Immunity to positioning debuffs and void mire terrain penalties.
    - Combat Effect: Simultaneously restores $+15$ Shield power and $+15$ Sword edge; parries incoming strikes while counter-attacking for $20$ damage; nudges moral sway toward center ($0$).
 
-## 3. The Moral Sway Continuum
+## 3. The Moral Sway Continuum & Decoupled Elemental Expression
 
 The moral trajectory of Sacyra's champions is tracked along a continuous bounded integer axis:
 
 [source,text]
 ----
 [ -100: Sovereign of Ruin ] ◄──── [ 0: Equilibrium ] ────► [ +100: Saint of Mercy ]
+                 ▲                                ▲
+                 └─── [ -50 to +50: Bystander ] ──┘
 ----
 
-* **Virtue & Mercy ($+1 \dots +100$)**:
-  - Gained by shielding fleeing militia, sparing defeated enemy officers, resolving noble-court corruption through justice, and protecting the innocent with the Shield of Lux.
-  - Unlocks royal alliances, Knight Commander endorsements, and sanctuary miracles.
-* **Tyranny & Ruin ($-1 \dots -100$)**:
-  - Accumulated through ruthless executions, collateral damage in villages, using scorched-earth radiance to blind subjects, or giving in to the void's bloodlust.
-  - Unlocks forbidden void arts, mercenary enlistments, and intimidation tactics.
-* **Equilibrium ($0$)**:
-  - Maintained by balancing the blade and the aegis; recognizing that light without shadow is a calcified wasteland, and shadow without light is an endless void.
-  - Unlocks the ultimate secret synthesis arts of ancient Sacyra.
+### 3.1. Decoupling Morality ("The Why") from Elemental Expression ("The How")
+Neither Lux nor Tenebris dictates a character's moral alignment:
+* **Virtuous Lux (`+1 ... +100`):** Selfless sanctuary, kinetic mitigation (*Lux Barrio*), and restorative peace.
+* **Tyrannical Lux (`-100 ... -1`):** Blinding glare, totalitarian enforcement of rigid order, and calcifying living will into petrified stasis (The Mi-ren Fallacy).
+* **Virtuous Tenebris (`+1 ... +100`):** Surgical severance (*Cuttatio Tenebris*), cutting corrupt bindings, and executing Absolute Justice without unnecessary bloodshed (The Casatti Ideal).
+* **Malevolent Tenebris (`-100 ... -1`):** Creeping entropic rot, nihilistic bloodlust, and devouring devastation (The Dark Lord).
+
+### 3.2. The Bystander Corridor (`[-50, +50]`) as Net Moral Inertia
+The `[-50, +50]` band represents **Net Moral Inertia**, where opposing deeds cancel out into zero net displacement. Staying within this corridor traps the protagonists in 3,000 years of repeating cyclical tragedy. Breaking past $\pm 50$ through deliberate micro-choices (such as aiding Eric or John in Dio Village) asserts heroic agency: *"Trauma is Inherited, Destiny is Chosen."*
+
+### 3.3. Equilibrium (`0`)
+Maintained by active discipline rather than passive fence-sitting; balancing the blade and the aegis so that radiant light tempers the void without collapsing into calcified stasis or entropic rot. Unlocks the tandem secret art *Duo-Loca Bashin n Slash*.
 
 ## 4. Tactical Actions & Combat Skills
 
@@ -3253,14 +3430,19 @@ Throughout the campaign, the Shield of Lux and Sword of Tenebris are actively em
 4. **Armory Relics (Medusa's Sword & Heart Shield):**
    - Optional material infusions granting petrification stasis or passive HP vitality warding.
 
-## 7. Relic Profiles & Ending Correlation
+## 7. Relic Profiles & The Ten-Ending Campaign Matrix
 
-The final state of relic embellishments along the `[-100, +100]` Moral Sway continuum determines which of the five ending routes resolves the campaign:
-* **Route A (Canonical Harmony):** Balanced embellishments, Stance of Equilibrium, True Ending.
-* **Route B (Benevolent Stasis):** Pure Lux embellishment, `+100` sway, continental comatose barrier.
-* **Route C (Calcified Tyrant):** Lux embellishment, `-100` sway, inquisitorial solar tyranny.
-* **Route D (Abyssal Usurper):** Pure Tenebris embellishment, `-100` sway, Dark Sovereign ascension.
-* **Route E (Secret Chronicler):** Custom bearer, 100% relic synthesis, planar tear healed.
+The final profile of relic embellishments along the `[-100, +100]` Moral Sway continuum maps into the 3x3 matrix crowned by the 10th synthesis ending:
+* **Lux-Good (`[+50, +100]`):** *The Radiant Sanctuary* — Selfless protection without tyranny.
+* **Lux-Neutral (`[-50, +50]`):** *The Benevolent Stasis* — The Mi-ren Fallacy; golden crystal cocoon.
+* **Lux-Bad (`[-100, -50]`):** *The Calcified Tyrant* — Radiance weaponized into an inquisitorial police state.
+* **Tenebris-Good (`[+50, +100]`):** *Absolute Justice* — The Casatti Ideal; surgical severance of corruption.
+* **Tenebris-Neutral (`[-50, +50]`):** *The Cynical Outlaw* — Threat slain; realm abandoned to decay.
+* **Tenebris-Bad (`[-100, -50]`):** *The Abyssal Usurper* — The Cycle of Usuru; rules from obsidian ashes.
+* **Statera-Good (`[+50, +100]`):** *Harmonized Concord* — Both relics united in restorative justice.
+* **Statera-Neutral (`[-50, +50]`):** *Armed Deterrence* — Uneasy status quo; frontier rift unhealed.
+* **Statera-Bad (`[-100, -50]`):** *The Dual Despot* — Totalitarian martial hegemony.
+* **Synthesis (10th Route):** *The True Ending ("The Ugly Truth")* — Unlocked via Elijah, Katrina, and the Custom Bearer (`<chosen_name>`) alongside nocturnal Dreamscape trials, mending the 3,000-year planar tear.
 
 
 ---
@@ -3371,40 +3553,94 @@ The canonical True Ending is neither a simplistic fairy-tale triumph nor a dark 
 * It reveals that Sacyra's three millennia of golden peace were bought at the cost of deliberate neglect
   toward frontier provinces like Libira and Dio Village.
 
-## 3. Relic Embellishment & The Five-Route Ending Matrix
+## 3. Relic Embellishment & The Ten-Ending Campaign Matrix
 
 Throughout both acts, the player's choices, side quests, and stance preferences actively **embellish**
-the Shield of Lux and Sword of Tenebris along the `[-100, +100]` **Moral Sway** continuum:
+the Shield of Lux and Sword of Tenebris along the `[-100, +100]` **Moral Sway** continuum.
 
-[cols="1,2,2,3", options="header"]
+### 3.1. Telemetry Over Point Locks & The Bystander Corridor
+Players do not aim for brittle, exact integers to unlock endings. Instead, `moral_sway` acts as
+continuous behavioral telemetry showing where the player's philosophy is steering the world:
+
+* **The Bystander Corridor (`[-50, +50]`):** Represents **Net Moral Inertia**—a mutual cancellation trap
+  where opposing moral vectors offset each other. Floating in this corridor produces status-quo stagnation
+  or repeating cycles.
+* **The Threshold of Conviction:** Escaping the bystander corridor requires sustained virtue (`[+50, +100]`)
+  or despotic malice (`[-100, -50]`).
+* **Equilibrium (`0`):** An active, razor-thin discipline where Lux and Tenebris temper each other without
+  collapsing into calcification or entropic rot.
+
+### 3.2. The 3x3 Ending Matrix + The 10th True Ending
+
+Combining the three elemental expressions (**Lux**, **Tenebris**, and **Statera** / Equilibrium) with
+the three moral bands (**Good** `[+50, +100]`, **Neutral** `[-50, +50]`, and **Bad** `[-100, -50]`)
+produces nine distinct campaign resolutions, crowned by a tenth synthesis ending:
+
+[cols="1,2,2,2", options="header"]
 |===
-| Ending Route | Playable Requirement | Relic Embellishment & Moral Sway Profile | Narrative & Metaphysical Resolution
+| Expression | Good (`[+50, +100]`) | Neutral (`[-50, +50]`) | Bad (`[-100, -50]`)
 
-| **Route A: The Canonical Harmony** _(True Equilibrium Ending)_
-| Complete the campaign playing through **both** Elijah's and Katrina's perspectives; finish all Dreamscape trials.
-| Balanced embellishments; Moral Sway harmonized at Equilibrium (`0`); master the Stance of Equilibrium (*Duo-Loca Bashin n Slash*).
-| Exposes King Jihad's corruption; severs Usuru's abyssal tether while the Shield absorbs the fallout without dissipating; grants Usuru the reconciliation Mi-ren sought 3,000 years ago; releases the First King's soul to final rest.
+| **Lux** +
+  _(Cohesion & Preservation)_
+| **1. The Radiant Sanctuary:** +
+  Selfless protection; the Shield of Lux shelters the realm and heals frontier wounds without imposing despotic rule.
+| **2. The Benevolent Stasis (The Mi-ren Fallacy):** +
+  Out of fear of conflict, the wielder seals Sacyra in an unchanging golden crystal cocoon where nothing harms—and nothing grows.
+| **3. The Calcified Tyrant:** +
+  Radiance weaponized into an unblinking inquisition that blinds dissenters and petrifies living will into stone.
 
-| **Route B: The Benevolent Stasis** _(Neutral-Good / The Mi-ren Fallacy)_
-| High Lux focus with pure preservation choices; reject Tenebris severance; ignore Dreamscape truth.
-| Pure Lux barrier embellishments; Moral Sway pinned at `+100`.
-| Terrified of void destruction, the wielder repeats Mi-ren's ancient error on a continental scale, sealing Sacyra inside a comatose golden barrier where nothing can harm—and no living being can grow.
+| **Tenebris** +
+  _(Severance & Rest)_
+| **4. Absolute Justice (The Casatti Ideal):** +
+  The Sword of Tenebris surgically severs corrupt noble monopolies and King Jihad's war machinery without civilian bloodshed.
+| **5. The Cynical Outlaw:** +
+  The immediate threat is slain for personal survival, but the wielder abandons Sacyra to its ongoing feudal decay.
+| **6. The Abyssal Usurper (Cycle of Usuru):** +
+  The wielder executes King Jihad, absorbs The Dark Lord's void essence, and rules from the obsidian ashes.
 
-| **Route C: The Calcified Tyrant** _(Neutral-Bad / Corrupted Order)_
-| High Lux embellishments paired with authoritarian, merciless choices; negative moral sway (`-100`).
-| Petrifying solar embellishments; high stasis lockdown.
-| Overthrows King Jihad only to establish an inquisitorial police state, using blinding radiance to enforce absolute compliance and extinguish personal dissent.
+| **Statera** +
+  _(Equilibrium & Harmony)_
+| **7. Harmonized Concord:** +
+  Both relics work in virtuous partnership, ushering in restorative justice, frontier outposts, and provincial renewal.
+| **8. Armed Deterrence:** +
+  A tense status quo where the war pauses, but the deep cultural rift with border provinces remains unhealed.
+| **9. The Dual Despot:** +
+  Barrier stasis and abyssal severance combine to enforce total, totalitarian martial hegemony.
 
-| **Route D: The Abyssal Usurper** _(Neutral-Bad / The Cycle of Usuru)_
-| High Tenebris focus with ruthless malice (`-100`); endorse theft and indiscriminate executions.
-| Pure Tenebris severance embellishments; Lux completely dissipated by wrath.
-| Agreeing that Sacyra's court is irredeemably hypocritical, the wielder slays King Jihad, absorbs The Dark Lord's void essence, razes the Capital, and ascends the High Throne as the new Dark Sovereign.
-
-| **Route E: The Secret Chronicler Ending** _(Custom Bearer 100% Route)_
-| Complete the campaign as `<chosen_name>`; perform the "double work" across both protagonists' questlines; achieve $100\%$ Dreamscape nocturnal trials.
-| Full mastery of all relic embellishments, Magic vs. Science synthesis, and complete planar harmony.
-| The custom bearer bridges the Magic vs. Science schism, dissolves royal secrecy, establishes an egalitarian relay outpost network for frontier settlements, and permanently mends the planar wound in the Room of Sages.
+| **Synthesis** +
+  _(The 10th Route)_
+3+| **10. The True Ending ("The Ugly Truth"):** +
+  Unlocked only by experiencing Elijah's campaign, Katrina's campaign, and finally the Custom Bearer (`<chosen_name>`) while completing all nocturnal Dreamscape trials. Sacyra confronts its 3,000-year institutional guilt, releases the First King's trapped soul, reconciles Usuru's childhood grief, exposes King Jihad, and permanently mends the planar tear in the Room of Sages.
 |===
+
+### 3.3. The Witness Protagonist, Keystone Route & Observer Effect
+
+Reaching the True Ending ("The Ugly Truth") relies on three formal game design structures:
+
+1. **The Witness Protagonist (Internal vs. External Focalization):**
+   - **Elijah Ro-enheart** and **Lady Katrina Jaren** live inside the story (*Internal Focalization*).
+     They are shaped by their personal trauma, social caste, and military or aristocratic backgrounds.
+   - **The Custom Bearer (`<chosen_name>`)** serves as the *External Focalizer* (the Observer/Chronicler
+     alongside Chrono in the Room of Sages), possessing the detachment required to perceive the full truth.
+2. **The Keystone Route (Synthesis Scenario):**
+   - Elijah uncovers the military conspiracy surrounding Commander Gareth and King Jihad.
+   - Katrina uncovers noble and underworld exploitation alongside John the Thief and the Guild.
+   - The Custom Bearer's campaign acts as the architectural keystone locking both partial perspectives together.
+3. **The Quantum Observer Effect:**
+   - Left to themselves, Sacyra's internal factions repeat the tragic 3,000-year cycle.
+   - The outside Observer's conscious engagement collapses the tragic wavefunction into historical reconciliation.
+
+### 3.4. Chrono's Chronicle Ledger: NG+ Timeline Navigation
+
+To ensure that exploring the full matrix never devolves into repetitive grinding:
+
+* **Persistent Archival Memory:** Compendiums (*Book of Monsters*, *Book of Items*), unlocked embellishments,
+  and combat masteries persist across runs.
+* **Timeline Branching:** Once a campaign route is cleared, **Chrono's Chronicle Ledger** unlocks in the
+  Room of Sages, functioning as an interactive timeline tree. Completionists can jump directly to pivotal
+  decision bookmarks (such as Eric's honesty test, the St. Baron infiltration, or the Act I climax) to
+  explore all 9 matrix endings without replaying introductory chapters.
+* **Diegetic Saves:** Saving is rooted diegetically at **Grandma Magolia's Hearth** and **Chrono's Room of Sages**.
 
 ## 4. Systemic Invariants & Engine Triggers
 
@@ -3413,9 +3649,11 @@ All ending routes and campaign forks are evaluated through deterministic engine 
 1. **`player_state_t` Integrity:** The moral sway value (`int16_t moral_sway`) is clamped strictly
    within `[-100, +100]` via `math_clamp_int`.
 2. **Dream Compass Nocturnal Flag:** Entry into `LOC_THE_DREAMSCAPE` requires `hour >= 20 || hour <= 4`
-   from the Layer 0 monotonic clock.
-3. **Equilibrium State Check:** Unlocking Route A requires `abs(moral_sway) <= 15` and both
+   from the Layer 0 monotonic clock (`time_get_monotonic_ms`).
+3. **Equilibrium State Check:** Unlocking Route 7 or Route 10 requires `abs(moral_sway) <= 15` and both
    `shield_power >= 80` and `sword_edge >= 80` during the final turn sequence.
+4. **Observer Flags:** The 10th True Ending requires validation flags `flag_elijah_cleared`,
+   `flag_katrina_cleared`, and `dreamscape_trials_mask == 0xFF`.
 
 
 ---
@@ -10205,6 +10443,163 @@ With this milestone, the verification suite achieves 100% green status across al
   - 7/7 comprehensive engine self-audit tests pass (including telemetry and debugger)
 * **Interactive CLI Debugger (`tenebris-lux --debug`)**:
   - Active interactive REPL exposing `inspect`, `history`, `snap`, and `rewind` verbs.
+
+
+---
+
+## Chapter 68: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
+
+> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc`
+
+[abstract]
+## Abstract
+
+This developer log documents the comprehensive formalization of the morality architecture,
+philosophical foundations, and multi-route campaign topology for *Tenebris and Lux*.
+Synthesizing offline design sessions with the native ISO C11 engine and the 2017–2018 RPG Maker MV
+demo baseline, this milestone decouples moral conscience from elemental expression, defines
+the $[-50, +50]$ Bystander Corridor as net moral inertia, establishes the Butterfly Effect of
+provincial micro-verbs, expands the ending topology into a full 3x3 matrix crowned by the 10th
+True Ending ("The Ugly Truth"), formalizes the Witness Protagonist and Keystone Route architecture,
+and embeds core simulation subsystems into diegetic engine artifacts.
+
+## 1. Decoupling Morality ("The Why") from Elemental Expression ("The How")
+
+Prior design iterations occasionally risked falling into the conventional fantasy trap of conflating
+Light with intrinsic goodness and Darkness with intrinsic malice. DevLog 013 formally rectifies
+and cements the cosmological boundary:
+
+* **Cosmic Neutrality of Apex Forces:** Lux (Cohesion, Preservation, Illumination) and Tenebris
+  (Darkness, Severance, Dissolution, Rest) are primal, morally neutral cosmic constants.
+* **The Expression Matrix:**
+  - **Virtuous Lux (`+1 ... +100`):** Selfless sanctuary, kinetic shielding (*Lux Barrio*),
+    preserving community life, seeking restorative reconciliation.
+  - **Tyrannical Lux (`-100 ... -1`):** Blinding glare, totalitarian enforcement of rigid order,
+    petrifying living will into comatose stasis (The Mi-ren Fallacy).
+  - **Virtuous Tenebris (`+1 ... +100`):** Surgical severance (*Cuttatio Tenebris*), cutting corrupt
+    bindings, liberating the oppressed, executing **Absolute Justice** without collateral slaughter
+    (The Casatti Ideal).
+  - **Malevolent Tenebris (`-100 ... -1`):** Entropic rot, nihilistic bloodlust, devouring ruin
+    (The Usuru Spiral / The Dark Lord).
+* **Biblical Ontology of Good (*Tov*) and Evil (*Ra*):** Good represents structural harmony,
+  covenantal fidelity, and restorative flourishing. Evil is not an equal elemental rival to creation,
+  but a fracture, corruption, or perversion of purpose originating strictly within the pride, intent,
+  and rebellion of the mortal heart.
+* **The Tempering vs. Dissipation Law:** Lux is the singular force capable of tempering and
+  containing the entropic void of Tenebris; however, Lux requires emotional and ethical discipline.
+  Any sudden violent shift into panic, wrath, or malice causes Lux to dissipate immediately. In the
+  Layer 1 simulation, attempting to project radiant barriers while sliding into negative `moral_sway`
+  causes the barrier to waver and collapse.
+
+## 2. Psychological & Systemic Catalysts: The Bystander Corridor vs. The Butterfly Effect
+
+### 2.1. Why `[-50, +50]` Constitutes "Neutrality" as Net Moral Inertia
+In an active universe where absolute Good and Evil exert constant moral gravity, true neutrality
+belongs only to inanimate stones. For living mortals, the `[-50, +50]` corridor is classified as
+Neutral because it represents **Net Moral Inertia**:
+
+* **The Mutual Cancellation Trap:** Citizens within `[-50, +50]` continually offset small virtuous
+  acts with self-serving compromises (e.g., sparing an enemy soldier, then stealing 10 Gold from
+  Eric's shelf pot). Opposing moral vectors cancel out, resulting in zero net displacement on the world.
+* **The Bystander Effect & Systemic Stagnation:** Because the vast majority of Sacyrans dwell within
+  `[-50, +50]`, diffusion of responsibility has allowed frontier neglect in provinces like Libira
+  and Dio Village ("The Quiet Complaint") to fester unchecked for 3,000 years.
+* **Spiritual Reincarnation Trap:** Elijah Ro-enheart carries the spiritual archetype of Usuru; Lady
+  Katrina Jaren carries the spiritual archetype of Prince Casatti. Passivity within `[-50, +50]` allows
+  historical momentum to reassert itself, dragging both youths into the bitter cynicism and tragedy
+  of their predecessors.
+
+### 2.2. The Butterfly Effect: Micro-Agency Overriding Fate
+Derived from chaos theory, tiny perturbations in initial conditions compound nonlinearly into
+radically divergent macro-outcomes:
+
+* **Micro-Verbs as Fate Breakers:** Seemingly modest provincial choices in Dio Village—such as
+  donating 500 Gold to cover Eric the Lumberjack's taxes, intervening between John the Thief and the
+  St. Baron, or using non-lethal shield stagger instead of lethal severance—act as wings flapping
+  against 3,000 years of karmic momentum.
+* By crossing the $\pm 50$ conviction threshold, the player breaks the dynastic curse, affirming the
+  project axiom: *"Trauma is Inherited, Destiny is Chosen."*
+
+## 3. Complete Taxonomy of the Moral Sway Continuum (`[-100, +100]`)
+
+The continuum is codified into a formal 13-tier diagnostic nomenclature:
+
+1. **`-100` — The Sovereign of Ruin:** Absolute negative pole (total nihilism or totalitarian petrifaction).
+2. **`[-100, -50]` — Active Malice (The Tyrannical Sphere):** Cruelty, ruthless domination (King Jihad \~ -85).
+3. **`[-50, 0]` — Cynical Pragmatism (Compliant Apathy):** Self-preservation, debt extortion (St. Baron \~ -45, Katrina Base \~ -20).
+4. **`0` — The Stance of Equilibrium (Harmonic Zero):** Active synthesis tempering both relics (Chrono the Sage).
+5. **`[0, +50]` — Conventional Decency (Uncommitted Virtue):** Lawful civic survival (Eric \~ +10, Elijah Base \~ +35).
+6. **`[+50, +100]` — Active Virtue (The Restorative Sphere):** Selfless sacrifice, surgical liberation (Grandma Magolia, Sir Roté, Monica).
+7. **`+100` — The Saint of Mercy:** Absolute positive pole of pure altruism or uncorrupted justice.
+8. **`[-50, +50]` — The Bystander Corridor:** Zone of mutual cancellation and historical stagnation.
+9. **`[-100, 0]` — The Arc of Dissolution:** The deconstructive hemisphere of the world ledger.
+10. **`[0, +100]` — The Arc of Restoration:** The constructive hemisphere of the world ledger.
+11. **`[-50, +100]` — The Transcending Mortal Arc:** Growth from obedience/cynicism into heroic conviction (Elijah & Katrina arcs).
+12. **`[-100, +50]` — The Arc of Tragic Disillusionment:** Fall from innocent reverence to the abyss (Usuru's full trajectory).
+13. **`[-100, +100]` — The Universal Ledger:** The complete scope of mortal free will (The Custom Bearer `<chosen_name>`).
+
+## 4. The 10-Ending Matrix & The Witness Observer
+
+### 4.1. The 3x3 Matrix + The 10th True Ending
+Combining the 3 elemental expressions (Lux, Tenebris, Statera) with the 3 moral bands (Good, Neutral, Bad)
+yields 9 matrix endings, crowned by the 10th synthesis route:
+
+1. **Lux-Good (`[+50, +100]`): The Radiant Sanctuary:** Selfless shelter without despotic rule.
+2. **Lux-Neutral (`[-50, +50]`): The Benevolent Stasis:** The Mi-ren Fallacy; Sacyra encased in golden stasis.
+3. **Lux-Bad (`[-100, -50]`): The Calcified Tyrant:** Radiance weaponized into an inquisitorial police state.
+4. **Tenebris-Good (`[+50, +100]`): Absolute Justice:** The Casatti Ideal; surgical severance of corruption.
+5. **Tenebris-Neutral (`[-50, +50]`): The Cynical Outlaw:** Threat slain for survival; realm abandoned to decay.
+6. **Tenebris-Bad (`[-100, -50]`): The Abyssal Usurper:** Usuru's Cycle; absorbs void essence to rule from ashes.
+7. **Statera-Good (`[+50, +100]`): Harmonized Concord:** Both relics united in restorative justice.
+8. **Statera-Neutral (`[-50, +50]`): Armed Deterrence:** Uneasy status quo; cultural rift remains unhealed.
+9. **Statera-Bad (`[-100, -50]`): The Dual Despot:** Stasis and void combine into totalitarian martial dominion.
+10. **Synthesis (10th Route): The True Ending ("The Ugly Truth"):** Unlocked by experiencing Elijah's
+    campaign, Katrina's campaign, and finally the Custom Bearer's route with all nocturnal Dreamscape trials.
+    Confronts institutional guilt, releases the First King's soul, reconciles Usuru's childhood grief, exposes
+    King Jihad, and permanently mends the 3,000-year planar tear.
+
+### 4.2. The Witness Protagonist & Keystone Route Architecture
+* **Internal vs. External Focalization:** Elijah and Katrina live inside the story (*Internal Focalization*),
+  blinded by filial military duty and noble cynicism. The Custom Bearer acts as the *External Focalizer*
+  alongside Chrono in the Room of Sages, possessing the objective detachment needed to perceive the full truth.
+* **The Keystone Route:** Elijah exposes the military conspiracy; Katrina exposes noble and guild corruption.
+  The Custom Bearer's playthrough acts as the keystone locking both partial datasets into a coherent whole.
+* **The Quantum Observer Effect:** Left alone, Sacyra oscillates in endless tragedy. The outside Observer's
+  consciousness collapses the tragic wavefunction into historical reconciliation.
+
+## 5. Diegetic Item Architecture & Save Mechanics
+
+Core simulation subsystems are embedded directly into physical in-game items:
+
+* **Grandma's Watch -> The Dream Compass:** Initializes the Layer 0 monotonic clock (`0 ... 23` hours,
+  weekdays, months, years) and evolves into the nocturnal planar key detecting Dreamscape rifts (`20:00 ... 04:00`).
+* **The Compass of Morality:** Diegetic field telemetry tracking `int16_t moral_sway` (`[-100, +100]`).
+* **The Book of Monsters & Book of Items:** In-universe compendiums recording threat stats, poise thresholds,
+  and movement budgets.
+* **Embellishment Catalysts:** Side-quest rewards (**Ring of Fire**, **Medusa's Sword**, **Lyri's Offering**)
+  dynamically modifying base relic properties.
+* **Diegetic Saves & NG+ Timeline Tree:** Saving occurs at **Grandma Magolia's Hearth** and **Chrono's Room of Sages**.
+  Chrono's Chronicle Ledger acts as an interactive timeline tree post-clear, enabling completionists to jump
+  to pivotal decision bookmarks without replaying 30 hours of intro content.
+* **Speedrunner Determinism:** Monotonic clock guarantees 100% deterministic turn routing and frame-accurate triggers.
+
+## 6. Historical Grounding: The 2017–2018 Demo Baseline
+
+Every sequence from Folders 1 & 2 stages Sacyra's history in microcosm:
+* **Maps 002–003 (Walk of Fear & Festival of Heroes):** Sir Roté's warnings mirror the ancient Festival of Peoples;
+  Roté embodies Usuru's pre-fall faith in the crown.
+* **Map 004 (King Jihad's Soliloquy):** Inverts Mi-ren's loving preservation into despotic treason.
+* **Maps 006 & 008 (Dreamscape Tutorial & "AWAKEN!"):** Introduces the astral plane where the First King is marooned.
+* **Maps 020–031 (Dio Village as Libira 2.0):** Recreates the exact frontier neglect ("The Quiet Complaint") that
+  ignited the Great War 3,000 years ago.
+
+## 7. Verification & Invariant Audit
+
+All systems and state boundaries strictly adhere to Layer 1 simulation invariants:
+* `moral_sway` bounded strictly in `[-100, +100]`.
+* Time-of-day queries evaluated deterministically via `time_utils.h`.
+* Zero heap allocations across all telemetry tracking routines.
+* Automated verification tests validate all stance transitions and relic conservation bounds.
 
 
 ---
