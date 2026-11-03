@@ -78,7 +78,7 @@ const module_metadata_t geom_utils_manifest = {
 // -----------------------------------------------------------------------------
 
 /**
- * Constructs a validated 2D rectangle with non-negative dimensions.
+ * @brief Constructs a validated 2D rectangle with non-negative dimensions.
  *
  * ### Machine Role & Mission
  *
@@ -103,9 +103,9 @@ const module_metadata_t geom_utils_manifest = {
  * @param[in] w Desired width (negative inputs clamped to 0).
  * @param[in] h Desired height (negative inputs clamped to 0).
  *
- * @return Normalized `geom_rect_t` satisfying `w >= 0` and `h >= 0`.
+ * @return Normalized geom_rect_t satisfying w >= 0 and h >= 0.
  *
- * @post `return.w >= 0` and `return.h >= 0`.
+ * @post return.w >= 0 and return.h >= 0.
  */
 geom_rect_t geom_make_rect(int x, int y, int w, int h)
 {
@@ -123,13 +123,13 @@ geom_rect_t geom_make_rect(int x, int y, int w, int h)
 }
 
 /**
- * Tests whether a 2D screen-space point lies within a bounding box.
+ * @brief Tests whether a 2D screen-space point lies within a bounding box.
  *
  * ### Machine Role & Mission
  *
  * Evaluates cursor clicks and hover events against interactive GUI buttons
  * and tactical map grid tiles. Points on the top/left edges are included;
- * points on bottom/right edges are excluded (half-open interval `[x, x+w)`).
+ * points on bottom/right edges are excluded (half-open interval [x, x+w)).
  *
  * ### Ontological Classification
  *
@@ -148,7 +148,7 @@ geom_rect_t geom_make_rect(int x, int y, int w, int h)
  * @param[in] py Target vertical test coordinate.
  * @param[in] r  Target bounding box to evaluate against.
  *
- * @return `true` if `(px, py)` resides inside `r`; `false` otherwise.
+ * @return true if (px, py) resides inside r; false otherwise.
  */
 bool geom_point_in_rect(int px, int py, geom_rect_t r)
 {
@@ -168,7 +168,7 @@ bool geom_point_in_rect(int px, int py, geom_rect_t r)
 // -----------------------------------------------------------------------------
 
 /**
- * Tests whether two 2D Axis-Aligned Bounding Boxes (AABBs) intersect.
+ * @brief Tests whether two 2D Axis-Aligned Bounding Boxes (AABBs) intersect.
  *
  * ### Machine Role & Mission
  *
@@ -192,7 +192,7 @@ bool geom_point_in_rect(int px, int py, geom_rect_t r)
  * @param[in] a First bounding box.
  * @param[in] b Second bounding box.
  *
- * @return `true` if `a` and `b` share any interior area; `false` otherwise.
+ * @return true if a and b share any interior area; false otherwise.
  */
 bool geom_rect_intersects(geom_rect_t a, geom_rect_t b)
 {
@@ -207,7 +207,7 @@ bool geom_rect_intersects(geom_rect_t a, geom_rect_t b)
 }
 
 /**
- * Validates that a bounding box is completely contained within bounds.
+ * @brief Validates that a bounding box is completely contained within bounds.
  *
  * ### Machine Role & Mission
  *
@@ -231,7 +231,7 @@ bool geom_rect_intersects(geom_rect_t a, geom_rect_t b)
  * @param[in] max_w Maximum viewport width boundary.
  * @param[in] max_h Maximum viewport height boundary.
  *
- * @return `true` if `r` is completely inside `[0, max_w] x [0, max_h]`.
+ * @return true if r is completely inside [0, max_w] x [0, max_h].
  */
 bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h)
 {

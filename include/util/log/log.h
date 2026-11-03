@@ -146,30 +146,38 @@ typedef struct {
 // =============================================================================
 
 /**
- * Returns the current state of the logging data pipeline tripwire.
+ * @brief Returns the current state of the logging data pipeline tripwire.
+ *
+ * @return Active log_tripwire_t status code.
  */
 log_tripwire_t log_get_tripwire_status(void);
 
 /**
- * Returns a detailed message explaining why a tripwire was tripped.
+ * @brief Returns a detailed message explaining why a tripwire was tripped.
+ *
+ * @return Null-terminated diagnostic string.
  */
 const char *log_get_tripwire_details(void);
 
 /**
- * Resets the tripwire state to CLEAR (used in diagnostic test suites).
+ * @brief Resets the tripwire state to CLEAR (used in diagnostic test suites).
  */
 void log_reset_tripwire(void);
 
 /**
- * Returns the default configuration resolved strictly from the data-driven
- * manifest (data/log/manifest.json). If data assets are missing or corrupted,
+ * @brief Returns the default configuration resolved strictly from the data-driven manifest.
+ *
+ * Resolves from data/log/manifest.json. If data assets are missing or corrupted,
  * this function trips a diagnostic tripwire and flags loaded_from_data == false.
+ *
+ * @return Resolved default log_config_t structure.
  */
 log_config_t log_get_default_config(void);
 
 /**
- * Converts a human-readable severity string ("FATAL", "CRITICAL", "ERROR",
- * "WARNING", "INFO", "DEBUG", "TRACE") into its typed log_severity_t enum.
+ * @brief Converts a human-readable severity string into its typed log_severity_t enum.
+ *
+ * Parses "FATAL", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE".
  *
  * @param[in]  str     Case-insensitive severity name.
  * @param[out] out_sev Output pointer for parsed severity.
@@ -178,8 +186,9 @@ log_config_t log_get_default_config(void);
 bool log_severity_from_string(const char *str, log_severity_t *out_sev);
 
 /**
- * Converts a human-readable category string ("SYSTEM", "LOG", "EVENT",
- * "MESSAGE", "CHARACTER", "DEBUG") into its typed log_category_t enum.
+ * @brief Converts a human-readable category string into its typed log_category_t enum.
+ *
+ * Parses "SYSTEM", "LOG", "EVENT", "MESSAGE", "CHARACTER", "DEBUG".
  *
  * @param[in]  str     Case-insensitive category name.
  * @param[out] out_cat Output pointer for parsed category.
@@ -188,7 +197,7 @@ bool log_severity_from_string(const char *str, log_severity_t *out_sev);
 bool log_category_from_string(const char *str, log_category_t *out_cat);
 
 /**
- * Loads a log configuration profile from a specified JSON data file.
+ * @brief Loads a log configuration profile from a specified JSON data file.
  *
  * @param[in]  filepath   Path to JSON setting file (e.g. "data/log/development.json").
  * @param[out] out_config Output configuration structure to populate.
@@ -197,7 +206,7 @@ bool log_category_from_string(const char *str, log_category_t *out_cat);
 bool log_load_config_from_file(const char *filepath, log_config_t *out_config);
 
 /**
- * Loads the active log configuration profile from a manifest "main menu" file.
+ * @brief Loads the active log configuration profile from a manifest "main menu" file.
  *
  * @param[in]  manifest_path Path to log manifest JSON (NULL for auto-discovery).
  * @param[out] out_config    Output configuration structure to populate.
@@ -206,79 +215,99 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config);
 bool log_load_config_from_manifest(const char *manifest_path, log_config_t *out_config);
 
 /**
- * Loads a named configuration profile ("development", "production", "quiet", etc.)
- * from the data/log/ directory.
+ * @brief Loads a named configuration profile from the data/log/ directory.
  *
- * @param[in]  profile_name Name of the setting profile to load.
+ * @param[in]  profile_name Name of the setting profile to load (e.g. "development").
  * @param[out] out_config   Output configuration structure to populate.
  * @return True if found and loaded, false otherwise.
  */
 bool log_load_config_profile(const char *profile_name, log_config_t *out_config);
 
 /**
- * Returns the active configuration profile name (e.g. "development", "fallback").
+ * @brief Returns the active configuration profile name (e.g. "development", "fallback").
+ *
+ * @return Null-terminated string identifying the profile.
  */
 const char *log_get_active_profile_name(void);
 
 /**
- * Returns whether the active logging subsystem was configured from data sources.
+ * @brief Returns whether the active logging subsystem was configured from data sources.
+ *
+ * @return True if loaded from JSON data, false if using fallback code page.
  */
 bool log_is_data_driven(void);
 
 /**
- * Initializes the logging subsystem, creates directories, and opens active file.
+ * @brief Initializes the logging subsystem, creates directories, and opens active file.
  *
- * @param config Pointer to logging configuration (NULL uses defaults).
+ * @param[in] config Pointer to logging configuration (NULL uses defaults).
  * @return True on successful initialization, false on filesystem error.
  */
 bool log_init(const log_config_t *config);
 
 /**
- * Flushes active file streams and shuts down logging subsystem.
+ * @brief Flushes active file streams and shuts down logging subsystem.
  */
 void log_shutdown(void);
 
 /**
- * Checks if the logging subsystem has been initialized and is active.
+ * @brief Checks if the logging subsystem has been initialized and is active.
+ *
+ * @return True if initialized and open, false otherwise.
  */
 bool log_is_active(void);
 
 /**
- * Converts a normalized float grade [-1.0f, +1.0f] to integer percent [-100, +100].
+ * @brief Converts a normalized float grade [-1.0f, +1.0f] to integer percent [-100, +100].
+ *
+ * @param[in] grade Normalized grade value.
+ * @return Integer percentage clamped to [-100, +100].
  */
 int log_grade_to_percent(float grade);
 
 /**
- * Converts an integer percent [-100, +100] to a normalized float grade [-1.0f, +1.0f].
+ * @brief Converts an integer percent [-100, +100] to a normalized float grade [-1.0f, +1.0f].
+ *
+ * @param[in] percent Integer percentage [-100, +100].
+ * @return Normalized floating-point grade in [-1.0f, +1.0f].
  */
 float log_percent_to_grade(int percent);
 
 /**
- * Returns the human-readable fixed-width string for a severity level.
+ * @brief Returns the human-readable fixed-width string for a severity level.
+ *
+ * @param[in] severity Graded severity enum.
+ * @return Fixed-width severity label (e.g. "[INFO ]").
  */
 const char *log_severity_name(log_severity_t severity);
 
 /**
- * Returns the human-readable fixed-width string for a category.
+ * @brief Returns the human-readable fixed-width string for a category.
+ *
+ * @param[in] category Domain category enum.
+ * @return Fixed-width category label (e.g. "[EVENT ]").
  */
 const char *log_category_name(log_category_t category);
 
 /**
- * Returns the folder name associated with a category (e.g. "character", "event").
+ * @brief Returns the folder name associated with a category (e.g. "character", "event").
+ *
+ * @param[in] category Domain category enum.
+ * @return Directory name string.
  */
 const char *log_category_dir_name(log_category_t category);
 
 /**
- * Emits a structured log entry into the ring buffer, file, and console.
+ * @brief Emits a structured log entry into the ring buffer, file, and console.
  *
- * @param severity Graded severity level.
- * @param category Target functional category.
- * @param entity Entity/Character name (e.g. "Elijah", "Katrina", "System").
- * @param grade Normalized grade [-1.0f .. +1.0f] (e.g. moral sway or health).
- * @param file Source file name (__FILE__).
- * @param line Source line number (__LINE__).
- * @param func Source function name (__func__).
- * @param fmt Printf-style format string.
+ * @param[in] severity Graded severity level.
+ * @param[in] category Target functional category.
+ * @param[in] entity   Entity/Character name (e.g. "Elijah", "Katrina", "System").
+ * @param[in] grade    Normalized grade [-1.0f .. +1.0f] (e.g. moral sway or health).
+ * @param[in] file     Source file name (__FILE__).
+ * @param[in] line     Source line number (__LINE__).
+ * @param[in] func     Source function name (__func__).
+ * @param[in] fmt      Printf-style format string.
  * @return Monotonic sequence ID assigned to the entry, or 0 on drop/failure.
  */
 uint64_t log_write_entry(
@@ -294,32 +323,36 @@ uint64_t log_write_entry(
 );
 
 /**
- * Retrieves the total number of log entries recorded since initialization.
+ * @brief Retrieves the total number of log entries recorded since initialization.
+ *
+ * @return Cumulative monotonic log count.
  */
 uint64_t log_get_total_entries(void);
 
 /**
- * Copies the recent log entries from the in-memory circular ring buffer in
- * chronological order.
+ * @brief Copies recent log entries from the in-memory circular ring buffer.
  *
- * @param dest Output buffer array for log entries.
- * @param max_entries Maximum entries to copy.
+ * Entries are copied in chronological order (oldest to newest).
+ *
+ * @param[out] dest        Output buffer array for log entries.
+ * @param[in]  max_entries Maximum entries to copy.
  * @return Number of entries actually copied.
  */
 size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries);
 
 /**
- * Retrieves the top 10-25 most recent log entries in reverse chronological order
- * (newest first), ideal for on-screen debug consoles or crash inspect summaries.
+ * @brief Retrieves the top 10-25 most recent log entries in reverse chronological order.
  *
- * @param dest Output buffer array for top log entries.
- * @param max_entries Maximum entries to retrieve (typically 10 to 25).
+ * Newest entries are placed first, ideal for HUD and on-screen debug consoles.
+ *
+ * @param[out] dest        Output buffer array for top log entries.
+ * @param[in]  max_entries Maximum entries to retrieve (typically 10 to 25).
  * @return Number of entries retrieved.
  */
 size_t log_get_top_entries(log_entry_t *dest, size_t max_entries);
 
 /**
- * Triggers an immediate log rotation if current file size exceeds threshold.
+ * @brief Triggers an immediate log rotation if current file size exceeds threshold.
  *
  * @return True if rotation occurred, false otherwise.
  */
@@ -366,9 +399,9 @@ bool log_rotate_if_needed(void);
 // =============================================================================
 
 /**
- * Diagnostic self-audit verifying formatting buffers, grade clamping, and rotation.
+ * @brief Diagnostic self-audit verifying formatting buffers, grade clamping, and rotation.
  *
- * @param verbose Enable verbose trace output during audit.
+ * @param[in] verbose Enable verbose trace output during audit.
  * @return Diagnostic verification result.
  */
 diag_result_t log_audit(bool verbose);

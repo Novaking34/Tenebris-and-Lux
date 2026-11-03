@@ -84,7 +84,7 @@ static const char *const s_debug_invariants[4] = {
 
 const module_metadata_t debug_manifest = {
     "core.util.debug",
-    "include/util/debug/debug.h",
+    "debug.h",
     LAYER_0_CORE_UTIL,
     { 1, 0, 0 },
     1,                          // interface_rev
@@ -116,13 +116,20 @@ const module_metadata_t debug_manifest = {
 // Subsystem: util/debug
 // =============================================================================
 
+/**
+ * @brief Computes a deterministic 32-bit FNV-1a hash of a state record.
+ *
+ * @param[in] fields State fields to hash.
+ * @return 32-bit unsigned FNV-1a hash.
+ */
 uint32_t debug_compute_state_hash(const debug_state_fields_t *fields)
 {
+    /* Step 1: Precondition check on pointer */
     if (fields == NULL) {
         return 0;
     }
 
-    // FNV-1a 32-bit hash
+    /* Step 2: Initialize FNV-1a 32-bit parameters */
     uint32_t hash = 2166136261u;
     const uint32_t prime = 16777619u;
 
@@ -144,6 +151,7 @@ uint32_t debug_compute_state_hash(const debug_state_fields_t *fields)
         } \
     } while (0)
 
+    /* Step 3: Hash individual simulation state fields */
     HASH_INT(fields->turn);
     HASH_STR(fields->hero_name);
     HASH_INT(fields->hp);
@@ -166,6 +174,11 @@ uint32_t debug_compute_state_hash(const debug_state_fields_t *fields)
     return hash;
 }
 
+/**
+ * @brief Returns the quarantined emergency fallback configuration.
+ *
+ * @return Default fallback debug_config_t structure.
+ */
 debug_config_t debug_get_monolith_fallback_config(void)
 {
     debug_config_t cfg;
@@ -173,12 +186,22 @@ debug_config_t debug_get_monolith_fallback_config(void)
     return cfg;
 }
 
+/**
+ * @brief Loads a specific named debug profile from data/debug/.
+ *
+ * @param[in]  profile_name Name of the profile JSON file without extension.
+ * @param[out] out_config   Output configuration structure to populate.
+ *
+ * @return `true` if loaded successfully; `false` on missing or unreadable file.
+ */
 bool debug_load_config_profile(const char *profile_name, debug_config_t *out_config)
 {
+    /* Step 1: Precondition validation */
     if (profile_name == NULL || out_config == NULL) {
         return false;
     }
 
+    /* Step 2: Resolve profile file path across candidate directories */
     char file_path[FS_PATH_MAX];
     bool exists = false;
     snprintf(file_path, sizeof(file_path), "data/debug/%s.json", profile_name);
@@ -191,6 +214,7 @@ bool debug_load_config_profile(const char *profile_name, debug_config_t *out_con
         }
     }
 
+    /* Step 3: Fallback tripwire if file is absent */
     if (!exists) {
         s_debug.tripwire_status = DEBUG_TRIPWIRE_SETTING_MISSING;
         snprintf(s_debug.tripwire_details, sizeof(s_debug.tripwire_details),
@@ -199,6 +223,7 @@ bool debug_load_config_profile(const char *profile_name, debug_config_t *out_con
         return true;
     }
 
+    /* Step 4: Bounded read of profile JSON content */
     char json_buffer[FS_BUFFER_MEDIUM_BYTES];
     size_t bytes_read = 0;
     if (!fs_read_file_bounded(file_path, json_buffer, sizeof(json_buffer), &bytes_read)) {
@@ -209,7 +234,7 @@ bool debug_load_config_profile(const char *profile_name, debug_config_t *out_con
         return true;
     }
 
-    // Default values before parse
+    /* Step 5: Initialize defaults before parsing */
     memset(out_config, 0, sizeof(debug_config_t));
     out_config->enabled = true;
     out_config->max_snapshots = DEBUG_MAX_SNAPSHOTS;
@@ -218,7 +243,7 @@ bool debug_load_config_profile(const char *profile_name, debug_config_t *out_con
     out_config->interactive_repl = true;
     out_config->ansi_color = true;
 
-    // Parse profile fields
+    /* Step 6: Deserialize profile fields */
     json_get_object_bool(json_buffer, "profile", "enabled", &out_config->enabled);
     json_get_object_bool(json_buffer, "profile", "break_on_error", &out_config->break_on_error);
     json_get_object_bool(json_buffer, "profile", "break_on_tripwire", &out_config->break_on_tripwire);
@@ -248,12 +273,22 @@ bool debug_load_config_profile(const char *profile_name, debug_config_t *out_con
     return true;
 }
 
+/**
+ * @brief Loads a debug configuration from a manifest file.
+ *
+ * @param[in]  manifest_path Path to debug manifest JSON (NULL for default candidate paths).
+ * @param[out] out_config    Output configuration structure to populate.
+ *
+ * @return `true` if loaded successfully; `false` on missing file or read failure.
+ */
 bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *out_config)
 {
+    /* Step 1: Precondition check */
     if (out_config == NULL) {
         return false;
     }
 
+    /* Step 2: Resolve candidate manifest paths */
     static const char *const s_manifest_candidates[] = {
         "data/debug/manifest.json",
         "../data/debug/manifest.json"
@@ -289,6 +324,7 @@ bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *
         return false;
     }
 
+    /* Step 3: Read manifest JSON file */
     char json_buffer[FS_BUFFER_MEDIUM_BYTES];
     size_t bytes_read = 0;
     if (!fs_read_file_bounded(resolved_path, json_buffer, sizeof(json_buffer), &bytes_read)) {
@@ -298,6 +334,7 @@ bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *
         return false;
     }
 
+    /* Step 4: Extract active profile name and delegate */
     char active_profile[32];
     if (!json_get_string(json_buffer, "active_profile", active_profile, sizeof(active_profile))) {
         str_safe_copy(active_profile, "default", sizeof(active_profile));
@@ -306,6 +343,11 @@ bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *
     return debug_load_config_profile(active_profile, out_config);
 }
 
+/**
+ * @brief Returns the default configuration (data-driven or fallback).
+ *
+ * @return Populated default debug_config_t structure.
+ */
 debug_config_t debug_get_default_config(void)
 {
     debug_config_t cfg;
@@ -315,8 +357,16 @@ debug_config_t debug_get_default_config(void)
     return debug_get_monolith_fallback_config();
 }
 
+/**
+ * @brief Initializes the debugging system with a specific configuration.
+ *
+ * @param[in] config Optional custom configuration, or NULL for data-driven default.
+ *
+ * @return `true` on successful initialization; `false` on fatal failure.
+ */
 bool debug_init(const debug_config_t *config)
 {
+    /* Step 1: Resolve configuration instance */
     debug_config_t cfg;
     if (config != NULL) {
         cfg = *config;
@@ -324,7 +374,7 @@ bool debug_init(const debug_config_t *config)
         cfg = debug_get_default_config();
     }
 
-    // Invariant validation
+    /* Step 2: Invariant validation & bounds enforcement */
     if (cfg.max_snapshots == 0 || cfg.max_snapshots > DEBUG_MAX_SNAPSHOTS) {
         cfg.max_snapshots = DEBUG_MAX_SNAPSHOTS;
     }
@@ -332,7 +382,7 @@ bool debug_init(const debug_config_t *config)
         cfg.snapshot_interval_turns = 1;
     }
 
-    // Initialize state
+    /* Step 3: Zero-initialize and populate internal subsystem state */
     memset(&s_debug, 0, sizeof(s_debug));
     s_debug.config = cfg;
     s_debug.snapshot_count = 0;
@@ -354,22 +404,40 @@ bool debug_init(const debug_config_t *config)
     return true;
 }
 
+/**
+ * @brief Shuts down the debugging system and resets state.
+ */
 void debug_shutdown(void)
 {
     s_debug_active = false;
     s_debug_data_driven = false;
 }
 
+/**
+ * @brief Checks if the debugging system is currently initialized and active.
+ *
+ * @return `true` if initialized; `false` otherwise.
+ */
 bool debug_is_active(void)
 {
     return s_debug_active;
 }
 
+/**
+ * @brief Checks if active debugger configuration was loaded from data assets.
+ *
+ * @return `true` if loaded from JSON; `false` if using monolith fallback.
+ */
 bool debug_is_data_driven(void)
 {
     return s_debug_data_driven;
 }
 
+/**
+ * @brief Returns the name of the active debugging profile.
+ *
+ * @return Null-terminated string identifying active profile.
+ */
 const char *debug_get_active_profile_name(void)
 {
     if (!s_debug_active) {
@@ -378,13 +446,24 @@ const char *debug_get_active_profile_name(void)
     return s_debug.config.profile_name;
 }
 
+/**
+ * @brief Captures and records a state snapshot into the static ring buffer.
+ *
+ * @param[in] fields State fields to capture.
+ * @param[in] cmd    Command string that caused this state transition.
+ * @param[in] arg    Argument string associated with the command.
+ *
+ * @return Unique monotonic snapshot ID, or 0 on failure/inactive.
+ */
 uint64_t debug_record_snapshot(const debug_state_fields_t *fields,
                                const char *cmd, const char *arg)
 {
+    /* Step 1: Precondition check on active state and fields */
     if (!s_debug_active || fields == NULL) {
         return 0;
     }
 
+    /* Step 2: Populate snapshot record in ring buffer slot */
     size_t idx = s_debug.snapshot_head;
     debug_snapshot_t *snap = &s_debug.snapshots[idx];
 
@@ -398,7 +477,7 @@ uint64_t debug_record_snapshot(const debug_state_fields_t *fields,
     snap->state_hash = debug_compute_state_hash(fields);
     snap->log_sequence_id = log_get_total_entries();
 
-    // Advance head in ring buffer
+    /* Step 3: Advance head in circular ring buffer */
     s_debug.snapshot_head = (s_debug.snapshot_head + 1) % s_debug.config.max_snapshots;
     if (s_debug.snapshot_count < s_debug.config.max_snapshots) {
         s_debug.snapshot_count++;
@@ -407,6 +486,11 @@ uint64_t debug_record_snapshot(const debug_state_fields_t *fields,
     return snap->snapshot_id;
 }
 
+/**
+ * @brief Returns the total number of valid snapshots currently recorded.
+ *
+ * @return Number of snapshots stored in the ring buffer.
+ */
 size_t debug_get_snapshot_count(void)
 {
     if (!s_debug_active) {
@@ -415,12 +499,22 @@ size_t debug_get_snapshot_count(void)
     return s_debug.snapshot_count;
 }
 
+/**
+ * @brief Retrieves a historical snapshot by logical index (0 = oldest valid in buffer).
+ *
+ * @param[in]  index    Logical snapshot index.
+ * @param[out] out_snap Destination snapshot structure.
+ *
+ * @return `true` if snapshot was retrieved; `false` on invalid index or inactive debugger.
+ */
 bool debug_get_snapshot(size_t index, debug_snapshot_t *out_snap)
 {
+    /* Step 1: Precondition check */
     if (!s_debug_active || out_snap == NULL || index >= s_debug.snapshot_count) {
         return false;
     }
 
+    /* Step 2: Map logical index to physical ring buffer slot */
     size_t cap = s_debug.config.max_snapshots;
     size_t physical_idx;
 
@@ -434,6 +528,11 @@ bool debug_get_snapshot(size_t index, debug_snapshot_t *out_snap)
     return true;
 }
 
+/**
+ * @brief Retrieves the most recent snapshot in the buffer.
+ *
+ * @return Pointer to latest snapshot in the ring buffer, or NULL if empty.
+ */
 const debug_snapshot_t *debug_get_latest_snapshot(void)
 {
     if (!s_debug_active || s_debug.snapshot_count == 0) {
@@ -445,17 +544,30 @@ const debug_snapshot_t *debug_get_latest_snapshot(void)
     return &s_debug.snapshots[latest_idx];
 }
 
+/**
+ * @brief Restores simulation state fields from a recorded snapshot index.
+ *
+ * Copies the frozen field state from the specified historical snapshot into
+ * the caller-provided out_fields structure.
+ *
+ * @param[in]  index      Zero-based chronological index (0 = oldest).
+ * @param[out] out_fields Destination pointer for restored state fields.
+ * @return True if snapshot was retrieved and restored; false otherwise.
+ */
 bool debug_rewind_to_snapshot(size_t index, debug_state_fields_t *out_fields)
 {
+    // Step 1: Precondition check on active debugger and destination pointer
     if (!s_debug_active || out_fields == NULL) {
         return false;
     }
 
+    // Step 2: Retrieve the frozen snapshot from the ring buffer
     debug_snapshot_t snap;
     if (!debug_get_snapshot(index, &snap)) {
         return false;
     }
 
+    // Step 3: Copy field data into destination
     *out_fields = snap.state;
 
     LOG_INFO(LOG_CAT_DEBUG, "Debugger", 0.0f,
@@ -464,9 +576,22 @@ bool debug_rewind_to_snapshot(size_t index, debug_state_fields_t *out_fields)
     return true;
 }
 
+/**
+ * @brief Formats a human-readable comparison delta between two state snapshots.
+ *
+ * Compares health, shield power, sword edge, stance, moral sway, location, and
+ * 32-bit state hash, generating formatted diff text into out_buf.
+ *
+ * @param[in]  s1      Pointer to the baseline (older) snapshot.
+ * @param[in]  s2      Pointer to the target (newer) snapshot.
+ * @param[out] out_buf Destination character buffer.
+ * @param[in]  buf_len Maximum writable capacity of destination buffer.
+ * @return Number of characters written to out_buf (excluding null terminator).
+ */
 size_t debug_diff_snapshots(const debug_snapshot_t *s1, const debug_snapshot_t *s2,
                             char *out_buf, size_t buf_len)
 {
+    // Step 1: Validate input pointers and non-empty buffer capacity
     if (s1 == NULL || s2 == NULL || out_buf == NULL || buf_len == 0) {
         return 0;
     }
@@ -474,12 +599,14 @@ size_t debug_diff_snapshots(const debug_snapshot_t *s1, const debug_snapshot_t *
     char tmp[1024];
     size_t offset = 0;
 
+    // Step 2: Format header banner
     offset += (size_t)snprintf(tmp + offset, sizeof(tmp) - offset,
         "Snapshot Diff: #%lu (Turn %d) -> #%lu (Turn %d)\n"
         "--------------------------------------------------\n",
         (unsigned long)s1->snapshot_id, s1->state.turn,
         (unsigned long)s2->snapshot_id, s2->state.turn);
 
+    // Step 3: Format field deltas
     if (s1->state.hp != s2->state.hp) {
         offset += (size_t)snprintf(tmp + offset, sizeof(tmp) - offset,
             "  HP:           %d -> %d (%+d)\n",
@@ -516,16 +643,30 @@ size_t debug_diff_snapshots(const debug_snapshot_t *s1, const debug_snapshot_t *
             "  State Hash:   0x%08X -> 0x%08X\n", s1->state_hash, s2->state_hash);
     }
 
+    // Step 4: Safely copy into output buffer
     str_safe_copy(out_buf, tmp, buf_len);
     return strlen(out_buf);
 }
 
+/**
+ * @brief Registers a dynamic conditional breakpoint or state watchpoint.
+ *
+ * Appends a new breakpoint entry to the active breakpoint registry if capacity
+ * permits and returns its unique integer identifier.
+ *
+ * @param[in] type         Type of breakpoint to evaluate (turn, stance, sway, etc.).
+ * @param[in] target_value Target value or threshold triggering the break.
+ * @param[in] label        Human-readable descriptor or variable name.
+ * @return Unique breakpoint identifier on success; -1 on failure or capacity limit.
+ */
 int debug_add_breakpoint(debug_breakpoint_type_t type, int target_value, const char *label)
 {
+    // Step 1: Guard against inactive debugger, invalid type, or capacity limit
     if (!s_debug_active || type == DEBUG_BREAK_NONE || s_debug.breakpoint_count >= DEBUG_MAX_BREAKPOINTS) {
         return -1;
     }
 
+    // Step 2: Allocate and populate breakpoint entry
     int id = s_debug.next_breakpoint_id++;
     debug_breakpoint_t *bp = &s_debug.breakpoints[s_debug.breakpoint_count++];
     bp->id = id;
@@ -540,14 +681,25 @@ int debug_add_breakpoint(debug_breakpoint_type_t type, int target_value, const c
     return id;
 }
 
+/**
+ * @brief Removes an active breakpoint by its assigned identifier.
+ *
+ * Searches the registry for the specified identifier and shifts subsequent
+ * elements leftward to maintain zero-heap contiguous storage.
+ *
+ * @param[in] bp_id Unique breakpoint identifier returned by debug_add_breakpoint.
+ * @return True if breakpoint was found and removed; false otherwise.
+ */
 bool debug_remove_breakpoint(int bp_id)
 {
     if (!s_debug_active) {
         return false;
     }
 
+    // Step 1: Scan active breakpoints for matching identifier
     for (size_t i = 0; i < s_debug.breakpoint_count; i++) {
         if (s_debug.breakpoints[i].id == bp_id) {
+            // Step 2: Shift remaining elements down to keep buffer contiguous
             for (size_t j = i; j + 1 < s_debug.breakpoint_count; j++) {
                 s_debug.breakpoints[j] = s_debug.breakpoints[j + 1];
             }
@@ -558,6 +710,11 @@ bool debug_remove_breakpoint(int bp_id)
     return false;
 }
 
+/**
+ * @brief Clears all registered dynamic breakpoints.
+ *
+ * Resets the active breakpoint count to 0 without freeing memory.
+ */
 void debug_clear_breakpoints(void)
 {
     if (s_debug_active) {
@@ -565,6 +722,17 @@ void debug_clear_breakpoints(void)
     }
 }
 
+/**
+ * @brief Evaluates current simulation fields against active breakpoints and invariant guardrails.
+ *
+ * Checks dynamic breakpoints registered via debug_add_breakpoint followed by
+ * static configuration guardrails (sway limits, relic bounds, zero HP).
+ *
+ * @param[in]  fields     Current simulation state fields snapshot.
+ * @param[out] out_reason Character buffer receiving description of triggered condition.
+ * @param[in]  max_len    Maximum writable capacity of out_reason buffer.
+ * @return True if a breakpoint or invariant was triggered and paused; false otherwise.
+ */
 bool debug_check_breakpoints(const debug_state_fields_t *fields,
                              char *out_reason, size_t max_len)
 {
@@ -572,7 +740,7 @@ bool debug_check_breakpoints(const debug_state_fields_t *fields,
         return false;
     }
 
-    // 1. Check dynamic registered breakpoints
+    // Step 1: Check dynamic registered breakpoints
     for (size_t i = 0; i < s_debug.breakpoint_count; i++) {
         const debug_breakpoint_t *bp = &s_debug.breakpoints[i];
         if (!bp->is_active) continue;
@@ -615,7 +783,7 @@ bool debug_check_breakpoints(const debug_state_fields_t *fields,
         }
     }
 
-    // 2. Check configuration invariant guardrails
+    // Step 2: Check configuration invariant guardrails
     if (s_debug.config.break_on_sway_breach &&
         (fields->moral_sway < -100 || fields->moral_sway > 100)) {
         if (out_reason != NULL && max_len > 0) {
@@ -648,12 +816,25 @@ bool debug_check_breakpoints(const debug_state_fields_t *fields,
     return false;
 }
 
+/**
+ * @brief Latches a forensic invariant violation or anomalous event.
+ *
+ * Updates internal tripwire status to corrupt, records source file and line,
+ * increments the trap counter, and optionally emits an alert to stderr.
+ *
+ * @param[in] subsystem Originating subsystem name (e.g. "SimEngine").
+ * @param[in] condition Text describing the violated invariant condition.
+ * @param[in] file      Source filename where violation occurred (__FILE__).
+ * @param[in] line      Line number where violation occurred (__LINE__).
+ */
 void debug_trap_tripwire(const char *subsystem, const char *condition,
                          const char *file, int line)
 {
+    // Step 1: Latch tripwire state and increment counter
     s_debug.tripwire_status = DEBUG_TRIPWIRE_STATE_CORRUPT;
     s_debug.traps_triggered++;
 
+    // Step 2: Format forensic tripwire detail string
     snprintf(s_debug.tripwire_details, sizeof(s_debug.tripwire_details),
              "[%s] %s (%s:%d)",
              (subsystem != NULL) ? subsystem : "unknown",
@@ -662,43 +843,80 @@ void debug_trap_tripwire(const char *subsystem, const char *condition,
 
     LOG_WARN(LOG_CAT_DEBUG, "Debugger", -0.5f, "Tripwire trapped: %s", s_debug.tripwire_details);
 
+    // Step 3: Trigger console alert if auto_dump_on_tripwire is enabled
     if (s_debug_active && s_debug.config.auto_dump_on_tripwire) {
         fprintf(stderr, "\n[DEBUG TRIPWIRE ALERT] %s\n", s_debug.tripwire_details);
     }
 }
 
+/**
+ * @brief Retrieves current tripwire latch status.
+ *
+ * @return Active debug_tripwire_t enum status code.
+ */
 debug_tripwire_t debug_get_tripwire_status(void)
 {
     return s_debug.tripwire_status;
 }
 
+/**
+ * @brief Retrieves forensic detail string of the most recent trapped tripwire.
+ *
+ * @return Constant string containing subsystem, condition, file, and line details.
+ */
 const char *debug_get_tripwire_details(void)
 {
     return s_debug.tripwire_details;
 }
 
+/**
+ * @brief Resets tripwire state back to clear.
+ *
+ * Clears status back to DEBUG_TRIPWIRE_CLEAR and empties detail string.
+ */
 void debug_reset_tripwire(void)
 {
     s_debug.tripwire_status = DEBUG_TRIPWIRE_CLEAR;
     s_debug.tripwire_details[0] = '\0';
 }
 
+/**
+ * @brief Sets execution stepping mode.
+ *
+ * @param[in] mode Desired stepping mode (continuous, step, or paused).
+ */
 void debug_set_step_mode(debug_step_mode_t mode)
 {
     s_debug.step_mode = mode;
 }
 
+/**
+ * @brief Retrieves current stepping mode.
+ *
+ * @return Current debug_step_mode_t execution mode.
+ */
 debug_step_mode_t debug_get_step_mode(void)
 {
     return s_debug.step_mode;
 }
 
+/**
+ * @brief Prints an interactive forensic state inspection table to stdout.
+ *
+ * Formats hero attributes, relic charges, active stance, moral sway, and
+ * 32-bit state hash into a formatted inspection view.
+ *
+ * @param[in] fields Current simulation state fields snapshot.
+ */
 void debug_dump_state(const debug_state_fields_t *fields)
 {
+    // Step 1: Precondition check on fields pointer
     if (fields == NULL) return;
 
+    // Step 2: Compute 32-bit hash for live state verification
     uint32_t hash = debug_compute_state_hash(fields);
 
+    // Step 3: Render formatted inspection table
     printf("============================================================\n");
     printf("        TENEBRIS AND LUX - LIVE STATE INSPECTOR             \n");
     printf("============================================================\n");
@@ -713,19 +931,28 @@ void debug_dump_state(const debug_state_fields_t *fields)
     printf("============================================================\n");
 }
 
+/**
+ * @brief Prints a chronological timeline table of all recorded state snapshots to stdout.
+ *
+ * Traverses the snapshot ring buffer in chronological order and outputs a
+ * columnar report of turn, hero, HP, relics, stance, moral sway, and hash.
+ */
 void debug_dump_snapshot_history(void)
 {
+    // Step 1: Validate active debugger and non-empty snapshot history
     if (!s_debug_active || s_debug.snapshot_count == 0) {
         printf("[DEBUG] No snapshots recorded in history ring buffer.\n");
         return;
     }
 
+    // Step 2: Render timeline table header
     printf("================================================================================\n");
     printf("                         STATE SNAPSHOT HISTORY TIMELINE                        \n");
     printf("================================================================================\n");
     printf("INDEX  SNAP ID  TURN  HERO        HP   SHIELD SWORD STANCE  SWAY  COMMAND     HASH    \n");
     printf("--------------------------------------------------------------------------------\n");
 
+    // Step 3: Print each snapshot in chronological sequence
     for (size_t i = 0; i < s_debug.snapshot_count; i++) {
         debug_snapshot_t snap;
         if (debug_get_snapshot(i, &snap)) {
@@ -744,6 +971,13 @@ void debug_dump_snapshot_history(void)
 // Subsystem: util/debug
 // =============================================================================
 
+/**
+ * @brief Executes isolated preflight diagnostic self-checks on the debugger subsystem.
+ *
+ * Verifies monolithic fallback code page integrity and deterministic 32-bit state hashing.
+ *
+ * @return Diagnostic result structure with passed status, severity, and details.
+ */
 diag_result_t debug_preflight(void)
 {
     diag_result_t res;
@@ -788,18 +1022,28 @@ diag_result_t debug_preflight(void)
     return res;
 }
 
+/**
+ * @brief Executes full diagnostic self-audit on the debugger subsystem.
+ *
+ * Evaluates preflight checks, then tests snapshot recording and time-travel rewind
+ * under an isolated, non-interfering configuration.
+ *
+ * @param[in] verbose If true, prints progress messages to stdout.
+ * @return Diagnostic result structure indicating overall audit pass/fail status.
+ */
 diag_result_t debug_audit(bool verbose)
 {
     if (verbose) {
         printf("--- Running Core Utilities: Debugger Subsystem Diagnostic Audit ---\n");
     }
 
+    // Step 1: Execute preflight checks
     diag_result_t pre = debug_preflight();
     if (!pre.passed) {
         return pre;
     }
 
-    // Verify snapshot recording & rewind under isolated test
+    // Step 2: Verify snapshot recording & rewind under isolated test
     bool was_active = s_debug_active;
     debug_config_t prev_cfg = s_debug.config;
 
@@ -838,6 +1082,7 @@ diag_result_t debug_audit(bool verbose)
         return fail_res;
     }
 
+    // Step 3: Restore previous debugger operational state
     debug_shutdown();
     if (was_active) {
         debug_init(&prev_cfg);

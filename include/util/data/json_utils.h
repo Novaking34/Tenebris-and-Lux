@@ -64,23 +64,19 @@ extern const module_metadata_t json_utils_manifest;
 // -----------------------------------------------------------------------------
 
 /**
- * Scans a JSON buffer for a specific top-level or scoped key token.
+ * @brief Scans a JSON buffer for a specific top-level or scoped key token.
  *
- * ### Machine Role & Mission
- *
- * Core search primitive that locates occurrences of `"key"` followed by a colon
- * (`:`), ignoring intervening whitespace. Prevents false positive matches on
+ * Core search primitive that locates occurrences of "key" followed by a colon
+ * (:), ignoring intervening whitespace. Prevents false positive matches on
  * substring prefixes or keys embedded inside quoted strings.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.json (Zero-Heap JSON Engine)
  * - Assembly:   JSON Token Locator
  * - Cog:        Key Pointer Scanner
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Stateless pointer scanner).
  * - Concurrency:    REENTRANT_PURE (Thread-safe read-only inspection).
  * - Latency Budget: < 20 microseconds (O(N) linear scan).
@@ -88,8 +84,8 @@ extern const module_metadata_t json_utils_manifest;
  * @param[in] json Null-terminated JSON buffer.
  * @param[in] key  Null-terminated key name to search for (without quotes).
  *
- * @return Pointer to value position immediately following the colon (`:`),
- *         or `NULL` if key is not found or parameters are invalid.
+ * @return Pointer to value position immediately following the colon (:),
+ *         or NULL if key is not found or parameters are invalid.
  */
 const char *json_find_key(const char *json, const char *key);
 
@@ -99,22 +95,18 @@ const char *json_find_key(const char *json, const char *key);
 // -----------------------------------------------------------------------------
 
 /**
- * Extracts a string literal value for a given key into a caller-supplied buffer.
+ * @brief Extracts a string literal value for a key into a caller-supplied buffer.
  *
- * ### Machine Role & Mission
- *
- * Deserializes string properties (e.g. `"version": "1.0.0"`, `"name": "Lux"`).
+ * Deserializes string properties (e.g. "version": "1.0.0", "name": "Lux").
  * Strips surrounding quotes and guarantees bounded null termination.
  *
  * ### Ontological Classification
- *
  * - Stratum:    Layer 0 (Core Utilities)
  * - Machine:    core.util.json (Zero-Heap JSON Engine)
  * - Assembly:   Value Extraction
  * - Cog:        Bounded String Field Extractor
  *
  * ### Execution & Resource Contract
- *
  * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, writes to caller buffer).
  * - Concurrency:    REENTRANT_PURE (Thread-safe on distinct destination buffers).
  * - Latency Budget: < 30 microseconds.
@@ -124,71 +116,74 @@ const char *json_find_key(const char *json, const char *key);
  * @param[out] out_val  Destination buffer for extracted string.
  * @param[in]  out_size Capacity of destination buffer in bytes.
  *
- * @return `true` if key was found and value extracted; `false` otherwise.
+ * @return true if key was found and value extracted; false otherwise.
  *
- * @post `out_val[out_size - 1] == '\0'` is guaranteed if returning `true`.
+ * @post out_val[out_size - 1] == '\0' is guaranteed if returning true.
  */
-bool json_get_string(const char *json, const char *key, char *out_val, size_t out_size);
+bool json_get_string(const char *json, const char *key, char *out_val,
+                     size_t out_size);
 
 /**
- * Extracts an unsigned `size_t` integer value for a given key.
+ * @brief Extracts an unsigned size_t integer value for a given key.
  *
  * @param[in]  json    Null-terminated JSON buffer.
  * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination `size_t` variable.
+ * @param[out] out_val Pointer to destination size_t variable.
  *
- * @return `true` if key was found and parsed; `false` otherwise.
+ * @return true if key was found and parsed; false otherwise.
  */
 bool json_get_size_t(const char *json, const char *key, size_t *out_val);
 
 /**
- * Extracts a signed 32-bit `int` value for a given key (supports negative values).
+ * @brief Extracts a signed 32-bit int value for a given key.
+ *
+ * Supports positive and negative integer representations.
  *
  * @param[in]  json    Null-terminated JSON buffer.
  * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination `int` variable.
+ * @param[out] out_val Pointer to destination int variable.
  *
- * @return `true` if key was found and parsed; `false` otherwise.
+ * @return true if key was found and parsed; false otherwise.
  */
 bool json_get_int(const char *json, const char *key, int *out_val);
 
 /**
- * Extracts a boolean value (`true` or `false`) for a given key.
+ * @brief Extracts a boolean value (true or false) for a given key.
  *
  * @param[in]  json    Null-terminated JSON buffer.
  * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination `bool` variable.
+ * @param[out] out_val Pointer to destination bool variable.
  *
- * @return `true` if key was found and parsed; `false` otherwise.
+ * @return true if key was found and parsed; false otherwise.
  */
 bool json_get_bool(const char *json, const char *key, bool *out_val);
 
 /**
- * Extracts a floating-point `float` value for a given key.
+ * @brief Extracts a floating-point float value for a given key.
  *
  * @param[in]  json    Null-terminated JSON buffer.
  * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination `float` variable.
+ * @param[out] out_val Pointer to destination float variable.
  *
- * @return `true` if key was found and parsed; `false` otherwise.
+ * @return true if key was found and parsed; false otherwise.
  */
 bool json_get_float(const char *json, const char *key, float *out_val);
 
 /**
- * Locates an embedded sub-object boundaries (`{ ... }`) for a given key.
+ * @brief Locates embedded sub-object boundaries ({ ... }) for a given key.
  *
  * @param[in]  json          Null-terminated JSON buffer.
  * @param[in]  object_key    Key name containing the object.
- * @param[out] out_obj_start Pointer to the opening `{` of the sub-object.
- * @param[out] out_obj_len   Length in bytes of the sub-object including `{` and `}`.
+ * @param[out] out_obj_start Pointer to opening '{' of the sub-object.
+ * @param[out] out_obj_len   Length in bytes of sub-object including '{' and '}'.
  *
- * @return `true` if sub-object was located and balanced; `false` otherwise.
+ * @return true if sub-object was located and balanced; false otherwise.
  */
 bool json_find_object(const char *json, const char *object_key,
                       const char **out_obj_start, size_t *out_obj_len);
 
 /**
- * Extracts a string value from within an embedded JSON object.
+ * @brief Extracts a string value from within an embedded JSON object.
  *
  * @param[in]  json           Null-terminated JSON buffer.
  * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
@@ -196,25 +191,46 @@ bool json_find_object(const char *json, const char *object_key,
  * @param[out] out_val        Destination buffer for extracted string.
  * @param[in]  out_size       Capacity of destination buffer in bytes.
  *
- * @return `true` if parent object and key were found and parsed; `false` otherwise.
+ * @return true if parent object and key were found and parsed; false otherwise.
  */
 bool json_get_object_string(const char *json, const char *parent_obj_key,
                             const char *key, char *out_val, size_t out_size);
 
 /**
- * Extracts a signed 32-bit int value from within an embedded JSON object.
+ * @brief Extracts a signed 32-bit int value from within an embedded JSON object.
+ *
+ * @param[in]  json           Null-terminated JSON buffer.
+ * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
+ * @param[in]  key            Key name to extract inside the object.
+ * @param[out] out_val        Pointer to destination int variable.
+ *
+ * @return true if parent object and key were found and parsed; false otherwise.
  */
 bool json_get_object_int(const char *json, const char *parent_obj_key,
                          const char *key, int *out_val);
 
 /**
- * Extracts a float value from within an embedded JSON object.
+ * @brief Extracts a float value from within an embedded JSON object.
+ *
+ * @param[in]  json           Null-terminated JSON buffer.
+ * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
+ * @param[in]  key            Key name to extract inside the object.
+ * @param[out] out_val        Pointer to destination float variable.
+ *
+ * @return true if parent object and key were found and parsed; false otherwise.
  */
 bool json_get_object_float(const char *json, const char *parent_obj_key,
                            const char *key, float *out_val);
 
 /**
- * Extracts a boolean value from within an embedded JSON object.
+ * @brief Extracts a boolean value from within an embedded JSON object.
+ *
+ * @param[in]  json           Null-terminated JSON buffer.
+ * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
+ * @param[in]  key            Key name to extract inside the object.
+ * @param[out] out_val        Pointer to destination bool variable.
+ *
+ * @return true if parent object and key were found and parsed; false otherwise.
  */
 bool json_get_object_bool(const char *json, const char *parent_obj_key,
                           const char *key, bool *out_val);
@@ -225,22 +241,22 @@ bool json_get_object_bool(const char *json, const char *parent_obj_key,
 // -----------------------------------------------------------------------------
 
 /**
- * Locates an embedded array `[ ... ]` for a given key.
+ * @brief Locates an embedded array [ ... ] for a given key.
  *
  * @param[in]  json          Null-terminated JSON buffer.
  * @param[in]  array_key     Key name containing the array.
- * @param[out] out_arr_start Pointer to the opening `[` of the array.
- * @param[out] out_arr_len   Length in bytes of the array including `[` and `]`.
+ * @param[out] out_arr_start Pointer to the opening '[' of the array.
+ * @param[out] out_arr_len   Length in bytes of array including '[' and ']'.
  *
- * @return `true` if array was located and brackets balanced; `false` otherwise.
+ * @return true if array was located and brackets balanced; false otherwise.
  */
 bool json_find_array(const char *json, const char *array_key,
                      const char **out_arr_start, size_t *out_arr_len);
 
 /**
- * Returns the number of comma-separated elements in a JSON array.
+ * @brief Returns the number of comma-separated elements in a JSON array.
  *
- * @param[in] arr_start Pointer to opening `[` of array.
+ * @param[in] arr_start Pointer to opening '[' of array.
  * @param[in] arr_len   Length of array in bytes.
  *
  * @return Count of elements in the array.
@@ -248,15 +264,15 @@ bool json_find_array(const char *json, const char *array_key,
 size_t json_array_get_count(const char *arr_start, size_t arr_len);
 
 /**
- * Extracts the i-th string element from a JSON array of strings into caller buffer.
+ * @brief Extracts i-th string element from JSON array into caller buffer.
  *
- * @param[in]  arr_start Pointer to opening `[` of array.
+ * @param[in]  arr_start Pointer to opening '[' of array.
  * @param[in]  arr_len   Length of array in bytes.
  * @param[in]  index     0-based element index.
  * @param[out] out_val   Destination buffer for extracted string.
  * @param[in]  out_size  Capacity of destination buffer in bytes.
  *
- * @return `true` if element exists and was extracted; `false` otherwise.
+ * @return true if element exists and was extracted; false otherwise.
  */
 bool json_array_get_string(const char *arr_start, size_t arr_len,
                            size_t index, char *out_val, size_t out_size);
@@ -272,20 +288,19 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
 // -----------------------------------------------------------------------------
 
 /**
- * Executes machine pre-flight diagnostic checks on JSON parser invariants.
+ * @brief Executes machine pre-flight diagnostic checks on JSON parser invariants.
  *
  * Verifies extraction of strings, integers, negatives, booleans, floats,
  * and bounds-checking resilience against truncated or malformed inputs.
  *
- * @return `diag_result_t` reporting SEVERITY_PASS or SEVERITY_FATAL.
+ * @return diag_result_t reporting SEVERITY_PASS or SEVERITY_FATAL.
  */
 diag_result_t json_utils_preflight(void);
 
 /**
- * High-level boolean audit wrapper for standalone test harnesses.
+ * @brief High-level boolean audit wrapper for standalone test harnesses.
  *
- * @return `true` if all JSON invariant tripwires pass cleanly;
- *         `false` otherwise.
+ * @return true if all JSON invariant tripwires pass cleanly; false otherwise.
  */
 bool json_utils_audit(void);
 

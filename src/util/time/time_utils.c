@@ -86,7 +86,7 @@ const module_metadata_t time_utils_manifest = {
 // -----------------------------------------------------------------------------
 
 /**
- * Queries current monotonic clock time in milliseconds.
+ * @brief Queries current monotonic clock time in milliseconds.
  *
  * ### Machine Role & Mission
  *
@@ -121,7 +121,7 @@ double time_get_monotonic_ms(void)
 }
 
 /**
- * Queries current monotonic clock time in microseconds.
+ * @brief Queries current monotonic clock time in microseconds.
  *
  * ### Machine Role & Mission
  *
@@ -154,7 +154,7 @@ double time_get_monotonic_us(void)
 }
 
 /**
- * Suspends thread execution for a specified duration in milliseconds.
+ * @brief Suspends thread execution for a specified duration in milliseconds.
  *
  * ### Machine Role & Mission
  *
@@ -197,8 +197,17 @@ void time_sleep_ms(double ms)
 // Mission: Format UTC calendar timestamps for telemetry headers and audit logs.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Formats the current UTC calendar time as an ISO 8601 timestamp string.
+ *
+ * @param[out] buf      Caller-supplied memory destination buffer.
+ * @param[in]  buf_size Byte capacity of destination buffer (must be >= 21).
+ *
+ * @return `true` if timestamp was successfully written; `false` on NULL or small buffer.
+ */
 bool time_get_iso_timestamp(char *buf, size_t buf_size)
 {
+    /* Step 1: Buffer capacity check (ISO 8601 UTC requires >= 21 bytes) */
     if (buf == NULL || buf_size < 21) {
         if (buf && buf_size > 0) {
             buf[0] = '\0';
@@ -206,6 +215,7 @@ bool time_get_iso_timestamp(char *buf, size_t buf_size)
         return false;
     }
 
+    /* Step 2: Query system calendar time and convert to UTC tm */
     time_t now = time(NULL);
     struct tm tm_buf;
     if (gmtime_r(&now, &tm_buf) == NULL) {
@@ -213,6 +223,7 @@ bool time_get_iso_timestamp(char *buf, size_t buf_size)
         return false;
     }
 
+    /* Step 3: Format ISO 8601 string */
     int written = snprintf(buf, buf_size, "%04d-%02d-%02dT%02d:%02d:%02dZ",
                            tm_buf.tm_year + 1900,
                            tm_buf.tm_mon + 1,
@@ -229,8 +240,14 @@ bool time_get_iso_timestamp(char *buf, size_t buf_size)
 // Mission: Load frame pacing profiles from external JSON with hardcoded fallback.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Returns hardcoded fallback frame timing configuration profile (60 FPS baseline).
+ *
+ * @return Default baseline time_config_t with canonical limits.
+ */
 time_config_t time_get_default_config(void)
 {
+    /* Step 1: Zero-initialize and populate 60 FPS canonical values */
     time_config_t cfg;
     memset(&cfg, 0, sizeof(cfg));
     str_safe_copy(cfg.id, "default", sizeof(cfg.id));
@@ -245,18 +262,29 @@ time_config_t time_get_default_config(void)
     return cfg;
 }
 
+/**
+ * @brief Loads a frame timing configuration profile from a JSON file.
+ *
+ * @param[in]  filepath   Null-terminated path to profile JSON.
+ * @param[out] out_config Destination configuration structure.
+ *
+ * @return `true` if loaded from file; `false` if fallback tripwire was triggered.
+ */
 bool time_load_config_from_file(const char *filepath, time_config_t *out_config)
 {
+    /* Step 1: Precondition check */
     if (out_config == NULL) {
         return false;
     }
 
+    /* Step 2: Seed with canonical default */
     *out_config = time_get_default_config();
 
     if (filepath == NULL || filepath[0] == '\0') {
         return false;
     }
 
+    /* Step 3: Load JSON file with alternate relative path support */
     char buf[FS_BUFFER_MEDIUM_BYTES];
     bool loaded = fs_read_file_contents(filepath, buf, sizeof(buf));
     if (!loaded) {
@@ -269,6 +297,7 @@ bool time_load_config_from_file(const char *filepath, time_config_t *out_config)
         return false;
     }
 
+    /* Step 4: Deserialize JSON timing properties */
     json_get_object_string(buf, "profile", "id", out_config->id, sizeof(out_config->id));
     json_get_object_string(buf, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
     json_get_object_int(buf, "profile", "target_fps", &out_config->target_fps);
@@ -306,7 +335,7 @@ bool time_load_config_from_file(const char *filepath, time_config_t *out_config)
 // -----------------------------------------------------------------------------
 
 /**
- * Pre-flight diagnostic check evaluating monotonic clock and calendar invariants.
+ * @brief Pre-flight diagnostic check evaluating monotonic clock and calendar invariants.
  *
  * ### Machine Role & Mission
  *
@@ -391,7 +420,7 @@ diag_result_t time_utils_preflight(void)
 }
 
 /**
- * Standalone boolean self-audit wrapper for regression test suites.
+ * @brief Standalone boolean self-audit wrapper for regression test suites.
  *
  * @return `true` if all timing invariant tripwires pass cleanly.
  */

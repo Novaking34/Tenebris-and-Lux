@@ -167,10 +167,21 @@ static void get_parent_directory(
     str_parent_dir(out_dir, out_size, filepath);
 }
 
+/**
+ * @brief Converts a human-readable severity string into its typed log_severity_t enum.
+ *
+ * @param[in]  str     Case-insensitive severity name.
+ * @param[out] out_sev Output pointer for parsed severity.
+ *
+ * @return `true` if matched; `false` if invalid token.
+ */
 bool log_severity_from_string(const char *str, log_severity_t *out_sev) {
+    /* Step 1: Precondition check on NULL inputs */
     if (str == NULL || out_sev == NULL) {
         return false;
     }
+
+    /* Step 2: Compare against canonical severity tokens */
     if (str_case_eq(str, "FATAL")) {
         *out_sev = LOG_SEV_FATAL;
         return true;
@@ -202,10 +213,21 @@ bool log_severity_from_string(const char *str, log_severity_t *out_sev) {
     return false;
 }
 
+/**
+ * @brief Converts a human-readable category string into its typed log_category_t enum.
+ *
+ * @param[in]  str     Case-insensitive category name.
+ * @param[out] out_cat Output pointer for parsed category.
+ *
+ * @return `true` if matched; `false` if invalid token.
+ */
 bool log_category_from_string(const char *str, log_category_t *out_cat) {
+    /* Step 1: Precondition check on NULL inputs */
     if (str == NULL || out_cat == NULL) {
         return false;
     }
+
+    /* Step 2: Compare against canonical category tokens */
     if (str_case_eq(str, "DEBUG")) {
         *out_cat = LOG_CAT_DEBUG;
         return true;
@@ -239,14 +261,27 @@ static void set_tripwire(log_tripwire_t status, const char *msg) {
     str_safe_copy(s_tripwire_details, msg, sizeof(s_tripwire_details));
 }
 
+/**
+ * @brief Returns the current state of the logging data pipeline tripwire.
+ *
+ * @return Active log_tripwire_t status code.
+ */
 log_tripwire_t log_get_tripwire_status(void) {
     return s_tripwire_status;
 }
 
+/**
+ * @brief Returns a detailed message explaining why a tripwire was tripped.
+ *
+ * @return Null-terminated diagnostic string.
+ */
 const char *log_get_tripwire_details(void) {
     return s_tripwire_details;
 }
 
+/**
+ * @brief Resets the tripwire state to CLEAR (used in diagnostic test suites).
+ */
 void log_reset_tripwire(void) {
     s_tripwire_status = LOG_TRIPWIRE_CLEAR;
     str_safe_copy(
@@ -256,7 +291,16 @@ void log_reset_tripwire(void) {
     );
 }
 
+/**
+ * @brief Loads a log configuration profile from a specified JSON data file.
+ *
+ * @param[in]  filepath   Path to JSON setting file (e.g. "data/log/development.json").
+ * @param[out] out_config Output configuration structure to populate.
+ *
+ * @return `true` if successfully parsed; `false` on missing file or syntax error.
+ */
 bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
+    /* Step 1: Precondition check on input pointers */
     if (filepath == NULL || out_config == NULL) {
         set_tripwire(
             LOG_TRIPWIRE_SETTING_INVALID,
@@ -264,6 +308,8 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
         );
         return false;
     }
+
+    /* Step 2: Read file contents from disk into static buffer */
     static char file_buf[8192];
     if (!read_file_contents(filepath, file_buf, sizeof(file_buf))) {
         char err_msg[256];
@@ -277,11 +323,13 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
         return false;
     }
 
+    /* Step 3: Locate setting JSON scope */
     const char *scope = strstr(file_buf, "\"setting\"");
     if (scope == NULL) {
         scope = file_buf;
     }
 
+    /* Step 4: Populate default base values */
     memset(out_config, 0, sizeof(*out_config));
     out_config->min_severity = LOG_SEV_TRACE;
     out_config->save_by_category = true;
@@ -289,6 +337,7 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
     out_config->use_colors = true;
     out_config->loaded_from_data = false;
 
+    /* Step 5: Deserialize JSON string, numeric, and boolean tokens */
     char tmp[64];
     if (json_get_string(scope, "id", tmp, sizeof(tmp))) {
         str_safe_copy(out_config->profile_name, tmp, sizeof(out_config->profile_name));
@@ -326,6 +375,7 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
         out_config->use_colors = bool_val;
     }
 
+    /* Step 6: Validate mandatory bounds */
     if (out_config->max_file_size_bytes == 0 || out_config->max_rotated_files == 0) {
         set_tripwire(
             LOG_TRIPWIRE_BOUNDS_VIOLATION,
@@ -339,10 +389,19 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
     return true;
 }
 
+/**
+ * @brief Loads the active log configuration profile from a manifest "main menu" file.
+ *
+ * @param[in]  manifest_path Path to log manifest JSON (NULL for auto-discovery).
+ * @param[out] out_config    Output configuration structure to populate.
+ *
+ * @return `true` if manifest and target profile were loaded; `false` on fallback.
+ */
 bool log_load_config_from_manifest(
     const char *manifest_path,
     log_config_t *out_config
 ) {
+    /* Step 1: Precondition check on destination pointer */
     if (out_config == NULL) {
         set_tripwire(
             LOG_TRIPWIRE_MANIFEST_INVALID,
@@ -351,6 +410,7 @@ bool log_load_config_from_manifest(
         return false;
     }
 
+    /* Step 2: Resolve candidate paths for data/log/manifest.json */
     static const char *const s_manifest_candidates[] = {
         "data/log/manifest.json",
         "../data/log/manifest.json"
@@ -388,6 +448,7 @@ bool log_load_config_from_manifest(
         return false;
     }
 
+    /* Step 3: Read manifest file */
     static char manifest_buf[8192];
     if (!read_file_contents(resolved_path, manifest_buf, sizeof(manifest_buf))) {
         set_tripwire(
@@ -397,6 +458,7 @@ bool log_load_config_from_manifest(
         return false;
     }
 
+    /* Step 4: Extract active profile name from menu */
     const char *menu_block = strstr(manifest_buf, "\"menu\"");
     const char *scope = (menu_block != NULL) ? menu_block : manifest_buf;
 
@@ -411,6 +473,7 @@ bool log_load_config_from_manifest(
         }
     }
 
+    /* Step 5: Assemble child setting filepath and load profile */
     char parent_dir[128];
     get_parent_directory(resolved_path, parent_dir, sizeof(parent_dir));
 
@@ -426,7 +489,16 @@ bool log_load_config_from_manifest(
     return log_load_config_from_file(setting_path, out_config);
 }
 
+/**
+ * @brief Loads a named configuration profile from the data/log/ directory.
+ *
+ * @param[in]  profile_name Name of the setting profile to load (e.g. "development").
+ * @param[out] out_config   Output configuration structure to populate.
+ *
+ * @return `true` if found and loaded; `false` otherwise.
+ */
 bool log_load_config_profile(const char *profile_name, log_config_t *out_config) {
+    /* Step 1: Validate input parameters */
     if (profile_name == NULL || profile_name[0] == '\0' || out_config == NULL) {
         set_tripwire(
             LOG_TRIPWIRE_SETTING_INVALID,
@@ -435,6 +507,7 @@ bool log_load_config_profile(const char *profile_name, log_config_t *out_config)
         return false;
     }
 
+    /* Step 2: Check candidate search paths */
     char candidate1[128];
     char candidate2[128];
     snprintf(candidate1, sizeof(candidate1), "data/log/%s.json", profile_name);
@@ -447,12 +520,18 @@ bool log_load_config_profile(const char *profile_name, log_config_t *out_config)
         return log_load_config_from_file(candidate2, out_config);
     }
 
+    /* Step 3: Trigger tripwire if profile file was not found */
     char err_msg[128];
     snprintf(err_msg, sizeof(err_msg), "Setting profile '%s' not found.", profile_name);
     set_tripwire(LOG_TRIPWIRE_SETTING_MISSING, err_msg);
     return false;
 }
 
+/**
+ * @brief Returns the active configuration profile name (e.g. "development", "fallback").
+ *
+ * @return Null-terminated string identifying the profile.
+ */
 const char *log_get_active_profile_name(void) {
     if (s_config.profile_name[0] != '\0') {
         return s_config.profile_name;
@@ -460,12 +539,17 @@ const char *log_get_active_profile_name(void) {
     return "default";
 }
 
+/**
+ * @brief Returns whether the active logging subsystem was configured from data sources.
+ *
+ * @return `true` if loaded from JSON data; `false` if using fallback code page.
+ */
 bool log_is_data_driven(void) {
     return s_config.loaded_from_data;
 }
 
 /**
- * Resolves the default runtime configuration for the logging subsystem.
+ * @brief Resolves the default runtime configuration for the logging subsystem.
  *
  * ### Machine Role & Mission
  *
@@ -513,22 +597,43 @@ log_config_t log_get_default_config(void) {
     return cfg;
 }
 
+/**
+ * @brief Converts a normalized float grade [-1.0f, +1.0f] to integer percent [-100, +100].
+ *
+ * @param[in] grade Normalized grade value.
+ * @return Integer percentage clamped to [-100, +100].
+ */
 int log_grade_to_percent(float grade) {
+    /* Step 1: Clamp floating point input to [-1.0f, +1.0f] */
     if (grade > 1.0f) {
         grade = 1.0f;
     } else if (grade < -1.0f) {
         grade = -1.0f;
     }
+
+    /* Step 2: Scale and round with symmetric bias */
     float scaled = grade * 100.0f;
     int rounded = (scaled >= 0.0f) ? (int)(scaled + 0.5f) : (int)(scaled - 0.5f);
     return math_clamp_int(rounded, -100, 100);
 }
 
+/**
+ * @brief Converts an integer percent [-100, +100] to a normalized float grade [-1.0f, +1.0f].
+ *
+ * @param[in] percent Integer percentage [-100, +100].
+ * @return Normalized floating-point grade in [-1.0f, +1.0f].
+ */
 float log_percent_to_grade(int percent) {
     int clamped = math_clamp_int(percent, -100, 100);
     return (float)clamped / 100.0f;
 }
 
+/**
+ * @brief Returns the human-readable fixed-width string for a severity level.
+ *
+ * @param[in] severity Graded severity enum.
+ * @return Fixed-width severity label (e.g. "[INFO ]").
+ */
 const char *log_severity_name(log_severity_t severity) {
     if ((size_t)severity < (size_t)LOG_SEV_COUNT) {
         return s_severity_labels[severity];
@@ -536,6 +641,12 @@ const char *log_severity_name(log_severity_t severity) {
     return "UNKNOWN ";
 }
 
+/**
+ * @brief Returns the human-readable fixed-width string for a category.
+ *
+ * @param[in] category Domain category enum.
+ * @return Fixed-width category label (e.g. "[EVENT ]").
+ */
 const char *log_category_name(log_category_t category) {
     if ((size_t)category < (size_t)LOG_CAT_COUNT) {
         return s_category_labels[category];
@@ -543,6 +654,12 @@ const char *log_category_name(log_category_t category) {
     return "UNKNOWN  ";
 }
 
+/**
+ * @brief Returns the folder name associated with a category (e.g. "character", "event").
+ *
+ * @param[in] category Domain category enum.
+ * @return Directory name string.
+ */
 const char *log_category_dir_name(log_category_t category) {
     if ((size_t)category < (size_t)LOG_CAT_COUNT) {
         return s_category_dir_names[category];
@@ -550,10 +667,20 @@ const char *log_category_dir_name(log_category_t category) {
     return "general";
 }
 
+/**
+ * @brief Checks if the logging subsystem has been initialized and is active.
+ *
+ * @return `true` if initialized and open; `false` otherwise.
+ */
 bool log_is_active(void) {
     return s_initialized;
 }
 
+/**
+ * @brief Retrieves the total number of log entries recorded since initialization.
+ *
+ * @return Cumulative monotonic log count.
+ */
 uint64_t log_get_total_entries(void) {
     return s_sequence_counter;
 }
@@ -587,7 +714,13 @@ static void get_log_filepath(char *dest, size_t dest_size, const char *dir, cons
     str_path_join(dest, dest_size, dir, name);
 }
 
+/**
+ * @brief Triggers an immediate log rotation if current file size exceeds threshold.
+ *
+ * @return `true` if rotation occurred; `false` otherwise.
+ */
 bool log_rotate_if_needed(void) {
+    /* Step 1: Check active state and byte threshold */
     if (!s_initialized || s_file == NULL) {
         return false;
     }
@@ -595,9 +728,11 @@ bool log_rotate_if_needed(void) {
         return false;
     }
 
+    /* Step 2: Close current active master log file */
     fclose(s_file);
     s_file = NULL;
 
+    /* Step 3: Shift older numbered archives upward (e.g. .24 -> .25) */
     char old_path[512];
     char new_path[512];
 
@@ -611,6 +746,7 @@ bool log_rotate_if_needed(void) {
         rename(old_path, new_path);
     }
 
+    /* Step 4: Promote active base file to .1 archive */
     char base_path[512];
     char first_rot[512];
     get_log_filepath(base_path, sizeof(base_path), s_config.log_dir, s_config.base_filename);
@@ -619,6 +755,7 @@ bool log_rotate_if_needed(void) {
     get_log_filepath(first_rot, sizeof(first_rot), s_config.log_dir, name_first);
     rename(base_path, first_rot);
 
+    /* Step 5: Reopen pristine active master log */
     s_file = fopen(base_path, "a");
     s_current_bytes = 0;
 
@@ -680,22 +817,27 @@ static void rotate_category_file(log_category_t cat) {
     s_cat_bytes[cat] = 0;
 }
 
+/**
+ * @brief Initializes the logging subsystem, creates directories, and opens active file.
+ *
+ * @param[in] config Pointer to logging configuration (NULL uses defaults).
+ *
+ * @return `true` on successful initialization; `false` on filesystem or config error.
+ */
 bool log_init(const log_config_t *config) {
+    /* Step 1: Tear down any existing active logging session */
     if (s_initialized) {
         log_shutdown();
     }
 
+    /* Step 2: Resolve runtime configuration */
     if (config != NULL) {
         s_config = *config;
     } else {
         s_config = log_get_default_config();
     }
 
-    /*
-     * Production Invariant: Only data-driven configurations (loaded_from_data == true)
-     * or the explicitly quarantined monolith fallback ("monolith_fallback") are
-     * permitted to boot the logging subsystem. Silent unverified fallbacks are rejected.
-     */
+    /* Step 3: Validate provenance policy */
     if (!s_config.loaded_from_data && !str_case_eq(s_config.profile_name, LOG_FALLBACK_PROFILE_NAME)) {
         if (s_tripwire_status == LOG_TRIPWIRE_CLEAR) {
             set_tripwire(
@@ -706,6 +848,7 @@ bool log_init(const log_config_t *config) {
         return false;
     }
 
+    /* Step 4: Validate directory and filename bounds */
     if (s_config.log_dir[0] == '\0' || s_config.base_filename[0] == '\0') {
         set_tripwire(
             LOG_TRIPWIRE_BOUNDS_VIOLATION,
@@ -722,6 +865,7 @@ bool log_init(const log_config_t *config) {
         return false;
     }
 
+    /* Step 5: Ensure destination directory exists and open master log file */
     ensure_directory(s_config.log_dir);
 
     char full_path[512];
@@ -732,6 +876,7 @@ bool log_init(const log_config_t *config) {
         return false;
     }
 
+    /* Step 6: Stat initial file size */
     struct stat st;
     if (stat(full_path, &st) == 0) {
         s_current_bytes = (size_t)st.st_size;
@@ -744,6 +889,7 @@ bool log_init(const log_config_t *config) {
         s_cat_bytes[i] = 0;
     }
 
+    /* Step 7: Reset ring buffer and emit system initialization banner */
     s_ring_head = 0;
     s_ring_count = 0;
     s_initialized = true;
@@ -765,10 +911,16 @@ bool log_init(const log_config_t *config) {
     return true;
 }
 
+/**
+ * @brief Flushes active file streams and shuts down logging subsystem.
+ */
 void log_shutdown(void) {
+    /* Step 1: Precondition check on active state */
     if (!s_initialized) {
         return;
     }
+
+    /* Step 2: Flush and close master log file */
     if (s_file != NULL) {
         char iso_ts[32];
         generate_iso_timestamp(iso_ts, sizeof(iso_ts));
@@ -785,6 +937,7 @@ void log_shutdown(void) {
         s_file = NULL;
     }
 
+    /* Step 3: Flush and close category-specific file handles */
     for (size_t i = 0; i < (size_t)LOG_CAT_COUNT; i++) {
         if (s_cat_files[i] != NULL) {
             fflush(s_cat_files[i]);
@@ -796,6 +949,20 @@ void log_shutdown(void) {
     s_initialized = false;
 }
 
+/**
+ * @brief Emits a structured log entry into the ring buffer, file, and console.
+ *
+ * @param[in] severity Graded severity level.
+ * @param[in] category Target functional category.
+ * @param[in] entity   Entity/Character name (e.g. "Elijah", "Katrina", "System").
+ * @param[in] grade    Normalized grade [-1.0f .. +1.0f] (e.g. moral sway or health).
+ * @param[in] file     Source file name (__FILE__).
+ * @param[in] line     Source line number (__LINE__).
+ * @param[in] func     Source function name (__func__).
+ * @param[in] fmt      Printf-style format string.
+ *
+ * @return Monotonic sequence ID assigned to the entry, or 0 on drop/failure.
+ */
 uint64_t log_write_entry(
     log_severity_t severity,
     log_category_t category,
@@ -807,13 +974,16 @@ uint64_t log_write_entry(
     const char *fmt,
     ...
 ) {
+    /* Step 1: Verify initialization and severity threshold */
     if (!s_initialized || severity > s_config.min_severity) {
         return 0;
     }
 
+    /* Step 2: Increment monotonic sequence counter */
     s_sequence_counter++;
     uint64_t seq = s_sequence_counter;
 
+    /* Step 3: Populate telemetry entry structure */
     log_entry_t entry;
     memset(&entry, 0, sizeof(entry));
     entry.sequence_id = seq;
@@ -839,14 +1009,14 @@ uint64_t log_write_entry(
     vsnprintf(entry.message, sizeof(entry.message), fmt, args);
     va_end(args);
 
-    // Insert into static circular ring buffer
+    /* Step 4: Insert into static circular in-memory ring buffer */
     s_ring_buffer[s_ring_head] = entry;
     s_ring_head = (s_ring_head + 1) % LOG_RING_BUFFER_CAPACITY;
     if (s_ring_count < LOG_RING_BUFFER_CAPACITY) {
         s_ring_count++;
     }
 
-    // Format human-readable, machine-greppable fixed-width string
+    /* Step 5: Format human-readable, machine-greppable fixed-width string */
     char line_buffer[LOG_MAX_LINE_BUFFER];
     double rel_ms = (double)entry.monotonic_us / 1000.0;
 
@@ -871,7 +1041,7 @@ uint64_t log_write_entry(
         return seq;
     }
 
-    // Disk Output 1: Master Unified Log
+    /* Step 6: Master unified file output */
     if (s_file != NULL) {
         fputs(line_buffer, s_file);
         s_current_bytes += (size_t)written;
@@ -879,7 +1049,7 @@ uint64_t log_write_entry(
         log_rotate_if_needed();
     }
 
-    // Disk Output 2: Category-Specific Log in logs/<category>/
+    /* Step 7: Category-specific file output */
     if (s_initialized && s_config.save_by_category && (size_t)category < (size_t)LOG_CAT_COUNT) {
         if (s_cat_files[category] == NULL) {
             const char *dir_name = log_category_dir_name(category);
@@ -907,7 +1077,7 @@ uint64_t log_write_entry(
         }
     }
 
-    // Console Output with Optional ANSI Colors
+    /* Step 8: Console output with optional ANSI colors */
     if (s_config.echo_to_console) {
         FILE *out = (severity <= LOG_SEV_ERROR) ? stderr : stdout;
         if (s_config.use_colors && (size_t)severity < (size_t)LOG_SEV_COUNT) {
@@ -932,6 +1102,16 @@ uint64_t log_write_entry(
     return seq;
 }
 
+/**
+ * @brief Copies recent log entries from the in-memory circular ring buffer.
+ *
+ * Entries are copied in chronological order (oldest to newest).
+ *
+ * @param[out] dest        Output buffer array for log entries.
+ * @param[in]  max_entries Maximum entries to copy.
+ *
+ * @return Number of entries actually copied.
+ */
 size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries) {
     if (dest == NULL || max_entries == 0 || s_ring_count == 0) {
         return 0;
@@ -947,6 +1127,16 @@ size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries) {
     return count;
 }
 
+/**
+ * @brief Retrieves the top 10-25 most recent log entries in reverse chronological order.
+ *
+ * Newest entries are placed first, ideal for HUD and on-screen debug consoles.
+ *
+ * @param[out] dest        Output buffer array for top log entries.
+ * @param[in]  max_entries Maximum entries to retrieve (typically 10 to 25).
+ *
+ * @return Number of entries retrieved.
+ */
 size_t log_get_top_entries(log_entry_t *dest, size_t max_entries) {
     if (dest == NULL || max_entries == 0) {
         return 0;
@@ -965,6 +1155,11 @@ size_t log_get_top_entries(log_entry_t *dest, size_t max_entries) {
 // Stratum: Layer 0 (Core Utilities) | Machine: Forensic Telemetry Engine
 // =============================================================================
 
+/**
+ * @brief Pre-flight diagnostic check for logging subsystem invariants.
+ *
+ * @return Diagnostic verification result.
+ */
 diag_result_t log_preflight(void) {
     diag_result_t res;
     res.passed = true;
@@ -1038,6 +1233,12 @@ diag_result_t log_preflight(void) {
     return res;
 }
 
+/**
+ * @brief Diagnostic self-audit verifying formatting buffers, grade clamping, and rotation.
+ *
+ * @param[in] verbose Enable verbose trace output during audit.
+ * @return Diagnostic verification result.
+ */
 diag_result_t log_audit(bool verbose) {
     if (verbose) {
         printf("--- Running Core Utilities: Telemetry Subsystem Diagnostic Audit ---\n");

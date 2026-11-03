@@ -86,7 +86,7 @@ const module_metadata_t string_utils_manifest = {
 // -----------------------------------------------------------------------------
 
 /**
- * Copies a source string into a destination buffer with bounded termination.
+ * @brief Copies a source string into a destination buffer with bounded termination.
  *
  * ### Machine Role & Mission
  *
@@ -136,7 +136,7 @@ void str_safe_copy(char *dst, const char *src, size_t dst_size)
 }
 
 /**
- * Trims leading and trailing ASCII whitespace in-place within a buffer.
+ * @brief Trims leading and trailing ASCII whitespace in-place within a buffer.
  *
  * ### Machine Role & Mission
  *
@@ -195,7 +195,7 @@ void str_trim_inplace(char *str)
 // -----------------------------------------------------------------------------
 
 /**
- * Compares two null-terminated strings for equality ignoring ASCII case.
+ * @brief Compares two null-terminated strings for equality ignoring ASCII case.
  *
  * ### Machine Role & Mission
  *
@@ -241,7 +241,7 @@ bool str_case_eq(const char *a, const char *b)
 }
 
 /**
- * Searches for a case-insensitive substring match within a haystack string.
+ * @brief Searches for a case-insensitive substring match within a haystack string.
  *
  * ### Machine Role & Mission
  *
@@ -306,8 +306,18 @@ bool str_contains_nocase(const char *haystack, const char *needle)
 // Mission: Safe extraction of parent directories and safe path joining.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Extracts the directory component of a filepath into a destination buffer.
+ *
+ * @param[out] out_dir   Destination buffer.
+ * @param[in]  out_size  Capacity of destination buffer in bytes.
+ * @param[in]  filepath  Source null-terminated filepath.
+ *
+ * @return `true` if directory was extracted within bounds; `false` on error/NULL.
+ */
 bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
 {
+    /* Step 1: Precondition check */
     if (out_dir == NULL || out_size == 0) {
         return false;
     }
@@ -317,6 +327,7 @@ bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
         return false;
     }
 
+    /* Step 2: Locate last slash separator */
     const char *last_slash = strrchr(filepath, '/');
     if (!last_slash) {
         // No directory component; default to current directory "."
@@ -324,6 +335,7 @@ bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
         return true;
     }
 
+    /* Step 3: Handle root directory case */
     size_t dir_len = (size_t)(last_slash - filepath);
     if (dir_len == 0) {
         // Root directory "/"
@@ -331,6 +343,7 @@ bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
         return true;
     }
 
+    /* Step 4: Capacity check before bounded copy */
     if (dir_len >= out_size) {
         return false;
     }
@@ -340,13 +353,25 @@ bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
     return true;
 }
 
+/**
+ * @brief Safely joins a directory path and filename with a single intervening separator.
+ *
+ * @param[out] dest      Destination memory buffer.
+ * @param[in]  dest_size Capacity of destination buffer in bytes.
+ * @param[in]  dir       Directory path prefix (e.g. "data/log").
+ * @param[in]  filename  File component (e.g. "default.json").
+ *
+ * @return `true` if joined successfully within bounds; `false` on error/NULL.
+ */
 bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *filename)
 {
+    /* Step 1: Precondition check */
     if (dest == NULL || dest_size == 0) {
         return false;
     }
     dest[0] = '\0';
 
+    /* Step 2: Handle NULL or empty filename */
     if (filename == NULL || filename[0] == '\0') {
         if (dir != NULL) {
             str_safe_copy(dest, dir, dest_size);
@@ -355,11 +380,13 @@ bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *fi
         return false;
     }
 
+    /* Step 3: Handle NULL or empty directory */
     if (dir == NULL || dir[0] == '\0') {
         str_safe_copy(dest, filename, dest_size);
         return true;
     }
 
+    /* Step 4: Format with single separator */
     size_t dir_len = strlen(dir);
     bool has_trailing_slash = (dir[dir_len - 1] == '/');
 
@@ -378,8 +405,14 @@ bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *fi
 // Mission: Load lexical bounds and dictionaries from JSON with hardcoded fallback.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Returns the hardcoded fallback lexical configuration profile.
+ *
+ * @return Default baseline string_config_t with canonical bounds.
+ */
 string_config_t string_get_default_config(void)
 {
+    /* Step 1: Zero-initialize and populate canonical defaults */
     string_config_t cfg;
     memset(&cfg, 0, sizeof(cfg));
     str_safe_copy(cfg.id, "default", sizeof(cfg.id));
@@ -392,18 +425,29 @@ string_config_t string_get_default_config(void)
     return cfg;
 }
 
+/**
+ * @brief Loads a lexical configuration profile from a JSON file.
+ *
+ * @param[in]  filepath   Null-terminated path to profile JSON.
+ * @param[out] out_config Destination configuration structure.
+ *
+ * @return `true` if loaded from file; `false` if fallback tripwire was triggered.
+ */
 bool string_load_config_from_file(const char *filepath, string_config_t *out_config)
 {
+    /* Step 1: Safety check on destination */
     if (out_config == NULL) {
         return false;
     }
 
+    /* Step 2: Initialize with default fallback config */
     *out_config = string_get_default_config();
 
     if (filepath == NULL || filepath[0] == '\0') {
         return false;
     }
 
+    /* Step 3: Read file contents with fallback relative path */
     char buf[FS_BUFFER_MEDIUM_BYTES];
     bool loaded = fs_read_file_contents(filepath, buf, sizeof(buf));
     if (!loaded) {
@@ -416,6 +460,7 @@ bool string_load_config_from_file(const char *filepath, string_config_t *out_con
         return false;
     }
 
+    /* Step 4: Parse JSON fields */
     json_get_object_string(buf, "profile", "id", out_config->id, sizeof(out_config->id));
     json_get_object_string(buf, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
     json_get_size_t(buf, "max_path_length", &out_config->max_path_length);
@@ -438,7 +483,7 @@ bool string_load_config_from_file(const char *filepath, string_config_t *out_con
 // -----------------------------------------------------------------------------
 
 /**
- * Pre-flight diagnostic check evaluating safe string invariants.
+ * @brief Pre-flight diagnostic check evaluating safe string invariants.
  *
  * ### Machine Role & Mission
  *
@@ -589,7 +634,7 @@ diag_result_t string_utils_preflight(void)
 }
 
 /**
- * Standalone boolean self-audit wrapper for regression test suites.
+ * @brief Standalone boolean self-audit wrapper for regression test suites.
  *
  * @return `true` if all string invariant tripwires pass cleanly.
  */

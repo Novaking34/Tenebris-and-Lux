@@ -1,6 +1,6 @@
 = Documentation Architecture & Living Repository Index
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v1.2.0, 2026-11-02
 :doctype: book
 :toc: left
 :toclevels: 3
@@ -20,37 +20,40 @@ AsciiDoc (`.adoc`) documentation standard for clean, modular, and comprehensive 
 [cols="1,2,3", options="header"]
 |===
 | Category | Directory | Description
-| **Installation** | **[INSTALL.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/INSTALL.adoc)** | System requirements, CMake compilation workflows, direct GCC/Clang instructions, and troubleshooting.
-| **Architecture** | **[docs/architecture/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/README.adoc)** | 
-  - **[ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc)**: System boundaries, 5-block lifecycle, TRPG architecture, and engine evolution roadmap. +
-  - **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**: Headless CLI + native double-buffered X11 GUI specifications. +
-  - **[preflight_and_manifest_spec.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/preflight_and_manifest_spec.adoc)**: Central Manifest registry, executable metadata contracts, loose-bolts machine checks, and expected vs actual gap analysis.
-| **Lore & World** | **[docs/lore/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/README.adoc)** | 
-  - **[world_and_lore.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/world_and_lore.adoc)**: Primordial neutrality of Lux and Tenebris, the Kingdom of Sacyra, and the re-awakened Dark Lord. +
-  - **[genesis_and_historical_canon.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/genesis_and_historical_canon.adoc)**: Historical canon across Eras I–VI, Usuru's 11th festival tragedy, 7-Year Great War, and 3,000-year dynastic wave. +
-  - **[master_storyboard_chronicle.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/master_storyboard_chronicle.adoc)**: 20-scene master storyboard sequence from the founding forges to the Prophecy of Kings. +
-  - **[thematic_triad.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/thematic_triad.adoc)**: Past/Present/Future thematic triad ("Trauma is Inherited, Destiny is Chosen"). +
-  - **[characters.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/lore/characters.adoc)**: Dramatis personae of Elijah Ro-enheart, Lady Katrina Jaren, and the Custom Bearer.
-| **Game Design** | **[docs/game_design/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/README.adoc)** | 
-  - **[tactical_trpg_system.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/tactical_trpg_system.adoc)**: Tactical Strategy RPG system: 2D grid positioning, terrain, and cinematic duels. +
-  - **[relics_and_combat.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/relics_and_combat.adoc)**: Relic mechanics, stances, tempering/dissipation, and relic embellishments. +
-  - **[campaign_structure_and_endings.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/campaign_structure_and_endings.adoc)**: Two-half campaign, "The King's Curse", midpoint fork, and 5-route ending matrix. +
-  - **[dreamscape_and_temporal_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/dreamscape_and_temporal_architecture.adoc)**: Dreamscape engine verification, Dream Compass, and nocturnal temporal phasing. +
-  - **[world_topography.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/world_topography.adoc)**: Sacyran provinces, encounters, and threat scaling. +
-  - **[game_testing.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/game_testing.adoc)**: The philosophy of game development testing vs. standard software testing. +
-  - **[demo_baseline/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/game_design/demo_baseline/README.adoc)**: 2017–2018 Historical Demo Baseline & Extraction Compendium.
-| **Developer Logs** | **[docs/dev_logs/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/README.adoc)** | 
-  - **[devlog_001_genesis_and_pivot.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc)**: Inception, survival battery audit, paradigm pivot, and game dev testing. +
-  - **[devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc)**: 2014–2018 RPG Maker genesis, Kingdom of Sacyra, dual protagonists, and TRPG evolution. +
-  - **[devlog_008_canonical_skills_and_dreamscape_baseline.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc)**: Canonical skills (Lux Barrio, Cuttatio), The Dreamscape baseline, and "The Dark Lord" ground-truth pacing. +
-  - **[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc)**: 3,000-year dynastic wave, 20-scene master storyboard, thematic triad, and 5-route ending matrix. +
-  - **[Architecture Dev Logs](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/README.adoc)**: Preflight manifest, pedagogical metadata contracts, and LSP docstring discipline.
-
-| **Code Tours** | **[docs/code/](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/README.adoc)** | 
-  - **[core_utilities.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/core_utilities.adoc)**: Walkthrough of Layer 0 `include/util/` and `src/util/` (math, string, geometry, timing). +
-  - **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**: Walkthrough of Layer 1 `include/sim/game.h` and `src/sim/game.c`. +
-  - **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**: Walkthrough of Layer 2 `include/gui/gui.h` and `src/gui/gui.c`. +
-  - **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**: Walkthrough of Layer 4 `tests/test_utils.c`, `tests/test_game_invariants.c`, and `tests/test_gameplay_scenarios.c`.
+| **Installation** | **link:INSTALL.adoc[INSTALL.adoc]** | System requirements, CMake compilation workflows, direct GCC/Clang instructions, and troubleshooting.
+| **Architecture** | **link:architecture/README.adoc[docs/architecture/]** | 
+  - **link:architecture/ARCHITECTURE.adoc[ARCHITECTURE.adoc]**: System boundaries, 5-block lifecycle, TRPG architecture, and engine evolution roadmap. +
+  - **link:architecture/dual_frontend_architecture.adoc[dual_frontend_architecture.adoc]**: Headless CLI + native double-buffered X11 GUI specifications. +
+  - **link:architecture/preflight_and_manifest_spec.adoc[preflight_and_manifest_spec.adoc]**: Central Manifest registry, executable metadata contracts, loose-bolts machine checks, and expected vs actual gap analysis. +
+  - **link:architecture/data_driven_architecture.adoc[data_driven_architecture.adoc]**: Data-driven runtime model, JSON schemas, catalog manifests, and profiles.
+| **Lore & World** | **link:lore/README.adoc[docs/lore/]** | 
+  - **link:lore/world_and_lore.adoc[world_and_lore.adoc]**: Primordial neutrality of Lux and Tenebris, the Kingdom of Sacyra, and the re-awakened Dark Lord. +
+  - **link:lore/genesis_and_historical_canon.adoc[genesis_and_historical_canon.adoc]**: Historical canon across Eras I–VI, Usuru's 11th festival tragedy, 7-Year Great War, and 3,000-year dynastic wave. +
+  - **link:lore/master_storyboard_chronicle.adoc[master_storyboard_chronicle.adoc]**: 20-scene master storyboard sequence from the founding forges to the Prophecy of Kings. +
+  - **link:lore/thematic_triad.adoc[thematic_triad.adoc]**: Past/Present/Future thematic triad ("Trauma is Inherited, Destiny is Chosen"). +
+  - **link:lore/characters.adoc[characters.adoc]**: Dramatis personae of Elijah Ro-enheart, Lady Katrina Jaren, and the Custom Bearer.
+| **Game Design** | **link:game_design/README.adoc[docs/game_design/]** | 
+  - **link:game_design/tactical_trpg_system.adoc[tactical_trpg_system.adoc]**: Tactical Strategy RPG system: 2D grid positioning, terrain, and cinematic duels. +
+  - **link:game_design/relics_and_combat.adoc[relics_and_combat.adoc]**: Relic mechanics, stances, tempering/dissipation, and relic embellishments. +
+  - **link:game_design/campaign_structure_and_endings.adoc[campaign_structure_and_endings.adoc]**: Two-half campaign, "The King's Curse", midpoint fork, and 5-route ending matrix. +
+  - **link:game_design/dreamscape_and_temporal_architecture.adoc[dreamscape_and_temporal_architecture.adoc]**: Dreamscape engine verification, Dream Compass, and nocturnal temporal phasing. +
+  - **link:game_design/world_topography.adoc[world_topography.adoc]**: Sacyran provinces, encounters, and threat scaling. +
+  - **link:game_design/game_testing.adoc[game_testing.adoc]**: The philosophy of game development testing vs. standard software testing. +
+  - **link:game_design/demo_baseline/README.adoc[demo_baseline/]**: 2017–2018 Historical Demo Baseline & Extraction Compendium.
+| **Developer Logs** | **link:dev_logs/README.adoc[docs/dev_logs/]** | 
+  - **link:dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc[devlog_001]**: Inception, survival battery audit, paradigm pivot, and game dev testing. +
+  - **link:dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc[devlog_002]**: 2014–2018 RPG Maker genesis, Kingdom of Sacyra, dual protagonists, and TRPG evolution. +
+  - **link:dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc[devlog_008]**: Canonical skills (Lux Barrio, Cuttatio), The Dreamscape baseline, and "The Dark Lord" ground-truth pacing. +
+  - **link:dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc[devlog_009]**: 3,000-year dynastic wave, 20-scene master storyboard, thematic triad, and 5-route ending matrix. +
+  - **link:dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc[devlog_010]**: Layer 0 modularization and data-driven configuration assets. +
+  - **link:dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc[devlog_011]**: Four-tier verification hierarchy and ontological testing framework. +
+  - **link:dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc[devlog_012]**: Interactive state debugger, snapshot ring buffer, and time-travel rewind.
+| **Code Tours** | **link:code/README.adoc[docs/code/]** | 
+  - **link:code/core_utilities.adoc[core_utilities.adoc]**: Walkthrough of Layer 0 `include/util/` and `src/util/` (math, string, geometry, timing, data, log). +
+  - **link:code/debug_system.adoc[debug_system.adoc]**: Walkthrough of Layer 0 Debugger (`util/debug/`), zero-heap ring buffer, and time-travel rewind. +
+  - **link:code/simulation_engine.adoc[simulation_engine.adoc]**: Walkthrough of Layer 1 `include/sim/game.h` and `src/sim/game.c`. +
+  - **link:code/presentation_gui.adoc[presentation_gui.adoc]**: Walkthrough of Layer 2 `include/gui/gui.h` and `src/gui/gui.c`. +
+  - **link:code/test_suite.adoc[test_suite.adoc]**: Walkthrough of Layer 4 four-tier verification strata (`functional/`, `unit/`, `integrated/`, `system/`).
 |===
 
 == 2. Ontological Documentation Principles

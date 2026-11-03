@@ -367,7 +367,7 @@ void manifest_print_report(const manifest_registry_t *registry)
 }
 
 /**
- * Returns static string representation of a diagnostic severity code.
+ * @brief Returns static string representation of a diagnostic severity code.
  *
  * @param[in] severity Diagnostic severity level.
  * @return Null-terminated static string identifier.
@@ -385,7 +385,7 @@ const char *manifest_severity_to_str(diag_severity_t severity)
 }
 
 /**
- * Returns static string representation of a pre-flight aggregate status.
+ * @brief Returns static string representation of a pre-flight aggregate status.
  *
  * @param[in] status Aggregate preflight status enum.
  * @return Null-terminated static status name.
@@ -402,7 +402,7 @@ const char *manifest_status_to_str(preflight_status_t status)
 }
 
 /**
- * Returns static string name of an architectural layer stratum.
+ * @brief Returns static string name of an architectural layer stratum.
  *
  * @param[in] layer Architectural layer stratum.
  * @return Null-terminated static stratum description.
@@ -416,7 +416,7 @@ const char *manifest_layer_to_str(module_layer_t layer)
 }
 
 /**
- * Returns static string representation of a memory allocation policy.
+ * @brief Returns static string representation of a memory allocation policy.
  *
  * @param[in] policy Memory allocation contract policy.
  * @return Null-terminated static memory model identifier.
@@ -433,7 +433,7 @@ const char *manifest_alloc_policy_to_str(alloc_policy_t policy)
 }
 
 /**
- * Returns static string representation of a concurrency contract.
+ * @brief Returns static string representation of a concurrency contract.
  *
  * @param[in] policy Concurrency and thread safety policy.
  * @return Null-terminated static concurrency identifier.
@@ -521,7 +521,7 @@ const module_metadata_t manifest_utils_manifest = {
 };
 
 /**
- * Pre-flight diagnostic check evaluating manifest registry invariants.
+ * @brief Pre-flight diagnostic check evaluating manifest registry invariants.
  *
  * ### Machine Role & Mission
  *
@@ -551,9 +551,9 @@ diag_result_t manifest_utils_preflight(void)
 }
 
 /**
- * Standalone boolean self-audit testing manifest invariants.
+ * @brief Standalone boolean self-audit testing manifest invariants.
  *
- * @return `true` if all manifest tests pass cleanly; `false` on violation.
+ * @return true if all manifest tests pass cleanly; false on violation.
  */
 bool manifest_audit(void)
 {

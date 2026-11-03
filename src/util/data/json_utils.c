@@ -132,8 +132,16 @@ static const char *json_find_key_scoped(const char *json, size_t max_len, const 
     return NULL;
 }
 
+/**
+ * @brief Scans a JSON buffer for a specific top-level or scoped key token.
+ *
+ * @param[in] json Null-terminated JSON buffer.
+ * @param[in] key  Null-terminated key name to search for (without quotes).
+ * @return Pointer to value position immediately following the colon (:), or NULL.
+ */
 const char *json_find_key(const char *json, const char *key)
 {
+    /* Scan JSON with unbounded length using scoped scanner */
     return json_find_key_scoped(json, 0, key);
 }
 
@@ -142,8 +150,19 @@ const char *json_find_key(const char *json, const char *key)
 // Mission: Extract typed values (string, integer, size_t, bool, float).
 // -----------------------------------------------------------------------------
 
-bool json_get_string(const char *json, const char *key, char *out_val, size_t out_size)
+/**
+ * @brief Extracts a string literal value for a key into a caller-supplied buffer.
+ *
+ * @param[in]  json     Null-terminated JSON buffer.
+ * @param[in]  key      Key name to search for.
+ * @param[out] out_val  Destination buffer for extracted string.
+ * @param[in]  out_size Capacity of destination buffer in bytes.
+ * @return true if key was found and value extracted; false otherwise.
+ */
+bool json_get_string(const char *json, const char *key, char *out_val,
+                     size_t out_size)
 {
+    /* Step 1: Precondition check on destination buffer */
     if (json == NULL || key == NULL || out_val == NULL || out_size == 0) {
         if (out_val && out_size > 0) {
             out_val[0] = '\0';
@@ -151,17 +170,19 @@ bool json_get_string(const char *json, const char *key, char *out_val, size_t ou
         return false;
     }
 
+    /* Step 2: Locate key token */
     const char *val = json_find_key(json, key);
     if (!val || *val != '"') {
         out_val[0] = '\0';
         return false;
     }
 
-    val++; // Skip opening quote
+    /* Step 3: Advance past opening quote and extract string literal */
+    val++;
     size_t i = 0;
     while (*val != '\0' && *val != '"' && i < out_size - 1) {
         if (*val == '\\' && *(val + 1) != '\0') {
-            val++; // Handle basic escapes
+            val++; /* Skip escape slash */
         }
         out_val[i++] = *val++;
     }
@@ -170,21 +191,33 @@ bool json_get_string(const char *json, const char *key, char *out_val, size_t ou
     return true;
 }
 
+/**
+ * @brief Extracts an unsigned size_t integer value for a given key.
+ *
+ * @param[in]  json    Null-terminated JSON buffer.
+ * @param[in]  key     Key name to search for.
+ * @param[out] out_val Pointer to destination size_t variable.
+ * @return true if key was found and parsed; false otherwise.
+ */
 bool json_get_size_t(const char *json, const char *key, size_t *out_val)
 {
+    /* Step 1: Precondition check */
     if (json == NULL || key == NULL || out_val == NULL) {
         return false;
     }
 
+    /* Step 2: Locate key token */
     const char *val = json_find_key(json, key);
     if (!val) {
         return false;
     }
 
+    /* Step 3: Verify numeric digit start */
     if (!isdigit((unsigned char)*val)) {
         return false;
     }
 
+    /* Step 4: Parse unsigned long */
     char *endptr = NULL;
     unsigned long parsed = strtoul(val, &endptr, 10);
     if (endptr == val) {
@@ -195,21 +228,33 @@ bool json_get_size_t(const char *json, const char *key, size_t *out_val)
     return true;
 }
 
+/**
+ * @brief Extracts a signed 32-bit int value for a given key.
+ *
+ * @param[in]  json    Null-terminated JSON buffer.
+ * @param[in]  key     Key name to search for.
+ * @param[out] out_val Pointer to destination int variable.
+ * @return true if key was found and parsed; false otherwise.
+ */
 bool json_get_int(const char *json, const char *key, int *out_val)
 {
+    /* Step 1: Precondition check */
     if (json == NULL || key == NULL || out_val == NULL) {
         return false;
     }
 
+    /* Step 2: Locate key token */
     const char *val = json_find_key(json, key);
     if (!val) {
         return false;
     }
 
+    /* Step 3: Verify digit or sign start */
     if (!isdigit((unsigned char)*val) && *val != '-' && *val != '+') {
         return false;
     }
 
+    /* Step 4: Parse signed long */
     char *endptr = NULL;
     long parsed = strtol(val, &endptr, 10);
     if (endptr == val) {
@@ -220,17 +265,28 @@ bool json_get_int(const char *json, const char *key, int *out_val)
     return true;
 }
 
+/**
+ * @brief Extracts a boolean value (true or false) for a given key.
+ *
+ * @param[in]  json    Null-terminated JSON buffer.
+ * @param[in]  key     Key name to search for.
+ * @param[out] out_val Pointer to destination bool variable.
+ * @return true if key was found and parsed; false otherwise.
+ */
 bool json_get_bool(const char *json, const char *key, bool *out_val)
 {
+    /* Step 1: Precondition check */
     if (json == NULL || key == NULL || out_val == NULL) {
         return false;
     }
 
+    /* Step 2: Locate key token */
     const char *val = json_find_key(json, key);
     if (!val) {
         return false;
     }
 
+    /* Step 3: Match true / false literals */
     if (strncmp(val, "true", 4) == 0) {
         *out_val = true;
         return true;
@@ -242,21 +298,33 @@ bool json_get_bool(const char *json, const char *key, bool *out_val)
     return false;
 }
 
+/**
+ * @brief Extracts a floating-point float value for a given key.
+ *
+ * @param[in]  json    Null-terminated JSON buffer.
+ * @param[in]  key     Key name to search for.
+ * @param[out] out_val Pointer to destination float variable.
+ * @return true if key was found and parsed; false otherwise.
+ */
 bool json_get_float(const char *json, const char *key, float *out_val)
 {
+    /* Step 1: Precondition check */
     if (json == NULL || key == NULL || out_val == NULL) {
         return false;
     }
 
+    /* Step 2: Locate key token */
     const char *val = json_find_key(json, key);
     if (!val) {
         return false;
     }
 
+    /* Step 3: Verify digit, sign, or period */
     if (!isdigit((unsigned char)*val) && *val != '-' && *val != '+' && *val != '.') {
         return false;
     }
 
+    /* Step 4: Parse float */
     char *endptr = NULL;
     float parsed = strtof(val, &endptr);
     if (endptr == val) {
@@ -267,18 +335,31 @@ bool json_get_float(const char *json, const char *key, float *out_val)
     return true;
 }
 
+/**
+ * @brief Locates embedded sub-object boundaries ({ ... }) for a given key.
+ *
+ * @param[in]  json          Null-terminated JSON buffer.
+ * @param[in]  object_key    Key name containing the object.
+ * @param[out] out_obj_start Pointer to opening '{' of the sub-object.
+ * @param[out] out_obj_len   Length in bytes of sub-object including '{' and '}'.
+ * @return true if sub-object was located and balanced; false otherwise.
+ */
 bool json_find_object(const char *json, const char *object_key,
                       const char **out_obj_start, size_t *out_obj_len)
 {
-    if (json == NULL || object_key == NULL || out_obj_start == NULL || out_obj_len == NULL) {
+    /* Step 1: Precondition check */
+    if (json == NULL || object_key == NULL || out_obj_start == NULL ||
+        out_obj_len == NULL) {
         return false;
     }
 
+    /* Step 2: Locate key token */
     const char *val = json_find_key(json, object_key);
     if (!val || *val != '{') {
         return false;
     }
 
+    /* Step 3: Scan for matching closing bracket respecting strings */
     *out_obj_start = val;
     int depth = 0;
     bool in_str = false;
@@ -304,9 +385,20 @@ bool json_find_object(const char *json, const char *object_key,
     return false;
 }
 
+/**
+ * @brief Extracts a string value from within an embedded JSON object.
+ *
+ * @param[in]  json           Null-terminated JSON buffer.
+ * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
+ * @param[in]  key            Key name to extract inside the object.
+ * @param[out] out_val        Destination buffer for extracted string.
+ * @param[in]  out_size       Capacity of destination buffer in bytes.
+ * @return true if parent object and key were found and parsed; false otherwise.
+ */
 bool json_get_object_string(const char *json, const char *parent_obj_key,
                             const char *key, char *out_val, size_t out_size)
 {
+    /* Step 1: Precondition check on destination buffer */
     if (json == NULL || key == NULL || out_val == NULL || out_size == 0) {
         if (out_val && out_size > 0) {
             out_val[0] = '\0';
@@ -314,10 +406,12 @@ bool json_get_object_string(const char *json, const char *parent_obj_key,
         return false;
     }
 
+    /* Step 2: Delegate to top-level extractor if parent_obj_key is NULL */
     if (parent_obj_key == NULL) {
         return json_get_string(json, key, out_val, out_size);
     }
 
+    /* Step 3: Locate sub-object bounds */
     const char *obj_start = NULL;
     size_t obj_len = 0;
     if (!json_find_object(json, parent_obj_key, &obj_start, &obj_len)) {
@@ -325,13 +419,15 @@ bool json_get_object_string(const char *json, const char *parent_obj_key,
         return false;
     }
 
+    /* Step 4: Scan scoped key within sub-object */
     const char *val = json_find_key_scoped(obj_start, obj_len, key);
     if (!val || *val != '"') {
         out_val[0] = '\0';
         return false;
     }
 
-    val++; // Skip opening quote
+    /* Step 5: Extract string literal */
+    val++;
     size_t i = 0;
     while (*val != '\0' && *val != '"' && i < out_size - 1) {
         if (*val == '\\' && *(val + 1) != '\0') {
@@ -343,28 +439,42 @@ bool json_get_object_string(const char *json, const char *parent_obj_key,
     return true;
 }
 
+/**
+ * @brief Extracts a signed 32-bit int value from within an embedded JSON object.
+ *
+ * @param[in]  json           Null-terminated JSON buffer.
+ * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
+ * @param[in]  key            Key name to extract inside the object.
+ * @param[out] out_val        Pointer to destination int variable.
+ * @return true if parent object and key were found and parsed; false otherwise.
+ */
 bool json_get_object_int(const char *json, const char *parent_obj_key,
                          const char *key, int *out_val)
 {
+    /* Step 1: Precondition check */
     if (json == NULL || key == NULL || out_val == NULL) {
         return false;
     }
 
+    /* Step 2: Delegate if parent is NULL */
     if (parent_obj_key == NULL) {
         return json_get_int(json, key, out_val);
     }
 
+    /* Step 3: Locate parent object */
     const char *obj_start = NULL;
     size_t obj_len = 0;
     if (!json_find_object(json, parent_obj_key, &obj_start, &obj_len)) {
         return false;
     }
 
+    /* Step 4: Locate scoped key */
     const char *val = json_find_key_scoped(obj_start, obj_len, key);
     if (!val || (!isdigit((unsigned char)*val) && *val != '-' && *val != '+')) {
         return false;
     }
 
+    /* Step 5: Parse integer */
     char *endptr = NULL;
     long parsed = strtol(val, &endptr, 10);
     if (endptr == val) {
@@ -375,28 +485,42 @@ bool json_get_object_int(const char *json, const char *parent_obj_key,
     return true;
 }
 
+/**
+ * @brief Extracts a float value from within an embedded JSON object.
+ *
+ * @param[in]  json           Null-terminated JSON buffer.
+ * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
+ * @param[in]  key            Key name to extract inside the object.
+ * @param[out] out_val        Pointer to destination float variable.
+ * @return true if parent object and key were found and parsed; false otherwise.
+ */
 bool json_get_object_float(const char *json, const char *parent_obj_key,
                            const char *key, float *out_val)
 {
+    /* Step 1: Precondition check */
     if (json == NULL || key == NULL || out_val == NULL) {
         return false;
     }
 
+    /* Step 2: Delegate if parent is NULL */
     if (parent_obj_key == NULL) {
         return json_get_float(json, key, out_val);
     }
 
+    /* Step 3: Locate parent object */
     const char *obj_start = NULL;
     size_t obj_len = 0;
     if (!json_find_object(json, parent_obj_key, &obj_start, &obj_len)) {
         return false;
     }
 
+    /* Step 4: Locate scoped key */
     const char *val = json_find_key_scoped(obj_start, obj_len, key);
     if (!val || (!isdigit((unsigned char)*val) && *val != '-' && *val != '+' && *val != '.')) {
         return false;
     }
 
+    /* Step 5: Parse float */
     char *endptr = NULL;
     float parsed = strtof(val, &endptr);
     if (endptr == val) {
@@ -407,28 +531,42 @@ bool json_get_object_float(const char *json, const char *parent_obj_key,
     return true;
 }
 
+/**
+ * @brief Extracts a boolean value from within an embedded JSON object.
+ *
+ * @param[in]  json           Null-terminated JSON buffer.
+ * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
+ * @param[in]  key            Key name to extract inside the object.
+ * @param[out] out_val        Pointer to destination bool variable.
+ * @return true if parent object and key were found and parsed; false otherwise.
+ */
 bool json_get_object_bool(const char *json, const char *parent_obj_key,
                           const char *key, bool *out_val)
 {
+    /* Step 1: Precondition check */
     if (json == NULL || key == NULL || out_val == NULL) {
         return false;
     }
 
+    /* Step 2: Delegate if parent is NULL */
     if (parent_obj_key == NULL) {
         return json_get_bool(json, key, out_val);
     }
 
+    /* Step 3: Locate parent object */
     const char *obj_start = NULL;
     size_t obj_len = 0;
     if (!json_find_object(json, parent_obj_key, &obj_start, &obj_len)) {
         return false;
     }
 
+    /* Step 4: Locate scoped key */
     const char *val = json_find_key_scoped(obj_start, obj_len, key);
     if (!val) {
         return false;
     }
 
+    /* Step 5: Match boolean string */
     if (strncmp(val, "true", 4) == 0) {
         *out_val = true;
         return true;
@@ -445,18 +583,31 @@ bool json_get_object_bool(const char *json, const char *parent_obj_key,
 // Mission: Scan JSON array boundaries and extract elements without heap usage.
 // -----------------------------------------------------------------------------
 
+/**
+ * @brief Locates an embedded array [ ... ] for a given key.
+ *
+ * @param[in]  json          Null-terminated JSON buffer.
+ * @param[in]  array_key     Key name containing the array.
+ * @param[out] out_arr_start Pointer to the opening '[' of the array.
+ * @param[out] out_arr_len   Length in bytes of array including '[' and ']'.
+ * @return true if array was located and brackets balanced; false otherwise.
+ */
 bool json_find_array(const char *json, const char *array_key,
                      const char **out_arr_start, size_t *out_arr_len)
 {
-    if (json == NULL || array_key == NULL || out_arr_start == NULL || out_arr_len == NULL) {
+    /* Step 1: Precondition check */
+    if (json == NULL || array_key == NULL || out_arr_start == NULL ||
+        out_arr_len == NULL) {
         return false;
     }
 
+    /* Step 2: Locate array key token */
     const char *val = json_find_key(json, array_key);
     if (!val || *val != '[') {
         return false;
     }
 
+    /* Step 3: Scan matching closing bracket */
     *out_arr_start = val;
     int depth = 0;
     bool in_str = false;
@@ -482,22 +633,31 @@ bool json_find_array(const char *json, const char *array_key,
     return false;
 }
 
+/**
+ * @brief Returns the number of comma-separated elements in a JSON array.
+ *
+ * @param[in] arr_start Pointer to opening '[' of array.
+ * @param[in] arr_len   Length of array in bytes.
+ * @return Count of elements in the array.
+ */
 size_t json_array_get_count(const char *arr_start, size_t arr_len)
 {
+    /* Step 1: Precondition validation */
     if (arr_start == NULL || arr_len < 2 || *arr_start != '[') {
         return 0;
     }
 
+    /* Step 2: Check for empty array '[]' */
     const char *end = arr_start + arr_len;
     const char *p = arr_start + 1;
-    // Skip leading whitespace
     while (p < end && (*p == ' ' || *p == '\t' || *p == '\r' || *p == '\n')) {
         p++;
     }
     if (p < end && *p == ']') {
-        return 0; // Empty array []
+        return 0;
     }
 
+    /* Step 3: Count comma-separated elements at depth 0 */
     size_t count = 1;
     int depth = 0;
     bool in_str = false;
@@ -520,9 +680,20 @@ size_t json_array_get_count(const char *arr_start, size_t arr_len)
     return count;
 }
 
+/**
+ * @brief Extracts i-th string element from JSON array into caller buffer.
+ *
+ * @param[in]  arr_start Pointer to opening '[' of array.
+ * @param[in]  arr_len   Length of array in bytes.
+ * @param[in]  index     0-based element index.
+ * @param[out] out_val   Destination buffer for extracted string.
+ * @param[in]  out_size  Capacity of destination buffer in bytes.
+ * @return true if element exists and was extracted; false otherwise.
+ */
 bool json_array_get_string(const char *arr_start, size_t arr_len,
                            size_t index, char *out_val, size_t out_size)
 {
+    /* Step 1: Precondition validation */
     if (arr_start == NULL || arr_len < 2 || *arr_start != '[' ||
         out_val == NULL || out_size == 0) {
         if (out_val && out_size > 0) {
@@ -531,6 +702,7 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
         return false;
     }
 
+    /* Step 2: Scan array elements */
     const char *end = arr_start + arr_len;
     const char *p = arr_start + 1;
     size_t cur_index = 0;
@@ -538,7 +710,6 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
     bool in_str = false;
 
     while (p < end - 1) {
-        // Skip whitespace
         while (p < end - 1 && (*p == ' ' || *p == '\t' || *p == '\r' || *p == '\n')) {
             p++;
         }
@@ -551,7 +722,7 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
                 out_val[0] = '\0';
                 return false;
             }
-            p++; // Skip opening quote
+            p++; /* Skip opening quote */
             size_t i = 0;
             while (p < end && *p != '"' && i < out_size - 1) {
                 if (*p == '\\' && (p + 1 < end)) {
@@ -563,7 +734,7 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
             return true;
         }
 
-        // Advance to next element separated by comma at depth 0
+        /* Advance to next element separated by comma at depth 0 */
         while (p < end - 1) {
             if (*p == '"' && *(p - 1) != '\\') {
                 in_str = !in_str;
@@ -573,7 +744,7 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
                 } else if (*p == ']' || *p == '}') {
                     depth--;
                 } else if (*p == ',' && depth == 0) {
-                    p++; // Skip comma
+                    p++;
                     cur_index++;
                     break;
                 }
