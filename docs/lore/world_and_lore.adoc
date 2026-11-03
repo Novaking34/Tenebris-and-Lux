@@ -57,11 +57,151 @@ The relationship between Lux and Tenebris is governed by a strict metaphysical l
   and ethical harmony. Any sudden, violent surge of fear, wrath, or malice causes Lux to **dissipate immediately**,
   collapsing protective barriers and leaving Tenebris unbridled.
 
-=== 1.4. The Moral Sway Continuum (`[-100, +100]`)
+=== 1.4. The Moral Sway Continuum (`[-100, +100]`) & 13-Tier Taxonomy
+
 Neither Lux nor Tenebris dictates a character's morality. Good and evil belong entirely to the **intent,
 conscience, and choices of the heart behind the weapon**, tracked along the `[-100, +100]` **Moral Sway**
 axis via the **Compass of Morality**. A knight channeling blinding radiance can act as a calcified tyrant,
 while an outrider wielding the void-edged blade of Tenebris can stand as the people's ultimate savior.
+
+The continuum is codified into a formal 13-tier canonical nomenclature:
+
+[cols="1,2,3", options="header"]
+|===
+| Integer Range / Point | Canonical Designation | Functional Definition
+
+| **`-100`**
+| **The Sovereign of Ruin**
+| Absolute negative terminus. Total surrender to abyssal nihilism or petrifying totalitarianism.
+
+| **`[-100, -50]`**
+| **Active Malice (The Tyrannical Sphere)**
+| Deliberate cruelty, ruthless execution, and despotic dominion.
+
+| **`[-50, 0]`**
+| **Cynical Pragmatism (Compliant Apathy)**
+| Lower bystander band. Self-serving opportunism, petty theft, and systemic complicity.
+
+| **`0`**
+| **The Stance of Equilibrium (Harmonic Zero)**
+| Active, disciplined synthesis where Lux and Tenebris temper one another without stasis or rot.
+
+| **`[0, +50]`**
+| **Conventional Decency (Uncommitted Virtue)**
+| Upper bystander band. Civic compliance that avoids personal risk to challenge corruption.
+
+| **`[+50, +100]`**
+| **Active Virtue (The Restorative Sphere)**
+| Self-sacrificing heroism, surgical liberation, and restorative justice breaking inertia.
+
+| **`+100`**
+| **The Saint of Mercy**
+| Absolute positive terminus. Unyielding altruism in protection (Lux) or pure Absolute Justice (Tenebris).
+
+| **`[-50, +50]`**
+| **The Bystander Corridor**
+| Net Moral Inertia; zone of mutual cancellation where history repeats itself.
+
+| **`[-100, 0]`**
+| **The Arc of Dissolution**
+| The deconstructive hemisphere of the world ledger (Tyranny & Ruin).
+
+| **`[0, +100]`**
+| **The Arc of Restoration**
+| The constructive hemisphere of the world ledger (Virtue & Mercy).
+
+| **`[-50, +100]`**
+| **The Transcending Mortal Arc**
+| Trajectory of overcoming cynicism or blind obedience to achieve heroic conviction.
+
+| **`[-100, +50]`**
+| **The Arc of Tragic Disillusionment**
+| Trajectory of a betrayed soul whose optimism is capped at cautious neutrality, plunging to the abyss.
+
+| **`[-100, +100]`**
+| **The Universal Ledger**
+| The complete canvas of mortal free will (The Compass of Morality).
+|===
+
+=== 1.5. Character Categorization Across the Continuum
+
+[cols="1,2,2,2,3", options="header"]
+|===
+| Range / Point | Canonical Designation | Historical Figures (Past) | Campaign Figures (Present) | Ludonarrative Rationale
+
+| **`-100`**
+| **Sovereign of Ruin**
+| **Usuru (Late Era)**
+| **The Dark Lord**
+| Consumed by unhealed grief after discovering the 11th Festival stasis deception.
+
+| **`[-100, -50]`**
+| **Active Malice**
+| _Six-Faction Warlords_
+| **King Jihad** (\~ -85)
+| Issues royal gag orders and plots to usurp the Dark Lord's void essence behind a benevolent facade.
+
+| **`[-50, 0]`**
+| **Cynical Pragmatism**
+| _Ancient Court Bailiffs_
+| **The St. Baron** (\~ -45), +
+  **Katrina Jaren (Base)** (\~ -20)
+| The St. Baron exploits Lower Dio through debt bondage. Katrina begins here: sardonic, hunting for Grandma's will to escape Dio.
+
+| **`[-30, +30]`**
+| **The Provincial Swing**
+| _Border Smugglers_
+| **John the Thief**
+| Operates in Lower Dio's gray margins, balancing illegal theft against community survival.
+
+| **`0`**
+| **Stance of Equilibrium**
+| _The Sages of Old_
+| **Chrono the Sage**
+| Anchored outside temporal degradation in the Room of Sages within the Dreamscape.
+
+| **`[0, +50]`**
+| **Conventional Decency**
+| **Usuru (Youth)** (\~ +30)
+| **Eric the Lumberjack** (\~ +10), +
+  **Elijah Ro-enheart (Base)** (\~ +35)
+| Honest folk surviving day-to-day. Elijah starts as a polite, rule-bound soldier hesitant to violate protocol.
+
+| **`[+50, +100]`**
+| **Active Virtue**
+| **Prince Mi-ren**, +
+  **Prince Casatti**, +
+  **The First King**
+| **Grandma Magolia**, +
+  **Sir Roté**, +
+  **Monica the Mystic**
+| Figures defined by communal protection, sacrificial defense, and devotion to peace.
+
+| **`+100`**
+| **Saint of Mercy**
+| **Goddess Lyri** (Ideal)
+| _Endgame Player Potential_
+| Theoretical pinnacle of pure self-sacrifice and uncorrupted justice.
+
+| **`[-50, +100]`**
+| **Transcending Mortal Arc**
+| _Academy Reformers_
+| **Elijah Ro-enheart (Arc)**, +
+  **Katrina Jaren (Arc)**
+| Elijah transcends blind obedience into conscience; Katrina refines rebellious cynicism into noble sacrifice.
+
+| **`[-100, +50]`**
+| **Tragic Disillusionment**
+| **Usuru (Full Trajectory)**
+| _Compromised Playthrough_
+| Faith shattered in his 11th year, plunging from innocent reverence (+30) to the abyss (-100).
+
+| **`[-100, +100]`**
+| **The Unwritten Slate**
+| **Prince Mi-ren (Burden)**
+| **The Custom Bearer (`<chosen_name>`)**
+| Awakens at 0 in the Dreamscape; carries Mi-ren's macro-stewardship across the entire moral spectrum.
+|===
 
 == 2. Genesis: The Mundane Inception & The Two Princes
 

@@ -111,40 +111,94 @@ The canonical True Ending is neither a simplistic fairy-tale triumph nor a dark 
 * It reveals that Sacyra's three millennia of golden peace were bought at the cost of deliberate neglect
   toward frontier provinces like Libira and Dio Village.
 
-== 3. Relic Embellishment & The Five-Route Ending Matrix
+== 3. Relic Embellishment & The Ten-Ending Campaign Matrix
 
 Throughout both acts, the player's choices, side quests, and stance preferences actively **embellish**
-the Shield of Lux and Sword of Tenebris along the `[-100, +100]` **Moral Sway** continuum:
+the Shield of Lux and Sword of Tenebris along the `[-100, +100]` **Moral Sway** continuum.
 
-[cols="1,2,2,3", options="header"]
+=== 3.1. Telemetry Over Point Locks & The Bystander Corridor
+Players do not aim for brittle, exact integers to unlock endings. Instead, `moral_sway` acts as
+continuous behavioral telemetry showing where the player's philosophy is steering the world:
+
+* **The Bystander Corridor (`[-50, +50]`):** Represents **Net Moral Inertia**—a mutual cancellation trap
+  where opposing moral vectors offset each other. Floating in this corridor produces status-quo stagnation
+  or repeating cycles.
+* **The Threshold of Conviction:** Escaping the bystander corridor requires sustained virtue (`[+50, +100]`)
+  or despotic malice (`[-100, -50]`).
+* **Equilibrium (`0`):** An active, razor-thin discipline where Lux and Tenebris temper each other without
+  collapsing into calcification or entropic rot.
+
+=== 3.2. The 3x3 Ending Matrix + The 10th True Ending
+
+Combining the three elemental expressions (**Lux**, **Tenebris**, and **Statera** / Equilibrium) with
+the three moral bands (**Good** `[+50, +100]`, **Neutral** `[-50, +50]`, and **Bad** `[-100, -50]`)
+produces nine distinct campaign resolutions, crowned by a tenth synthesis ending:
+
+[cols="1,2,2,2", options="header"]
 |===
-| Ending Route | Playable Requirement | Relic Embellishment & Moral Sway Profile | Narrative & Metaphysical Resolution
+| Expression | Good (`[+50, +100]`) | Neutral (`[-50, +50]`) | Bad (`[-100, -50]`)
 
-| **Route A: The Canonical Harmony** _(True Equilibrium Ending)_
-| Complete the campaign playing through **both** Elijah's and Katrina's perspectives; finish all Dreamscape trials.
-| Balanced embellishments; Moral Sway harmonized at Equilibrium (`0`); master the Stance of Equilibrium (*Duo-Loca Bashin n Slash*).
-| Exposes King Jihad's corruption; severs Usuru's abyssal tether while the Shield absorbs the fallout without dissipating; grants Usuru the reconciliation Mi-ren sought 3,000 years ago; releases the First King's soul to final rest.
+| **Lux** +
+  _(Cohesion & Preservation)_
+| **1. The Radiant Sanctuary:** +
+  Selfless protection; the Shield of Lux shelters the realm and heals frontier wounds without imposing despotic rule.
+| **2. The Benevolent Stasis (The Mi-ren Fallacy):** +
+  Out of fear of conflict, the wielder seals Sacyra in an unchanging golden crystal cocoon where nothing harms—and nothing grows.
+| **3. The Calcified Tyrant:** +
+  Radiance weaponized into an unblinking inquisition that blinds dissenters and petrifies living will into stone.
 
-| **Route B: The Benevolent Stasis** _(Neutral-Good / The Mi-ren Fallacy)_
-| High Lux focus with pure preservation choices; reject Tenebris severance; ignore Dreamscape truth.
-| Pure Lux barrier embellishments; Moral Sway pinned at `+100`.
-| Terrified of void destruction, the wielder repeats Mi-ren's ancient error on a continental scale, sealing Sacyra inside a comatose golden barrier where nothing can harm—and no living being can grow.
+| **Tenebris** +
+  _(Severance & Rest)_
+| **4. Absolute Justice (The Casatti Ideal):** +
+  The Sword of Tenebris surgically severs corrupt noble monopolies and King Jihad's war machinery without civilian bloodshed.
+| **5. The Cynical Outlaw:** +
+  The immediate threat is slain for personal survival, but the wielder abandons Sacyra to its ongoing feudal decay.
+| **6. The Abyssal Usurper (Cycle of Usuru):** +
+  The wielder executes King Jihad, absorbs The Dark Lord's void essence, and rules from the obsidian ashes.
 
-| **Route C: The Calcified Tyrant** _(Neutral-Bad / Corrupted Order)_
-| High Lux embellishments paired with authoritarian, merciless choices; negative moral sway (`-100`).
-| Petrifying solar embellishments; high stasis lockdown.
-| Overthrows King Jihad only to establish an inquisitorial police state, using blinding radiance to enforce absolute compliance and extinguish personal dissent.
+| **Statera** +
+  _(Equilibrium & Harmony)_
+| **7. Harmonized Concord:** +
+  Both relics work in virtuous partnership, ushering in restorative justice, frontier outposts, and provincial renewal.
+| **8. Armed Deterrence:** +
+  A tense status quo where the war pauses, but the deep cultural rift with border provinces remains unhealed.
+| **9. The Dual Despot:** +
+  Barrier stasis and abyssal severance combine to enforce total, totalitarian martial hegemony.
 
-| **Route D: The Abyssal Usurper** _(Neutral-Bad / The Cycle of Usuru)_
-| High Tenebris focus with ruthless malice (`-100`); endorse theft and indiscriminate executions.
-| Pure Tenebris severance embellishments; Lux completely dissipated by wrath.
-| Agreeing that Sacyra's court is irredeemably hypocritical, the wielder slays King Jihad, absorbs The Dark Lord's void essence, razes the Capital, and ascends the High Throne as the new Dark Sovereign.
-
-| **Route E: The Secret Chronicler Ending** _(Custom Bearer 100% Route)_
-| Complete the campaign as `<chosen_name>`; perform the "double work" across both protagonists' questlines; achieve $100\%$ Dreamscape nocturnal trials.
-| Full mastery of all relic embellishments, Magic vs. Science synthesis, and complete planar harmony.
-| The custom bearer bridges the Magic vs. Science schism, dissolves royal secrecy, establishes an egalitarian relay outpost network for frontier settlements, and permanently mends the planar wound in the Room of Sages.
+| **Synthesis** +
+  _(The 10th Route)_
+3+| **10. The True Ending ("The Ugly Truth"):** +
+  Unlocked only by experiencing Elijah's campaign, Katrina's campaign, and finally the Custom Bearer (`<chosen_name>`) while completing all nocturnal Dreamscape trials. Sacyra confronts its 3,000-year institutional guilt, releases the First King's trapped soul, reconciles Usuru's childhood grief, exposes King Jihad, and permanently mends the planar tear in the Room of Sages.
 |===
+
+=== 3.3. The Witness Protagonist, Keystone Route & Observer Effect
+
+Reaching the True Ending ("The Ugly Truth") relies on three formal game design structures:
+
+1. **The Witness Protagonist (Internal vs. External Focalization):**
+   - **Elijah Ro-enheart** and **Lady Katrina Jaren** live inside the story (*Internal Focalization*).
+     They are shaped by their personal trauma, social caste, and military or aristocratic backgrounds.
+   - **The Custom Bearer (`<chosen_name>`)** serves as the *External Focalizer* (the Observer/Chronicler
+     alongside Chrono in the Room of Sages), possessing the detachment required to perceive the full truth.
+2. **The Keystone Route (Synthesis Scenario):**
+   - Elijah uncovers the military conspiracy surrounding Commander Gareth and King Jihad.
+   - Katrina uncovers noble and underworld exploitation alongside John the Thief and the Guild.
+   - The Custom Bearer's campaign acts as the architectural keystone locking both partial perspectives together.
+3. **The Quantum Observer Effect:**
+   - Left to themselves, Sacyra's internal factions repeat the tragic 3,000-year cycle.
+   - The outside Observer's conscious engagement collapses the tragic wavefunction into historical reconciliation.
+
+=== 3.4. Chrono's Chronicle Ledger: NG+ Timeline Navigation
+
+To ensure that exploring the full matrix never devolves into repetitive grinding:
+
+* **Persistent Archival Memory:** Compendiums (*Book of Monsters*, *Book of Items*), unlocked embellishments,
+  and combat masteries persist across runs.
+* **Timeline Branching:** Once a campaign route is cleared, **Chrono's Chronicle Ledger** unlocks in the
+  Room of Sages, functioning as an interactive timeline tree. Completionists can jump directly to pivotal
+  decision bookmarks (such as Eric's honesty test, the St. Baron infiltration, or the Act I climax) to
+  explore all 9 matrix endings without replaying introductory chapters.
+* **Diegetic Saves:** Saving is rooted diegetically at **Grandma Magolia's Hearth** and **Chrono's Room of Sages**.
 
 == 4. Systemic Invariants & Engine Triggers
 
@@ -153,6 +207,8 @@ All ending routes and campaign forks are evaluated through deterministic engine 
 1. **`player_state_t` Integrity:** The moral sway value (`int16_t moral_sway`) is clamped strictly
    within `[-100, +100]` via `math_clamp_int`.
 2. **Dream Compass Nocturnal Flag:** Entry into `LOC_THE_DREAMSCAPE` requires `hour >= 20 || hour <= 4`
-   from the Layer 0 monotonic clock.
-3. **Equilibrium State Check:** Unlocking Route A requires `abs(moral_sway) <= 15` and both
+   from the Layer 0 monotonic clock (`time_get_monotonic_ms`).
+3. **Equilibrium State Check:** Unlocking Route 7 or Route 10 requires `abs(moral_sway) <= 15` and both
    `shield_power >= 80` and `sword_edge >= 80` during the final turn sequence.
+4. **Observer Flags:** The 10th True Ending requires validation flags `flag_elijah_cleared`,
+   `flag_katrina_cleared`, and `dreamscape_trials_mask == 0xFF`.

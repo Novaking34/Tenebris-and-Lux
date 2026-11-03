@@ -15,7 +15,8 @@ thematically (`architecture/`, `lore_and_design/`).
 
 == Calendar Archives
 
-* **[October 2026 Monthly Chronicle](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/10/README.adoc)** (5 Logs)
+* **link:2026/10/README.adoc[October 2026 Monthly Chronicle]** (7 Logs)
+* **link:2026/11/README.adoc[November 2026 Monthly Chronicle]** (5 Logs)
 
 == Complete Dev Log Manifest
 
@@ -78,11 +79,38 @@ thematically (`architecture/`, `lore_and_design/`).
    - Corrected antagonist identity strictly to "The Dark Lord" (the overarching background "A Plot").
    - Reinstated The Dreamscape opening trial and protagonist customization.
 
-9. **[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc)**  
+9. **link:2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc]**  
    *Macro-History, Thematic Triad & Multi-Ending Architecture* (2026-11-02 | Lore & Design):
    - Codified the 3,000-year dynastic wave from the First King to King Jihad across 30–50 monarchs.
    - Formalized the 20-scene Master Storyboard Sequence of the Genesis Chronicle.
    - Established the Past, Present, and Future Thematic Triad ("Trauma is Inherited, Destiny is Chosen").
    - Defined "The King's Curse" as the open planar wound beneath the High Throne and King Jihad's possession.
    - Articulated the Midpoint Fork, nocturnal Dream Compass temporal architecture, and 5-route ending matrix.
+
+10. **link:2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc[devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc]**  
+    *Layer 0 Subsystem Modularization & Data-Driven Architecture* (2026-11-02 | Architecture):
+    - Decomposed utility monoliths into dedicated domain subsystems (`math/`, `data/`, `log/`, `debug/`).
+    - Implemented bounded arithmetic, spatial hitboxes, and zero-heap JSON parsing.
+    - Quarantined fallback monoliths and maintained 100% zero-heap reentrancy.
+
+11. **link:2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc[devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc]**  
+    *Four-Tier Verification Strata & Ontological Testing Framework* (2026-11-02 | Architecture):
+    - Reorganized test suites into Functional, Unit, Integrated, and System strata.
+    - Introduced granular function-level cogs in `test_functional` with isolated telemetry.
+    - Achieved 13/13 passing automated CTest test suites with sub-microsecond latency.
+
+12. **link:2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc[devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc]**  
+    *Interactive Debugging System & State Rewind Architecture* (2026-11-02 | Architecture):
+    - Engineered interactive CLI state debugger with frozen snapshot ring buffer.
+    - Implemented FNV-1a state hashing, time-travel state rewind, and dynamic expression breakpoints.
+    - Stress-tested under chaotic input sequences with 100% deterministic reproducibility.
+
+13. **link:2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc[devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc]**  
+    *Morality Architecture, Bystander Corridor & Ten-Ending Matrix* (2026-11-03 | Lore & Design):
+    - Decoupled moral conscience ("The Why") from elemental expression ("The How").
+    - Grounded good (*Tov*) and evil (*Ra*) in biblical ontology and established the Tempering vs. Dissipation Law.
+    - Defined the `[-50, +50]` Bystander Corridor as Net Moral Inertia and cyclic stagnation.
+    - Formalized the Butterfly Effect of provincial micro-verbs breaking 3,000 years of karmic momentum.
+    - Codified 13-tier continuum nomenclature and expanded ending topology to the 3x3 matrix + 10th True Ending ("The Ugly Truth").
+    - Embedded core engine subsystems into diegetic items (Grandma's Watch -> Dream Compass, Compass of Morality) and formulated NG+ timeline tree.
 

@@ -57,16 +57,27 @@ cutting through bureaucratic red tape with sarcastic practicality.
    cosmic threshold, the heroes overcome individual biases, passing relics fluidly between each other to
    unlock the **Stance of Equilibrium** (*Duo-Loca Bashin n Slash*).
 
-== 3. The Tri-Perspective Secret Chronicler Architecture
+== 3. The Tri-Perspective Architecture: Witness Protagonist & Keystone Route
 
-When a player selects a custom name via the engine's `name <str>` command, the game decouples the relics
-from fixed protagonists:
+Requiring the player to experience Elijah, Katrina, and finally the customizable Bearer (`<chosen_name>`)
+utilizes three formal narrative game design structures:
 
-* **The Third Eye:** The Custom Bearer acts as an emergent champion guided by **Chrono the Sage** in
-  The Dreamscape, holding **The Dream Compass**.
-* **Synthesizing Both Tales:** While playing both Elijah and Katrina unlocks the canonical **True Ending**,
-  the Custom Bearer performs the "double work" along the `[-100, +100]` Moral Sway axis, catching fragments
-  of both investigations to unlock the **Secret Chronicler True Ending**.
+1. **The Witness Protagonist (Internal vs. External Focalization):**
+   - **Internal Focalization (Elijah & Katrina):** Elijah and Katrina live inside the terrestrial world of
+     Dio Village and the Capital. Their perceptions are clouded by personal trauma, military duty, and aristocratic
+     rebellion.
+   - **External Focalization (The Custom Bearer):** Guided by **Chrono the Sage** in the Room of Sages within
+     The Dreamscape, the Custom Bearer holds **The Dream Compass**, acting as an objective, unaligned Observer
+     capable of perceiving the full 3,000-year board without inherited prejudice.
+2. **The Keystone Route (Synthesis Scenario):**
+   - Elijah uncovers the military conspiracy surrounding Commander Gareth and King Jihad.
+   - Katrina uncovers aristocratic corruption and underworld resistance with John the Thief.
+   - The Custom Bearer's campaign functions as the architectural keystone that locks both partial perspectives
+     together into a single unified truth.
+3. **The Quantum Observer Effect:**
+   - Left to themselves, Sacyra's historical factions remain trapped in a cyclical 3,000-year loop of trauma.
+   - The outside Observer's conscious choice collapses the tragic wavefunction, unlocking the 10th True Ending
+     (**"The Ugly Truth"**) and permanently mending the planar tear.
 
 == 4. Tactical Synergy on the TRPG Battlefield
 
