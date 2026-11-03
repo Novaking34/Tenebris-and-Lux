@@ -1,0 +1,60 @@
+{
+  "subsystem": "sim.combat.stances",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Deterministic 4-stance state machine specifications",
+  "stances": [
+    {
+      "id": 0,
+      "code": "STANCE_NEUTRAL",
+      "token": "neutral",
+      "name": "Neutral (At Ease)",
+      "description": "Balanced, resting poise. Optimal for turn-to-turn resource recovery and steady breath.",
+      "effects": {
+        "damage_reduction_pct": 0,
+        "attack_bonus_pct": 0,
+        "recovery_bonus": 5
+      },
+      "valid_transitions": ["warding", "striking", "equilibrium"]
+    },
+    {
+      "id": 1,
+      "code": "STANCE_WARDING",
+      "token": "warding",
+      "name": "Aegis Warding (Shield High Guard)",
+      "description": "The Shield of Lux is held high in forward deflection. 40% kinetic mitigation and increased stagger.",
+      "effects": {
+        "damage_reduction_pct": 40,
+        "attack_bonus_pct": -10,
+        "shield_boost_bonus": 5
+      },
+      "valid_transitions": ["neutral", "striking", "equilibrium"]
+    },
+    {
+      "id": 2,
+      "code": "STANCE_STRIKING",
+      "token": "striking",
+      "name": "Edge Striking (Sword Drawn)",
+      "description": "Center lowered, Sword of Tenebris primed for lethal severance. Maximizes damage output and splash breadth.",
+      "effects": {
+        "damage_reduction_pct": -10,
+        "attack_bonus_pct": 30,
+        "sword_boost_bonus": 5
+      },
+      "valid_transitions": ["neutral", "warding", "equilibrium"]
+    },
+    {
+      "id": 3,
+      "code": "STANCE_EQUILIBRIUM",
+      "token": "equilibrium",
+      "name": "Equilibrium (Twin Harmonized)",
+      "description": "Both relics wielded in tandem harmonic balance. 20% kinetic mitigation with dual parry and tandem burst synergy.",
+      "effects": {
+        "damage_reduction_pct": 20,
+        "attack_bonus_pct": 15,
+        "dual_relic_sync": true
+      },
+      "valid_transitions": ["neutral", "warding", "striking"]
+    }
+  ]
+}

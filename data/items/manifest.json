@@ -1,0 +1,41 @@
+{
+  "subsystem": "sim.items",
+  "version": "1.1.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Master data-driven item catalog manifest for Tenebris and Lux",
+  "data_files": [
+    {
+      "category": "relics",
+      "path": "data/items/relics.json",
+      "type_enum": 1,
+      "description": "Diegetic key items and relics"
+    },
+    {
+      "category": "catalysts",
+      "path": "data/items/catalysts.json",
+      "type_enum": 2,
+      "description": "Tactical armaments, equipment, and catalysts"
+    },
+    {
+      "category": "consumables",
+      "path": "data/items/consumables.json",
+      "type_enum": 3,
+      "description": "Consumables, curatives, and field draughts"
+    },
+    {
+      "category": "valuables",
+      "path": "data/items/valuables.json",
+      "type_enum": 4,
+      "description": "Trade goods, currency vouchers, and quest tokens"
+    }
+  ],
+  "invariants": {
+    "max_catalog_entries": 64,
+    "max_inventory_slots": 32,
+    "max_stack_relic": 1,
+    "max_stack_catalyst": 1,
+    "max_stack_consumable": 99,
+    "max_stack_valuable": 999,
+    "zero_heap_parsing": true
+  }
+}

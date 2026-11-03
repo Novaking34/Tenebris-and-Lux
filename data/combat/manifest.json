@@ -1,0 +1,32 @@
+{
+  "subsystem": "sim.combat",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Master data-driven combat mechanics manifest for Tenebris and Lux",
+  "data_files": [
+    {
+      "module": "modes",
+      "path": "data/combat/modes.json",
+      "description": "Battle paradigms: Tactical grid-based, Action resolution, Traditional turn-based"
+    },
+    {
+      "module": "formulas",
+      "path": "data/combat/formulas.json",
+      "description": "Damage, mitigation, splash damage, and poise formula parameters"
+    },
+    {
+      "module": "stances",
+      "path": "data/combat/stances.json",
+      "description": "4-stance deterministic state machine definitions and transition graph"
+    }
+  ],
+  "invariants": {
+    "shield_max": 100,
+    "sword_max": 100,
+    "moral_sway_min": -100,
+    "moral_sway_max": 100,
+    "stance_count": 4,
+    "battle_mode_count": 3,
+    "zero_heap_parsing": true
+  }
+}

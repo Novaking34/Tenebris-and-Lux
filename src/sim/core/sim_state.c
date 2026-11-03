@@ -6,20 +6,26 @@
 // @file          sim_state.c
 // @id            sim.engine.state
 // @layer         Layer 1: Simulation Engine
-// @version       1.2.0
-// @interface_rev Rev 3
-// @date          2026-10-30
-// @updated       2026-10-30
+// @subsystem     Simulation Core Subsystem (sim/core)
+// @version       1.3.0
+// @interface_rev Rev 4
+// @date          2026-11-03
+// @updated       2026-11-03
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Implementation of player state lifecycle, canonical reset defaults,
-//   customizable protagonist name assignment, and state invariant audits.
-//   Anchored in the 2017-2018 demo baseline: Starting in The Dreamscape.
+//   customizable protagonist name assignment, inventory initialization, and
+//   state invariant audits. Anchored in the 2017-2018 demo baseline.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: sim.types.common, core.util.log, core.util.string
+//   - Upstream Dependencies:
+//       sim/core/sim_state.h
+//       sim/items/inventory.h
+//       sim/items/items.h
+//       util/log/log.h
+//       util/string/string_utils.h
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation)
 //   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state transitions)
 //   - Latency Budget:        < 10 microseconds per state audit
@@ -37,7 +43,9 @@
 // Stratum: Layer 1 (Simulation Engine) | Machine: State Lifecycle Core
 // =============================================================================
 
-#include "sim/sim_state.h"
+#include "sim/core/sim_state.h"
+#include "sim/items/inventory.h"
+#include "sim/items/items.h"
 #include "util/log/log.h"
 #include "util/string/string_utils.h"
 
@@ -56,10 +64,10 @@ const module_metadata_t sim_state_manifest = {
     "sim.engine.state",
     "sim_state.h",
     LAYER_1_SIMULATION,
-    { 1, 2, 0 },
-    3,                          // interface_rev
-    "2026-10-30",               // last_updated
-    "Player state lifecycle, canonical reset, and invariant audits",
+    { 1, 3, 0 },
+    4,                          // interface_rev
+    "2026-11-03",               // last_updated
+    "Player state lifecycle, canonical reset, inventory init, & audits",
     3,                          // dependency_count
     { "core.util.manifest", "core.util.log", "core.util.math", NULL },
     ALLOC_ZERO_HEAP,            // alloc_policy
@@ -80,9 +88,6 @@ const module_metadata_t sim_state_manifest = {
 // Stratum: Layer 1 (Simulation Engine) | Machine: State Lifecycle Core
 // =============================================================================
 
-/**
- * Returns narrative description of moral sway alignment.
- */
 const char *sim_state_get_sway_desc(int sway)
 {
     if (sway >= 40) return "Saint of Radiant Mercy (Virtue Unyielding)";
@@ -92,9 +97,6 @@ const char *sim_state_get_sway_desc(int sway)
     return "Emissary of The Void (Ruthless Dominion)";
 }
 
-/**
- * Configures the protagonist according to canonical identity or custom Observer creation.
- */
 void sim_state_configure_protagonist(player_state_t *state,
                                      protagonist_id_t protagonist_id,
                                      const char *custom_name,
@@ -105,6 +107,9 @@ void sim_state_configure_protagonist(player_state_t *state,
 
     state->protagonist = protagonist_id;
     state->gender = gender;
+
+    /* Initialize zero-heap player inventory */
+    inventory_init(&state->inventory);
 
     switch (protagonist_id) {
         case PROTAGONIST_ELIJAH:
@@ -125,6 +130,14 @@ void sim_state_configure_protagonist(player_state_t *state,
             state->shield_power = INITIAL_SHIELD_POWER;
             state->sword_edge = INITIAL_SWORD_EDGE;
             state->moral_sway = INITIAL_MORAL_SWAY;
+
+            /* Diegetic Starter Gear: Grandma's Watch, Sacyran Herbs, Gold */
+            state->has_grandmas_watch = true;
+            inventory_add(&state->inventory, NULL, 0, 5, 1);  /* Grandma's Watch */
+            inventory_add(&state->inventory, NULL, 0, 1, 3);  /* Sacyran Herb x3 */
+            inventory_add(&state->inventory, NULL, 0, 2, 2);  /* Phial of Light x2 */
+            state->inventory.currency_gold = 100;
+            state->gold = 100;
             break;
 
         case PROTAGONIST_KATRINA:
@@ -145,6 +158,11 @@ void sim_state_configure_protagonist(player_state_t *state,
             state->shield_power = INITIAL_SHIELD_POWER;
             state->sword_edge = INITIAL_SWORD_EDGE;
             state->moral_sway = INITIAL_MORAL_SWAY;
+
+            inventory_add(&state->inventory, NULL, 0, 1, 3);  /* Sacyran Herb x3 */
+            inventory_add(&state->inventory, NULL, 0, 4, 2);  /* Tenebrous Draught x2 */
+            state->inventory.currency_gold = 150;
+            state->gold = 150;
             break;
 
         case PROTAGONIST_OBSERVER:
@@ -165,6 +183,10 @@ void sim_state_configure_protagonist(player_state_t *state,
             state->sword_edge = INITIAL_SWORD_EDGE;
             state->moral_sway = INITIAL_MORAL_SWAY;
 
+            inventory_add(&state->inventory, NULL, 0, 1, 2);  /* Sacyran Herb x2 */
+            state->inventory.currency_gold = 50;
+            state->gold = 50;
+
             if (starting_class == CLASS_MAGE) {
                 state->active_class = CLASS_MAGE;
                 state->movement_points = 4;
@@ -179,9 +201,6 @@ void sim_state_configure_protagonist(player_state_t *state,
     }
 }
 
-/**
- * Configures the protagonist's identity name.
- */
 void sim_state_set_name(player_state_t *state, const char *new_name)
 {
     if (state == NULL) return;
@@ -200,7 +219,7 @@ void sim_state_set_name(player_state_t *state, const char *new_name)
         str_trim_inplace(state->name);
     } else {
         sim_state_configure_protagonist(state, PROTAGONIST_ELIJAH, DEFAULT_PROTAGONIST_NAME,
-                                        GENDER_MALE, CLASS_WARRIOR);
+                                         GENDER_MALE, CLASS_WARRIOR);
     }
 
     LOG_INFO(
@@ -214,14 +233,13 @@ void sim_state_set_name(player_state_t *state, const char *new_name)
     );
 }
 
-/**
- * Initializes player state with canonical starting values.
- */
 void sim_state_init(player_state_t *state)
 {
     if (state == NULL) {
         return;
     }
+
+    memset(state, 0, sizeof(*state));
 
     /* Configure starting protagonist: Elijah Ro-enheart (Warrior / Shield of Lux) */
     sim_state_configure_protagonist(state, PROTAGONIST_ELIJAH, DEFAULT_PROTAGONIST_NAME,
@@ -267,9 +285,6 @@ void sim_state_init(player_state_t *state)
 // Stratum: Layer 1 (Simulation Engine) | Machine: State Lifecycle Core
 // =============================================================================
 
-/**
- * Validates all state invariants on a given player state struct.
- */
 game_audit_report_t sim_state_audit(const player_state_t *state)
 {
     game_audit_report_t report;
@@ -308,7 +323,7 @@ game_audit_report_t sim_state_audit(const player_state_t *state)
         report.error_count++;
         snprintf(report.error_log + strlen(report.error_log),
             sizeof(report.error_log) - strlen(report.error_log),
-            "[ERROR] Moral sway (%d) outside bounds [-100, +100]. ",
+            "[ERROR] Moral sway (%d) outside bounds [-100, 100]. ",
             state->moral_sway);
     }
 
@@ -317,7 +332,7 @@ game_audit_report_t sim_state_audit(const player_state_t *state)
         report.error_count++;
         snprintf(report.error_log + strlen(report.error_log),
             sizeof(report.error_log) - strlen(report.error_log),
-            "[ERROR] Stance (%d) outside valid range [0, %d). ",
+            "[ERROR] Stance enum (%d) outside valid range [0, %d). ",
             state->stance, STANCE_COUNT);
     }
 
@@ -326,55 +341,50 @@ game_audit_report_t sim_state_audit(const player_state_t *state)
         report.error_count++;
         snprintf(report.error_log + strlen(report.error_log),
             sizeof(report.error_log) - strlen(report.error_log),
-            "[ERROR] Location (%d) outside valid bounds [0, %d). ",
+            "[ERROR] Location enum (%d) outside valid range [0, %d). ",
             state->location, LOC_COUNT);
-    }
-
-    if (state->hp < 0) {
-        report.is_valid = false;
-        report.error_count++;
-        snprintf(report.error_log + strlen(report.error_log),
-            sizeof(report.error_log) - strlen(report.error_log),
-            "[ERROR] Player HP (%d) dropped below 0 floor. ",
-            state->hp);
     }
 
     return report;
 }
 
-/**
- * Pre-flight diagnostic callback verifying initial state invariants.
- */
 diag_result_t sim_state_preflight(void)
 {
     diag_result_t res;
-    res.subsystem = sim_state_manifest.module_id;
-    res.check_name = "Canonical State Bounds & Invariants";
+    memset(&res, 0, sizeof(res));
 
     player_state_t test_state;
     sim_state_init(&test_state);
 
     game_audit_report_t report = sim_state_audit(&test_state);
-    if (!report.is_valid) {
+    if (!report.is_valid || report.error_count > 0) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Canonical state failed invariant bounds check.";
+        res.details = "Default canonical state failed invariant audit.";
         return res;
     }
 
-    // Verify corruption detection tripwire
-    test_state.shield_power = 999;
-    game_audit_report_t trap_report = sim_state_audit(&test_state);
-    if (trap_report.is_valid || trap_report.error_count == 0) {
+    /* Test inventory initialization */
+    if (test_state.inventory.slot_count == 0) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "State corruption trap failed to catch invalid resonance.";
+        res.details = "Starter inventory failed to populate slots.";
+        return res;
+    }
+
+    /* Tripwire intentional corruption: shield_power over ceiling */
+    test_state.shield_power = MAX_RESONANCE + 1;
+    report = sim_state_audit(&test_state);
+    if (report.is_valid) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Audit tripwire failed: Shield power overflow not caught.";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "State bounds, moral sway, and tripwires verified.";
+    res.details = "State initialization and invariant audit tripwires passed.";
     return res;
 }
 

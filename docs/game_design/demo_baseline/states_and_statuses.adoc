@@ -1,0 +1,145 @@
+= Tactical States & Status Ailments Directory (2017–2018 Demo)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-03
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Overview
+
+This document catalogs all 30 status ailments, tactical combat states, aura modifiers,
+and battlefield terrain effects defined in `States.json` across Folder 1 and Folder 2 (LeTBS).
+It distinguishes generic RPG Maker MV Runtime Package (RTP) boilerplate from authentic
+tactical grid modifiers and stance dynamics.
+
+== 1. Triage: RTP Boilerplate States vs. Authentic Tactical Grid States
+
+[cols="1,2,3", options="header"]
+|===
+| Category | State IDs | Architectural Policy
+
+| **Tier 1: RTP Default States**
+| `1`–`10` (Knockout, Guard, Immortal, Poison, Blind, Silence, Rage, Confusion, Fascination, Sleep)
+| Stock RPG Maker MV status conditions. Re-architect in C11 to tie directly into Sacyran relic affinities, posture break, and elemental resistances.
+
+| **Tier 3: Authentic LeTBS Grid States**
+| `11`, `31`–`34`, `46`, `62`–`63`, `78`–`79`, `94`–`95`, `109`–`110`
+| Authentic tactical modifiers altering grid movement points (MP), turn order priority, damage mitigation, and tile propagation.
+|===
+
+== 2. Standard Status Conditions (Tier 1 Boilerplate)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Priority | Restriction / Description
+
+| `1` | **Knockout** | 100 | Cannot move; unit is felled upon reaching 0 HP.
+| `2` | **Guard** | 0 | Damage taken reduced by 50%; expires at start of next turn.
+| `3` | **Immortal** | 0 | Unit cannot drop below 1 HP; used for critical NPC story anchors.
+| `4` | **Poison** | 50 | Loses 10% max HP at end of combat turn.
+| `5` | **Blind** | 60 | Hit rate reduced by 50%.
+| `6` | **Silence** | 70 | Magic skills cannot be cast.
+| `7` | **Rage** | 80 | Attacks nearest enemy or ally indiscriminately.
+| `8` | **Confusion** | 75 | Actions randomized between foes and friends.
+| `9` | **Fascination** | 70 | Charmed unit attacks allies.
+| `10` | **Sleep** | 90 | Cannot take turns; wakes up upon taking damage.
+| `11` | **Paralyze** | 85 | Stunned; skip turn (`loop_animation: 64`).
+|===
+
+== 3. Knight & Vanguard Tactical States (Tier 3 LeTBS)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Affected Stat | Tactical Mechanism & LeTBS Meta
+
+| `31`
+| **Intimidating Aura**
+| ATK -15%
+| Passive aura cast via Skill 14 (`auras: intimidating_aura`). Reduces adjacent enemy physical attack and grants 70% counter-attack chance.
+
+| `32`
+| **Intimidated**
+| ATK -15%
+| Status inflicted on foes caught within the Intimidating Aura boundary.
+
+| `33`
+| **Heavy Strike**
+| Move Points: -3
+| Tactical stagger inflicted by Heavy Hit (Skill 15). Severely impedes enemy mobility on the grid.
+
+| `34`
+| **Focused**
+| AI Threat
+| Cast by Provoke (Skill 16). Forces enemy AI to prioritize the vanguard (`focused_by_ai_for_offense: 100`).
+|===
+
+== 4. Mage & Priest Arcane States (Tier 3 LeTBS)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Affected Stat | Tactical Mechanism & LeTBS Meta
+
+| `46`
+| **Charging**
+| Spell Delay
+| Channeling visual state for high-tier spells like Water (charged) (`loop_animation: 184`).
+
+| `62`
+| **Light Steps**
+| Move Points: +1
+| Mobility buff cast via Skill 78. Expands grid traversal budget for outriders and rogues.
+
+| `63`
+| **Ghost Arrow**
+| Move Points: -1
+| Tactical snare inflicted by Ghost Arrow (Skill 79). Reduces movement allowance.
+|===
+
+== 5. Summoner & Environmental Grid States (Tier 3 LeTBS)
+
+[cols="^1,2,^1,4", options="header"]
+|===
+| ID | State Name | Affected Stat | Tactical Mechanism & LeTBS Meta
+
+| `78`
+| **Transformation**
+| Form Shift
+| Active metamorphosis into astral beast (`character_name: Monster`).
+
+| `79`
+| **Fusion**
+| Unit Merge
+| Fuses summoner with tactical summon (`sprite_name: Rabbit`).
+
+| `94`
+| **Rabbit's Jump**
+| Mobility
+| Leap mechanics allowing clearance over terrain obstacles.
+
+| `95`
+| **Evil Protection**
+| DEF/MDF Buff
+| Damage shield cast by enemy warlocks (Skill 167).
+
+| `109`
+| **Tile Regen**
+| Periodic Heal
+| Restores health to units occupying consecrated ground.
+
+| `110`
+| **Burning**
+| Fire Dot / Spread
+| Fire hazard state (`spread: 100% circle(1)`). Expands dynamically to adjacent flammable tiles.
+|===
+
+== 6. Modern C11 Architectural Mapping
+
+In the C11 simulation engine, tactical states are decoupled from engine internals:
+1. **Zero-Heap State Mask**: Active states on an actor are tracked via a bitmask and static array (`active_states[MAX_ACTIVE_STATES]`).
+2. **Move Point Clamping**: `move_points` modifiers directly feed into Layer 0 spatial pathing routines.
+3. **Data-Driven Configuration**: State durations, stat multipliers, and tile spread rules are loaded from `data/states/*.json`.
+

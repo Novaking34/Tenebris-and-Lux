@@ -83,9 +83,9 @@
     {
       "id": "combat",
       "title": "Tactical Combat & Stance Mechanics",
-      "description": "Grid formations, action point economy, and relic stance transitions.",
+      "description": "Tactical grid (TRPG), action skirmishes, traditional turn-based, formulas, and stances.",
       "manifest_path": "combat/manifest.json",
-      "status": "planned",
+      "status": "active",
       "category": "simulation"
     },
     {
@@ -101,13 +101,45 @@
       "title": "Kingdom of Sacyra & Dreamscape Topology",
       "description": "Regional node graph, travel vigor consumption, and realm threat tiers.",
       "manifest_path": "world/manifest.json",
-      "status": "planned",
+      "status": "active",
       "category": "world"
+    },
+    {
+      "id": "items",
+      "title": "Diegetic Relics, Catalysts & Inventory Subsystem",
+      "description": "Grandma's Watch, Dream Compass, Compass of Morality, Ring of Fire, and Sacyran herbalism.",
+      "manifest_path": "items/manifest.json",
+      "status": "active",
+      "category": "simulation"
+    },
+    {
+      "id": "skills",
+      "title": "Tactical Grimoire & Combat Abilities Subsystem",
+      "description": "Knight maneuvers, Mage spells, Priest support, and Duo-Loca Bashin n Slash.",
+      "manifest_path": "skills/manifest.json",
+      "status": "active",
+      "category": "simulation"
+    },
+    {
+      "id": "states",
+      "title": "Tactical States & Status Ailments Subsystem",
+      "description": "LeTBS grid movement modifiers, Intimidating Aura, Heavy Strike, Light Steps, and Burning.",
+      "manifest_path": "states/manifest.json",
+      "status": "active",
+      "category": "simulation"
+    },
+    {
+      "id": "player",
+      "title": "Player Tracking, Progression & Morality Matrix Subsystem",
+      "description": "Protagonist archetypes, Bystander Corridor (-50 to +50), moral inertia, progression limits, and loadout specs.",
+      "manifest_path": "player/manifest.json",
+      "status": "active",
+      "category": "simulation"
     }
   ],
   "_audit": {
-    "manifest_count": 10,
-    "active_subsystems": 7,
+    "manifest_count": 14,
+    "active_subsystems": 13,
     "integrity_check": "All paths relative to data root"
   },
   "_navigation": {

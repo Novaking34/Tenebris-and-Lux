@@ -1,0 +1,44 @@
+{
+  "subsystem": "sim.combat.formulas",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Combat damage, mitigation, and relic resonance balance formulas",
+  "defend": {
+    "standard_ward_boost": 10,
+    "warding_stance_boost": 15,
+    "lux_barrio_boost": 20,
+    "lux_barrio_mitigation_pct": 25,
+    "lux_barrio_min_turns": 2,
+    "lux_barrio_max_turns": 5,
+    "heart_shield_guard_bonus": 5,
+    "ring_of_fire_retaliation_stagger": 5
+  },
+  "attack": {
+    "standard_base_damage": 12,
+    "striking_stance_base_damage": 20,
+    "cuttatio_base_damage": 25,
+    "cuttatio_striking_base_damage": 35,
+    "cuttatio_splash_pct": 20,
+    "medusa_sword_base_bonus": 7,
+    "medusa_sword_cuttatio_bonus": 10
+  },
+  "special": {
+    "basic_magic_cost_mp": 10,
+    "basic_magic_base_damage": 25,
+    "basic_ward_cost_mp": 8,
+    "basic_ward_shield_boost": 25,
+    "basic_ward_def_buff": 3,
+    "basic_charm_cost_mp": 12,
+    "basic_charm_mat_buff_pct": 20,
+    "duo_loca_cost_tp": 15,
+    "duo_loca_cost_mp": 8,
+    "duo_loca_base_damage": 40,
+    "duo_loca_relic_balance_boost": 15
+  },
+  "enemy_turn": {
+    "base_raw_damage_min": 15,
+    "base_raw_damage_max": 25,
+    "warding_mitigation_pct": 40,
+    "equilibrium_mitigation_pct": 20
+  }
+}

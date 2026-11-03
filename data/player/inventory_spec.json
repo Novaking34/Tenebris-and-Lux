@@ -1,0 +1,23 @@
+{
+  "subsystem": "sim.player.inventory",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Player inventory slots, equipment loadout specification, and pouch limits",
+  "inventory_rules": {
+    "capacity_slots": 32,
+    "quick_use_slots": 4,
+    "equipment_slots": [
+      { "id": 1, "name": "weapon", "allowed_types": ["catalyst_weapon"] },
+      { "id": 2, "name": "shield", "allowed_types": ["catalyst_armor"] },
+      { "id": 3, "name": "armor", "allowed_types": ["catalyst_armor"] },
+      { "id": 4, "name": "accessory_1", "allowed_types": ["catalyst_elemental", "catalyst_mystic"] },
+      { "id": 5, "name": "accessory_2", "allowed_types": ["catalyst_elemental", "catalyst_mystic"] }
+    ],
+    "stacking": {
+      "relics": 1,
+      "catalysts": 1,
+      "consumables": 99,
+      "valuables": 999
+    }
+  }
+}

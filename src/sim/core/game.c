@@ -6,21 +6,29 @@
 // @file          game.c
 // @id            sim.engine.core
 // @layer         Layer 1: Simulation Engine
-// @version       1.1.0
-// @interface_rev Rev 2
-// @date          2026-10-30
-// @updated       2026-10-30
+// @subsystem     Simulation Core Subsystem (sim/core)
+// @version       1.3.0
+// @interface_rev Rev 4
+// @date          2026-11-03
+// @updated       2026-11-03
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Cohesive simulation engine facade orchestrator. Unites the modular
-//   sub-assemblies (sim_state, combat, world, dispatcher) providing a single
-//   clean interface for presentation viewports and test harnesses.
+//   sub-assemblies (sim_state, combat, world, items, dispatcher) providing
+//   a single clean interface for presentation viewports and test harnesses.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: sim.engine.state, sim.engine.combat,
-//                            sim.engine.world, sim.engine.dispatcher
+//   - Upstream Dependencies:
+//       sim/core/game.h
+//       sim/core/sim_state.h
+//       sim/combat/combat.h
+//       sim/world/world.h
+//       sim/items/items.h
+//       sim/dispatch/dispatcher.h
+//       util/debug/debug.h
+//       util/string/string_utils.h
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation)
 //   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state transitions)
 //   - Latency Budget:        < 50 microseconds per simulation tick
@@ -37,11 +45,12 @@
 // Stratum: Layer 1 (Simulation Engine) | Machine: Tactical Simulation Core
 // =============================================================================
 
-#include "sim/game.h"
-#include "sim/sim_state.h"
-#include "sim/combat.h"
-#include "sim/world.h"
-#include "sim/dispatcher.h"
+#include "sim/core/game.h"
+#include "sim/combat/combat.h"
+#include "sim/core/sim_state.h"
+#include "sim/dispatch/dispatcher.h"
+#include "sim/items/items.h"
+#include "sim/world/world.h"
 #include "util/debug/debug.h"
 #include "util/string/string_utils.h"
 
@@ -59,10 +68,10 @@ const module_metadata_t game_manifest = {
     "sim.engine.core",
     "game.h",
     LAYER_1_SIMULATION,
-    { 1, 1, 0 },
-    2,                          // interface_rev
-    "2026-10-30",               // last_updated
-    "Simulation engine facade orchestrating state, combat, world & dispatcher",
+    { 1, 3, 0 },
+    4,                          // interface_rev
+    "2026-11-03",               // last_updated
+    "Simulation engine facade orchestrating state, combat, world, items & dispatch",
     4,                          // dependency_count
     {
         "sim.engine.state",
@@ -90,6 +99,8 @@ const module_metadata_t game_manifest = {
 
 void game_init(player_state_t *state)
 {
+    items_init();
+    combat_init();
     sim_state_init(state);
 }
 
@@ -192,7 +203,9 @@ void game_state_from_debug_fields(const void *fields, player_state_t *out_state)
     out_state->foes_vanquished = f->foes_vanquished;
 }
 
-uint64_t game_record_debug_snapshot(const player_state_t *state, const char *cmd, const char *arg)
+uint64_t game_record_debug_snapshot(const player_state_t *state,
+                                    const char *cmd,
+                                    const char *arg)
 {
     if (state == NULL || !debug_is_active()) return 0;
     debug_state_fields_t f;
@@ -243,7 +256,13 @@ diag_result_t game_preflight(void)
         return world_pre;
     }
 
-    // Sub-Assembly 4: Dispatcher Preflight
+    // Sub-Assembly 4: Items & Relics Preflight
+    diag_result_t items_pre = items_preflight();
+    if (!items_pre.passed) {
+        return items_pre;
+    }
+
+    // Sub-Assembly 5: Dispatcher Preflight
     diag_result_t disp_pre = dispatcher_preflight();
     if (!disp_pre.passed) {
         return disp_pre;
@@ -272,7 +291,7 @@ int game_run_self_audit(void)
     }
     printf("[PASS] Test 1: Initial twin relic state verified.\n");
 
-    game_process_command(&state, "barrio", NULL, 0);
+    game_process_command(&state, "defend barrio", NULL, 0);
     if (state.shield_power != MAX_RESONANCE) {
         fprintf(stderr, "[FAIL] Test 2: Shield did not reach ceiling! (%d)\n",
             state.shield_power);

@@ -1,0 +1,73 @@
+{
+  "subsystem": "sim.player.morality",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Moral sway continuum, Bystander Corridor, and micro-verb weight matrix",
+  "continuum": {
+    "absolute_min": -100,
+    "absolute_max": 100,
+    "initial_sway": 0,
+    "bystander_corridor": {
+      "min": -50,
+      "max": 50,
+      "inertia_dampening_factor": 0.5,
+      "description": "The zone of everyday survival and pragmatic hesitation where micro-actions accumulate moral inertia before tipping into active ideological alignment."
+    },
+    "polarized_zones": {
+      "radiance_threshold": 75,
+      "abyssal_threshold": -75,
+      "equilibrium_band_min": -25,
+      "equilibrium_band_max": 25
+    }
+  },
+  "micro_verbs": [
+    {
+      "verb": "DONATE_RENT",
+      "target": "Eric the Lumberjack",
+      "sway_delta": 15,
+      "description": "Altruistically covers Eric's rent arrears, preventing eviction."
+    },
+    {
+      "verb": "SHRINE_OFFERING",
+      "target": "Goddess Lyri Shrine",
+      "sway_delta": 10,
+      "description": "Places consecrated flowers and oils on Monica's woodland altar."
+    },
+    {
+      "verb": "MERCIFUL_SPARE",
+      "target": "Defeated Frontier Scout",
+      "sway_delta": 20,
+      "description": "Refuses to execute a disarmed foe, granting safe passage."
+    },
+    {
+      "verb": "REPAIR_COMPASS",
+      "target": "Grandma's Watch",
+      "sway_delta": 5,
+      "description": "Cleans and recalibrates the familial clock mechanism."
+    },
+    {
+      "verb": "STEAL_CHEST",
+      "target": "Grandma Magnolia Upstairs Chest",
+      "sway_delta": -15,
+      "description": "Looting domestic reserves without asking permission."
+    },
+    {
+      "verb": "DESECRATE_SHRINE",
+      "target": "Woodland Shrine",
+      "sway_delta": -25,
+      "description": "Plundering holy relics and knocking down devotional candles."
+    },
+    {
+      "verb": "RUTHLESS_SEVERANCE",
+      "target": "Stunned Captive",
+      "sway_delta": -20,
+      "description": "Striking down an incapacitated combatant to harvest shadow essence."
+    },
+    {
+      "verb": "EXTORTION",
+      "target": "Dio Merchant",
+      "sway_delta": -15,
+      "description": "Threatening merchants for discounted armaments or potions."
+    }
+  ]
+}

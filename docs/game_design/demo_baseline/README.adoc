@@ -40,7 +40,9 @@ This baseline compendium is partitioned into specialized manuals covering every 
 | **[grimoire_and_skills.adoc](grimoire_and_skills.adoc)** | Complete grimoire of all 75+ historical spells, martial techniques, movement abilities, MP/TP costs, damage formulas, and LeTBS sequence tags.
 | **[bestiary_and_troops.adoc](bestiary_and_troops.adoc)** | Bestiary of all 22+ enemies and neutral entities (Dream Eaters, Magos, Bandits, Chests, Ice Blocks), stat parameters, AI behavior routines, and troop encounter formations.
 | **[armory_and_inventory.adoc](armory_and_inventory.adoc)** | Weapons (Medusa's Sword), Armors (Heart Shield, Ring of Fire), Items (Potions, Magic Water), and Key Lore Relics (Grandma's Watch, Compass of Morality, Book of Monsters, Book of Items).
+| **[states_and_statuses.adoc](states_and_statuses.adoc)** | 30 tactical states, LeTBS grid modifiers (Intimidating Aura, Heavy Strike, Light Steps, Burning, Tile Regen), and status ailments.
 | **[systems_switches_variables.adoc](systems_switches_variables.adoc)** | Global game engines: Monotonic Time System / Day-Night Cycle, Morality System, and an exhaustive directory of all 100+ switches and variables.
+| **[game_design_curation.adoc](game_design_curation.adoc)** | Triaging matrix: RTP defaults (discard/re-architect) vs. prototype sketches (review/evolve) vs. authentic canonical pillars (reconstruct in C11).
 | **[dataset_evolution_delta.adoc](dataset_evolution_delta.adoc)** | Side-by-side comparative delta analysis between `Old Game Data` and `Old_Game_Data_2/data`, detailing version discrepancies and modern C11 reconciliation strategies.
 |===
 

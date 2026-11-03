@@ -1,0 +1,49 @@
+{
+  "subsystem": "sim.items.valuables",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Trade goods, currency vouchers, and quest tokens for Tenebris and Lux",
+  "count": 4,
+  "items": [
+    {
+      "id": 201,
+      "code": "GOLD_INGOT",
+      "name": "Sacyran Gold Ingot",
+      "type": "valuable",
+      "valuable_type": "bullion",
+      "max_stack": 999,
+      "value_gold": 1000,
+      "description": "A refined gold ingot bearing the official royal seal of King Jihad's treasury. Highly prized by merchants."
+    },
+    {
+      "id": 202,
+      "code": "ERICS_RENT_RECEIPT",
+      "name": "Eric's Rent Receipt",
+      "type": "valuable",
+      "valuable_type": "quest_token",
+      "max_stack": 1,
+      "value_gold": 0,
+      "description": "Proof of paying 500 Gold to cover Eric the Lumberjack's overdue arrears, saving his home and earning the Ring of Fire."
+    },
+    {
+      "id": 203,
+      "code": "FESTIVAL_RIBBON",
+      "name": "Festival of Peoples Ribbon",
+      "type": "valuable",
+      "valuable_type": "token",
+      "max_stack": 10,
+      "value_gold": 50,
+      "description": "A vibrant braided ribbon commemorating the quadriennial gathering of Sacyrans, Libirans, and Frontier clans."
+    },
+    {
+      "id": 204,
+      "code": "LUMBERJACK_MAP",
+      "name": "Lumberjack's Forest Charter",
+      "type": "valuable",
+      "valuable_type": "map_token",
+      "max_stack": 1,
+      "value_gold": 100,
+      "description": "A hand-drawn chart marking secret logging paths and timber caches across Whispering Woods."
+    }
+  ]
+}

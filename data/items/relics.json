@@ -1,0 +1,90 @@
+{
+  "subsystem": "sim.items.relics",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Diegetic key items and relics for Tenebris and Lux",
+  "count": 6,
+  "items": [
+    {
+      "id": 5,
+      "code": "GRANDMAS_WATCH",
+      "name": "Grandma's Watch",
+      "type": "relic",
+      "relic_type": "temporal",
+      "consumable": false,
+      "description": "A cherished family heirloom keeping monotonic time across seconds, minutes, hours, weekdays, weeks, months, and years. Evolves into the Dream Compass.",
+      "properties": {
+        "clock_interface": true,
+        "evolves_into": 9,
+        "location": "Grandma Magolia's Upstairs Chest"
+      }
+    },
+    {
+      "id": 6,
+      "code": "BOOK_OF_MONSTERS",
+      "name": "Book of Monsters",
+      "type": "relic",
+      "relic_type": "archival",
+      "consumable": false,
+      "description": "An in-universe tactical compendium recording enemy threat HP, poise thresholds, movement budgets, and elemental vulnerabilities.",
+      "properties": {
+        "unlocks_bestiary": true,
+        "location": "Monica's Woodland Grove"
+      }
+    },
+    {
+      "id": 7,
+      "code": "BOOK_OF_ITEMS",
+      "name": "Book of Items",
+      "type": "relic",
+      "relic_type": "archival",
+      "consumable": false,
+      "description": "A comprehensive registry cataloging the properties of Sacyran herbs, tools, catalysts, and armaments.",
+      "properties": {
+        "unlocks_item_compendium": true
+      }
+    },
+    {
+      "id": 8,
+      "code": "COMPASS_OF_MORALITY",
+      "name": "Compass of Morality",
+      "type": "relic",
+      "relic_type": "telemetry",
+      "consumable": false,
+      "description": "A needle that wavers with the intent of the heart, diegetically reporting party moral sway along the continuum from -100 to +100.",
+      "properties": {
+        "tracks_moral_sway": true,
+        "min_sway": -100,
+        "max_sway": 100
+      }
+    },
+    {
+      "id": 9,
+      "code": "DREAM_COMPASS",
+      "name": "The Dream Compass",
+      "type": "relic",
+      "relic_type": "planar",
+      "consumable": false,
+      "description": "The evolved form of Grandma's Watch. Detects and resonates with astral rifts, opening gates to the Dreamscape during active nocturnal windows (20:00 to 04:00).",
+      "properties": {
+        "planar_key": true,
+        "active_start_hour": 20,
+        "active_end_hour": 4,
+        "hums_on_nocturnal_window": true
+      }
+    },
+    {
+      "id": 10,
+      "code": "ACCORD_PARCHMENT",
+      "name": "Accord of Kings Parchment",
+      "type": "relic",
+      "relic_type": "diplomatic",
+      "consumable": false,
+      "description": "The ancient treaty binding Sacyra and the Coalition. Inscribed with the sovereign principle: Joint Realm, Separate Kingdoms.",
+      "properties": {
+        "unlocks_diplomatic_dialogue": true,
+        "era_provenance": "Era V"
+      }
+    }
+  ]
+}
