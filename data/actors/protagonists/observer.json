@@ -1,0 +1,40 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/protagonists/observer.json",
+    "id": "data.actors.protagonist.observer",
+    "actor_id": 3,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX"
+  },
+  "actor": {
+    "id": 3,
+    "name": "<Observer>",
+    "gender": "custom",
+    "title": "The Awakening Bearer",
+    "class_selection": ["warrior", "mage", "rogue"],
+    "unlocked_upgrades": ["priest"],
+    "job_key": "scholar",
+    "relic_binding": "equilibrium",
+    "base_level": 5,
+    "base_stats": {
+      "hp": 450,
+      "max_hp": 450,
+      "rp": 80,
+      "max_rp": 100,
+      "atk": 18,
+      "def": 16,
+      "mat": 16,
+      "mdf": 14,
+      "agi": 30,
+      "luk": 40
+    },
+    "moral_sway": 0,
+    "relic_actions": ["duo_loca"],
+    "narrative": {
+      "origin": "The Dream Chamber / Ethereal Trial Redoubt",
+      "lineage": "An unburdened consciousness awakening into the mortal realm free from ancestral blood-feuds",
+      "motivation": "Acting as the Sovereign Steward of Balance across the 3,000-year dynastic cycle."
+    }
+  }
+}

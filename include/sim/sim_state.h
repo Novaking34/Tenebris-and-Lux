@@ -65,6 +65,21 @@ void sim_state_init(player_state_t *state);
 void sim_state_set_name(player_state_t *state, const char *new_name);
 
 /**
+ * Configures the protagonist according to canonical identity or custom Observer creation.
+ *
+ * @param[in,out] state          Pointer to player state.
+ * @param[in]     protagonist_id Chosen protagonist identity (Elijah, Katrina, or Observer).
+ * @param[in]     custom_name    Custom name if Observer (or NULL to keep default).
+ * @param[in]     gender         Chosen gender identity.
+ * @param[in]     starting_class Chosen starting class if Observer (Warrior, Mage, or Rogue).
+ */
+void sim_state_configure_protagonist(player_state_t *state,
+                                     protagonist_id_t protagonist_id,
+                                     const char *custom_name,
+                                     sim_gender_t gender,
+                                     class_id_t starting_class);
+
+/**
  * Returns narrative description of moral sway alignment.
  *
  * @param[in] sway Signed integer moral sway value in [-100, +100].

@@ -1,0 +1,30 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/classes/advanced/summoner.json",
+    "id": "data.classes.advanced.summoner",
+    "class_id": 6,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Class 4: Summoner"
+  },
+  "class": {
+    "id": 6,
+    "key": "summoner",
+    "name": "Summoner",
+    "tier": "advanced",
+    "description": "Tactical battlefield manipulator deploying sentinel totems, spirit wards, and familiar conduits across the combat grid.",
+    "unlock_condition": "Acquiring ancient Libiran parchment in the frontier woods.",
+    "movement_points": 4,
+    "equippable_weapons": ["rod", "grimoire", "talisman"],
+    "innate_actions": ["summon_totem", "spirit_tether", "ward", "focus"],
+    "stat_milestones": {
+      "lv1":  { "mhp": 450,  "mmp": 90,   "atk": 16,  "def": 16,  "mat": 16,  "mdf": 16,  "agi": 32,  "luk": 32 },
+      "lv5":  { "mhp": 650,  "mmp": 130,  "atk": 21,  "def": 21,  "mat": 21,  "mdf": 21,  "agi": 42,  "luk": 42 },
+      "lv10": { "mhp": 900,  "mmp": 180,  "atk": 28,  "def": 28,  "mat": 28,  "mdf": 28,  "agi": 55,  "luk": 55 },
+      "lv20": { "mhp": 1400, "mmp": 280,  "atk": 40,  "def": 40,  "mat": 40,  "mdf": 40,  "agi": 80,  "luk": 80 },
+      "lv50": { "mhp": 2900, "mmp": 580,  "atk": 77,  "def": 77,  "mat": 77,  "mdf": 77,  "agi": 155, "luk": 155 },
+      "lv99": { "mhp": 5350, "mmp": 1070, "atk": 138, "def": 138, "mat": 138, "mdf": 138, "agi": 277, "luk": 277 }
+    }
+  }
+}

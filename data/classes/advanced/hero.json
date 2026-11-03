@@ -1,0 +1,30 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/classes/advanced/hero.json",
+    "id": "data.classes.advanced.hero",
+    "class_id": 5,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Class 5: Hero"
+  },
+  "class": {
+    "id": 5,
+    "key": "hero",
+    "name": "Hero",
+    "tier": "advanced",
+    "description": "Sovereign harmonic discipline capable of wielding both the Shield of Lux and Sword of Tenebris with balanced stat scaling and resonance conservation.",
+    "unlock_condition": "Awakening in the Dream Chamber or reaching equilibrium resonance [Sw 0].",
+    "movement_points": 4,
+    "equippable_weapons": ["sword", "shield", "staff", "relic"],
+    "innate_actions": ["strike", "guard", "stance", "harmonic_pulse"],
+    "stat_milestones": {
+      "lv1":  { "mhp": 300,  "mmp": 90,   "atk": 16,  "def": 16,  "mat": 16,  "mdf": 16,  "agi": 32,  "luk": 32 },
+      "lv5":  { "mhp": 507,  "mmp": 130,  "atk": 21,  "def": 21,  "mat": 21,  "mdf": 21,  "agi": 42,  "luk": 42 },
+      "lv10": { "mhp": 764,  "mmp": 180,  "atk": 28,  "def": 28,  "mat": 28,  "mdf": 28,  "agi": 55,  "luk": 55 },
+      "lv20": { "mhp": 1280, "mmp": 280,  "atk": 40,  "def": 40,  "mat": 40,  "mdf": 40,  "agi": 80,  "luk": 80 },
+      "lv50": { "mhp": 2825, "mmp": 580,  "atk": 77,  "def": 77,  "mat": 77,  "mdf": 77,  "agi": 155, "luk": 155 },
+      "lv99": { "mhp": 5350, "mmp": 1070, "atk": 138, "def": 138, "mat": 138, "mdf": 138, "agi": 277, "luk": 277 }
+    }
+  }
+}

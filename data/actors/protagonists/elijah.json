@@ -1,0 +1,42 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/protagonists/elijah.json",
+    "id": "data.actors.protagonist.elijah",
+    "actor_id": 1,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX"
+  },
+  "actor": {
+    "id": 1,
+    "name": "Elijah Ro-enheart",
+    "gender": "male",
+    "title": "The Steadfast Vanguard",
+    "class_id": 1,
+    "class_key": "warrior",
+    "job_key": "vanguard",
+    "relic_binding": "lux",
+    "base_level": 5,
+    "base_stats": {
+      "hp": 450,
+      "max_hp": 450,
+      "rp": 80,
+      "max_rp": 100,
+      "atk": 17,
+      "def": 18,
+      "mat": 5,
+      "mdf": 11,
+      "agi": 27,
+      "luk": 42
+    },
+    "movement_points": 4,
+    "moral_sway": 15,
+    "relic_actions": ["lux_barrio"],
+    "class_actions": ["strike", "heavy_hit", "guard", "provoke"],
+    "narrative": {
+      "origin": "Kingdom of Sacyra / Royal Guard Quarter",
+      "lineage": "Son of vanished Guard Commander Gareth Ro-enheart",
+      "motivation": "Upholding martial duty and protecting the realm while searching for the truth of his father's disappearance."
+    }
+  }
+}

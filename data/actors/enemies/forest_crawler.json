@@ -1,0 +1,31 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/enemies/forest_crawler.json",
+    "id": "data.actors.enemy.forest_crawler",
+    "enemy_id": 102,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Enemy 2: Forest Crawler"
+  },
+  "enemy": {
+    "id": 102,
+    "key": "forest_crawler",
+    "name": "Forest Crawler",
+    "category": "wild_beast",
+    "base_stats": {
+      "hp": 120,
+      "max_hp": 120,
+      "atk": 22,
+      "def": 12,
+      "mat": 4,
+      "mdf": 8,
+      "agi": 16,
+      "luk": 18
+    },
+    "exp_reward": 45,
+    "gold_reward": 20,
+    "behavior": "territorial_grapple",
+    "tactical_role": "Heavy frontline beast harassing lumberjacks in the Whispering Woods."
+  }
+}

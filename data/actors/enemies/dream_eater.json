@@ -1,0 +1,31 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/enemies/dream_eater.json",
+    "id": "data.actors.enemy.dream_eater",
+    "enemy_id": 101,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "provenance": "2017-2018 Demo Baseline Enemy 1: Dream Eater"
+  },
+  "enemy": {
+    "id": 101,
+    "key": "dream_eater",
+    "name": "Dream Eater",
+    "category": "abyssal_creature",
+    "base_stats": {
+      "hp": 70,
+      "max_hp": 70,
+      "atk": 18,
+      "def": 8,
+      "mat": 14,
+      "mdf": 6,
+      "agi": 20,
+      "luk": 15
+    },
+    "exp_reward": 25,
+    "gold_reward": 12,
+    "behavior": "aggressive_swarm",
+    "tactical_role": "Frontline trial aggressor serving The Dark Lord in the Dreamscape."
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/manifest.json",
+    "id": "data.actors.manifest",
+    "layer": "Data-Driven Subsystem: Actors",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Master catalog indexing playable protagonists, party companions, and adversaries.",
+    "invariants": [
+      "Actor IDs must be unique across the actor registry",
+      "Protagonists must bind to valid class IDs from the class catalog",
+      "Custom Observer bearer permits runtime name, gender, and starting class selection"
+    ]
+  },
+  "_types": {
+    "schema_id": "tenlux.data.actors.v1",
+    "actor_categories": [
+      "protagonist",
+      "companion",
+      "enemy"
+    ]
+  },
+  "actors": [
+    {
+      "id": 1,
+      "key": "elijah",
+      "name": "Elijah Ro-enheart",
+      "category": "protagonist",
+      "class_id": 1,
+      "relic": "lux",
+      "file": "protagonists/elijah.json"
+    },
+    {
+      "id": 2,
+      "key": "katrina",
+      "name": "Lady Katrina Jaren",
+      "category": "protagonist",
+      "class_id": 3,
+      "relic": "tenebris",
+      "file": "protagonists/katrina.json"
+    },
+    {
+      "id": 3,
+      "key": "observer",
+      "name": "<Observer>",
+      "category": "protagonist",
+      "class_id": 0,
+      "relic": "equilibrium",
+      "file": "protagonists/observer.json"
+    },
+    {
+      "id": 4,
+      "key": "sebastien",
+      "name": "Sebastien",
+      "category": "companion",
+      "class_id": 3,
+      "relic": "none",
+      "file": "companions/sebastien.json"
+    },
+    {
+      "id": 5,
+      "key": "angela",
+      "name": "Angela",
+      "category": "companion",
+      "class_id": 2,
+      "relic": "none",
+      "file": "companions/angela.json"
+    },
+    {
+      "id": 101,
+      "key": "dream_eater",
+      "name": "Dream Eater",
+      "category": "enemy",
+      "class_id": 0,
+      "relic": "none",
+      "file": "enemies/dream_eater.json"
+    },
+    {
+      "id": 102,
+      "key": "forest_crawler",
+      "name": "Forest Crawler",
+      "category": "enemy",
+      "class_id": 0,
+      "relic": "none",
+      "file": "enemies/forest_crawler.json"
+    }
+  ]
+}

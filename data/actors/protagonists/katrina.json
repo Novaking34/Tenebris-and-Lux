@@ -1,0 +1,43 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/actors/protagonists/katrina.json",
+    "id": "data.actors.protagonist.katrina",
+    "actor_id": 2,
+    "version": "1.0.0",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX"
+  },
+  "actor": {
+    "id": 2,
+    "name": "Lady Katrina Jaren",
+    "gender": "female",
+    "title": "The Outrider Blade",
+    "class_id": 3,
+    "class_key": "rogue",
+    "former_tutelage": "court_mage",
+    "job_key": "outrider",
+    "relic_binding": "tenebris",
+    "base_level": 5,
+    "base_stats": {
+      "hp": 400,
+      "max_hp": 400,
+      "rp": 80,
+      "max_rp": 100,
+      "atk": 22,
+      "def": 14,
+      "mat": 18,
+      "mdf": 12,
+      "agi": 32,
+      "luk": 42
+    },
+    "movement_points": 5,
+    "moral_sway": -10,
+    "relic_actions": ["cuttatio_tenebris"],
+    "class_actions": ["strike", "flank", "sprint", "evade"],
+    "narrative": {
+      "origin": "Kingdom of Sacyra / High Court of House Jaren",
+      "lineage": "Noble daughter of House Jaren tutored as court Mage; escaped aristocracy to join Dio Village Guild as a Rogue",
+      "motivation": "Severing complacent aristocratic destiny; her latent magical aptitude allows her to master the Sword of Tenebris without corruption."
+    }
+  }
+}
