@@ -112,7 +112,7 @@ uint16_t inventory_get_count(const player_inventory_t *inv, uint32_t item_id);
 bool inventory_has_item(const player_inventory_t *inv, uint32_t item_id);
 
 /**
- * @brief Formats human-readable inventory listing into a caller-supplied buffer.
+ * @brief Formats human-readable inventory listing into a caller buffer.
  *
  * @param[in]  inv         Pointer to player inventory.
  * @param[in]  catalog     Pointer to item definitions catalog.
@@ -148,3 +148,4 @@ bool inventory_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_ITEMS_INVENTORY_H */
+

@@ -25,7 +25,7 @@
 //   - Concurrency / Safety:  REENTRANT_PURE (Pure deterministic state shifts)
 //
 // AXIOMATIC INVARIANTS:
-//   1. Determinism: Stance graph forms a strongly connected, deterministic graph.
+//   1. Determinism: Stance graph forms a strongly connected graph.
 //   2. Bound limits: Stance enum strictly in [0, STANCE_COUNT).
 //   3. Zero heap: No dynamic allocations during transitions.
 // =============================================================================
@@ -96,7 +96,7 @@ bool stances_can_transition(combat_stance_t from, combat_stance_t to);
  * @brief Applies stance transition based on user command argument string.
  *
  * @param[in,out] state   Mutable player state.
- * @param[in]     token   Input argument string (e.g. "warding", "1", "striking").
+ * @param[in]     token   Input argument string (e.g. "warding", "striking").
  * @param[out]    out_msg Destination buffer for feedback narration.
  * @param[in]     msg_len Capacity of destination buffer in bytes.
  *
@@ -127,3 +127,4 @@ bool stances_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_COMBAT_STANCES_H */
+

@@ -97,6 +97,33 @@ const char *sim_state_get_sway_desc(int sway)
     return "Emissary of The Void (Ruthless Dominion)";
 }
 
+const char *sim_state_get_class_name(class_id_t class_id)
+{
+    switch (class_id) {
+        case CLASS_WARRIOR:      return "Warrior";
+        case CLASS_MAGE:         return "Mage";
+        case CLASS_ROGUE:        return "Rogue";
+        case CLASS_PRIEST:       return "Priest";
+        case CLASS_HERO:         return "Hero";
+        case CLASS_SUMMONER:     return "Summoner";
+        case CLASS_GUARD:        return "Royal Guard";
+        case CLASS_WIND_SPIRIT:  return "Wind Spirit";
+        case CLASS_PIXIE:        return "Pixie";
+        case CLASS_FIRE_CHICKEN: return "Fire Chicken";
+        default:                 return "Unknown";
+    }
+}
+
+const char *sim_state_get_relic_name(relic_affinity_t relic)
+{
+    switch (relic) {
+        case RELIC_LUX:         return "Shield of Lux";
+        case RELIC_TENEBRIS:    return "Sword of Tenebris";
+        case RELIC_EQUILIBRIUM: return "Twin Relics of Equilibrium";
+        default:                return "None";
+    }
+}
+
 void sim_state_configure_protagonist(player_state_t *state,
                                      protagonist_id_t protagonist_id,
                                      const char *custom_name,

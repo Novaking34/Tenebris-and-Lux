@@ -15,7 +15,7 @@
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Master Orchestrator implementation for the Item, Relic & Inventory Subsystem.
+//   Master Orchestrator for the Item, Relic & Inventory Subsystem.
 //   Coordinates data loading, catalog lookup, player inventory management,
 //   diegetic relic queries, tactical catalyst calculations, and consumable
 //   applications without tight coupling or hardcoded data tables.
@@ -33,7 +33,7 @@
 // AXIOMATIC INVARIANTS:
 //   1. Data-driven: Zero items hardcoded; catalog loaded from data/items files.
 //   2. Orchestrator delegation: Type-specific logic delegated to sub-modules.
-//   3. Invariant audit integrity: Subsystem pre-flight validates all sub-modules.
+//   3. Invariant integrity: Subsystem pre-flight validates all sub-modules.
 // =============================================================================
 
 #define _POSIX_C_SOURCE 200809L
@@ -59,7 +59,7 @@ static const char *const s_items_invariants[3] = {
 };
 
 const module_metadata_t items_manifest = {
-    "sim.items.orchestrator",
+    "sim.engine.items",
     "items.h",
     LAYER_1_SIMULATION,
     { 1, 1, 0 },
@@ -68,10 +68,10 @@ const module_metadata_t items_manifest = {
     "Item and inventory domain orchestrator",
     4,
     {
-        "sim.items.loader",
-        "sim.items.relics",
-        "sim.items.catalysts",
-        "sim.items.inventory"
+        "core.util.math",
+        "core.util.string",
+        "core.util.fs",
+        "core.util.log"
     },
     ALLOC_ZERO_HEAP,
     CONCURRENCY_REENTRANT,
@@ -181,7 +181,7 @@ bool items_use(player_inventory_t *inv,
         case ITEM_TYPE_CONSUMABLE: {
             if (!ps) {
                 snprintf(out_msg, msg_len,
-                         "[ITEM-ERROR] Cannot consume item without player context.");
+                         "[ITEM-ERROR] Cannot consume item without context.");
                 return false;
             }
             int32_t hp = ps->hp;

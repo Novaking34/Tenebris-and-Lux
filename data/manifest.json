@@ -135,11 +135,19 @@
       "manifest_path": "player/manifest.json",
       "status": "active",
       "category": "simulation"
+    },
+    {
+      "id": "dispatch",
+      "title": "Command Dispatcher & Domain Router Subsystem",
+      "description": "Command dictionary, alias resolution, and domain routing across Combat, World, Items, and System.",
+      "manifest_path": "dispatch/manifest.json",
+      "status": "active",
+      "category": "simulation"
     }
   ],
   "_audit": {
-    "manifest_count": 14,
-    "active_subsystems": 13,
+    "manifest_count": 15,
+    "active_subsystems": 14,
     "integrity_check": "All paths relative to data root"
   },
   "_navigation": {

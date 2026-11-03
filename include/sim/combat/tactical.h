@@ -104,3 +104,4 @@ bool tactical_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_COMBAT_TACTICAL_H */
+

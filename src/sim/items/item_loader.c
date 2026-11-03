@@ -33,7 +33,7 @@
 // AXIOMATIC INVARIANTS:
 //   1. Zero heap allocations: Strict zero-heap guarantee across all parsing.
 //   2. Complete decoupling: Game item stats are loaded purely from JSON files.
-//   3. Fallback resilience: If disk files are unreachable, provides valid fallbacks.
+//   3. Fallback resilience: Provides valid fallbacks if data is unreachable.
 // =============================================================================
 
 #include "sim/items/item_loader.h"
@@ -84,7 +84,7 @@ const module_metadata_t item_loader_manifest = {
 // =============================================================================
 
 /**
- * Extracts the n-th JSON object slice { ... } from an array [ { ... }, { ... } ]
+ * Extracts n-th JSON object slice { ... } from array [ { ... }, { ... } ]
  * into a caller-supplied null-terminated buffer.
  */
 static bool slice_array_object(const char *arr_start,
@@ -380,6 +380,24 @@ static bool parse_valuable_entry(const char *json_obj, item_def_t *item)
     return true;
 }
 
+static const char *resolve_item_path(const char *rel_path,
+                                     char *out_buf,
+                                     size_t buf_len)
+{
+    if (fs_file_exists(rel_path)) {
+        str_safe_copy(out_buf, rel_path, buf_len);
+        return out_buf;
+    }
+    char alt[256];
+    snprintf(alt, sizeof(alt), "../%s", rel_path);
+    if (fs_file_exists(alt)) {
+        str_safe_copy(out_buf, alt, buf_len);
+        return out_buf;
+    }
+    str_safe_copy(out_buf, rel_path, buf_len);
+    return out_buf;
+}
+
 static size_t load_dataset(const char *filepath,
                            item_type_t item_type,
                            item_def_t *out_catalog,
@@ -389,11 +407,14 @@ static size_t load_dataset(const char *filepath,
     static char s_file_buf[LOADER_FILE_BUF_SIZE];
     static char s_obj_buf[LOADER_OBJ_BUF_SIZE];
 
-    if (!fs_file_exists(filepath)) {
+    char resolved[256];
+    resolve_item_path(filepath, resolved, sizeof(resolved));
+
+    if (!fs_file_exists(resolved)) {
         return 0;
     }
 
-    if (!fs_read_file_contents(filepath, s_file_buf, sizeof(s_file_buf))) {
+    if (!fs_read_file_contents(resolved, s_file_buf, sizeof(s_file_buf))) {
         return 0;
     }
 
@@ -497,6 +518,24 @@ static void apply_fallback_baseline(item_def_t *out_catalog, size_t *out_count)
     rf->data.catalyst.skill_grant = 42;
     rf->data.catalyst.retaliation_element = 1;
 
+    /* Fallback Catalyst: Medusa's Sword */
+    item_def_t *ms = &out_catalog[c++];
+    memset(ms, 0, sizeof(*ms));
+    ms->id = 102;
+    str_safe_copy(ms->code, "MEDUSAS_SWORD", sizeof(ms->code));
+    str_safe_copy(ms->name, "Medusa's Sword", sizeof(ms->name));
+    str_safe_copy(ms->description,
+                  "Ancient blade infusing strikes with stasis.",
+                  sizeof(ms->description));
+    ms->type = ITEM_TYPE_CATALYST;
+    ms->consumable = false;
+    ms->max_stack = 1;
+    ms->data.catalyst.sub_type = CATALYST_TYPE_WEAPON;
+    ms->data.catalyst.slot = EQUIP_SLOT_WEAPON;
+    ms->data.catalyst.atk_bonus = 17;
+    ms->data.catalyst.poise_bonus = 15;
+    ms->data.catalyst.inflicts_state = 11;
+
     /* Fallback Consumable: Sacyran Herb */
     item_def_t *sh = &out_catalog[c++];
     memset(sh, 0, sizeof(*sh));
@@ -541,7 +580,7 @@ bool item_loader_load_catalog(item_def_t *out_catalog,
     total += load_dataset("data/items/valuables.json", ITEM_TYPE_VALUABLE,
                           out_catalog, total, max_entries);
 
-    /* If no files could be read, apply fallback baseline to guarantee resilience */
+    /* If no files could be read, apply fallback baseline for resilience */
     if (total == 0) {
         apply_fallback_baseline(out_catalog, &total);
     }

@@ -1,0 +1,32 @@
+{
+  "subsystem": "sim.dispatch.aliases",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Synonym and shorthand mapping dictionary resolving user tokens to canonical verbs",
+  "aliases": [
+    {"alias": "strike", "canonical": "attack", "default_arg": "cuttatio"},
+    {"alias": "slash", "canonical": "attack", "default_arg": ""},
+    {"alias": "tenebris", "canonical": "attack", "default_arg": "cuttatio"},
+    {"alias": "ward", "canonical": "defend", "default_arg": "barrio"},
+    {"alias": "shield", "canonical": "defend", "default_arg": "barrio"},
+    {"alias": "lux", "canonical": "defend", "default_arg": "barrio"},
+    {"alias": "duo", "canonical": "special", "default_arg": "duo"},
+    {"alias": "balance", "canonical": "special", "default_arg": "duo"},
+    {"alias": "magic", "canonical": "special", "default_arg": "magic"},
+    {"alias": "charm", "canonical": "special", "default_arg": "charm"},
+    {"alias": "go", "canonical": "move", "default_arg": ""},
+    {"alias": "north", "canonical": "move", "default_arg": "north"},
+    {"alias": "south", "canonical": "move", "default_arg": "south"},
+    {"alias": "east", "canonical": "move", "default_arg": "east"},
+    {"alias": "west", "canonical": "move", "default_arg": "west"},
+    {"alias": "n", "canonical": "move", "default_arg": "north"},
+    {"alias": "s", "canonical": "move", "default_arg": "south"},
+    {"alias": "e", "canonical": "move", "default_arg": "east"},
+    {"alias": "w", "canonical": "move", "default_arg": "west"},
+    {"alias": "inv", "canonical": "inventory", "default_arg": ""},
+    {"alias": "item", "canonical": "items", "default_arg": ""},
+    {"alias": "exit", "canonical": "quit", "default_arg": ""},
+    {"alias": "?", "canonical": "help", "default_arg": ""},
+    {"alias": "h", "canonical": "help", "default_arg": ""}
+  ]
+}

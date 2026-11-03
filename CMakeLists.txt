@@ -123,6 +123,10 @@ set(SIM_SOURCES
     src/sim/combat/tactical.c
     src/sim/combat/action_resolve.c
     src/sim/world/world.c
+    src/sim/world/world_topology.c
+    src/sim/world/map_scaler.c
+    src/sim/world/maps.c
+    src/sim/world/world_loader.c
     src/sim/items/items.c
     src/sim/items/item_loader.c
     src/sim/items/relics.c
@@ -130,6 +134,11 @@ set(SIM_SOURCES
     src/sim/items/consumables.c
     src/sim/items/inventory.c
     src/sim/dispatch/dispatcher.c
+    src/sim/dispatch/dispatch_combat.c
+    src/sim/dispatch/dispatch_world.c
+    src/sim/dispatch/dispatch_items.c
+    src/sim/dispatch/dispatch_system.c
+    src/sim/dispatch/dispatch_loader.c
 )
 
 set(SIM_HEADERS
@@ -149,6 +158,11 @@ set(SIM_HEADERS
     include/sim/combat/tactical.h
     include/sim/combat/action_resolve.h
     include/sim/combat/combat.h
+    include/sim/world/map_types.h
+    include/sim/world/map_scaler.h
+    include/sim/world/world_topology.h
+    include/sim/world/maps.h
+    include/sim/world/world_loader.h
     include/sim/world/world.h
     include/sim/items/item_types.h
     include/sim/items/item_loader.h
@@ -157,6 +171,12 @@ set(SIM_HEADERS
     include/sim/items/consumables.h
     include/sim/items/inventory.h
     include/sim/items/items.h
+    include/sim/dispatch/dispatch_types.h
+    include/sim/dispatch/dispatch_combat.h
+    include/sim/dispatch/dispatch_world.h
+    include/sim/dispatch/dispatch_items.h
+    include/sim/dispatch/dispatch_system.h
+    include/sim/dispatch/dispatch_loader.h
     include/sim/dispatch/dispatcher.h
 )
 
@@ -275,9 +295,45 @@ if(BUILD_TESTING)
     target_include_directories(test_debug PRIVATE include)
     target_compile_options(test_debug PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Simulation Combat Subsystem Unit Test
+    add_executable(test_combat
+        tests/unit/test_combat_unit.c
+        ${SIM_SOURCES}
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_combat PRIVATE include)
+    target_compile_options(test_combat PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Simulation Items Subsystem Unit Test
+    add_executable(test_items
+        tests/unit/test_items_unit.c
+        ${SIM_SOURCES}
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_items PRIVATE include)
+    target_compile_options(test_items PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Simulation World Subsystem Unit Test
+    add_executable(test_world
+        tests/unit/test_world_unit.c
+        ${SIM_SOURCES}
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_world PRIVATE include)
+    target_compile_options(test_world PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Simulation Dispatch Subsystem Unit Test
+    add_executable(test_dispatch
+        tests/unit/test_dispatch_unit.c
+        ${SIM_SOURCES}
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_dispatch PRIVATE include)
+    target_compile_options(test_dispatch PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.3: LAYER 0 INTEGRATED UTILITIES HARNESS ]
-    # Mission: Verify cross-subsystem coordination, DAG dependencies, and profiles.
+    # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
+    # Mission: Verify cross-subsystem coordination, DAG dependencies, and pipelines.
     # --------------------------------------------------------------------------
     add_executable(test_utils
         tests/integrated/test_utils.c
@@ -285,6 +341,15 @@ if(BUILD_TESTING)
     )
     target_include_directories(test_utils PRIVATE include)
     target_compile_options(test_utils PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Simulation Cross-Subsystem Integration Harness
+    add_executable(test_sim_integrated
+        tests/integrated/test_sim_integrated.c
+        ${SIM_SOURCES}
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_sim_integrated PRIVATE include)
+    target_compile_options(test_sim_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.4: LAYER 1 SIMULATION SYSTEM HARNESSES ]
@@ -332,13 +397,40 @@ if(BUILD_TESTING)
     add_test(NAME unit_string_test COMMAND test_string)
     add_test(NAME unit_log_test COMMAND test_log)
     add_test(NAME unit_debug_test COMMAND test_debug)
+    add_test(NAME unit_combat_test COMMAND test_combat)
+    add_test(NAME unit_items_test COMMAND test_items)
+    add_test(NAME unit_world_test COMMAND test_world)
+    add_test(NAME unit_dispatch_test COMMAND test_dispatch)
 
     # Integrated Tests (Cross-Subsystem Coordination)
     add_test(NAME integrated_utils_test COMMAND test_utils)
+    add_test(NAME integrated_sim_test COMMAND test_sim_integrated)
 
     # System Tests (Full Simulation Invariants & Scenarios)
     add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
     add_test(NAME system_gameplay_scenarios_test COMMAND test_gameplay_scenarios)
+
+    set_tests_properties(
+        cli_help_test
+        cli_version_test
+        subsystem_audit_test
+        functional_cogs_test
+        unit_math_test
+        unit_data_test
+        unit_time_test
+        unit_string_test
+        unit_log_test
+        unit_debug_test
+        unit_combat_test
+        unit_items_test
+        unit_world_test
+        unit_dispatch_test
+        integrated_utils_test
+        integrated_sim_test
+        system_game_invariants_test
+        system_gameplay_scenarios_test
+        PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
 endif()
 
 # End of CMakeLists.txt

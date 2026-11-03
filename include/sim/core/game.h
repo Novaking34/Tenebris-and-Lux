@@ -134,14 +134,15 @@ void game_loop_cli(player_state_t *state);
 /* --- Debugger State Adaptation & Time-Travel Rewind --- */
 
 /**
- * @brief Converts a player simulation state into Layer 0 decoupled debug fields.
+ * @brief Converts player simulation state into decoupled debug fields.
  */
 void game_state_to_debug_fields(const player_state_t *state, void *out_fields);
 
 /**
- * @brief Restores a player simulation state from Layer 0 decoupled debug fields.
+ * @brief Restores player simulation state from decoupled debug fields.
  */
-void game_state_from_debug_fields(const void *fields, player_state_t *out_state);
+void game_state_from_debug_fields(const void *fields,
+                                  player_state_t *out_state);
 
 /**
  * @brief Captures and records a debugger snapshot from player state.
@@ -180,3 +181,4 @@ int game_run_self_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_CORE_GAME_H */
+

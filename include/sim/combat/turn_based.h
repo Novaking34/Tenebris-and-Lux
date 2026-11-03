@@ -68,7 +68,7 @@ void turn_based_handle_defend(player_state_t *state,
                               size_t msg_len);
 
 /**
- * @brief Resolves offensive strike using Sword of Tenebris and active catalysts.
+ * @brief Resolves offensive strike using Sword of Tenebris & catalysts.
  */
 void turn_based_handle_attack(player_state_t *state,
                               const combat_formulas_t *formulas,
@@ -111,3 +111,4 @@ bool turn_based_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_COMBAT_TURN_BASED_H */
+

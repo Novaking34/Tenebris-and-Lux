@@ -1,0 +1,130 @@
+{
+  "subsystem": "sim.world.maps",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Specific maps across exteriors, interiors, and tactical battle zones",
+  "maps": [
+    {
+      "id": "dio_village_exterior",
+      "map_type": "settlement_exterior",
+      "canonical_name": "Dio Village Square",
+      "environment": "exterior",
+      "dimensions": {"width": 32, "height": 32, "cell_size": 32},
+      "spawn_point": {"x": 16, "y": 28},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 32, "max_y": 32},
+      "description": "The tranquil square of Dio Village with Grandma's cottage to the north and the woods to the east.",
+      "portals": [
+        {"x": 16, "y": 10, "target_map": "grandmas_cottage_interior", "name": "Grandma Magolia's Cottage"},
+        {"x": 31, "y": 16, "target_map": "whispering_woods", "name": "East Trail to Whispering Woods"}
+      ]
+    },
+    {
+      "id": "royal_capital_plaza",
+      "map_type": "settlement_exterior",
+      "canonical_name": "Sacyra Capital Plaza",
+      "environment": "exterior",
+      "dimensions": {"width": 40, "height": 40, "cell_size": 32},
+      "spawn_point": {"x": 20, "y": 36},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 40, "max_y": 40},
+      "description": "The grand stone plaza of the Royal Capital, surrounded by market stalls and the High Citadel.",
+      "portals": [
+        {"x": 20, "y": 4, "target_map": "sacyra_throne_room", "name": "High Throne Gates"}
+      ]
+    },
+    {
+      "id": "frontier_ruins_exterior",
+      "map_type": "settlement_exterior",
+      "canonical_name": "Libiran Frontier Ruins",
+      "environment": "exterior",
+      "dimensions": {"width": 30, "height": 30, "cell_size": 32},
+      "spawn_point": {"x": 15, "y": 26},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 30, "max_y": 30},
+      "description": "Weather-beaten stone colonnades and dusty courier outposts on the edge of Libira.",
+      "portals": []
+    },
+    {
+      "id": "dreamscape_nexus_interior",
+      "map_type": "interior_chamber",
+      "canonical_name": "The Dreamscape Nexus & Room of Sages",
+      "environment": "astral",
+      "dimensions": {"width": 24, "height": 24, "cell_size": 32},
+      "spawn_point": {"x": 12, "y": 20},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 24, "max_y": 24},
+      "description": "An ethereal rotunda where Chrono chronicles history across the astral void.",
+      "portals": [
+        {"x": 12, "y": 23, "target_map": "dio_village_exterior", "name": "Awakening Portal to Dio Village"}
+      ]
+    },
+    {
+      "id": "grandmas_cottage_interior",
+      "map_type": "interior_chamber",
+      "canonical_name": "Grandma Magolia's Hearth",
+      "environment": "interior",
+      "dimensions": {"width": 16, "height": 16, "cell_size": 32},
+      "spawn_point": {"x": 8, "y": 14},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 16, "max_y": 16},
+      "description": "A warm timber hearth scented with dried chamomile, lavender, and Grandma's herbal teas.",
+      "portals": [
+        {"x": 8, "y": 15, "target_map": "dio_village_exterior", "name": "Front Door to Dio Village Square"}
+      ]
+    },
+    {
+      "id": "sacyra_throne_room",
+      "map_type": "interior_chamber",
+      "canonical_name": "The High Throne Room",
+      "environment": "interior",
+      "dimensions": {"width": 24, "height": 30, "cell_size": 32},
+      "spawn_point": {"x": 12, "y": 26},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 24, "max_y": 30},
+      "description": "The solemn throne room of King Jihad, with the veiled planar fissure pulsing beneath the dais.",
+      "portals": [
+        {"x": 12, "y": 29, "target_map": "royal_capital_plaza", "name": "Palace Gates"}
+      ]
+    },
+    {
+      "id": "battle_dreamscape_rift",
+      "map_type": "tactical_grid",
+      "canonical_name": "Tactical Grid: Astral Rift",
+      "environment": "battle_zone",
+      "dimensions": {"width": 12, "height": 12, "cell_size": 48},
+      "spawn_point": {"x": 5, "y": 10},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 12, "max_y": 12},
+      "description": "A 12x12 tactical battlefield suspended over the cosmic abyss with ethereal mist hazards.",
+      "grid_cells": {
+        "player_spawn_zone": [{"x": 4, "y": 10}, {"x": 5, "y": 10}, {"x": 6, "y": 10}],
+        "enemy_spawn_zone": [{"x": 4, "y": 2}, {"x": 5, "y": 2}, {"x": 6, "y": 2}],
+        "hazards": [{"x": 2, "y": 5, "type": "void_mist"}, {"x": 9, "y": 5, "type": "void_mist"}]
+      }
+    },
+    {
+      "id": "battle_whispering_woods",
+      "map_type": "tactical_grid",
+      "canonical_name": "Tactical Grid: Woodland Ambush",
+      "environment": "battle_zone",
+      "dimensions": {"width": 14, "height": 14, "cell_size": 48},
+      "spawn_point": {"x": 6, "y": 12},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 14, "max_y": 14},
+      "description": "A 14x14 tactical clearing shaded by ancient oaks with fallen log cover and flanking paths.",
+      "grid_cells": {
+        "player_spawn_zone": [{"x": 5, "y": 12}, {"x": 6, "y": 12}, {"x": 7, "y": 12}],
+        "enemy_spawn_zone": [{"x": 5, "y": 2}, {"x": 6, "y": 2}, {"x": 7, "y": 2}],
+        "cover": [{"x": 3, "y": 6}, {"x": 4, "y": 6}, {"x": 9, "y": 7}, {"x": 10, "y": 7}]
+      }
+    },
+    {
+      "id": "battle_palace_colonnade",
+      "map_type": "tactical_grid",
+      "canonical_name": "Tactical Grid: Palace Colonnade",
+      "environment": "battle_zone",
+      "dimensions": {"width": 16, "height": 16, "cell_size": 48},
+      "spawn_point": {"x": 8, "y": 14},
+      "camera_clamp": {"min_x": 0, "min_y": 0, "max_x": 16, "max_y": 16},
+      "description": "A 16x16 marble colonnade with high elevation steps leading to the royal dais.",
+      "grid_cells": {
+        "player_spawn_zone": [{"x": 7, "y": 14}, {"x": 8, "y": 14}, {"x": 9, "y": 14}],
+        "enemy_spawn_zone": [{"x": 7, "y": 2}, {"x": 8, "y": 2}, {"x": 9, "y": 2}],
+        "elevation_steps": [{"y": 4, "bonus": 1}, {"y": 3, "bonus": 2}]
+      }
+    }
+  ]
+}

@@ -43,6 +43,8 @@
 // =============================================================================
 
 #include "sim/game.h"
+#include "sim/world/world.h"
+#include "sim/dispatch/dispatcher.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -212,6 +214,58 @@ static void test_spatial_topology_emergence(void)
     printf("  [EMERGE-4] Section 4 passed: Province transitions cleanly emerged without drift.\n");
 }
 
+static void test_dynamic_map_viewport_and_dispatch_invariants(void)
+{
+    printf("  [AXIOM-5] Running Section 5: Dynamic Viewport & Dispatch Invariants...\n");
+    player_state_t state;
+    game_init(&state);
+
+    /* 5.1 Dynamic Viewport Scale and Offset Invariants across resolutions */
+    world_update_viewport(800, 600);
+    const map_viewport_t *vp_800 = world_get_viewport();
+    TEST_ASSERT(vp_800->scale_factor > 1.24f && vp_800->scale_factor < 1.26f,
+                "Viewport scale factor for 800x600 is 1.25");
+    TEST_ASSERT(vp_800->offset_y > 0, "Vertical letterbox offset is positive");
+
+    world_update_viewport(1920, 1080);
+    const map_viewport_t *vp_1080 = world_get_viewport();
+    TEST_ASSERT(vp_1080->scale_factor > 2.99f && vp_1080->scale_factor < 3.01f,
+                "Viewport scale factor for 1920x1080 is 3.0");
+    TEST_ASSERT(vp_1080->offset_x == 0 && vp_1080->offset_y == 0,
+                "1080p exact fit produces zero letterbox offsets");
+
+    /* 5.2 Dispatcher alias resolution determinism */
+    char canonical[32] = {0};
+    char def_arg[64] = {0};
+    dispatcher_resolve_alias("strike", canonical, sizeof(canonical),
+                             def_arg, sizeof(def_arg));
+    TEST_ASSERT(strcmp(canonical, "attack") == 0,
+                "Alias 'strike' resolved to canonical 'attack'");
+    TEST_ASSERT(strcmp(def_arg, "cuttatio") == 0,
+                "Alias 'strike' assigned default argument 'cuttatio'");
+
+    dispatcher_resolve_alias("ward", canonical, sizeof(canonical),
+                             def_arg, sizeof(def_arg));
+    TEST_ASSERT(strcmp(canonical, "defend") == 0,
+                "Alias 'ward' resolved to canonical 'defend'");
+    TEST_ASSERT(strcmp(def_arg, "barrio") == 0,
+                "Alias 'ward' assigned default argument 'barrio'");
+
+    /* 5.3 Dispatcher domain classification bounds */
+    TEST_ASSERT(dispatcher_classify_verb("attack") == DOMAIN_COMBAT,
+                "attack is DOMAIN_COMBAT");
+    TEST_ASSERT(dispatcher_classify_verb("move") == DOMAIN_WORLD,
+                "move is DOMAIN_WORLD");
+    TEST_ASSERT(dispatcher_classify_verb("items") == DOMAIN_ITEMS,
+                "items is DOMAIN_ITEMS");
+    TEST_ASSERT(dispatcher_classify_verb("status") == DOMAIN_SYSTEM,
+                "status is DOMAIN_SYSTEM");
+    TEST_ASSERT(dispatcher_classify_verb("non_existent_verb") == DOMAIN_UNKNOWN,
+                "non_existent_verb is DOMAIN_UNKNOWN");
+
+    printf("  [AXIOM-5] Section 5 passed: Viewport scaling & dispatch routing invariants verified.\n");
+}
+
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // =============================================================================
@@ -232,9 +286,10 @@ int main(void)
     test_diagnostic_tripwire_manifests();
     test_relic_and_moral_axioms();
     test_spatial_topology_emergence();
+    test_dynamic_map_viewport_and_dispatch_invariants();
 
     printf("============================================================\n");
-    printf("ALL SYSTEM INVARIANT TESTS PASSED (4/4 Sections Verified)\n");
+    printf("ALL SYSTEM INVARIANT TESTS PASSED (5/5 Sections Verified)\n");
     printf("============================================================\n");
     return 0;
 }

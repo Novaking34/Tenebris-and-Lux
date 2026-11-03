@@ -1,0 +1,224 @@
+{
+  "subsystem": "sim.dispatch.commands",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Exhaustive command dictionary mapping verbs to domain processors",
+  "commands": [
+    {
+      "verb": "defend",
+      "domain": "combat",
+      "min_args": 0,
+      "max_args": 1,
+      "usage": "defend [barrio]",
+      "description": "Raise Shield of Lux to guard; append 'barrio' for kinetic deflection (-25% dmg, stagger)"
+    },
+    {
+      "verb": "barrio",
+      "domain": "combat",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "barrio",
+      "description": "Direct invocation of Lux Barrio warding barrier"
+    },
+    {
+      "verb": "attack",
+      "domain": "combat",
+      "min_args": 0,
+      "max_args": 1,
+      "usage": "attack [cuttatio]",
+      "description": "Strike with Sword of Tenebris; append 'cuttatio' for abyssal splash cleave"
+    },
+    {
+      "verb": "cuttatio",
+      "domain": "combat",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "cuttatio",
+      "description": "Direct execution of Cuttatio Tenebris abyssal severance"
+    },
+    {
+      "verb": "special",
+      "domain": "combat",
+      "min_args": 1,
+      "max_args": 2,
+      "usage": "special <skill_name>",
+      "description": "Execute specialized technique: magic, ward, charm, or duo"
+    },
+    {
+      "verb": "stance",
+      "domain": "combat",
+      "min_args": 1,
+      "max_args": 1,
+      "usage": "stance <warding|striking|equilibrium|neutral>",
+      "description": "Shift combat posture across the 4 canonical relic stances"
+    },
+    {
+      "verb": "mode",
+      "domain": "combat",
+      "min_args": 1,
+      "max_args": 1,
+      "usage": "mode <turn|tact|act>",
+      "description": "Switch active combat paradigm (Turn-based, Tactical grid, Action)"
+    },
+    {
+      "verb": "flee",
+      "domain": "combat",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "flee",
+      "description": "Disengage from active combat encounter"
+    },
+    {
+      "verb": "move",
+      "domain": "world",
+      "min_args": 1,
+      "max_args": 1,
+      "usage": "move <north|south|east|west|awaken>",
+      "description": "Traverse directional provincial paths or astral portals"
+    },
+    {
+      "verb": "look",
+      "domain": "world",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "look",
+      "description": "Survey the active provincial surroundings, lore, and threats"
+    },
+    {
+      "verb": "map",
+      "domain": "world",
+      "min_args": 0,
+      "max_args": 1,
+      "usage": "map [viewport]",
+      "description": "Display topological realm graph and active map coordinates"
+    },
+    {
+      "verb": "travel",
+      "domain": "world",
+      "min_args": 1,
+      "max_args": 1,
+      "usage": "travel <province_id|name>",
+      "description": "Travel across connected provinces consuming vigor"
+    },
+    {
+      "verb": "items",
+      "domain": "items",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "items",
+      "description": "Display player inventory pouch, capacity, and gold"
+    },
+    {
+      "verb": "inventory",
+      "domain": "items",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "inventory",
+      "description": "Inspect player inventory pouch"
+    },
+    {
+      "verb": "use",
+      "domain": "items",
+      "min_args": 1,
+      "max_args": 2,
+      "usage": "use <item_id|item_name>",
+      "description": "Consume restorative draught or activate diegetic relic"
+    },
+    {
+      "verb": "inspect",
+      "domain": "items",
+      "min_args": 1,
+      "max_args": 2,
+      "usage": "inspect <item_id|item_name>",
+      "description": "Appraise detailed properties of an item, catalyst, or relic"
+    },
+    {
+      "verb": "equip",
+      "domain": "items",
+      "min_args": 1,
+      "max_args": 2,
+      "usage": "equip <catalyst_name>",
+      "description": "Bind equipment catalyst or armament to protagonist"
+    },
+    {
+      "verb": "clock",
+      "domain": "items",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "clock",
+      "description": "Consult Grandma's Watch for diurnal monotonic time"
+    },
+    {
+      "verb": "morality",
+      "domain": "items",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "morality",
+      "description": "Consult Compass of Morality for party moral sway"
+    },
+    {
+      "verb": "help",
+      "domain": "system",
+      "min_args": 0,
+      "max_args": 1,
+      "usage": "help [command]",
+      "description": "Display master tactical manual and available commands"
+    },
+    {
+      "verb": "status",
+      "domain": "system",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "status",
+      "description": "Display protagonist vitals, relic charge, attributes, and buffs"
+    },
+    {
+      "verb": "name",
+      "domain": "system",
+      "min_args": 1,
+      "max_args": 1,
+      "usage": "name <hero_name>",
+      "description": "Assign custom protagonist designation (defaults to Elijah)"
+    },
+    {
+      "verb": "quit",
+      "domain": "system",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "quit",
+      "description": "Sheath armaments and terminate current session"
+    },
+    {
+      "verb": "debug",
+      "domain": "system",
+      "min_args": 0,
+      "max_args": 1,
+      "usage": "debug [on|off]",
+      "description": "Toggle interactive state debugger telemetry"
+    },
+    {
+      "verb": "snap",
+      "domain": "system",
+      "min_args": 0,
+      "max_args": 1,
+      "usage": "snap [tag]",
+      "description": "Capture zero-heap simulation state snapshot"
+    },
+    {
+      "verb": "rewind",
+      "domain": "system",
+      "min_args": 1,
+      "max_args": 1,
+      "usage": "rewind <index>",
+      "description": "Time-travel rewind to a previous state snapshot"
+    },
+    {
+      "verb": "history",
+      "domain": "system",
+      "min_args": 0,
+      "max_args": 0,
+      "usage": "history",
+      "description": "Display ring buffer of captured state snapshots"
+    }
+  ]
+}

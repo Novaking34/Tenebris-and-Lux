@@ -57,9 +57,9 @@ extern const module_metadata_t action_resolve_manifest;
 // =============================================================================
 
 /**
- * @brief Checks if a player's button press falls within the active parry window.
+ * @brief Checks if player button press falls within active parry window.
  *
- * @param[in]  delta_ms       Milliseconds elapsed between threat swing and input.
+ * @param[in]  delta_ms       Elapsed ms between threat swing and input.
  * @param[in]  window_ms      Allowed parry window duration (typically 200ms).
  * @param[out] out_is_perfect Pointer receiving true if within 80ms sweet-spot.
  *
@@ -109,3 +109,4 @@ bool action_resolve_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_COMBAT_ACTION_RESOLVE_H */
+

@@ -15,8 +15,8 @@
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Ontological type definitions, battle mode paradigms (Traditional Turn-Based,
-//   Tactical Grid TRPG, Action Skirmish), stance structures, and combat formula
+//   Ontological type definitions, battle mode paradigms (Turn-Based,
+//   Tactical Grid TRPG, Action Skirmish), stance structures, and formulas
 //   parameter sets for the data-driven combat engine.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
@@ -61,7 +61,7 @@ typedef enum {
     BATTLE_MODE_NONE             = 0,
     BATTLE_MODE_TURN_BASED       = 1, /**< Classic JRPG turn/command-driven. */
     BATTLE_MODE_TACTICAL         = 2, /**< Grid-based Strategy RPG (TRPG). */
-    BATTLE_MODE_ACTION           = 3  /**< Cinematic real-time action resolution. */
+    BATTLE_MODE_ACTION           = 3  /**< Cinematic real-time action. */
 } battle_mode_t;
 
 /**
@@ -180,3 +180,4 @@ static inline bool battle_mode_is_valid(battle_mode_t mode) {
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_COMBAT_COMBAT_TYPES_H */
+

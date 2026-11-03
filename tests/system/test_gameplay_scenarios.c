@@ -44,6 +44,8 @@
 #define _POSIX_C_SOURCE 199309L
 
 #include "sim/game.h"
+#include "sim/combat/combat.h"
+#include "sim/world/world.h"
 #include "util/time/time_utils.h"
 
 #include <assert.h>
@@ -118,6 +120,45 @@ static void test_scenario_righteous_warden(void)
     TEST_ASSERT(striker_state.foes_vanquished == 1, "Foe recorded as vanquished");
 
     printf("  [PASS-1] Section 1 passed unconditionally.\n");
+}
+
+static void test_scenario_tactical_viewport_and_multi_region(void)
+{
+    printf("  [PASS-1b] Running Section 1b: Tactical Viewport & Multi-Region Scenario...\n");
+    player_state_t state;
+    game_init(&state);
+
+    /* 1. Awaken from Dreamscape to Dio Village */
+    game_process_command(&state, "move north", NULL, 0);
+    TEST_ASSERT(state.location == LOC_DIO_VILLAGE, "In Dio Village");
+
+    /* 2. Traverse into Whispering Woods, spawning threat */
+    game_process_command(&state, "move north", NULL, 0);
+    TEST_ASSERT(state.location == LOC_WHISPERING_WOODS, "In Whispering Woods");
+    TEST_ASSERT(state.threat_hp > 0, "Threat spawned");
+
+    /* 3. Switch combat mode to tactical grid */
+    game_process_command(&state, "mode tact", NULL, 0);
+    TEST_ASSERT(combat_get_battle_mode() == BATTLE_MODE_TACTICAL,
+                "Tactical grid mode active");
+
+    /* 4. Strike in tactical mode, confirm damage */
+    int hp_before = state.threat_hp;
+    game_process_command(&state, "strike", NULL, 0);
+    TEST_ASSERT(state.threat_hp < hp_before, "Tactical strike damaged threat");
+
+    /* 5. Dynamically scale viewport to 1080p, verify simulation unaltered */
+    world_update_viewport(1920, 1080);
+    const map_viewport_t *vp = world_get_viewport();
+    TEST_ASSERT(vp->scale_factor > 2.99f && vp->scale_factor < 3.01f,
+                "Viewport dynamically updated to 3.0x scale");
+
+    /* 6. Switch back to turn-based mode */
+    game_process_command(&state, "mode turn", NULL, 0);
+    TEST_ASSERT(combat_get_battle_mode() == BATTLE_MODE_TURN_BASED,
+                "Restored turn-based mode");
+
+    printf("  [PASS-1b] Section 1b passed: Multi-region tactical scenario verified.\n");
 }
 
 // -----------------------------------------------------------------------------
@@ -239,6 +280,7 @@ int main(void)
     printf("============================================================\n");
 
     test_scenario_righteous_warden();
+    test_scenario_tactical_viewport_and_multi_region();
     test_softlock_and_stress_invariance();
     test_scenario_deterministic_golden_replay();
     test_simulation_latency_and_headroom();
