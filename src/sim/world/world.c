@@ -6,298 +6,306 @@
 // @file          world.c
 // @id            sim.engine.world
 // @layer         Layer 1: Simulation Engine
-// @version       1.3.0
-// @interface_rev Rev 4
+// @subsystem     World Navigation & Dynamic Map Strata (sim/world)
+// @version       2.0.0
+// @interface_rev Rev 5
 // @date          2026-11-03
 // @updated       2026-11-03
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Topographical world map implementation, province lore strings, movement
-//   routing across the Kingdom of Sacyra and The Dreamscape, and encounter
-//   triggers grounded in the 2017-2018 demo baseline and macro-lore.
-//   Enforces nocturnal gating for Dreamscape traversal via the Dream Compass.
+//   Master World Orchestrator coordinating provincial topology, dynamic map
+//   viewport scaling, multi-tier maps (Overworld, Tactical Grids, Town
+//   Exteriors, Interior Chambers), and directional movement routing.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: sim/world/world.h, sim/items/items.h,
-//                            util/log/log.h, util/string/string_utils.h
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation)
-//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state transitions)
-//   - Latency Budget:        < 15 microseconds per movement action
+//   - Upstream Dependencies: sim/world/world.h, util/manifest.h
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation).
+//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant state evaluation).
+//   - Latency Budget:        < 15 microseconds per spatial operation.
 //
 // AXIOMATIC INVARIANTS:
 //   1. Location bounds strictly bounded: 0 <= location < LOC_COUNT.
-//   2. Topological routing graph is deterministic and bi-directional.
-//   3. Impassable paths emit warnings and leave state untouched.
-//   4. Encounters trigger deterministically on entry conditions.
+//   2. Dynamic viewport preserves aspect ratio via isotropic scaling.
+//   3. Camera clamp enforces bounds within active map dimensions.
 // =============================================================================
 
 // =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 1 (Simulation Engine) | Machine: Topographical World Core
+// BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
 #include "sim/world/world.h"
-#include "sim/items/items.h"
 #include "util/log/log.h"
 #include "util/string/string_utils.h"
-
-#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-
-static const char *s_location_names[LOC_COUNT] = {
-    "The Dreamscape",
-    "Dio Village",
-    "Whispering Woods",
-    "The Sacyran Marches",
-    "The Royal Capital",
-    "Kingdom of Libira"
-};
-
-static const char *s_location_descriptions[LOC_COUNT] = {
-    "The ethereal realm of trials where the illusion of the dream shatters "
-    "and Dream Eaters gather under the command of The Dark Lord.",
-    "Ancestral pastoral hamlet in the Sacyran woodlands. Grandma Magolia's "
-    "hearth, Eric's timber yard, and the starting redoubt of the journey.",
-    "Dense ancient forest enveloping Dio Village. Whispering foliage "
-    "conceals predatory Magos, outlaws, and the shrine to Goddess Lyri.",
-    "The windswept frontier marches of the Kingdom of Sacyra, leading "
-    "toward the Royal Court of King Jihad.",
-    "The chivalric crown seat of Sacyra. Site of the High Throne, the open "
-    "planar wound of The King's Curse, and King Jihad's treason.",
-    "Remote border territory across the continental chasm. The homeland of "
-    "Usuru and the historical spark of 'The Quiet Complaint'."
-};
-
-static const int s_location_threats[LOC_COUNT] = {
-    4, // Dreamscape: High ethereal threat
-    0, // Dio Village: Peaceful pastoral hamlet
-    1, // Whispering Woods: Low-medium fauna
-    2, // Sacyra Marches: Military patrols
-    3, // Royal Capital: High political / guard conflict
-    3  // Kingdom of Libira: Arid border terrain
-};
-
-static const char *const s_world_invariants[4] = {
-    "Location indices strictly bounded: [0, LOC_COUNT)",
-    "Provincial transition graph is bi-directionally consistent",
-    "Invalid headings leave state unchanged with zero side effects",
-    "Encounter triggers set enemy vigor deterministically"
-};
 
 const module_metadata_t world_manifest = {
     "sim.engine.world",
     "world.h",
     LAYER_1_SIMULATION,
-    { 1, 3, 0 },
-    4,                          // interface_rev
-    "2026-11-03",               // last_updated
-    "Topographical province graph, lore chronicle, and traversal routing",
-    2,                          // dependency_count
-    { "core.util.manifest", "core.util.log", NULL, NULL },
-    ALLOC_ZERO_HEAP,            // alloc_policy
-    CONCURRENCY_REENTRANT,      // concurrency
-    15,                         // max_budget_us
+    { 2, 0, 0 },
+    5,
+    "2026-11-03",
+    "World orchestrator, dynamic map scaler, topology, and map catalogs",
+    3,
+    { "core.util.math", "core.util.string", "core.util.log", NULL },
+    ALLOC_ZERO_HEAP,
+    CONCURRENCY_REENTRANT,
+    25,
     4,
     {
-        s_world_invariants[0],
-        s_world_invariants[1],
-        s_world_invariants[2],
-        s_world_invariants[3]
+        "Location bounds strictly bounded: 0 <= location < LOC_COUNT",
+        "Dynamic viewport preserves aspect ratio via isotropic scaling",
+        "Camera clamp enforces bounds within active map dimensions",
+        "Provincial navigation graph is deterministic and bi-directional"
     },
     world_preflight
 };
 
+static const map_def_t *s_active_map = NULL;
+static map_camera_t     s_camera = {0, 0, 0, 0};
+static map_viewport_t   s_viewport = {640, 360, 640, 360, 1.0f, 0, 0};
+static bool             s_initialized = false;
+
+static void ensure_world_initialized(void)
+{
+    if (!s_initialized) {
+        s_active_map = maps_get_by_id("dio_village_exterior");
+        map_scaler_init_viewport(&s_viewport, 640, 360, 640, 360);
+        if (s_active_map) {
+            s_camera.target_x = s_active_map->spawn_x *
+                                (int32_t)s_active_map->dimensions.cell_size_px;
+            s_camera.target_y = s_active_map->spawn_y *
+                                (int32_t)s_active_map->dimensions.cell_size_px;
+            s_camera.cam_x = s_camera.target_x -
+                             (int32_t)(s_viewport.target_view_w / 2);
+            s_camera.cam_y = s_camera.target_y -
+                             (int32_t)(s_viewport.target_view_h / 2);
+            map_scaler_clamp_camera(&s_camera, &s_active_map->dimensions,
+                                    &s_viewport);
+        }
+        s_initialized = true;
+    }
+}
+
 // =============================================================================
-// BLOCK 3: BODY BLOCK / CORE LOGIC
-// Stratum: Layer 1 (Simulation Engine) | Machine: Topographical World Core
+// BLOCK 3: BODY BLOCK / API IMPLEMENTATIONS
 // =============================================================================
 
 const char *world_get_location_name(location_id_t loc)
 {
-    if (loc >= 0 && loc < LOC_COUNT) {
-        return s_location_names[loc];
-    }
-    return "Uncharted Realm";
+    return world_topology_get_name(loc);
 }
 
 const char *world_get_location_desc(location_id_t loc)
 {
-    if (loc >= 0 && loc < LOC_COUNT) {
-        return s_location_descriptions[loc];
-    }
-    return "Gloom obscures the contours of the land.";
+    return world_topology_get_desc(loc);
 }
 
 int world_get_threat_level(location_id_t loc)
 {
-    if (loc >= 0 && loc < LOC_COUNT) {
-        return s_location_threats[loc];
+    return world_topology_get_threat(loc);
+}
+
+const map_def_t *world_get_active_map(void)
+{
+    ensure_world_initialized();
+    return s_active_map;
+}
+
+bool world_set_active_map_by_id(const char *map_id)
+{
+    ensure_world_initialized();
+    const map_def_t *found = maps_get_by_id(map_id);
+    if (!found) {
+        return false;
     }
-    return 0;
+    s_active_map = found;
+    s_camera.target_x = s_active_map->spawn_x *
+                        (int32_t)s_active_map->dimensions.cell_size_px;
+    s_camera.target_y = s_active_map->spawn_y *
+                        (int32_t)s_active_map->dimensions.cell_size_px;
+    s_camera.cam_x = s_camera.target_x -
+                     (int32_t)(s_viewport.target_view_w / 2);
+    s_camera.cam_y = s_camera.target_y -
+                     (int32_t)(s_viewport.target_view_h / 2);
+    map_scaler_clamp_camera(&s_camera, &s_active_map->dimensions, &s_viewport);
+    return true;
+}
+
+const map_camera_t *world_get_camera(void)
+{
+    ensure_world_initialized();
+    return &s_camera;
+}
+
+const map_viewport_t *world_get_viewport(void)
+{
+    ensure_world_initialized();
+    return &s_viewport;
+}
+
+void world_update_viewport(uint32_t screen_w, uint32_t screen_h)
+{
+    ensure_world_initialized();
+    map_scaler_init_viewport(&s_viewport, screen_w, screen_h, 640, 360);
+    if (s_active_map) {
+        map_scaler_clamp_camera(&s_camera, &s_active_map->dimensions,
+                                &s_viewport);
+    }
+}
+
+bool world_move_protagonist(player_state_t *state,
+                            int32_t delta_x, int32_t delta_y,
+                            char *out_msg, size_t msg_len)
+{
+    ensure_world_initialized();
+    if (!state || !s_active_map) {
+        return false;
+    }
+
+    int32_t step_px = (int32_t)s_active_map->dimensions.cell_size_px;
+    s_camera.target_x += delta_x * step_px;
+    s_camera.target_y += delta_y * step_px;
+
+    /* Center camera on target */
+    s_camera.cam_x = s_camera.target_x -
+                     (int32_t)(s_viewport.target_view_w / 2);
+    s_camera.cam_y = s_camera.target_y -
+                     (int32_t)(s_viewport.target_view_h / 2);
+    map_scaler_clamp_camera(&s_camera, &s_active_map->dimensions, &s_viewport);
+
+    if (out_msg) {
+        snprintf(out_msg, msg_len,
+                 "Traversed grid on '%s' to (%d, %d). Camera centered.",
+                 s_active_map->canonical_name,
+                 s_camera.target_x / step_px,
+                 s_camera.target_y / step_px);
+    }
+    return true;
 }
 
 bool world_handle_move(player_state_t *state, const char *direction,
                        char *out_msg, size_t msg_len)
 {
-    if (state == NULL) {
+    if (state == NULL || direction == NULL) {
         return false;
     }
 
-    if (direction == NULL || strlen(direction) == 0) {
+    ensure_world_initialized();
+    location_id_t target = world_topology_resolve_direction(state->location,
+                                                           direction);
+    if (target == LOC_COUNT) {
         if (out_msg) {
             snprintf(out_msg, msg_len,
-                     "Specify a direction (north, south, east, west, awaken).");
+                     "You cannot travel '%s' from %s. Path is blocked.",
+                     direction, world_get_location_name(state->location));
         }
-        printf("Travel where? Specify a direction (e.g. 'move north').\n");
         return false;
     }
 
-    location_id_t next_loc = state->location;
-    char dir = (char)tolower((unsigned char)direction[0]);
-
-    switch (state->location) {
-    case LOC_THE_DREAMSCAPE:
-        if (dir == 'n' || dir == 'a') {
-            next_loc = LOC_DIO_VILLAGE;
-        }
-        break;
-    case LOC_DIO_VILLAGE:
-        if (dir == 's' || dir == 'd') {
-            next_loc = LOC_THE_DREAMSCAPE;
-        } else if (dir == 'n') {
-            next_loc = LOC_WHISPERING_WOODS;
-        }
-        break;
-    case LOC_WHISPERING_WOODS:
-        if (dir == 's') {
-            next_loc = LOC_DIO_VILLAGE;
-        } else if (dir == 'e' || dir == 'n') {
-            next_loc = LOC_SACYRA_MARCHES;
-        }
-        break;
-    case LOC_SACYRA_MARCHES:
-        if (dir == 'w' || dir == 's') {
-            next_loc = LOC_WHISPERING_WOODS;
-        } else if (dir == 'n') {
-            next_loc = LOC_ROYAL_CAPITAL;
-        }
-        break;
-    case LOC_ROYAL_CAPITAL:
-        if (dir == 's') {
-            next_loc = LOC_SACYRA_MARCHES;
-        } else if (dir == 'e') {
-            next_loc = LOC_KINGDOM_OF_LIBIRA;
-        }
-        break;
-    case LOC_KINGDOM_OF_LIBIRA:
-        if (dir == 'w') {
-            next_loc = LOC_ROYAL_CAPITAL;
-        }
-        break;
-    default:
-        break;
-    }
-
-    if (next_loc == state->location) {
+    char block_reason[128] = {0};
+    if (!world_topology_can_traverse(state->location, target, false,
+                                     state->has_dream_compass,
+                                     block_reason, sizeof(block_reason))) {
         if (out_msg) {
-            snprintf(out_msg, msg_len, "Path blocked or impassable in that direction.");
+            str_safe_copy(out_msg, block_reason, msg_len);
         }
-        printf("The path is impassable or contested in that direction.\n");
-
-        LOG_WARN(
-            LOG_CAT_EVENT,
-            state->name,
-            log_percent_to_grade(state->moral_sway),
-            "Movement blocked or impassable toward direction: '%s'.",
-            direction
-        );
         return false;
     }
 
-    state->location = next_loc;
+    location_id_t prev = state->location;
+    state->location = target;
 
-    /* Encounter Triggers Grounded in Authentic Lore & Baseline */
-    if (state->location == LOC_WHISPERING_WOODS && state->foes_vanquished <= 1) {
-        str_safe_copy(state->threat_name, "Woodland Mago", sizeof(state->threat_name));
-        state->threat_hp = 60;
-        state->threat_max_hp = 60;
+    /* Switch active map to match new province */
+    const map_def_t *new_map = maps_get_for_province(target);
+    if (new_map) {
+        s_active_map = new_map;
+        s_camera.target_x = s_active_map->spawn_x *
+                            (int32_t)s_active_map->dimensions.cell_size_px;
+        s_camera.target_y = s_active_map->spawn_y *
+                            (int32_t)s_active_map->dimensions.cell_size_px;
+        s_camera.cam_x = s_camera.target_x -
+                         (int32_t)(s_viewport.target_view_w / 2);
+        s_camera.cam_y = s_camera.target_y -
+                         (int32_t)(s_viewport.target_view_h / 2);
+        map_scaler_clamp_camera(&s_camera, &s_active_map->dimensions,
+                                &s_viewport);
+    }
+
+    /* Spawn provincial encounters */
+    if (target == LOC_WHISPERING_WOODS && state->threat_hp <= 0) {
+        str_safe_copy(state->threat_name, "ShadowStalker",
+                      sizeof(state->threat_name));
+        state->threat_hp = 50;
+        state->threat_max_hp = 50;
         state->threat_def = 10;
         state->threat_mdf = 12;
-        state->threat_surrounding_hp = 40;
-    } else if (state->location == LOC_SACYRA_MARCHES && state->threat_hp == 0) {
-        str_safe_copy(state->threat_name, "Shadow Scout", sizeof(state->threat_name));
-        state->threat_hp = 110;
-        state->threat_max_hp = 110;
-        state->threat_def = 18;
-        state->threat_mdf = 14;
-        state->threat_surrounding_hp = 80;
-    } else if (state->location == LOC_ROYAL_CAPITAL && state->threat_hp == 0) {
-        str_safe_copy(state->threat_name, "Corrupt Royal Guard", sizeof(state->threat_name));
-        state->threat_hp = 140;
-        state->threat_max_hp = 140;
-        state->threat_def = 24;
-        state->threat_mdf = 16;
-        state->threat_surrounding_hp = 90;
+        state->threat_surrounding_hp = 15;
+    } else if (target == LOC_THE_DREAMSCAPE && state->threat_hp <= 0) {
+        str_safe_copy(state->threat_name, "Dream Eater",
+                      sizeof(state->threat_name));
+        state->threat_hp = 35;
+        state->threat_max_hp = 35;
+        state->threat_def = 8;
+        state->threat_mdf = 10;
+        state->threat_surrounding_hp = 10;
     }
-
-    if (out_msg) {
-        snprintf(out_msg, msg_len, "Traversed into %s.",
-                 world_get_location_name(state->location));
-    }
-
-    printf("\nYou journey forward across the realm...\n\n[%s]\n%s\n\n",
-           world_get_location_name(state->location),
-           world_get_location_desc(state->location));
 
     LOG_INFO(
-        LOG_CAT_EVENT,
-        state->name,
+        LOG_CAT_LOG,
+        "World",
         log_percent_to_grade(state->moral_sway),
-        "Journeyed into realm '%s' (Threat: %d).",
-        world_get_location_name(state->location),
-        world_get_threat_level(state->location)
+        "Protagonist moved: %s -> %s.",
+        world_get_location_name(prev),
+        world_get_location_name(target)
     );
 
+    if (out_msg) {
+        snprintf(out_msg, msg_len,
+                 "You journeyed to %s. %s",
+                 world_get_location_name(target),
+                 world_get_location_desc(target));
+    }
     return true;
 }
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 1 (Simulation Engine) | Machine: Topographical World Core
 // =============================================================================
 
 diag_result_t world_preflight(void)
 {
-    diag_result_t res;
-    res.subsystem = world_manifest.module_id;
-    res.check_name = "Topographical World Names & Descriptions";
-    res.passed = true;
-    res.severity = SEVERITY_PASS;
-    res.details = "All provincial locations verified with valid lore.";
+    diag_result_t res = {
+        true,
+        SEVERITY_PASS,
+        "sim.engine.world",
+        "world.c",
+        "World orchestrator, scaler, topology, and map catalogs verified."
+    };
 
-    for (int i = 0; i < LOC_COUNT; i++) {
-        const char *name = world_get_location_name((location_id_t)i);
-        const char *desc = world_get_location_desc((location_id_t)i);
-
-        if (name == NULL || strlen(name) == 0) {
-            res.passed = false;
-            res.severity = SEVERITY_FATAL;
-            res.details = "Location name is missing or empty.";
-            return res;
-        }
-        if (desc == NULL || strlen(desc) == 0) {
-            res.passed = false;
-            res.severity = SEVERITY_FATAL;
-            res.details = "Location description is missing or empty.";
-            return res;
-        }
+    diag_result_t scaler_res = map_scaler_preflight();
+    if (!scaler_res.passed) {
+        return scaler_res;
     }
+
+    diag_result_t topo_res = world_topology_preflight();
+    if (!topo_res.passed) {
+        return topo_res;
+    }
+
+    diag_result_t maps_res = maps_preflight();
+    if (!maps_res.passed) {
+        return maps_res;
+    }
+
+    diag_result_t loader_res = world_loader_preflight();
+    if (loader_res.severity == SEVERITY_CRITICAL ||
+        loader_res.severity == SEVERITY_FATAL) {
+        return loader_res;
+    }
+
     return res;
 }
-
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================

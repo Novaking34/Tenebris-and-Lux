@@ -113,7 +113,7 @@ typedef enum {
     CONSUMABLE_TYPE_RESTORATIVE = 1,  /**< Restores HP or resonance. */
     CONSUMABLE_TYPE_CLEANSE     = 2,  /**< Cures negative tactical states. */
     CONSUMABLE_TYPE_ELIXIR      = 3,  /**< Advanced tonic / edge recovery. */
-    CONSUMABLE_TYPE_HARMONIC    = 4,  /**< Dual-phase light/shadow restorative. */
+    CONSUMABLE_TYPE_HARMONIC    = 4,  /**< Dual-phase restorative brew. */
     CONSUMABLE_TYPE_REVIVAL     = 5   /**< Resurrects incapacitated ally. */
 } consumable_type_t;
 
@@ -239,3 +239,4 @@ static inline bool item_is_valid_id(uint32_t id) {
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_ITEMS_ITEM_TYPES_H */
+

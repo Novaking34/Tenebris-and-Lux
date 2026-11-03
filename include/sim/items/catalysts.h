@@ -75,7 +75,7 @@ bool catalysts_apply_stats(const item_def_t *catalyst,
  * @brief Checks if the catalyst triggers elemental retaliation when struck.
  *
  * @param[in]  catalyst    Pointer to catalyst definition.
- * @param[out] out_element Pointer receiving retaliation element (1: fire, etc.).
+ * @param[out] out_element Pointer receiving retaliation element (1: fire).
  *
  * @return true if retaliation is triggered; false otherwise.
  */
@@ -126,3 +126,4 @@ bool catalysts_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_ITEMS_CATALYSTS_H */
+

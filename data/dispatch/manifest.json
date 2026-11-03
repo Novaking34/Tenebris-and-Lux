@@ -1,0 +1,11 @@
+{
+  "subsystem": "sim.dispatch",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Command dictionary, alias resolution table, and domain routing rules for the Master Dispatcher Orchestrator",
+  "data_files": [
+    "commands.json",
+    "aliases.json",
+    "routes.json"
+  ]
+}

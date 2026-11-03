@@ -16,8 +16,8 @@
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Zero-heap data loader for the combat mechanics subsystem. Deserializes
-//   combat formula balance parameters and stance definitions from
-//   data/combat/formulas.json and data/combat/stances.json into runtime structs.
+//   combat formula balance parameters and stance definitions from data files
+//   (data/combat/formulas.json and stances.json) into runtime structs.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies:
@@ -26,12 +26,12 @@
 //       util/data/json_utils.h
 //       util/manifest.h
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap allocations).
-//   - Concurrency / Safety:  REENTRANT_PURE (Mutates caller destination buffers).
+//   - Concurrency / Safety:  REENTRANT_PURE (Mutates caller destination buff).
 //
 // AXIOMATIC INVARIANTS:
 //   1. Zero heap: Parsing strictly utilizes stack/caller buffers.
 //   2. Complete decoupling: Combat tuning is decoupled from engine source code.
-//   3. Resilience: Verified fallback parameters applied if data files are missing.
+//   3. Resilience: Verified fallback applied if data files are missing.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_SIM_COMBAT_COMBAT_LOADER_H
@@ -58,7 +58,7 @@ extern const module_metadata_t combat_loader_manifest;
 // =============================================================================
 
 /**
- * @brief Loads combat formula balance parameters from data/combat/formulas.json.
+ * @brief Loads combat formula parameters from data/combat/formulas.json.
  *
  * @param[out] out_formulas Pointer to destination formula structure.
  *
@@ -99,3 +99,4 @@ bool combat_loader_audit(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_COMBAT_COMBAT_LOADER_H */
+

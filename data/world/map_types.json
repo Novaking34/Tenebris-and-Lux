@@ -1,0 +1,63 @@
+{
+  "subsystem": "sim.world.map_types",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Taxonomy of map structures unbound from RPG Maker tile limitations",
+  "map_types": [
+    {
+      "id": "overworld",
+      "name": "Provincial Overworld",
+      "type_code": 0,
+      "description": "Macro-scale continental topology connecting provinces and celestial realms",
+      "coordinate_system": "topological_nodes",
+      "default_tile_size": 64,
+      "scaling_policy": "isotropic_fit",
+      "has_elevation": false,
+      "environment": "exterior"
+    },
+    {
+      "id": "tactical_grid",
+      "name": "Tactical Battle Grid",
+      "type_code": 1,
+      "description": "Deterministic grid for TRPG and LeTBS positioning, flanking, and terrain buffs",
+      "coordinate_system": "cartesian_cells",
+      "default_tile_size": 48,
+      "scaling_policy": "fixed_grid_centered",
+      "has_elevation": true,
+      "environment": "battle_zone"
+    },
+    {
+      "id": "settlement_exterior",
+      "name": "Settlement Exterior",
+      "type_code": 2,
+      "description": "Open-air village, town plazas, roads, and market squares with diurnal states",
+      "coordinate_system": "bounded_cartesian",
+      "default_tile_size": 32,
+      "scaling_policy": "dynamic_camera_clamp",
+      "has_elevation": false,
+      "environment": "exterior"
+    },
+    {
+      "id": "interior_chamber",
+      "name": "Interior Chamber",
+      "type_code": 3,
+      "description": "Enclosed dwellings, shrines, throne halls, and astral nexus sanctuaries",
+      "coordinate_system": "bounded_cartesian",
+      "default_tile_size": 32,
+      "scaling_policy": "dynamic_camera_clamp",
+      "has_elevation": false,
+      "environment": "interior"
+    },
+    {
+      "id": "dungeon_labyrinth",
+      "name": "Dungeon Labyrinth",
+      "type_code": 4,
+      "description": "Multi-corridor planar rift or catacomb with fog-of-war and destructible props",
+      "coordinate_system": "bounded_cartesian",
+      "default_tile_size": 32,
+      "scaling_policy": "dynamic_camera_clamp",
+      "has_elevation": true,
+      "environment": "dungeon"
+    }
+  ]
+}

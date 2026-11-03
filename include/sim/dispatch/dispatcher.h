@@ -7,33 +7,35 @@
 // @id            sim.engine.dispatcher
 // @layer         Layer 1: Simulation Engine
 // @subsystem     Command Dispatcher Subsystem (sim/dispatch)
-// @version       1.2.0
-// @interface_rev Rev 3
+// @version       2.0.0
+// @interface_rev Rev 4
 // @date          2026-11-03
 // @updated       2026-11-03
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Simulation command parsing, verb tokenization, and action routing.
-//   Translates abstract input actions into deterministic mutations across
-//   combat mechanics, inventory usage, relic telemetries, and spatial moves.
+//   Master Command Orchestrator tokenizing input strings, resolving synonym
+//   and shorthand aliases, classifying command domains (Combat, World, Items,
+//   System), and dispatching execution to domain-specific handlers.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies:
 //       sim/core/sim_types.h
-//       sim/combat/combat.h
-//       sim/items/items.h
-//       sim/world/world.h
+//       sim/dispatch/dispatch_types.h
+//       sim/dispatch/dispatch_combat.h
+//       sim/dispatch/dispatch_world.h
+//       sim/dispatch/dispatch_items.h
+//       sim/dispatch/dispatch_system.h
 //       util/manifest.h
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation)
-//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant command dispatch)
-//   - Latency Budget:        < 50 microseconds per command dispatch
+//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic allocation).
+//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant command dispatch).
+//   - Latency Budget:        < 50 microseconds per command dispatch.
 //
 // AXIOMATIC INVARIANTS:
 //   1. Stack-only tokenization buffer; zero dynamic heap allocations.
 //   2. Empty, whitespace-only, or unknown inputs produce no state mutations.
-//   3. Turns increment deterministically on successfully executed actions.
+//   3. Alias resolution converges deterministically in 1 hop.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_SIM_DISPATCH_DISPATCHER_H
@@ -41,10 +43,15 @@
 
 // =============================================================================
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
-// Stratum: Layer 1 (Simulation Engine) | Machine: Command Dispatch Core
 // =============================================================================
 
 #include "sim/core/sim_types.h"
+#include "sim/dispatch/dispatch_combat.h"
+#include "sim/dispatch/dispatch_items.h"
+#include "sim/dispatch/dispatch_loader.h"
+#include "sim/dispatch/dispatch_system.h"
+#include "sim/dispatch/dispatch_types.h"
+#include "sim/dispatch/dispatch_world.h"
 #include "util/manifest.h"
 #include <stdbool.h>
 #include <stddef.h>
@@ -53,8 +60,26 @@ extern const module_metadata_t dispatcher_manifest;
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK / API DECLARATIONS
-// Stratum: Layer 1 (Simulation Engine) | Machine: Command Dispatch Core
 // =============================================================================
+
+/**
+ * @brief Resolves an alias or shorthand token to its canonical command verb.
+ *
+ * @param[in]  input_verb      Raw input verb token.
+ * @param[out] out_canonical   Buffer receiving canonical verb string.
+ * @param[in]  can_len         Capacity of out_canonical in bytes.
+ * @param[out] out_default_arg Buffer receiving default arg if applicable.
+ * @param[in]  arg_len         Capacity of out_default_arg in bytes.
+ * @return True if token was an alias, false if already canonical or unknown.
+ */
+bool dispatcher_resolve_alias(const char *input_verb,
+                              char *out_canonical, size_t can_len,
+                              char *out_default_arg, size_t arg_len);
+
+/**
+ * @brief Classifies a canonical verb into its target execution domain.
+ */
+dispatch_domain_t dispatcher_classify_verb(const char *verb);
 
 /**
  * @brief Evaluates and dispatches a text command against player state.
@@ -74,15 +99,11 @@ void dispatcher_print_intro(void);
 
 /**
  * @brief Prints formatted status card to stdout.
- *
- * @param[in] state Immutable pointer to player state.
  */
 void dispatcher_print_status(const player_state_t *state);
 
 /**
  * @brief Prints current location overview and lore to stdout.
- *
- * @param[in] state Immutable pointer to player state.
  */
 void dispatcher_print_location(const player_state_t *state);
 
@@ -93,23 +114,16 @@ void dispatcher_print_help(void);
 
 /**
  * @brief Executes interactive terminal text loop.
- *
- * @param[in,out] state Active player state.
  */
 void dispatcher_loop_cli(player_state_t *state);
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 1 (Simulation Engine) | Machine: Command Dispatch Core
 // =============================================================================
 
 /**
- * @brief Pre-flight diagnostic callback for command dispatcher invariants.
+ * @brief Pre-flight diagnostic callback for the master dispatcher orchestrator.
  */
 diag_result_t dispatcher_preflight(void);
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
-
-#endif /* TENEBRIS_LUX_SIM_DISPATCH_DISPATCHER_H */
+#endif // TENEBRIS_LUX_SIM_DISPATCH_DISPATCHER_H

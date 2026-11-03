@@ -64,18 +64,18 @@ void sim_state_init(player_state_t *state);
  * Configures the protagonist's identity name.
  *
  * @param[in,out] state    Pointer to player state.
- * @param[in]     new_name Chosen hero name (defaults to "Elijah" if NULL/empty).
+ * @param[in]     new_name Chosen hero name (defaults to "Elijah" if empty).
  */
 void sim_state_set_name(player_state_t *state, const char *new_name);
 
 /**
- * Configures the protagonist according to canonical identity or custom Observer creation.
+ * Configures protagonist according to identity or custom Observer creation.
  *
  * @param[in,out] state          Pointer to player state.
- * @param[in]     protagonist_id Chosen protagonist identity (Elijah, Katrina, or Observer).
- * @param[in]     custom_name    Custom name if Observer (or NULL to keep default).
+ * @param[in]     protagonist_id Identity (Elijah, Katrina, or Observer).
+ * @param[in]     custom_name    Custom name if Observer (or NULL).
  * @param[in]     gender         Chosen gender identity.
- * @param[in]     starting_class Chosen starting class if Observer (Warrior, Mage, or Rogue).
+ * @param[in]     starting_class Starting class (Warrior, Mage, or Rogue).
  */
 void sim_state_configure_protagonist(player_state_t *state,
                                      protagonist_id_t protagonist_id,
@@ -90,6 +90,22 @@ void sim_state_configure_protagonist(player_state_t *state,
  * @return Static description of alignment continuum.
  */
 const char *sim_state_get_sway_desc(int sway);
+
+/**
+ * Returns canonical name of combat class.
+ *
+ * @param[in] class_id Combat class identifier.
+ * @return Static string containing class name.
+ */
+const char *sim_state_get_class_name(class_id_t class_id);
+
+/**
+ * Returns canonical name of bound cosmic relic.
+ *
+ * @param[in] relic Cosmic relic affinity identifier.
+ * @return Static string containing relic name.
+ */
+const char *sim_state_get_relic_name(relic_affinity_t relic);
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
@@ -116,3 +132,4 @@ diag_result_t sim_state_preflight(void);
 // =============================================================================
 
 #endif /* TENEBRIS_LUX_SIM_CORE_SIM_STATE_H */
+

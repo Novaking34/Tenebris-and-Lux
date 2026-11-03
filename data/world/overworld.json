@@ -1,0 +1,79 @@
+{
+  "subsystem": "sim.world.overworld",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Macro overworld spatial nodes, provincial edges, and travel friction",
+  "nodes": [
+    {
+      "id": 1,
+      "loc_code": "LOC_DIO_VILLAGE",
+      "canonical_name": "Dio Village",
+      "world_pos": {"x": 120, "y": 340},
+      "threat_tier": 0,
+      "base_vigor_cost": 10,
+      "biome": "temperate_woodland",
+      "exterior_map_id": "dio_village_exterior",
+      "interior_maps": ["grandmas_cottage_interior"]
+    },
+    {
+      "id": 2,
+      "loc_code": "LOC_WHISPERING_WOODS",
+      "canonical_name": "Whispering Woods",
+      "world_pos": {"x": 220, "y": 280},
+      "threat_tier": 1,
+      "base_vigor_cost": 25,
+      "biome": "dense_forest",
+      "battle_zone_id": "battle_whispering_woods"
+    },
+    {
+      "id": 3,
+      "loc_code": "LOC_SACYRA_MARCHES",
+      "canonical_name": "Sacyra Marches",
+      "world_pos": {"x": 340, "y": 210},
+      "threat_tier": 2,
+      "base_vigor_cost": 35,
+      "biome": "frontier_plains"
+    },
+    {
+      "id": 4,
+      "loc_code": "LOC_ROYAL_CAPITAL",
+      "canonical_name": "The Royal Capital",
+      "world_pos": {"x": 480, "y": 150},
+      "threat_tier": 3,
+      "base_vigor_cost": 50,
+      "biome": "fortified_citadel",
+      "exterior_map_id": "royal_capital_plaza",
+      "interior_maps": ["sacyra_throne_room"],
+      "battle_zone_id": "battle_palace_colonnade"
+    },
+    {
+      "id": 5,
+      "loc_code": "LOC_THE_DREAMSCAPE",
+      "canonical_name": "The Dreamscape",
+      "world_pos": {"x": 120, "y": 120},
+      "threat_tier": 4,
+      "base_vigor_cost": 0,
+      "biome": "astral_ether",
+      "interior_maps": ["dreamscape_nexus_interior"],
+      "battle_zone_id": "battle_dreamscape_rift"
+    },
+    {
+      "id": 6,
+      "loc_code": "LOC_KINGDOM_OF_LIBIRA",
+      "canonical_name": "Kingdom of Libira",
+      "world_pos": {"x": 600, "y": 380},
+      "threat_tier": 3,
+      "base_vigor_cost": 60,
+      "biome": "arid_frontier",
+      "exterior_map_id": "frontier_ruins_exterior"
+    }
+  ],
+  "edges": [
+    {"from": 1, "to": 2, "distance": 100, "vigor_cost": 15, "bidirectional": true},
+    {"from": 1, "to": 5, "distance": 0, "vigor_cost": 0, "bidirectional": true, "nocturnal_portal": true},
+    {"from": 2, "to": 3, "distance": 120, "vigor_cost": 25, "bidirectional": true},
+    {"from": 3, "to": 4, "distance": 140, "vigor_cost": 35, "bidirectional": true},
+    {"from": 4, "to": 5, "distance": 0, "vigor_cost": 0, "bidirectional": true, "planar_wound_portal": true},
+    {"from": 4, "to": 6, "distance": 230, "vigor_cost": 60, "bidirectional": true}
+  ]
+}

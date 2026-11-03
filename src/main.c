@@ -39,6 +39,7 @@
 #include "sim/game.h"
 #include "sim/sim_state.h"
 #include "sim/combat.h"
+#include "sim/items/items.h"
 #include "sim/world.h"
 #include "sim/dispatcher.h"
 #include "gui/gui.h"
@@ -102,6 +103,7 @@ static void init_engine_manifest(manifest_registry_t *registry)
     /* Step 3: Register Layer 1 Simulation Engine Subsystems */
     manifest_register(registry, &sim_state_manifest);
     manifest_register(registry, &combat_manifest);
+    manifest_register(registry, &items_manifest);
     manifest_register(registry, &world_manifest);
     manifest_register(registry, &dispatcher_manifest);
     manifest_register(registry, &game_manifest);

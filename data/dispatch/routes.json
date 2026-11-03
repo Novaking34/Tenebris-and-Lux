@@ -1,0 +1,44 @@
+{
+  "subsystem": "sim.dispatch.routes",
+  "version": "1.0.0",
+  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+  "description": "Domain orchestration routing priorities and execution contracts",
+  "domains": [
+    {
+      "id": "system",
+      "code": 0,
+      "name": "System & Lifecycle Domain",
+      "priority": 1,
+      "handler": "dispatch_system_handle",
+      "description": "Session lifecycle, telemetry, help manual, status appraisal, and debugger time-travel"
+    },
+    {
+      "id": "combat",
+      "code": 1,
+      "name": "Combat Mechanics Domain",
+      "priority": 2,
+      "handler": "dispatch_combat_handle",
+      "description": "Attacks, barrier wards, special techniques, stance shifts, and battle mode configuration"
+    },
+    {
+      "id": "items",
+      "code": 2,
+      "name": "Inventory & Relics Domain",
+      "priority": 3,
+      "handler": "dispatch_items_handle",
+      "description": "Pouch inspection, elixir consumption, equipment catalyst binding, and relic appraisal"
+    },
+    {
+      "id": "world",
+      "code": 3,
+      "name": "World Navigation Domain",
+      "priority": 4,
+      "handler": "dispatch_world_handle",
+      "description": "Provincial directional traversal, topological map projection, and environmental inspection"
+    }
+  ],
+  "fallback_policy": {
+    "unknown_verb_message": "Unknown tactical command '%s'. Enter 'help' for tactical manual.",
+    "empty_input_policy": "ignore_no_mutation"
+  }
+}
