@@ -60,7 +60,7 @@
 *.app
 
 # Distribution directories and target output staging
-bin/
+/bin/
 out/
 dist/
 target/

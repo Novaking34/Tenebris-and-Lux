@@ -181,9 +181,14 @@ void gui_widget_draw_button(void *display, unsigned long dr, void *gc,
     }
 
     XSetForeground(d, g, text_col);
-    int tx = btn->x + 8;
-    int ty = btn->y + (btn->height / 2) + 4;
-    XDrawString(d, draw, g, tx, ty, btn->label, strlen(btn->label));
+    int label_len = (int)strlen(btn->label);
+    int text_w = label_len * 9;
+    int tx = btn->x + ((btn->width - text_w) / 2);
+    if (tx < btn->x + 6) {
+        tx = btn->x + 6;
+    }
+    int ty = btn->y + (btn->height / 2) + 5;
+    XDrawString(d, draw, g, tx, ty, btn->label, label_len);
 }
 
 void gui_widget_draw_meter(void *display, unsigned long dr, void *gc,

@@ -68,21 +68,21 @@ void gui_layout_update(gui_layout_t *layout, int win_w, int win_h)
     layout->header.x      = margin;
     layout->header.y      = margin;
     layout->header.width  = avail_w;
-    layout->header.height = 48;
+    layout->header.height = 70;
     layout->header.title  = "Header Banner";
 
     /* Vertical partition below header */
-    const int rem_y = margin + 48 + gap;
+    const int rem_y = margin + 70 + gap;
     const int rem_h = win_h - margin - rem_y;
 
-    /* Right column width (Status + Dock): 30% of width, bounded [260, 360] */
+    /* Right column width (Status + Dock): 30% of width, bounded [260, 440] */
     int right_w = (avail_w * 30) / 100;
-    right_w = math_clamp_int(right_w, 260, 360);
+    right_w = math_clamp_int(right_w, 260, 440);
     const int left_w = avail_w - right_w - gap;
 
-    /* Bottom section height (Chronicle + Dock): 28% of rem_h, bounded */
-    int bottom_h = (rem_h * 28) / 100;
-    bottom_h = math_clamp_int(bottom_h, 140, 240);
+    /* Bottom section height (Chronicle + Dock): 30% of rem_h, bounded */
+    int bottom_h = (rem_h * 30) / 100;
+    bottom_h = math_clamp_int(bottom_h, 140, 280);
     const int top_h = rem_h - bottom_h - gap;
 
     /* Panel 2: 2D / 2.5D Tactical world viewport (Top-Left) */

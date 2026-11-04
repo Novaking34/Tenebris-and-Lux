@@ -46,14 +46,39 @@
 
 #define GUI_WINDOW_WIDTH       860
 #define GUI_WINDOW_HEIGHT      620
-#define GUI_MAX_LOG_LINES      6
+#define GUI_MAX_LOG_LINES      16
 #define GUI_LOG_ENTRY_LEN      128
 #define GUI_NUM_BUTTONS        9
+#define GUI_NUM_TABS           5
 #define GUI_MAX_ASSETS         32
 #define GUI_MAX_ENTITIES_DEPTH 64
 #define GUI_ISO_TILE_W         48
 #define GUI_ISO_TILE_H         24
 #define GUI_ISO_ELEV_SCALE     8
+
+/**
+ * Presentation screen views and modal navigation states.
+ */
+typedef enum {
+    GUI_SCREEN_TACTICAL = 0,    /**< 2.5D / 2D Tactical battlefield & combat */
+    GUI_SCREEN_STATUS,          /**< Full protagonist dossier & attributes */
+    GUI_SCREEN_INVENTORY,       /**< Bag, key items, Grandma's Watch */
+    GUI_SCREEN_WORLD_MAP,       /**< Provincial realm topology & travel */
+    GUI_SCREEN_CHRONICLE        /**< Complete lore codex & history of deeds */
+} gui_screen_mode_t;
+
+/**
+ * Top navigation tab descriptor.
+ */
+typedef struct {
+    int x;
+    int y;
+    int width;
+    int height;
+    const char *label;
+    gui_screen_mode_t screen;
+    char hotkey;
+} gui_tab_t;
 
 /**
  * Display view mode for the tactical world viewport.
