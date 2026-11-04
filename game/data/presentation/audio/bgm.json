@@ -1,0 +1,70 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/audio/bgm.json",
+    "id": "data.audio.bgm",
+    "layer": "Layer 2: Presentation & Audiovisual",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Soundtrack playlist, loop points, and regional background music bindings."
+  },
+  "soundtracks": [
+    {
+      "id": "bgm_dreamscape_nexus",
+      "title": "The Nocturnal Nexus (Chrono's Vigil)",
+      "region_binding": "Dreamscape",
+      "asset_path": "assets/audio/bgm/dreamscape_nexus.ogg",
+      "loop_start_samples": 384000,
+      "loop_end_samples": 4224000,
+      "tempo_bpm": 64,
+      "volume_scale": 0.85,
+      "description": "Ethereal string quartet layered with steady pocketwatch ticking."
+    },
+    {
+      "id": "bgm_sacyra_royal_capital",
+      "title": "Citadel of the High Throne",
+      "region_binding": "Royal Capital of Sacyra",
+      "asset_path": "assets/audio/bgm/sacyra_capital.ogg",
+      "loop_start_samples": 576000,
+      "loop_end_samples": 5184000,
+      "tempo_bpm": 88,
+      "volume_scale": 0.90,
+      "description": "Ceremonial brass and choral hymn celebrating the Accord of Kings."
+    },
+    {
+      "id": "bgm_libira_frontier_winds",
+      "title": "The Quiet Complaint (Arid Frontier)",
+      "region_binding": "Kingdom of Libira",
+      "asset_path": "assets/audio/bgm/libira_frontier.ogg",
+      "loop_start_samples": 288000,
+      "loop_end_samples": 3456000,
+      "tempo_bpm": 72,
+      "volume_scale": 0.80,
+      "description": "Solitary acoustic lute and dry wind howling across abandoned courier posts."
+    },
+    {
+      "id": "bgm_tactical_skirmish",
+      "title": "Blade and Barrier (Tactical Clash)",
+      "region_binding": "Combat_General",
+      "asset_path": "assets/audio/bgm/tactical_skirmish.ogg",
+      "loop_start_samples": 192000,
+      "loop_end_samples": 3840000,
+      "tempo_bpm": 128,
+      "volume_scale": 0.95,
+      "description": "Driving orchestral percussion and brisk cello counterpoint for grid duels."
+    },
+    {
+      "id": "bgm_dark_lord_usuru",
+      "title": "The Sovereign of Severance",
+      "region_binding": "Abyssal_Rift",
+      "asset_path": "assets/audio/bgm/dark_lord_usuru.ogg",
+      "loop_start_samples": 480000,
+      "loop_end_samples": 5760000,
+      "tempo_bpm": 104,
+      "volume_scale": 1.00,
+      "description": "Towering pipe organ and low male choir embodying the ancient Libiran king."
+    }
+  ]
+}
+

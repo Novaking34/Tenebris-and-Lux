@@ -285,8 +285,14 @@ bool time_load_config_from_file(const char *filepath, time_config_t *out_config)
     }
 
     /* Step 3: Load JSON file with alternate relative path support */
+    char resolved[FS_PATH_MAX];
+    const char *target = filepath;
+    if (fs_resolve_data_path(filepath, resolved, sizeof(resolved))) {
+        target = resolved;
+    }
+
     char buf[FS_BUFFER_MEDIUM_BYTES];
-    bool loaded = fs_read_file_contents(filepath, buf, sizeof(buf));
+    bool loaded = fs_read_file_contents(target, buf, sizeof(buf));
     if (!loaded) {
         char alt_path[FS_PATH_MAX];
         snprintf(alt_path, sizeof(alt_path), "game/%s", filepath);

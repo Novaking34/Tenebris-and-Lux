@@ -1,0 +1,46 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/mechanics/manifest.json",
+    "id": "data.mechanics.root",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "1.0.0",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Mechanics Domain Manifest orchestrating simulation rules & flow.",
+    "invariants": [
+      "Zero dynamic heap allocations in simulation mechanics",
+      "Moral sway continuum strictly bounded within [-100, +100]",
+      "Twin Relic resonance bounded within [0, 100]"
+    ]
+  },
+  "domain": "mechanics",
+  "title": "Simulation Rules, Combat & Campaign Progression",
+  "subsystems": [
+    {
+      "id": "tactics",
+      "title": "Squad Formations & Zone of Control Tactics",
+      "path": "tactics/manifest.json",
+      "category": "tactics"
+    },
+    {
+      "id": "combat",
+      "title": "Combat Stances, Formulas, Modes, Skills & States",
+      "path": "combat/manifest.json",
+      "category": "combat"
+    },
+    {
+      "id": "items",
+      "title": "Diegetic Relics, Catalysts, Consumables & Valuables",
+      "path": "items/manifest.json",
+      "category": "items"
+    },
+    {
+      "id": "campaign",
+      "title": "Campaign Morality Matrix, Archetypes & Dispatch Router",
+      "path": "campaign/player_manifest.json",
+      "category": "campaign"
+    }
+  ]
+}

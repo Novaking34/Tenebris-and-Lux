@@ -230,6 +230,36 @@ bool fs_is_regular_file(const char *path);
  */
 bool fs_ensure_directory(const char *dir_path);
 
+/**
+ * @brief Dynamically resolves a dataset or configuration file path.
+ *
+ * Traverses candidate prefix trees across workspace root, build directory,
+ * and the 5 structured data domains (system, world, entities, mechanics,
+ * presentation) to locate an accessible file without hardcoded paths.
+ *
+ * ### Ontological Classification
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.fs (Zero-Heap Filesystem Engine)
+ * - Assembly:   Dynamic Data Pathfinding & Resolution
+ * - Cog:        Dynamic Data Path Resolver
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model:   ALLOC_ZERO_HEAP (Uses caller-supplied buffer).
+ * - Concurrency:    REENTRANT_PURE (Read-only filesystem probing).
+ * - Latency Budget: < 50 microseconds across candidate prefix probes.
+ *
+ * @param[in]  rel_path  Relative path or filename (e.g. "relics.json" or
+ *                       "mechanics/items/relics.json").
+ * @param[out] out_path  Destination buffer for resolved accessible path.
+ * @param[in]  out_size  Capacity of destination buffer in bytes.
+ *
+ * @return true if an accessible file was dynamically resolved;
+ *         false if no candidate path exists or parameters are invalid.
+ */
+bool fs_resolve_data_path(const char *rel_path,
+                          char *out_path,
+                          size_t out_size);
+
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap Filesystem Engine

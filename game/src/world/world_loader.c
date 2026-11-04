@@ -67,24 +67,7 @@ static const char *resolve_world_path(const char *rel_path,
                                       char *out_buf,
                                       size_t buf_len)
 {
-    if (fs_file_exists(rel_path)) {
-        str_safe_copy(out_buf, rel_path, buf_len);
-        return out_buf;
-    }
-    char alt[256];
-    snprintf(alt, sizeof(alt), "game/%s", rel_path);
-    if (fs_file_exists(alt)) {
-        str_safe_copy(out_buf, alt, buf_len);
-        return out_buf;
-    }
-    snprintf(alt, sizeof(alt), "../%s", rel_path);
-    if (fs_file_exists(alt)) {
-        str_safe_copy(out_buf, alt, buf_len);
-        return out_buf;
-    }
-    snprintf(alt, sizeof(alt), "../game/%s", rel_path);
-    if (fs_file_exists(alt)) {
-        str_safe_copy(out_buf, alt, buf_len);
+    if (fs_resolve_data_path(rel_path, out_buf, buf_len)) {
         return out_buf;
     }
     str_safe_copy(out_buf, rel_path, buf_len);

@@ -410,54 +410,18 @@ bool log_load_config_from_manifest(
         return false;
     }
 
-    /* Step 2: Resolve candidate paths for data/log/manifest.json */
-    static const char *const s_manifest_candidates[] = {
-        "game/data/log/manifest.json",
-        "../game/data/log/manifest.json",
-        "data/log/manifest.json",
-        "../data/log/manifest.json"
-    };
-
+    /* Step 2: Resolve candidate paths dynamically */
     char resolved_path[256];
     bool found = false;
 
     if (manifest_path != NULL && manifest_path[0] != '\0') {
-        if (access(manifest_path, R_OK) == 0) {
-            str_safe_copy(resolved_path, manifest_path, sizeof(resolved_path));
+        if (fs_resolve_data_path(manifest_path, resolved_path, sizeof(resolved_path))) {
             found = true;
-        } else {
-            char alt[256];
-            snprintf(alt, sizeof(alt), "game/%s", manifest_path);
-            if (access(alt, R_OK) == 0) {
-                str_safe_copy(resolved_path, alt, sizeof(resolved_path));
-                found = true;
-            } else {
-                snprintf(alt, sizeof(alt), "../%s", manifest_path);
-                if (access(alt, R_OK) == 0) {
-                    str_safe_copy(resolved_path, alt, sizeof(resolved_path));
-                    found = true;
-                } else {
-                    snprintf(alt, sizeof(alt), "../game/%s", manifest_path);
-                    if (access(alt, R_OK) == 0) {
-                        str_safe_copy(resolved_path, alt, sizeof(resolved_path));
-                        found = true;
-                    }
-                }
-            }
         }
     } else {
-        size_t num_candidates =
-            sizeof(s_manifest_candidates) / sizeof(s_manifest_candidates[0]);
-        for (size_t i = 0; i < num_candidates; i++) {
-            if (access(s_manifest_candidates[i], R_OK) == 0) {
-                str_safe_copy(
-                    resolved_path,
-                    s_manifest_candidates[i],
-                    sizeof(resolved_path)
-                );
-                found = true;
-                break;
-            }
+        if (fs_resolve_data_path("telemetry/manifest.json", resolved_path, sizeof(resolved_path)) ||
+            fs_resolve_data_path("log/manifest.json", resolved_path, sizeof(resolved_path))) {
+            found = true;
         }
     }
 
@@ -528,19 +492,20 @@ bool log_load_config_profile(const char *profile_name, log_config_t *out_config)
         return false;
     }
 
-    /* Step 2: Check candidate search paths */
-    static const char *const prefixes[] = {
-        "game/data/log",
-        "../game/data/log",
-        "data/log",
-        "../data/log"
-    };
-    for (size_t i = 0; i < 4; i++) {
-        char cand[128];
-        snprintf(cand, sizeof(cand), "%s/%s.json", prefixes[i], profile_name);
-        if (access(cand, R_OK) == 0) {
-            return log_load_config_from_file(cand, out_config);
-        }
+    /* Step 2: Check candidate search paths dynamically */
+    char file_req[128];
+    char resolved_profile[256];
+    snprintf(file_req, sizeof(file_req), "telemetry/%s.json", profile_name);
+    if (fs_resolve_data_path(file_req, resolved_profile, sizeof(resolved_profile))) {
+        return log_load_config_from_file(resolved_profile, out_config);
+    }
+    snprintf(file_req, sizeof(file_req), "log/%s.json", profile_name);
+    if (fs_resolve_data_path(file_req, resolved_profile, sizeof(resolved_profile))) {
+        return log_load_config_from_file(resolved_profile, out_config);
+    }
+    snprintf(file_req, sizeof(file_req), "%s.json", profile_name);
+    if (fs_resolve_data_path(file_req, resolved_profile, sizeof(resolved_profile))) {
+        return log_load_config_from_file(resolved_profile, out_config);
     }
 
     /* Step 3: Trigger tripwire if profile file was not found */

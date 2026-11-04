@@ -204,17 +204,19 @@ bool debug_load_config_profile(const char *profile_name, debug_config_t *out_con
     /* Step 2: Resolve profile file path across candidate directories */
     char file_path[FS_PATH_MAX];
     bool exists = false;
-    static const char *const prefixes[] = {
-        "game/data/debug",
-        "../game/data/debug",
-        "data/debug",
-        "../data/debug"
-    };
-    for (size_t i = 0; i < 4; i++) {
-        snprintf(file_path, sizeof(file_path), "%s/%s.json", prefixes[i], profile_name);
-        if (fs_file_exists(file_path)) {
+    char req[128];
+    snprintf(req, sizeof(req), "debugger/%s.json", profile_name);
+    if (fs_resolve_data_path(req, file_path, sizeof(file_path))) {
+        exists = true;
+    } else {
+        snprintf(req, sizeof(req), "debug/%s.json", profile_name);
+        if (fs_resolve_data_path(req, file_path, sizeof(file_path))) {
             exists = true;
-            break;
+        } else {
+            snprintf(req, sizeof(req), "%s.json", profile_name);
+            if (fs_resolve_data_path(req, file_path, sizeof(file_path))) {
+                exists = true;
+            }
         }
     }
 
@@ -293,48 +295,17 @@ bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *
     }
 
     /* Step 2: Resolve candidate manifest paths */
-    static const char *const s_manifest_candidates[] = {
-        "game/data/debug/manifest.json",
-        "../game/data/debug/manifest.json",
-        "data/debug/manifest.json",
-        "../data/debug/manifest.json"
-    };
-
     char resolved_path[FS_PATH_MAX];
     bool found = false;
 
     if (manifest_path != NULL && manifest_path[0] != '\0') {
-        if (fs_file_exists(manifest_path)) {
-            str_safe_copy(resolved_path, manifest_path, sizeof(resolved_path));
-            found = true;
-        } else {
-            char alt[FS_PATH_MAX];
-            snprintf(alt, sizeof(alt), "game/%s", manifest_path);
-            if (fs_file_exists(alt)) {
-                str_safe_copy(resolved_path, alt, sizeof(resolved_path));
-                found = true;
-            } else {
-                snprintf(alt, sizeof(alt), "../%s", manifest_path);
-                if (fs_file_exists(alt)) {
-                    str_safe_copy(resolved_path, alt, sizeof(resolved_path));
-                    found = true;
-                } else {
-                    snprintf(alt, sizeof(alt), "../game/%s", manifest_path);
-                    if (fs_file_exists(alt)) {
-                        str_safe_copy(resolved_path, alt, sizeof(resolved_path));
-                        found = true;
-                    }
-                }
-            }
-        }
+        found = fs_resolve_data_path(manifest_path, resolved_path,
+                                     sizeof(resolved_path));
     } else {
-        for (size_t i = 0; i < sizeof(s_manifest_candidates) / sizeof(s_manifest_candidates[0]); i++) {
-            if (fs_file_exists(s_manifest_candidates[i])) {
-                str_safe_copy(resolved_path, s_manifest_candidates[i], sizeof(resolved_path));
-                found = true;
-                break;
-            }
-        }
+        found = fs_resolve_data_path("debugger/manifest.json", resolved_path,
+                                     sizeof(resolved_path)) ||
+                fs_resolve_data_path("debug/manifest.json", resolved_path,
+                                     sizeof(resolved_path));
     }
 
     if (!found) {
