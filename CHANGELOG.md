@@ -84,6 +84,14 @@ The `v0.1.0` milestone transforms the verified interactive prototype into a full
   - *The Bystander Corridor (`[-50, +50]`)*: Quantifying moral inertia where refusal to take a stand leads to default dynastic stagnation.
   - *The Butterfly Effect*: Provincial micro-choices breaking the 3,000-year cycle of the King's Curse.
 
+#### 5. Workspace Hygiene, Tooling & Ephemeral Sandboxing (Infrastructure Strata)
+
+- **Clean Root Hygiene & Auxiliary Taxonomy**:
+  - Quarantined all ephemeral runtime telemetry and flight recorder archives into `build/logs/`, eliminating root-level log rot.
+  - Quarantined compiler language server AST indices (`clangd`) into `build/.cache/clangd`.
+  - Canonicalized `.vscode/` with professional team IDE definitions: `settings.json` (C11 ISO standards, clangd LSP paths), `tasks.json` (build, ctest, audit, master_guide), `launch.json` (GDB launch targets), and `extensions.json`.
+  - Formalized `.github/` with GitHub Actions continuous verification (`workflows/ci.yml`) alongside markdownlint rules and issue templates.
+
 ---
 
 ## BLOCK 3: BODY CHRONICLE: RELEASES & EVOLUTIONARY MILESTONES

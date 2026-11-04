@@ -1,0 +1,25 @@
+{
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/build",
+        "--background-index",
+        "--index-file=${workspaceFolder}/build/.cache/clangd.idx",
+        "--header-insertion=never",
+        "--all-scopes-completion"
+    ],
+    "editor.rulers": [
+        80
+    ],
+    "editor.formatOnSave": false,
+    "editor.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "markdown.validate.ignoredLinks": [
+        "#engine-architecture--thesis",
+        "#quickstart-build-play--audit",
+        "#developer-tooling--the-master-guide",
+        "#verification-audit-verdict--telemetry"
+    ]
+}
