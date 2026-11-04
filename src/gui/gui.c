@@ -6,7 +6,7 @@
 // @file          gui.c
 // @id            gui.viewport.x11
 // @layer         Layer 2: Presentation & Viewport
-// @version       1.1.0
+// @version       1.2.0
 // @interface_rev Rev 2
 // @date          2026-11-03
 // @updated       2026-11-03
@@ -16,8 +16,8 @@
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Master presentation orchestrator and event dispatcher for native desktop
 //   X11 double-buffered rendering. Coordinates the 2D/2.5D tactical viewport,
-//   HUD, command dock, and narrative chronicle while enforcing zero-tearing
-//   and non-overlapping layout contracts.
+//   HUD, command dock, and narrative chronicle while enforcing dynamic
+//   responsive resizing, full-screen switching, and zero-tearing contracts.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: gui/gui.h, sim/core/game.h, util/log/log.h,
@@ -30,7 +30,8 @@
 //   1. Presentation follows simulation: GUI never mutates state directly.
 //   2. Double-buffered rendering guarantees zero visual tearing.
 //   3. Non-overlapping button and panel geometry verified by AABB audits.
-//   4. Headless fallback cleanly downgrades to CLI in DISPLAY absence.
+//   4. Dynamic layout recalibration adapts smoothly to full-screen/resizing.
+//   5. Headless fallback cleanly downgrades to CLI in DISPLAY absence.
 // =============================================================================
 
 // =============================================================================
@@ -53,6 +54,31 @@ static gui_button_t   s_buttons[GUI_NUM_BUTTONS];
 static gui_palette_t  s_palette;
 static gui_log_t      s_log;
 static gui_view_mode_t s_view_mode = GUI_VIEW_25D_ISOMETRIC;
+
+/**
+ * Toggles EWMH fullscreen state via _NET_WM_STATE_FULLSCREEN client message.
+ */
+static void toggle_fullscreen(Display *d, Window w)
+{
+    Atom wm_state = XInternAtom(d, "_NET_WM_STATE", False);
+    Atom wm_fullscreen = XInternAtom(d, "_NET_WM_STATE_FULLSCREEN", False);
+
+    XEvent xev;
+    memset(&xev, 0, sizeof(xev));
+    xev.type = ClientMessage;
+    xev.xclient.window = w;
+    xev.xclient.message_type = wm_state;
+    xev.xclient.format = 32;
+    xev.xclient.data.l[0] = 2; /* _NET_WM_STATE_TOGGLE */
+    xev.xclient.data.l[1] = (long)wm_fullscreen;
+    xev.xclient.data.l[2] = 0;
+    xev.xclient.data.l[3] = 1; /* Normal application source */
+    xev.xclient.data.l[4] = 0;
+
+    int screen = DefaultScreen(d);
+    XSendEvent(d, RootWindow(d, screen), False,
+               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+}
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK
@@ -97,8 +123,11 @@ int gui_run(player_state_t *state)
                      StructureNotifyMask;
     swa.background_pixel = BlackPixel(display, screen);
 
+    int cur_win_w = GUI_WINDOW_WIDTH;
+    int cur_win_h = GUI_WINDOW_HEIGHT;
+
     Window window = XCreateWindow(display, root,
-        100, 100, GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 0,
+        100, 100, (unsigned int)cur_win_w, (unsigned int)cur_win_h, 0,
         CopyFromParent, InputOutput, CopyFromParent,
         CWEventMask | CWBackPixel, &swa);
 
@@ -115,12 +144,13 @@ int gui_run(player_state_t *state)
     int window_depth = wa.depth;
 
     Pixmap backbuffer = XCreatePixmap(display, window,
-        GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, window_depth);
+        (unsigned int)cur_win_w, (unsigned int)cur_win_h,
+        (unsigned int)window_depth);
     GC gc = XCreateGC(display, backbuffer, 0, NULL);
 
     /* Step 4: Initialize sub-assemblies */
     gui_palette_bind_x11(&s_palette, display, screen);
-    gui_layout_get_default(&s_layout);
+    gui_layout_update(&s_layout, cur_win_w, cur_win_h);
     gui_widgets_init_buttons(&s_layout, s_buttons, GUI_NUM_BUTTONS);
     gui_assets_init();
 
@@ -131,7 +161,7 @@ int gui_run(player_state_t *state)
     gui_hud_log_append(&s_log,
         "Bearing the Shield of Lux and Sword of Tenebris.");
     gui_hud_log_append(&s_log,
-        "Tactical 2.5D Engine active. Press [M] to toggle 2D/2.5D.");
+        "Tactical 2.5D active. [M] toggle 2D/2.5D, [F11] fullscreen.");
 
     bool running = true;
 
@@ -149,6 +179,27 @@ int gui_run(player_state_t *state)
                     state->is_running = false;
                     break;
                 }
+            } else if (ev.type == ConfigureNotify) {
+                int new_w = ev.xconfigure.width;
+                int new_h = ev.xconfigure.height;
+                if ((new_w != cur_win_w || new_h != cur_win_h) &&
+                    new_w > 100 && new_h > 100) {
+                    cur_win_w = new_w;
+                    cur_win_h = new_h;
+                    if (backbuffer != None) {
+                        XFreePixmap(display, backbuffer);
+                    }
+                    backbuffer = XCreatePixmap(display, window,
+                        (unsigned int)cur_win_w,
+                        (unsigned int)cur_win_h,
+                        (unsigned int)window_depth);
+                    gui_layout_update(&s_layout, cur_win_w, cur_win_h);
+                    gui_widgets_init_buttons(&s_layout, s_buttons,
+                                             GUI_NUM_BUTTONS);
+                    LOG_DEBUG(LOG_CAT_DEBUG, "GUIViewport", 0.0f,
+                              "Window resized to %dx%d.",
+                              cur_win_w, cur_win_h);
+                }
             } else if (ev.type == ButtonPress) {
                 int bx = ev.xbutton.x;
                 int by = ev.xbutton.y;
@@ -158,7 +209,8 @@ int gui_run(player_state_t *state)
                     gui_button_find_clicked(s_buttons, GUI_NUM_BUTTONS, bx, by);
                 if (btn != NULL) {
                     LOG_DEBUG(LOG_CAT_DEBUG, "GUIViewport", 0.0f,
-                        "Button click '%s' -> '%s'.", btn->label, btn->command);
+                        "Button click '%s' -> '%s'.",
+                        btn->label, btn->command);
                     char out_msg[GUI_LOG_ENTRY_LEN];
                     out_msg[0] = '\0';
                     game_process_command(state, btn->command, out_msg,
@@ -177,13 +229,30 @@ int gui_run(player_state_t *state)
                     if (s_view_mode == GUI_VIEW_25D_ISOMETRIC) {
                         int origin_x = s_layout.viewport_2d.x +
                                        (s_layout.viewport_2d.width / 2);
-                        int origin_y = s_layout.viewport_2d.y + 70;
+                        int origin_y = s_layout.viewport_2d.y +
+                            ((s_layout.viewport_2d.height - 192) / 2);
+                        if (origin_y < s_layout.viewport_2d.y + 40) {
+                            origin_y = s_layout.viewport_2d.y + 40;
+                        }
                         gui_iso_unproject(bx, by, 0, origin_x, origin_y,
                                           GUI_ISO_TILE_W, GUI_ISO_TILE_H,
                                           GUI_ISO_ELEV_SCALE, &gx, &gy);
                     } else {
-                        gx = (bx - s_layout.viewport_2d.x - 30) / 38;
-                        gy = (by - s_layout.viewport_2d.y - 40) / 38;
+                        const int cell_size = 38;
+                        int grid_w = 8 * cell_size;
+                        int grid_h = 8 * cell_size;
+                        int origin_x = s_layout.viewport_2d.x +
+                            ((s_layout.viewport_2d.width - grid_w) / 2);
+                        int origin_y = s_layout.viewport_2d.y +
+                            ((s_layout.viewport_2d.height - grid_h) / 2);
+                        if (origin_x < s_layout.viewport_2d.x + 20) {
+                            origin_x = s_layout.viewport_2d.x + 20;
+                        }
+                        if (origin_y < s_layout.viewport_2d.y + 35) {
+                            origin_y = s_layout.viewport_2d.y + 35;
+                        }
+                        gx = (bx - origin_x) / cell_size;
+                        gy = (by - origin_y) / cell_size;
                     }
 
                     if (gx >= 0 && gx < 8 && gy >= 0 && gy < 8) {
@@ -203,7 +272,11 @@ int gui_run(player_state_t *state)
                     key = (char)('a' + (ks - XK_A));
                 }
 
-                if (key == 'm') {
+                if (ks == XK_F11 || key == 'f') {
+                    toggle_fullscreen(display, window);
+                    gui_hud_log_append(&s_log,
+                        "Fullscreen mode toggled (F11 / F).");
+                } else if (key == 'm') {
                     /* Toggle between 2.5D Isometric and 2D Top-Down */
                     s_view_mode = (s_view_mode == GUI_VIEW_25D_ISOMETRIC) ?
                         GUI_VIEW_2D_FLAT : GUI_VIEW_25D_ISOMETRIC;
@@ -237,7 +310,7 @@ int gui_run(player_state_t *state)
         /* Step 7: Compose complete frame onto backbuffer */
         XSetForeground(display, gc, s_palette.bg);
         XFillRectangle(display, backbuffer, gc, 0, 0,
-                       GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT);
+                       (unsigned int)cur_win_w, (unsigned int)cur_win_h);
 
         gui_hud_render_header(display, backbuffer, gc,
                               &s_layout.header, &s_palette);
@@ -253,13 +326,13 @@ int gui_run(player_state_t *state)
         XSetForeground(display, gc, s_palette.panel);
         XFillRectangle(display, backbuffer, gc,
                        s_layout.command_dock.x, s_layout.command_dock.y,
-                       s_layout.command_dock.width,
-                       s_layout.command_dock.height);
+                       (unsigned int)s_layout.command_dock.width,
+                       (unsigned int)s_layout.command_dock.height);
         XSetForeground(display, gc, s_palette.border);
         XDrawRectangle(display, backbuffer, gc,
                        s_layout.command_dock.x, s_layout.command_dock.y,
-                       s_layout.command_dock.width,
-                       s_layout.command_dock.height);
+                       (unsigned int)s_layout.command_dock.width,
+                       (unsigned int)s_layout.command_dock.height);
 
         for (int i = 0; i < GUI_NUM_BUTTONS; i++) {
             gui_widget_draw_button(display, backbuffer, gc,
@@ -268,7 +341,7 @@ int gui_run(player_state_t *state)
 
         /* Step 8: Blit offscreen backbuffer to window (zero-tear) */
         XCopyArea(display, backbuffer, window, gc, 0, 0,
-                  GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 0, 0);
+                  (unsigned int)cur_win_w, (unsigned int)cur_win_h, 0, 0);
         XFlush(display);
 
         time_sleep_ms(16.66);
@@ -293,7 +366,7 @@ static const char *const gui_invariants[] = {
     "Double-buffered native X11 rendering with zero-tear guarantees",
     "Universal action dispatch without direct simulation mutation",
     "Non-overlapping panel and button geometry bounded within viewport",
-    "Asset abstraction layer with drop-in support for artist spritesheets",
+    "Dynamic layout recalibration adapts smoothly to full-screen/resizing",
     "Headless fallback cleanly downgrades to CLI in DISPLAY absence"
 };
 
@@ -301,7 +374,7 @@ const module_metadata_t gui_manifest = {
     "gui.viewport.x11",
     "gui.h",
     LAYER_2_PRESENTATION,
-    { 1, 1, 0 },
+    { 1, 2, 0 },
     2,                          // interface_rev
     "2026-11-03",               // last_updated
     "Desktop presentation viewport, HUD, and 2.5D tactical isometric engine",

@@ -185,7 +185,10 @@ static void render_isometric_view(Display *d, Drawable dr, GC gc,
     const int tile_h     = GUI_ISO_TILE_H;
     const int elev_scale = GUI_ISO_ELEV_SCALE;
     const int origin_x   = vp->x + (vp->width / 2);
-    const int origin_y   = vp->y + 70;
+    int origin_y         = vp->y + ((vp->height - 192) / 2);
+    if (origin_y < vp->y + 40) {
+        origin_y = vp->y + 40;
+    }
 
     int hero_gx = 3;
     int hero_gy = 4;
@@ -315,8 +318,16 @@ static void render_flat_view(Display *d, Drawable dr, GC gc,
                              const gui_palette_t *pal)
 {
     const int cell_size = 38;
-    const int origin_x = vp->x + 30;
-    const int origin_y = vp->y + 40;
+    int grid_w = GRID_COLS * cell_size;
+    int grid_h = GRID_ROWS * cell_size;
+    int origin_x = vp->x + ((vp->width - grid_w) / 2);
+    int origin_y = vp->y + ((vp->height - grid_h) / 2);
+    if (origin_x < vp->x + 20) {
+        origin_x = vp->x + 20;
+    }
+    if (origin_y < vp->y + 35) {
+        origin_y = vp->y + 35;
+    }
 
     int hero_gx = 3;
     int hero_gy = 4;

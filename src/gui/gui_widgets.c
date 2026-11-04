@@ -85,8 +85,8 @@ int gui_widgets_init_buttons(const gui_layout_t *layout,
     const int pad_y = 10;
     const int gap_x = 8;
     const int gap_y = 8;
-    const int btn_w = 72;
-    const int btn_h = 40;
+    const int btn_w = (dock->width - (2 * pad_x) - (2 * gap_x)) / cols;
+    const int btn_h = (dock->height - (2 * pad_y) - (2 * gap_y)) / 3;
 
     for (int i = 0; i < GUI_NUM_BUTTONS; i++) {
         int c = i % cols;

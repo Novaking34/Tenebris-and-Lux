@@ -34,6 +34,7 @@
 // =============================================================================
 
 #include "gui/gui_layout.h"
+#include "util/math/math_utils.h"
 #include <stdio.h>
 
 #define NUM_PANELS 5
@@ -43,49 +44,79 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-void gui_layout_get_default(gui_layout_t *layout)
+void gui_layout_update(gui_layout_t *layout, int win_w, int win_h)
 {
     if (layout == NULL) {
         return;
     }
 
-    layout->window_width  = GUI_WINDOW_WIDTH;
-    layout->window_height = GUI_WINDOW_HEIGHT;
+    if (win_w < 640) {
+        win_w = 640;
+    }
+    if (win_h < 480) {
+        win_h = 480;
+    }
+
+    layout->window_width  = win_w;
+    layout->window_height = win_h;
+
+    const int margin = 10;
+    const int gap    = 10;
+    const int avail_w = win_w - (2 * margin);
 
     /* Panel 1: Top header banner */
-    layout->header.x      = 10;
-    layout->header.y      = 10;
-    layout->header.width  = 840;
+    layout->header.x      = margin;
+    layout->header.y      = margin;
+    layout->header.width  = avail_w;
     layout->header.height = 48;
     layout->header.title  = "Header Banner";
 
-    /* Panel 2: 2D / 2.5D Tactical world viewport */
-    layout->viewport_2d.x      = 10;
-    layout->viewport_2d.y      = 66;
-    layout->viewport_2d.width  = 570;
-    layout->viewport_2d.height = 374;
+    /* Vertical partition below header */
+    const int rem_y = margin + 48 + gap;
+    const int rem_h = win_h - margin - rem_y;
+
+    /* Right column width (Status + Dock): 30% of width, bounded [260, 360] */
+    int right_w = (avail_w * 30) / 100;
+    right_w = math_clamp_int(right_w, 260, 360);
+    const int left_w = avail_w - right_w - gap;
+
+    /* Bottom section height (Chronicle + Dock): 28% of rem_h, bounded */
+    int bottom_h = (rem_h * 28) / 100;
+    bottom_h = math_clamp_int(bottom_h, 140, 240);
+    const int top_h = rem_h - bottom_h - gap;
+
+    /* Panel 2: 2D / 2.5D Tactical world viewport (Top-Left) */
+    layout->viewport_2d.x      = margin;
+    layout->viewport_2d.y      = rem_y;
+    layout->viewport_2d.width  = left_w;
+    layout->viewport_2d.height = top_h;
     layout->viewport_2d.title  = "Tactical World Viewport";
 
-    /* Panel 3: Right side hero vitals and relic meters */
-    layout->status.x      = 590;
-    layout->status.y      = 66;
-    layout->status.width  = 260;
-    layout->status.height = 374;
+    /* Panel 3: Right side hero vitals and relic meters (Top-Right) */
+    layout->status.x      = margin + left_w + gap;
+    layout->status.y      = rem_y;
+    layout->status.width  = right_w;
+    layout->status.height = top_h;
     layout->status.title  = "Vitals & Relics Inspection";
 
-    /* Panel 4: Bottom left chronicle narrative log */
-    layout->chronicle.x      = 10;
-    layout->chronicle.y      = 448;
-    layout->chronicle.width  = 570;
-    layout->chronicle.height = 162;
+    /* Panel 4: Bottom left chronicle narrative log (Bottom-Left) */
+    layout->chronicle.x      = margin;
+    layout->chronicle.y      = rem_y + top_h + gap;
+    layout->chronicle.width  = left_w;
+    layout->chronicle.height = bottom_h;
     layout->chronicle.title  = "Chronicle Narrative Log";
 
-    /* Panel 5: Bottom right tactical command dock */
-    layout->command_dock.x      = 590;
-    layout->command_dock.y      = 448;
-    layout->command_dock.width  = 260;
-    layout->command_dock.height = 162;
+    /* Panel 5: Bottom right tactical command dock (Bottom-Right) */
+    layout->command_dock.x      = margin + left_w + gap;
+    layout->command_dock.y      = rem_y + top_h + gap;
+    layout->command_dock.width  = right_w;
+    layout->command_dock.height = bottom_h;
     layout->command_dock.title  = "Tactical Action Dock";
+}
+
+void gui_layout_get_default(gui_layout_t *layout)
+{
+    gui_layout_update(layout, GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT);
 }
 
 geom_rect_t gui_layout_panel_to_rect(const gui_panel_rect_t *panel)
@@ -151,3 +182,4 @@ bool gui_layout_audit(const gui_layout_t *layout)
 // =============================================================================
 // BLOCK 5: CLOSING BLOCK
 // =============================================================================
+
