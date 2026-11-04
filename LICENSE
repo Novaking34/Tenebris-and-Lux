@@ -1,0 +1,172 @@
+CREATIVEWORKZSTUDIO COMMERCIAL GAME LICENSE & SOURCE-AVAILABLE AGREEMENT
+================================================================================
+
+Project:      Tenebris and Lux
+Organization: CreativeWorkzStudio LLC
+Author / IP:  ProfessorSeanEX
+Repository:   <https://github.com/Novaking34/tenebris-lux>
+Version:      1.0 (Commercial Reservation & Source-Available Evaluation)
+Effective:    November 3, 2026
+
+Copyright (c) 2014–2026 CreativeWorkzStudio LLC / ProfessorSeanEX.
+All Rights Reserved
+================================================================================
+
+PREAMBLE & RECITALS
+
+This Commercial Game License and Source-Available Agreement ("Agreement") is a
+binding legal covenant between you ("Licensee", "User", or "You") and
+CreativeWorkzStudio LLC ("Licensor", "Author", or "Studio"), regarding the
+tactical strategy video game, custom ISO C11 engine architecture, documentation,
+and proprietary universe known as "Tenebris and Lux" ("Software", "Game", or "Project").
+
+WHEREAS, Licensor is the sole and exclusive proprietor of all copyright, patent,
+trademark, trade secret, and creative intellectual property rights embodied within
+the Game and its underlying engine; and
+
+WHEREAS, Licensor intends to commercialize, publish, and sell copies of the Game
+on digital distribution platforms, including Valve Corporation's Steam storefront; and
+
+WHEREAS, Licensor maintains this repository on GitHub for transparent engineering,
+technical evaluation, community engagement, and educational study, subject to strict
+reservation of all commercial exploitation and proprietary asset rights;
+
+NOW, THEREFORE, by accessing, cloning, downloading, viewing, compiling, or executing
+any portion of the Software, You unconditionally agree to the following terms:
+
+ARTICLE I: PROPRIETARY INTELLECTUAL PROPERTY & ALL RIGHTS RESERVED
+
+1.1 Exclusive Ownership:
+    The Software, source code, game engine, build scripts, data definitions, and
+    associated documentation constitute the valuable intellectual property of
+    CreativeWorkzStudio LLC. All rights not expressly granted to You in this
+    Agreement are strictly and unequivocally reserved by Licensor.
+
+1.2 Proprietary Game Assets & Canon:
+    All creative assets, artistic materials, and narrative works are protected
+    under international copyright, trademark, and unfair competition laws.
+    Without limitation, the following materials are strictly ALL RIGHTS RESERVED:
+    (a) Narrative & Canon: The storylines, dialogue, quest structures, character
+        dossiers, realm chronicles, continental geography (including the Kingdom
+        of Sacyra and the Six Powers), and the 67-chapter Master Guide Compendium.
+    (b) Characters & Relics: The identities, designs, likenesses, and lore of
+        Elijah Ro-enheart, Lady Katrina Jaren, The Custom Bearer, Chrono, the
+        Dark Lord Usuru, the Shield of Lux, and the Sword of Tenebris.
+    (c) Media & Aesthetics: All sprites, icons, concept art, textures, typography,
+        fonts, audio tracks, soundscapes, and visual compositions.
+
+1.3 Trademark Protection:
+    "Tenebris and Lux", "CreativeWorkzStudio", "CreativeWorkzStudio LLC", the
+    studio crests, and associated logos are registered or common-law trademarks
+    of Licensor. No license or permission to use these marks in commerce, marketing,
+    or promotional materials is granted herein.
+
+ARTICLE II: GRANT OF LIMITED NON-COMMERCIAL LICENSE
+
+2.1 Scope of Permitted Non-Commercial Use:
+    Subject to continuous compliance with this Agreement, Licensor grants You a
+    revocable, non-exclusive, non-transferable, non-sublicensable, royalty-free
+    license solely to:
+    (a) View, read, and inspect the source code and architectural documentation
+        for private personal education, technical study, and non-commercial research;
+    (b) Compile, build, and execute the Software locally on your personal device
+        exclusively for personal, non-commercial testing and evaluation; and
+    (c) Create non-commercial personal forks hosted publicly on GitHub strictly
+        for the purpose of submitting contributions, patches, or issues upstream
+        to the official repository.
+
+ARTICLE III: COMMERCIAL RESTRICTIONS & STOREFRONT EXCLUSIVITY
+
+3.1 Commercial Prohibition:
+    You shall NOT sell, rent, lease, sublicense, monetize, commercialize, or
+    distribute the Software, engine, game builds, or any derivative works, whether
+    in source or binary form, standalone or incorporated into another product.
+
+3.2 Storefront & Marketplace Exclusivity:
+    Licensor reserves the sole, exclusive right to publish, monetize, and distribute
+    the Game on commercial digital platforms. You are strictly prohibited from
+    publishing, packaging, releasing, or distributing the Game or any derivative
+    thereof on any storefront or marketplace, including but not limited to:
+    (a) Valve Corporation platforms (Steam, Steam Early Access, Steam Deck);
+    (b) Epic Games Store;
+    (c) GOG.com;
+    (d) itch.io;
+    (e) Microsoft Xbox, Sony PlayStation, Nintendo Switch;
+    (f) Apple App Store, Google Play Store; and
+    (g) Any web portal, subscription service, or digital distribution network.
+
+3.3 Monetization & Sublicensing:
+    You may not charge any fee, require monetary payments, solicit subscriptions,
+    display commercial advertising, or receive donations conditioned upon access
+    to the Software or its compiled binaries.
+
+ARTICLE IV: DERIVATIVE WORKS, CONTRIBUTIONS & FORKING
+
+4.1 Repository Forks:
+    Any fork or copy of this repository made on GitHub or elsewhere remains fully
+    bound by all terms of this Agreement. You may not alter, delete, or obscure
+    any copyright notice, this LICENSE file, or proprietary header comments.
+
+4.2 No Proprietary Asset Extraction:
+    Under no circumstances may game assets (sprites, art, dialogue, audio, lore)
+    be extracted, decoupled, or utilized in any other game, engine, or application.
+
+4.3 Contributions & Intellectual Property Assignment:
+    By submitting issues, pull requests, suggestions, code enhancements, or lore
+    proposals to the repository, You grant to CreativeWorkzStudio LLC a perpetual,
+    irrevocable, worldwide, royalty-free, fully paid-up, assignable, and sublicensable
+    license to use, modify, incorporate, and commercialize such contributions into
+    the official Game, Steam releases, and documentation without compensation or
+    accounting to You.
+
+ARTICLE V: COMPLIANCE, AUDIT & TERMINATION
+
+5.1 Immediate Termination:
+    This Agreement and all rights granted hereunder terminate automatically,
+    without need of notice or judicial process, if You violate or fail to comply
+    with any provision of this Agreement, including unauthorized commercialization
+    or asset misuse.
+
+5.2 Remedies for Breach:
+    Upon termination, You must immediately cease all use of the Software, delete
+    all copies, and destroy all compiled binaries. In the event of unauthorized
+    commercial distribution (such as unauthorized Steam publishing or asset sale),
+    Licensor reserves all rights to pursue statutory damages, injunctive relief,
+    DMCA takedowns, and legal fees to the maximum extent permitted by law.
+
+ARTICLE VI: DISCLAIMER OF WARRANTIES & LIMITATION OF LIABILITY
+
+6.1 Disclaimer:
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. LICENSOR DOES
+    NOT WARRANT THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE, OR COMPATIBLE
+    WITH ANY SPECIFIC HARDWARE OR OPERATING SYSTEM.
+
+6.2 Limitation of Liability:
+    IN NO EVENT SHALL CREATIVEWORKZSTUDIO LLC, ITS MEMBERS, DIRECTORS, OR AUTHORS
+    BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING LOSS OF PROFITS, DATA, OR BUSINESS INTERRUPTION)
+    ARISING IN ANY WAY OUT OF THE USE, COMPILATION, OR PERFORMANCE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ARTICLE VII: GENERAL LEGAL PROVISIONS
+
+7.1 Governing Law & Jurisdiction:
+    This Agreement shall be governed by, and interpreted in accordance with, the
+    laws of the United States of America, without giving effect to conflicts of
+    law principles. Any dispute arising out of or relating to this Agreement shall
+    be subject to the exclusive jurisdiction of the competent courts of the
+    United States.
+
+7.2 Severability & Entire Agreement:
+    If any provision of this Agreement is held to be invalid or unenforceable, the
+    remaining provisions shall remain in full force and effect. This Agreement
+    constitutes the complete understanding between the parties regarding the
+    licensing and use of the Software.
+
+================================================================================
+COMMERCIAL INQUIRIES & OFFICIAL CONTACT:
+CreativeWorkzStudio LLC / ProfessorSeanEX
+Official Repository: <https://github.com/Novaking34/tenebris-lux>
+================================================================================

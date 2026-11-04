@@ -1,260 +1,290 @@
+<!--
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          AGENTS.md
+@layer         Cognitive Anchor & Repository Governance Strata
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-03
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Universal 5-Block Lifecycle Protocol & Agent Standards
+@role          Cognitive Compass, Architectural Invariants & Ontological Guide
+@invariants    1. Zero dynamic heap allocations in Layer 0 (Core Util) & Layer 1 (Sim).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Explicit include pathing (No forwarder headers in include root).
+               4. Dual-frontend determinism (Headless CLI and X11 share pure sim state).
+               5. Authentic project canon (Sole antagonist: The Dark Lord Usuru).
+               6. Universal 5-Block Lifecycle Protocol enforced across all files.
+
+PURPOSE & COGNITIVE ROLE:
+  The definitive architectural manual and cognitive anchor for autonomous AI
+  agents and human engineers working on Tenebris and Lux. Translates the
+  OmniCode Universal 5-Block Lifecycle Protocol into an actionable mental model:
+  Block 1: Metadata -> Block 2: Types/Ontology -> Block 3: Body/Execution ->
+  Block 4: Audit/Tripwires -> Block 5: Closing/CLI/Teardown.
+================================================================================
+-->
+
 # Repository Guidelines & Agent Standards
 
 > **Project**: Tenebris and Lux  
 > **Standard**: OmniCode 5-Block Ontological Architecture & Layered Invariant Discipline  
 > **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  
-> **Repository**: [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux)
+> **Repository**: [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux)  
+> **Engine Milestone**: `0.1.0-dev` (Tactical Strategy RPG Grid Engine & Continental Topology)
 
 ---
 
-## 0. Philosophy: The Purpose of this Document
+## 0. Philosophy: The Cognitive Anchor & Compass
 
 This document (`AGENTS.md`) is **not** an inflexible bureaucratic straitjacket or a rigid legal statute meant to override developer judgment or stifle pragmatic engineering.
 
-Rather, it is a **cognitive anchor and compass**. In complex AI-assisted pair-programming workflows involving multi-layered C11 engines, Rust developer tooling, and deep narrative world-building, autonomous agents can easily experience context drift, introduce synthetic hallucinations (e.g. inventing placeholder names), violate architectural constraints (e.g. introducing heap allocations to zero-heap layers), or pollute repository hygiene.
+Rather, it is a **cognitive anchor and compass**. In complex AI-assisted pair-programming workflows involving multi-layered C11 engines, Rust developer tooling, and deep narrative worldbuilding, autonomous agents frequently suffer from **context drift**:
+
+* Inventing synthetic hallucinations (e.g., deprecated placeholder names like "Malakor" instead of the canonical **Dark Lord Usuru**);
+* Violating architectural constraints (e.g., introducing heap allocations like `malloc` into zero-heap Layer 0 or Layer 1);
+* Polluting repository hygiene (e.g., placing source files or forwarder headers at the repository root);
+* Breaking determinism (e.g., coupling rendering viewports into pure simulation logic).
 
 `AGENTS.md` exists to **re-ground you in proven patterns and axiomatic invariants**:
 
-- **Clarity of Architectural Intent**: Understanding *why* code is layered and *why* contracts exist prevents well-meaning changes from breaking subtle guarantees.
-- **Cognitive Consistency**: Grounding names, themes, and narrative logic in authentic project canon ensures all new systems harmonize like an integrated guidebook.
-- **Engineering Hygiene**: Maintaining root directory cleanliness, explicit pathing, and zero-warning compilation keeps the codebase robust and maintainable.
-
-When in doubt, use this document to re-center your decisions around the project's true North Star.
+* **Clarity of Architectural Intent**: Understanding *why* code is layered and *why* contracts exist prevents well-meaning changes from breaking subtle guarantees.
+* **Cognitive Consistency**: Grounding names, themes, and narrative logic in authentic project canon ensures all systems harmonize like an integrated guidebook.
+* **Engineering Hygiene**: Maintaining root directory cleanliness, explicit pathing, zero warnings, and 100% CTest pass rates keeps the codebase pristine.
 
 ---
 
-## 1. Architectural Philosophy: The 5-Block Lifecycle Protocol
+## BLOCK 1: METADATA & COGNITIVE ANCHOR BLOCK
 
-Every source file, header, and configuration file in this repository strictly adheres to the **Universal 5-Block Lifecycle Protocol** adapted from the OmniCode framework. This structure eliminates ambiguity, guarantees self-documenting code, and enforces compile-time and runtime invariants.
+> **Cognitive Role in the Mind: Orientation & Invariant Grounding**  
+> Before writing a single line of executable logic, the engineer or agent must orient: *Who am I? What module is this? What contracts bind this space? What are the non-negotiable constraints?*
 
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                        BLOCK 1: METADATA BLOCK                         │
-│  Identity, Provenance, Invariant Boundary Contracts & System Anchors   │
-├────────────────────────────────────────────────────────────────────────┤
-│                    BLOCK 2: OPENING / TYPES BLOCK                      │
-│  Includes, Preconditions, Enums, State Structures & Global Constants   │
-├────────────────────────────────────────────────────────────────────────┤
-│                         BLOCK 3: BODY BLOCK                            │
-│  Core Logic, State Transitions, Execution Routines & Gameplay Loop     │
-├────────────────────────────────────────────────────────────────────────┤
-│                   BLOCK 4: AUDIT PROCEDURES BLOCK                      │
-│  Diagnostic Audits, State Invariant Verifications & Telemetry Traces   │
-├────────────────────────────────────────────────────────────────────────┤
-│                BLOCK 5: CLOSING / TEST & CLI BLOCK                     │
-│  CLI Entry Point, Automated Invariant Unit Tests & Execution Teardown  │
-└────────────────────────────────────────────────────────────────────────┘
+### 1.1 The File Metadata Header Covenant
+
+Every C source file (`.c`), header (`.h`), script, and documentation file must begin with an explicit **Block 1 Metadata Header**:
+
+```c
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          <filename>.<ext>
+@layer         Layer <N>: <Stratum Name>
+@version       0.1.0-dev
+@interface_rev Rev <N>
+@date          YYYY-MM-DD
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        <Subsystem Identity>
+@role          <Single Responsibility Role>
+@invariants    <Axiomatic Invariant List>
+
+PURPOSE & ARCHITECTURAL ROLE:
+  <Detailed exposition of architectural mission and design rationale>
+================================================================================
+*/
 ```
 
-### Block Breakdown
+### 1.2 The Root Directory Hygiene Invariant
 
-1. **BLOCK 1: METADATA BLOCK**
-   - Must contain file identity tags (`@project`, `@file`, `@layer`, `@version`, `@author`, `@system`, `@role`, `@invariants`).
-   - Outlines architectural intent and axiomatic invariants governing the module.
+The repository root must remain immaculate. According to project standards, the root directory may ONLY contain essential project anchors:
 
-2. **BLOCK 2: OPENING / TYPES BLOCK**
-   - Explicit includes of layered headers.
-   - Type definitions, enums, structs, and compile-time constants (`#define`).
-   - Preconditions and memory layout definitions.
+* `CMakeLists.txt` (Root C11 build orchestrator)
+* `.gitignore` (VCS exclusion rules with Block 1 metadata)
+* `README.md` (Root documentation anchor with expanded YAML frontmatter)
+* `CHANGELOG.md` (Evolutionary chronicle across DevLogs 001–014)
+* `LICENSE` (CreativeWorkzStudio Commercial Game & Source-Available Agreement)
+* `AGENTS.md` (This cognitive anchor and governance standard)
 
-3. **BLOCK 3: BODY BLOCK**
-   - Pure, modular, single-responsibility functions and algorithms.
-   - Core gameplay mechanics, mathematical clamping, and state transitions.
+All other materials belong in their respective strata:
 
-4. **BLOCK 4: AUDIT PROCEDURES BLOCK**
-   - Dedicated diagnostic routines (e.g. `audit_*` functions).
-   - Validates subsystem state invariant integrity (e.g., resonance within `[0, MAX_RESONANCE]`, viewport non-overlap, monotonic clock ticks).
-   - Reports detailed pre-flight audit manifests without relying on crude runtime crashes.
-
-5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**
-   - For executables (`src/main.c`): Command-line argument parsing (`--audit`, `--help`, `--version`, `--cli`, `--gui`), teardown, and return codes.
-   - For modular units: Standalone unit tests and verification suites.
-   - For headers (`.h`): Include guard closing `#endif`.
+* `engine/`: Zero-heap foundational utilities (`engine/include/util/`, `engine/src/util/`) and Presentation Viewports (`engine/include/gui/`, `engine/src/gui/`).
+* `game/`: Tactical Simulation Engine (`game/include/sim/`, `game/src/sim/`) and Application Router (`game/src/main.c`).
+* `data/`: Data-driven JSON manifests, subsystem profiles, and tactical schemas (`data/SCHEMAS.md`).
+* `tests/<stratum>/`: All automated test suites (`functional/`, `unit/`, `integrated/`, `system/`).
+* `docs/<category>/`: All technical manuals and realm chronicles in AsciiDoc format.
+* `assets/<type>/`: All fonts (`fonts/`), high-res icons (`icons/`), banners (`branding/`), and screenshots (`screenshots/`).
+* `tools/`: Developer toolchain in Rust (`master_guide`, `extractor`).
+* `.github/`: Issue templates and linter configurations.
 
 ---
 
-## 2. Layered Architecture & Directory Strata
+## BLOCK 2: OPENING / TYPES & DOMAIN ONTOLOGY BLOCK
 
-The codebase is organized into strict, hierarchical strata. Higher layers may depend on lower layers, but lower layers NEVER depend on higher layers.
+> **Cognitive Role in the Mind: Framing & State Representation**  
+> In the mind, Block 2 defines the grammar and boundaries of the problem space: *What data structures exist? What are the memory layouts? What headers are imported? What is the ontological vocabulary?*
+
+### 2.1 The 5 Layered Strata & Hierarchy
+
+Dependencies strictly flow downwards. Higher layers may call lower layers; lower layers **never** import or depend on higher layers.
 
 ```text
 Layer 4: Verification Suite       [ tests/ ]
            │
-Layer 3: Application Entry        [ src/main.c ]
+Layer 3: Application Router       [ game/src/main.c ]
            │
-Layer 2: Presentation & Viewport  [ src/gui/   <-> include/gui/ ]
+Layer 2: Presentation Viewports   [ engine/src/gui/   <-> engine/include/gui/ ]
            │
-Layer 1: Simulation Engine        [ src/sim/   <-> include/sim/ ]
+Layer 1: Simulation Engine        [ game/src/sim/     <-> game/include/sim/ ]
            │
-Layer 0: Core Utilities           [ src/util/  <-> include/util/ ]
+Layer 0: Core Utilities           [ engine/src/util/  <-> engine/include/util/ ]
 ```
 
-### Layer Definitions
-
-1. **Layer 0: Core Utilities (`src/util/`, `include/util/`)**:
-   - Zero-dependency foundational primitives organized into domain subsystems:
-     - `math/`: Bounded arithmetic (`math_utils.h`: clamping, saturating, normalization) and 2D spatial geometry (`geom_utils.h`: AABB, hit-tests).
-     - `data/`: Zero-heap filesystem I/O (`fs_utils.h`) and JSON token/value deserialization (`json_utils.h`).
-     - `log/`: Forensic telemetry, categorized channels, grade tracking, static ring buffer, and quarantined fallback monoliths (`log.h`, `log_fallback.h`).
-     - `debug/`: Interactive state debugger, frozen snapshot ring buffer, FNV-1a state hashing, time-travel rewind, dynamic breakpoints, and quarantined fallback monoliths (`debug.h`, `debug_fallback.h`).
-     - Leaf Primitives: Safe string copying and trimming (`string_utils.h`), monotonic timing and ISO timestamps (`time_utils.h`), and central pre-flight manifest registry (`manifest.h`).
-   - *Invariant*: Zero heap allocations, pure reentrant C11, no GUI or game dependencies.
-
-2. **Layer 1: Simulation Engine (`src/sim/`, `include/sim/`)**:
-   - Implements game state (`player_state_t`), twin armaments, stance mechanics, moral sway continuum, provincial topology, and command dispatching.
-   - Fully decoupled from windowing or rendering. Runs headless in CLI, in native GUI viewports, or under simulation test harnesses.
-   - *Headers*: `include/sim/*.h` | *Sources*: `src/sim/*.c`
-
-3. **Layer 2: Presentation & Viewports (`src/gui/`, `include/gui/`)**:
-   - Native X11 double-buffered desktop interface. Translates mouse clicks and keystrokes into universal simulation commands.
-   - Renders health/resonance meters, region chronicles, stance visualizers, and interactive controls.
-   - *Header*: `include/gui/gui.h` | *Source*: `src/gui/gui.c`
-
-4. **Layer 3: Application Entry & Presentation Router (`src/main.c`)**:
-   - Entry point parsing CLI flags (`--help`, `--version`, `--audit`, `--debug`, `--cli`, `--gui`).
-   - Implements automatic headless fallback: launches GUI when X11 display is available, gracefully falls back to terminal CLI otherwise.
-
+1. **Layer 0: Core Utilities (`engine/src/util/`, `engine/include/util/`)**:
+   * Zero-dependency foundational primitives: `math/` (bounded arithmetic), `geom/` (2D AABB geometry), `data/` (zero-heap FS and JSON tokenizer), `log/` (categorized telemetry and static ring buffer), `debug/` (snapshot buffer and FNV-1a hashing), `string/` (bounded safety), `time/` (monotonic timers), and `manifest/` (pre-flight DAG registry).
+   * **Hard Invariant**: **Zero dynamic heap allocations** (`malloc`, `calloc`, `free` are prohibited). Pure reentrant ISO C11.
+2. **Layer 1: Simulation Engine (`game/src/sim/`, `game/include/sim/`)**:
+   * Manages player state (`player_state_t`), twin armaments, combat stance machine, moral sway continuum, provincial topology, and command dispatching.
+   * **Hard Invariant**: Zero heap allocations. Completely decoupled from X11 or windowing runtimes. Runs headless under any CLI or test harness.
+3. **Layer 2: Presentation & Viewports (`engine/src/gui/`, `engine/include/gui/`)**:
+   * Native X11 double-buffered desktop interface. Translates mouse clicks and keystrokes into universal simulation commands.
+   * High-DPI TrueType font engine (`Cinzel`, `MedievalSharp`), 640x360 target resolution with letterbox/pillarbox scalers.
+4. **Layer 3: Application Entry & Presentation Router (`game/src/main.c`)**:
+   * Evaluates CLI flags (`--help`, `--version`, `--audit`, `--debug`, `--cli`, `--gui`).
+   * Automatically detects active X11 display, launching GUI when available and gracefully falling back to terminal CLI.
 5. **Layer 4: Verification & Test Suite (`tests/`)**:
-   - Automated game development verification suite integrated into CTest (13/13 tests pass):
-     - `tests/functional/`:
-       - `test_functional`: Granular function-level debugging harness isolating 20 individual cogs across utilities, simulation, and debugger with `[DEBUG-TRACE]` telemetry for zero-friction debugging.
-     - `tests/unit/`:
-       - `test_math`: Subsystem unit verification of mathematical clamping, saturating, normalization, and 2D spatial geometry.
-       - `test_data`: Subsystem unit verification of zero-heap filesystem I/O and recursive JSON parsing.
-       - `test_time`: Subsystem unit verification of monotonic timers, ISO timestamps, and 60/120 FPS frame profiles.
-       - `test_string`: Subsystem unit verification of safe bounded string copying, whitespace trimming, and path operations.
-       - `test_log`: Subsystem unit verification of categorized telemetry channels, ring buffer cycling, and fallback monoliths across the 4 Ontological Testing Sections.
-       - `test_debug`: Subsystem unit verification of state snapshot ring buffer, time-travel rewind, state diffing, dynamic breakpoints, and emergent chaotic stress across the 4 Ontological Testing Sections.
-     - `tests/integrated/`:
-       - `test_utils`: Cross-utility coordination, central pre-flight manifest DAG verification, multi-subsystem boot, and configuration loading.
-     - `tests/system/`:
-       - `test_game_invariants`: High-level simulation engine state limits, twin relic resonance conservation, stance deterministic transitions, provincial topology, and audit tripwires.
-       - `test_gameplay_scenarios`: Whole-game scenarios, 15-step golden replay determinism, softlock immunity under 1,000 chaotic commands, and strict < 50µs latency budget.
+   * 19 automated CTest verification suites spanning Functional cogs, Subsystem units, Integrated DAG, and System golden replays.
 
-6. **Developer Tooling Strata (`tools/`)**:
-   - Standalone Rust toolchain supporting extractor utilities and documentation compilation:
-     - `tools/src/extractor.rs`: Historical RPG Maker MV data extractor.
-     - `tools/src/guide.rs`: Standalone Master Guide compiler assembling 65 chapters across 6 volumes into AsciiDoc, Markdown, and PDF books.
+### 2.2 Strict Include Pathing (No Forwarders)
 
----
+All header includes must explicitly declare their stratum and subsystem. Lazy forwarder headers in include roots are strictly forbidden:
 
-## 3. Strict Include Pathing & Root Hygiene
+```c
+#include "util/math/math_utils.h"
+#include "util/math/geom_utils.h"
+#include "util/data/fs_utils.h"
+#include "util/data/json_utils.h"
+#include "util/log/log.h"
+#include "util/debug/debug.h"
+#include "util/string/string_utils.h"
+#include "util/time/time_utils.h"
+#include "sim/game.h"
+#include "gui/gui.h"
+```
 
-1. **Explicit Pathing (No Forwarders)**:
-   - Header includes must explicitly declare their stratum and subsystem:
-     - `#include "sim/game.h"`
-     - `#include "gui/gui.h"`
-     - `#include "util/math/math_utils.h"`
-     - `#include "util/math/geom_utils.h"`
-     - `#include "util/data/fs_utils.h"`
-     - `#include "util/data/json_utils.h"`
-     - `#include "util/log/log.h"`
-     - `#include "util/debug/debug.h"`
-     - `#include "util/string/string_utils.h"`
-     - `#include "util/time/time_utils.h"`
-   - Never generate lazy forwarder headers in `include/` root.
-2. **Root Directory Hygiene**:
-   - The repository root must ONLY contain essential project anchors:
-     - `CMakeLists.txt`
-     - `.gitignore`
-     - `README.md`
-     - `AGENTS.md`
-   - All source code lives in `src/<layer>/`.
-   - All public headers live in `include/<layer>/`.
-   - All tests live in `tests/<stratum>/`.
-   - All documentation lives in `docs/<category>/`.
-   - All raw working notes, transcribe logs, and offline drafts live in `docs/offline_work/`.
+### 2.3 Continental Lore & Canon Invariants
+
+* **The Twin Relics**:
+  * **The Shield of Lux**: Light, barrier resonance, poise, kinetic deflection, protection.
+  * **The Sword of Tenebris**: Darkness, edge sharpness, armor severance, abyssal mist.
+* **Metaphysical Neutrality**: Neither Light nor Darkness is inherently good or evil. They are primal cosmic apex forces. Morality exists solely in wielder intent (`moral_sway` in `[-100, +100]`).
+* **The Thematic Triad: "Trauma is Inherited, Destiny is Chosen"**:
+  * *The Past (Frontier Neglect)*: **Elijah Ro-enheart** and ancient wanderer **Usuru**.
+  * *The Present (Severing Complacency)*: **Lady Katrina Jaren** and founding **Prince Casatti**.
+  * *The Future (The Steward of Balance)*: **The Custom Bearer** (`<chosen_name>`) and founding architect **Prince Mi-ren**.
+* **The Geopolitical Six Powers**:
+  * Royal Capital of Sacyra, Kingdom of Libira, Great Mau Kingdom, Old Sacyra, The Academy, and the Yun-yin Provinces—bound by the *Accord of Kings* ("Joint Realm, Separate Kingdoms").
+* **Existential Antagonist Truth**: The sole overarching antagonist is **"The Dark Lord"** (the ancient Libiran sovereign Usuru). Deprecated placeholder names (e.g., "Malakor") are non-canonical and prohibited.
 
 ---
 
-## 4. Lore, Canon & Thematic Invariants
+## BLOCK 3: BODY / EXECUTION LOGIC & GAMEPLAY LOOPS
 
-1. **Genesis & Provenance**:
-   - Conceived between **2014–2018** in RPG Maker as the very first major game of **CreativeWorkzStudio** prior to its publishing house evolution.
-   - Reborn as a custom-engineered **Tactical Strategy RPG (TRPG)** featuring a grid-based battlefield with cinematic traditional side-scroll / action combat resolution.
+> **Cognitive Role in the Mind: Algorithmic Execution & State Transitions**  
+> In the mind, Block 3 implements the core engine routines: *How does state transition? What are the mathematical bounds? How do combat and mechanics resolve?*
 
-2. **Twin Relics Canon**:
-   - **The Shield of Lux**: Personification of Light, barrier resonance, kinetic deflection, and protection.
-   - **The Sword of Tenebris**: Personification of Darkness, edge sharpness, abyssal mist, and severance.
+### 3.1 Deterministic Stance State Machine
 
-3. **Metaphysical Neutrality**:
-   - Neither Light (Lux) nor Darkness (Tenebris) is inherently good or evil. They are primal cosmic apex forces.
-   - The wielder's intent and application determine the moral sway (`moral_sway` in `[-100, +100]`):
-     - Positive sway: Virtue, protection, mercy.
-     - Negative sway: Malice, ruin, ruthless dominion.
+Every stance transition forms a strongly connected, deterministic finite state machine:
 
-4. **The Thematic Triad: "Trauma is Inherited, Destiny is Chosen"**:
-   - **The Past (Healing the Frontier Wound)**: **Usuru** (the tragic Libiran wanderer) and **Elijah Ro-enheart** (son of the vanished Guard Commander Gareth).
-   - **The Present (Severing Complacency)**: **Prince Casatti** (the outrider prince who walked the wilderness) and **Lady Katrina Jaren** (noble court aspirant renouncing aristocracy for the Adventurers' Guild).
-   - **The Future (The Steward of Balance)**: **Prince Mi-ren** (the founding architect who held the four-year vigil) and **The Custom Bearer** (`<chosen_name>`, unburdened by ancestral grudge, awakening in the Dream Chamber).
+* `STANCE_NEUTRAL`: Baseline posture, balanced stamina recovery.
+* `STANCE_WARDING` (*Lux Barrio*): Raises radiant dome, absorbs 25% damage, kinetic reflect.
+* `STANCE_STRIKING` (*Cuttatio Tenebris*): Lowers center of gravity, sweeping arc + 20% flank splash.
+* `STANCE_EQUILIBRIUM` (*Duo-Loca Bashin n Slash*): Harmonic shield bash + abyssal double-cleave targeting raw DEF.
 
-5. **Macro-Historical Timeline & The 3,000-Year Dynastic Wave**:
-   - **Era I**: Founding of Sacyra, the Two Princes (Mi-ren & Casatti), and the Four-Year Coma.
-   - **Era II–III**: The International Festival of Peoples, the Four-Year Vigil, and the 5th Festival passing.
-   - **Era IV**: Usuru the Wanderer, Libira's "Quiet Complaint" (7-day courier gap, no outpost system), and the 11th Year Festival Rupture.
-   - **Era V**: The Seven-Year Great War between Sacyra and the 6-Power Coalition, culminating in the *Accord of Kings* ("Joint Realm, Separate Kingdoms").
-   - **Era VI**: The 3,000-Year Dynastic Wave (30–50 Kings, alternating stasis crests and tether troughs), ending in the possession of King Jihad via **The King's Curse** (the open planar wound beneath the High Throne).
+### 3.2 Bounded Arithmetic & Conserved Resources
 
-6. **Canonical Antagonist Truth**:
-   - The overarching existential antagonist is solely **"The Dark Lord"** (the ancient Libiran sovereign Usuru).
-   - Deprecated placeholder names (such as "Malakor") are non-canonical and must not be used.
+* Shield warding charge: Strictly clamped in `[0, 100]` (`MAX_RESONANCE`).
+* Sword edge sharpness: Strictly clamped in `[0, 100]` (`MAX_RESONANCE`).
+* Moral Sway continuum: Strictly bounded in `[-100, +100]`.
+* Zero-divisor guards: All mathematical operations must use `safe_div()` or saturating math from `math_utils.h`.
 
----
+### 3.3 Midpoint Campaign Fork & The 5-Route Ending Matrix
 
-## 5. Ludology, Campaign Structure & Multi-Endings
-
-1. **State Machine Completeness**: Every stance (`STANCE_WARDING`, `STANCE_STRIKING`, `STANCE_EQUILIBRIUM`, `STANCE_NEUTRAL`) forms a strongly connected, deterministic transition graph.
-2. **Conserved Resources & Bounded Invariants**: Shield power and sword edge strictly respect `[0, MAX_RESONANCE]`. Moral sway remains bounded in `[-100, +100]`.
-3. **The King's Curse as Midpoint Campaign Fork**:
-   - Entering the Royal Capital without the calibrated *Dream Compass* triggers the tragic *Neutral Path*.
-   - Exposing the planar wound using the calibrated *Dream Compass* (evolved from Grandma's Watch) unlocks the *True Ending Paths*.
-4. **The 5-Route Ending Matrix**:
-   - *Path of Radiance (Lux Overload)*: Total moral sway $\ge +75$; light crystallization.
-   - *Path of the Abyssal Sovereign (Tenebrous Eclipse)*: Total moral sway $\le -75$; dominion over shadow.
-   - *The Sovereign Accord (Dual Harmonic Balance)*: Equilibrium maintained `[-25, +25]`; renewal of the Accord of Kings.
-   - *The Cycle Shattered (Planar Dissolution)*: Transcending both relics; healing the 3,000-year breach.
-   - *The Forgotten Stasis (The King's Slumber)*: Neutral default; repetition of the dynastic cycle.
+* **The King's Curse**: The open planar wound beneath the High Throne and possession of King Jihad.
+* **The Dream Compass**: Evolved from Grandma's Watch through nocturnal calibration.
+  * Entering the Royal Capital without the calibrated Compass triggers the tragic *Neutral Path (The Forgotten Stasis)*.
+  * Exposing the wound with the calibrated Compass unlocks the *True Ending Paths*:
+    1. *Path of Radiance (Lux Overload)*: Moral sway $\ge +75$; light crystallization.
+    2. *Path of the Abyssal Sovereign (Tenebrous Eclipse)*: Moral sway $\le -75$; absolute shadow.
+    3. *The Sovereign Accord (Dual Harmonic Balance)*: Equilibrium maintained `[-25, +25]`.
+    4. *The Cycle Shattered (Planar Dissolution)*: Transcending both relics; healing the 3,000-year breach.
+    5. *The Forgotten Stasis (The King's Slumber)*: Default neutral closure; dynastic repetition.
 
 ---
 
-## 6. Documentation Standards (AsciiDoc)
+## BLOCK 4: AUDIT PROCEDURES & DIAGNOSTIC TRIPWIRES
 
-- All technical manuals, architecture designs, dev logs, realm chronicles, and lore documents are standardized in **AsciiDoc (`.adoc`)** format.
-- Located within `docs/`:
-  - `docs/architecture/`: System design, layered strata, dual-frontend architecture.
-  - `docs/lore/`: World canon, timeline, character dossiers, realm chronicles.
-  - `docs/game_design/`: Combat mechanics, stances, topographical map, test criteria.
-  - `docs/dev_logs/`: Chronological engineering logs and milestone postmortems.
-  - `docs/code/`: Module walkthroughs and subsystem code documentation.
-  - `docs/offline_work/`: Archived genesis notes and raw working papers.
-- **AsciiDoc Best Practices**:
-  - Keep lines under 100 characters where practical.
-  - Always escape tildes (`\~` or write "approximately") to prevent unintentional unclosed subscript formatting warnings.
-  - Use relative cross-references (`xref:`, `link:`) rather than absolute `file:///` URLs within documentation files.
-  - Utilize attributed quotes (`[quote, Author, Context]`), multi-column tables, sidebars (`****`), and semantic admonitions (`[NOTE]`, `[IMPORTANT]`, `[WARNING]`).
+> **Cognitive Role in the Mind: Self-Reflection, Telemetry & Invariant Defense**  
+> In the mind, Block 4 acts as the self-reflective immune system: *Did any invariant breach? Is memory leaking? Is the state machine healthy? How do we catch drift before a crash?*
 
----
+### 4.1 Diagnostic Pre-Flight Audits (`audit_*`)
 
-## 7. Build, Test, and Quality Commands
+Every subsystem must expose a dedicated diagnostic routine registered in `manifest.h`:
 
-CMake 3.24+ is configured for C11 with zero-warning tolerance; Rust 2021 toolchain manages compilation:
+* Evaluates memory limits, boundary clamping, and state transitions.
+* Reports telemetry manifests without relying on crude runtime crashes (`abort()`).
+* Categorized logging with forensic grades (`GRADE:+003`).
 
-- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug`: Configure build directory.
-- `cmake --build build --config Debug`: Compile executable `./build/tenebris-lux` and test suites.
-- `ctest --test-dir build -C Debug --output-on-failure`: Run full automated test suite (13/13 tests pass).
-- `./build/tenebris-lux --audit`: Run internal diagnostic self-audit suite (15-module manifest + 7 invariant tests).
-- `./build/tenebris-lux --version`: Display version information.
-- `./build/tenebris-lux --help`: Display command-line options.
-- `./build/tenebris-lux --debug`: Launch game with interactive CLI state debugger enabled.
-- `./build/tenebris-lux --cli`: Force text-based CLI terminal mode.
-- `./build/tenebris-lux --gui`: Launch native X11 double-buffered desktop GUI.
-- `cargo run --manifest-path tools/Cargo.toml --bin master_guide`: Compile the 67-chapter unified Master Guide (`MASTER_GUIDE.adoc`, `MASTER_GUIDE.md`, and `MASTER_GUIDE.pdf`).
+### 4.2 Interactive State Debugger & Rewind
+
+* **Snapshot Ring Buffer**: Captures frozen simulation states (up to 64 snapshots).
+* **FNV-1a Deterministic Hashing**: Evaluates hash of `player_state_t` to instantly detect non-deterministic drift.
+* **Time-Travel Rewind (`rewind <idx>`)**: Reverts simulation state to a historical snapshot.
+* **Diagnostic ASCII Cards (`inspect`)**: Live visual readout of hero vitals, relics, and tripwires.
+
+### 4.3 Automated Verification Strata (19/19 Passing)
+
+Automated verification is structured into 4 strata integrated into CTest:
+
+1. `tests/functional/test_functional`: Isolates individual cogs across utilities, simulation, and debugger with `[DEBUG-TRACE]` telemetry.
+2. `tests/unit/`: Subsystem unit verification across `math`, `data`, `time`, `string`, `log`, `debug`, `combat`, `items`, `world`, `dispatch`, `gui`.
+3. `tests/integrated/`: Cross-utility DAG verification (`test_utils`) and multi-subsystem simulation boot (`test_sim`).
+4. `tests/system/`: Engine state limits (`test_game_invariants`), 15-step golden replay determinism, and 1,000-turn chaotic fuzzing softlock immunity (`test_gameplay_scenarios`).
 
 ---
 
-## 8. Structured Git Commit & Release Tagging Guidelines
+## BLOCK 5: CLOSING / CLI & VERIFICATION PROTOCOLS
 
-Do **not** use terse or vague one-line commit messages. Every commit must serve as an enduring record of engineering rationale, architectural modifications, and verification telemetry:
+> **Cognitive Role in the Mind: Execution Handshake, Toolchains & Teardown**  
+> In the mind, Block 5 is the delivery and exit contract: *How is this module invoked? How is it verified? How does it return cleanly to the operating system or caller?*
+
+### 5.1 Build, Test, and Quality Commands
+
+The project compiles under CMake 3.24+ for ISO C11 with zero warnings (`-Wall -Wextra -Wpedantic`):
+
+```bash
+# Configure and compile
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --config Debug
+
+# Execute full CTest verification suite (19/19 test suites must pass)
+ctest --test-dir build -C Debug --output-on-failure
+
+# Execute diagnostic self-audit (16 registered modules + 7 invariant tests)
+./build/tenebris-lux --audit
+
+# Launch options
+./build/tenebris-lux           # Auto-detects GUI, falls back to CLI
+./build/tenebris-lux --cli     # Explicit terminal CLI mode
+./build/tenebris-lux --gui     # Explicit native X11 desktop GUI mode
+./build/tenebris-lux --debug   # Launch with interactive CLI state debugger enabled
+./build/tenebris-lux --version # Display engine version
+./build/tenebris-lux --help    # Display command-line manual
+
+# Compile 67-chapter unified Master Guide
+cargo run --manifest-path tools/Cargo.toml --bin master_guide
+```
+
+### 5.2 Structured Git Commit Guidelines
+
+Do **not** use terse or vague commit messages. Every commit must serve as an enduring record of engineering rationale, structural modifications, and verification telemetry:
 
 ```text
 <type>(<scope>): <summary title>
@@ -271,7 +301,16 @@ and how this fulfills the invariant contracts of the project.
 - BLOCK 5 (Closing/CLI): Integrated command-line flags and teardown.
 
 ### Verification Telemetry
-- ctest results and pass rates.
-- Diagnostic audit status (e.g. ./build/tenebris-lux --audit output).
+- CTest results and pass rates (e.g. 19/19 suites passing).
+- Diagnostic audit status (e.g. ./build/tenebris-lux --audit: 16 modules pass).
 - Compiler diagnostic check (-Wall -Wextra -Wpedantic clean).
 ```
+
+### 5.3 AsciiDoc Documentation Standards
+
+All technical manuals, design logs, and realm chronicles in `docs/` are standardized in **AsciiDoc (`.adoc`)**:
+
+* Keep lines under 100 characters where practical.
+* Escape tildes (`\~` or write "approximately") to prevent unclosed subscript warnings.
+* Use relative cross-references (`xref:`, `link:`) rather than absolute URLs within documentation files.
+* Utilize semantic admonitions (`[NOTE]`, `[IMPORTANT]`, `[WARNING]`) and attributed quotes.

@@ -37,7 +37,7 @@ This subsystem adopts the **Menu-to-Settings Ontological Pattern**:
 
 2. **Data Files (`*.json`) = The "Settings"**:
    - Each individual file represents a discrete, self-contained configuration profile ("Setting").
-   - Directly maps to the Layer 0 `log_config_t` structure defined in [`include/util/log/log.h`](file:///home/professorseanex/Tenebris%20and%20Lux/include/util/log/log.h).
+   - Directly maps to the Layer 0 `log_config_t` structure defined in [`engine/include/util/log/log.h`](file:///home/professorseanex/Tenebris%20and%20Lux/engine/include/util/log/log.h).
    - Allows runtime hot-swapping between developer trace mode, high-speed automated CI benchmarking (< 50µs tick), and production distribution without recompilation.
 
 ---
@@ -78,3 +78,11 @@ In addition to logging, the data-driven framework encompasses the following acti
    - `default.json`: Balanced developer debugging baseline with 64-snapshot rewind ring buffer.
    - `strict.json`: Halts immediately on any state breach, stance shift, or diagnostic warning.
    - `trace.json`: Deep micro-step cog-level tracing across all engine channels.
+
+---
+
+## 6. Tactical Strategy RPG Schemas Roadmap
+
+For milestone `v0.1.0-dev`, the tactical strategy RPG grid engine design specifications are documented in:
+
+- **[`data/SCHEMAS.md`](file:///home/professorseanex/Tenebris%20and%20Lux/data/SCHEMAS.md)**: Comprehensive design contracts for discrete 2D grid topologies, Movement Points (MP) budgeting, Zone-of-Control (ZOC) physics, terrain friction modifiers, and 8-slot party formation positioning matrices.

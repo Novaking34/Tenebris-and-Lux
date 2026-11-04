@@ -4,36 +4,40 @@
 # ==============================================================================
 # @project       Tenebris and Lux
 # @file          CMakeLists.txt
-# @layer         Build & Toolchain Configuration
-# @version       0.0.1
-# @interface_rev Rev 2
-# @date          2026-10-26
-# @updated       2026-10-26
+# @layer         Build & Toolchain Configuration (Layer 0 Infrastructure)
+# @version       0.1.0-dev
+# @interface_rev Rev 4
+# @date          2026-11-03
+# @updated       2026-11-03
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
+# @system        Root CMake Build & Automated Test Orchestration Engine
+# @role          Compilation Coordinator, Invariant Guard & CTest Test Runner
+# @invariants    1. Strict ISO C11 standard conformance (no vendor extensions).
+#                2. Zero-warning compilation policy across GCC, Clang (-Wall
+#                   -Wextra -Wpedantic), and MSVC (/W4).
+#                3. Zero external binary runtime downloads (native X11 + POSIX).
+#                4. Multi-tier verification integrated via CTest (19/19).
+#                5. Strict 80-column line width discipline across all lines.
+#                6. Domain-split architecture: engine/ (L0/L2) vs game/ (L1/L3).
 #
 # PURPOSE & ARCHITECTURAL ROLE:
-#   Root CMake build specification for the Tenebris and Lux custom TRPG
-#   game engine, native desktop X11 presentation layer, and verification
-#   suites. Enforces ISO C11 compiler standards, zero-warning tolerance,
-#   and coordinates compilation of Layer 0 utilities through Layer 4 tests.
+#   Root CMake build specification for Tenebris and Lux. Enforces an explicit
+#   domain split between the reusable C11 game engine architecture (engine/)
+#   and the narrative tactical strategy RPG game implementation (game/).
+#   Coordinates compilation across Layer 0 utilities through Layer 4 tests.
 #
-# PEDAGOGICAL MISSION:
-#   Serves as a clean, self-documenting build manifest structured according
-#   to the OmniCode 5-Block Lifecycle Protocol. Guides both junior developers
-#   learning native C game architecture and senior engineers auditing
-#   toolchain flags, dependency graphs, and automated verification targets.
-#
-# AXIOMATIC INVARIANTS:
-#   1. Strict ISO C11 standard conformance (no compiler-specific extensions).
-#   2. Zero-warning compilation policy across GCC, Clang (-Wall -Wextra
-#      -Wpedantic), and MSVC (/W4).
-#   3. Zero external binary runtime downloads (native X11 + POSIX standard).
-#   4. Multi-tiered game development verification integrated into CTest.
+# PEDAGOGICAL MISSION & THE BATON-PASSING LIFECYCLE:
+#   This build specification models the Universal 5-Block Lifecycle Protocol:
+#   - Block 1 (Metadata): Identity, provenance, and toolchain invariants.
+#   - Block 2 (Opening/Objects): Declares compiler objects, C11, and flags.
+#   - Block 3 (Body/Procedure): Compiles engine and game domain targets.
+#   - Block 4 (Audit/Harnesses): Builds four-tier verification test targets.
+#   - Block 5 (Closing/CTest): Registers and executes all 19 automated tests.
 # ==============================================================================
 
 cmake_minimum_required(VERSION 3.24)
-project(TenebrisLux VERSION 0.0.1 LANGUAGES C)
+project(TenebrisLux VERSION 0.1.0 LANGUAGES C)
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
@@ -88,6 +92,13 @@ else()
     set(GAME_WARNING_FLAGS -Wall -Wextra -Wpedantic)
 endif()
 
+# Global include directories spanning engine and game domain trees
+set(COMMON_INCLUDES
+    engine/include
+    game/include
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
 # ( Target Definitions, Source Manifests & Link Libraries )
@@ -95,146 +106,155 @@ endif()
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.1: LAYER 0 CORE UTILITY SOURCES ]
+# [ SUB-ASSEMBLY 3.1: LAYER 0 ENGINE UTILITY SOURCES ]
 # Mission: Foundational zero-heap mathematical, geometric, and timing modules.
 # ------------------------------------------------------------------------------
 
-set(UTIL_SOURCES
-    src/util/manifest.c
-    src/util/data/fs_utils.c
-    src/util/data/json_utils.c
-    src/util/math/math_utils.c
-    src/util/math/geom_utils.c
-    src/util/string/string_utils.c
-    src/util/time/time_utils.c
-    src/util/log/log.c
-    src/util/log/log_fallback.c
-    src/util/debug/debug.c
-    src/util/debug/debug_fallback.c
-)
-
-set(SIM_SOURCES
-    src/sim/core/sim_state.c
-    src/sim/core/game.c
-    src/sim/combat/combat.c
-    src/sim/combat/combat_loader.c
-    src/sim/combat/stances.c
-    src/sim/combat/turn_based.c
-    src/sim/combat/tactical.c
-    src/sim/combat/action_resolve.c
-    src/sim/world/world.c
-    src/sim/world/world_topology.c
-    src/sim/world/map_scaler.c
-    src/sim/world/maps.c
-    src/sim/world/world_loader.c
-    src/sim/items/items.c
-    src/sim/items/item_loader.c
-    src/sim/items/relics.c
-    src/sim/items/catalysts.c
-    src/sim/items/consumables.c
-    src/sim/items/inventory.c
-    src/sim/dispatch/dispatcher.c
-    src/sim/dispatch/dispatch_combat.c
-    src/sim/dispatch/dispatch_world.c
-    src/sim/dispatch/dispatch_items.c
-    src/sim/dispatch/dispatch_system.c
-    src/sim/dispatch/dispatch_loader.c
-)
-
-set(SIM_HEADERS
-    include/sim/sim_types.h
-    include/sim/sim_state.h
-    include/sim/combat.h
-    include/sim/world.h
-    include/sim/dispatcher.h
-    include/sim/game.h
-    include/sim/core/sim_types.h
-    include/sim/core/sim_state.h
-    include/sim/core/game.h
-    include/sim/combat/combat_types.h
-    include/sim/combat/combat_loader.h
-    include/sim/combat/stances.h
-    include/sim/combat/turn_based.h
-    include/sim/combat/tactical.h
-    include/sim/combat/action_resolve.h
-    include/sim/combat/combat.h
-    include/sim/world/map_types.h
-    include/sim/world/map_scaler.h
-    include/sim/world/world_topology.h
-    include/sim/world/maps.h
-    include/sim/world/world_loader.h
-    include/sim/world/world.h
-    include/sim/items/item_types.h
-    include/sim/items/item_loader.h
-    include/sim/items/relics.h
-    include/sim/items/catalysts.h
-    include/sim/items/consumables.h
-    include/sim/items/inventory.h
-    include/sim/items/items.h
-    include/sim/dispatch/dispatch_types.h
-    include/sim/dispatch/dispatch_combat.h
-    include/sim/dispatch/dispatch_world.h
-    include/sim/dispatch/dispatch_items.h
-    include/sim/dispatch/dispatch_system.h
-    include/sim/dispatch/dispatch_loader.h
-    include/sim/dispatch/dispatcher.h
-)
-
-set(GUI_SOURCES
-    src/gui/gui_palette.c
-    src/gui/gui_fonts.c
-    src/gui/gui_layout.c
-    src/gui/gui_widgets.c
-    src/gui/gui_assets.c
-    src/gui/gui_view2d.c
-    src/gui/gui_hud.c
-    src/gui/gui_screens.c
-    src/gui/gui.c
-)
-
-set(GUI_HEADERS
-    include/gui/gui_types.h
-    include/gui/gui_palette.h
-    include/gui/gui_fonts.h
-    include/gui/gui_layout.h
-    include/gui/gui_widgets.h
-    include/gui/gui_assets.h
-    include/gui/gui_view2d.h
-    include/gui/gui_hud.h
-    include/gui/gui_screens.h
-    include/gui/gui.h
+set(ENGINE_UTIL_SOURCES
+    engine/src/util/manifest.c
+    engine/src/util/data/fs_utils.c
+    engine/src/util/data/json_utils.c
+    engine/src/util/math/math_utils.c
+    engine/src/util/math/geom_utils.c
+    engine/src/util/string/string_utils.c
+    engine/src/util/time/time_utils.c
+    engine/src/util/log/log.c
+    engine/src/util/log/log_fallback.c
+    engine/src/util/debug/debug.c
+    engine/src/util/debug/debug_fallback.c
 )
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.2: PRIMARY GAME ENGINE EXECUTABLE TARGET ]
+# [ SUB-ASSEMBLY 3.2: LAYER 1 GAME SIMULATION SOURCES & HEADERS ]
+# Mission: Pure simulation state, relics, stances, topology & dispatchers.
+# ------------------------------------------------------------------------------
+
+set(GAME_SIM_SOURCES
+    game/src/sim/core/sim_state.c
+    game/src/sim/core/game.c
+    game/src/sim/combat/combat.c
+    game/src/sim/combat/combat_loader.c
+    game/src/sim/combat/stances.c
+    game/src/sim/combat/turn_based.c
+    game/src/sim/combat/tactical.c
+    game/src/sim/combat/action_resolve.c
+    game/src/sim/world/world.c
+    game/src/sim/world/world_topology.c
+    game/src/sim/world/map_scaler.c
+    game/src/sim/world/maps.c
+    game/src/sim/world/world_loader.c
+    game/src/sim/items/items.c
+    game/src/sim/items/item_loader.c
+    game/src/sim/items/relics.c
+    game/src/sim/items/catalysts.c
+    game/src/sim/items/consumables.c
+    game/src/sim/items/inventory.c
+    game/src/sim/dispatch/dispatcher.c
+    game/src/sim/dispatch/dispatch_combat.c
+    game/src/sim/dispatch/dispatch_world.c
+    game/src/sim/dispatch/dispatch_items.c
+    game/src/sim/dispatch/dispatch_system.c
+    game/src/sim/dispatch/dispatch_loader.c
+)
+
+set(GAME_SIM_HEADERS
+    game/include/sim/sim_types.h
+    game/include/sim/sim_state.h
+    game/include/sim/combat.h
+    game/include/sim/world.h
+    game/include/sim/dispatcher.h
+    game/include/sim/game.h
+    game/include/sim/core/sim_types.h
+    game/include/sim/core/sim_state.h
+    game/include/sim/core/game.h
+    game/include/sim/combat/combat_types.h
+    game/include/sim/combat/combat_loader.h
+    game/include/sim/combat/stances.h
+    game/include/sim/combat/turn_based.h
+    game/include/sim/combat/tactical.h
+    game/include/sim/combat/action_resolve.h
+    game/include/sim/combat/combat.h
+    game/include/sim/world/map_types.h
+    game/include/sim/world/map_scaler.h
+    game/include/sim/world/world_topology.h
+    game/include/sim/world/maps.h
+    game/include/sim/world/world_loader.h
+    game/include/sim/world/world.h
+    game/include/sim/items/item_types.h
+    game/include/sim/items/item_loader.h
+    game/include/sim/items/relics.h
+    game/include/sim/items/catalysts.h
+    game/include/sim/items/consumables.h
+    game/include/sim/items/inventory.h
+    game/include/sim/items/items.h
+    game/include/sim/dispatch/dispatch_types.h
+    game/include/sim/dispatch/dispatch_combat.h
+    game/include/sim/dispatch/dispatch_world.h
+    game/include/sim/dispatch/dispatch_items.h
+    game/include/sim/dispatch/dispatch_system.h
+    game/include/sim/dispatch/dispatch_loader.h
+    game/include/sim/dispatch/dispatcher.h
+)
+
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 3.3: LAYER 2 ENGINE PRESENTATION SOURCES & HEADERS ]
+# Mission: Double-buffered X11 presentation, layout, HUD & TrueType fonts.
+# ------------------------------------------------------------------------------
+
+set(ENGINE_GUI_SOURCES
+    engine/src/gui/gui_palette.c
+    engine/src/gui/gui_fonts.c
+    engine/src/gui/gui_layout.c
+    engine/src/gui/gui_widgets.c
+    engine/src/gui/gui_assets.c
+    engine/src/gui/gui_view2d.c
+    engine/src/gui/gui_hud.c
+    engine/src/gui/gui_screens.c
+    engine/src/gui/gui.c
+)
+
+set(ENGINE_GUI_HEADERS
+    engine/include/gui/gui_types.h
+    engine/include/gui/gui_palette.h
+    engine/include/gui/gui_fonts.h
+    engine/include/gui/gui_layout.h
+    engine/include/gui/gui_widgets.h
+    engine/include/gui/gui_assets.h
+    engine/include/gui/gui_view2d.h
+    engine/include/gui/gui_hud.h
+    engine/include/gui/gui_screens.h
+    engine/include/gui/gui.h
+)
+
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 3.4: PRIMARY GAME ENGINE EXECUTABLE TARGET ]
 # Mission: Compile executable linking entry router, simulation, GUI, and utils.
 # ------------------------------------------------------------------------------
 
 add_executable(tenebris-lux
-    src/main.c
-    ${GUI_SOURCES}
-    ${SIM_SOURCES}
-    ${UTIL_SOURCES}
-    ${GUI_HEADERS}
-    ${SIM_HEADERS}
-    include/util/manifest.h
-    include/util/data/fs_utils.h
-    include/util/data/json_utils.h
-    include/util/math/math_utils.h
-    include/util/math/geom_utils.h
-    include/util/string/string_utils.h
-    include/util/time/time_utils.h
-    include/util/log/log.h
-    include/util/log/log_fallback.h
-    include/util/debug/debug.h
-    include/util/debug/debug_fallback.h
+    game/src/main.c
+    ${ENGINE_GUI_SOURCES}
+    ${GAME_SIM_SOURCES}
+    ${ENGINE_UTIL_SOURCES}
+    ${ENGINE_GUI_HEADERS}
+    ${GAME_SIM_HEADERS}
+    engine/include/util/manifest.h
+    engine/include/util/data/fs_utils.h
+    engine/include/util/data/json_utils.h
+    engine/include/util/math/math_utils.h
+    engine/include/util/math/geom_utils.h
+    engine/include/util/string/string_utils.h
+    engine/include/util/time/time_utils.h
+    engine/include/util/log/log.h
+    engine/include/util/log/log_fallback.h
+    engine/include/util/debug/debug.h
+    engine/include/util/debug/debug_fallback.h
 )
 
 # Private include paths: internal headers and X11 system display headers
 target_include_directories(tenebris-lux PRIVATE
-    include
+    ${COMMON_INCLUDES}
     ${X11_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # Link against native X11 client library for desktop GUI presentation
@@ -246,9 +266,8 @@ target_link_libraries(tenebris-lux PRIVATE
 target_compile_options(tenebris-lux PRIVATE ${GAME_WARNING_FLAGS})
 
 # ==============================================================================
-# ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES & GAME DEV TESTING BLOCK
-# ( Game Dev Verification Suites: Functional, Unit, Integrated, & System Strata )
+# ( Four-Tier Verification Strata: Functional, Unit, Integrated, & System )
 # Stratum: Verification | Machine: build.tests.ctest
 # ==============================================================================
 
@@ -261,130 +280,135 @@ if(BUILD_TESTING)
     # --------------------------------------------------------------------------
     add_executable(test_functional
         tests/functional/test_functional.c
-        ${UTIL_SOURCES}
-        ${SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+        ${GAME_SIM_SOURCES}
     )
-    target_include_directories(test_functional PRIVATE include)
+    target_include_directories(test_functional PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.2: LAYER 0 SUBSYSTEM UNIT HARNESSES ]
-    # Mission: Verify isolated subsystem contracts across four ontological sections.
+    # [ SUB-ASSEMBLY 4.2: LAYER 0 & LAYER 1 SUBSYSTEM UNIT HARNESSES ]
+    # Mission: Verify isolated subsystem contracts across ontological sections.
     # --------------------------------------------------------------------------
 
     # Math & Geometry Subsystem Unit Test
     add_executable(test_math
         tests/unit/test_math.c
-        ${UTIL_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_math PRIVATE include)
+    target_include_directories(test_math PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_math PRIVATE ${GAME_WARNING_FLAGS})
 
     # Data & Filesystem Subsystem Unit Test
     add_executable(test_data
         tests/unit/test_data.c
-        ${UTIL_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_data PRIVATE include)
+    target_include_directories(test_data PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_data PRIVATE ${GAME_WARNING_FLAGS})
 
     # High-Resolution Timing Subsystem Unit Test
     add_executable(test_time
         tests/unit/test_time.c
-        ${UTIL_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_time PRIVATE include)
+    target_include_directories(test_time PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_time PRIVATE ${GAME_WARNING_FLAGS})
 
     # Safe String Subsystem Unit Test
     add_executable(test_string
         tests/unit/test_string.c
-        ${UTIL_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_string PRIVATE include)
+    target_include_directories(test_string PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_string PRIVATE ${GAME_WARNING_FLAGS})
 
     # Forensic Telemetry & Logging Subsystem Unit Test
     add_executable(test_log
         tests/unit/test_log.c
-        ${UTIL_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_log PRIVATE include)
+    target_include_directories(test_log PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_log PRIVATE ${GAME_WARNING_FLAGS})
 
     # Interactive State Debugger & Rewind Subsystem Unit Test
     add_executable(test_debug
         tests/unit/test_debug.c
-        ${UTIL_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_debug PRIVATE include)
+    target_include_directories(test_debug PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_debug PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Combat Subsystem Unit Test
     add_executable(test_combat
         tests/unit/test_combat_unit.c
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_combat PRIVATE include)
+    target_include_directories(test_combat PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_combat PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Items Subsystem Unit Test
     add_executable(test_items
         tests/unit/test_items_unit.c
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_items PRIVATE include)
+    target_include_directories(test_items PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_items PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation World Subsystem Unit Test
     add_executable(test_world
         tests/unit/test_world_unit.c
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_world PRIVATE include)
+    target_include_directories(test_world PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_world PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Dispatch Subsystem Unit Test
     add_executable(test_dispatch
         tests/unit/test_dispatch_unit.c
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_dispatch PRIVATE include)
+    target_include_directories(test_dispatch PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_dispatch PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI & 2.5D Viewport Subsystem Unit Test
     add_executable(test_gui
         tests/unit/test_gui_unit.c
-        ${GUI_SOURCES}
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
+        ${ENGINE_GUI_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_gui PRIVATE include ${X11_INCLUDE_DIR})
+    target_include_directories(test_gui PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
     target_link_libraries(test_gui PRIVATE ${X11_LIBRARIES})
     target_compile_options(test_gui PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
-    # Mission: Verify cross-subsystem coordination, DAG dependencies, and pipelines.
+    # Mission: Verify cross-subsystem coordination, DAG dependencies & runs.
     # --------------------------------------------------------------------------
+
+    # Cross-Utility Integration Harness
     add_executable(test_utils
         tests/integrated/test_utils.c
-        ${UTIL_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_utils PRIVATE include)
+    target_include_directories(test_utils PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_utils PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Cross-Subsystem Integration Harness
     add_executable(test_sim_integrated
         tests/integrated/test_sim_integrated.c
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_sim_integrated PRIVATE include)
+    target_include_directories(test_sim_integrated PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_sim_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
@@ -395,21 +419,23 @@ if(BUILD_TESTING)
     # System State Invariants Harness
     add_executable(test_game_invariants
         tests/system/test_game_invariants.c
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
-        ${SIM_HEADERS}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+        ${GAME_SIM_HEADERS}
     )
-    target_include_directories(test_game_invariants PRIVATE include)
+    target_include_directories(test_game_invariants PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_game_invariants PRIVATE ${GAME_WARNING_FLAGS})
 
     # System Gameplay Scenarios & Replay Determinism Harness
     add_executable(test_gameplay_scenarios
         tests/system/test_gameplay_scenarios.c
-        ${SIM_SOURCES}
-        ${UTIL_SOURCES}
-        ${SIM_HEADERS}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+        ${GAME_SIM_HEADERS}
     )
-    target_include_directories(test_gameplay_scenarios PRIVATE include)
+    target_include_directories(test_gameplay_scenarios PRIVATE
+        ${COMMON_INCLUDES}
+    )
     target_compile_options(test_gameplay_scenarios
         PRIVATE ${GAME_WARNING_FLAGS})
 
@@ -445,7 +471,10 @@ if(BUILD_TESTING)
 
     # System Tests (Full Simulation Invariants & Scenarios)
     add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
-    add_test(NAME system_gameplay_scenarios_test COMMAND test_gameplay_scenarios)
+    add_test(
+        NAME system_gameplay_scenarios_test
+        COMMAND test_gameplay_scenarios
+    )
 
     set_tests_properties(
         cli_help_test
