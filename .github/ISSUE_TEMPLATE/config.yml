@@ -1,0 +1,6 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "Tenebris and Lux Compendium Documentation"
+    url: "https://github.com/Novaking34/tenebris-lux/tree/main/docs"
+    about: "Explore the 67-chapter Master Guide, continental lore, and engine architecture specifications."
+

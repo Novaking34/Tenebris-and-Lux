@@ -4,13 +4,20 @@
 # ==============================================================================
 # @project       Tenebris and Lux
 # @file          .gitignore
-# @layer         Version Control & Workspace Hygiene
-# @version       0.0.1
-# @interface_rev Rev 2
-# @date          2026-10-26
-# @updated       2026-10-26
+# @layer         Version Control & Workspace Hygiene (Layer 0 Infrastructure)
+# @version       0.1.0-dev
+# @interface_rev Rev 3
+# @date          2026-11-03
+# @updated       2026-11-03
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
+# @system        Git Version Control Invariant Exclusion Engine
+# @role          Workspace Boundary Guard & Clean Tree Governance Manifest
+# @invariants    1. Zero binary tracking: No machine-generated objects.
+#                2. Zero CMake cache leakage: Toolchain paths stay local.
+#                3. Zero telemetry leakage: Diagnostic runtime logs stay out.
+#                4. Zero user-environment leakage: IDE & OS caches stay out.
+#                5. Strict 80-column line width discipline across all lines.
 #
 # PURPOSE & ARCHITECTURAL ROLE:
 #   Repository version control exclusion manifest and root hygiene guard.
@@ -18,70 +25,81 @@
 #   IDE workspace states, diagnostic dumps, and OS cache detritus never
 #   pollute the Git history or corrupt cross-platform verification trees.
 #
-# PEDAGOGICAL MISSION:
-#   Maintains an immaculate, reproducible repository state across Unix,
-#   Linux, and Windows environments, ensuring new contributors and automated
-#   agents operate exclusively on canonical, unpolluted source code.
-#
-# AXIOMATIC INVARIANTS:
-#   1. Zero binary tracking: Never commit machine-generated object code.
-#   2. Zero CMake cache leakage: Toolchain paths remain strictly local.
-#   3. Zero user-environment leakage: IDE and editor caches stay untracked.
-#   4. Strict 80-column line width discipline across comments and rules.
+# PEDAGOGICAL MISSION & THE BATON-PASSING LIFECYCLE:
+#   This file models the Universal 5-Block Lifecycle Protocol:
+#   - Block 1 (Metadata): Anchors identity, provenance, and hygiene contracts.
+#   - Block 2 (Opening/Objects): Declares all machine binary artifacts.
+#   - Block 3 (Body/Procedure): Traverses the build toolchain pipeline.
+#   - Block 4 (Audit/Telemetry): Filters forensic dumps, logs, and scratchpads.
+#   - Block 5 (Closing/Teardown): Seals against OS and editor state.
 # ==============================================================================
 
 # ==============================================================================
 # BLOCK 2: OPENING / COMPILED BINARIES BLOCK
-# ( Native Executables, Object Files & Dynamic Libraries )
+# ( The Functional Objects: Declaring Machine Artifacts Prior to Execution )
 # Stratum: Version Control | Machine: vcs.hygiene.binaries
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 2.1: INTERMEDIATE OBJECT FILES & ARCHIVES ]
-# Mission: Insulate repo from platform-dependent object code and libraries.
+# [ SUB-ASSEMBLY 2.1: INTERMEDIATE OBJECT FILES & STATIC ARCHIVES ]
+# Mission: Insulate the repository from platform-dependent compiler objects.
 # ------------------------------------------------------------------------------
 
-# Intermediate compiler object code (ELF, Mach-O, PE/COFF)
+# Intermediate compiler object files (ELF, Mach-O, PE/COFF)
 *.o
 *.obj
 
-# Static library archives
+# Static library archives (C11 utility and engine static archives)
 *.a
 *.lib
 
-# Dynamic shared libraries and shared objects
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 2.2: DYNAMIC LIBRARIES & SHARED MODULES ]
+# Mission: Guard against compiled dynamic linkages and runtime shared libraries.
+# ------------------------------------------------------------------------------
+
+# Dynamic shared objects and dynamic link libraries
 *.so
+*.so.*
 *.dylib
 *.dll
 
-# Native executables and application bundles
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 2.3: NATIVE EXECUTABLES & STAGING OUTPUTS ]
+# Mission: Prevent compiled binary executables from entering version control.
+# ------------------------------------------------------------------------------
+
+# Native machine executables and bundles
 *.exe
 *.out
 *.app
+tenebris-lux
 
-# Distribution directories and target output staging
+# Build distribution output staging directories
 /bin/
 out/
 dist/
+
+# Rust developer toolchain compilation outputs (tools/Cargo.toml)
 target/
 tools/target/
 
 # ==============================================================================
-# BLOCK 3: BODY / BUILD SYSTEM ARTIFACTS BLOCK
-# ( CMake Caches, Generated Build Files & Toolchain Temporary Files )
+# BLOCK 3: BODY / BUILD SYSTEM PROCEDURAL PIPELINE BLOCK
+# ( The Procedural Logic: Build System Lifecycles Passing the Baton )
 # Stratum: Version Control | Machine: vcs.hygiene.cmake
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.1: CMAKE BUILD DIRECTORIES & CACHES ]
-# Mission: Exclude generated build trees and toolchain configuration state.
+# [ SUB-ASSEMBLY 3.1: CMAKE BUILD DIRECTORIES & GENERATED CACHES ]
+# Mission: Isolate out-of-source CMake build trees and host-specific toolchains.
 # ------------------------------------------------------------------------------
 
 # Primary out-of-source CMake build directories
 build/
 build-*/
 
-# Root CMake cache files generated during in-source configurations
+# In-source CMake cache files and generated build manifests
 CMakeCache.txt
 CMakeFiles/
 CMakeScripts/
@@ -92,42 +110,62 @@ Makefile
 CTestTestfile.cmake
 Testing/
 
-# Compiler commands database (exported for local LSP engines)
+# Compiler commands database (exported for local clangd / LSP engines)
 compile_commands.json
 
 # CMake installation manifests and external dependency caches
 install_manifest.txt
 _deps/
 
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 3.2: DOCUMENTATION TOOLCHAIN TEMPORARY ARTIFACTS ]
+# Mission: Prevent transient docbook and asciidoctor compile intermediates.
+# ------------------------------------------------------------------------------
+
+# Asciidoctor and PDF compilation scratch files
+*.tmp
+*.temp
+.asciidoctor/
+
 # ==============================================================================
-# BLOCK 4: AUDIT PROCEDURES / LOGS & TELEMETRY BLOCK
-# ( Diagnostic Dumps, Crash Reports, Trace Records & Audit Outputs )
+# BLOCK 4: AUDIT PROCEDURES, LOGS & TELEMETRY BLOCK
+# ( The Audit Track: Forensic Telemetry, Diagnostics & Scratch Verification )
 # Stratum: Version Control | Machine: vcs.hygiene.telemetry
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 4.1: DIAGNOSTIC LOGS & SCRATCH DIRECTORIES ]
-# Mission: Prevent transient runtime traces and scratch files from commit.
+# [ SUB-ASSEMBLY 4.1: DIAGNOSTIC LOGS & TELEMETRY ROTATION DUMPS ]
+# Mission: Filter diagnostic logs, rotation histories, and runtime crash traces.
 # ------------------------------------------------------------------------------
 
-# Engine diagnostic runtime traces and crash logs
+# Engine diagnostic runtime traces and rotation files
 *.log
+*.log.*
 *.audit
+*.telemetry
+
+# Dedicated telemetry and log archives
 logs/
 
-# Temporary scratch and experiment worktrees
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 4.2: SCRATCHPADS & TEST HARNESS WORKING DIRECTORIES ]
+# Mission: Isolate non-canonical experimental scripts and test outputs.
+# ------------------------------------------------------------------------------
+
+# Temporary scratchpads, experiment scripts, and sandbox directories
 scratch/
 test_output/
+debug_dumps/
 
 # ==============================================================================
-# BLOCK 5: CLOSING / IDE & OS SPECIFIC METADATA BLOCK
-# ( Editor Workspaces, Language Server Indices & OS Detritus )
+# BLOCK 5: CLOSING / WORKSPACES & OS TEARDOWN BLOCK
+# ( The Closing Handshake: Sealing Against IDE, Editor & OS State Detritus )
 # Stratum: Version Control | Machine: vcs.hygiene.workspaces
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 5.1: EDITOR SETTINGS & LANGUAGE SERVER CACHES ]
-# Mission: Guard repository from developer-specific editor configurations.
+# [ SUB-ASSEMBLY 5.1: IDE WORKSPACES & LANGUAGE SERVER CACHES ]
+# Mission: Protect repository hygiene from developer-specific editor state.
 # ------------------------------------------------------------------------------
 
 # IDE workspace folders and metadata
@@ -135,15 +173,43 @@ test_output/
 .idea/
 .cache/
 
-# Vim / Emacs swap files and lock buffers
+# Vim / Emacs swap buffers, lockfiles, and backup files
 *.swp
 *.swo
 *~
 .#*
 
-# Operating system desktop database files and thumbnail caches
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 5.2: OPERATING SYSTEM FILESYSTEM DETRITUS ]
+# Mission: Guard against platform-specific desktop indexes and thumbnail stores.
+# ------------------------------------------------------------------------------
+
+# macOS metadata and desktop index files
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows desktop databases and thumbnail caches
 Thumbs.db
 ehthumbs.db
+desktop.ini
+
+# Linux filesystem metadata
+.directory
+
+# ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 5.3: PACKAGE MANAGERS & PATCH ARTIFACTS ]
+# Mission: Prevent local package caches and patch rejects from entering tree.
+# ------------------------------------------------------------------------------
+
+# Local package manager directories and logs
+node_modules/
+.npm/
+.gem/
+
+# Git patch application temporary and reject files
+*.patch
+*.orig
+*.rej
 
 # End of .gitignore
