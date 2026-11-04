@@ -1,0 +1,98 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/fonts/typography.json",
+    "id": "data.fonts.typography",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Functional typographic roles, font face bindings, and baseline metrics."
+  },
+  "font_families": [
+    {
+      "id": "font_cinzel_decorative",
+      "file": "assets/fonts/CinzelDecorative-Bold.ttf",
+      "style": "serif_ornate",
+      "weight": "bold"
+    },
+    {
+      "id": "font_cinzel_bold",
+      "file": "assets/fonts/Cinzel-Bold.ttf",
+      "style": "serif_classical",
+      "weight": "bold"
+    },
+    {
+      "id": "font_medieval_sharp",
+      "file": "assets/fonts/MedievalSharp.ttf",
+      "style": "gothic_vernacular",
+      "weight": "regular"
+    }
+  ],
+  "typography_roles": [
+    {
+      "role": "title_banner",
+      "font_id": "font_cinzel_decorative",
+      "base_pt": 22,
+      "line_height_px": 28,
+      "letter_spacing_px": 2,
+      "description": "Continental title banner and triumph splash screens"
+    },
+    {
+      "role": "header_screen",
+      "font_id": "font_cinzel_bold",
+      "base_pt": 16,
+      "line_height_px": 22,
+      "letter_spacing_px": 1,
+      "description": "5-Screen architecture primary navigation headers"
+    },
+    {
+      "role": "header_panel",
+      "font_id": "font_cinzel_bold",
+      "base_pt": 13,
+      "line_height_px": 18,
+      "letter_spacing_px": 1,
+      "description": "Window frame headers (Status, Chronicle, Viewport, Actions)"
+    },
+    {
+      "role": "body_narrative",
+      "font_id": "font_medieval_sharp",
+      "base_pt": 11,
+      "line_height_px": 16,
+      "letter_spacing_px": 0,
+      "description": "Compendium lore chapters, item flavor descriptions, and chronicle feeds"
+    },
+    {
+      "role": "hud_vital_numbers",
+      "font_id": "font_cinzel_bold",
+      "base_pt": 12,
+      "line_height_px": 16,
+      "letter_spacing_px": 1,
+      "description": "HP/MP/TP gauges, stance percentage meters, and turn timers"
+    },
+    {
+      "role": "dialogue_speaker",
+      "font_id": "font_cinzel_bold",
+      "base_pt": 13,
+      "line_height_px": 18,
+      "letter_spacing_px": 1,
+      "description": "Character portrait nameplate in cinematic dialogue frames"
+    },
+    {
+      "role": "dialogue_speech",
+      "font_id": "font_medieval_sharp",
+      "base_pt": 12,
+      "line_height_px": 18,
+      "letter_spacing_px": 0,
+      "description": "Spoken dialogue text inside character speech boxes"
+    },
+    {
+      "role": "tactical_grid_labels",
+      "font_id": "font_cinzel_bold",
+      "base_pt": 9,
+      "line_height_px": 12,
+      "letter_spacing_px": 0,
+      "description": "Cell coordinate labels, movement cost badges, and floating damage numbers"
+    }
+  ]
+}

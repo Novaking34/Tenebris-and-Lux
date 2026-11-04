@@ -1,0 +1,65 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/textures/animations.json",
+    "id": "data.textures.animations",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Frame timing sequences and animation clips for tactical combatants."
+  },
+  "animation_clips": [
+    {
+      "id": "anim_idle",
+      "name": "Stance Idle Breathing",
+      "loop": true,
+      "frame_count": 4,
+      "frame_duration_ms": 250,
+      "frames": [0, 1, 2, 1]
+    },
+    {
+      "id": "anim_walk",
+      "name": "Grid Cell Traversal Walk",
+      "loop": true,
+      "frame_count": 4,
+      "frame_duration_ms": 150,
+      "frames": [0, 1, 2, 3]
+    },
+    {
+      "id": "anim_ward_lux",
+      "name": "Raise Shield of Lux (Lux Barrio)",
+      "loop": false,
+      "frame_count": 3,
+      "frame_duration_ms": 100,
+      "frames": [0, 2, 3],
+      "sfx_cue": "sfx_ward_lux_barrio"
+    },
+    {
+      "id": "anim_strike_tenebris",
+      "name": "Cuttatio Tenebris Sweeping Arc",
+      "loop": false,
+      "frame_count": 4,
+      "frame_duration_ms": 75,
+      "frames": [0, 1, 2, 3],
+      "sfx_cue": "sfx_strike_cuttatio_tenebris"
+    },
+    {
+      "id": "anim_stagger",
+      "name": "Kinetic Poise Stagger / Recoil",
+      "loop": false,
+      "frame_count": 2,
+      "frame_duration_ms": 200,
+      "frames": [1, 0],
+      "sfx_cue": "sfx_shield_stagger"
+    },
+    {
+      "id": "anim_vanquish",
+      "name": "Vanquished Dissolution (Twilight Fade)",
+      "loop": false,
+      "frame_count": 4,
+      "frame_duration_ms": 120,
+      "frames": [0, 1, 2, 3]
+    }
+  ]
+}
