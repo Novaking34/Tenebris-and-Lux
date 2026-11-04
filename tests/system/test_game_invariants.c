@@ -42,9 +42,9 @@
 // ( System Headers & Test Assertion Macros )
 // =============================================================================
 
-#include "sim/game.h"
-#include "sim/world/world.h"
-#include "sim/dispatch/dispatcher.h"
+#include "ending/game.h"
+#include "world/world.h"
+#include "dispatch/dispatcher.h"
 
 #include <assert.h>
 #include <stdio.h>

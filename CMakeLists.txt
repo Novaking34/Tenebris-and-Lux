@@ -106,22 +106,52 @@ set(COMMON_INCLUDES
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.1: LAYER 0 ENGINE UTILITY SOURCES ]
+# [ SUB-ASSEMBLY 3.1: LAYER 0 ENGINE UTILITY SOURCES & HEADERS ]
 # Mission: Foundational zero-heap mathematical, geometric, and timing modules.
 # ------------------------------------------------------------------------------
 
+set(ENGINE_CORE_SOURCES
+    engine/src/core/manifest.c
+    engine/src/core/math_utils.c
+    engine/src/core/geom_utils.c
+    engine/src/core/string_utils.c
+    engine/src/core/time_utils.c
+)
+
+set(ENGINE_IO_SOURCES
+    engine/src/io/fs_utils.c
+    engine/src/io/json_utils.c
+)
+
+set(ENGINE_LOG_SOURCES
+    engine/src/log/log.c
+    engine/src/log/log_fallback.c
+)
+
+set(ENGINE_DEBUG_SOURCES
+    engine/src/debug/debug.c
+    engine/src/debug/debug_fallback.c
+)
+
 set(ENGINE_UTIL_SOURCES
-    engine/src/util/manifest.c
-    engine/src/util/data/fs_utils.c
-    engine/src/util/data/json_utils.c
-    engine/src/util/math/math_utils.c
-    engine/src/util/math/geom_utils.c
-    engine/src/util/string/string_utils.c
-    engine/src/util/time/time_utils.c
-    engine/src/util/log/log.c
-    engine/src/util/log/log_fallback.c
-    engine/src/util/debug/debug.c
-    engine/src/util/debug/debug_fallback.c
+    ${ENGINE_CORE_SOURCES}
+    ${ENGINE_IO_SOURCES}
+    ${ENGINE_LOG_SOURCES}
+    ${ENGINE_DEBUG_SOURCES}
+)
+
+set(ENGINE_UTIL_HEADERS
+    engine/include/core/manifest.h
+    engine/include/core/math_utils.h
+    engine/include/core/geom_utils.h
+    engine/include/core/string_utils.h
+    engine/include/core/time_utils.h
+    engine/include/io/fs_utils.h
+    engine/include/io/json_utils.h
+    engine/include/log/log.h
+    engine/include/log/log_fallback.h
+    engine/include/debug/debug.h
+    engine/include/debug/debug_fallback.h
 )
 
 # ------------------------------------------------------------------------------
@@ -129,101 +159,119 @@ set(ENGINE_UTIL_SOURCES
 # Mission: Pure simulation state, relics, stances, topology & dispatchers.
 # ------------------------------------------------------------------------------
 
+set(GAME_HERO_SOURCES
+    game/src/hero/sim_state.c
+)
+
+set(GAME_ENDING_SOURCES
+    game/src/ending/game.c
+)
+
+set(GAME_COMBAT_SOURCES
+    game/src/combat/combat.c
+    game/src/combat/combat_loader.c
+    game/src/combat/stances.c
+    game/src/combat/turn_based.c
+    game/src/combat/tactical.c
+    game/src/combat/action_resolve.c
+)
+
+set(GAME_WORLD_SOURCES
+    game/src/world/world.c
+    game/src/world/world_topology.c
+    game/src/world/map_scaler.c
+    game/src/world/maps.c
+    game/src/world/world_loader.c
+)
+
+set(GAME_RELICS_SOURCES
+    game/src/relics/items.c
+    game/src/relics/item_loader.c
+    game/src/relics/relics.c
+    game/src/relics/catalysts.c
+    game/src/relics/consumables.c
+    game/src/relics/inventory.c
+)
+
+set(GAME_DISPATCH_SOURCES
+    game/src/dispatch/dispatcher.c
+    game/src/dispatch/dispatch_combat.c
+    game/src/dispatch/dispatch_world.c
+    game/src/dispatch/dispatch_items.c
+    game/src/dispatch/dispatch_system.c
+    game/src/dispatch/dispatch_loader.c
+)
+
 set(GAME_SIM_SOURCES
-    game/src/sim/core/sim_state.c
-    game/src/sim/core/game.c
-    game/src/sim/combat/combat.c
-    game/src/sim/combat/combat_loader.c
-    game/src/sim/combat/stances.c
-    game/src/sim/combat/turn_based.c
-    game/src/sim/combat/tactical.c
-    game/src/sim/combat/action_resolve.c
-    game/src/sim/world/world.c
-    game/src/sim/world/world_topology.c
-    game/src/sim/world/map_scaler.c
-    game/src/sim/world/maps.c
-    game/src/sim/world/world_loader.c
-    game/src/sim/items/items.c
-    game/src/sim/items/item_loader.c
-    game/src/sim/items/relics.c
-    game/src/sim/items/catalysts.c
-    game/src/sim/items/consumables.c
-    game/src/sim/items/inventory.c
-    game/src/sim/dispatch/dispatcher.c
-    game/src/sim/dispatch/dispatch_combat.c
-    game/src/sim/dispatch/dispatch_world.c
-    game/src/sim/dispatch/dispatch_items.c
-    game/src/sim/dispatch/dispatch_system.c
-    game/src/sim/dispatch/dispatch_loader.c
+    ${GAME_HERO_SOURCES}
+    ${GAME_ENDING_SOURCES}
+    ${GAME_COMBAT_SOURCES}
+    ${GAME_WORLD_SOURCES}
+    ${GAME_RELICS_SOURCES}
+    ${GAME_DISPATCH_SOURCES}
 )
 
 set(GAME_SIM_HEADERS
-    game/include/sim/sim_types.h
-    game/include/sim/sim_state.h
-    game/include/sim/combat.h
-    game/include/sim/world.h
-    game/include/sim/dispatcher.h
-    game/include/sim/game.h
-    game/include/sim/core/sim_types.h
-    game/include/sim/core/sim_state.h
-    game/include/sim/core/game.h
-    game/include/sim/combat/combat_types.h
-    game/include/sim/combat/combat_loader.h
-    game/include/sim/combat/stances.h
-    game/include/sim/combat/turn_based.h
-    game/include/sim/combat/tactical.h
-    game/include/sim/combat/action_resolve.h
-    game/include/sim/combat/combat.h
-    game/include/sim/world/map_types.h
-    game/include/sim/world/map_scaler.h
-    game/include/sim/world/world_topology.h
-    game/include/sim/world/maps.h
-    game/include/sim/world/world_loader.h
-    game/include/sim/world/world.h
-    game/include/sim/items/item_types.h
-    game/include/sim/items/item_loader.h
-    game/include/sim/items/relics.h
-    game/include/sim/items/catalysts.h
-    game/include/sim/items/consumables.h
-    game/include/sim/items/inventory.h
-    game/include/sim/items/items.h
-    game/include/sim/dispatch/dispatch_types.h
-    game/include/sim/dispatch/dispatch_combat.h
-    game/include/sim/dispatch/dispatch_world.h
-    game/include/sim/dispatch/dispatch_items.h
-    game/include/sim/dispatch/dispatch_system.h
-    game/include/sim/dispatch/dispatch_loader.h
-    game/include/sim/dispatch/dispatcher.h
+    game/include/hero/sim_types.h
+    game/include/hero/sim_state.h
+    game/include/ending/game.h
+    game/include/combat/combat_types.h
+    game/include/combat/combat_loader.h
+    game/include/combat/stances.h
+    game/include/combat/turn_based.h
+    game/include/combat/tactical.h
+    game/include/combat/action_resolve.h
+    game/include/combat/combat.h
+    game/include/world/map_types.h
+    game/include/world/map_scaler.h
+    game/include/world/world_topology.h
+    game/include/world/maps.h
+    game/include/world/world_loader.h
+    game/include/world/world.h
+    game/include/relics/item_types.h
+    game/include/relics/item_loader.h
+    game/include/relics/relics.h
+    game/include/relics/catalysts.h
+    game/include/relics/consumables.h
+    game/include/relics/inventory.h
+    game/include/relics/items.h
+    game/include/dispatch/dispatch_types.h
+    game/include/dispatch/dispatch_combat.h
+    game/include/dispatch/dispatch_world.h
+    game/include/dispatch/dispatch_items.h
+    game/include/dispatch/dispatch_system.h
+    game/include/dispatch/dispatch_loader.h
+    game/include/dispatch/dispatcher.h
 )
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.3: LAYER 2 ENGINE PRESENTATION SOURCES & HEADERS ]
+# [ SUB-ASSEMBLY 3.3: LAYER 2 ENGINE VIEWPORT PRESENTATION SOURCES & HEADERS ]
 # Mission: Double-buffered X11 presentation, layout, HUD & TrueType fonts.
 # ------------------------------------------------------------------------------
 
-set(ENGINE_GUI_SOURCES
-    engine/src/gui/gui_palette.c
-    engine/src/gui/gui_fonts.c
-    engine/src/gui/gui_layout.c
-    engine/src/gui/gui_widgets.c
-    engine/src/gui/gui_assets.c
-    engine/src/gui/gui_view2d.c
-    engine/src/gui/gui_hud.c
-    engine/src/gui/gui_screens.c
-    engine/src/gui/gui.c
+set(ENGINE_VIEWPORT_SOURCES
+    engine/src/viewport/gui_palette.c
+    engine/src/viewport/gui_fonts.c
+    engine/src/viewport/gui_layout.c
+    engine/src/viewport/gui_widgets.c
+    engine/src/viewport/gui_assets.c
+    engine/src/viewport/gui_view2d.c
+    engine/src/viewport/gui_hud.c
+    engine/src/viewport/gui_screens.c
+    engine/src/viewport/gui.c
 )
 
-set(ENGINE_GUI_HEADERS
-    engine/include/gui/gui_types.h
-    engine/include/gui/gui_palette.h
-    engine/include/gui/gui_fonts.h
-    engine/include/gui/gui_layout.h
-    engine/include/gui/gui_widgets.h
-    engine/include/gui/gui_assets.h
-    engine/include/gui/gui_view2d.h
-    engine/include/gui/gui_hud.h
-    engine/include/gui/gui_screens.h
-    engine/include/gui/gui.h
+set(ENGINE_VIEWPORT_HEADERS
+    engine/include/viewport/gui_types.h
+    engine/include/viewport/gui_palette.h
+    engine/include/viewport/gui_fonts.h
+    engine/include/viewport/gui_layout.h
+    engine/include/viewport/gui_widgets.h
+    engine/include/viewport/gui_assets.h
+    engine/include/viewport/gui_view2d.h
+    engine/include/viewport/gui_hud.h
+    engine/include/viewport/gui_screens.h
+    engine/include/viewport/gui.h
 )
 
 # ------------------------------------------------------------------------------
@@ -233,22 +281,12 @@ set(ENGINE_GUI_HEADERS
 
 add_executable(tenebris-lux
     game/src/main.c
-    ${ENGINE_GUI_SOURCES}
+    ${ENGINE_VIEWPORT_SOURCES}
     ${GAME_SIM_SOURCES}
     ${ENGINE_UTIL_SOURCES}
-    ${ENGINE_GUI_HEADERS}
+    ${ENGINE_VIEWPORT_HEADERS}
     ${GAME_SIM_HEADERS}
-    engine/include/util/manifest.h
-    engine/include/util/data/fs_utils.h
-    engine/include/util/data/json_utils.h
-    engine/include/util/math/math_utils.h
-    engine/include/util/math/geom_utils.h
-    engine/include/util/string/string_utils.h
-    engine/include/util/time/time_utils.h
-    engine/include/util/log/log.h
-    engine/include/util/log/log_fallback.h
-    engine/include/util/debug/debug.h
-    engine/include/util/debug/debug_fallback.h
+    ${ENGINE_UTIL_HEADERS}
 )
 
 # Private include paths: internal headers and X11 system display headers
@@ -378,7 +416,7 @@ if(BUILD_TESTING)
     # Presentation GUI & 2.5D Viewport Subsystem Unit Test
     add_executable(test_gui
         tests/unit/test_gui_unit.c
-        ${ENGINE_GUI_SOURCES}
+        ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
         ${ENGINE_UTIL_SOURCES}
     )

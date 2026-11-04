@@ -39,9 +39,9 @@
 // Stratum: Layer 4 (Verification Suite) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "gui/gui.h"
-#include "gui/gui_fonts.h"
-#include "gui/gui_screens.h"
+#include "viewport/gui.h"
+#include "viewport/gui_fonts.h"
+#include "viewport/gui_screens.h"
 
 #include <stdio.h>
 #include <stdlib.h>

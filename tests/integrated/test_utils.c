@@ -41,15 +41,15 @@
 // BLOCK 2: OPENING BLOCK / STATIC DATA
 // =============================================================================
 
-#include "util/manifest.h"
-#include "util/data/fs_utils.h"
-#include "util/data/json_utils.h"
-#include "util/math/math_utils.h"
-#include "util/math/geom_utils.h"
-#include "util/string/string_utils.h"
-#include "util/time/time_utils.h"
-#include "util/log/log.h"
-#include "util/log/log_fallback.h"
+#include "core/manifest.h"
+#include "io/fs_utils.h"
+#include "io/json_utils.h"
+#include "core/math_utils.h"
+#include "core/geom_utils.h"
+#include "core/string_utils.h"
+#include "core/time_utils.h"
+#include "log/log.h"
+#include "log/log_fallback.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -74,7 +74,15 @@ static const char *resolve_integrated_path(const char *rel_path)
         resolved[sizeof(resolved) - 1] = '\0';
         return resolved;
     }
+    snprintf(resolved, sizeof(resolved), "game/%s", rel_path);
+    if (fs_file_exists(resolved)) {
+        return resolved;
+    }
     snprintf(resolved, sizeof(resolved), "../%s", rel_path);
+    if (fs_file_exists(resolved)) {
+        return resolved;
+    }
+    snprintf(resolved, sizeof(resolved), "../game/%s", rel_path);
     if (fs_file_exists(resolved)) {
         return resolved;
     }

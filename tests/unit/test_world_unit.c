@@ -33,13 +33,13 @@
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
-#include "sim/core/sim_state.h"
-#include "sim/world/map_scaler.h"
-#include "sim/world/map_types.h"
-#include "sim/world/maps.h"
-#include "sim/world/world.h"
-#include "sim/world/world_loader.h"
-#include "sim/world/world_topology.h"
+#include "hero/sim_state.h"
+#include "world/map_scaler.h"
+#include "world/map_types.h"
+#include "world/maps.h"
+#include "world/world.h"
+#include "world/world_loader.h"
+#include "world/world_topology.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

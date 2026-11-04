@@ -36,13 +36,13 @@
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
-#include "sim/combat/action_resolve.h"
-#include "sim/combat/combat.h"
-#include "sim/combat/combat_loader.h"
-#include "sim/combat/stances.h"
-#include "sim/combat/tactical.h"
-#include "sim/combat/turn_based.h"
-#include "sim/core/sim_state.h"
+#include "combat/action_resolve.h"
+#include "combat/combat.h"
+#include "combat/combat_loader.h"
+#include "combat/stances.h"
+#include "combat/tactical.h"
+#include "combat/turn_based.h"
+#include "hero/sim_state.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

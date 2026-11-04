@@ -36,22 +36,22 @@
 // Stratum: Layer 3 (Application Entry) | Machine: Presentation Router
 // =============================================================================
 
-#include "sim/game.h"
-#include "sim/sim_state.h"
-#include "sim/combat.h"
-#include "sim/items/items.h"
-#include "sim/world.h"
-#include "sim/dispatcher.h"
-#include "gui/gui.h"
-#include "util/manifest.h"
-#include "util/data/fs_utils.h"
-#include "util/data/json_utils.h"
-#include "util/math/math_utils.h"
-#include "util/math/geom_utils.h"
-#include "util/string/string_utils.h"
-#include "util/time/time_utils.h"
-#include "util/log/log.h"
-#include "util/debug/debug.h"
+#include "ending/game.h"
+#include "hero/sim_state.h"
+#include "combat/combat.h"
+#include "relics/items.h"
+#include "world/world.h"
+#include "dispatch/dispatcher.h"
+#include "viewport/gui.h"
+#include "core/manifest.h"
+#include "io/fs_utils.h"
+#include "io/json_utils.h"
+#include "core/math_utils.h"
+#include "core/geom_utils.h"
+#include "core/string_utils.h"
+#include "core/time_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 #include <stdio.h>
 #include <string.h>

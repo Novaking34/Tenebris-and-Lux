@@ -194,9 +194,9 @@ Dependencies strictly flow downwards. Higher layers may call lower layers; lower
 graph TD
     L4["Layer 4: Verification & Test Suite (tests/)<br/>19 CTest Verification Suites • Golden Replay • Chaotic Fuzzing"]
     L3["Layer 3: Application Router & Entry (game/src/main.c)<br/>CLI/GUI Presentation Router • CLI Flag Dispatcher"]
-    L2["Layer 2: Presentation & Viewports (engine/src/gui/)<br/>Native Double-Buffered X11 Desktop GUI • 2.5D Viewport"]
-    L1["Layer 1: Simulation Engine (game/src/sim/)<br/>Deterministic Relics • Stances • Combat • World Topology"]
-    L0["Layer 0: Core Utilities (engine/src/util/)<br/>Zero-Heap Math, Geom, JSON, FS, Time, Log, Ring-Buffer Debugger"]
+    L2["Layer 2: Presentation & Viewports (engine/src/viewport/)<br/>Native Double-Buffered X11 Desktop GUI • 2.5D Viewport"]
+    L1["Layer 1: Simulation Engine (game/src/)<br/>Combat Stances • Hero Vitals • Relics • World Grid • Endings"]
+    L0["Layer 0: Core Utilities (engine/src/)<br/>Core Primitives • Zero-Heap IO • Forensic Log • Rewind Debugger"]
 
     L4 --> L3
     L4 --> L1
@@ -213,11 +213,11 @@ graph TD
     style L4 fill:#22543d,stroke:#9ae6b4,stroke-width:2px,color:#fff
 ```
 
-* **Layer 0 (Core Utilities)**: Zero-dependency primitives organized into domain subsystems (`math/`, `geom/`, `data/`, `log/`, `debug/`, `string/`, `time/`, `manifest/`). Zero heap allocations, pure reentrant C11.
-* **Layer 1 (Simulation Engine)**: Core player state (`player_state_t`), twin armaments, stance mechanics, moral sway continuum, provincial topology, and dynamic command dispatching.
-* **Layer 2 (Presentation & Viewports)**: Native X11 double-buffered desktop interface. Translates mouse clicks and keystrokes into universal simulation commands without owning game logic.
-* **Layer 3 (Application Entry & Router)**: Evaluates environment flags (`--cli`, `--gui`, `--debug`, `--audit`) and routes execution to GUI or terminal CLI.
-* **Layer 4 (Verification Suite)**: 19 automated CTest suites validating memory, geometry, time, data parsing, logs, time-travel rewind, and system invariants.
+* **Layer 0 (Core Utilities)**: Zero-dependency primitives in `engine/src/` (`core/`, `io/`, `log/`, `debug/`). Zero heap allocations, pure reentrant ISO C11.
+* **Layer 1 (Simulation Engine)**: Game mechanics in `game/src/` (`combat/`, `hero/`, `relics/`, `world/`, `ending/`, `dispatch/`). Zero heap allocations, decoupled from windowing.
+* **Layer 2 (Presentation & Viewports)**: Native X11 double-buffered desktop interface in `engine/src/viewport/`. Translates mouse and keyboard events into universal simulation commands.
+* **Layer 3 (Application Entry & Router)**: Evaluates environment flags (`--cli`, `--gui`, `--debug`, `--audit`) in `game/src/main.c` and routes execution to GUI or terminal CLI.
+* **Layer 4 (Verification Suite)**: 19 automated CTest suites in `tests/` validating memory, geometry, time, data parsing, logs, time-travel rewind, and system invariants.
 
 ### 3. Combat Mechanics & Deterministic Stance State Machine
 

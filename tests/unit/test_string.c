@@ -43,9 +43,9 @@
 // ( System Headers, Assertion Macros & Test Fixtures )
 // =============================================================================
 
-#include "util/manifest.h"
-#include "util/string/string_utils.h"
-#include "util/data/fs_utils.h"
+#include "core/manifest.h"
+#include "core/string_utils.h"
+#include "io/fs_utils.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -70,7 +70,15 @@ static const char *resolve_string_path(const char *rel_path)
         resolved[sizeof(resolved) - 1] = '\0';
         return resolved;
     }
+    snprintf(resolved, sizeof(resolved), "game/%s", rel_path);
+    if (fs_file_exists(resolved)) {
+        return resolved;
+    }
     snprintf(resolved, sizeof(resolved), "../%s", rel_path);
+    if (fs_file_exists(resolved)) {
+        return resolved;
+    }
+    snprintf(resolved, sizeof(resolved), "../game/%s", rel_path);
     if (fs_file_exists(resolved)) {
         return resolved;
     }

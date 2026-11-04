@@ -33,14 +33,14 @@
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
-#include "sim/combat/combat.h"
-#include "sim/core/game.h"
-#include "sim/core/sim_state.h"
-#include "sim/dispatch/dispatcher.h"
-#include "sim/items/inventory.h"
-#include "sim/items/items.h"
-#include "sim/world/world.h"
-#include "util/debug/debug.h"
+#include "combat/combat.h"
+#include "ending/game.h"
+#include "hero/sim_state.h"
+#include "dispatch/dispatcher.h"
+#include "relics/inventory.h"
+#include "relics/items.h"
+#include "world/world.h"
+#include "debug/debug.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -42,10 +42,10 @@
 // ( System Headers, Assertion Macros & Test Fixtures )
 // =============================================================================
 
-#include "util/manifest.h"
-#include "util/math/math_utils.h"
-#include "util/math/geom_utils.h"
-#include "util/data/fs_utils.h"
+#include "core/manifest.h"
+#include "core/math_utils.h"
+#include "core/geom_utils.h"
+#include "io/fs_utils.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -121,7 +121,13 @@ static void test_math_always_pass(void)
     /* 1.8 Default math configuration profile loading */
     const char *cfg_path = "data/math/default.json";
     if (!fs_file_exists(cfg_path)) {
+        cfg_path = "game/data/math/default.json";
+    }
+    if (!fs_file_exists(cfg_path)) {
         cfg_path = "../data/math/default.json";
+    }
+    if (!fs_file_exists(cfg_path)) {
+        cfg_path = "../game/data/math/default.json";
     }
     math_config_t cfg;
     bool loaded = math_load_config_from_file(cfg_path, &cfg);

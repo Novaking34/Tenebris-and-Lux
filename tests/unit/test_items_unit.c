@@ -33,13 +33,13 @@
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
-#include "sim/core/sim_state.h"
-#include "sim/items/catalysts.h"
-#include "sim/items/consumables.h"
-#include "sim/items/inventory.h"
-#include "sim/items/item_loader.h"
-#include "sim/items/items.h"
-#include "sim/items/relics.h"
+#include "hero/sim_state.h"
+#include "relics/catalysts.h"
+#include "relics/consumables.h"
+#include "relics/inventory.h"
+#include "relics/item_loader.h"
+#include "relics/items.h"
+#include "relics/relics.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

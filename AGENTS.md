@@ -104,12 +104,16 @@ The repository root must remain immaculate. According to project standards, the 
 
 All other materials belong in their respective strata:
 
-* `engine/`: Zero-heap foundational utilities (`engine/include/util/`, `engine/src/util/`) and Presentation Viewports (`engine/include/gui/`, `engine/src/gui/`).
-* `game/`: Tactical Simulation Engine (`game/include/sim/`, `game/src/sim/`) and Application Router (`game/src/main.c`).
-* `data/`: Data-driven JSON manifests, subsystem profiles, and tactical schemas (`data/SCHEMAS.md`).
+* `engine/`: Bespoke C11 engine architecture:
+  * `engine/include/`: Public engine headers (`core/`, `io/`, `log/`, `debug/`, `viewport/`).
+  * `engine/src/`: Engine implementation modules (`core/`, `io/`, `log/`, `debug/`, `viewport/`).
+* `game/`: Tenebris and Lux TRPG game implementation:
+  * `game/include/`: Domain headers (`combat/`, `hero/`, `relics/`, `world/`, `ending/`, `dispatch/`).
+  * `game/src/`: Game implementation modules and router entry point (`game/src/main.c`).
+  * `game/data/`: Data-driven JSON manifests, subsystem profiles, and tactical schemas (`game/data/SCHEMAS.md`).
+  * `game/assets/`: Visual assets, fonts (`fonts/`), high-res icons (`icons/`), banners (`branding/`), and screenshots (`screenshots/`).
 * `tests/<stratum>/`: All automated test suites (`functional/`, `unit/`, `integrated/`, `system/`).
-* `docs/<category>/`: All technical manuals and realm chronicles in AsciiDoc format.
-* `assets/<type>/`: All fonts (`fonts/`), high-res icons (`icons/`), banners (`branding/`), and screenshots (`screenshots/`).
+* `docs/<category>/`: All technical manuals, 67-chapter Master Guide, and realm chronicles in AsciiDoc format.
 * `tools/`: Developer toolchain in Rust (`master_guide`, `extractor`).
 * `.github/`: Issue templates and linter configurations.
 
@@ -129,20 +133,20 @@ Layer 4: Verification Suite       [ tests/ ]
            │
 Layer 3: Application Router       [ game/src/main.c ]
            │
-Layer 2: Presentation Viewports   [ engine/src/gui/   <-> engine/include/gui/ ]
+Layer 2: Presentation Viewports   [ engine/src/viewport/ <-> engine/include/viewport/ ]
            │
-Layer 1: Simulation Engine        [ game/src/sim/     <-> game/include/sim/ ]
+Layer 1: Simulation Engine        [ game/src/{combat,hero,relics,world,ending,dispatch}/ ]
            │
-Layer 0: Core Utilities           [ engine/src/util/  <-> engine/include/util/ ]
+Layer 0: Core Utilities           [ engine/src/{core,io,log,debug}/ ]
 ```
 
-1. **Layer 0: Core Utilities (`engine/src/util/`, `engine/include/util/`)**:
-   * Zero-dependency foundational primitives: `math/` (bounded arithmetic), `geom/` (2D AABB geometry), `data/` (zero-heap FS and JSON tokenizer), `log/` (categorized telemetry and static ring buffer), `debug/` (snapshot buffer and FNV-1a hashing), `string/` (bounded safety), `time/` (monotonic timers), and `manifest/` (pre-flight DAG registry).
+1. **Layer 0: Core Utilities (`engine/src/{core,io,log,debug}/`, `engine/include/{core,io,log,debug}/`)**:
+   * Zero-dependency foundational primitives: `core/` (bounded math, 2D AABB geometry, safety strings, monotonic time, pre-flight DAG registry), `io/` (zero-heap FS and JSON tokenizer), `log/` (categorized telemetry and static ring buffer), and `debug/` (snapshot buffer and FNV-1a hashing).
    * **Hard Invariant**: **Zero dynamic heap allocations** (`malloc`, `calloc`, `free` are prohibited). Pure reentrant ISO C11.
-2. **Layer 1: Simulation Engine (`game/src/sim/`, `game/include/sim/`)**:
-   * Manages player state (`player_state_t`), twin armaments, combat stance machine, moral sway continuum, provincial topology, and command dispatching.
+2. **Layer 1: Simulation Engine (`game/src/{combat,hero,relics,world,ending,dispatch}/`, `game/include/`)**:
+   * Manages hero state (`hero/sim_state.h`), combat stances (`combat/`), twin armaments and inventory (`relics/`), provincial topology (`world/`), command routing (`dispatch/`), and campaign resolution (`ending/`).
    * **Hard Invariant**: Zero heap allocations. Completely decoupled from X11 or windowing runtimes. Runs headless under any CLI or test harness.
-3. **Layer 2: Presentation & Viewports (`engine/src/gui/`, `engine/include/gui/`)**:
+3. **Layer 2: Presentation & Viewports (`engine/src/viewport/`, `engine/include/viewport/`)**:
    * Native X11 double-buffered desktop interface. Translates mouse clicks and keystrokes into universal simulation commands.
    * High-DPI TrueType font engine (`Cinzel`, `MedievalSharp`), 640x360 target resolution with letterbox/pillarbox scalers.
 4. **Layer 3: Application Entry & Presentation Router (`game/src/main.c`)**:
@@ -156,16 +160,22 @@ Layer 0: Core Utilities           [ engine/src/util/  <-> engine/include/util/ ]
 All header includes must explicitly declare their stratum and subsystem. Lazy forwarder headers in include roots are strictly forbidden:
 
 ```c
-#include "util/math/math_utils.h"
-#include "util/math/geom_utils.h"
-#include "util/data/fs_utils.h"
-#include "util/data/json_utils.h"
-#include "util/log/log.h"
-#include "util/debug/debug.h"
-#include "util/string/string_utils.h"
-#include "util/time/time_utils.h"
-#include "sim/game.h"
-#include "gui/gui.h"
+#include "core/math_utils.h"
+#include "core/geom_utils.h"
+#include "core/time_utils.h"
+#include "core/string_utils.h"
+#include "core/manifest.h"
+#include "io/fs_utils.h"
+#include "io/json_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
+#include "viewport/gui.h"
+#include "combat/combat.h"
+#include "hero/sim_state.h"
+#include "relics/relics.h"
+#include "world/world.h"
+#include "dispatch/dispatcher.h"
+#include "ending/game.h"
 ```
 
 ### 2.3 Continental Lore & Canon Invariants
