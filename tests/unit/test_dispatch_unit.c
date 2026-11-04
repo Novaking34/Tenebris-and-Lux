@@ -36,14 +36,14 @@
 // BLOCK 2: OPENING BLOCK / TYPES BLOCK
 // =============================================================================
 
-#include "sim/core/sim_state.h"
-#include "sim/dispatch/dispatch_combat.h"
-#include "sim/dispatch/dispatch_items.h"
-#include "sim/dispatch/dispatch_loader.h"
-#include "sim/dispatch/dispatch_system.h"
-#include "sim/dispatch/dispatch_types.h"
-#include "sim/dispatch/dispatch_world.h"
-#include "sim/dispatch/dispatcher.h"
+#include "hero/sim_state.h"
+#include "dispatch/dispatch_combat.h"
+#include "dispatch/dispatch_items.h"
+#include "dispatch/dispatch_loader.h"
+#include "dispatch/dispatch_system.h"
+#include "dispatch/dispatch_types.h"
+#include "dispatch/dispatch_world.h"
+#include "dispatch/dispatcher.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

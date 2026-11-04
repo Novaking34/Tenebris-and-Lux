@@ -39,10 +39,10 @@
 // BLOCK 2: OPENING BLOCK / STATIC DATA
 // =============================================================================
 
-#include "util/log/log.h"
-#include "util/log/log_fallback.h"
-#include "util/string/string_utils.h"
-#include "util/time/time_utils.h"
+#include "log/log.h"
+#include "log/log_fallback.h"
+#include "core/string_utils.h"
+#include "core/time_utils.h"
 
 #include <assert.h>
 #include <stdio.h>

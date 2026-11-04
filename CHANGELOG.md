@@ -92,46 +92,46 @@ The `v0.1.0` milestone transforms the verified interactive prototype into a full
 
 Milestone `0.0.1` represents the complete architectural foundation of *Tenebris and Lux*, establishing a pure ISO C11 engine with zero dynamic heap allocations in core layers, verified by 19 automated CTest test suites and a 16-module diagnostic self-audit.
 
-#### Layer 0: Core Utilities (`engine/src/util/`, `engine/include/util/`)
+#### Layer 0: Core Utilities (`engine/src/{core,io,log,debug}/`, `engine/include/`)
 
 - **Central Manifest & Pre-Flight DAG** ([DevLog 003](docs/dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc), [DevLog 004](docs/dev_logs/2026/10/architecture/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc)):
-  - Built zero-heap Central Manifest Registry (`manifest.h`, `manifest.c`) validating subsystem integrity.
+  - Built zero-heap Central Manifest Registry (`core/manifest.h`, `core/manifest.c`) validating subsystem integrity.
   - Implemented boot-time Directed Acyclic Graph (DAG) upstream dependency validation (`dependencies[4]`) halting on missing prerequisites.
   - Formulated 5-tier diagnostic severity hierarchy (`TRACE`, `INFO`, `WARN`, `CRITICAL`, `FATAL`) and 4-tier engine startup policies.
 - **Domain Subsystem Modularization** ([DevLog 010](docs/dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc)):
   - Decomposed utility monoliths into dedicated zero-dependency sub-assemblies:
-    - `math/math_utils.h`: Clamping (`clamp_int`), saturating arithmetic, zero-divisor guards, and normalization.
-    - `math/geom_utils.h`: 2D spatial geometry, Axis-Aligned Bounding Box (AABB) hit-testing, and coordinate containment.
-    - `data/fs_utils.h`: Zero-heap filesystem I/O with fixed-size line buffers (no `malloc`).
-    - `data/json_utils.h`: Streaming, zero-heap JSON tokenizer and recursive value parser.
+    - `core/math_utils.h`: Clamping (`clamp_int`), saturating arithmetic, zero-divisor guards, and normalization.
+    - `core/geom_utils.h`: 2D spatial geometry, Axis-Aligned Bounding Box (AABB) hit-testing, and coordinate containment.
+    - `io/fs_utils.h`: Zero-heap filesystem I/O with fixed-size line buffers (no `malloc`).
+    - `io/json_utils.h`: Streaming, zero-heap JSON tokenizer and recursive value parser.
     - `log/log.h`: Categorized forensic telemetry (`CAT:LOG`, `CAT:CHARACTER`, `CAT:DEBUG`), grade mapping (`GRADE:+003`), static ring buffer, and quarantined fallback monoliths (`log_fallback.h`).
     - `debug/debug.h`: Interactive state debugger, frozen snapshot ring buffer (up to 64 snapshots), FNV-1a state hashing, and time-travel rewind.
-    - `string/string_utils.h`: Bounded buffer safety, safe copying, whitespace trimming, and path joining.
-    - `time/time_utils.h`: Monotonic sub-millisecond clock timers, ISO-8601 timestamps, and frame profiles (60/120 FPS).
+    - `core/string_utils.h`: Bounded buffer safety, safe copying, whitespace trimming, and path joining.
+    - `core/time_utils.h`: Monotonic sub-millisecond clock timers, ISO-8601 timestamps, and frame profiles (60/120 FPS).
 - **Pedagogical Standards & Code Hygiene** ([DevLog 005](docs/dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc), [DevLog 006](docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc)):
   - Formulated the Machine-Cog ontological framework: Stratum &rarr; Machine &rarr; Assembly &rarr; Cog &rarr; Fasteners.
   - Enforced strict 80-column line width discipline across 100% of the C codebase.
   - Standardized rich Markdown LSP hover docstrings across all headers and sources.
 
-#### Layer 1: Simulation Engine (`game/src/sim/`, `game/include/sim/`)
+#### Layer 1: Simulation Engine (`game/src/{combat,hero,relics,world,ending,dispatch}/`, `game/include/`)
 
 - **Tri-Perspective Protagonist Architecture** ([DevLog 002](docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc), [DevLog 009](docs/dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc)):
-  - Modeled state for Elijah Ro-enheart (The Past), Lady Katrina Jaren (The Present), and The Custom Bearer (The Future).
+  - Modeled state for Elijah Ro-enheart (The Past), Lady Katrina Jaren (The Present), and The Custom Bearer (The Future) in `hero/sim_state.h`.
   - Implemented dynamic hero designation (`name <bearer>`).
 - **Twin Relic Metaphysics & Resonance Conservation** ([DevLog 001](docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc), [DevLog 008](docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc)):
   - Conserved Relic resources: Shield of Lux warding and Sword of Tenebris edge sharpness strictly bounded in `[0, 100]`.
   - Moral Sway Continuum: Bounded tracking in `[-100, +100]`.
   - Signature Arts: *Lux Barrio* (-25% damage absorption, 2-turn barrier dome), *Cuttatio Tenebris* (sweeping arc, 20% splash), and harmonic *Duo-Loca Bashin n Slash* (blinding shield bash + abyssal double-cleave targeting raw DEF).
 - **Deterministic Stance State Machine** ([DevLog 001](docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc), [DevLog 008](docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc)):
-  - 4-posture strongly connected deterministic state machine: `STANCE_NEUTRAL`, `STANCE_WARDING`, `STANCE_STRIKING`, `STANCE_EQUILIBRIUM`.
+  - 4-posture strongly connected deterministic state machine: `STANCE_NEUTRAL`, `STANCE_WARDING`, `STANCE_STRIKING`, `STANCE_EQUILIBRIUM` in `combat/stances.h`.
 - **Topological World & Command Dispatching** ([DevLog 008](docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc), [DevLog 010](docs/dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc)):
-  - Built world orchestrator and topological room scaler (`world.h`, `world.c`) managing The Dreamscape and Dio Village Square.
-  - Implemented dynamic command router (`dispatcher.h`, `dispatcher.c`) translating aliases into canonical domain verbs.
+  - Built world orchestrator and topological room scaler (`world/world.h`, `world/world.c`) managing The Dreamscape and Dio Village Square.
+  - Implemented dynamic command router (`dispatch/dispatcher.h`, `dispatch/dispatcher.c`) translating aliases into canonical domain verbs.
 
-#### Layer 2: Presentation & Viewports (`engine/src/gui/`, `engine/include/gui/`)
+#### Layer 2: Presentation & Viewports (`engine/src/viewport/`, `engine/include/viewport/`)
 
 - **Native Double-Buffered X11 Desktop GUI** ([DevLog 001](docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc), [DevLog 014](docs/dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc)):
-  - Built native X11 double-buffered interface (`gui.h`, `gui.c`) rendering at 640x360 target resolution with letterbox/pillarbox scalers.
+  - Built native X11 double-buffered interface (`viewport/gui.h`, `viewport/gui.c`) rendering at 640x360 target resolution with letterbox/pillarbox scalers.
   - Real-time rendering of health meters, relic resonance bars, stance indicators, hostile threat readouts, and provincial chronicles.
   - Decoupled from simulation logic: GUI translates user events into simulation commands without owning game state.
 

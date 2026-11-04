@@ -43,10 +43,10 @@
 
 #define _POSIX_C_SOURCE 199309L
 
-#include "sim/game.h"
-#include "sim/combat/combat.h"
-#include "sim/world/world.h"
-#include "util/time/time_utils.h"
+#include "ending/game.h"
+#include "combat/combat.h"
+#include "world/world.h"
+#include "core/time_utils.h"
 
 #include <assert.h>
 #include <stdio.h>
