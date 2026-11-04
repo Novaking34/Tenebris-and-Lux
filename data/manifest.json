@@ -143,11 +143,19 @@
       "manifest_path": "dispatch/manifest.json",
       "status": "active",
       "category": "simulation"
+    },
+    {
+      "id": "gui",
+      "title": "Desktop Presentation & 2.5D Tactical Viewport Subsystem",
+      "description": "X11 double-buffering, dark fantasy palette, 2.5D diamond isometric projection, and asset abstraction pipeline.",
+      "manifest_path": "gui/manifest.json",
+      "status": "active",
+      "category": "presentation"
     }
   ],
   "_audit": {
-    "manifest_count": 15,
-    "active_subsystems": 14,
+    "manifest_count": 16,
+    "active_subsystems": 15,
     "integrity_check": "All paths relative to data root"
   },
   "_navigation": {

@@ -180,6 +180,27 @@ set(SIM_HEADERS
     include/sim/dispatch/dispatcher.h
 )
 
+set(GUI_SOURCES
+    src/gui/gui_palette.c
+    src/gui/gui_layout.c
+    src/gui/gui_widgets.c
+    src/gui/gui_assets.c
+    src/gui/gui_view2d.c
+    src/gui/gui_hud.c
+    src/gui/gui.c
+)
+
+set(GUI_HEADERS
+    include/gui/gui_types.h
+    include/gui/gui_palette.h
+    include/gui/gui_layout.h
+    include/gui/gui_widgets.h
+    include/gui/gui_assets.h
+    include/gui/gui_view2d.h
+    include/gui/gui_hud.h
+    include/gui/gui.h
+)
+
 # ------------------------------------------------------------------------------
 # [ SUB-ASSEMBLY 3.2: PRIMARY GAME ENGINE EXECUTABLE TARGET ]
 # Mission: Compile executable linking entry router, simulation, GUI, and utils.
@@ -187,11 +208,11 @@ set(SIM_HEADERS
 
 add_executable(tenebris-lux
     src/main.c
-    src/gui/gui.c
+    ${GUI_SOURCES}
     ${SIM_SOURCES}
     ${UTIL_SOURCES}
+    ${GUI_HEADERS}
     ${SIM_HEADERS}
-    include/gui/gui.h
     include/util/manifest.h
     include/util/data/fs_utils.h
     include/util/data/json_utils.h
@@ -331,6 +352,17 @@ if(BUILD_TESTING)
     target_include_directories(test_dispatch PRIVATE include)
     target_compile_options(test_dispatch PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Presentation GUI & 2.5D Viewport Subsystem Unit Test
+    add_executable(test_gui
+        tests/unit/test_gui_unit.c
+        ${GUI_SOURCES}
+        ${SIM_SOURCES}
+        ${UTIL_SOURCES}
+    )
+    target_include_directories(test_gui PRIVATE include ${X11_INCLUDE_DIR})
+    target_link_libraries(test_gui PRIVATE ${X11_LIBRARIES})
+    target_compile_options(test_gui PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
     # Mission: Verify cross-subsystem coordination, DAG dependencies, and pipelines.
@@ -401,6 +433,7 @@ if(BUILD_TESTING)
     add_test(NAME unit_items_test COMMAND test_items)
     add_test(NAME unit_world_test COMMAND test_world)
     add_test(NAME unit_dispatch_test COMMAND test_dispatch)
+    add_test(NAME unit_gui_test COMMAND test_gui)
 
     # Integrated Tests (Cross-Subsystem Coordination)
     add_test(NAME integrated_utils_test COMMAND test_utils)
@@ -425,6 +458,7 @@ if(BUILD_TESTING)
         unit_items_test
         unit_world_test
         unit_dispatch_test
+        unit_gui_test
         integrated_utils_test
         integrated_sim_test
         system_game_invariants_test

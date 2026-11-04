@@ -1,0 +1,39 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/gui/manifest.json",
+    "id": "data.gui.manifest",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "GUI presentation subsystem manifest specifying palettes, layout, and asset pipelines."
+  },
+  "subsystem": {
+    "id": "gui",
+    "name": "GUI Desktop Viewport & 2.5D Tactical Presentation",
+    "stratum": "Layer 2: Presentation & Viewport",
+    "status": "active",
+    "catalog_files": [
+      "layout.json",
+      "palette.json",
+      "assets.json"
+    ],
+    "sub_assemblies": [
+      "gui_palette",
+      "gui_layout",
+      "gui_widgets",
+      "gui_assets",
+      "gui_view2d",
+      "gui_hud",
+      "gui_core"
+    ],
+    "axioms": [
+      "Presentation follows simulation: GUI never mutates state directly",
+      "Double-buffered offscreen rendering eliminates tearing artifacts",
+      "Non-overlapping panel and widget geometry strictly audited via AABB checks",
+      "Asset abstraction guarantees seamless transition from procedural to artist sprites",
+      "Headless fallback cleanly downgrades to CLI in DISPLAY absence"
+    ]
+  }
+}

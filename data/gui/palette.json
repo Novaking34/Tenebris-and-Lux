@@ -1,0 +1,42 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/gui/palette.json",
+    "id": "gui.palette.dark_fantasy",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "24-bit RGB and 32-bit ARGB hardware color palette specification."
+  },
+  "theme": "dark_fantasy_high_contrast",
+  "colors": {
+    "bg_obsidian": "0x0D0E12",
+    "panel_granite": "0x1A1D24",
+    "border_stone": "0x2E3440",
+    "text_ivory": "0xECEFF4",
+    "text_muted_silver": "0x8892B0",
+    "shield_gold_lux": "0xF0CE78",
+    "shield_gold_highlight": "0xFFE49E",
+    "sword_violet_tenchris": "0x8A78C8",
+    "sword_violet_highlight": "0xB09FE8",
+    "virtue_emerald": "0x52B788",
+    "malice_crimson": "0xE63946",
+    "btn_bg_slate": "0x1E222B",
+    "btn_border_rim": "0x3E4452",
+    "btn_hover_highlight": "0x2D3442",
+    "tile_grid_line": "0x252A36",
+    "tile_cobblestone": "0x3C4252",
+    "tile_cobble_mortar": "0x282C37",
+    "tile_grass_deep": "0x24422D",
+    "tile_grass_highlight": "0x3A6A48",
+    "tile_water_abyssal": "0x1E2E4A",
+    "tile_water_crest": "0x385B8A",
+    "tile_stone_wall": "0x4A5162",
+    "tile_wall_shadow": "0x20242D",
+    "tactical_move_range": "0x3A86FF",
+    "tactical_attack_range": "0xDE369D",
+    "tactical_cursor_gold": "0xFFD166",
+    "entity_drop_shadow": "0x050608"
+  }
+}
