@@ -40,6 +40,8 @@
 // =============================================================================
 
 #include "gui/gui.h"
+#include "gui/gui_fonts.h"
+#include "gui/gui_screens.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -194,6 +196,18 @@ static void test_gui_assertions_and_guarantees(void)
     const gui_asset_t *bound = gui_assets_get(ASSET_HERO_ELIJAH);
     TEST_ASSERT(bound != NULL && bound->kind == ASSET_KIND_BITMAP,
                 "asset marked as BITMAP kind");
+
+    /* 3.6 Typography catalog fallback audit */
+    TEST_ASSERT(gui_fonts_audit(), "typography catalog audit verified");
+    gui_font_catalog_t cat;
+    gui_fonts_init(&cat, NULL);
+    TEST_ASSERT(!cat.is_loaded, "NULL display marks not loaded");
+    int w = gui_fonts_measure_width(&cat, GUI_FONT_UI, "Elijah");
+    TEST_ASSERT(w > 0, "heuristic width measurement positive");
+    gui_fonts_teardown(&cat, NULL);
+
+    /* 3.7 Alternate screens tab navigation audit */
+    TEST_ASSERT(gui_screens_audit(), "alternate screens audit verified");
 
     printf("  [AXIOM-3] Section 3 passed: Layout & projection axioms hold.\n");
 }

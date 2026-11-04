@@ -182,22 +182,26 @@ set(SIM_HEADERS
 
 set(GUI_SOURCES
     src/gui/gui_palette.c
+    src/gui/gui_fonts.c
     src/gui/gui_layout.c
     src/gui/gui_widgets.c
     src/gui/gui_assets.c
     src/gui/gui_view2d.c
     src/gui/gui_hud.c
+    src/gui/gui_screens.c
     src/gui/gui.c
 )
 
 set(GUI_HEADERS
     include/gui/gui_types.h
     include/gui/gui_palette.h
+    include/gui/gui_fonts.h
     include/gui/gui_layout.h
     include/gui/gui_widgets.h
     include/gui/gui_assets.h
     include/gui/gui_view2d.h
     include/gui/gui_hud.h
+    include/gui/gui_screens.h
     include/gui/gui.h
 )
 

@@ -39,28 +39,28 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#define HEX_BG_OBSIDIAN    0x0D0E12
-#define HEX_PANEL_GRANITE  0x1A1D24
-#define HEX_BORDER_STONE   0x2E3440
-#define HEX_TEXT_IVORY     0xECEFF4
-#define HEX_TEXT_SILVER    0x8892B0
-#define HEX_SHIELD_GOLD    0xF0CE78
-#define HEX_GOLD_BRIGHT    0xFFE49E
-#define HEX_SWORD_VIOLET   0x8A78C8
-#define HEX_VIOLET_BRIGHT  0xB09FE8
-#define HEX_VIRTUE_GREEN   0x52B788
-#define HEX_MALICE_RED     0xE63946
-#define HEX_BTN_SLATE      0x1E222B
-#define HEX_BTN_RIM        0x3E4452
-#define HEX_BTN_HOVER      0x2D3442
-#define HEX_TILE_GRID      0x252A36
-#define HEX_TILE_COBBLE    0x3C4252
-#define HEX_TILE_GRASS     0x24422D
-#define HEX_TILE_WATER     0x1E2E4A
-#define HEX_TILE_WALL      0x4A5162
-#define HEX_TACTICAL_MOVE  0x3A86FF
-#define HEX_TACTICAL_ATK   0xDE369D
-#define HEX_SHADOW         0x050608
+#define HEX_BG_OBSIDIAN    0x0F131E
+#define HEX_PANEL_GRANITE  0x181E2E
+#define HEX_BORDER_STONE   0x3A4460
+#define HEX_TEXT_IVORY     0xF8F9FC
+#define HEX_TEXT_SILVER    0x9BA5C2
+#define HEX_SHIELD_GOLD    0xE8B84B
+#define HEX_GOLD_BRIGHT    0xFFE082
+#define HEX_SWORD_VIOLET   0x9D65E5
+#define HEX_VIOLET_BRIGHT  0xC79BFF
+#define HEX_VIRTUE_GREEN   0x2ECC71
+#define HEX_MALICE_RED     0xE74C3C
+#define HEX_BTN_SLATE      0x20273A
+#define HEX_BTN_RIM        0x4A567A
+#define HEX_BTN_HOVER      0x323D5A
+#define HEX_TILE_GRID      0x2A3348
+#define HEX_TILE_COBBLE    0x54607B
+#define HEX_TILE_GRASS     0x2E6F40
+#define HEX_TILE_WATER     0x214E80
+#define HEX_TILE_WALL      0x5E6B88
+#define HEX_TACTICAL_MOVE  0x3898EC
+#define HEX_TACTICAL_ATK   0xF35B7A
+#define HEX_SHADOW         0x07090F
 
 // =============================================================================
 // BLOCK 3: BODY BLOCK

@@ -6,8 +6,8 @@
 // @file          gui_view2d.h
 // @id            gui.view2d.tactical
 // @layer         Layer 2: Presentation & Viewport
-// @version       1.0.0
-// @interface_rev Rev 1
+// @version       1.2.0
+// @interface_rev Rev 2
 // @date          2026-11-03
 // @updated       2026-11-03
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -15,8 +15,9 @@
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   2D / 2.5D Tactical World Viewport renderer. Implements diamond dimetric
-//   projection, 3D prism elevation blocks (3-face shaded cubes), depth-sorted
-//   Painter's algorithm entity queue, and tactical range overlays.
+//   projection, dynamic responsive battlefield scaling, 3D prism elevation
+//   blocks (3-face shaded cubes), depth-sorted Painter's algorithm queue,
+//   and high fantasy ground aprons and range overlays.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: gui/gui_types.h, gui/gui_assets.h,
@@ -27,9 +28,10 @@
 //
 // AXIOMATIC INVARIANTS:
 //   1. Diamond isometric projection reversibility: project then unproject
-//      recovers original discrete grid coordinates.
+//      recovers original discrete grid coordinates at any scale factor.
 //   2. Entities render strictly back-to-front according to depth key sorting.
 //   3. Viewport rendering is strictly clipped to viewport panel bounds.
+//   4. Battlefield scales responsively to fill 55-75% of viewport surface.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_GUI_VIEW2D_H
@@ -48,6 +50,36 @@
 // BLOCK 3: BODY BLOCK
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
+
+/**
+ * Calculates optimal responsive zoom scale (1x, 2x, 3x) for the viewport.
+ *
+ * @param[in] vp Viewport bounding rectangle.
+ * @return Integer scale multiplier in [1, 3].
+ */
+int gui_view2d_calc_scale(const gui_panel_rect_t *vp);
+
+/**
+ * Calculates screen origin for the 2.5D isometric tactical grid.
+ *
+ * @param[in]  vp     Viewport bounding rectangle.
+ * @param[in]  scale  Active zoom scale multiplier.
+ * @param[out] out_ox Computed grid root origin X.
+ * @param[out] out_oy Computed grid root origin Y.
+ */
+void gui_view2d_get_iso_origin(const gui_panel_rect_t *vp, int scale,
+                               int *out_ox, int *out_oy);
+
+/**
+ * Calculates screen origin for the 2D flat orthographic grid.
+ *
+ * @param[in]  vp     Viewport bounding rectangle.
+ * @param[in]  scale  Active zoom scale multiplier.
+ * @param[out] out_ox Computed grid root origin X.
+ * @param[out] out_oy Computed grid root origin Y.
+ */
+void gui_view2d_get_flat_origin(const gui_panel_rect_t *vp, int scale,
+                                int *out_ox, int *out_oy);
 
 /**
  * Projects a discrete 3D grid coordinate (gx, gy, gz) to screen space (sx, sy).
@@ -97,12 +129,14 @@ void gui_iso_unproject(int sx, int sy, int gz,
  * @param[in] state     Active simulation player state.
  * @param[in] pal       Color palette.
  * @param[in] view_mode 2D Flat or 2.5D Isometric view mode.
+ * @param[in] fonts     High Fantasy font catalog (or NULL).
  */
 void gui_view2d_render(void *display, unsigned long dr, void *gc,
                        const gui_panel_rect_t *vp,
                        const player_state_t *state,
                        const gui_palette_t *pal,
-                       gui_view_mode_t view_mode);
+                       gui_view_mode_t view_mode,
+                       const void *fonts);
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK

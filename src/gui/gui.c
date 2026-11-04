@@ -40,6 +40,8 @@
 // =============================================================================
 
 #include "gui/gui.h"
+#include "gui/gui_fonts.h"
+#include "gui/gui_screens.h"
 #include "util/log/log.h"
 #include "util/time/time_utils.h"
 
@@ -52,8 +54,10 @@
 static gui_layout_t   s_layout;
 static gui_button_t   s_buttons[GUI_NUM_BUTTONS];
 static gui_palette_t  s_palette;
+static gui_font_catalog_t s_fonts;
 static gui_log_t      s_log;
 static gui_view_mode_t s_view_mode = GUI_VIEW_25D_ISOMETRIC;
+static gui_screen_mode_t s_screen_mode = GUI_SCREEN_TACTICAL;
 
 /**
  * Toggles EWMH fullscreen state via _NET_WM_STATE_FULLSCREEN client message.
@@ -150,6 +154,8 @@ int gui_run(player_state_t *state)
 
     /* Step 4: Initialize sub-assemblies */
     gui_palette_bind_x11(&s_palette, display, screen);
+    gui_fonts_init(&s_fonts, display);
+    gui_fonts_apply(display, gc, &s_fonts, GUI_FONT_UI);
     gui_layout_update(&s_layout, cur_win_w, cur_win_h);
     gui_widgets_init_buttons(&s_layout, s_buttons, GUI_NUM_BUTTONS);
     gui_assets_init();
@@ -204,63 +210,76 @@ int gui_run(player_state_t *state)
                 int bx = ev.xbutton.x;
                 int by = ev.xbutton.y;
 
-                /* Check command dock buttons */
-                const gui_button_t *btn =
-                    gui_button_find_clicked(s_buttons, GUI_NUM_BUTTONS, bx, by);
-                if (btn != NULL) {
-                    LOG_DEBUG(LOG_CAT_DEBUG, "GUIViewport", 0.0f,
-                        "Button click '%s' -> '%s'.",
-                        btn->label, btn->command);
-                    char out_msg[GUI_LOG_ENTRY_LEN];
-                    out_msg[0] = '\0';
-                    game_process_command(state, btn->command, out_msg,
-                                         sizeof(out_msg));
-                    if (strlen(out_msg) > 0) {
-                        gui_hud_log_append(&s_log, out_msg);
-                    }
-                    if (strcmp(btn->command, "quit") == 0) {
-                        running = false;
-                    }
-                } else if (geom_point_in_rect(bx, by,
-                    gui_layout_panel_to_rect(&s_layout.viewport_2d))) {
-                    /* Click in 2D / 2.5D Viewport: unproject to grid */
-                    int gx = 0;
-                    int gy = 0;
-                    if (s_view_mode == GUI_VIEW_25D_ISOMETRIC) {
-                        int origin_x = s_layout.viewport_2d.x +
-                                       (s_layout.viewport_2d.width / 2);
-                        int origin_y = s_layout.viewport_2d.y +
-                            ((s_layout.viewport_2d.height - 192) / 2);
-                        if (origin_y < s_layout.viewport_2d.y + 40) {
-                            origin_y = s_layout.viewport_2d.y + 40;
+                gui_screen_mode_t clicked_screen;
+                if (gui_screens_handle_tab_click(&s_layout.header,
+                                                 bx, by, &clicked_screen)) {
+                    s_screen_mode = clicked_screen;
+                    static const char *const tab_names[GUI_NUM_TABS] = {
+                        "Tactical Battle",
+                        "Hero Dossier",
+                        "Inventory Bag",
+                        "World Map",
+                        "Chronicle Codex"
+                    };
+                    char tab_msg[GUI_LOG_ENTRY_LEN];
+                    snprintf(tab_msg, sizeof(tab_msg), "Switched screen: %s",
+                             tab_names[clicked_screen]);
+                    gui_hud_log_append(&s_log, tab_msg);
+                } else if (s_screen_mode == GUI_SCREEN_TACTICAL) {
+                    /* Check command dock buttons */
+                    const gui_button_t *btn =
+                        gui_button_find_clicked(s_buttons, GUI_NUM_BUTTONS,
+                                                bx, by);
+                    if (btn != NULL) {
+                        LOG_DEBUG(LOG_CAT_DEBUG, "GUIViewport", 0.0f,
+                            "Button click '%s' -> '%s'.",
+                            btn->label, btn->command);
+                        char out_msg[GUI_LOG_ENTRY_LEN];
+                        out_msg[0] = '\0';
+                        game_process_command(state, btn->command, out_msg,
+                                             sizeof(out_msg));
+                        if (strlen(out_msg) > 0) {
+                            gui_hud_log_append(&s_log, out_msg);
                         }
-                        gui_iso_unproject(bx, by, 0, origin_x, origin_y,
-                                          GUI_ISO_TILE_W, GUI_ISO_TILE_H,
-                                          GUI_ISO_ELEV_SCALE, &gx, &gy);
-                    } else {
-                        const int cell_size = 38;
-                        int grid_w = 8 * cell_size;
-                        int grid_h = 8 * cell_size;
-                        int origin_x = s_layout.viewport_2d.x +
-                            ((s_layout.viewport_2d.width - grid_w) / 2);
-                        int origin_y = s_layout.viewport_2d.y +
-                            ((s_layout.viewport_2d.height - grid_h) / 2);
-                        if (origin_x < s_layout.viewport_2d.x + 20) {
-                            origin_x = s_layout.viewport_2d.x + 20;
+                        if (strcmp(btn->command, "quit") == 0) {
+                            running = false;
                         }
-                        if (origin_y < s_layout.viewport_2d.y + 35) {
-                            origin_y = s_layout.viewport_2d.y + 35;
+                    } else if (geom_point_in_rect(bx, by,
+                        gui_layout_panel_to_rect(&s_layout.viewport_2d))) {
+                        /* Click in 2D / 2.5D Viewport: unproject to grid */
+                        int gx = 0;
+                        int gy = 0;
+                        int scale = gui_view2d_calc_scale(
+                            &s_layout.viewport_2d);
+                        if (s_view_mode == GUI_VIEW_25D_ISOMETRIC) {
+                            int origin_x = 0;
+                            int origin_y = 0;
+                            gui_view2d_get_iso_origin(&s_layout.viewport_2d,
+                                                      scale, &origin_x,
+                                                      &origin_y);
+                            gui_iso_unproject(bx, by, 0, origin_x, origin_y,
+                                              GUI_ISO_TILE_W * scale,
+                                              GUI_ISO_TILE_H * scale,
+                                              GUI_ISO_ELEV_SCALE * scale,
+                                              &gx, &gy);
+                        } else {
+                            int cell_size = 38 * scale;
+                            int origin_x = 0;
+                            int origin_y = 0;
+                            gui_view2d_get_flat_origin(&s_layout.viewport_2d,
+                                                       scale, &origin_x,
+                                                       &origin_y);
+                            gx = (bx - origin_x) / cell_size;
+                            gy = (by - origin_y) / cell_size;
                         }
-                        gx = (bx - origin_x) / cell_size;
-                        gy = (by - origin_y) / cell_size;
-                    }
 
-                    if (gx >= 0 && gx < 8 && gy >= 0 && gy < 8) {
-                        char click_msg[GUI_LOG_ENTRY_LEN];
-                        snprintf(click_msg, sizeof(click_msg),
-                                 "Tactical target selected: Grid (%d, %d)",
-                                 gx, gy);
-                        gui_hud_log_append(&s_log, click_msg);
+                        if (gx >= 0 && gx < 8 && gy >= 0 && gy < 8) {
+                            char click_msg[GUI_LOG_ENTRY_LEN];
+                            snprintf(click_msg, sizeof(click_msg),
+                                     "Tactical target selected: Grid (%d, %d)",
+                                     gx, gy);
+                            gui_hud_log_append(&s_log, click_msg);
+                        }
                     }
                 }
             } else if (ev.type == KeyPress) {
@@ -272,7 +291,31 @@ int gui_run(player_state_t *state)
                     key = (char)('a' + (ks - XK_A));
                 }
 
-                if (ks == XK_F11 || key == 'f') {
+                if (ks == XK_Escape) {
+                    s_screen_mode = GUI_SCREEN_TACTICAL;
+                    gui_hud_log_append(&s_log,
+                        "Returned to Tactical Battle View.");
+                } else if (ks == XK_1 || key == '1') {
+                    s_screen_mode = GUI_SCREEN_TACTICAL;
+                    gui_hud_log_append(&s_log,
+                        "Switched screen: Tactical Battle View.");
+                } else if (ks == XK_2 || key == '2' || key == 'i') {
+                    s_screen_mode = GUI_SCREEN_STATUS;
+                    gui_hud_log_append(&s_log,
+                        "Switched screen: Protagonist Hero Dossier.");
+                } else if (ks == XK_3 || key == '3' || key == 'u') {
+                    s_screen_mode = GUI_SCREEN_INVENTORY;
+                    gui_hud_log_append(&s_log,
+                        "Switched screen: 32-Slot Bag & Key Relics.");
+                } else if (ks == XK_4 || key == '4' || key == 'o') {
+                    s_screen_mode = GUI_SCREEN_WORLD_MAP;
+                    gui_hud_log_append(&s_log,
+                        "Switched screen: Provincial Realm Topology.");
+                } else if (ks == XK_5 || key == '5' || key == 'c') {
+                    s_screen_mode = GUI_SCREEN_CHRONICLE;
+                    gui_hud_log_append(&s_log,
+                        "Switched screen: Deeds & Lore Codex.");
+                } else if (ks == XK_F11 || key == 'f') {
                     toggle_fullscreen(display, window);
                     gui_hud_log_append(&s_log,
                         "Fullscreen mode toggled (F11 / F).");
@@ -284,7 +327,7 @@ int gui_run(player_state_t *state)
                         (s_view_mode == GUI_VIEW_25D_ISOMETRIC) ?
                         "Viewport switched to 2.5D Isometric Mode." :
                         "Viewport switched to 2D Top-Down Mode.");
-                } else if (key != 0) {
+                } else if (key != 0 && s_screen_mode == GUI_SCREEN_TACTICAL) {
                     const gui_button_t *btn =
                         gui_button_find_by_hotkey(s_buttons, GUI_NUM_BUTTONS,
                                                   key);
@@ -313,30 +356,64 @@ int gui_run(player_state_t *state)
                        (unsigned int)cur_win_w, (unsigned int)cur_win_h);
 
         gui_hud_render_header(display, backbuffer, gc,
-                              &s_layout.header, &s_palette);
-        gui_view2d_render(display, backbuffer, gc,
-                          &s_layout.viewport_2d, state,
-                          &s_palette, s_view_mode);
-        gui_hud_render_status(display, backbuffer, gc,
-                              &s_layout.status, state, &s_palette);
-        gui_hud_render_chronicle(display, backbuffer, gc,
-                                 &s_layout.chronicle, &s_log, &s_palette);
+                              &s_layout.header, &s_palette, &s_fonts);
+        gui_screens_render_tab_bar(display, backbuffer, gc,
+                                   &s_layout.header, &s_palette,
+                                   s_screen_mode, &s_fonts);
 
-        /* Render command dock frame and buttons */
-        XSetForeground(display, gc, s_palette.panel);
-        XFillRectangle(display, backbuffer, gc,
-                       s_layout.command_dock.x, s_layout.command_dock.y,
-                       (unsigned int)s_layout.command_dock.width,
-                       (unsigned int)s_layout.command_dock.height);
-        XSetForeground(display, gc, s_palette.border);
-        XDrawRectangle(display, backbuffer, gc,
-                       s_layout.command_dock.x, s_layout.command_dock.y,
-                       (unsigned int)s_layout.command_dock.width,
-                       (unsigned int)s_layout.command_dock.height);
+        if (s_screen_mode == GUI_SCREEN_TACTICAL) {
+            gui_view2d_render(display, backbuffer, gc,
+                              &s_layout.viewport_2d, state,
+                              &s_palette, s_view_mode, &s_fonts);
+            gui_hud_render_status(display, backbuffer, gc,
+                                  &s_layout.status, state,
+                                  &s_palette, &s_fonts);
+            gui_hud_render_chronicle(display, backbuffer, gc,
+                                     &s_layout.chronicle, &s_log,
+                                     &s_palette, &s_fonts);
 
-        for (int i = 0; i < GUI_NUM_BUTTONS; i++) {
-            gui_widget_draw_button(display, backbuffer, gc,
-                                   &s_buttons[i], &s_palette);
+            /* Render command dock frame and buttons */
+            XSetForeground(display, gc, s_palette.panel);
+            XFillRectangle(display, backbuffer, gc,
+                           s_layout.command_dock.x, s_layout.command_dock.y,
+                           (unsigned int)s_layout.command_dock.width,
+                           (unsigned int)s_layout.command_dock.height);
+            XSetForeground(display, gc, s_palette.border);
+            XDrawRectangle(display, backbuffer, gc,
+                           s_layout.command_dock.x, s_layout.command_dock.y,
+                           (unsigned int)s_layout.command_dock.width,
+                           (unsigned int)s_layout.command_dock.height);
+
+            gui_fonts_apply(display, gc, &s_fonts, GUI_FONT_UI);
+            for (int i = 0; i < GUI_NUM_BUTTONS; i++) {
+                gui_widget_draw_button(display, backbuffer, gc,
+                                       &s_buttons[i], &s_palette);
+            }
+        } else {
+            gui_panel_rect_t full_content;
+            full_content.x = s_layout.viewport_2d.x;
+            full_content.y = s_layout.viewport_2d.y;
+            full_content.width = cur_win_w - (2 * full_content.x);
+            full_content.height = cur_win_h - full_content.y - 10;
+            full_content.title = "Screen View";
+
+            if (s_screen_mode == GUI_SCREEN_STATUS) {
+                gui_screen_render_status_dossier(display, backbuffer, gc,
+                                                 &full_content, state,
+                                                 &s_palette, &s_fonts);
+            } else if (s_screen_mode == GUI_SCREEN_INVENTORY) {
+                gui_screen_render_inventory(display, backbuffer, gc,
+                                            &full_content, state,
+                                            &s_palette, &s_fonts);
+            } else if (s_screen_mode == GUI_SCREEN_WORLD_MAP) {
+                gui_screen_render_world_map(display, backbuffer, gc,
+                                            &full_content, state,
+                                            &s_palette, &s_fonts);
+            } else if (s_screen_mode == GUI_SCREEN_CHRONICLE) {
+                gui_screen_render_chronicle_codex(display, backbuffer, gc,
+                                                  &full_content, &s_log,
+                                                  &s_palette, &s_fonts);
+            }
         }
 
         /* Step 8: Blit offscreen backbuffer to window (zero-tear) */
@@ -350,6 +427,7 @@ int gui_run(player_state_t *state)
     /* Step 9: Teardown display resources */
     LOG_INFO(LOG_CAT_LOG, "GUIViewport", 0.0f,
              "Tearing down presentation resources.");
+    gui_fonts_teardown(&s_fonts, display);
     XFreePixmap(display, backbuffer);
     XFreeGC(display, gc);
     XDestroyWindow(display, window);
@@ -429,6 +507,16 @@ bool gui_audit_layout(void)
 
     /* Step 6: HUD chronicle ring buffer */
     if (!gui_hud_audit()) {
+        return false;
+    }
+
+    /* Step 7: Typography catalog fallback audit */
+    if (!gui_fonts_audit()) {
+        return false;
+    }
+
+    /* Step 8: Alternate screen navigation audit */
+    if (!gui_screens_audit()) {
         return false;
     }
 

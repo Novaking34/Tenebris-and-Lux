@@ -155,33 +155,41 @@ static void draw_procedural_elijah(Display *d, Drawable dr, GC gc,
                                    const gui_palette_t *pal)
 {
     (void)facing;
-    int half = size / 2;
+    float s = (float)size / 32.0f;
 
     /* Drop shadow */
     XSetForeground(d, gc, pal->shadow);
-    XFillArc(d, dr, gc, cx - half + 4, cy + half - 6, size - 8, 8, 0, 360 * 64);
+    XFillArc(d, dr, gc, cx - (int)(12 * s), cy + (int)(10 * s),
+             (int)(24 * s), (int)(8 * s), 0, 360 * 64);
 
     /* Armor Torso: Slate granite mantle */
     XSetForeground(d, gc, pal->btn_border);
-    XFillRectangle(d, dr, gc, cx - 6, cy - 8, 12, 14);
+    XFillRectangle(d, dr, gc, cx - (int)(6 * s), cy - (int)(8 * s),
+                   (int)(12 * s), (int)(14 * s));
 
     /* Helm & Visor: Ivory with gold plume */
     XSetForeground(d, gc, pal->text_main);
-    XFillArc(d, dr, gc, cx - 5, cy - 18, 10, 10, 0, 360 * 64);
+    XFillArc(d, dr, gc, cx - (int)(5 * s), cy - (int)(18 * s),
+             (int)(10 * s), (int)(10 * s), 0, 360 * 64);
     XSetForeground(d, gc, pal->shield_gold);
-    XFillRectangle(d, dr, gc, cx - 2, cy - 22, 4, 5);
+    XFillRectangle(d, dr, gc, cx - (int)(2 * s), cy - (int)(22 * s),
+                   (int)(4 * s), (int)(5 * s));
 
     /* Shield of Lux: Golden emblazoned heater shield on left */
     XSetForeground(d, gc, pal->shield_gold);
-    XFillArc(d, dr, gc, cx - 12, cy - 8, 8, 14, 0, 360 * 64);
+    XFillArc(d, dr, gc, cx - (int)(14 * s), cy - (int)(8 * s),
+             (int)(9 * s), (int)(15 * s), 0, 360 * 64);
     XSetForeground(d, gc, pal->gold_bright);
-    XDrawArc(d, dr, gc, cx - 12, cy - 8, 8, 14, 0, 360 * 64);
+    XDrawArc(d, dr, gc, cx - (int)(14 * s), cy - (int)(8 * s),
+             (int)(9 * s), (int)(15 * s), 0, 360 * 64);
 
     /* Sword of Tenebris: Abyssal violet blade on right */
     XSetForeground(d, gc, pal->sword_violet);
-    XDrawLine(d, dr, gc, cx + 8, cy - 12, cx + 8, cy + 6);
+    XFillRectangle(d, dr, gc, cx + (int)(8 * s), cy - (int)(12 * s),
+                   (int)(2 * s), (int)(18 * s));
     XSetForeground(d, gc, pal->text_main);
-    XDrawLine(d, dr, gc, cx + 6, cy - 4, cx + 10, cy - 4);
+    XDrawLine(d, dr, gc, cx + (int)(6 * s), cy - (int)(4 * s),
+              cx + (int)(12 * s), cy - (int)(4 * s));
 }
 
 /**
@@ -191,29 +199,34 @@ static void draw_procedural_dream_eater(Display *d, Drawable dr, GC gc,
                                         int cx, int cy, int size,
                                         const gui_palette_t *pal)
 {
-    (void)size;
+    float s = (float)size / 32.0f;
+
     /* Soft abyssal shadow */
     XSetForeground(d, gc, pal->shadow);
-    XFillArc(d, dr, gc, cx - 10, cy + 10, 20, 6, 0, 360 * 64);
+    XFillArc(d, dr, gc, cx - (int)(10 * s), cy + (int)(10 * s),
+             (int)(20 * s), (int)(6 * s), 0, 360 * 64);
 
     /* Central core: Violet diamond */
     XPoint core[4] = {
-        { (short)cx, (short)(cy - 12) },
-        { (short)(cx + 10), (short)cy },
-        { (short)cx, (short)(cy + 12) },
-        { (short)(cx - 10), (short)cy }
+        { (short)cx,                   (short)(cy - (int)(12 * s)) },
+        { (short)(cx + (int)(10 * s)), (short)cy },
+        { (short)cx,                   (short)(cy + (int)(12 * s)) },
+        { (short)(cx - (int)(10 * s)), (short)cy }
     };
     XSetForeground(d, gc, pal->sword_violet);
     XFillPolygon(d, dr, gc, core, 4, Convex, CoordModeOrigin);
 
     /* Glowing pupil / nucleus */
     XSetForeground(d, gc, pal->gold_bright);
-    XFillArc(d, dr, gc, cx - 3, cy - 3, 6, 6, 0, 360 * 64);
+    XFillArc(d, dr, gc, cx - (int)(3 * s), cy - (int)(3 * s),
+             (int)(6 * s), (int)(6 * s), 0, 360 * 64);
 
     /* Orbiting abyssal motes */
     XSetForeground(d, gc, pal->violet_bright);
-    XFillRectangle(d, dr, gc, cx - 14, cy - 6, 3, 3);
-    XFillRectangle(d, dr, gc, cx + 12, cy + 4, 3, 3);
+    XFillRectangle(d, dr, gc, cx - (int)(14 * s), cy - (int)(6 * s),
+                   (int)(3 * s), (int)(3 * s));
+    XFillRectangle(d, dr, gc, cx + (int)(12 * s), cy + (int)(4 * s),
+                   (int)(3 * s), (int)(3 * s));
 }
 
 /**
@@ -223,18 +236,20 @@ static void draw_procedural_shadow_stalker(Display *d, Drawable dr, GC gc,
                                            int cx, int cy, int size,
                                            const gui_palette_t *pal)
 {
-    (void)size;
+    float s = (float)size / 32.0f;
+
     /* Shadow */
     XSetForeground(d, gc, pal->shadow);
-    XFillArc(d, dr, gc, cx - 12, cy + 10, 24, 6, 0, 360 * 64);
+    XFillArc(d, dr, gc, cx - (int)(12 * s), cy + (int)(10 * s),
+             (int)(24 * s), (int)(6 * s), 0, 360 * 64);
 
     /* Horned shadowy body */
     XPoint body[5] = {
-        { (short)(cx - 10), (short)(cy - 14) },
-        { (short)(cx - 4),  (short)(cy - 6) },
-        { (short)(cx + 4),  (short)(cy - 6) },
-        { (short)(cx + 10), (short)(cy - 14) },
-        { (short)cx,        (short)(cy + 10) }
+        { (short)(cx - (int)(10 * s)), (short)(cy - (int)(14 * s)) },
+        { (short)(cx - (int)(4 * s)),  (short)(cy - (int)(6 * s)) },
+        { (short)(cx + (int)(4 * s)),  (short)(cy - (int)(6 * s)) },
+        { (short)(cx + (int)(10 * s)), (short)(cy - (int)(14 * s)) },
+        { (short)cx,                   (short)(cy + (int)(10 * s)) }
     };
     XSetForeground(d, gc, pal->bg);
     XFillPolygon(d, dr, gc, body, 5, Convex, CoordModeOrigin);
@@ -243,8 +258,10 @@ static void draw_procedural_shadow_stalker(Display *d, Drawable dr, GC gc,
 
     /* Piercing crimson eyes */
     XSetForeground(d, gc, pal->malice_red);
-    XFillRectangle(d, dr, gc, cx - 5, cy - 2, 3, 2);
-    XFillRectangle(d, dr, gc, cx + 2, cy - 2, 3, 2);
+    XFillRectangle(d, dr, gc, cx - (int)(5 * s), cy - (int)(2 * s),
+                   (int)(3 * s), (int)(2 * s));
+    XFillRectangle(d, dr, gc, cx + (int)(2 * s), cy - (int)(2 * s),
+                   (int)(3 * s), (int)(2 * s));
 }
 
 void gui_assets_draw_sprite(void *display, unsigned long dr, void *gc,

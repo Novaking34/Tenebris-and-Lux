@@ -6,16 +6,18 @@
 // @file          gui_hud.h
 // @id            gui.hud.display
 // @layer         Layer 2: Presentation & Viewport
-// @version       1.0.0
-// @interface_rev Rev 1
+// @version       1.2.0
+// @interface_rev Rev 2
 // @date          2026-11-03
 // @updated       2026-11-03
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Heads-Up Display (HUD), character vitals inspection, twin relic resonance
-//   meters, moral sway dial, and chronicle narrative ring-buffer rendering.
+//   Heads-Up Display (HUD) presentation routines. Renders heroic title banner,
+//   protagonist vitals dossier, combat attributes, twin relics resonance,
+//   active wards/buffs, threat telemetry, and multi-line narrative chronicle
+//   using High Fantasy typography.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: gui/gui_types.h, sim/core/sim_state.h
@@ -24,10 +26,9 @@
 //   - Latency Budget:        < 2000 microseconds per frame render.
 //
 // AXIOMATIC INVARIANTS:
-//   1. Ring-buffer strictly discards oldest events upon reaching capacity
-//      in FIFO order.
-//   2. Moral sway indicators visually distinguish virtue (+), malice (-),
-//      and harmonic equilibrium (0).
+//   1. Ring buffer shifts oldest elements upward in FIFO order.
+//   2. Meter graphics saturate cleanly at boundaries.
+//   3. Chronicle smoothly displays most recent visible narrative events.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_GUI_HUD_H
@@ -63,13 +64,15 @@ void gui_hud_log_append(gui_log_t *log, const char *msg);
  * @param[in] gc      Opaque GC graphics context.
  * @param[in] pnl     Header panel rectangle.
  * @param[in] pal     Color palette.
+ * @param[in] fonts   High Fantasy font catalog (or NULL).
  */
 void gui_hud_render_header(void *display, unsigned long dr, void *gc,
                            const gui_panel_rect_t *pnl,
-                           const gui_palette_t *pal);
+                           const gui_palette_t *pal,
+                           const void *fonts);
 
 /**
- * Renders the hero vitals, relic meters, stance, and moral sway panel.
+ * Renders the hero vitals dossier, relic meters, attributes, and threat panel.
  *
  * @param[in] display Opaque Display pointer.
  * @param[in] dr      Target Drawable backbuffer.
@@ -77,11 +80,13 @@ void gui_hud_render_header(void *display, unsigned long dr, void *gc,
  * @param[in] pnl     Status panel rectangle.
  * @param[in] state   Active simulation player state.
  * @param[in] pal     Color palette.
+ * @param[in] fonts   High Fantasy font catalog (or NULL).
  */
 void gui_hud_render_status(void *display, unsigned long dr, void *gc,
                            const gui_panel_rect_t *pnl,
                            const player_state_t *state,
-                           const gui_palette_t *pal);
+                           const gui_palette_t *pal,
+                           const void *fonts);
 
 /**
  * Renders the scrolling narrative chronicle log.
@@ -92,11 +97,13 @@ void gui_hud_render_status(void *display, unsigned long dr, void *gc,
  * @param[in] pnl     Chronicle panel rectangle.
  * @param[in] log     Narrative log ring-buffer.
  * @param[in] pal     Color palette.
+ * @param[in] fonts   High Fantasy font catalog (or NULL).
  */
 void gui_hud_render_chronicle(void *display, unsigned long dr, void *gc,
                               const gui_panel_rect_t *pnl,
                               const gui_log_t *log,
-                              const gui_palette_t *pal);
+                              const gui_palette_t *pal,
+                              const void *fonts);
 
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
