@@ -104,4 +104,15 @@ path = "src/bin/demo_extractor.rs"
 name = "master_guide"
 path = "src/bin/master_guide.rs"
 
+# Unified game launcher with mode selection and diagnostics
+[[bin]]
+name = "launcher"
+path = "src/bin/launcher.rs"
+
+# Automated compilation, testing, and deployment updater
+[[bin]]
+name = "updater"
+path = "src/bin/updater.rs"
+
+
 

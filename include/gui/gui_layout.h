@@ -54,6 +54,15 @@
 void gui_layout_get_default(gui_layout_t *layout);
 
 /**
+ * Dynamically recomputes panel bounds for arbitrary window dimensions.
+ *
+ * @param[out] layout Target layout structure to update.
+ * @param[in]  win_w  Current window width in pixels.
+ * @param[in]  win_h  Current window height in pixels.
+ */
+void gui_layout_update(gui_layout_t *layout, int win_w, int win_h);
+
+/**
  * Converts a panel bounding box into a Layer 0 geom_rect_t primitive.
  *
  * @param[in] panel Source panel rect.
