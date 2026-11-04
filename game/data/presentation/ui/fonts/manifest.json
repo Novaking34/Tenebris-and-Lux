@@ -1,0 +1,34 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/fonts/manifest.json",
+    "id": "data.fonts.manifest",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Typography and TrueType font rendering subsystem manifest."
+  },
+  "subsystem": {
+    "id": "fonts",
+    "name": "High-Fantasy Typography & Responsive Font Subsystem",
+    "stratum": "Layer 2: Presentation & Viewport",
+    "status": "active",
+    "catalog_files": [
+      "typography.json",
+      "scalers.json"
+    ],
+    "sub_assemblies": [
+      "font_xft_rasterizer",
+      "font_metrics_cache",
+      "font_responsive_scaler"
+    ],
+    "axioms": [
+      "TrueType font files strictly located in assets/fonts/ with fonts.dir/fonts.scale descriptors",
+      "Zero-heap glyph metrics caching: pre-rendered character advance tables",
+      "Strict aspect ratio preservation: fonts scale proportionally with letterbox/pillarbox",
+      "Graceful fallback: plain ASCII 8x16 bitmap font in headless or unrasterized environments"
+    ]
+  }
+}
+

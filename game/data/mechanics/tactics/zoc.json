@@ -1,0 +1,46 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/tactical/zoc.json",
+    "id": "data.tactical.zoc",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Zone of Control threat perimeters, pinning physics, and interception penalties."
+  },
+  "zoc_rules": {
+    "entry_cost_mp": 1,
+    "pinning_enabled": true,
+    "disengage_attack_of_opportunity": true,
+    "ward_bypasses_pinning": true
+  },
+  "threat_profiles": [
+    {
+      "profile_id": "zoc_melee_standard",
+      "name": "Standard Melee Perimeter",
+      "radius_tiles": 1,
+      "shape": "orthogonal_plus",
+      "applicable_weapons": ["Sword", "Dagger", "Mace", "Fist"],
+      "pin_strength": 1
+    },
+    {
+      "profile_id": "zoc_polearm_cone",
+      "name": "Polearm & Greatsword Reach Cone",
+      "radius_tiles": 2,
+      "shape": "frontal_cone",
+      "applicable_weapons": ["Spear", "Halberd", "Greatsword"],
+      "pin_strength": 2
+    },
+    {
+      "profile_id": "zoc_shield_wall",
+      "name": "Vanguard Shield Wall (Lux Barrio)",
+      "radius_tiles": 1,
+      "shape": "surrounding_circle",
+      "applicable_weapons": ["Shield_of_Lux"],
+      "pin_strength": 3,
+      "stagger_on_entry": true
+    }
+  ]
+}
+

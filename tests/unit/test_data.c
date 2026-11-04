@@ -64,6 +64,9 @@
 static const char *resolve_path(const char *rel_path)
 {
     static char resolved[512];
+    if (fs_resolve_data_path(rel_path, resolved, sizeof(resolved))) {
+        return resolved;
+    }
     if (fs_file_exists(rel_path)) {
         strncpy(resolved, rel_path, sizeof(resolved) - 1);
         resolved[sizeof(resolved) - 1] = '\0';

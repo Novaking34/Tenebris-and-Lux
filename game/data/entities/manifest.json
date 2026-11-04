@@ -1,0 +1,34 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/entities/manifest.json",
+    "id": "data.entities.root",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "1.0.0",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Entities Domain Manifest orchestrating roster and combat classes.",
+    "invariants": [
+      "Zero dynamic heap allocation during entity deserialization",
+      "Canon character identity preserved (Elijah, Katrina, Casatti, Usuru)",
+      "Tiered progression hierarchy across basic, upgraded, and advanced tiers"
+    ]
+  },
+  "domain": "entities",
+  "title": "Character Roster & Tactical Classes",
+  "subsystems": [
+    {
+      "id": "roster",
+      "title": "Protagonists, Companions & Bestiary Roster",
+      "path": "roster/manifest.json",
+      "category": "actors"
+    },
+    {
+      "id": "classes",
+      "title": "Combat Classes, Growths & Summons Hierarchy",
+      "path": "classes/manifest.json",
+      "category": "classes"
+    }
+  ]
+}

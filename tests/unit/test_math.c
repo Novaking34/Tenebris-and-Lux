@@ -119,8 +119,11 @@ static void test_math_always_pass(void)
     TEST_ASSERT(geom_rect_within_bounds(r, 800, 600), "Rect within 800x600 viewport");
 
     /* 1.8 Default math configuration profile loading */
+    char resolved_cfg[FS_PATH_MAX];
     const char *cfg_path = "data/math/default.json";
-    if (!fs_file_exists(cfg_path)) {
+    if (fs_resolve_data_path(cfg_path, resolved_cfg, sizeof(resolved_cfg))) {
+        cfg_path = resolved_cfg;
+    } else if (!fs_file_exists(cfg_path)) {
         cfg_path = "game/data/math/default.json";
     }
     if (!fs_file_exists(cfg_path)) {

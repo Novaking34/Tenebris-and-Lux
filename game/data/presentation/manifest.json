@@ -1,0 +1,40 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/presentation/manifest.json",
+    "id": "data.presentation.root",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "1.0.0",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Presentation Domain Manifest orchestrating UI, audio & visuals.",
+    "invariants": [
+      "Decoupled sensory output: pure presentation decoupled from sim state",
+      "640x360 target resolution baseline with letterbox/pillarbox scalers",
+      "Multi-channel audio mixing buses and TrueType typographic scaling"
+    ]
+  },
+  "domain": "presentation",
+  "title": "Desktop Viewport, Sensory Audio & Visual Themes",
+  "subsystems": [
+    {
+      "id": "ui",
+      "title": "Desktop HUD, Panel Layouts & TrueType Fonts",
+      "path": "ui/gui_manifest.json",
+      "category": "interface"
+    },
+    {
+      "id": "audio",
+      "title": "Audio Channels, Synthesizer SFX & Orchestral BGM",
+      "path": "audio/manifest.json",
+      "category": "sound"
+    },
+    {
+      "id": "visuals",
+      "title": "2D Texture Atlases, Biome Palettes & Animations",
+      "path": "visuals/manifest.json",
+      "category": "graphics"
+    }
+  ]
+}

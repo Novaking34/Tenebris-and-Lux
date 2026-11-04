@@ -1,0 +1,99 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/textures/spritesheets.json",
+    "id": "data.textures.spritesheets",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Character and entity sprite sheet atlas definitions and cell coordinates."
+  },
+  "cell_size": {
+    "width": 32,
+    "height": 32
+  },
+  "sheets": [
+    {
+      "id": "sheet_elijah",
+      "name": "Elijah Ro-enheart (The Steadfast Vanguard)",
+      "file": "assets/textures/sprites/characters/elijah_sheet_128x128.png",
+      "procedural_generator": "procedural_vanguard_shield",
+      "cols": 4,
+      "rows": 4,
+      "anchor_x": 16,
+      "anchor_y": 30,
+      "directions": {
+        "south": 0,
+        "west": 1,
+        "east": 2,
+        "north": 3
+      }
+    },
+    {
+      "id": "sheet_katrina",
+      "name": "Lady Katrina Jaren (Guild Outrider)",
+      "file": "assets/textures/sprites/characters/katrina_sheet_128x128.png",
+      "procedural_generator": "procedural_outrider_sword",
+      "cols": 4,
+      "rows": 4,
+      "anchor_x": 16,
+      "anchor_y": 30,
+      "directions": {
+        "south": 0,
+        "west": 1,
+        "east": 2,
+        "north": 3
+      }
+    },
+    {
+      "id": "sheet_observer",
+      "name": "The Custom Bearer (Steward of Balance)",
+      "file": "assets/textures/sprites/characters/observer_sheet_128x128.png",
+      "procedural_generator": "procedural_steward_relics",
+      "cols": 4,
+      "rows": 4,
+      "anchor_x": 16,
+      "anchor_y": 30,
+      "directions": {
+        "south": 0,
+        "west": 1,
+        "east": 2,
+        "north": 3
+      }
+    },
+    {
+      "id": "sheet_dream_eater",
+      "name": "Dream Eater (Nocturnal Predator)",
+      "file": "assets/textures/sprites/enemies/dream_eater_sheet_128x128.png",
+      "procedural_generator": "procedural_shadow_fiend",
+      "cols": 4,
+      "rows": 4,
+      "anchor_x": 16,
+      "anchor_y": 28,
+      "directions": {
+        "south": 0,
+        "west": 1,
+        "east": 2,
+        "north": 3
+      }
+    },
+    {
+      "id": "sheet_guard",
+      "name": "Sacyran Royal Guard",
+      "file": "assets/textures/sprites/npc/guard_sheet_128x128.png",
+      "procedural_generator": "procedural_imperial_guard",
+      "cols": 4,
+      "rows": 4,
+      "anchor_x": 16,
+      "anchor_y": 30,
+      "directions": {
+        "south": 0,
+        "west": 1,
+        "east": 2,
+        "north": 3
+      }
+    }
+  ]
+}
+

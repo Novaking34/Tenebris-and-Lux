@@ -1,0 +1,100 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/palettes/themes.json",
+    "id": "data.palettes.themes",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Master UI color themes and window chrome color specifications."
+  },
+  "active_theme": "dark_fantasy_high_contrast",
+  "themes": [
+    {
+      "id": "dark_fantasy_high_contrast",
+      "name": "Dark Fantasy (Canonical Default)",
+      "description": "Obsidian, granite, ivory, and high-contrast gold/violet accents.",
+      "colors": {
+        "bg_primary": "0x0D0E12",
+        "bg_panel": "0x1A1D24",
+        "border_outer": "0x2E3440",
+        "border_inner": "0x3E4452",
+        "text_header": "0xECEFF4",
+        "text_body": "0xD8DEE9",
+        "text_muted": "0x8892B0",
+        "btn_default": "0x1E222B",
+        "btn_hover": "0x2D3442",
+        "btn_active": "0x3B4252",
+        "accent_lux": "0xF0CE78",
+        "accent_tenebris": "0x8A78C8",
+        "accent_virtue": "0x52B788",
+        "accent_malice": "0xE63946"
+      }
+    },
+    {
+      "id": "lux_radiance",
+      "name": "Lux Radiance (Light Overload)",
+      "description": "Solar gold, crystalline amber, and pure luminous white.",
+      "colors": {
+        "bg_primary": "0x1C1810",
+        "bg_panel": "0x282216",
+        "border_outer": "0x5C4E2E",
+        "border_inner": "0x8C7642",
+        "text_header": "0xFFF8E7",
+        "text_body": "0xF0E4C8",
+        "text_muted": "0xB8A882",
+        "btn_default": "0x322A1A",
+        "btn_hover": "0x4A3E26",
+        "btn_active": "0x635332",
+        "accent_lux": "0xFFD700",
+        "accent_tenebris": "0x785A9E",
+        "accent_virtue": "0x64D8A0",
+        "accent_malice": "0xF05A65"
+      }
+    },
+    {
+      "id": "tenebrous_eclipse",
+      "name": "Tenebrous Eclipse (Abyssal Sovereign)",
+      "description": "Abyssal indigo, deep violet, midnight shadow, and sharp crimson.",
+      "colors": {
+        "bg_primary": "0x08060E",
+        "bg_panel": "0x120E1C",
+        "border_outer": "0x261E38",
+        "border_inner": "0x3A2E54",
+        "text_header": "0xEDE8F5",
+        "text_body": "0xCECAD9",
+        "text_muted": "0x7D7590",
+        "btn_default": "0x1A1428",
+        "btn_hover": "0x2A2040",
+        "btn_active": "0x3C2E5C",
+        "accent_lux": "0xC4A850",
+        "accent_tenebris": "0x9D7BE8",
+        "accent_virtue": "0x429E74",
+        "accent_malice": "0xFF2A3C"
+      }
+    },
+    {
+      "id": "retro_terminal_amber",
+      "name": "Retro Terminal (Amber CRT)",
+      "description": "Monochromatic high-readability amber phosphor display.",
+      "colors": {
+        "bg_primary": "0x000000",
+        "bg_panel": "0x141000",
+        "border_outer": "0x403000",
+        "border_inner": "0x664C00",
+        "text_header": "0xFFB000",
+        "text_body": "0xE09C00",
+        "text_muted": "0x8C6100",
+        "btn_default": "0x201800",
+        "btn_hover": "0x332600",
+        "btn_active": "0x4D3900",
+        "accent_lux": "0xFFCC00",
+        "accent_tenebris": "0xCC8800",
+        "accent_virtue": "0xFFAA00",
+        "accent_malice": "0xFF4400"
+      }
+    }
+  ]
+}
+

@@ -4,15 +4,15 @@
     "file": "data/manifest.json",
     "id": "data.root.manifest",
     "layer": "Data-Driven Subsystem Root",
-    "version": "1.0.0",
-    "date": "2026-10-30",
+    "version": "1.1.0",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Root data manifest acting as the master menu for all data-driven game subsystems.",
+    "role": "Master root data manifest orchestrating the 5 primary domains.",
     "invariants": [
-      "All registered subsystem paths must point to valid subdirectories containing their own manifest.json",
-      "Subsystem identifiers must be unique across the entire data catalog",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+      "All registered subsystem paths point to valid directories",
+      "Subsystem identifiers are unique across the entire data catalog",
+      "OmniCode 5-Block Ontological Architecture enforced"
     ]
   },
   "_types": {
@@ -23,83 +23,107 @@
       "planned"
     ]
   },
+  "domains": [
+    {
+      "id": "system",
+      "title": "System Domain (Runtime & Diagnostics)",
+      "manifest_path": "system/manifest.json",
+      "status": "active"
+    },
+    {
+      "id": "world",
+      "title": "World Domain (Topology & Battlefields)",
+      "manifest_path": "world/manifest.json",
+      "status": "active"
+    },
+    {
+      "id": "entities",
+      "title": "Entities Domain (Roster & Classes)",
+      "manifest_path": "entities/manifest.json",
+      "status": "active"
+    },
+    {
+      "id": "mechanics",
+      "title": "Mechanics Domain (Simulation Rules & Flow)",
+      "manifest_path": "mechanics/manifest.json",
+      "status": "active"
+    },
+    {
+      "id": "presentation",
+      "title": "Presentation Domain (Viewports, Audio & Visuals)",
+      "manifest_path": "presentation/manifest.json",
+      "status": "active"
+    }
+  ],
   "subsystems": [
     {
       "id": "log",
       "title": "Logging & Diagnostic Telemetry Subsystem",
-      "description": "Log runtime configurations, telemetry depth, and console output settings.",
-      "manifest_path": "log/manifest.json",
+      "description": "Log runtime configurations and ring buffer telemetry.",
+      "manifest_path": "system/diagnostics/telemetry/manifest.json",
       "status": "active",
-      "category": "core_engine"
+      "category": "system"
     },
     {
       "id": "math",
       "title": "Mathematical Continuum & Invariant Subsystem",
-      "description": "Resonance limits, moral sway continuum, equilibrium bands, and HUD scaling.",
-      "manifest_path": "math/manifest.json",
+      "description": "Resonance limits and moral sway continuum [-100, +100].",
+      "manifest_path": "system/runtime/math/manifest.json",
       "status": "active",
-      "category": "core_engine"
+      "category": "system"
     },
     {
       "id": "time",
       "title": "Monotonic Timing & Frame Pacing Subsystem",
-      "description": "60/120 FPS frame budgets, simulation turn latency, and monotonic clock.",
-      "manifest_path": "time/manifest.json",
+      "description": "60/120 FPS frame budgets and simulation turn latency.",
+      "manifest_path": "system/runtime/time/manifest.json",
       "status": "active",
-      "category": "core_engine"
+      "category": "system"
     },
     {
       "id": "string",
       "title": "Lexical Buffer & Command Tokens Subsystem",
-      "description": "Buffer limits, stance tokens, and canonical action verb dictionaries.",
-      "manifest_path": "string/manifest.json",
+      "description": "Buffer limits, stance tokens, and canonical action verbs.",
+      "manifest_path": "system/runtime/string/manifest.json",
       "status": "active",
-      "category": "core_engine"
+      "category": "system"
     },
     {
       "id": "debug",
       "title": "Interactive Engine Debugger & State Rewind Subsystem",
-      "description": "State snapshots, time-travel rewind, breakpoint watchpoints, tripwire traps, and trace telemetry.",
-      "manifest_path": "debug/manifest.json",
+      "description": "State snapshots, rewind, tripwire traps, and trace logs.",
+      "manifest_path": "system/diagnostics/debugger/manifest.json",
       "status": "active",
-      "category": "core_engine"
+      "category": "system"
     },
     {
       "id": "classes",
       "title": "Combat Classes & Growth Subsystem",
-      "description": "Basic classes (Warrior, Mage, Rogue), first upgrade Priest, advanced classes, NPC guards, and summons.",
-      "manifest_path": "classes/manifest.json",
+      "description": "Basic, upgraded, advanced classes, NPC guards, summons.",
+      "manifest_path": "entities/classes/manifest.json",
       "status": "active",
-      "category": "simulation"
+      "category": "entities"
     },
     {
       "id": "actors",
       "title": "Protagonists, Companions & Adversaries",
-      "description": "Elijah, Katrina (ex-Mage Rogue), Observer custom bearer, Sebastien, Angela, and bestiary.",
-      "manifest_path": "actors/manifest.json",
+      "description": "Elijah, Katrina, Observer Custom Bearer, and bestiary.",
+      "manifest_path": "entities/roster/manifest.json",
       "status": "active",
-      "category": "narrative"
+      "category": "entities"
     },
     {
       "id": "combat",
       "title": "Tactical Combat & Stance Mechanics",
-      "description": "Tactical grid (TRPG), action skirmishes, traditional turn-based, formulas, and stances.",
-      "manifest_path": "combat/manifest.json",
+      "description": "Tactical stances, damage formulas, skills, and states.",
+      "manifest_path": "mechanics/combat/manifest.json",
       "status": "active",
-      "category": "simulation"
-    },
-    {
-      "id": "relics",
-      "title": "Twin Relics Continuum (Lux & Tenebris)",
-      "description": "Shield of Lux and Sword of Tenebris resonance thresholds and affinity curves.",
-      "manifest_path": "relics/manifest.json",
-      "status": "planned",
-      "category": "simulation"
+      "category": "mechanics"
     },
     {
       "id": "world",
-      "title": "Kingdom of Sacyra & Dreamscape Topology",
-      "description": "Regional node graph, travel vigor consumption, and realm threat tiers.",
+      "title": "Kingdom of Sacyra & Continental Topology",
+      "description": "Regional node graph, travel vigor, and realm tiers.",
       "manifest_path": "world/manifest.json",
       "status": "active",
       "category": "world"
@@ -107,99 +131,84 @@
     {
       "id": "items",
       "title": "Diegetic Relics, Catalysts & Inventory Subsystem",
-      "description": "Grandma's Watch, Dream Compass, Compass of Morality, Ring of Fire, and Sacyran herbalism.",
-      "manifest_path": "items/manifest.json",
+      "description": "Twin Relics, Grandma's Watch, Dream Compass, herbs.",
+      "manifest_path": "mechanics/items/manifest.json",
       "status": "active",
-      "category": "simulation"
+      "category": "mechanics"
     },
     {
-      "id": "skills",
-      "title": "Tactical Grimoire & Combat Abilities Subsystem",
-      "description": "Knight maneuvers, Mage spells, Priest support, and Duo-Loca Bashin n Slash.",
-      "manifest_path": "skills/manifest.json",
+      "id": "tactical",
+      "title": "Tactical Formations & Zone of Control Subsystem",
+      "description": "8-slot formations, grid coordinates, and pinning ZOC.",
+      "manifest_path": "mechanics/tactics/manifest.json",
       "status": "active",
-      "category": "simulation"
+      "category": "mechanics"
     },
     {
-      "id": "states",
-      "title": "Tactical States & Status Ailments Subsystem",
-      "description": "LeTBS grid movement modifiers, Intimidating Aura, Heavy Strike, Light Steps, and Burning.",
-      "manifest_path": "states/manifest.json",
+      "id": "campaign",
+      "title": "Player Tracking, Progression & Morality Matrix",
+      "description": "Archetypes, moral inertia, and progression ceilings.",
+      "manifest_path": "mechanics/campaign/player_manifest.json",
       "status": "active",
-      "category": "simulation"
-    },
-    {
-      "id": "player",
-      "title": "Player Tracking, Progression & Morality Matrix Subsystem",
-      "description": "Protagonist archetypes, Bystander Corridor (-50 to +50), moral inertia, progression limits, and loadout specs.",
-      "manifest_path": "player/manifest.json",
-      "status": "active",
-      "category": "simulation"
+      "category": "mechanics"
     },
     {
       "id": "dispatch",
       "title": "Command Dispatcher & Domain Router Subsystem",
-      "description": "Command dictionary, alias resolution, and domain routing across Combat, World, Items, and System.",
-      "manifest_path": "dispatch/manifest.json",
+      "description": "Command dictionary, alias resolution, domain routing.",
+      "manifest_path": "mechanics/campaign/dispatch/manifest.json",
       "status": "active",
-      "category": "simulation"
-    },
-    {
-      "id": "tactical",
-      "title": "Tactical Grid Mechanics & Formations Subsystem",
-      "description": "2D Cartesian grid coordinates, terrain friction modifiers, 8-slot formations, and Zone of Control.",
-      "manifest_path": "tactical/manifest.json",
-      "status": "active",
-      "category": "simulation"
+      "category": "mechanics"
     },
     {
       "id": "gui",
-      "title": "Desktop Presentation & 2.5D Tactical Viewport Subsystem",
-      "description": "X11 double-buffering, dark fantasy palette, 2.5D diamond isometric projection, and asset abstraction pipeline.",
-      "manifest_path": "gui/manifest.json",
-      "status": "active",
-      "category": "presentation"
-    },
-    {
-      "id": "audio",
-      "title": "Audiovisual Sound & Music Synthesis Subsystem",
-      "description": "Bus channels, SFX cue registry, BGM loop points, and spatial attenuation.",
-      "manifest_path": "audio/manifest.json",
-      "status": "active",
-      "category": "presentation"
-    },
-    {
-      "id": "palettes",
-      "title": "Hardware Color Palettes & Viewport Theme Subsystem",
-      "description": "24/32-bit hex themes, continental biome tile colors, and dynamic relic glow spectrum.",
-      "manifest_path": "palettes/manifest.json",
+      "title": "Desktop Presentation & Tactical Viewport Subsystem",
+      "description": "X11 double-buffering, HUD layout, and panel scalers.",
+      "manifest_path": "presentation/ui/gui_manifest.json",
       "status": "active",
       "category": "presentation"
     },
     {
       "id": "fonts",
       "title": "High-Fantasy Typography & Responsive Font Subsystem",
-      "description": "TrueType font bindings, typographic role metrics, and high-DPI responsive scalers.",
-      "manifest_path": "fonts/manifest.json",
+      "description": "TrueType font bindings, typographic role metrics.",
+      "manifest_path": "presentation/ui/fonts/manifest.json",
+      "status": "active",
+      "category": "presentation"
+    },
+    {
+      "id": "audio",
+      "title": "Audiovisual Sound & Music Synthesis Subsystem",
+      "description": "Bus channels, SFX cue registry, and BGM loops.",
+      "manifest_path": "presentation/audio/manifest.json",
+      "status": "active",
+      "category": "presentation"
+    },
+    {
+      "id": "palettes",
+      "title": "Hardware Color Palettes & Viewport Theme Subsystem",
+      "description": "24/32-bit hex themes, biome colors, relic spectrum.",
+      "manifest_path": "presentation/visuals/palettes/manifest.json",
       "status": "active",
       "category": "presentation"
     },
     {
       "id": "textures",
-      "title": "2D Texture Atlases, Sprite Sheets & Animation Subsystem",
-      "description": "32x32 character sprite sheets, terrain tilesets, autotile masks, and animation clips.",
-      "manifest_path": "textures/manifest.json",
+      "title": "2D Texture Atlases, Sprite Sheets & Animations",
+      "description": "Character sprite sheets, tilesets, and animations.",
+      "manifest_path": "presentation/visuals/manifest.json",
       "status": "active",
       "category": "presentation"
     }
   ],
   "_audit": {
-    "manifest_count": 21,
-    "active_subsystems": 20,
-    "integrity_check": "All paths relative to data root"
+    "manifest_count": 23,
+    "active_subsystems": 18,
+    "domains": 5,
+    "integrity_check": "All paths dynamically resolvable via fs_resolve_data_path"
   },
   "_navigation": {
     "home_dir": "data",
-    "primary_menu": "log/manifest.json"
+    "primary_menu": "system/diagnostics/telemetry/manifest.json"
   }
 }

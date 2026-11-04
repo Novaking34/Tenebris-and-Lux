@@ -1,0 +1,52 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/system/manifest.json",
+    "id": "data.system.root",
+    "layer": "Layer 0: Core Utilities",
+    "version": "1.0.0",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "System Domain Manifest orchestrating runtime & diagnostics.",
+    "invariants": [
+      "Zero dynamic heap allocations across Layer 0 data profiles",
+      "Strict conformance to the OmniCode 5-Block Architecture",
+      "Dynamic data path resolution across workspace candidates"
+    ]
+  },
+  "domain": "system",
+  "title": "Core System & Invariant Engine",
+  "subsystems": [
+    {
+      "id": "math",
+      "title": "Bounded Arithmetic & Continuum Invariants",
+      "path": "runtime/math/manifest.json",
+      "category": "runtime"
+    },
+    {
+      "id": "time",
+      "title": "Monotonic Timing & Frame Pacing Engine",
+      "path": "runtime/time/manifest.json",
+      "category": "runtime"
+    },
+    {
+      "id": "string",
+      "title": "Safe Lexical Buffers & Token Lexicon",
+      "path": "runtime/string/manifest.json",
+      "category": "runtime"
+    },
+    {
+      "id": "telemetry",
+      "title": "Diagnostic Telemetry & Static Ring Buffer",
+      "path": "diagnostics/telemetry/manifest.json",
+      "category": "diagnostics"
+    },
+    {
+      "id": "debugger",
+      "title": "Interactive State Rewind & Snapshots",
+      "path": "diagnostics/debugger/manifest.json",
+      "category": "diagnostics"
+    }
+  ]
+}

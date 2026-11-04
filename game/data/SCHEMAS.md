@@ -54,9 +54,9 @@ Rather than hardcoding grid dimensions, terrain penalties, formation offsets, or
         ┌──────────────────────────────┼──────────────────────────────┐
         ▼                              ▼                              ▼
 ┌───────────────┐              ┌───────────────┐              ┌───────────────┐
-│  data/world/  │              │ data/tactical/│              │ data/classes/ │
-│ Map Topologies│              │ Formations &  │              │ Movement (MP) │
-│ Terrain Grids │              │ Zone-of-Ctrl  │              │ Archetypes    │
+│  world/       │              │ mechanics/    │              │ entities/     │
+│  battlefields/│              │  tactics/     │              │  classes/     │
+│  terrains/    │              │  combat/      │              │  roster/      │
 └───────────────┘              └───────────────┘              └───────────────┘
 ```
 
@@ -290,7 +290,8 @@ Tactical deployment utilizes an 8-slot relative positioning grid representing ta
 > Tracks integration steps as the engine moves through the `v0.1.0-dev` lifecycle.
 
 * [x] **Architecture Blueprint**: Establish formal data schema specification (`game/data/SCHEMAS.md`).
-* [ ] **Domain Directory Scaffolding**: Provision `game/data/tactical/formations/` and `game/data/world/terrains/` menus.
+* [x] **5-Domain Directory Architecture**: Reorganize data into 5 operational domains (`system/`, `world/`, `entities/`, `mechanics/`, `presentation/`).
+* [x] **Dynamic Path Resolution**: Implement `fs_resolve_data_path()` with legacy translation across all engine/game loaders.
 * [ ] **C11 Struct Definitions**: Define `tactical_terrain_t` and `formation_matrix_t` in `game/include/world/` and `game/include/combat/`.
 * [ ] **Zero-Heap Tokenizer Integration**: Wire `json_utils` into `world_loader.c` and `combat_loader.c` to parse tactical schemas.
 * [ ] **Tripwire Audit Routine**: Register `audit_tactical_schemas()` in `engine/include/core/manifest.h` and verify under `./build/tenebris-lux --audit`.

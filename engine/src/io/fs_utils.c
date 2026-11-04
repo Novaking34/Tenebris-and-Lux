@@ -346,6 +346,289 @@ bool fs_ensure_directory(const char *dir_path)
     return true;
 }
 
+typedef struct {
+    const char *prefix;
+    size_t prefix_len;
+    const char *replacement;
+} legacy_path_map_t;
+
+static const legacy_path_map_t s_legacy_mappings[] = {
+    { "data/math/", 10, "system/runtime/math/" },
+    { "math/", 5, "system/runtime/math/" },
+    { "data/time/", 10, "system/runtime/time/" },
+    { "time/", 5, "system/runtime/time/" },
+    { "data/string/", 12, "system/runtime/string/" },
+    { "string/", 7, "system/runtime/string/" },
+    { "data/log/", 9, "system/diagnostics/telemetry/" },
+    { "log/", 4, "system/diagnostics/telemetry/" },
+    { "data/debug/", 11, "system/diagnostics/debugger/" },
+    { "debug/", 6, "system/diagnostics/debugger/" },
+    { "data/items/", 11, "mechanics/items/" },
+    { "items/", 6, "mechanics/items/" },
+    { "data/combat/", 12, "mechanics/combat/" },
+    { "combat/", 7, "mechanics/combat/" },
+    { "data/tactical/terrains.json", 27, "world/terrains/default.json" },
+    { "tactical/terrains.json", 22, "world/terrains/default.json" },
+    { "data/tactical/", 14, "mechanics/tactics/" },
+    { "tactical/", 9, "mechanics/tactics/" },
+    { "data/actors/", 12, "entities/roster/" },
+    { "actors/", 7, "entities/roster/" },
+    { "data/classes/", 13, "entities/classes/" },
+    { "classes/", 8, "entities/classes/" },
+    {
+        "data/player/morality_matrix.json", 33,
+        "mechanics/campaign/morality.json"
+    },
+    {
+        "player/morality_matrix.json", 28,
+        "mechanics/campaign/morality.json"
+    },
+    {
+        "data/player/inventory_spec.json", 31,
+        "mechanics/campaign/inventory_spec.json"
+    },
+    {
+        "player/inventory_spec.json", 26,
+        "mechanics/campaign/inventory_spec.json"
+    },
+    {
+        "data/player/manifest.json", 26,
+        "mechanics/campaign/player_manifest.json"
+    },
+    {
+        "player/manifest.json", 21,
+        "mechanics/campaign/player_manifest.json"
+    },
+    { "data/player/", 12, "mechanics/campaign/" },
+    { "player/", 7, "mechanics/campaign/" },
+    { "data/world/maps.json", 20, "world/battlefields/maps.json" },
+    { "world/maps.json", 15, "world/battlefields/maps.json" },
+    { "data/world/map_types.json", 25, "world/battlefields/map_types.json" },
+    { "world/map_types.json", 20, "world/battlefields/map_types.json" },
+    { "data/world/overworld.json", 25, "world/geography/realms.json" },
+    { "world/overworld.json", 20, "world/geography/realms.json" },
+    {
+        "data/gui/palette.json", 22,
+        "presentation/visuals/palettes/legacy_palette.json"
+    },
+    {
+        "gui/palette.json", 17,
+        "presentation/visuals/palettes/legacy_palette.json"
+    },
+    { "data/gui/assets.json", 21, "presentation/visuals/assets.json" },
+    { "gui/assets.json", 16, "presentation/visuals/assets.json" },
+    { "data/gui/", 9, "presentation/ui/" },
+    { "gui/", 4, "presentation/ui/" },
+    { "data/audio/", 11, "presentation/audio/" },
+    { "audio/", 6, "presentation/audio/" },
+    { "data/fonts/", 11, "presentation/ui/fonts/" },
+    { "fonts/", 6, "presentation/ui/fonts/" },
+    { "data/textures/", 14, "presentation/visuals/" },
+    { "textures/", 9, "presentation/visuals/" },
+    { "data/palettes/", 14, "presentation/visuals/palettes/" },
+    { "palettes/", 9, "presentation/visuals/palettes/" },
+    { "data/skills/manifest.json", 25, "mechanics/combat/skills.json" },
+    { "skills/manifest.json", 20, "mechanics/combat/skills.json" },
+    { "data/states/manifest.json", 25, "mechanics/combat/states.json" },
+    { "states/manifest.json", 20, "mechanics/combat/states.json" },
+    { "data/dispatch/", 14, "mechanics/campaign/dispatch/" },
+    { "dispatch/", 9, "mechanics/campaign/dispatch/" }
+};
+
+static const char *s_base_data_roots[] = {
+    "game/data/%s",
+    "../game/data/%s",
+    "data/%s",
+    "../data/%s"
+};
+
+static const char *s_data_candidate_prefixes[] = {
+    "%s",
+    "game/%s",
+    "../game/%s",
+    "../%s",
+    "game/data/%s",
+    "../game/data/%s",
+    "data/%s",
+    "../data/%s",
+    /* 1. System Domain */
+    "game/data/system/%s",
+    "../game/data/system/%s",
+    "game/data/system/runtime/%s",
+    "../game/data/system/runtime/%s",
+    "game/data/system/runtime/math/%s",
+    "../game/data/system/runtime/math/%s",
+    "game/data/system/runtime/time/%s",
+    "../game/data/system/runtime/time/%s",
+    "game/data/system/runtime/string/%s",
+    "../game/data/system/runtime/string/%s",
+    "game/data/system/diagnostics/%s",
+    "../game/data/system/diagnostics/%s",
+    "game/data/system/diagnostics/telemetry/%s",
+    "../game/data/system/diagnostics/telemetry/%s",
+    "game/data/system/diagnostics/debugger/%s",
+    "../game/data/system/diagnostics/debugger/%s",
+    /* 2. World Domain */
+    "game/data/world/%s",
+    "../game/data/world/%s",
+    "game/data/world/geography/%s",
+    "../game/data/world/geography/%s",
+    "game/data/world/battlefields/%s",
+    "../game/data/world/battlefields/%s",
+    "game/data/world/terrains/%s",
+    "../game/data/world/terrains/%s",
+    /* 3. Entities Domain */
+    "game/data/entities/%s",
+    "../game/data/entities/%s",
+    "game/data/entities/roster/%s",
+    "../game/data/entities/roster/%s",
+    "game/data/entities/roster/protagonists/%s",
+    "../game/data/entities/roster/protagonists/%s",
+    "game/data/entities/roster/companions/%s",
+    "../game/data/entities/roster/companions/%s",
+    "game/data/entities/roster/enemies/%s",
+    "../game/data/entities/roster/enemies/%s",
+    "game/data/entities/classes/%s",
+    "../game/data/entities/classes/%s",
+    "game/data/entities/classes/basic/%s",
+    "../game/data/entities/classes/basic/%s",
+    "game/data/entities/classes/upgraded/%s",
+    "../game/data/entities/classes/upgraded/%s",
+    "game/data/entities/classes/advanced/%s",
+    "../game/data/entities/classes/advanced/%s",
+    "game/data/entities/classes/summon/%s",
+    "../game/data/entities/classes/summon/%s",
+    "game/data/entities/classes/npc/%s",
+    "../game/data/entities/classes/npc/%s",
+    /* 4. Mechanics Domain */
+    "game/data/mechanics/%s",
+    "../game/data/mechanics/%s",
+    "game/data/mechanics/tactics/%s",
+    "../game/data/mechanics/tactics/%s",
+    "game/data/mechanics/combat/%s",
+    "../game/data/mechanics/combat/%s",
+    "game/data/mechanics/items/%s",
+    "../game/data/mechanics/items/%s",
+    "game/data/mechanics/campaign/%s",
+    "../game/data/mechanics/campaign/%s",
+    "game/data/mechanics/campaign/dispatch/%s",
+    "../game/data/mechanics/campaign/dispatch/%s",
+    /* 5. Presentation Domain */
+    "game/data/presentation/%s",
+    "../game/data/presentation/%s",
+    "game/data/presentation/ui/%s",
+    "../game/data/presentation/ui/%s",
+    "game/data/presentation/ui/fonts/%s",
+    "../game/data/presentation/ui/fonts/%s",
+    "game/data/presentation/audio/%s",
+    "../game/data/presentation/audio/%s",
+    "game/data/presentation/visuals/%s",
+    "../game/data/presentation/visuals/%s",
+    "game/data/presentation/visuals/palettes/%s",
+    "../game/data/presentation/visuals/palettes/%s"
+};
+
+bool fs_resolve_data_path(const char *rel_path,
+                          char *out_path,
+                          size_t out_size)
+{
+    if (rel_path == NULL || rel_path[0] == '\0' ||
+        out_path == NULL || out_size == 0) {
+        return false;
+    }
+
+    /* Step 1: Direct existence check */
+    if (fs_is_regular_file(rel_path)) {
+        str_safe_copy(out_path, rel_path, out_size);
+        return true;
+    }
+
+    /* Step 2: Strip leading workspace/data prefixes */
+    const char *stripped = rel_path;
+    if (strncmp(stripped, "../game/data/", 13) == 0) {
+        stripped += 13;
+    } else if (strncmp(stripped, "game/data/", 10) == 0) {
+        stripped += 10;
+    } else if (strncmp(stripped, "../data/", 8) == 0) {
+        stripped += 8;
+    } else if (strncmp(stripped, "../game/", 8) == 0) {
+        stripped += 8;
+    } else if (strncmp(stripped, "game/", 5) == 0) {
+        stripped += 5;
+    } else if (strncmp(stripped, "../", 3) == 0) {
+        stripped += 3;
+    }
+
+    /* Step 3: Check legacy mappings */
+    size_t map_count = sizeof(s_legacy_mappings) / sizeof(s_legacy_mappings[0]);
+    size_t root_count = sizeof(s_base_data_roots) /
+                        sizeof(s_base_data_roots[0]);
+    for (size_t m = 0; m < map_count; m++) {
+        const legacy_path_map_t *entry = &s_legacy_mappings[m];
+        if (strncmp(stripped, entry->prefix, entry->prefix_len) == 0) {
+            char mapped[512];
+            snprintf(mapped, sizeof(mapped), "%s%s", entry->replacement,
+                     stripped + entry->prefix_len);
+            for (size_t r = 0; r < root_count; r++) {
+                char candidate[512];
+                int n = snprintf(candidate, sizeof(candidate),
+                                 s_base_data_roots[r], mapped);
+                if (n > 0 && (size_t)n < sizeof(candidate)) {
+                    if (fs_is_regular_file(candidate)) {
+                        str_safe_copy(out_path, candidate, out_size);
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    /* Step 4: Check stripped path against base roots */
+    for (size_t r = 0; r < root_count; r++) {
+        char candidate[512];
+        int n = snprintf(candidate, sizeof(candidate),
+                         s_base_data_roots[r], stripped);
+        if (n > 0 && (size_t)n < sizeof(candidate)) {
+            if (fs_is_regular_file(candidate)) {
+                str_safe_copy(out_path, candidate, out_size);
+                return true;
+            }
+        }
+    }
+
+    /* Step 5: Check all domain candidate prefixes */
+    size_t count = sizeof(s_data_candidate_prefixes) /
+                   sizeof(s_data_candidate_prefixes[0]);
+    for (size_t i = 0; i < count; i++) {
+        char candidate[512];
+        int written = snprintf(candidate, sizeof(candidate),
+                               s_data_candidate_prefixes[i], stripped);
+        if (written > 0 && (size_t)written < sizeof(candidate)) {
+            if (fs_is_regular_file(candidate)) {
+                str_safe_copy(out_path, candidate, out_size);
+                return true;
+            }
+        }
+    }
+
+    /* Fallback test with unstripped path */
+    if (stripped != rel_path) {
+        for (size_t i = 0; i < count; i++) {
+            char candidate[512];
+            int written = snprintf(candidate, sizeof(candidate),
+                                   s_data_candidate_prefixes[i], rel_path);
+            if (written > 0 && (size_t)written < sizeof(candidate)) {
+                if (fs_is_regular_file(candidate)) {
+                    str_safe_copy(out_path, candidate, out_size);
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap Filesystem Engine

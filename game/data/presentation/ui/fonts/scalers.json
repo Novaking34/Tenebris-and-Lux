@@ -1,0 +1,56 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/fonts/scalers.json",
+    "id": "data.fonts.scalers",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "High-DPI font scaling coefficients across viewport resolutions."
+  },
+  "base_virtual_canvas": {
+    "width": 640,
+    "height": 360,
+    "aspect_ratio": "16:9",
+    "target_dpi": 96
+  },
+  "display_presets": [
+    {
+      "preset": "retro_canvas",
+      "width": 640,
+      "height": 360,
+      "font_scale": 1.0,
+      "pt_multiplier": 1.0
+    },
+    {
+      "preset": "desktop_windowed",
+      "width": 860,
+      "height": 620,
+      "font_scale": 1.25,
+      "pt_multiplier": 1.2
+    },
+    {
+      "preset": "hd_720p",
+      "width": 1280,
+      "height": 720,
+      "font_scale": 2.0,
+      "pt_multiplier": 1.8
+    },
+    {
+      "preset": "full_hd_1080p",
+      "width": 1920,
+      "height": 1080,
+      "font_scale": 3.0,
+      "pt_multiplier": 2.5
+    },
+    {
+      "preset": "ultra_hd_4k",
+      "width": 3840,
+      "height": 2160,
+      "font_scale": 6.0,
+      "pt_multiplier": 4.5
+    }
+  ]
+}
+
