@@ -8768,61 +8768,132 @@ enabling automated continuous integration testing without relying on crude proce
 [abstract]
 ## Overview
 
-This document provides a technical walkthrough of the native graphical presentation layer
-implemented in `include/gui/gui.h` and `src/gui/gui.c`. It explains the X11 double-buffering architecture,
-palette color allocation under 32-bit compositors, event handling, geometric hit-testing, and layout auditing.
+This document provides a comprehensive architectural and code walkthrough of the modular Layer 2
+Presentation engine implemented in `include/gui/` and `src/gui/`. It details the decomposition of
+the graphical frontend into specialized sub-assemblies (`gui_palette`, `gui_layout`, `gui_widgets`,
+`gui_assets`, `gui_view2d`, `gui_hud`), the 2.5D diamond dimetric isometric projection engine with
+elevation prisms, the Asset Abstraction Layer for future artist drop-in assets, and the 60 FPS
+double-buffered X11 event loop.
 
-## 1. The Native X11 Architecture
+## 1. The Modular GUI Sub-Assembly Architecture
 
-The GUI is written directly against standard POSIX Xlib (`<X11/Xlib.h>`), eliminating heavyweight
-web browsers, electron wrappers, and external dependencies.
+To prevent monolithic bloat and maintain strict separation of concerns, the presentation engine is
+partitioned into six single-responsibility sub-assemblies:
 
-### Key Specifications:
-* **Geometry**: $860 \times 620$ fixed resolution canvas (`GUI_WINDOW_WIDTH`, `GUI_WINDOW_HEIGHT`).
-* **Frame Target**: 60 FPS deterministic render tick (~16.6 ms) via `time_sleep_ms(16.66)`.
-* **Double Buffering**: Backbuffer pixmap allocated matching the root window's exact depth (`XCreatePixmap`).
-* **Atomic Blit**: `XCopyArea` blits the offscreen pixmap to the visible window in a single hardware cycle, eliminating flicker.
+[cols="1,2,2", options="header"]
+|===
+| Sub-Assembly | Source Files | Architectural Responsibility
+| `gui_types` | `include/gui/gui_types.h` | Shared geometry, view modes, color, asset, and widget structs.
+| `gui_palette` | `gui_palette.c`, `gui_palette.h` | 24-bit RGB / 32-bit ARGB colormap binding and 3D elevation shading.
+| `gui_layout` | `gui_layout.c`, `gui_layout.h` | Window partitioning into 5 disjoint panels with AABB non-overlap audits.
+| `gui_widgets` | `gui_widgets.c`, `gui_widgets.h` | Interactive buttons, case-insensitive hotkeys, and progress/relic meters.
+| `gui_assets` | `gui_assets.c`, `gui_assets.h` | Asset Abstraction Layer and procedural geometric vector art synthesizers.
+| `gui_view2d` | `gui_view2d.c`, `gui_view2d.h` | 2D Flat / 2.5D Isometric tactical world viewport with elevation blocks.
+| `gui_hud` | `gui_hud.c`, `gui_hud.h` | Heads-Up Display: banner, vitals, twin relics, moral sway, and chronicle log.
+| `gui_core` | `gui.c`, `gui.h` | Master facade, X11 double-buffer backbuffer, and 60 FPS event dispatcher.
+|===
 
-## 2. TrueColor Palette & Alpha Opacity
+## 2. Desktop Panel Zoning & Layout Invariants
 
-Under modern Linux compositors (such as Wayland/Xwayland), windows frequently provide 32-bit ARGB
-TrueColor visuals. If drawn pixels do not set the highest alpha byte (`0xFF000000`), the desktop
-compositor renders the drawn primitives as 100% transparent.
+The presentation viewport ($860 \times 620$ pixels) is partitioned into five distinct presentation
+zones designed with 10px outer margins and 8px inter-panel gutters:
 
-`src/gui.c` solves this through explicit color allocation:
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│ Header Banner (840 x 48 px): Title, Realm Province, Dynastic Cycle     │
+├─────────────────────────────────────────┬──────────────────────────────┤
+│                                         │ Status & Inspection          │
+│ 2D / 2.5D Tactical World Viewport       │ (260 x 374 px):              │
+│ (570 x 374 px):                         │ - Protagonist Vitals (HP/MP) │
+│ - Diamond isometric tile grid           │ - Twin Relic Meters          │
+│ - 3D elevation ramparts & daises        │ - Stance & Moral Sway        │
+│ - Depth-sorted entity Painter queue     │ - Active Threat Vitals       │
+│ - Movement & attack range highlights    │                              │
+├─────────────────────────────────────────┼──────────────────────────────┤
+│ Narrative Chronicle Log (570 x 162 px): │ Command Dock (260 x 162 px): │
+│ - 6-line bounded FIFO event ring-buffer │ - 3x3 Tactical Action Grid   │
+│ - Color-coded channels & gold highlight │ - Ward, Strike, Balance, etc.│
+└─────────────────────────────────────────┴──────────────────────────────┘
+```
 
-[source,c]
-----
-static unsigned long alloc_color(Display *d, int screen, unsigned int rgb_hex)
-{
-    XColor col;
-    // Map RGB components...
-    if (XAllocColor(d, DefaultColormap(d, screen), &col)) {
-        if (DefaultDepth(d, screen) == 32 || (col.pixel & 0xFF000000) == 0) {
-            return col.pixel | 0xFF000000; // Force full opacity
-        }
-        return col.pixel;
-    }
-    return 0xFF000000 | rgb_hex;
-}
-----
+Every panel bounding box is mathematically audited via `gui_layout_audit()` using Layer 0
+`geom_rect_intersects()` and `geom_rect_within_bounds()` to guarantee zero visual collisions.
 
-## 3. Event Loop & Action Routing
+## 3. The 2.5D Tactical Isometric Engine
 
-The main event loop in `gui_run()` handles three primary X11 event types:
-1. **`ClientMessage`**: Intercepts `WM_DELETE_WINDOW` for clean application exit when clicking the window close button.
-2. **`ButtonPress`**: Executes hit-testing against the 9 interactive button bounding boxes via `geom_point_in_rect()` (`find_clicked_button`).
-3. **`KeyPress`**: Maps keyboard keys (`w`, `s`, `b`, `t`, `l`, `i`, `n`, `r`, `q`) to corresponding actions.
+The game features dual visual projection modes toggleable at runtime via the `[M]` key:
+* `GUI_VIEW_2D_FLAT`: Orthographic top-down grid ($38 \times 38$ px cells) for overworld travel.
+* `GUI_VIEW_25D_ISOMETRIC`: Diamond dimetric projection ($48 \times 24$ px tiles) with vertical
+  $Z$-axis elevation prisms ($8$ px per elevation level) for tactical battles.
 
-All button clicks and hotkeys dispatch directly to `game_process_command()`, ensuring the presentation
-layer remains strictly read-only with respect to game state.
+### Isometric Mathematical Formulation:
+Given discrete 3D grid coordinates $(gx, gy, gz)$, tile width $W$, tile height $H$, elevation scale
+$E$, and screen origin $(X_0, Y_0)$:
 
-## 4. Viewport Layout Auditing (`gui_audit_layout`)
+[stem]
+++++
+screen_x = X_0 + (gx - gy) \cdot \frac{W}{2}
+++++
 
-Block 4 implements mathematical layout verification using Layer 0 `geom_utils`:
-- Asserts that all 9 buttons fit strictly within window boundaries via `geom_rect_within_bounds()`.
-- Executes pairwise AABB (Axis-Aligned Bounding Box) intersection tests via `geom_rect_intersects()` to mathematically prove that no two buttons overlap.
-- Runs as part of `./build/tenebris-lux --audit` and CTest.
+[stem]
+++++
+screen_y = Y_0 + (gx + gy) \cdot \frac{H}{2} - gz \cdot E
+++++
+
+### Unprojection Reciprocity:
+Translating mouse clicks $(sx, sy)$ on ground plane $gz$ back to discrete grid $(gx, gy)$:
+
+[stem]
+++++
+gx = \left\lfloor \frac{sx - X_0}{W} + \frac{sy + gz \cdot E - Y_0}{H} + 0.5 \right\rfloor
+++++
+
+[stem]
+++++
+gy = \left\lfloor \frac{sy + gz \cdot E - Y_0}{H} - \frac{sx - X_0}{W} + 0.5 \right\rfloor
+++++
+
+### 3D Prism Shading & Elevation Blocks:
+When a tile has height $gz > 0$ (such as perimeter ramparts or altar daises), `gui_view2d.c`
+extrudes a 3-face shaded isometric cube:
+1. **Front-Left Face**: Extruded downward by $gz \cdot E$, shaded at $75\%$ brightness.
+2. **Front-Right Face**: Extruded downward by $gz \cdot E$, shaded at $55\%$ brightness (shadow).
+3. **Top Diamond Face**: Rendered with ambient highlight at $115\%$ brightness.
+
+### Painter's Algorithm Depth Sorting:
+Entities (Elijah, Katrina, Dream Eater, ShadowStalker) are inserted into a depth-sorted render queue
+keyed by:
+
+[stem]
+++++
+depth\_key = (gx + gy) \cdot 1000 + gz \cdot 10 + layer\_bias
+++++
+
+Rendering from lowest to highest depth key guarantees that foreground characters cleanly occlude
+background terrain and entities without depth buffer hardware dependencies.
+
+## 4. The Asset Abstraction Layer
+
+To ensure the game looks visually striking immediately while gracefully welcoming future hand-drawn
+sprites from artists, `gui_assets.c` implements an **Asset Abstraction Layer**:
+
+1. **Asset Identity Registry**: Maps canonical asset IDs (`ASSET_HERO_ELIJAH`, `ASSET_ENEMY_DREAM_EATER`,
+   `ASSET_TILE_COBBLESTONE`, `ASSET_RELIC_SHIELD_LUX`) to dimension specifications and target filepaths.
+2. **Procedural Fallback Synthesizer**: In the absence of an external image, procedural vector
+   generators draw character heraldry (e.g., Elijah's golden heater shield and ivory helm, Dream
+   Eater's ethereal violet diamond nucleus with orbiting motes).
+3. **Drop-in Artist Binding**: Calling `gui_assets_bind_external(id, path)` marks the asset as
+   `ASSET_KIND_BITMAP`, routing draw calls to the spritesheet blitter without modifying simulation logic.
+
+## 5. Verification Telemetry
+
+The presentation stratum is validated via `tests/unit/test_gui_unit.c` across four ontological sections:
+* **Section 1 (Always Pass)**: Verifies default layout geometry, palette alpha opacity, and 9-button grid.
+* **Section 2 (Never Fail)**: Validates negative shading factor clamping, out-of-bounds click safety,
+  and case-insensitive hotkey resolution.
+* **Section 3 (Assertion & Guarantee)**: Enforces AABB panel pairwise disjointness, projection
+  reciprocity, and chronicle FIFO ring-buffer shift.
+* **Section 4 (Emergence)**: Probes X11 display availability and runs full self-audit pre-flight checks.
 
 
 ---
