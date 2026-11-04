@@ -15,8 +15,8 @@ thematically (`architecture/`, `lore_and_design/`).
 
 == Calendar Archives
 
-* **link:2026/10/README.adoc[October 2026 Monthly Chronicle]** (7 Logs)
-* **link:2026/11/README.adoc[November 2026 Monthly Chronicle]** (5 Logs)
+* **xref:2026/10/README.adoc[October 2026 Monthly Chronicle]** (7 Logs)
+* **xref:2026/11/README.adoc[November 2026 Monthly Chronicle]** (6 Logs)
 
 == Complete Dev Log Manifest
 
@@ -113,4 +113,11 @@ thematically (`architecture/`, `lore_and_design/`).
     - Formalized the Butterfly Effect of provincial micro-verbs breaking 3,000 years of karmic momentum.
     - Codified 13-tier continuum nomenclature and expanded ending topology to the 3x3 matrix + 10th True Ending ("The Ugly Truth").
     - Embedded core engine subsystems into diegetic items (Grandma's Watch -> Dream Compass, Compass of Morality) and formulated NG+ timeline tree.
+
+14. **link:2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc[devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc]**  
+    *High Fantasy Presentation Engine, Typography Scaling & 5-Screen Architecture* (2026-11-03 | Architecture):
+    - Re-engineered Layer 2 presentation with High-DPI TrueType fonts (Cinzel, MedievalSharp).
+    - Implemented dynamic 3x widescreen battlefield zoom with 96x96 sprites and ground foundation apron.
+    - Built 5-screen navigation architecture (Tactical Battle, Hero Dossier, 32-Slot Bag, Provincial Map, Deeds Codex).
+    - Executed comprehensive v1.4.0 architectural review identifying core strengths, outstanding gaps, and technical debt.
 

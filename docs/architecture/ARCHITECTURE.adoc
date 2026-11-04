@@ -1,6 +1,6 @@
 = System Architecture & Technical Design Specification
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
+v1.4.0, 2026-11-03
 :doctype: article
 :toc: left
 :toclevels: 3
@@ -13,64 +13,61 @@ v0.0.1, 2026-10-26
 
 This document specifies the technical design, subsystem boundaries, data models, and
 ontological lifecycle governing *Tenebris and Lux* ("Darkness and Light").
-Set within the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`), the game is a
-**Tactical Strategy RPG (TRPG)** centered on dual protagonists—**Elijah Ro-enheart** (son of the former
-Head of the Royal Guard) and **Katrina Jaren** (noble court aspirant seeking the Adventurers' Guild)—who
-wield the primordial **Shield of Lux** and **Sword of Tenebris** against the encroaching dread legions of
-**The Dark Lord**.
+Set within the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`), the
+game is a **Tactical Strategy RPG (TRPG)** centered on dual protagonists—**Elijah Ro-enheart**
+(son of former Head of the Royal Guard) and **Lady Katrina Jaren** (noble court aspirant seeking
+the Adventurers' Guild)—who wield the primordial **Shield of Lux** and **Sword of Tenebris**
+against the dread legions of **The Dark Lord** (the ancient Libiran sovereign Usuru).
 
-The engine strictly separates **simulation state** from the **presentation layer**:
+The engine strictly separates **simulation state** from **presentation** across 5 strata:
 
 [source,text]
 ----
-┌────────────────────────────────────────────────────────┐
-│             LAYER 1: SIMULATION ENGINE (C11)           │
-│  State: player_state_t (Elijah & Katrina, Armaments)   │
-│  Tactical Grid & Action Router: game_process_command() │
-│  Audit Suite: game_audit_state(), game_run_self_audit()│
-└───────────────────────────┬────────────────────────────┘
-                            │
-            ┌───────────────┴───────────────┐
-            ▼                               ▼
-┌────────────────────────┐      ┌────────────────────────┐
-│  Headless Terminal CLI │      │ Native Double-Buffered │
-│  (Automated CI & stdin)│      │ X11 Graphical Viewport │
-└────────────────────────┘      └────────────────────────┘
-                            │
-                            ▼ (Layer 0 Primitives)
-┌────────────────────────────────────────────────────────┐
-│               LAYER 0: FOUNDATIONAL UTILITIES          │
-│   math_utils (clamping, saturation) | string_utils     │
-│   geom_utils (2D AABB, hit-tests)   | time_utils (ms)  │
-└────────────────────────────────────────────────────────┘
+Layer 4: Verification Suite       [ tests/ ]  (19 Automated CTest Targets)
+           │
+Layer 3: Application Entry        [ src/main.c ]  (Presentation Router & CLI)
+           │
+Layer 2: Presentation & Viewport  [ src/gui/ <-> include/gui/ ]  (X11 Double-Buffered)
+           │
+Layer 1: Simulation Engine        [ src/sim/ <-> include/sim/ ]  (Core, Combat, Items, World)
+           │
+Layer 0: Core Utilities           [ src/util/ <-> include/util/ ] (Math, Geom, Data, Log)
 ----
 
 == 1. The Universal 5-Block Code Structure
 
-In alignment with the OmniCode framework, all C source code, headers, and build scripts are organized into 5 standardized blocks:
+In alignment with the OmniCode framework, all C source code, headers, and build scripts are
+organized into 5 standardized blocks:
 
-1. **BLOCK 1: METADATA BLOCK**: Defines module identity, layer, author, version, role, and invariant axioms.
-2. **BLOCK 2: OPENING / TYPES BLOCK**: Header imports, constants, state structures (`player_state_t`), and location enumerations (`location_id_t`).
-3. **BLOCK 3: BODY BLOCK**: Core simulation routines, relic stance transitions, combat calculations, and moral alignment resolution.
-4. **BLOCK 4: AUDIT PROCEDURES BLOCK**: Self-healing diagnostic routines, invariant tripwires, and game development testing verification harnesses.
-5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**: CLI argument parser, headless game runner, automated test hooks, and clean teardown.
+1. **BLOCK 1: METADATA BLOCK**: Defines module identity, layer, author, version, role,
+   and invariant axioms.
+2. **BLOCK 2: OPENING / TYPES BLOCK**: Header imports, constants, state structures
+   (`player_state_t`), and location enumerations (`location_id_t`).
+3. **BLOCK 3: BODY BLOCK**: Core simulation routines, relic stance transitions, combat
+   calculations, and moral alignment resolution.
+4. **BLOCK 4: AUDIT PROCEDURES BLOCK**: Self-healing diagnostic routines, invariant tripwires,
+   and verification harnesses.
+5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**: CLI argument parser, headless game runner,
+   automated test hooks, and clean teardown.
 
 == 2. Core Mechanics & State Invariants
 
 === The Twin Relics: Shield and Sword
 
 * **The Shield of Lux (`shield_power`, $0 \dots 100$)**:
-  Primarily borne by **Elijah Ro-enheart**. Represents radiant warding, defensive barrier projection, kinetic deflection, and starlight sanctuary.
+  Primarily borne by **Elijah Ro-enheart**. Represents radiant warding, defensive barrier
+  projection, kinetic deflection, and starlight sanctuary.
 * **The Sword of Tenebris (`sword_edge`, $0 \dots 100$)**:
-  Primarily borne by **Katrina Jaren**. Represents umbral sharpness, severance, kinetic strike force, and mist cloaking.
+  Primarily borne by **Katrina Jaren**. Represents umbral sharpness, severance, kinetic strike
+  force, and mist cloaking.
 * **Tactical Stance (`combat_stance_t`)**:
   - `STANCE_NEUTRAL`: Relics held in readiness.
-  - `STANCE_WARDING`: Shield raised forward; enhances defensive warding; mitigates incoming damage.
+  - `STANCE_WARDING`: Shield raised forward; mitigates incoming damage.
   - `STANCE_STRIKING`: Sword drawn for offensive severance; boosts strike damage.
   - `STANCE_EQUILIBRIUM`: Twin mastery; balances offensive and defensive resonance.
 * **Moral Sway (`moral_sway`, $-100 \dots +100$)**:
-  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless, seek harmony, and heal Sacyra).
-  - Negative ($< 0$): **Tyranny & Ruin** (using power for cruel domination, ruthless execution, and feeding the Dark Lord).
+  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless).
+  - Negative ($< 0$): **Tyranny & Ruin** (using power for cruel domination and ruin).
 
 === Invariant Axioms
 
@@ -78,15 +75,43 @@ In alignment with the OmniCode framework, all C source code, headers, and build 
 2. **Sword Edge Boundary**: $0 \le \text{state.sword\_edge} \le \text{MAX\_RESONANCE}$.
 3. **Moral Sway Bounded Range**: $-100 \le \text{state.moral\_sway} \le +100$.
 4. **Valid Location Invariant**: $0 \le \text{state.location} < \text{LOC\_COUNT}$.
-5. **Deterministic Replay Guarantee**: Any identical sequence of actions from a given initial state must produce identical state telemetry.
+5. **Deterministic Replay Guarantee**: Any identical sequence of actions from a given initial state
+   must produce identical state telemetry.
 
 == 3. Multi-Phase Engine Evolution
 
-[cols="1,2,3", options="header"]
+[cols="1,1,3", options="header"]
 |===
 | Phase | Milestone | Subsystem Architecture
-| **Phase 1 (Current)** | `v0.0.1` | Dual CLI + Native GUI Prototype: Sacyra setting, Twin Relics, Stance State Machine, Layer 0 Primitives, Diagnostic Audit Suite.
-| **Phase 2** | `v0.1.0` | Tactical Strategy RPG Grid Engine: Discrete 2D grid coordinates, unit movement budgets, terrain modifiers, Zone-of-Control (ZOC), and dual-protagonist data models.
-| **Phase 3** | `v0.2.0` | Cinematic Combat Resolution: Transition from grid to traditional 2D side-view action duels, timed ward/strike inputs, and poise meters.
-| **Phase 4** | `v1.0.0` | Full TRPG Campaign of Sacyra: Dynamic party management, story branching, and final confrontation against The Dark Lord.
+| **Phase 1 (Complete)** | `v0.0.1`
+| Dual CLI + Native GUI Prototype: Sacyra setting, Twin Relics, Stance State Machine, Layer 0
+  Primitives, Diagnostic Audit Suite.
+
+| **Phase 2 (Active)** | `v0.1.0`
+| Tactical Strategy RPG Engine & 5-Screen UI: 2.5D responsive scaling (3x zoom), TrueType vector
+  fonts (Cinzel, MedievalSharp), 32-slot inventory, provincial topology, and 19 CTest targets.
+
+| **Phase 3** | `v0.2.0`
+| Cinematic Combat Resolution & AI: Real-time kinetic deflection windows, poise breaking, dynamic
+  skill execution from data catalogs, and enemy flanking AI.
+
+| **Phase 4** | `v1.0.0`
+| Full TRPG Campaign of Sacyra: Dynamic party management, persistent disk save/load, King's Curse
+  midpoint planar wound fork, and the 5 canonical ending routes.
 |===
+
+== 4. Layer 2 Presentation Architecture & 5-Screen Navigation
+
+The presentation engine is organized into modular sub-assemblies under `src/gui/`:
+* `gui_palette`: High Fantasy Hero's Journey color palette (Radiant Gold, Tenebrous Violet).
+* `gui_fonts`: Scalable TrueType font loader with automatic `xset fp+` fontpath registration.
+* `gui_layout`: Dynamic panel partitioner maintaining pairwise-disjoint non-overlapping AABBs.
+* `gui_view2d`: 2.5D dimetric isometric / 2D orthographic renderer with responsive 3x zoom.
+* `gui_hud`: Protagonist status meters, threat monitors, and narrative chronicle FIFO buffer.
+* `gui_widgets`: Centered button cards with mnemonic hotkey accents.
+* `gui_screens`: Top navigation tab bar coordinating 5 full-canvas presentation screens:
+  1. **1: Tactical Battle** (`GUI_SCREEN_TACTICAL`): 2.5D dais, range diamonds, status HUD, dock.
+  2. **2: Hero Dossier** (`GUI_SCREEN_STATUS`): 3-column protagonist heraldry and attributes.
+  3. **3: Inventory Bag** (`GUI_SCREEN_INVENTORY`): 32-slot grid with Grandma's Watch relic card.
+  4. **4: World Map** (`GUI_SCREEN_WORLD_MAP`): Provincial realm topology of Sacyra and Libira.
+  5. **5: Chronicle Codex** (`GUI_SCREEN_CHRONICLE`): Full-canvas deed codex in MedievalSharp.

@@ -28,6 +28,10 @@ Logs are categorized into thematic subdirectories based on their focus:
    *Interactive Debugging System & State Rewind Architecture* +
    Engineered interactive CLI state debugger, frozen state ring buffer, FNV-1a state hashing, time-travel rewind, and dynamic expression breakpoints.
 
+4. **link:architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc[devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc]** (2026-11-03) +
+   *High Fantasy Presentation Engine, Typography Scaling & 5-Screen Architecture* +
+   Re-engineered Layer 2 presentation with High-DPI TrueType fonts (Cinzel, MedievalSharp), 3x widescreen battlefield zoom with 96x96 sprites, 5-screen navigation architecture (Tactical, Hero Dossier, 32-slot Bag, Provincial Map, Deeds Codex), and system-wide v1.4.0 architectural review.
+
 === Lore & Game Design (`docs/dev_logs/2026/11/lore_and_design/`)
 
 1. **link:lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc]** (2026-11-02) +

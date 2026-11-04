@@ -218,6 +218,10 @@ impl MasterGuideBuilder {
                     make_ch("DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework", "dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc"),
                     make_ch("DevLog 012: Interactive Debugging System & State Rewind Architecture", "dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc"),
                     make_ch("DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix", "dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc"),
+                    make_ch(
+                        "DevLog 014: Presentation Engine & 5-Screen UI",
+                        "dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc",
+                    ),
                 ],
             },
         ]

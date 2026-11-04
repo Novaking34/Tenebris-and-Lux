@@ -87,6 +87,7 @@ It serves as a high-density, context-rich reference for AI engineering workflows
   - Chapter 67: DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
   - Chapter 68: DevLog 012: Interactive Debugging System & State Rewind Architecture
   - Chapter 69: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
+  - Chapter 70: DevLog 014: Presentation Engine & 5-Screen UI
 
 ---
 
@@ -7845,64 +7846,61 @@ _System boundaries, layered strata, dual-frontend GUI/CLI, and pre-flight zero-h
 
 This document specifies the technical design, subsystem boundaries, data models, and
 ontological lifecycle governing *Tenebris and Lux* ("Darkness and Light").
-Set within the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`), the game is a
-**Tactical Strategy RPG (TRPG)** centered on dual protagonists—**Elijah Ro-enheart** (son of the former
-Head of the Royal Guard) and **Katrina Jaren** (noble court aspirant seeking the Adventurers' Guild)—who
-wield the primordial **Shield of Lux** and **Sword of Tenebris** against the encroaching dread legions of
-**The Dark Lord**.
+Set within the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`), the
+game is a **Tactical Strategy RPG (TRPG)** centered on dual protagonists—**Elijah Ro-enheart**
+(son of former Head of the Royal Guard) and **Lady Katrina Jaren** (noble court aspirant seeking
+the Adventurers' Guild)—who wield the primordial **Shield of Lux** and **Sword of Tenebris**
+against the dread legions of **The Dark Lord** (the ancient Libiran sovereign Usuru).
 
-The engine strictly separates **simulation state** from the **presentation layer**:
+The engine strictly separates **simulation state** from **presentation** across 5 strata:
 
 [source,text]
 ----
-┌────────────────────────────────────────────────────────┐
-│             LAYER 1: SIMULATION ENGINE (C11)           │
-│  State: player_state_t (Elijah & Katrina, Armaments)   │
-│  Tactical Grid & Action Router: game_process_command() │
-│  Audit Suite: game_audit_state(), game_run_self_audit()│
-└───────────────────────────┬────────────────────────────┘
-                            │
-            ┌───────────────┴───────────────┐
-            ▼                               ▼
-┌────────────────────────┐      ┌────────────────────────┐
-│  Headless Terminal CLI │      │ Native Double-Buffered │
-│  (Automated CI & stdin)│      │ X11 Graphical Viewport │
-└────────────────────────┘      └────────────────────────┘
-                            │
-                            ▼ (Layer 0 Primitives)
-┌────────────────────────────────────────────────────────┐
-│               LAYER 0: FOUNDATIONAL UTILITIES          │
-│   math_utils (clamping, saturation) | string_utils     │
-│   geom_utils (2D AABB, hit-tests)   | time_utils (ms)  │
-└────────────────────────────────────────────────────────┘
+Layer 4: Verification Suite       [ tests/ ]  (19 Automated CTest Targets)
+           │
+Layer 3: Application Entry        [ src/main.c ]  (Presentation Router & CLI)
+           │
+Layer 2: Presentation & Viewport  [ src/gui/ <-> include/gui/ ]  (X11 Double-Buffered)
+           │
+Layer 1: Simulation Engine        [ src/sim/ <-> include/sim/ ]  (Core, Combat, Items, World)
+           │
+Layer 0: Core Utilities           [ src/util/ <-> include/util/ ] (Math, Geom, Data, Log)
 ----
 
 ## 1. The Universal 5-Block Code Structure
 
-In alignment with the OmniCode framework, all C source code, headers, and build scripts are organized into 5 standardized blocks:
+In alignment with the OmniCode framework, all C source code, headers, and build scripts are
+organized into 5 standardized blocks:
 
-1. **BLOCK 1: METADATA BLOCK**: Defines module identity, layer, author, version, role, and invariant axioms.
-2. **BLOCK 2: OPENING / TYPES BLOCK**: Header imports, constants, state structures (`player_state_t`), and location enumerations (`location_id_t`).
-3. **BLOCK 3: BODY BLOCK**: Core simulation routines, relic stance transitions, combat calculations, and moral alignment resolution.
-4. **BLOCK 4: AUDIT PROCEDURES BLOCK**: Self-healing diagnostic routines, invariant tripwires, and game development testing verification harnesses.
-5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**: CLI argument parser, headless game runner, automated test hooks, and clean teardown.
+1. **BLOCK 1: METADATA BLOCK**: Defines module identity, layer, author, version, role,
+   and invariant axioms.
+2. **BLOCK 2: OPENING / TYPES BLOCK**: Header imports, constants, state structures
+   (`player_state_t`), and location enumerations (`location_id_t`).
+3. **BLOCK 3: BODY BLOCK**: Core simulation routines, relic stance transitions, combat
+   calculations, and moral alignment resolution.
+4. **BLOCK 4: AUDIT PROCEDURES BLOCK**: Self-healing diagnostic routines, invariant tripwires,
+   and verification harnesses.
+5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**: CLI argument parser, headless game runner,
+   automated test hooks, and clean teardown.
 
 ## 2. Core Mechanics & State Invariants
 
 ### The Twin Relics: Shield and Sword
 
 * **The Shield of Lux (`shield_power`, $0 \dots 100$)**:
-  Primarily borne by **Elijah Ro-enheart**. Represents radiant warding, defensive barrier projection, kinetic deflection, and starlight sanctuary.
+  Primarily borne by **Elijah Ro-enheart**. Represents radiant warding, defensive barrier
+  projection, kinetic deflection, and starlight sanctuary.
 * **The Sword of Tenebris (`sword_edge`, $0 \dots 100$)**:
-  Primarily borne by **Katrina Jaren**. Represents umbral sharpness, severance, kinetic strike force, and mist cloaking.
+  Primarily borne by **Katrina Jaren**. Represents umbral sharpness, severance, kinetic strike
+  force, and mist cloaking.
 * **Tactical Stance (`combat_stance_t`)**:
   - `STANCE_NEUTRAL`: Relics held in readiness.
-  - `STANCE_WARDING`: Shield raised forward; enhances defensive warding; mitigates incoming damage.
+  - `STANCE_WARDING`: Shield raised forward; mitigates incoming damage.
   - `STANCE_STRIKING`: Sword drawn for offensive severance; boosts strike damage.
   - `STANCE_EQUILIBRIUM`: Twin mastery; balances offensive and defensive resonance.
 * **Moral Sway (`moral_sway`, $-100 \dots +100$)**:
-  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless, seek harmony, and heal Sacyra).
-  - Negative ($< 0$): **Tyranny & Ruin** (using power for cruel domination, ruthless execution, and feeding the Dark Lord).
+  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless).
+  - Negative ($< 0$): **Tyranny & Ruin** (using power for cruel domination and ruin).
 
 ### Invariant Axioms
 
@@ -7910,18 +7908,46 @@ In alignment with the OmniCode framework, all C source code, headers, and build 
 2. **Sword Edge Boundary**: $0 \le \text{state.sword\_edge} \le \text{MAX\_RESONANCE}$.
 3. **Moral Sway Bounded Range**: $-100 \le \text{state.moral\_sway} \le +100$.
 4. **Valid Location Invariant**: $0 \le \text{state.location} < \text{LOC\_COUNT}$.
-5. **Deterministic Replay Guarantee**: Any identical sequence of actions from a given initial state must produce identical state telemetry.
+5. **Deterministic Replay Guarantee**: Any identical sequence of actions from a given initial state
+   must produce identical state telemetry.
 
 ## 3. Multi-Phase Engine Evolution
 
-[cols="1,2,3", options="header"]
+[cols="1,1,3", options="header"]
 |===
 | Phase | Milestone | Subsystem Architecture
-| **Phase 1 (Current)** | `v0.0.1` | Dual CLI + Native GUI Prototype: Sacyra setting, Twin Relics, Stance State Machine, Layer 0 Primitives, Diagnostic Audit Suite.
-| **Phase 2** | `v0.1.0` | Tactical Strategy RPG Grid Engine: Discrete 2D grid coordinates, unit movement budgets, terrain modifiers, Zone-of-Control (ZOC), and dual-protagonist data models.
-| **Phase 3** | `v0.2.0` | Cinematic Combat Resolution: Transition from grid to traditional 2D side-view action duels, timed ward/strike inputs, and poise meters.
-| **Phase 4** | `v1.0.0` | Full TRPG Campaign of Sacyra: Dynamic party management, story branching, and final confrontation against The Dark Lord.
+| **Phase 1 (Complete)** | `v0.0.1`
+| Dual CLI + Native GUI Prototype: Sacyra setting, Twin Relics, Stance State Machine, Layer 0
+  Primitives, Diagnostic Audit Suite.
+
+| **Phase 2 (Active)** | `v0.1.0`
+| Tactical Strategy RPG Engine & 5-Screen UI: 2.5D responsive scaling (3x zoom), TrueType vector
+  fonts (Cinzel, MedievalSharp), 32-slot inventory, provincial topology, and 19 CTest targets.
+
+| **Phase 3** | `v0.2.0`
+| Cinematic Combat Resolution & AI: Real-time kinetic deflection windows, poise breaking, dynamic
+  skill execution from data catalogs, and enemy flanking AI.
+
+| **Phase 4** | `v1.0.0`
+| Full TRPG Campaign of Sacyra: Dynamic party management, persistent disk save/load, King's Curse
+  midpoint planar wound fork, and the 5 canonical ending routes.
 |===
+
+## 4. Layer 2 Presentation Architecture & 5-Screen Navigation
+
+The presentation engine is organized into modular sub-assemblies under `src/gui/`:
+* `gui_palette`: High Fantasy Hero's Journey color palette (Radiant Gold, Tenebrous Violet).
+* `gui_fonts`: Scalable TrueType font loader with automatic `xset fp+` fontpath registration.
+* `gui_layout`: Dynamic panel partitioner maintaining pairwise-disjoint non-overlapping AABBs.
+* `gui_view2d`: 2.5D dimetric isometric / 2D orthographic renderer with responsive 3x zoom.
+* `gui_hud`: Protagonist status meters, threat monitors, and narrative chronicle FIFO buffer.
+* `gui_widgets`: Centered button cards with mnemonic hotkey accents.
+* `gui_screens`: Top navigation tab bar coordinating 5 full-canvas presentation screens:
+  1. **1: Tactical Battle** (`GUI_SCREEN_TACTICAL`): 2.5D dais, range diamonds, status HUD, dock.
+  2. **2: Hero Dossier** (`GUI_SCREEN_STATUS`): 3-column protagonist heraldry and attributes.
+  3. **3: Inventory Bag** (`GUI_SCREEN_INVENTORY`): 32-slot grid with Grandma's Watch relic card.
+  4. **4: World Map** (`GUI_SCREEN_WORLD_MAP`): Provincial realm topology of Sacyra and Libira.
+  5. **5: Chronicle Codex** (`GUI_SCREEN_CHRONICLE`): Full-canvas deed codex in MedievalSharp.
 
 
 ---
@@ -10816,6 +10842,249 @@ All systems and state boundaries strictly adhere to Layer 1 simulation invariant
 * Time-of-day queries evaluated deterministically via `time_utils.h`.
 * Zero heap allocations across all telemetry tracking routines.
 * Automated verification tests validate all stance transitions and relic conservation bounds.
+
+
+---
+
+## Chapter 70: DevLog 014: Presentation Engine & 5-Screen UI
+
+> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc`
+
+[abstract]
+## Executive Summary
+
+This development log chronicles the comprehensive re-engineering of the presentation engine in
+*Tenebris and Lux*, transforming it from a raw X11 fixed-bitmap prototype into a rich,
+thematically authentic *High Fantasy Hero's Journey Tactical Strategy RPG* interface.
+Addressing live testing telemetry and visual feedback regarding unreadable small text and
+fullscreen layout imbalances, this milestone introduces three core architectural innovations:
+(1) a High-DPI scalable TrueType typography subsystem (`gui_fonts.h`, `gui_fonts.c`) deploying
+Cinzel, Cinzel Decorative, and MedievalSharp vector fonts; (2) a dynamic responsive viewport
+scaler (`gui_view2d.c`, `gui_layout.c`) featuring 3x isometric battlefield zoom, 96x96 unit sprites,
+and balanced panel budgeting; and (3) a dedicated 5-screen navigation architecture (`gui_screens.h`,
+`gui_screens.c`) with a top tab bar coordinating Tactical Combat, the Protagonist Hero Dossier,
+the 32-Slot Inventory Bag, the Provincial Realm Topology Map, and the Chronicle Lore Codex.
+Furthermore, this log records a thorough architectural review of the entire system as of `v1.4.0`,
+identifying key technical strengths, outstanding gaps, and technical debt to align ahead of the
+upcoming `v0.1.0` consolidation milestone.
+
+[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
+____
+A tactical RPG is not merely arithmetic in a dark void. Typography, proportion, heraldry, and
+space are narrative instruments. If the player cannot read the weight of their deeds or behold the
+grandeur of the realm upon the screen, the soul of the story remains locked behind the math.
+____
+
+## 1. Visual Balance Dilemma & High-DPI Typography Subsystem
+
+### The Problem of Fixed-Width Core Bitmap Fonts
+Early engine iterations utilized X11 core bitmap fonts (`9x15`, `fixed`) inherited from classic
+Unix workstation conventions. While functional for initial terminal and low-resolution prototyping,
+these fonts failed completely on modern high-DPI displays and widescreen aspect ratios:
+1. **Unreadable Glyphs**: Core bitmap fonts are locked to rigid pixel grids. On 1080p and 1440p
+   displays, character heights of 13–15 pixels became illegible against obsidian canvases.
+2. **Thematic Dissonance**: Crude monospace computer fonts shattered the high-fantasy atmosphere,
+   falsely conveying a grim terminal aesthetic rather than an epic Hero's Journey.
+3. **Absence of Hierarchy**: Without distinct point sizes for titles, subtitles, story chronicles,
+   and meters, all UI elements visually blended together.
+
+### TrueType Vector Typography Architecture (`gui_fonts.h`, `gui_fonts.c`)
+To resolve this, we integrated an open-source scalable TrueType font catalog into `assets/fonts/`:
+* **`CinzelDecorative-Bold.ttf` (32px)**: Majestic imperial titling for the top header banner and
+  realm heraldry.
+* **`Cinzel-Bold.ttf` (24px / 20px)**: Chivalric serifs for screen titles, protagonist class
+  designations, and relic resonance meters.
+* **`MedievalSharp.ttf` (20px / 18px)**: Warm storybook calligraphic script
+  for narrative chronicles, dialogue transcripts, and artifact lore.
+* **`Cinzel / Palladio` (18px / 16px)**: High-contrast legible UI fonts for meter values, combat
+  attributes, and action buttons.
+
+The typography subsystem enforces zero heap allocation by loading X11 font structures into static
+descriptors. At engine initialization, `ensure_font_path_registered()` dynamically registers the
+local font path (`xset fp+ assets/fonts`) and rehashes the X server font catalog:
+
+[source,c]
+----
+// include/gui/gui_fonts.h: Typography Catalog Structure
+typedef struct {
+    void *title_font;     // Cinzel Decorative Bold 32px
+    void *subtitle_font;  // Cinzel Bold 24px / 20px
+    void *story_font;     // MedievalSharp 20px / 18px
+    void *ui_font;        // Cinzel Medium / Palladio 18px
+    bool is_loaded;       // True if X11 server bound fonts
+} gui_font_catalog_t;
+----
+
+## 2. Responsive Widescreen Scaling & Isometric Dais Zoom
+
+### Eliminating the Widescreen Void
+In previous fullscreen tests ($1450\times 700\text{ px}$ and $1920\times 1080\text{ px}$), the 8x8
+isometric dais remained locked at a tiny $384\times 192\text{ px}$ footprint, leaving ~75% of the
+viewport as an empty obsidian void, while the right status panel was squashed
+against the screen edge.
+
+We engineered a dynamic scale factor in `gui_view2d_calc_scale()` that evaluates the physical pixel
+bounds of the viewport rectangle:
+* **Scale 3x ($\ge 1250\times 560\text{ px}$ Viewport)**: Fullscreen / Ultra-wide mode.
+  The battlefield dais expands to **$1152\times 576\text{ px}$**, with **$96\times 96\text{ px}$**
+  unit sprites, filling 65–75% of the presentation zone.
+* **Scale 2x ($\ge 800\times 420\text{ px}$ Viewport)**: Medium widescreen displays. Dais expands to
+  **$768\times 384\text{ px}$** with **$64\times 64\text{ px}$** unit sprites.
+* **Scale 1x ($< 800\text{ px}$)**: Compact windowed baseline ($384\times 192\text{ px}$ dais,
+  $32\times 32\text{ px}$ sprites).
+
+### Ground Shadow Apron & Shaded Elevation Prisms
+To firmly anchor the floating dais in space, the renderer projects a diamond ground foundation
+apron beneath the battlefield, rendered in obsidian drop-shadow (`pal->shadow`) with etched carved
+cobblestone borders. Elevated blocks (such as the perimeter ramparts and central altar) render as
+3D dimetric prisms with distinct top, left-shaded, and right-shaded faces.
+
+## 3. Dedicated 5-Screen Navigation Architecture
+
+Rather than forcing every gameplay mechanic, lore entry, and inventory slot into a single crowded
+sidebar, the presentation layer was modularized into five distinct presentation screens governed
+by a top navigation tab bar:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│ TENEBRIS AND LUX — Tactical TRPG & Hero's Journey            [Era VI: Accord of Kings] │
+├───────────────────┬────────────────┬───────────────┬──────────────┬────────────────────┤
+│ [1: Tactical]     │ [2: Hero]      │ [3: Items]    │ [4: World]   │ [5: Lore]          │
+└───────────────────┴────────────────┴───────────────┴──────────────┴────────────────────┘
+----
+
+### Screen 1: Tactical Battle (`GUI_SCREEN_TACTICAL`)
+* **Presentation**: 2.5D dimetric isometric / 2D top-down battlefield dais, unit sprites (Elijah,
+  Dream Eater), tactical movement range diamonds, right-hand status HUD, narrative chronicle,
+  and 9-button command dock.
+* **Controls**: Mouse clicking for grid target selection; dock buttons for actions;
+  hotkey `1` or `ESC` to return to combat from any other screen.
+
+### Screen 2: Protagonist Hero Dossier (`GUI_SCREEN_STATUS`)
+* **Presentation**: Full-canvas 3-column grand protagonist dossier:
+  * *Column 1*: Hero Identity, Title, Class designation, Origin tutelage, and a 140px heraldic
+    crest bounding box.
+  * *Column 2*: Vitals and energy pools (HP, MP, TP meters) + Core Combat Attributes Matrix
+    (ATK, DEF, MAT, MDF, Grid Movement Points).
+  * *Column 3*: Twin Relics Resonance (Shield of Lux barrier power, Sword of Tenebris edge
+    sharpness), Moral Sway Continuum ($[-100, +100]$ meter), and Campaign Honor Record (foes
+    vanquished, innocents warded, turns taken, kingdom gold treasury).
+* **Controls**: Hotkey `2` or `i` (Inspect).
+
+### Screen 3: 32-Slot Inventory Bag & Relics (`GUI_SCREEN_INVENTORY`)
+* **Presentation**: An interactive 32-slot inventory grid (4 rows of 8 cells) with golden border
+  highlights for filled slots, slot counters, and gold purse telemetry.
+* **Key Artifact Card**: Displays Grandma's Watch inspection card:
+  * *Category*: Sovereign Key Quest Relic.
+  * *Origin*: Handed down by grandmother in Dio Village.
+  * *Canon*: Conceals the resonance-calibrated Dream Compass.
+  * *Power*: Pierces the planar illusion of the High Throne.
+* **Controls**: Hotkey `3` or `u` (Use/Bag).
+
+### Screen 4: Provincial Realm Topology Map (`GUI_SCREEN_WORLD_MAP`)
+* **Presentation**: Full-canvas cartographic map of Sacyra and Libira showing trade roads and the
+  six canonical provincial nodes:
+  1. *The Dreamscape* (Astral Nexus)
+  2. *Dio Village* (Founding Settlement)
+  3. *Whispering Woods* (Frontier Wilds)
+  4. *Sacyra Marches* (Border Ramparts)
+  5. *The Royal Capital* (High Citadel & Planar Breach)
+  6. *Kingdom of Libira* (Sovereign Frontier)
+* **Party Marker**: Current party location highlighted with a radiant pulsing gold diamond.
+* **Controls**: Hotkey `4` or `o` (Overworld).
+
+### Screen 5: Chronicle Lore Codex (`GUI_SCREEN_CHRONICLE`)
+* **Presentation**: Full-canvas historical deed codex and lore ledger rendered in 20px
+  `MedievalSharp` calligraphic typography, scrolling through past tactical events, dialogues,
+  and realm chronicle entries.
+* **Controls**: Hotkey `5` or `c` (Chronicle).
+
+## 4. Architectural Review & State of the Engine (v1.4.0)
+
+As we prepare for the `v0.1.0` consolidation milestone, we conducted a comprehensive review
+evaluating current strengths, outstanding gaps, and architectural debt:
+
+### What Is Going Well (Core Strengths)
+1. **Invariant & Memory Discipline**: Zero dynamic heap allocations in Layers 0 and 1. Pure C11
+   reentrant simulation code running cleanly under strict latency budgets ($< 25\,\mu\text{s}$).
+2. **Automated Verification**: 19/19 passing CTest verification targets (< 0.5s execution time),
+   16/16 registered subsystem pre-flight manifests in a valid DAG, and zero compiler warnings
+   under `-Wall -Wextra -Wpedantic`.
+3. **Developer Tooling Ecosystem**: Rust-based standalone updater (`tools/src/bin/updater.rs`),
+   multi-mode interactive launcher (`tools/src/bin/launcher.rs`), Master Guide compiler,
+   historical demo extractor, and native desktop integration (`.desktop`, custom 256px icon).
+4. **Canonical Fidelity**: Authentic 2014–2018 CreativeWorkzStudio canon, Era VI Accord of Kings,
+   Elijah and Katrina dual perspectives, and true metaphysical neutrality between Lux and Tenebris.
+
+### What Is Missing (Gaps to Address)
+1. **Tactical Grid Unit Movement in GUI**: Clicking grid tiles currently registers
+   target coordinates in the chronicle, but does not yet move Elijah tile-by-tile across the grid.
+2. **Dynamic Map Swapping in Presentation**: `maps.c` defines 8 canonical maps, but `gui_view2d.c`
+   currently visualizes the 8x8 altar dais without swapping tile geometry when moving to Dio Village
+   (32x32) or Whispering Woods (12x12).
+3. **Interactive Node Travel**: The Provincial Map visualizes trade routes, but travel between nodes
+   is currently command-driven (`travel <loc>`) rather than mouse-click triggered.
+4. **Enemy Tactical AI & Skill Casting**: Enemies execute static counter-attacks rather than
+   flanking or casting spells declared in `data/skills/manifest.json`.
+5. **Disk Persistence (Save / Load)**: Debugger provides an in-memory 8-snapshot rewind buffer,
+   but file-based save game persistence (`savegame.json`) is not yet implemented.
+6. **Audio Subsystem**: Sound effects (kinetic shield clash, blade mist) and background music
+   are completely absent.
+7. **Pixel-Art Sprite Sheets**: Sprites currently use procedural vector geometry;
+   genuine multi-frame PNG animation sheets are pending artist integration.
+
+### Consistency vs. Inconsistency Analysis (Technical Debt)
+1. **Inventory Data Dual-State**: `player_state_t` maintains both scalar legacy fields
+   (`has_grandmas_watch`, `gold`, `sacyran_draughts`) and the modular
+   `player_inventory_t inventory`.
+   *Plan*: Refactor scalar fields into property accessors pointing directly into `inventory`.
+2. **Map Scaler Coupling**: Layer 1 `map_scaler.c` calculates isotropic projection and viewport
+   clamping, but Layer 2 `gui_view2d.c` independently re-computes scaling heuristics.
+   *Plan*: Wire `map_scaler_compute_viewport()` directly into `gui_view2d.c`.
+3. **Declarative Skills vs. Engine Hardcoding**: `data/skills/manifest.json` defines dozens of
+   skills (`Rush`, `Flash Jump`, `Heavy Hit`), but `combat.c` hardcodes logic specifically for
+   `Lux Barrio`, `Cuttatio`, and `Duo-Loca`.
+   *Plan*: Implement `skills_loader.c` to parse the JSON grimoire into static engine tables.
+
+## 5. Verification Telemetry
+
+[source,text]
+----
+Test project /home/professorseanex/Tenebris and Lux/build
+      Start  1: cli_help_test                    Passed (0.00s)
+      Start  2: cli_version_test                 Passed (0.00s)
+      Start  3: subsystem_audit_test             Passed (0.02s)
+      Start  4: functional_cogs_test             Passed (0.01s)
+      Start  5: unit_math_test                   Passed (0.00s)
+      Start  6: unit_data_test                   Passed (0.01s)
+      Start  7: unit_time_test                   Passed (0.01s)
+      Start  8: unit_string_test                 Passed (0.00s)
+      Start  9: unit_log_test                    Passed (0.08s)
+      Start 10: unit_debug_test                  Passed (0.01s)
+      Start 11: unit_combat_test                 Passed (0.00s)
+      Start 12: unit_items_test                  Passed (0.01s)
+      Start 13: unit_world_test                  Passed (0.00s)
+      Start 14: unit_dispatch_test               Passed (0.01s)
+      Start 15: unit_gui_test                    Passed (0.01s)
+      Start 16: integrated_utils_test            Passed (0.01s)
+      Start 17: integrated_sim_test              Passed (0.01s)
+      Start 18: system_game_invariants_test      Passed (0.01s)
+      Start 19: system_gameplay_scenarios_test   Passed (0.03s)
+
+100% tests passed, 0 tests failed out of 19 (Total Test time = 0.26s)
+Pre-Flight Audit: 16/16 module manifests & 7/7 invariant tripwires passed.
+Compiler Diagnostics: Clean (-Wall -Wextra -Wpedantic, GCC/Clang C11).
+Column Discipline: 100% compliant with strict <= 80 characters limit.
+----
+
+## 6. Summary & Forward Stance
+
+With high-fantasy typography, responsive widescreen scaling, and the 5-screen navigation
+architecture operational and installed to the PC, the visual and architectural scaffolding of
+*Tenebris and Lux* is firmly grounded. In the upcoming session, we will tackle the alignment
+and cleanup of `v0.1.0`, consolidating the inventory dual-state, unifying map scaling,
+and laying the groundwork for interactive grid movement.
 
 
 ---
