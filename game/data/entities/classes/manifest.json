@@ -1,119 +1,179 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/classes/manifest.json",
+    "file": "game/data/entities/classes/manifest.json",
     "id": "data.classes.manifest",
-    "layer": "Data-Driven Subsystem: Classes",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Master manifest and index for all playable, NPC, advanced, and summon combat classes.",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Combat Classes, Growths & Summons Hierarchy Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/entities/classes/",
+      "basic_tier": "basic/ (warrior.json, mage.json, rogue.json)",
+      "upgraded_tier": "upgraded/ (priest.json)",
+      "advanced_tier": "advanced/ (hero.json, summoner.json)",
+      "npc_tier": "npc/ (guard.json)",
+      "summon_tier": "summon/ (wind_spirit.json, pixie.json, fire_chicken.json)"
+    },
+    "what_it_enables": [
+      "Base class definitions with primary stat affiliations",
+      "Stat growth curves from Lv 1 to Lv 99 across HP, MP, TP, and Hex-Attributes",
+      "Class promotion routes (Basic -> Upgraded -> Advanced)",
+      "Tactical battlefield summons and minion scaling"
+    ],
     "invariants": [
-      "All registered class files must exist and adhere to class schema v1",
+      "Zero dynamic heap allocation during class deserialization (ALLOC_ZERO_HEAP)",
       "Class IDs must be positive and globally unique within the class catalog",
-      "Stat curves must define bounded values across Lv 1 to Lv 99 without negative numbers"
+      "Stat curves must define bounded non-negative values across Lv 1-99",
+      "All registered class files must resolve to regular JSON assets"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.classes.v1",
-    "class_tiers": [
-      "basic",
-      "upgraded",
-      "advanced",
-      "npc",
-      "summon"
-    ]
-  },
-  "classes": [
-    {
-      "id": 1,
-      "key": "warrior",
-      "name": "Warrior",
-      "tier": "basic",
-      "role": "Frontline Martial Melee",
-      "primary_stat": "atk",
-      "file": "basic/warrior.json"
+  "block_2_opening": {
+    "pre_conditions": {
+      "hero_subsystem": "hero/sim_state.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
-    {
-      "id": 2,
-      "key": "mage",
-      "name": "Mage",
-      "tier": "basic",
-      "role": "Planar & Elemental Arcane Channeling",
-      "primary_stat": "mat",
-      "file": "basic/mage.json"
+    "static_declarations": {
+      "subsystem": "sim.entities.classes",
+      "schema_id": "tenlux.data.classes.v1",
+      "class_count": 10,
+      "class_tiers": [
+        "basic",
+        "upgraded",
+        "advanced",
+        "npc",
+        "summon"
+      ]
     },
-    {
-      "id": 3,
-      "key": "rogue",
-      "name": "Rogue",
-      "tier": "basic",
-      "role": "Critical Edge, Flanking & High Mobility",
-      "primary_stat": "agi",
-      "file": "basic/rogue.json"
-    },
-    {
-      "id": 4,
-      "key": "priest",
-      "name": "Priest",
-      "tier": "upgraded",
-      "role": "First Upgraded Class: Restorative Arts & Metaphysical Warding",
-      "primary_stat": "mdf",
-      "file": "upgraded/priest.json"
-    },
-    {
-      "id": 5,
-      "key": "hero",
-      "name": "Hero",
-      "tier": "advanced",
-      "role": "Dual Relic Harmonics & Sovereign Balanced Growth",
-      "primary_stat": "balanced",
-      "file": "advanced/hero.json"
-    },
-    {
-      "id": 6,
-      "key": "summoner",
-      "name": "Summoner",
-      "tier": "advanced",
-      "role": "Tactical Field Manipulation, Totems & Familiars",
-      "primary_stat": "mat",
-      "file": "advanced/summoner.json"
-    },
-    {
-      "id": 11,
-      "key": "guard",
-      "name": "Guard",
-      "tier": "npc",
-      "role": "Sacyran Royal Guard & Frontier Militia",
-      "primary_stat": "def",
-      "file": "npc/guard.json"
-    },
-    {
-      "id": 12,
-      "key": "wind_spirit",
-      "name": "Wind Spirit",
-      "tier": "summon",
-      "role": "Airborne Familiar & Kinetic Displacement",
-      "primary_stat": "mmp",
-      "file": "summon/wind_spirit.json"
-    },
-    {
-      "id": 13,
-      "key": "pixie",
-      "name": "Pixie",
-      "tier": "summon",
-      "role": "Regenerative Pulse Familiar",
-      "primary_stat": "mmp",
-      "file": "summon/pixie.json"
-    },
-    {
-      "id": 14,
-      "key": "fire_chicken",
-      "name": "Fire Chicken",
-      "tier": "summon",
-      "role": "Explosive Minion & Tactical Area Bomb",
-      "primary_stat": "hp",
-      "file": "summon/fire_chicken.json"
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
     }
-  ]
+  },
+  "block_3_body": {
+    "classes": [
+      {
+        "id": 1,
+        "key": "warrior",
+        "name": "Warrior",
+        "tier": "basic",
+        "role": "Frontline Martial Melee",
+        "primary_stat": "atk",
+        "file": "basic/warrior.json"
+      },
+      {
+        "id": 2,
+        "key": "mage",
+        "name": "Mage",
+        "tier": "basic",
+        "role": "Planar & Elemental Arcane Channeling",
+        "primary_stat": "mat",
+        "file": "basic/mage.json"
+      },
+      {
+        "id": 3,
+        "key": "rogue",
+        "name": "Rogue",
+        "tier": "basic",
+        "role": "Critical Edge, Flanking & High Mobility",
+        "primary_stat": "agi",
+        "file": "basic/rogue.json"
+      },
+      {
+        "id": 4,
+        "key": "priest",
+        "name": "Priest",
+        "tier": "upgraded",
+        "role": "Restorative Arts & Metaphysical Warding",
+        "primary_stat": "mdf",
+        "file": "upgraded/priest.json"
+      },
+      {
+        "id": 5,
+        "key": "hero",
+        "name": "Hero",
+        "tier": "advanced",
+        "role": "Dual Relic Harmonics & Sovereign Balanced Growth",
+        "primary_stat": "balanced",
+        "file": "advanced/hero.json"
+      },
+      {
+        "id": 6,
+        "key": "summoner",
+        "name": "Summoner",
+        "tier": "advanced",
+        "role": "Tactical Field Manipulation, Totems & Familiars",
+        "primary_stat": "mat",
+        "file": "advanced/summoner.json"
+      },
+      {
+        "id": 11,
+        "key": "guard",
+        "name": "Guard",
+        "tier": "npc",
+        "role": "Sacyran Royal Guard & Frontier Militia",
+        "primary_stat": "def",
+        "file": "npc/guard.json"
+      },
+      {
+        "id": 12,
+        "key": "wind_spirit",
+        "name": "Wind Spirit",
+        "tier": "summon",
+        "role": "Airborne Familiar & Kinetic Displacement",
+        "primary_stat": "mmp",
+        "file": "summon/wind_spirit.json"
+      },
+      {
+        "id": 13,
+        "key": "pixie",
+        "name": "Pixie",
+        "tier": "summon",
+        "role": "Regenerative Pulse Familiar",
+        "primary_stat": "mmp",
+        "file": "summon/pixie.json"
+      },
+      {
+        "id": 14,
+        "key": "fire_chicken",
+        "name": "Fire Chicken",
+        "tier": "summon",
+        "role": "Explosive Minion & Tactical Area Bomb",
+        "primary_stat": "hp",
+        "file": "summon/fire_chicken.json"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_CLASS_ID_UNIQUE",
+        "condition": "id > 0 && id is strictly unique in classes[]",
+        "action": "Halt preflight on collision or non-positive ID"
+      },
+      {
+        "id": "TRIPWIRE_VALID_TIER",
+        "condition": "tier in ['basic', 'upgraded', 'advanced', 'npc', 'summon']",
+        "action": "Reject unrecognized class progression tier"
+      }
+    ],
+    "metrics": {
+      "total_registered_classes": 10,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "../roster/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
+  }
 }

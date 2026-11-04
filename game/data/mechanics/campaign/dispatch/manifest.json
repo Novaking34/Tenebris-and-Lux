@@ -1,11 +1,95 @@
 {
-  "subsystem": "sim.dispatch",
-  "version": "1.0.0",
-  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-  "description": "Command dictionary, alias resolution table, and domain routing rules for the Master Dispatcher Orchestrator",
-  "data_files": [
-    "commands.json",
-    "aliases.json",
-    "routes.json"
-  ]
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/mechanics/campaign/dispatch/manifest.json",
+    "id": "data.dispatch.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Command Dispatcher, Alias Resolution & Route Resolution Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/mechanics/campaign/dispatch/",
+      "commands_catalog": "commands.json",
+      "aliases_catalog": "aliases.json",
+      "routes_catalog": "routes.json"
+    },
+    "what_it_enables": [
+      "Canonical command vocabulary for CLI and GUI dispatcher routing",
+      "Alias resolution table (e.g. 'def' -> 'defend', 'st' -> 'strike')",
+      "Domain routing rules across Combat, World, Inventory, and System",
+      "Headless simulation deterministic execution parity"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocation during command dispatch (ALLOC_ZERO_HEAP)",
+      "All aliases must resolve to defined canonical command identifiers",
+      "Domain identifiers strictly bounded within known dispatcher strata",
+      "Subsystem key must equal 'sim.dispatch' for pre-flight verification"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "dispatch_subsystem": "dispatch/dispatcher.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "sim.dispatch",
+      "schema_id": "tenlux.data.dispatch.v1",
+      "catalog_files_count": 3
+    },
+    "generic_helper_contracts": {
+      "manifest_verifier": "dispatch_loader_verify_manifest",
+      "command_verifier": "dispatch_loader_verify_commands",
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "data_files": [
+      {
+        "module": "commands",
+        "file": "commands.json",
+        "description": "Command dictionary and domain routing assignments"
+      },
+      {
+        "module": "aliases",
+        "file": "aliases.json",
+        "description": "Alias lookup table resolving shorthands to canonical commands"
+      },
+      {
+        "module": "routes",
+        "file": "routes.json",
+        "description": "Domain router dispatch targets and handler mappings"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_DISPATCH_MANIFEST",
+        "condition": "subsystem == 'sim.dispatch'",
+        "action": "Fatal halt if dispatch manifest subsystem key mismatch"
+      },
+      {
+        "id": "TRIPWIRE_COMMANDS_LOADED",
+        "condition": "commands catalog resolves cleanly",
+        "action": "Halt preflight if command dictionary is corrupt"
+      }
+    ],
+    "metrics": {
+      "registered_data_files": 3,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_load": "dispatch_loader_verify_manifest",
+      "audit_hook": "dispatch_loader_preflight"
+    }
+  }
 }

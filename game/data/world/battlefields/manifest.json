@@ -1,0 +1,111 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/world/battlefields/manifest.json",
+    "id": "data.world.battlefields.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Battlefields & Tactical Map Catalog Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/world/battlefields/",
+      "maps_catalog": "maps.json",
+      "map_types_schema": "map_types.json"
+    },
+    "what_it_enables": [
+      "Tactical battle grids for side-scroll/action-turn transition",
+      "Discrete Cartesian grid coordinate bounds (32x32 to 64x64 cells)",
+      "Spawn points, camera clamping rectangles, and inter-map portals",
+      "Elevation layers and deterministic line-of-sight evaluation"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocation during map loading (ALLOC_ZERO_HEAP)",
+      "Map dimensions strictly bounded to 64x64 maximum cells",
+      "Spawn points must reside within map boundary rectangles",
+      "Camera clamps must cover valid playable grid dimensions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "world_subsystem": "world/world_loader.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "sim.world.battlefields",
+      "schema_id": "tenlux.data.world.battlefields.v1",
+      "max_maps": 32,
+      "max_map_types": 8,
+      "max_grid_dimension": 64
+    },
+    "generic_helper_contracts": {
+      "map_resolver": "world_loader_verify_maps",
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "catalogs": [
+      {
+        "id": "maps",
+        "file": "maps.json",
+        "description": "Specific maps across settlement exteriors, interiors, and tactical grids",
+        "count": 6,
+        "primary_entries": [
+          "dio_village_exterior",
+          "royal_capital_plaza",
+          "frontier_ruins_exterior",
+          "dreamscape_nexus_interior",
+          "whispering_woods_clearing",
+          "sacyra_throne_room"
+        ]
+      },
+      {
+        "id": "map_types",
+        "file": "map_types.json",
+        "description": "Taxonomy of topological map structures and coordinate systems",
+        "count": 4,
+        "types": [
+          "overworld",
+          "tactical_grid",
+          "settlement_exterior",
+          "interior_chamber"
+        ]
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_MAP_BOUNDS",
+        "condition": "width <= 64 && height <= 64",
+        "action": "Clamp to max grid bounds; flag audit error if corrupted"
+      },
+      {
+        "id": "TRIPWIRE_SPAWN_VALIDITY",
+        "condition": "spawn_x < width && spawn_y < height",
+        "action": "Fallback to (0,0) center anchor if spawn point invalid"
+      }
+    ],
+    "metrics": {
+      "total_registered_maps": 6,
+      "total_registered_types": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "../geography/manifest.json",
+        "../terrains/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "world_loader_verify_maps",
+      "audit_hook": "world_loader_preflight"
+    }
+  }
+}

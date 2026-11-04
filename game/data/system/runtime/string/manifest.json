@@ -1,39 +1,66 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/string/manifest.json",
-    "id": "data.string.manifest",
-    "layer": "Layer 0 Data / Catalog",
-    "version": "1.0.0",
-    "date": "2026-11-02",
+    "file": "game/data/system/runtime/string/manifest.json",
+    "id": "data.system.string.manifest",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Manifest and menu for all lexical, buffer sizing, and command token profiles.",
+    "role": "String Subsystem Manifest indexing lexical buffers & token lexicon profiles.",
+    "where_the_data_lives": {
+      "topology": "System Runtime String Buffers",
+      "default_profile": "game/data/system/runtime/string/default.json"
+    },
+    "what_it_enables": [
+      "Strict memory bounds preventing buffer overruns across text formatting",
+      "Action verb token dictionaries (attack, defend, move, stance, item)",
+      "Zero-heap path joining and directory extraction utilities"
+    ],
     "invariants": [
-      "Every registered profile file must exist in data/string/",
-      "Profiles must declare unique IDs",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+      "Zero dynamic heap allocation (ALLOC_ZERO_HEAP)",
+      "Strict conformance to OmniCode 5-Block Architecture"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.string_menu.v1",
-    "target_subsystem": "core.util.string"
-  },
-  "active_profile": "default",
-  "profiles": [
-    {
-      "id": "default",
-      "display_name": "Standard Continental Lexical Profile",
-      "file": "default.json",
-      "description": "Buffer limits, stance tokens, and canonical action verb dictionaries."
+  "block_2_opening": {
+    "pre_conditions": {
+      "string_utils": "core/string_utils.h inclusion"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.string_menu.v1",
+      "target_subsystem": "core.util.string"
+    },
+    "generic_helper_contracts": {
+      "string_loader": "string_load_config_from_file"
     }
-  ],
-  "_audit": {
-    "profile_count": 1,
-    "active_valid": true
   },
-  "_navigation": {
-    "parent_menu": "../manifest.json",
-    "current_directory": "data/string"
+  "block_3_body": {
+    "active_profile": "default",
+    "profiles": [
+      {
+        "id": "default",
+        "display_name": "Standard Continental Lexical Profile",
+        "file": "default.json",
+        "description": "Buffer limits, stance tokens, and canonical action verb dictionaries."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "profile_count": 1,
+      "active_valid": true
+    },
+    "verification_tripwires": [
+      { "name": "BUFFER_BOUNDS", "rule": "max_path_length > 0", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "system/runtime/string"
+    }
   }
 }

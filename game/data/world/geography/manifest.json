@@ -1,0 +1,96 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/world/geography/manifest.json",
+    "id": "data.world.geography.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Geography & Overworld Spatial Nodes Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/world/geography/",
+      "realms_catalog": "realms.json"
+    },
+    "what_it_enables": [
+      "Provincial topology spanning Sacyra, Libira, and the Celestial Dreamscape",
+      "Macro-scale overworld node graph navigation and travel distance costs",
+      "Biomes, threat tier scaling, and tactical battlefield zoning",
+      "Nocturnal rift gating and compass-guided portal links"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocation during geography resolution (ALLOC_ZERO_HEAP)",
+      "All provincial nodes form a fully traversable connected graph",
+      "Threat tiers strictly bounded within [0, 5]",
+      "Travel vigor/TP costs strictly non-negative"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "world_subsystem": "world/world.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "sim.world.geography",
+      "schema_id": "tenlux.data.world.geography.v1",
+      "max_nodes": 64,
+      "max_provinces": 6
+    },
+    "generic_helper_contracts": {
+      "node_resolver": "world_get_province_name",
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "catalogs": [
+      {
+        "id": "realms",
+        "file": "realms.json",
+        "description": "Macro overworld spatial nodes, provincial edges, and travel friction",
+        "node_count": 6,
+        "nodes": [
+          {"id": 1, "code": "LOC_DIO_VILLAGE", "name": "Dio Village", "tier": 0},
+          {"id": 2, "code": "LOC_WHISPERING_WOODS", "name": "Whispering Woods", "tier": 1},
+          {"id": 3, "code": "LOC_SACYRA_MARCHES", "name": "Sacyra Marches", "tier": 2},
+          {"id": 4, "code": "LOC_ROYAL_CAPITAL", "name": "The Royal Capital", "tier": 3},
+          {"id": 5, "code": "LOC_LIBIRAN_FRONTIER", "name": "Libiran Frontier Ruins", "tier": 4},
+          {"id": 6, "code": "LOC_DREAMSCAPE_NEXUS", "name": "The Dreamscape Nexus", "tier": 5}
+        ]
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_THREAT_TIER",
+        "condition": "threat_tier >= 0 && threat_tier <= 5",
+        "action": "Clamp threat level to [0, 5]"
+      },
+      {
+        "id": "TRIPWIRE_TRAVEL_COST",
+        "condition": "base_vigor_cost >= 0",
+        "action": "Ensure non-negative travel cost"
+      }
+    ],
+    "metrics": {
+      "total_registered_nodes": 6,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "../battlefields/manifest.json",
+        "../terrains/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "world_loader_verify_manifest",
+      "audit_hook": "world_loader_preflight"
+    }
+  }
+}

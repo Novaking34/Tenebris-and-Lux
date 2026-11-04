@@ -1,175 +1,179 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/log/manifest.json",
-    "id": "data.log.manifest",
-    "layer": "Layer 0 Data / Configuration",
-    "version": "1.0.0",
-    "date": "2026-10-30",
+    "file": "game/data/system/diagnostics/telemetry/manifest.json",
+    "id": "data.system.telemetry.manifest",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Main menu manifest indexing selectable log configuration profiles ('settings').",
-    "invariants": [
-      "Every menu item must resolve to an existing, valid configuration data file within data/log/",
-      "The default_setting identifier must be an exact match to a registered menu item id",
-      "All configuration properties referenced must adhere to include/util/log/log.h contracts",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
-    ]
-  },
-  "_types": {
-    "schema_id": "tenlux.data.log_menu.v1",
-    "target_entity": "log_config_t",
-    "header_binding": "include/util/log/log.h",
-    "severity_levels": [
-      "FATAL",
-      "CRITICAL",
-      "ERROR",
-      "WARNING",
-      "INFO",
-      "DEBUG",
-      "TRACE"
+    "role": "Telemetry Subsystem Manifest indexing selectable log settings profiles.",
+    "where_the_data_lives": {
+      "topology": "System Diagnostics Telemetry",
+      "profiles_directory": "game/data/system/diagnostics/telemetry/"
+    },
+    "what_it_enables": [
+      "Static ring buffer log capture in .bss without dynamic allocation",
+      "Categorized file logging across SYSTEM, LOG, EVENT, MESSAGE, CHARACTER",
+      "Log file size rotation and automated archive timestamping",
+      "Dynamic hot-swapping between developer trace mode and quiet CI"
     ],
-    "categories": [
-      "SYSTEM",
-      "LOG",
-      "EVENT",
-      "MESSAGE",
-      "CHARACTER"
+    "invariants": [
+      "Every menu item resolves to a valid profile within telemetry/",
+      "Strict zero-heap memory allocation (ALLOC_ZERO_HEAP)",
+      "Strict conformance to OmniCode 5-Block Architecture"
     ]
   },
-  "menu": {
-    "menu_id": "menu_log_configurations",
-    "title": "Log Configuration & Telemetry Menu",
-    "subtitle": "Select active engine logging profile and diagnostic settings",
-    "default_setting": "development",
-    "active_setting": "development",
-    "settings": [
-      {
-        "index": 1,
-        "id": "default",
-        "label": "Default Baseline Profile",
-        "file": "default.json",
-        "description": "Standard out-of-the-box configuration matching the Layer 0 log_get_default_config() baseline.",
-        "hotkey": "1",
-        "is_default": false,
-        "recommended_for": ["Baseline Testing", "Standard Verification Suites"],
-        "attributes": {
-          "min_severity": "TRACE",
-          "echo_to_console": true,
-          "use_colors": true,
-          "save_by_category": true,
-          "max_file_size_mb": 1,
-          "max_rotated_files": 25
-        }
-      },
-      {
-        "index": 2,
-        "id": "development",
-        "label": "Development & Interactive Debugging",
-        "file": "development.json",
-        "description": "High-verbosity developer profile with real-time ANSI color console echoing, categorized file writes, and detailed turn traces.",
-        "hotkey": "2",
-        "is_default": true,
-        "recommended_for": ["Active Feature Development", "Subsystem Diagnostics", "Interactive Gameplay"],
-        "attributes": {
-          "min_severity": "TRACE",
-          "echo_to_console": true,
-          "use_colors": true,
-          "save_by_category": true,
-          "max_file_size_mb": 2,
-          "max_rotated_files": 25
-        }
-      },
-      {
-        "index": 3,
-        "id": "production",
-        "label": "Production / Shipping Release",
-        "file": "production.json",
-        "description": "Optimized release profile suppressing low-level debug spam, silencing terminal console echo, and enforcing clean 5 MB rotated archives.",
-        "hotkey": "3",
-        "is_default": false,
-        "recommended_for": ["End-User Releases", "Production Distribution", "Clean Presentation Mode"],
-        "attributes": {
-          "min_severity": "INFO",
-          "echo_to_console": false,
-          "use_colors": false,
-          "save_by_category": true,
-          "max_file_size_mb": 5,
-          "max_rotated_files": 10
-        }
-      },
-      {
-        "index": 4,
-        "id": "forensic_telemetry",
-        "label": "Forensic Telemetry & Flight Recorder",
-        "file": "forensic_telemetry.json",
-        "description": "Exhaustive instrumentation mode recording monotonic clock drift, moral sway gradient percentages, and 64-slot circular ring buffer dumps.",
-        "hotkey": "4",
-        "is_default": false,
-        "recommended_for": ["Physics Drift Audits", "Race Condition Investigation", "Pre-Flight Diagnostics"],
-        "attributes": {
-          "min_severity": "TRACE",
-          "echo_to_console": true,
-          "use_colors": true,
-          "save_by_category": true,
-          "max_file_size_mb": 10,
-          "max_rotated_files": 25
-        }
-      },
-      {
-        "index": 5,
-        "id": "quiet",
-        "label": "Quiet Headless CI & Benchmark",
-        "file": "quiet.json",
-        "description": "Minimal overhead (< 50µs tick target) for automated CTest runs. Suppresses console echoing and captures only WARNING, ERROR, and FATAL events.",
-        "hotkey": "5",
-        "is_default": false,
-        "recommended_for": ["Automated CI/CD", "Headless Simulation Benchmarks", "High-Speed Batch Invariants"],
-        "attributes": {
-          "min_severity": "WARNING",
-          "echo_to_console": false,
-          "use_colors": false,
-          "save_by_category": false,
-          "max_file_size_mb": 1,
-          "max_rotated_files": 5
-        }
-      },
-      {
-        "index": 6,
-        "id": "combat_focus",
-        "label": "Combat & Relic Stance Telemetry Focus",
-        "file": "combat_focus.json",
-        "description": "Specialized profile routing combat stance shifts (Warding, Striking, Equilibrium) and skill calculations (Lux Barrio, Cuttatio) to priority streams.",
-        "hotkey": "6",
-        "is_default": false,
-        "recommended_for": ["Combat Balancing", "Stance State Machine Testing", "Relic Resonance Auditing"],
-        "attributes": {
-          "min_severity": "DEBUG",
-          "echo_to_console": true,
-          "use_colors": true,
-          "save_by_category": true,
-          "max_file_size_mb": 2,
-          "max_rotated_files": 20
-        }
-      }
-    ]
+  "block_2_opening": {
+    "pre_conditions": {
+      "log_subsystem": "log/log.h inclusion",
+      "ring_buffer_init": "Ring buffer initialized during log_init"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.log_menu.v1",
+      "target_entity": "log_config_t",
+      "severity_levels": [
+        "FATAL", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"
+      ],
+      "categories": [
+        "SYSTEM", "LOG", "EVENT", "MESSAGE", "CHARACTER"
+      ]
+    },
+    "generic_helper_contracts": {
+      "logger": "log_write_entry",
+      "profile_loader": "log_load_config_profile"
+    }
   },
-  "_audit": {
-    "total_settings_count": 6,
-    "max_file_size_bytes_limit": 52428800,
-    "max_rotated_files_limit": 50,
-    "ring_buffer_capacity": 64,
-    "max_message_len": 256,
-    "max_entity_len": 16,
-    "invariants_verified": [
-      "No duplicate setting identifiers",
-      "No duplicate hotkey bindings",
-      "All referenced target files exist in the same directory"
-    ]
+  "block_3_body": {
+    "menu": {
+      "menu_id": "menu_log_configurations",
+      "title": "Log Configuration & Telemetry Menu",
+      "subtitle": "Select active engine logging profile and diagnostic settings",
+      "default_setting": "development",
+      "active_setting": "development",
+      "settings": [
+        {
+          "index": 1,
+          "id": "default",
+          "label": "Default Baseline Profile",
+          "file": "default.json",
+          "description": "Standard baseline matching Layer 0 log_get_default_config().",
+          "hotkey": "1",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "TRACE",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 1,
+            "max_rotated_files": 25
+          }
+        },
+        {
+          "index": 2,
+          "id": "development",
+          "label": "Development & Interactive Debugging",
+          "file": "development.json",
+          "description": "High-verbosity developer profile with ANSI color console echoing.",
+          "hotkey": "2",
+          "is_default": true,
+          "attributes": {
+            "min_severity": "TRACE",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 2,
+            "max_rotated_files": 20
+          }
+        },
+        {
+          "index": 3,
+          "id": "production",
+          "label": "Production & Shipping Release",
+          "file": "production.json",
+          "description": "Silent high-performance profile capturing INFO+ events without console echo.",
+          "hotkey": "3",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "INFO",
+            "echo_to_console": false,
+            "use_colors": false,
+            "save_by_category": true,
+            "max_file_size_mb": 5,
+            "max_rotated_files": 10
+          }
+        },
+        {
+          "index": 4,
+          "id": "forensic_telemetry",
+          "label": "Forensic Flight Recorder",
+          "file": "forensic_telemetry.json",
+          "description": "Exhaustive forensic audit logging microsecond timestamps.",
+          "hotkey": "4",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "TRACE",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 10,
+            "max_rotated_files": 25
+          }
+        },
+        {
+          "index": 5,
+          "id": "quiet",
+          "label": "Quiet Automated CI Benchmarking",
+          "file": "quiet.json",
+          "description": "Minimal overhead profile for headless CTest suites.",
+          "hotkey": "5",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "WARNING",
+            "echo_to_console": false,
+            "use_colors": false,
+            "save_by_category": false,
+            "max_file_size_mb": 1,
+            "max_rotated_files": 10
+          }
+        },
+        {
+          "index": 6,
+          "id": "combat_focus",
+          "label": "Combat & Stance Tuning Focus",
+          "file": "combat_focus.json",
+          "description": "Specialized trace filter isolating stance transitions and formulas.",
+          "hotkey": "6",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "DEBUG",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 2,
+            "max_rotated_files": 15
+          }
+        }
+      ]
+    }
   },
-  "_navigation": {
-    "parent_menu": "../manifest.json",
-    "on_select_action": "apply_log_setting",
-    "fallback_setting_file": "default.json"
+  "block_4_audit": {
+    "audit_metrics": {
+      "setting_count": 6,
+      "max_rotated_files_limit": 25,
+      "ring_buffer_entries": 64
+    },
+    "verification_tripwires": [
+      { "name": "PROFILE_EXISTENCE", "rule": "All 6 profile files exist on disk", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "system/diagnostics/telemetry"
+    }
   }
 }

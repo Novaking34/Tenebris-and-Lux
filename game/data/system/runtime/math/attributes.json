@@ -1,0 +1,152 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/system/runtime/math/attributes.json",
+    "id": "data.system.math.attributes",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Canonical attributes, vitals, scaling curves & tactical math model.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Mathematics",
+      "path": "game/data/system/runtime/math/attributes.json"
+    },
+    "what_it_enables": [
+      "Tri-Vital Resource Model (HP: Health, MP: Magic, TP: Tactical Points)",
+      "TP-to-Grid Movement Economy & Overworld-to-Battle advantage translation",
+      "Hex-Attribute System (ATK, DEF, MATK, MDEF, AGI, LUK) with lore names",
+      "Deterministic damage calculation and bounded continuum clamping"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in math evaluations (ALLOC_ZERO_HEAP)",
+      "Vitals and attributes strictly non-negative integers [0, MAX_VAL]",
+      "TP movement step cost strictly >= 1.0 (no zero-cost traversal)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "math_engine": "core/math_utils.h",
+      "bounded_clamping": "math_clamp_int, math_saturate_add"
+    },
+    "static_declarations": {
+      "vitals_list": [ "HP", "MP", "TP" ],
+      "primary_attributes": [ "ATK", "DEF", "MATK", "MDEF", "AGI", "LUK" ],
+      "relic_continua": [ "shield_power", "sword_edge", "moral_sway" ]
+    },
+    "generic_helper_contracts": {
+      "safe_div": "math_safe_div_int",
+      "clamp": "math_clamp_int"
+    }
+  },
+  "block_3_body": {
+    "vitals": {
+      "HP": {
+        "canonical_name": "Health Points",
+        "lore_name": "Vitality",
+        "abbreviation": "HP",
+        "description": "Biological and planar life force. Reaching 0 results in incapacitation or defeat.",
+        "base_scaling": "Base Vitals Curve from Class Tier",
+        "combat_role": "Primary survival pool for physical and magical damage absorption."
+      },
+      "MP": {
+        "canonical_name": "Magic Points",
+        "lore_name": "Ethereal Reservoir",
+        "abbreviation": "MP",
+        "description": "Metaphysical mana pool powering incantations, barrier domes, and spirit summons.",
+        "base_scaling": "Scaled by MATK and Class Growth",
+        "combat_role": "Resource currency for Mage spells, Priest wards, and relic resonant invocations."
+      },
+      "TP": {
+        "canonical_name": "Tactical Points",
+        "lore_name": "Strategic Initiative",
+        "abbreviation": "TP",
+        "description": "Tactical mobility currency spent to move on the grid and execute overworld actions.",
+        "base_scaling": "Base 100 TP pool, restored turn-by-turn based on AGI and stance",
+        "combat_role": "Governs grid movement, tandem martial arts (Duo-Loca), and overworld ambush advantages.",
+        "tactical_grid_rules": {
+          "base_move_cost_per_tile": 1,
+          "friction_multiplier": "Cost = base_cost * terrain_friction",
+          "overworld_ambush_cost": 25,
+          "scouting_ping_cost": 15,
+          "overworld_to_battle_effects": {
+            "surplus_tp_threshold": 50,
+            "surplus_tp_effect": "State 70 (Tactical Ambush): +25% ATK, initiative priority",
+            "exhausted_tp_threshold": 0,
+            "exhausted_tp_effect": "State 75 (Tactical Exhaustion): -25% AGI, -15% DEF"
+          }
+        }
+      }
+    },
+    "attributes": {
+      "ATK": {
+        "canonical_name": "Physical Attack",
+        "lore_name": "Might",
+        "abbreviation": "ATK",
+        "description": "Kinetic striking power and physical weapon lethality.",
+        "combat_formula": "Raw Physical Damage = (ATK * 2) - DEF",
+        "scales_with": "Weapons, Warrior classes, Striking Stance (+20%)"
+      },
+      "DEF": {
+        "canonical_name": "Physical Defense",
+        "lore_name": "Bastion Poise",
+        "abbreviation": "DEF",
+        "description": "Physical resilience against blades, bludgeons, and kinetic impacts.",
+        "combat_formula": "Damage Mitigation = DEF / 2, minimum 1 damage",
+        "scales_with": "Armor, Shield of Lux, Warding Stance (+25% mitigation)"
+      },
+      "MATK": {
+        "canonical_name": "Magic Attack",
+        "lore_name": "Resonance",
+        "abbreviation": "MATK",
+        "description": "Metaphysical potency governing spells, catalysts, and healing arts.",
+        "combat_formula": "Raw Magic Damage = (MATK * 2.5) - MDF",
+        "scales_with": "Tomes, Catalysts, Mage classes, Equilibrium (+15%)"
+      },
+      "MDEF": {
+        "canonical_name": "Magic Defense",
+        "lore_name": "Astral Warding",
+        "abbreviation": "MDEF",
+        "description": "Resistance against arcane corruption, planar decay, and elemental blasts.",
+        "combat_formula": "Magic Mitigation = MDF / 2, status ailment resistance",
+        "scales_with": "Talismans, Robes, Priest classes, Lux Barrio (+25%)"
+      },
+      "AGI": {
+        "canonical_name": "Agility",
+        "lore_name": "Celerity",
+        "abbreviation": "AGI",
+        "description": "Speed, turn order initiative, physical evasion, and action velocity.",
+        "combat_formula": "Initiative Score = AGI + rand(1, 10); Evasion Rate % = AGI / 4",
+        "scales_with": "Light Armor, Rogue classes, Light Steps state"
+      },
+      "LUK": {
+        "canonical_name": "Luck",
+        "lore_name": "Fortune",
+        "abbreviation": "LUK",
+        "description": "Cosmic serendipity, critical strike probability, and rare item discovery.",
+        "combat_formula": "Critical Strike Chance % = LUK / 5; Drop Bonus % = LUK / 10",
+        "scales_with": "Relic resonance balance, Accessories, Observer Bearer"
+      }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "vitals_count": 3,
+      "primary_attributes_count": 6,
+      "relic_continua_count": 3
+    },
+    "verification_tripwires": [
+      { "name": "VITAL_NON_NEGATIVE", "rule": "HP, MP, TP >= 0", "status": "VERIFIED_PASS" },
+      { "name": "MIN_STEP_COST", "rule": "Step cost >= 1", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "current_directory": "system/runtime/math"
+    }
+  }
+}

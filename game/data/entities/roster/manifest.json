@@ -1,90 +1,151 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/actors/manifest.json",
+    "file": "game/data/entities/roster/manifest.json",
     "id": "data.actors.manifest",
-    "layer": "Data-Driven Subsystem: Actors",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Master catalog indexing playable protagonists, party companions, and adversaries.",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Catalog Indexing Playable Protagonists, Companions, and Adversaries",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/entities/roster/",
+      "protagonists": "protagonists/ (elijah.json, katrina.json, observer.json)",
+      "companions": "companions/ (sebastien.json, angela.json)",
+      "enemies": "enemies/ (dream_eater.json, forest_crawler.json)"
+    },
+    "what_it_enables": [
+      "Playable hero initialization with starting vitals (HP, MP, TP) and attributes",
+      "Relic affinity binding: Shield of Lux (Elijah), Sword of Tenebris (Katrina), Equilibrium (Observer)",
+      "Party roster management and recruitment progression",
+      "Tactical battle enemy encounters and combat AI behaviors"
+    ],
     "invariants": [
+      "Zero dynamic heap allocation during actor deserialization (ALLOC_ZERO_HEAP)",
       "Actor IDs must be unique across the actor registry",
       "Protagonists must bind to valid class IDs from the class catalog",
       "Custom Observer bearer permits runtime name, gender, and starting class selection"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.actors.v1",
-    "actor_categories": [
-      "protagonist",
-      "companion",
-      "enemy"
+  "block_2_opening": {
+    "pre_conditions": {
+      "hero_subsystem": "hero/sim_state.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "sim.entities.roster",
+      "schema_id": "tenlux.data.actors.v1",
+      "actor_count": 7,
+      "actor_categories": [
+        "protagonist",
+        "companion",
+        "enemy"
+      ]
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "actors": [
+      {
+        "id": 1,
+        "key": "elijah",
+        "name": "Elijah Ro-enheart",
+        "category": "protagonist",
+        "class_id": 1,
+        "relic": "lux",
+        "file": "protagonists/elijah.json"
+      },
+      {
+        "id": 2,
+        "key": "katrina",
+        "name": "Lady Katrina Jaren",
+        "category": "protagonist",
+        "class_id": 3,
+        "relic": "tenebris",
+        "file": "protagonists/katrina.json"
+      },
+      {
+        "id": 3,
+        "key": "observer",
+        "name": "<Observer>",
+        "category": "protagonist",
+        "class_id": 0,
+        "relic": "equilibrium",
+        "file": "protagonists/observer.json"
+      },
+      {
+        "id": 4,
+        "key": "sebastien",
+        "name": "Sebastien",
+        "category": "companion",
+        "class_id": 3,
+        "relic": "none",
+        "file": "companions/sebastien.json"
+      },
+      {
+        "id": 5,
+        "key": "angela",
+        "name": "Angela",
+        "category": "companion",
+        "class_id": 2,
+        "relic": "none",
+        "file": "companions/angela.json"
+      },
+      {
+        "id": 101,
+        "key": "dream_eater",
+        "name": "Dream Eater",
+        "category": "enemy",
+        "class_id": 0,
+        "relic": "none",
+        "file": "enemies/dream_eater.json"
+      },
+      {
+        "id": 102,
+        "key": "forest_crawler",
+        "name": "Forest Crawler",
+        "category": "enemy",
+        "class_id": 0,
+        "relic": "none",
+        "file": "enemies/forest_crawler.json"
+      }
     ]
   },
-  "actors": [
-    {
-      "id": 1,
-      "key": "elijah",
-      "name": "Elijah Ro-enheart",
-      "category": "protagonist",
-      "class_id": 1,
-      "relic": "lux",
-      "file": "protagonists/elijah.json"
-    },
-    {
-      "id": 2,
-      "key": "katrina",
-      "name": "Lady Katrina Jaren",
-      "category": "protagonist",
-      "class_id": 3,
-      "relic": "tenebris",
-      "file": "protagonists/katrina.json"
-    },
-    {
-      "id": 3,
-      "key": "observer",
-      "name": "<Observer>",
-      "category": "protagonist",
-      "class_id": 0,
-      "relic": "equilibrium",
-      "file": "protagonists/observer.json"
-    },
-    {
-      "id": 4,
-      "key": "sebastien",
-      "name": "Sebastien",
-      "category": "companion",
-      "class_id": 3,
-      "relic": "none",
-      "file": "companions/sebastien.json"
-    },
-    {
-      "id": 5,
-      "key": "angela",
-      "name": "Angela",
-      "category": "companion",
-      "class_id": 2,
-      "relic": "none",
-      "file": "companions/angela.json"
-    },
-    {
-      "id": 101,
-      "key": "dream_eater",
-      "name": "Dream Eater",
-      "category": "enemy",
-      "class_id": 0,
-      "relic": "none",
-      "file": "enemies/dream_eater.json"
-    },
-    {
-      "id": 102,
-      "key": "forest_crawler",
-      "name": "Forest Crawler",
-      "category": "enemy",
-      "class_id": 0,
-      "relic": "none",
-      "file": "enemies/forest_crawler.json"
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_UNIQUE_ACTOR_ID",
+        "condition": "id > 0 && id is strictly unique in actors[]",
+        "action": "Halt preflight on collision or zero/negative ID"
+      },
+      {
+        "id": "TRIPWIRE_VALID_CATEGORY",
+        "condition": "category in ['protagonist', 'companion', 'enemy']",
+        "action": "Reject unclassified actor record"
+      }
+    ],
+    "metrics": {
+      "total_registered_actors": 7,
+      "protagonists": 3,
+      "companions": 2,
+      "enemies": 2,
+      "zero_heap_compliant": true
     }
-  ]
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "../classes/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
+  }
 }

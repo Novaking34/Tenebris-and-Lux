@@ -1,35 +1,93 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/textures/manifest.json",
+    "file": "game/data/presentation/visuals/manifest.json",
     "id": "data.textures.manifest",
     "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "2D texture atlas, sprite sheet, and animation metadata manifest."
-  },
-  "subsystem": {
-    "id": "textures",
-    "name": "2D Texture Atlases, Sprite Sheets & Animation Subsystem",
-    "stratum": "Layer 2: Presentation & Viewport",
-    "status": "active",
-    "catalog_files": [
-      "spritesheets.json",
-      "tilesets.json",
-      "animations.json"
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "2D Texture Atlases, Sprite Sheets, Tilesets & Animations Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/visuals/",
+      "spritesheets_catalog": "spritesheets.json",
+      "tilesets_catalog": "tilesets.json",
+      "animations_catalog": "animations.json",
+      "assets_catalog": "assets.json",
+      "palettes_subsystem": "palettes/manifest.json"
+    },
+    "what_it_enables": [
+      "2D sprite animations across 4 cardinal directions (S, W, E, N)",
+      "32x32 pixel baseline tile cells with power-of-two texture dimensions",
+      "Procedural vector fallback if external PNG texture assets are absent",
+      "Color palette LUT mappings across biomes and relic moral sway"
     ],
-    "sub_assemblies": [
-      "texture_atlas_loader",
-      "sprite_animation_clock",
-      "procedural_sprite_fallback"
-    ],
-    "axioms": [
-      "Tile cell standard: 32x32 pixels baseline with power-of-two texture dimensions",
-      "Procedural fallback guarantee: procedural vector generator renders if PNG missing",
+    "invariants": [
+      "Zero dynamic heap allocation during texture coordinate resolution (ALLOC_ZERO_HEAP)",
+      "Tile cell standard: strictly 32x32 pixels baseline",
       "Directional indexing standard: 0=South, 1=West, 2=East, 3=North",
-      "Zero allocations in animation stepping: fixed-size frame sequence buffers"
+      "Procedural vector generator fallback guaranteed if PNG assets missing"
     ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/gui.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "gui.textures",
+      "schema_id": "tenlux.data.textures.v1",
+      "base_tile_size": 32,
+      "directions_count": 4
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystem": {
+      "id": "textures",
+      "name": "2D Texture Atlases, Sprite Sheets & Animation Subsystem",
+      "stratum": "Layer 2: Presentation & Viewport",
+      "status": "active",
+      "catalog_files": [
+        "spritesheets.json",
+        "tilesets.json",
+        "animations.json",
+        "assets.json"
+      ],
+      "sub_assemblies": [
+        "texture_atlas_loader",
+        "sprite_animation_clock",
+        "procedural_sprite_fallback"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_TILE_SIZE",
+        "condition": "base_tile_size == 32",
+        "action": "Clamp tile size to canonical 32px baseline"
+      }
+    ],
+    "metrics": {
+      "registered_catalogs": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "subassemblies": [
+        "palettes/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
   }
 }
-

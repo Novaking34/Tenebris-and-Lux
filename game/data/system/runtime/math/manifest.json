@@ -1,39 +1,73 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/math/manifest.json",
-    "id": "data.math.manifest",
-    "layer": "Layer 0 Data / Catalog",
-    "version": "1.0.0",
-    "date": "2026-11-02",
+    "file": "game/data/system/runtime/math/manifest.json",
+    "id": "data.system.math.manifest",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Manifest and menu for all mathematical continuum and numerical profiles.",
+    "role": "Math Subsystem Manifest indexing continuum, bounds & attribute schemas.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Mathematics",
+      "default_profile": "game/data/system/runtime/math/default.json",
+      "attributes_spec": "game/data/system/runtime/math/attributes.json"
+    },
+    "what_it_enables": [
+      "Mathematical saturation, safe zero-divisor division, bounded clamping",
+      "Resonance boundaries [0, 100] and Moral Sway continuum [-100, +100]",
+      "Tri-Vital (HP, MP, TP) and Hex-Attribute (ATK, DEF, MATK, MDEF, AGI, LUK) models"
+    ],
     "invariants": [
-      "Every registered profile file must exist in data/math/",
-      "Profiles must declare unique IDs",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+      "Zero dynamic heap allocation (ALLOC_ZERO_HEAP)",
+      "Strict conformance to OmniCode 5-Block Architecture"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.math_menu.v1",
-    "target_subsystem": "core.util.math"
-  },
-  "active_profile": "default",
-  "profiles": [
-    {
-      "id": "default",
-      "display_name": "Standard Continental Continuum Baseline",
-      "file": "default.json",
-      "description": "Canonical limits: Resonance [0, 100], Moral Sway [-100, +100], Screen 800x600."
+  "block_2_opening": {
+    "pre_conditions": {
+      "math_utils": "core/math_utils.h inclusion"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.math_menu.v1",
+      "target_subsystem": "core.util.math"
+    },
+    "generic_helper_contracts": {
+      "loader": "math_load_config_from_file"
     }
-  ],
-  "_audit": {
-    "profile_count": 1,
-    "active_valid": true
   },
-  "_navigation": {
-    "parent_menu": "../manifest.json",
-    "current_directory": "data/math"
+  "block_3_body": {
+    "active_profile": "default",
+    "profiles": [
+      {
+        "id": "default",
+        "display_name": "Standard Continental Continuum Baseline",
+        "file": "default.json",
+        "description": "Canonical limits: Resonance [0, 100], Moral Sway [-100, +100], Screen 640x360."
+      },
+      {
+        "id": "attributes",
+        "display_name": "Attributes, Vitals & Tactical Math Specification",
+        "file": "attributes.json",
+        "description": "HP, MP, TP, ATK, DEF, MATK, MDEF, AGI, LUK base stats and TP movement formulas."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "profile_count": 2,
+      "active_valid": true
+    },
+    "verification_tripwires": [
+      { "name": "BOUNDS_PASS", "rule": "Resonance max == 100, sway max == 100", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "system/runtime/math"
+    }
   }
 }

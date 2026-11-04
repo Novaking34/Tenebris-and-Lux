@@ -1,40 +1,105 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/presentation/manifest.json",
-    "id": "data.presentation.root",
+    "file": "game/data/presentation/manifest.json",
+    "id": "data.presentation.manifest",
     "layer": "Layer 2: Presentation & Viewports",
-    "version": "1.0.0",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
     "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Presentation Domain Manifest orchestrating UI, audio & visuals.",
-    "invariants": [
+    "role": "Presentation Domain Master Manifest orchestrating UI, audio & visuals",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/",
+      "ui_subsystem": "ui/manifest.json",
+      "audio_subsystem": "audio/manifest.json",
+      "visuals_subsystem": "visuals/manifest.json"
+    },
+    "what_it_enables": [
       "Decoupled sensory output: pure presentation decoupled from sim state",
       "640x360 target resolution baseline with letterbox/pillarbox scalers",
-      "Multi-channel audio mixing buses and TrueType typographic scaling"
+      "Multi-channel audio mixing buses and TrueType typographic scaling",
+      "2D texture atlases, biome palettes, sprite sheets, and animations"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in presentation setup (ALLOC_ZERO_HEAP)",
+      "Strict presentation decoupled from simulation: UI never mutates sim state directly",
+      "Dual-frontend determinism: CLI and native X11 GUI consume identical commands",
+      "Graceful headless degradation in absence of active DISPLAY"
     ]
   },
-  "domain": "presentation",
-  "title": "Desktop Viewport, Sensory Audio & Visual Themes",
-  "subsystems": [
-    {
-      "id": "ui",
-      "title": "Desktop HUD, Panel Layouts & TrueType Fonts",
-      "path": "ui/gui_manifest.json",
-      "category": "interface"
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/gui.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
-    {
-      "id": "audio",
-      "title": "Audio Channels, Synthesizer SFX & Orchestral BGM",
-      "path": "audio/manifest.json",
-      "category": "sound"
+    "static_declarations": {
+      "subsystem": "sim.presentation",
+      "schema_id": "tenlux.data.presentation.v1",
+      "total_subsystems": 3,
+      "target_width": 640,
+      "target_height": 360,
+      "aspect_ratio": "16:9"
     },
-    {
-      "id": "visuals",
-      "title": "2D Texture Atlases, Biome Palettes & Animations",
-      "path": "visuals/manifest.json",
-      "category": "graphics"
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
     }
-  ]
+  },
+  "block_3_body": {
+    "domain": "presentation",
+    "title": "Desktop Viewport, Sensory Audio & Visual Themes",
+    "subsystems": [
+      {
+        "id": "ui",
+        "title": "Desktop HUD, Panel Layouts & TrueType Fonts",
+        "manifest_path": "ui/manifest.json",
+        "category": "interface"
+      },
+      {
+        "id": "audio",
+        "title": "Audio Channels, Synthesizer SFX & Orchestral BGM",
+        "manifest_path": "audio/manifest.json",
+        "category": "sound"
+      },
+      {
+        "id": "visuals",
+        "title": "2D Texture Atlases, Biome Palettes & Animations",
+        "manifest_path": "visuals/manifest.json",
+        "category": "graphics"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_ASPECT_RATIO",
+        "condition": "target_width == 640 && target_height == 360",
+        "action": "Enforce 16:9 baseline letterbox/pillarbox scalers"
+      },
+      {
+        "id": "TRIPWIRE_HEADLESS_FALLBACK",
+        "condition": "DISPLAY environment variable null or unconnectable",
+        "action": "Degrade cleanly to terminal CLI frontend"
+      }
+    ],
+    "metrics": {
+      "total_registered_subsystems": 3,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "subsystem_menus": [
+        "ui/manifest.json",
+        "audio/manifest.json",
+        "visuals/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
+  }
 }

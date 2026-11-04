@@ -1,34 +1,98 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/entities/manifest.json",
-    "id": "data.entities.root",
+    "file": "game/data/entities/manifest.json",
+    "id": "data.entities.manifest",
     "layer": "Layer 1: Simulation Engine",
-    "version": "1.0.0",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
     "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Entities Domain Manifest orchestrating roster and combat classes.",
+    "role": "Entities Domain Master Manifest orchestrating character roster and combat classes",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/entities/",
+      "roster_subsystem": "roster/manifest.json",
+      "classes_subsystem": "classes/manifest.json"
+    },
+    "what_it_enables": [
+      "Playable protagonists: Elijah Ro-enheart, Lady Katrina Jaren, Custom Bearer",
+      "Party companions: Sebastien (Rogue Scout) and Angela (Mage Scholar)",
+      "Bestiary adversaries: Dream Eater, Forest Crawler, Usuru's Abyssal Thralls",
+      "Tiered progression hierarchy across Basic, Upgraded, Advanced, NPC, and Summons"
+    ],
     "invariants": [
-      "Zero dynamic heap allocation during entity deserialization",
+      "Zero dynamic heap allocation during entity loading (ALLOC_ZERO_HEAP)",
       "Canon character identity preserved (Elijah, Katrina, Casatti, Usuru)",
-      "Tiered progression hierarchy across basic, upgraded, and advanced tiers"
+      "Protagonists must bind to valid class IDs from the class catalog",
+      "Stat curves bounded across Lv 1 to Lv 99 without negative numbers"
     ]
   },
-  "domain": "entities",
-  "title": "Character Roster & Tactical Classes",
-  "subsystems": [
-    {
-      "id": "roster",
-      "title": "Protagonists, Companions & Bestiary Roster",
-      "path": "roster/manifest.json",
-      "category": "actors"
+  "block_2_opening": {
+    "pre_conditions": {
+      "hero_subsystem": "hero/sim_state.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
-    {
-      "id": "classes",
-      "title": "Combat Classes, Growths & Summons Hierarchy",
-      "path": "classes/manifest.json",
-      "category": "classes"
+    "static_declarations": {
+      "subsystem": "sim.entities",
+      "schema_id": "tenlux.data.entities.v1",
+      "total_subsystems": 2,
+      "total_actors": 7,
+      "total_classes": 10
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
     }
-  ]
+  },
+  "block_3_body": {
+    "domain": "entities",
+    "title": "Character Roster & Tactical Classes",
+    "subsystems": [
+      {
+        "id": "roster",
+        "title": "Protagonists, Companions & Bestiary Roster",
+        "manifest_path": "roster/manifest.json",
+        "category": "actors",
+        "count": 7
+      },
+      {
+        "id": "classes",
+        "title": "Combat Classes, Growths & Summons Hierarchy",
+        "manifest_path": "classes/manifest.json",
+        "category": "classes",
+        "count": 10
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_UNIQUE_ACTOR_ID",
+        "condition": "actor_id must be strictly unique across registry",
+        "action": "Reject duplicate actor IDs during registry pre-flight"
+      },
+      {
+        "id": "TRIPWIRE_VALID_CLASS_BIND",
+        "condition": "actor.class_id exists in classes catalog or is 0 for Custom Bearer",
+        "action": "Halt preflight on unbound class identifier"
+      }
+    ],
+    "metrics": {
+      "registered_subsystems": 2,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "subsystem_menus": [
+        "roster/manifest.json",
+        "classes/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
+  }
 }

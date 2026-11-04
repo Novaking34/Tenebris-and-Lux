@@ -1,41 +1,115 @@
 {
-  "subsystem": "sim.items",
-  "version": "1.1.0",
-  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-  "description": "Master data-driven item catalog manifest for Tenebris and Lux",
-  "data_files": [
-    {
-      "category": "relics",
-      "path": "data/items/relics.json",
-      "type_enum": 1,
-      "description": "Diegetic key items and relics"
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/mechanics/items/manifest.json",
+    "id": "data.items.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Diegetic Relics, Catalysts, Consumables & Valuables Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/mechanics/items/",
+      "relics_catalog": "relics.json",
+      "catalysts_catalog": "catalysts.json",
+      "consumables_catalog": "consumables.json",
+      "valuables_catalog": "valuables.json"
     },
-    {
-      "category": "catalysts",
-      "path": "data/items/catalysts.json",
-      "type_enum": 2,
-      "description": "Tactical armaments, equipment, and catalysts"
+    "what_it_enables": [
+      "Diegetic key relics: Grandma's Watch, Dream Compass, Shield of Lux, Sword of Tenebris",
+      "Armament catalysts, weapon upgrades, and defensive barriers",
+      "Field draughts, healing salves, and restorative curatives",
+      "Economy items, sovereign gold currency, and quest trade tokens"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during item catalog deserialization (ALLOC_ZERO_HEAP)",
+      "Maximum catalog entries strictly capped at 64 items",
+      "Player inventory slots strictly capped at 32 slots",
+      "Relic Grandma's Watch (ID: 5) must exist for midpoint campaign progression"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "items_subsystem": "relics/items.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
-    {
-      "category": "consumables",
-      "path": "data/items/consumables.json",
-      "type_enum": 3,
-      "description": "Consumables, curatives, and field draughts"
+    "static_declarations": {
+      "subsystem": "sim.items",
+      "schema_id": "tenlux.data.items.v1",
+      "max_catalog_entries": 64,
+      "max_inventory_slots": 32,
+      "max_stack_relic": 1,
+      "max_stack_catalyst": 1,
+      "max_stack_consumable": 99,
+      "max_stack_valuable": 999,
+      "zero_heap_parsing": true
     },
-    {
-      "category": "valuables",
-      "path": "data/items/valuables.json",
-      "type_enum": 4,
-      "description": "Trade goods, currency vouchers, and quest tokens"
+    "generic_helper_contracts": {
+      "catalog_loader": "item_loader_load_catalog",
+      "path_resolver": "fs_resolve_data_path"
     }
-  ],
-  "invariants": {
-    "max_catalog_entries": 64,
-    "max_inventory_slots": 32,
-    "max_stack_relic": 1,
-    "max_stack_catalyst": 1,
-    "max_stack_consumable": 99,
-    "max_stack_valuable": 999,
-    "zero_heap_parsing": true
+  },
+  "block_3_body": {
+    "data_files": [
+      {
+        "category": "relics",
+        "path": "relics.json",
+        "type_enum": 1,
+        "description": "Diegetic key items and ancestral relics"
+      },
+      {
+        "category": "catalysts",
+        "path": "catalysts.json",
+        "type_enum": 2,
+        "description": "Tactical armaments, equipment, and focus catalysts"
+      },
+      {
+        "category": "consumables",
+        "path": "consumables.json",
+        "type_enum": 3,
+        "description": "Consumables, curatives, and field draughts"
+      },
+      {
+        "category": "valuables",
+        "path": "valuables.json",
+        "type_enum": 4,
+        "description": "Trade goods, currency vouchers, and quest tokens"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_ITEM_CATALOG_NON_ZERO",
+        "condition": "loaded_items_count > 0",
+        "action": "Fatal halt if item catalog fails to load any items"
+      },
+      {
+        "id": "TRIPWIRE_GRANDMAS_WATCH_EXISTS",
+        "condition": "item with id == 5 (Grandma's Watch) is loaded",
+        "action": "Fatal halt if critical campaign progression relic is missing"
+      }
+    ],
+    "metrics": {
+      "total_item_categories": 4,
+      "max_catalog_capacity": 64,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "../combat/manifest.json",
+        "../campaign/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "item_loader_load_catalog",
+      "audit_hook": "item_loader_preflight"
+    }
   }
 }
