@@ -1,0 +1,58 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, CI/CD Verification Pipeline & Automation Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          ci.yml
+# @layer         Continuous Integration & Quality Assurance (Layer 4 Infrastructure)
+# @version       0.1.0-dev
+# @interface_rev Rev 1
+# @date          2026-11-03
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Actions CI Pipeline
+# @role          Continuous Verification, CTest Automation & Compendium Build
+# @invariants    1. ISO C11 strict compilation (-Wall -Wextra -Wpedantic).
+#                2. 100% CTest pass rate across all 19 verification suites.
+#                3. 16/16 pre-flight subsystem self-audit pass.
+#                4. Rust Master Guide toolchain compiles without errors.
+# ==============================================================================
+
+name: CI Verification
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential libx11-dev libxft-dev
+
+      - name: Set up Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Configure CMake (Debug)
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build Engine, Simulation & Test Harnesses
+        run: cmake --build build --config Debug
+
+      - name: Execute CTest Verification Suite (19/19 Suites)
+        run: ctest --test-dir build -C Debug --output-on-failure
+
+      - name: Execute Pre-Flight Self-Audit & Invariant Tripwires
+        run: ./build/tenebris-lux --audit
+
+      - name: Build Master Guide Documentation via Rust Toolchain
+        run: cargo run --manifest-path tools/Cargo.toml --bin master_guide

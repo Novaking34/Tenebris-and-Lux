@@ -168,8 +168,9 @@ debug_dumps/
 # Mission: Protect repository hygiene from developer-specific editor state.
 # ------------------------------------------------------------------------------
 
-# IDE workspace folders and metadata
-.vscode/
+# IDE workspace folders and metadata (track canonical project configuration)
+.vscode/*
+!.vscode/*.json
 .idea/
 .cache/
 

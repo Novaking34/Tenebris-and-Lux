@@ -888,6 +888,21 @@ bool log_init(const log_config_t *config) {
         return false;
     }
 
+    /* Step 4b: Resolve ephemeral destination between workspace root and build dir */
+    if (strcmp(s_config.log_dir, "logs") == 0) {
+        struct stat st_build;
+        if (stat("build", &st_build) == 0 && S_ISDIR(st_build.st_mode)) {
+            str_safe_copy(s_config.log_dir, "build/logs", sizeof(s_config.log_dir));
+        }
+    } else if (strncmp(s_config.log_dir, "build/logs", 10) == 0) {
+        struct stat st_build;
+        if (stat("build", &st_build) != 0 || !S_ISDIR(st_build.st_mode)) {
+            if (fs_file_exists("CTestTestfile.cmake") || fs_file_exists("CMakeCache.txt")) {
+                str_safe_copy(s_config.log_dir, "logs", sizeof(s_config.log_dir));
+            }
+        }
+    }
+
     /* Step 5: Ensure destination directory exists and open master log file */
     ensure_directory(s_config.log_dir);
 

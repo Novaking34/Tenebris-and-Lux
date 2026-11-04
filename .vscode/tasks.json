@@ -1,0 +1,51 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Engine (Debug)",
+            "type": "shell",
+            "command": "cmake --build build --config Debug",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Run Verification Suite (CTest)",
+            "type": "shell",
+            "command": "ctest --test-dir build -C Debug --output-on-failure",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Subsystem Pre-Flight Audit",
+            "type": "shell",
+            "command": "./build/tenebris-lux --audit",
+            "problemMatcher": []
+        },
+        {
+            "label": "Launch CLI Mode",
+            "type": "shell",
+            "command": "./build/tenebris-lux --cli",
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile Master Guide Compendium",
+            "type": "shell",
+            "command": "cargo run --manifest-path tools/Cargo.toml --bin master_guide",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean Build Tree",
+            "type": "shell",
+            "command": "cmake --build build --target clean",
+            "problemMatcher": []
+        }
+    ]
+}
