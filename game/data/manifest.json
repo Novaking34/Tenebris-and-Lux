@@ -1,214 +1,426 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/manifest.json",
+    "file": "game/data/manifest.json",
     "id": "data.root.manifest",
-    "layer": "Data-Driven Subsystem Root",
-    "version": "1.1.0",
+    "layer": "Data-Driven Subsystem Root (Layers 0-2 Architecture)",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
     "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Master root data manifest orchestrating the 5 primary domains.",
+    "role": "Master Root Data Manifest & Continental System Orchestrator",
+    "purpose_and_intent": [
+      "Serves as the cognitive root and architectural master catalog for",
+      "all externalized JSON data configurations across Tenebris and Lux.",
+      "Eliminates hardcoded values in compiled C11 binaries by organizing",
+      "data into 5 operational domains matching simulation data movement."
+    ],
+    "where_the_data_lives": {
+      "topology": "5-Domain Hierarchical Tree with 2-3 levels of depth",
+      "domain_1_system": "game/data/system/ (runtime & diagnostics)",
+      "domain_2_world": "game/data/world/ (geography, battlefields, terrains)",
+      "domain_3_entities": "game/data/entities/ (roster & classes)",
+      "domain_4_mechanics": "game/data/mechanics/ (tactics, combat, items, campaign)",
+      "domain_5_presentation": "game/data/presentation/ (ui, audio, visuals)"
+    },
+    "what_the_data_enables": [
+      "Decoupled headless deterministic TRPG simulation execution",
+      "Zero dynamic heap allocations in Layer 0 Core and Layer 1 Sim",
+      "Deterministic 4-posture combat stance finite state machine",
+      "Dynamic data pathfinding across workspace and build sandboxes",
+      "Dual-frontend parity between terminal CLI and native X11 GUI",
+      "Authentic project canon centered on The Dark Lord Usuru"
+    ],
     "invariants": [
-      "All registered subsystem paths point to valid directories",
-      "Subsystem identifiers are unique across the entire data catalog",
-      "OmniCode 5-Block Ontological Architecture enforced"
+      "Zero dynamic heap allocation (ALLOC_ZERO_HEAP) in Layer 0 and 1",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "All registered paths resolvable via fs_resolve_data_path()",
+      "Root directory hygiene: zero lingering caches or runtime logs",
+      "Deterministic stance machine with bounded resonance and moral sway"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.root_catalog.v1",
-    "subsystem_status_types": [
-      "active",
-      "in_development",
-      "planned"
+  "block_2_opening": {
+    "pre_conditions": {
+      "system_environment": "ISO C11 conformant host runtime",
+      "monotonic_clock": "POSIX.1b CLOCK_MONOTONIC timing source",
+      "memory_allocation_policy": "ALLOC_ZERO_HEAP (zero malloc/calloc)",
+      "filesystem_access": "Read access to game/data/ root directory",
+      "presentation_display": "X11 Display server with CLI fallback"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.root_catalog.v1",
+      "engine_version": "0.1.0-dev",
+      "target_resolution": { "width": 640, "height": 360, "aspect": "16:9" },
+      "grid_bounds": { "max_grid_x": 64, "max_grid_y": 64, "cell_px": 32 },
+      "relic_resonance_bounds": { "min": 0, "max": 100, "step": 1 },
+      "moral_sway_bounds": { "min": -100, "max": 100, "equilibrium_band": 25 },
+      "fps_pacing_targets": [ 60, 120 ],
+      "subsystem_status_types": [ "active", "in_development", "planned" ],
+      "strata_layers": [
+        "Layer 0: Core Utilities",
+        "Layer 1: Simulation Engine",
+        "Layer 2: Presentation & Viewports",
+        "Layer 3: Application Router",
+        "Layer 4: Verification Suite"
+      ]
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path(rel_path, out_buf, out_size)",
+      "json_tokenizer": "json_find_key, json_get_string, json_get_int, ...",
+      "string_safety": "str_safe_copy, str_path_join, str_parent_dir",
+      "telemetry_logger": "log_write_entry(sev, cat, tag, grade, ...)",
+      "debugger_rewind": "debug_snapshot_capture, debug_snapshot_rewind",
+      "preflight_auditor": "subsystem_manifest.preflight_fn()"
+    }
+  },
+  "block_3_body": {
+    "data_movement_pipeline": {
+      "flow": "System -> World -> Entities -> Mechanics -> Presentation",
+      "description": [
+        "Data movement follows an operational baton-passing pipeline:",
+        "1. System initializes math bounds, clocks, and diagnostics.",
+        "2. World loads geography, provinces, and discrete grid topologies.",
+        "3. Entities populates character rosters, class growths, and bestiary.",
+        "4. Mechanics evaluates formations, ZOC, combat stances, and items.",
+        "5. Presentation projects simulation state into audio and viewports."
+      ]
+    },
+    "domains": [
+      {
+        "id": "system",
+        "title": "System Domain: Platform Invariants & Telemetry",
+        "manifest_path": "system/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/system/",
+        "what_it_enables": [
+          "Zero-heap bounded math clamping and safe division guards",
+          "60 FPS and 120 FPS high-refresh frame budgets and monotonic clocks",
+          "Safe string buffer sizing and canonical command tokens",
+          "Categorized static ring buffer telemetry and log rotation",
+          "Interactive 64-snapshot time-travel rewind and FNV-1a hashing"
+        ]
+      },
+      {
+        "id": "world",
+        "title": "World Domain: Continental Topology & Battlefields",
+        "manifest_path": "world/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/world/",
+        "what_it_enables": [
+          "Continental realm node graphs and provincial travel vigor costs",
+          "Discrete 2D Cartesian tactical grids (32x32 to 64x64 cells)",
+          "Terrain friction rates, defensive cover, and line-of-sight bounds",
+          "Planar rift node placements and nocturnal astral gateways"
+        ]
+      },
+      {
+        "id": "entities",
+        "title": "Entities Domain: Character Roster & Class Growths",
+        "manifest_path": "entities/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/entities/",
+        "what_it_enables": [
+          "Protagonist state models (Elijah, Katrina, Custom Bearer)",
+          "Companions (Angela, Sebastien) and adversary bestiary (Dark Lord)",
+          "Three-tier class growth curves (Basic, Upgraded, Advanced)",
+          "NPC combatant archetypes and elemental summons (Fire, Pixie, Wind)"
+        ]
+      },
+      {
+        "id": "mechanics",
+        "title": "Mechanics Domain: Simulation Rules, Tactics & Campaign",
+        "manifest_path": "mechanics/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/mechanics/",
+        "what_it_enables": [
+          "8-slot squad formation matrices with localized stat modifiers",
+          "Zone-of-Control (ZOC) kinetic perimeter and movement pinning",
+          "Deterministic 4-posture combat stance FSM and damage formulas",
+          "Twin Relics resonance (Shield of Lux and Sword of Tenebris)",
+          "5-route campaign ending matrix and moral sway inertia",
+          "Zero-heap command dispatcher and domain router"
+        ]
+      },
+      {
+        "id": "presentation",
+        "title": "Presentation Domain: Desktop Viewports, Audio & Visuals",
+        "manifest_path": "presentation/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/presentation/",
+        "what_it_enables": [
+          "X11 double-buffered 2.5D diamond isometric viewport renderer",
+          "Responsive HUD gauge layouts and TrueType high-DPI font scaling",
+          "4-channel audio bus mixer with diegetic SFX and orchestral BGM",
+          "24-bit and 32-bit hardware color palettes for biomes and relics",
+          "32x32 character sprite sheets, terrain tilesets, and animations"
+        ]
+      }
+    ],
+    "subsystems": [
+      {
+        "id": "log",
+        "title": "Logging & Diagnostic Telemetry Subsystem",
+        "description": "Log runtime configurations, static ring buffers, and rotation.",
+        "manifest_path": "system/diagnostics/telemetry/manifest.json",
+        "status": "active",
+        "category": "system",
+        "where_it_lives": "game/data/system/diagnostics/telemetry/",
+        "what_it_enables": "Forensic telemetry, category isolation, and ring buffer writes."
+      },
+      {
+        "id": "math",
+        "title": "Mathematical Continuum & Invariant Subsystem",
+        "description": "Resonance limits, moral sway continuum [-100, +100], and bands.",
+        "manifest_path": "system/runtime/math/manifest.json",
+        "status": "active",
+        "category": "system",
+        "where_it_lives": "game/data/system/runtime/math/",
+        "what_it_enables": "Clamping arithmetic, zero-divisor safety, and normalization."
+      },
+      {
+        "id": "time",
+        "title": "Monotonic Timing & Frame Pacing Subsystem",
+        "description": "60/120 FPS budgets, frame pacing, and sub-50us simulation turns.",
+        "manifest_path": "system/runtime/time/manifest.json",
+        "status": "active",
+        "category": "system",
+        "where_it_lives": "game/data/system/runtime/time/",
+        "what_it_enables": "Deterministic frame pacing, sub-ms timestamps, and tick rates."
+      },
+      {
+        "id": "string",
+        "title": "Lexical Buffer & Command Tokens Subsystem",
+        "description": "Buffer limits, stance tokens, and canonical action verb dictionaries.",
+        "manifest_path": "system/runtime/string/manifest.json",
+        "status": "active",
+        "category": "system",
+        "where_it_lives": "game/data/system/runtime/string/",
+        "what_it_enables": "Bounded string operations, token lexicons, and path joining."
+      },
+      {
+        "id": "debug",
+        "title": "Interactive Engine Debugger & State Rewind Subsystem",
+        "description": "State snapshots, rewind, tripwire traps, and trace logs.",
+        "manifest_path": "system/diagnostics/debugger/manifest.json",
+        "status": "active",
+        "category": "system",
+        "where_it_lives": "game/data/system/diagnostics/debugger/",
+        "what_it_enables": "64-snapshot ring buffer, FNV-1a hashing, and interactive REPL."
+      },
+      {
+        "id": "classes",
+        "title": "Combat Classes & Growth Subsystem",
+        "description": "Basic, upgraded, advanced classes, NPC guards, and summons.",
+        "manifest_path": "entities/classes/manifest.json",
+        "status": "active",
+        "category": "entities",
+        "where_it_lives": "game/data/entities/classes/",
+        "what_it_enables": "Stat progressions, growth caps, equip slots, and summon arts."
+      },
+      {
+        "id": "actors",
+        "title": "Protagonists, Companions & Adversaries Roster",
+        "description": "Elijah, Katrina, Observer Custom Bearer, companions, bestiary.",
+        "manifest_path": "entities/roster/manifest.json",
+        "status": "active",
+        "category": "entities",
+        "where_it_lives": "game/data/entities/roster/",
+        "what_it_enables": "Actor baselines, faction alignments, and equipment loadouts."
+      },
+      {
+        "id": "combat",
+        "title": "Tactical Combat & Stance Mechanics",
+        "description": "Tactical stances, damage formulas, action queues, skills, states.",
+        "manifest_path": "mechanics/combat/manifest.json",
+        "status": "active",
+        "category": "mechanics",
+        "where_it_lives": "game/data/mechanics/combat/",
+        "what_it_enables": "Stance FSM, warding dome, abyssal cleave, and Duo-Loca arts."
+      },
+      {
+        "id": "world",
+        "title": "Kingdom of Sacyra & Continental Topology",
+        "description": "Regional node graph, travel vigor consumption, realm threat tiers.",
+        "manifest_path": "world/manifest.json",
+        "status": "active",
+        "category": "world",
+        "where_it_lives": "game/data/world/",
+        "what_it_enables": "Provincial navigation, battlefield grids, and terrain friction."
+      },
+      {
+        "id": "items",
+        "title": "Diegetic Relics, Catalysts & Inventory Subsystem",
+        "description": "Twin Relics, Grandma's Watch, Dream Compass, consumables.",
+        "manifest_path": "mechanics/items/manifest.json",
+        "status": "active",
+        "category": "mechanics",
+        "where_it_lives": "game/data/mechanics/items/",
+        "what_it_enables": "Resonance scaling, catalytic stat boosts, and item effects."
+      },
+      {
+        "id": "tactical",
+        "title": "Tactical Formations & Zone of Control Subsystem",
+        "description": "8-slot squad formations, discrete grid coordinates, pinning ZOC.",
+        "manifest_path": "mechanics/tactics/manifest.json",
+        "status": "active",
+        "category": "mechanics",
+        "where_it_lives": "game/data/mechanics/tactics/",
+        "what_it_enables": "Vanguard/Midline/Rearguard formation buffs and ZOC interception."
+      },
+      {
+        "id": "campaign",
+        "title": "Player Tracking, Progression & Morality Matrix",
+        "description": "Archetypes, moral inertia, progression limits, 5 ending routes.",
+        "manifest_path": "mechanics/campaign/player_manifest.json",
+        "status": "active",
+        "category": "mechanics",
+        "where_it_lives": "game/data/mechanics/campaign/",
+        "what_it_enables": "Moral alignment tracking, campaign branching, and ending paths."
+      },
+      {
+        "id": "dispatch",
+        "title": "Command Dispatcher & Domain Router Subsystem",
+        "description": "Command dictionary, alias resolution, domain routing.",
+        "manifest_path": "mechanics/campaign/dispatch/manifest.json",
+        "status": "active",
+        "category": "mechanics",
+        "where_it_lives": "game/data/mechanics/campaign/dispatch/",
+        "what_it_enables": "Zero-heap lexical command token matching and domain routing."
+      },
+      {
+        "id": "gui",
+        "title": "Desktop Presentation & Tactical Viewport Subsystem",
+        "description": "X11 double-buffering, HUD layout, and panel scalers.",
+        "manifest_path": "presentation/ui/gui_manifest.json",
+        "status": "active",
+        "category": "presentation",
+        "where_it_lives": "game/data/presentation/ui/",
+        "what_it_enables": "Double-buffered X11 rendering, diamond isometric projection."
+      },
+      {
+        "id": "fonts",
+        "title": "High-Fantasy Typography & Responsive Font Subsystem",
+        "description": "TrueType font bindings, typographic role metrics, DPI scalers.",
+        "manifest_path": "presentation/ui/fonts/manifest.json",
+        "status": "active",
+        "category": "presentation",
+        "where_it_lives": "game/data/presentation/ui/fonts/",
+        "what_it_enables": "Font rasterization, high-DPI scaling, and header typography."
+      },
+      {
+        "id": "audio",
+        "title": "Audiovisual Sound & Music Synthesis Subsystem",
+        "description": "Bus channels, SFX cue registry, BGM loop points, spatial audio.",
+        "manifest_path": "presentation/audio/manifest.json",
+        "status": "active",
+        "category": "presentation",
+        "where_it_lives": "game/data/presentation/audio/",
+        "what_it_enables": "Dynamic audio mixing, combat cues, and ambient loop points."
+      },
+      {
+        "id": "palettes",
+        "title": "Hardware Color Palettes & Viewport Theme Subsystem",
+        "description": "24/32-bit hex themes, biome colors, and relic glow spectrum.",
+        "manifest_path": "presentation/visuals/palettes/manifest.json",
+        "status": "active",
+        "category": "presentation",
+        "where_it_lives": "game/data/presentation/visuals/palettes/",
+        "what_it_enables": "Theme switches, dark fantasy aesthetic, and relic glow."
+      },
+      {
+        "id": "textures",
+        "title": "2D Texture Atlases, Sprite Sheets & Animations",
+        "description": "Character sprite sheets, terrain tilesets, and animations.",
+        "manifest_path": "presentation/visuals/manifest.json",
+        "status": "active",
+        "category": "presentation",
+        "where_it_lives": "game/data/presentation/visuals/",
+        "what_it_enables": "Atlas slicing, autotile indexing, and sprite animation."
+      }
     ]
   },
-  "domains": [
-    {
-      "id": "system",
-      "title": "System Domain (Runtime & Diagnostics)",
-      "manifest_path": "system/manifest.json",
-      "status": "active"
+  "block_4_audit": {
+    "audit_metrics": {
+      "schema_id": "tenlux.data.root_catalog.v1",
+      "manifest_count": 23,
+      "active_subsystems": 18,
+      "domains_count": 5,
+      "registered_modules": 16,
+      "verified_invariants": 7
     },
-    {
-      "id": "world",
-      "title": "World Domain (Topology & Battlefields)",
-      "manifest_path": "world/manifest.json",
-      "status": "active"
-    },
-    {
-      "id": "entities",
-      "title": "Entities Domain (Roster & Classes)",
-      "manifest_path": "entities/manifest.json",
-      "status": "active"
-    },
-    {
-      "id": "mechanics",
-      "title": "Mechanics Domain (Simulation Rules & Flow)",
-      "manifest_path": "mechanics/manifest.json",
-      "status": "active"
-    },
-    {
-      "id": "presentation",
-      "title": "Presentation Domain (Viewports, Audio & Visuals)",
-      "manifest_path": "presentation/manifest.json",
-      "status": "active"
-    }
-  ],
-  "subsystems": [
-    {
-      "id": "log",
-      "title": "Logging & Diagnostic Telemetry Subsystem",
-      "description": "Log runtime configurations and ring buffer telemetry.",
-      "manifest_path": "system/diagnostics/telemetry/manifest.json",
-      "status": "active",
-      "category": "system"
-    },
-    {
-      "id": "math",
-      "title": "Mathematical Continuum & Invariant Subsystem",
-      "description": "Resonance limits and moral sway continuum [-100, +100].",
-      "manifest_path": "system/runtime/math/manifest.json",
-      "status": "active",
-      "category": "system"
-    },
-    {
-      "id": "time",
-      "title": "Monotonic Timing & Frame Pacing Subsystem",
-      "description": "60/120 FPS frame budgets and simulation turn latency.",
-      "manifest_path": "system/runtime/time/manifest.json",
-      "status": "active",
-      "category": "system"
-    },
-    {
-      "id": "string",
-      "title": "Lexical Buffer & Command Tokens Subsystem",
-      "description": "Buffer limits, stance tokens, and canonical action verbs.",
-      "manifest_path": "system/runtime/string/manifest.json",
-      "status": "active",
-      "category": "system"
-    },
-    {
-      "id": "debug",
-      "title": "Interactive Engine Debugger & State Rewind Subsystem",
-      "description": "State snapshots, rewind, tripwire traps, and trace logs.",
-      "manifest_path": "system/diagnostics/debugger/manifest.json",
-      "status": "active",
-      "category": "system"
-    },
-    {
-      "id": "classes",
-      "title": "Combat Classes & Growth Subsystem",
-      "description": "Basic, upgraded, advanced classes, NPC guards, summons.",
-      "manifest_path": "entities/classes/manifest.json",
-      "status": "active",
-      "category": "entities"
-    },
-    {
-      "id": "actors",
-      "title": "Protagonists, Companions & Adversaries",
-      "description": "Elijah, Katrina, Observer Custom Bearer, and bestiary.",
-      "manifest_path": "entities/roster/manifest.json",
-      "status": "active",
-      "category": "entities"
-    },
-    {
-      "id": "combat",
-      "title": "Tactical Combat & Stance Mechanics",
-      "description": "Tactical stances, damage formulas, skills, and states.",
-      "manifest_path": "mechanics/combat/manifest.json",
-      "status": "active",
-      "category": "mechanics"
-    },
-    {
-      "id": "world",
-      "title": "Kingdom of Sacyra & Continental Topology",
-      "description": "Regional node graph, travel vigor, and realm tiers.",
-      "manifest_path": "world/manifest.json",
-      "status": "active",
-      "category": "world"
-    },
-    {
-      "id": "items",
-      "title": "Diegetic Relics, Catalysts & Inventory Subsystem",
-      "description": "Twin Relics, Grandma's Watch, Dream Compass, herbs.",
-      "manifest_path": "mechanics/items/manifest.json",
-      "status": "active",
-      "category": "mechanics"
-    },
-    {
-      "id": "tactical",
-      "title": "Tactical Formations & Zone of Control Subsystem",
-      "description": "8-slot formations, grid coordinates, and pinning ZOC.",
-      "manifest_path": "mechanics/tactics/manifest.json",
-      "status": "active",
-      "category": "mechanics"
-    },
-    {
-      "id": "campaign",
-      "title": "Player Tracking, Progression & Morality Matrix",
-      "description": "Archetypes, moral inertia, and progression ceilings.",
-      "manifest_path": "mechanics/campaign/player_manifest.json",
-      "status": "active",
-      "category": "mechanics"
-    },
-    {
-      "id": "dispatch",
-      "title": "Command Dispatcher & Domain Router Subsystem",
-      "description": "Command dictionary, alias resolution, domain routing.",
-      "manifest_path": "mechanics/campaign/dispatch/manifest.json",
-      "status": "active",
-      "category": "mechanics"
-    },
-    {
-      "id": "gui",
-      "title": "Desktop Presentation & Tactical Viewport Subsystem",
-      "description": "X11 double-buffering, HUD layout, and panel scalers.",
-      "manifest_path": "presentation/ui/gui_manifest.json",
-      "status": "active",
-      "category": "presentation"
-    },
-    {
-      "id": "fonts",
-      "title": "High-Fantasy Typography & Responsive Font Subsystem",
-      "description": "TrueType font bindings, typographic role metrics.",
-      "manifest_path": "presentation/ui/fonts/manifest.json",
-      "status": "active",
-      "category": "presentation"
-    },
-    {
-      "id": "audio",
-      "title": "Audiovisual Sound & Music Synthesis Subsystem",
-      "description": "Bus channels, SFX cue registry, and BGM loops.",
-      "manifest_path": "presentation/audio/manifest.json",
-      "status": "active",
-      "category": "presentation"
-    },
-    {
-      "id": "palettes",
-      "title": "Hardware Color Palettes & Viewport Theme Subsystem",
-      "description": "24/32-bit hex themes, biome colors, relic spectrum.",
-      "manifest_path": "presentation/visuals/palettes/manifest.json",
-      "status": "active",
-      "category": "presentation"
-    },
-    {
-      "id": "textures",
-      "title": "2D Texture Atlases, Sprite Sheets & Animations",
-      "description": "Character sprite sheets, tilesets, and animations.",
-      "manifest_path": "presentation/visuals/manifest.json",
-      "status": "active",
-      "category": "presentation"
-    }
-  ],
-  "_audit": {
-    "manifest_count": 23,
-    "active_subsystems": 18,
-    "domains": 5,
-    "integrity_check": "All paths dynamically resolvable via fs_resolve_data_path"
+    "verification_tripwires": [
+      {
+        "name": "ALLOC_ZERO_HEAP",
+        "rule": "Zero dynamic heap allocations in Layer 0/1 data parsing",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "DYNAMIC_RESOLVABILITY",
+        "rule": "All manifest paths resolvable via fs_resolve_data_path",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "COORDINATE_BOUNDEDNESS",
+        "rule": "Discrete grid dimensions clamped within [0, 64) x [0, 64)",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "CONTINUUM_BOUNDS",
+        "rule": "Resonance clamped [0, 100], Moral Sway clamped [-100, +100]",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "FRICTION_SAFETY",
+        "rule": "Terrain movement friction must be strictly >= 1.0",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "COLLISION_INDEPENDENCE",
+        "rule": "Hostile units cannot occupy identical grid coordinates",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "ROOT_HYGIENE",
+        "rule": "Zero ephemeral build caches or logs outside build/",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
   },
-  "_navigation": {
-    "home_dir": "data",
-    "primary_menu": "system/diagnostics/telemetry/manifest.json"
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": {
+        "--audit": "Execute full pre-flight self-audit across 16 registered modules",
+        "--cli": "Launch explicit terminal CLI simulation loop",
+        "--gui": "Launch native X11 double-buffered desktop presentation interface",
+        "--debug": "Launch interactive CLI debugger with state snapshot rewind",
+        "--version": "Display engine version and build metadata",
+        "--help": "Display command-line manual and usage instructions"
+      }
+    },
+    "verification_protocols": [
+      {
+        "tier": "Unit Verification",
+        "target": "tests/unit/test_data",
+        "coverage": "JSON tokenizer bounds, schema extraction, buffer safety"
+      },
+      {
+        "tier": "Integrated Verification",
+        "target": "tests/integrated/test_sim_integrated",
+        "coverage": "Cross-subsystem simulation boot and command routing"
+      },
+      {
+        "tier": "System Verification",
+        "target": "tests/system/test_gameplay_scenarios",
+        "coverage": "15-turn golden replay and 1,000-turn fuzzing softlock immunity"
+      }
+    ],
+    "navigation": {
+      "home_dir": "data",
+      "root_manifest": "manifest.json",
+      "primary_menu": "system/diagnostics/telemetry/manifest.json",
+      "emergency_fallback": "monolith_fallback_profile"
+    }
   }
 }
