@@ -1,0 +1,78 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/palettes/biomes.json",
+    "id": "data.palettes.biomes",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "2D tactical grid terrain tile colors and environmental palette definitions."
+  },
+  "biomes": [
+    {
+      "id": "biome_sacyra_plains",
+      "name": "Sacyran Grasslands & Royal Meadows",
+      "tiles": {
+        "plains_base": "0x2A4D34",
+        "plains_highlight": "0x3E6B4B",
+        "plains_flower": "0xDE6B48",
+        "forest_canopy": "0x1B3824",
+        "forest_trunk": "0x4A3319",
+        "water_shallow": "0x285973",
+        "water_deep": "0x17384A",
+        "stone_road": "0x4A505C",
+        "wall_stone": "0x333740",
+        "grid_border": "0x1E3B27"
+      }
+    },
+    {
+      "id": "biome_dreamscape",
+      "name": "The Nocturnal Dream Chamber",
+      "tiles": {
+        "plains_base": "0x161A29",
+        "plains_highlight": "0x252C42",
+        "plains_flower": "0x7888BA",
+        "forest_canopy": "0x0F121C",
+        "forest_trunk": "0x2B2738",
+        "water_shallow": "0x2A3E63",
+        "water_deep": "0x131E33",
+        "stone_road": "0x353B52",
+        "wall_stone": "0x242838",
+        "grid_border": "0x1E2336"
+      }
+    },
+    {
+      "id": "biome_libira_desert",
+      "name": "Arid Frontier of Libira",
+      "tiles": {
+        "plains_base": "0x7A5B35",
+        "plains_highlight": "0x9E7848",
+        "plains_flower": "0xC49A5C",
+        "forest_canopy": "0x4A3E26",
+        "forest_trunk": "0x5C3A1E",
+        "water_shallow": "0x3E6B7A",
+        "water_deep": "0x24424D",
+        "stone_road": "0x6E5E4A",
+        "wall_stone": "0x4D4133",
+        "grid_border": "0x5E4527"
+      }
+    },
+    {
+      "id": "biome_academy_frost",
+      "name": "Northern Academy Glacial Spire",
+      "tiles": {
+        "plains_base": "0x4A6B82",
+        "plains_highlight": "0x6B93AD",
+        "plains_flower": "0xB0D4E8",
+        "forest_canopy": "0x2F4A5E",
+        "forest_trunk": "0x2C3B47",
+        "water_shallow": "0x26526B",
+        "water_deep": "0x132E3D",
+        "stone_road": "0x526373",
+        "wall_stone": "0x3B4752",
+        "grid_border": "0x385264"
+      }
+    }
+  ]
+}

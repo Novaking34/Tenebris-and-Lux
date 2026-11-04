@@ -1,0 +1,34 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/textures/manifest.json",
+    "id": "data.textures.manifest",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "2D texture atlas, sprite sheet, and animation metadata manifest."
+  },
+  "subsystem": {
+    "id": "textures",
+    "name": "2D Texture Atlases, Sprite Sheets & Animation Subsystem",
+    "stratum": "Layer 2: Presentation & Viewport",
+    "status": "active",
+    "catalog_files": [
+      "spritesheets.json",
+      "tilesets.json",
+      "animations.json"
+    ],
+    "sub_assemblies": [
+      "texture_atlas_loader",
+      "sprite_animation_clock",
+      "procedural_sprite_fallback"
+    ],
+    "axioms": [
+      "Tile cell standard: 32x32 pixels baseline with power-of-two texture dimensions",
+      "Procedural fallback guarantee: procedural vector generator renders if PNG missing",
+      "Directional indexing standard: 0=South, 1=West, 2=East, 3=North",
+      "Zero allocations in animation stepping: fixed-size frame sequence buffers"
+    ]
+  }
+}

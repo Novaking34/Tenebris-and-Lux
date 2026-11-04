@@ -1,0 +1,35 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/tactical/manifest.json",
+    "id": "data.tactical.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Tactical grid rules, terrain friction, party formations, and Zone-of-Control manifest."
+  },
+  "subsystem": {
+    "id": "tactical",
+    "name": "Tactical Strategy RPG Grid Mechanics & Formations Subsystem",
+    "stratum": "Layer 1: Simulation Engine",
+    "status": "active",
+    "catalog_files": [
+      "terrains.json",
+      "formations.json",
+      "zoc.json"
+    ],
+    "sub_assemblies": [
+      "tactical_grid_engine",
+      "tactical_terrain_friction",
+      "tactical_formation_matrix",
+      "tactical_zoc_interceptor"
+    ],
+    "axioms": [
+      "Discrete Cartesian integer coordinates bounded in [0, 64) x [0, 64)",
+      "Zero-heap pathfinding and movement cost calculations",
+      "Movement budgets (MP) strictly conserved and non-negative",
+      "Zone-of-Control (ZOC) pin rules halt contiguous traversal unless warded"
+    ]
+  }
+}

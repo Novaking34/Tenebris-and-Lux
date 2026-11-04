@@ -1,0 +1,114 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/audio/sfx.json",
+    "id": "data.audio.sfx",
+    "layer": "Layer 2: Presentation & Audiovisual",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Tactical TRPG sound effects catalog and audio cue dispatch definitions."
+  },
+  "sound_effects": [
+    {
+      "id": "sfx_ward_lux_barrio",
+      "name": "Lux Barrio Barrier Erection",
+      "bus": "bus_sfx_combat",
+      "asset_path": "assets/audio/sfx/combat/ward_lux_barrio.wav",
+      "pitch_variation": 0.05,
+      "volume_scale": 1.0,
+      "cooldown_ms": 150,
+      "description": "Crystalline resonance ping followed by hum of radiant protective dome."
+    },
+    {
+      "id": "sfx_strike_cuttatio_tenebris",
+      "name": "Cuttatio Tenebris Slash",
+      "bus": "bus_sfx_combat",
+      "asset_path": "assets/audio/sfx/combat/strike_cuttatio.wav",
+      "pitch_variation": 0.08,
+      "volume_scale": 0.95,
+      "cooldown_ms": 100,
+      "description": "Deep whipping whoosh with abyssal edge severance and shadow splash."
+    },
+    {
+      "id": "sfx_duo_loca_blast",
+      "name": "Duo-Loca Bashin n Slash Harmonization",
+      "bus": "bus_sfx_combat",
+      "asset_path": "assets/audio/sfx/combat/duo_loca_harmonic.wav",
+      "pitch_variation": 0.02,
+      "volume_scale": 1.15,
+      "cooldown_ms": 500,
+      "description": "Heavy kinetic shield crash instantly merging into dual abyssal cleave."
+    },
+    {
+      "id": "sfx_shield_stagger",
+      "name": "Kinetic Poise Break & Stagger",
+      "bus": "bus_sfx_combat",
+      "asset_path": "assets/audio/sfx/combat/shield_stagger.wav",
+      "pitch_variation": 0.06,
+      "volume_scale": 1.05,
+      "cooldown_ms": 200,
+      "description": "Crushing metallic deflection staggering charging adversary."
+    },
+    {
+      "id": "sfx_zoc_intercept",
+      "name": "Zone of Control Pinning",
+      "bus": "bus_sfx_tactical",
+      "asset_path": "assets/audio/sfx/tactical/zoc_pin.wav",
+      "pitch_variation": 0.04,
+      "volume_scale": 0.85,
+      "cooldown_ms": 250,
+      "description": "Clashing blades warning locking movement between contiguous enemy threat perimeters."
+    },
+    {
+      "id": "sfx_grid_step_plains",
+      "name": "Grid Footstep (Grassland)",
+      "bus": "bus_sfx_tactical",
+      "asset_path": "assets/audio/sfx/tactical/step_plains.wav",
+      "pitch_variation": 0.12,
+      "volume_scale": 0.60,
+      "cooldown_ms": 80,
+      "description": "Muffled grass rustle and soil compaction."
+    },
+    {
+      "id": "sfx_grid_step_cobble",
+      "name": "Grid Footstep (Imperial Stone)",
+      "bus": "bus_sfx_tactical",
+      "asset_path": "assets/audio/sfx/tactical/step_cobble.wav",
+      "pitch_variation": 0.10,
+      "volume_scale": 0.70,
+      "cooldown_ms": 80,
+      "description": "Armored greave tap on polished white-stone flagstone."
+    },
+    {
+      "id": "sfx_stance_shift",
+      "name": "Combat Stance Shift",
+      "bus": "bus_ui",
+      "asset_path": "assets/audio/sfx/ui/stance_shift.wav",
+      "pitch_variation": 0.03,
+      "volume_scale": 0.80,
+      "cooldown_ms": 100,
+      "description": "Quick leather strap cinch and armament alignment tone."
+    },
+    {
+      "id": "sfx_menu_confirm",
+      "name": "Tactical Menu Confirm",
+      "bus": "bus_ui",
+      "asset_path": "assets/audio/sfx/ui/menu_confirm.wav",
+      "pitch_variation": 0.02,
+      "volume_scale": 0.75,
+      "cooldown_ms": 50,
+      "description": "Crisp high-fantasy harp pluck confirming choice."
+    },
+    {
+      "id": "sfx_menu_cancel",
+      "name": "Tactical Menu Cancel / Back",
+      "bus": "bus_ui",
+      "asset_path": "assets/audio/sfx/ui/menu_cancel.wav",
+      "pitch_variation": 0.02,
+      "volume_scale": 0.70,
+      "cooldown_ms": 50,
+      "description": "Low wooden wooden clack returning to parent menu."
+    }
+  ]
+}

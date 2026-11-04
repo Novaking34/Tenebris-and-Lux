@@ -1,8 +1,8 @@
 # Data-Driven Architecture & Manifest System
 
-> **Project**: Tenebris and Lux  
-> **Standard**: OmniCode 5-Block Ontological Architecture & Layered Invariant Discipline  
-> **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  
+> **Project**: Tenebris and Lux
+> **Standard**: OmniCode 5-Block Ontological Architecture & Layered Invariant Discipline
+> **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX
 > **Repository**: [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux)
 
 ---
@@ -67,17 +67,38 @@ Every JSON file in the data hierarchy strictly mirrors the repository's 5-Block 
 
 ---
 
-## 5. Active Subsystem Catalogs
+## 5. Active Subsystem Catalogs Across 3 Layered Strata
 
-In addition to logging, the data-driven framework encompasses the following active subsystems:
+The data-driven framework encompasses 21 active subsystems mapped directly across the engine's 3 runtime layers:
 
-1. **`data/math/`**: Resonance limits (0 to 100), moral sway continuum bounds (-100 to +100), equilibrium bands (+/- 25), and HUD scaling.
-2. **`data/time/`**: Monotonic clock frame pacing, 60/120 FPS targets, and sub-50µs simulation turn budgets.
-3. **`data/string/`**: Buffer limits, command tokens, and canonical action verb dictionaries.
-4. **`data/debug/`**: Interactive debugger profiles, snapshot ring buffer capacities, breakpoint watchpoints, and tripwire assertion traps:
-   - `default.json`: Balanced developer debugging baseline with 64-snapshot rewind ring buffer.
-   - `strict.json`: Halts immediately on any state breach, stance shift, or diagnostic warning.
-   - `trace.json`: Deep micro-step cog-level tracing across all engine channels.
+### Stratum 0: Engine Core Utility Profiles (`core/`)
+
+- **`data/log/`**: Diagnostic telemetry levels, console echo modes, category directory isolation, and log rotation thresholds.
+- **`data/math/`**: Resonance limits (0 to 100), moral sway continuum bounds (-100 to +100), equilibrium bands (±25), and HUD scaling.
+- **`data/time/`**: Monotonic clock frame pacing, 60/120 FPS targets, and sub-50µs simulation turn budgets.
+- **`data/string/`**: Buffer limits, command tokens, and canonical action verb dictionaries.
+- **`data/debug/`**: Snapshot ring buffer capacities (up to 64 snapshots), FNV-1a state hashing, and tripwire assertion traps.
+
+### Stratum 1: Tactical TRPG Simulation Catalogs (`sim/`)
+
+- **`data/combat/`**: Battle stances, damage formulas, action queues, and dual-relic resonance expenditure.
+- **`data/tactical/`**: 2D discrete grid coordinates, terrain friction modifiers, 8-slot squad formations, and Zone of Control.
+- **`data/actors/`**: Protagonist profiles (Elijah, Katrina, Custom Bearer), companions, and enemy bestiary.
+- **`data/classes/`**: Growth curves, class tiers (Basic, Upgraded, Advanced), NPC roles, and elemental summons.
+- **`data/skills/`**: Tactical grimoire of martial maneuvers, AoE scope geometries, and tandem relic arts (*Duo-Loca*).
+- **`data/states/`**: Status ailments, tactical snares, movement point modifiers, and kinetic barrier auras.
+- **`data/items/`**: Twin Relics (Shield of Lux, Sword of Tenebris), catalysts, consumables, and valuables.
+- **`data/world/`**: Continental realm topology, regional map node graph, and travel vigor consumption.
+- **`data/player/`**: Protagonist archetypes, Bystander Corridor (-50 to +50), and 10-ending campaign matrix.
+- **`data/dispatch/`**: Command verbs, alias dictionaries, and domain routers (Combat, World, Items, System).
+
+### Stratum 2: Audiovisual & Presentation Viewports (`presentation/`)
+
+- **`data/gui/`**: Window geometry, HUD gauge layouts, dialogue frame anchors, and 2.5D isometric viewports.
+- **`data/audio/`**: Bus channel mixer, sound effects (SFX) cue catalog, BGM loop points, and spatial attenuation.
+- **`data/palettes/`**: 24/32-bit hardware themes (Dark Fantasy, Lux Radiance, Tenebrous Eclipse), biome colors, and relic glow spectrum.
+- **`data/fonts/`**: TrueType font bindings (Cinzel, MedievalSharp), typographic roles, and high-DPI responsive scalers.
+- **`data/textures/`**: 32x32 character spritesheet atlases, terrain tileset masks, autotile rules, and animation sequences.
 
 ---
 

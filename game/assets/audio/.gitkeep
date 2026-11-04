@@ -1,0 +1,12 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Audio Asset Staging & Subsystem Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          game/assets/audio/.gitkeep
+# @layer         Layer 2: Presentation & Audiovisual
+# @version       0.1.0-dev
+# @date          2026-11-03
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @role          Asset staging directory anchor for audio SFX and BGM tracks.
+# ==============================================================================

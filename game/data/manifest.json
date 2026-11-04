@@ -145,17 +145,57 @@
       "category": "simulation"
     },
     {
+      "id": "tactical",
+      "title": "Tactical Grid Mechanics & Formations Subsystem",
+      "description": "2D Cartesian grid coordinates, terrain friction modifiers, 8-slot formations, and Zone of Control.",
+      "manifest_path": "tactical/manifest.json",
+      "status": "active",
+      "category": "simulation"
+    },
+    {
       "id": "gui",
       "title": "Desktop Presentation & 2.5D Tactical Viewport Subsystem",
       "description": "X11 double-buffering, dark fantasy palette, 2.5D diamond isometric projection, and asset abstraction pipeline.",
       "manifest_path": "gui/manifest.json",
       "status": "active",
       "category": "presentation"
+    },
+    {
+      "id": "audio",
+      "title": "Audiovisual Sound & Music Synthesis Subsystem",
+      "description": "Bus channels, SFX cue registry, BGM loop points, and spatial attenuation.",
+      "manifest_path": "audio/manifest.json",
+      "status": "active",
+      "category": "presentation"
+    },
+    {
+      "id": "palettes",
+      "title": "Hardware Color Palettes & Viewport Theme Subsystem",
+      "description": "24/32-bit hex themes, continental biome tile colors, and dynamic relic glow spectrum.",
+      "manifest_path": "palettes/manifest.json",
+      "status": "active",
+      "category": "presentation"
+    },
+    {
+      "id": "fonts",
+      "title": "High-Fantasy Typography & Responsive Font Subsystem",
+      "description": "TrueType font bindings, typographic role metrics, and high-DPI responsive scalers.",
+      "manifest_path": "fonts/manifest.json",
+      "status": "active",
+      "category": "presentation"
+    },
+    {
+      "id": "textures",
+      "title": "2D Texture Atlases, Sprite Sheets & Animation Subsystem",
+      "description": "32x32 character sprite sheets, terrain tilesets, autotile masks, and animation clips.",
+      "manifest_path": "textures/manifest.json",
+      "status": "active",
+      "category": "presentation"
     }
   ],
   "_audit": {
-    "manifest_count": 16,
-    "active_subsystems": 15,
+    "manifest_count": 21,
+    "active_subsystems": 20,
     "integrity_check": "All paths relative to data root"
   },
   "_navigation": {

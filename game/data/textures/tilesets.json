@@ -1,0 +1,113 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/textures/tilesets.json",
+    "id": "data.textures.tilesets",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Tactical grid terrain tilesets, passability collision masks, and autotile metadata."
+  },
+  "tile_size": 32,
+  "tilesets": [
+    {
+      "id": "tileset_sacyra_plains",
+      "name": "Sacyra Continental Plains & Forest",
+      "file": "assets/textures/tilesets/sacyra_plains_256x256.png",
+      "tiles": [
+        {
+          "tile_id": 0,
+          "name": "Grassland Clear",
+          "passable": true,
+          "friction_mult": 1.0,
+          "cover_pct": 0,
+          "procedural_color": "0x2A4D34"
+        },
+        {
+          "tile_id": 1,
+          "name": "Grassland Meadow (Flowers)",
+          "passable": true,
+          "friction_mult": 1.0,
+          "cover_pct": 5,
+          "procedural_color": "0x3E6B4B"
+        },
+        {
+          "tile_id": 2,
+          "name": "Cobblestone Path",
+          "passable": true,
+          "friction_mult": 0.9,
+          "cover_pct": 0,
+          "procedural_color": "0x4A505C"
+        },
+        {
+          "tile_id": 3,
+          "name": "Dense Forest Thicket",
+          "passable": true,
+          "friction_mult": 1.5,
+          "cover_pct": 20,
+          "procedural_color": "0x1B3824"
+        },
+        {
+          "tile_id": 4,
+          "name": "Stone Rampart Wall",
+          "passable": false,
+          "friction_mult": 99.0,
+          "cover_pct": 50,
+          "blocks_los": true,
+          "procedural_color": "0x333740"
+        },
+        {
+          "tile_id": 5,
+          "name": "River Rapids",
+          "passable": false,
+          "friction_mult": 99.0,
+          "cover_pct": 0,
+          "blocks_los": false,
+          "procedural_color": "0x17384A"
+        }
+      ]
+    },
+    {
+      "id": "tileset_dreamscape",
+      "name": "The Nocturnal Dream Chamber",
+      "file": "assets/textures/tilesets/dreamscape_256x256.png",
+      "tiles": [
+        {
+          "tile_id": 10,
+          "name": "Ethereal Floor",
+          "passable": true,
+          "friction_mult": 1.0,
+          "cover_pct": 0,
+          "procedural_color": "0x161A29"
+        },
+        {
+          "tile_id": 11,
+          "name": "Memory Fragment",
+          "passable": true,
+          "friction_mult": 1.2,
+          "cover_pct": 10,
+          "procedural_color": "0x252C42"
+        },
+        {
+          "tile_id": 12,
+          "name": "Planar Abyss",
+          "passable": false,
+          "friction_mult": 99.0,
+          "cover_pct": 0,
+          "blocks_los": false,
+          "procedural_color": "0x0A0D14"
+        },
+        {
+          "tile_id": 13,
+          "name": "Chrono's Sundial",
+          "passable": false,
+          "friction_mult": 99.0,
+          "cover_pct": 30,
+          "blocks_los": true,
+          "procedural_color": "0xD4AF37"
+        }
+      ]
+    }
+  ]
+}

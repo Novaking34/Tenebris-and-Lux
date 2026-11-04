@@ -1,0 +1,80 @@
+{
+  "_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "data/tactical/terrains.json",
+    "id": "data.tactical.terrains",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "1.0.0",
+    "date": "2026-11-03",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Tactical terrain properties, movement friction, defensive cover, and relic resonance."
+  },
+  "terrains": [
+    {
+      "id": "PLAINS",
+      "name": "Sacyran Grassland",
+      "passable": true,
+      "movement_cost": 1.0,
+      "defense_cover_pct": 0,
+      "evasion_mod_pct": 0,
+      "blocks_los": false,
+      "relic_affinity": "NONE",
+      "relic_boost_pct": 0
+    },
+    {
+      "id": "FOREST",
+      "name": "Arboreal Canopy",
+      "passable": true,
+      "movement_cost": 1.5,
+      "defense_cover_pct": 20,
+      "evasion_mod_pct": 10,
+      "blocks_los": true,
+      "relic_affinity": "NONE",
+      "relic_boost_pct": 0
+    },
+    {
+      "id": "SWAMP",
+      "name": "Abyssal Mud Trench",
+      "passable": true,
+      "movement_cost": 2.0,
+      "defense_cover_pct": 0,
+      "evasion_mod_pct": -10,
+      "blocks_los": false,
+      "relic_affinity": "TENEBRIS",
+      "relic_boost_pct": 10
+    },
+    {
+      "id": "RAMPART",
+      "name": "High Bastion Rampart",
+      "passable": false,
+      "movement_cost": 99.0,
+      "defense_cover_pct": 50,
+      "evasion_mod_pct": 0,
+      "blocks_los": true,
+      "relic_affinity": "LUX",
+      "relic_boost_pct": 20
+    },
+    {
+      "id": "CHASM",
+      "name": "Planar Void Chasm",
+      "passable": false,
+      "movement_cost": 99.0,
+      "defense_cover_pct": 0,
+      "evasion_mod_pct": 0,
+      "blocks_los": false,
+      "relic_affinity": "NONE",
+      "relic_boost_pct": 0
+    },
+    {
+      "id": "RIFT_NODE",
+      "name": "The Planar Wound Nexus",
+      "passable": true,
+      "movement_cost": 1.0,
+      "defense_cover_pct": 10,
+      "evasion_mod_pct": 5,
+      "blocks_los": false,
+      "relic_affinity": "EQUILIBRIUM",
+      "relic_boost_pct": 25
+    }
+  ]
+}
