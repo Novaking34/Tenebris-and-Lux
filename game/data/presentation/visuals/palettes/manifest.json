@@ -1,35 +1,88 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/palettes/manifest.json",
+    "file": "game/data/presentation/visuals/palettes/manifest.json",
     "id": "data.palettes.manifest",
     "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Color palette subsystem manifest specifying themes, biomes, and relic resonance hues."
-  },
-  "subsystem": {
-    "id": "palettes",
-    "name": "Hardware Color Palettes & Viewport Theme Subsystem",
-    "stratum": "Layer 2: Presentation & Viewport",
-    "status": "active",
-    "catalog_files": [
-      "themes.json",
-      "biomes.json",
-      "relics.json"
-    ],
-    "sub_assemblies": [
-      "palette_hardware_lut",
-      "palette_theme_selector",
-      "palette_dynamic_gradient"
-    ],
-    "axioms": [
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Color Palette Subsystem Manifest Specifying Themes, Biomes & Relic Hues",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/visuals/palettes/",
+      "themes_catalog": "themes.json",
+      "biomes_catalog": "biomes.json",
+      "relics_catalog": "relics.json",
+      "legacy_palette": "legacy_palette.json"
+    },
+    "what_it_enables": [
       "Strict 24-bit RGB and 32-bit ARGB hex formatting (0xRRGGBB, 0xAARRGGBB)",
-      "WCAG AAA compliance (min 7:1 contrast ratio) for textual elements over backgrounds",
-      "Dynamic moral sway interpolates smoothly between Lux gold and Tenebris violet",
-      "Zero allocations in palette lookup: precomputed 32-entry lookup tables (LUT)"
+      "Dynamic moral sway interpolation between Lux gold (#D4AF37) and Tenebris violet (#4A0E4E)",
+      "Biome-specific environmental tinting across forests, plains, ruins, and astral voids",
+      "WCAG AAA compliance (min 7:1 contrast ratio) for HUD text over backdrops"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in palette lookup (ALLOC_ZERO_HEAP)",
+      "All palette values strictly conform to 24-bit or 32-bit hex colors",
+      "Moral sway interpolation must evaluate smoothly between -100 and +100",
+      "Static 32-entry lookup tables (LUT) eliminate runtime allocations"
     ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/gui.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "gui.palettes",
+      "schema_id": "tenlux.data.palettes.v1",
+      "lut_capacity": 32
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystem": {
+      "id": "palettes",
+      "name": "Hardware Color Palettes & Viewport Theme Subsystem",
+      "stratum": "Layer 2: Presentation & Viewport",
+      "status": "active",
+      "catalog_files": [
+        "themes.json",
+        "biomes.json",
+        "relics.json",
+        "legacy_palette.json"
+      ],
+      "sub_assemblies": [
+        "palette_hardware_lut",
+        "palette_theme_selector",
+        "palette_dynamic_gradient"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_HEX_FORMAT",
+        "condition": "hex colors match valid 6-char or 8-char hex patterns",
+        "action": "Fallback to canonical UI gold (#D4AF37) on invalid hex string"
+      }
+    ],
+    "metrics": {
+      "registered_catalogs": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
   }
 }
-

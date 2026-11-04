@@ -1,0 +1,92 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/presentation/ui/manifest.json",
+    "id": "data.ui.manifest",
+    "layer": "Layer 2: Presentation & Viewport",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Desktop HUD, Panel Layouts & Viewport Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/ui/",
+      "layout_catalog": "layout.json",
+      "gui_manifest_alias": "gui_manifest.json",
+      "fonts_subsystem": "fonts/manifest.json"
+    },
+    "what_it_enables": [
+      "Desktop HUD panel layout with non-overlapping AABB geometry",
+      "Vitals display: HP (Vitality), MP (Mana), and TP (Tactical Points)",
+      "Hex-Attribute inspect card (ATK, DEF, MATK, MDEF, AGI, LUK)",
+      "TrueType font typography scaling via Cinzel and MedievalSharp"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in UI initialization (ALLOC_ZERO_HEAP)",
+      "Panel and widget geometry strictly audited via non-overlapping AABB checks",
+      "Double-buffered offscreen rendering eliminates visual tearing",
+      "Headless fallback cleanly downgrades to terminal CLI"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/gui.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "gui.viewport.ui",
+      "schema_id": "tenlux.data.ui.v1",
+      "panel_count": 4
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystem": {
+      "id": "ui",
+      "name": "Desktop HUD, Panel Layouts & TrueType Fonts",
+      "stratum": "Layer 2: Presentation & Viewport",
+      "status": "active"
+    },
+    "catalogs": [
+      {
+        "id": "layout",
+        "file": "layout.json",
+        "description": "HUD panel coordinate geometry, AABB bounds, and view containers"
+      },
+      {
+        "id": "fonts",
+        "file": "fonts/manifest.json",
+        "description": "TrueType font rendering, typography styles, and responsive scalers"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_PANEL_OVERLAP",
+        "condition": "panel AABBs must not intersect destructively",
+        "action": "Audit fails if UI panels collide or clip active viewport"
+      }
+    ],
+    "metrics": {
+      "registered_catalogs": 2,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "fonts/manifest.json",
+        "../visuals/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
+  }
+}

@@ -1,36 +1,135 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/tactical/manifest.json",
+    "file": "game/data/mechanics/tactics/manifest.json",
     "id": "data.tactical.manifest",
     "layer": "Layer 1: Simulation Engine",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Tactical grid rules, terrain friction, party formations, and Zone-of-Control manifest."
-  },
-  "subsystem": {
-    "id": "tactical",
-    "name": "Tactical Strategy RPG Grid Mechanics & Formations Subsystem",
-    "stratum": "Layer 1: Simulation Engine",
-    "status": "active",
-    "catalog_files": [
-      "terrains.json",
-      "formations.json",
-      "zoc.json"
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Tactical Grid Mechanics, TP Overworld Rules, Formations & ZOC Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/mechanics/tactics/",
+      "formations_catalog": "formations.json",
+      "zoc_catalog": "zoc.json",
+      "terrain_reference": "../../world/terrains/default.json"
+    },
+    "what_it_enables": [
+      "Tactical Points (TP) economy: Spent to traverse the 2D grid and execute overworld actions",
+      "Overworld-to-battle state transitions affecting action-battle / side-scroll turn encounters",
+      "Tactical Ambush (15 TP): Grants first-strike initiative, +20% ATK, and 50% staggered foe poise",
+      "Tactical Scouting (10 TP): Reveals hazards and grants Fortune's Blessing (+30% LUK, +20% crit)",
+      "8-slot squad deployment matrix across Vanguard, Midline, and Rearguard positions",
+      "Zone-of-Control (ZOC) pin rules halting enemy traversal unless warded by Lux"
     ],
-    "sub_assemblies": [
-      "tactical_grid_engine",
-      "tactical_terrain_friction",
-      "tactical_formation_matrix",
-      "tactical_zoc_interceptor"
-    ],
-    "axioms": [
-      "Discrete Cartesian integer coordinates bounded in [0, 64) x [0, 64)",
-      "Zero-heap pathfinding and movement cost calculations",
-      "Movement budgets (MP) strictly conserved and non-negative",
-      "Zone-of-Control (ZOC) pin rules halt contiguous traversal unless warded"
+    "invariants": [
+      "Zero dynamic heap allocations in tactical pathfinding (ALLOC_ZERO_HEAP)",
+      "Discrete Cartesian grid coordinates strictly bounded within [0, 64) x [0, 64)",
+      "Tactical Points (TP) budget strictly non-negative; conserved between grid and battle",
+      "Movement costs strictly scaled by terrain friction (friction >= 1.0)"
     ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "world_subsystem": "world/world.h inclusion",
+      "hero_subsystem": "hero/sim_state.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "sim.mechanics.tactics",
+      "schema_id": "tenlux.data.tactics.v1",
+      "max_grid_size": 64,
+      "tp_max_default": 100,
+      "base_cell_tp_cost": 1.0
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystem": {
+      "id": "tactical",
+      "name": "Tactical Strategy RPG Grid Mechanics & Formations Subsystem",
+      "stratum": "Layer 1: Simulation Engine",
+      "status": "active"
+    },
+    "overworld_tp_rules": {
+      "vital": "TP (Tactical Points)",
+      "pool_range": [0, 100],
+      "actions": [
+        {
+          "action": "grid_traverse",
+          "tp_cost": "1.0 * cell_friction",
+          "effect": "Advances unit 1 tile on tactical grid"
+        },
+        {
+          "action": "tactical_sprint",
+          "tp_cost": 2.0,
+          "effect": "Doubles movement speed across open plains; inflicts -5% poise"
+        },
+        {
+          "action": "tactical_ambush",
+          "tp_cost": 15,
+          "effect": "Engages combat with First Strike, +20% ATK, 50% enemy stagger"
+        },
+        {
+          "action": "tactical_scout",
+          "tp_cost": 10,
+          "effect": "Reveals fog-of-war cells and grants Fortune's Blessing (+30% LUK)"
+        },
+        {
+          "action": "tactical_brace",
+          "tp_cost": 8,
+          "effect": "Fortifies ZOC perimeter; adds +20% Bastion DEF against flanking"
+        }
+      ]
+    },
+    "catalogs": [
+      {
+        "id": "formations",
+        "file": "formations.json",
+        "description": "8-slot squad tactical deployment matrix, line synergies, and buffs",
+        "presets_count": 3
+      },
+      {
+        "id": "zoc",
+        "file": "zoc.json",
+        "description": "Zone-of-Control interceptor rules, pin radius, and evasion penalties",
+        "rule_count": 4
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_COORDINATE_BOUNDS",
+        "condition": "x >= 0 && x < 64 && y >= 0 && y < 64",
+        "action": "Clamp position within [0, 64) grid limits"
+      },
+      {
+        "id": "TRIPWIRE_TP_DRAIN_EXHAUSTION",
+        "condition": "current_tp < 10",
+        "action": "Trigger Tactical Exhaustion state (double movement cost, +20% MP cost)"
+      }
+    ],
+    "metrics": {
+      "registered_catalogs": 2,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "../combat/manifest.json",
+        "../../world/terrains/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
   }
 }
-

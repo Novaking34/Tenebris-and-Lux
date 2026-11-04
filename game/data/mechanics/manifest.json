@@ -1,46 +1,127 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/mechanics/manifest.json",
-    "id": "data.mechanics.root",
+    "file": "game/data/mechanics/manifest.json",
+    "id": "data.mechanics.manifest",
     "layer": "Layer 1: Simulation Engine",
-    "version": "1.0.0",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
     "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Mechanics Domain Manifest orchestrating simulation rules & flow.",
+    "role": "Mechanics Domain Master Manifest orchestrating simulation rules, combat & campaign progression",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/mechanics/",
+      "tactics_subsystem": "tactics/manifest.json",
+      "combat_subsystem": "combat/manifest.json",
+      "items_subsystem": "items/manifest.json",
+      "campaign_subsystem": "campaign/manifest.json"
+    },
+    "what_it_enables": [
+      "Tri-Vital Model: Health Points (HP), Magic Points (MP), and Tactical Points (TP)",
+      "Hex-Base Attribute Continuum: ATK (Might), DEF (Bastion Poise), MATK (Resonance), MDEF (Astral Warding), AGI (Celerity), LUK (Fortune)",
+      "Overworld-to-battle state transitions via TP expenditure (Ambush, Pinning, Celerity)",
+      "Deterministic 4-posture combat stance finite state machine",
+      "Diegetic twin relics (Shield of Lux, Sword of Tenebris) and inventory specs",
+      "Branching 5-route campaign morality resolution and dispatch routing"
+    ],
     "invariants": [
-      "Zero dynamic heap allocations in simulation mechanics",
+      "Zero dynamic heap allocations across all mechanics (ALLOC_ZERO_HEAP)",
       "Moral sway continuum strictly bounded within [-100, +100]",
-      "Twin Relic resonance bounded within [0, 100]"
+      "Twin Relic resonance strictly clamped within [0, 100] (MAX_RESONANCE)",
+      "Tactical Points (TP) non-negative, conserved across overworld and battle"
     ]
   },
-  "domain": "mechanics",
-  "title": "Simulation Rules, Combat & Campaign Progression",
-  "subsystems": [
-    {
-      "id": "tactics",
-      "title": "Squad Formations & Zone of Control Tactics",
-      "path": "tactics/manifest.json",
-      "category": "tactics"
+  "block_2_opening": {
+    "pre_conditions": {
+      "combat_subsystem": "combat/combat.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
-    {
-      "id": "combat",
-      "title": "Combat Stances, Formulas, Modes, Skills & States",
-      "path": "combat/manifest.json",
-      "category": "combat"
+    "static_declarations": {
+      "subsystem": "sim.mechanics",
+      "schema_id": "tenlux.data.mechanics.v1",
+      "total_subsystems": 4,
+      "subsystem_list": [
+        "tactics",
+        "combat",
+        "items",
+        "campaign"
+      ]
     },
-    {
-      "id": "items",
-      "title": "Diegetic Relics, Catalysts, Consumables & Valuables",
-      "path": "items/manifest.json",
-      "category": "items"
-    },
-    {
-      "id": "campaign",
-      "title": "Campaign Morality Matrix, Archetypes & Dispatch Router",
-      "path": "campaign/player_manifest.json",
-      "category": "campaign"
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
     }
-  ]
+  },
+  "block_3_body": {
+    "domain": "mechanics",
+    "title": "Simulation Rules, Combat & Campaign Progression",
+    "subsystems": [
+      {
+        "id": "tactics",
+        "title": "Tactical Grid Mechanics, TP Overworld Rules & Formations",
+        "manifest_path": "tactics/manifest.json",
+        "category": "tactics",
+        "description": "Grid movement budgets, TP costs, formations, and Zone of Control"
+      },
+      {
+        "id": "combat",
+        "title": "Combat Stances, Formulas, Modes, Skills & States",
+        "manifest_path": "combat/manifest.json",
+        "category": "combat",
+        "description": "4-stance state machine, damage formulas, and status conditions"
+      },
+      {
+        "id": "items",
+        "title": "Diegetic Relics, Catalysts, Consumables & Valuables",
+        "manifest_path": "items/manifest.json",
+        "category": "items",
+        "description": "Equipment, consumable restorative items, and key artifacts"
+      },
+      {
+        "id": "campaign",
+        "title": "Campaign Morality Matrix, Archetypes & Dispatch Router",
+        "manifest_path": "campaign/manifest.json",
+        "category": "campaign",
+        "description": "Midpoint campaign fork, 5-route endings, and command router"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_RESONANCE_BOUNDS",
+        "condition": "shield_power in [0, 100] && sword_edge in [0, 100]",
+        "action": "Clamp relic power to [0, 100]; flag audit failure on negative"
+      },
+      {
+        "id": "TRIPWIRE_MORAL_SWAY_BOUNDS",
+        "condition": "moral_sway in [-100, +100]",
+        "action": "Clamp moral sway continuum to canonical [-100, +100]"
+      },
+      {
+        "id": "TRIPWIRE_TP_NON_NEGATIVE",
+        "condition": "tactical_points >= 0",
+        "action": "Clamp TP to 0; apply Tactical Exhaustion state when < 10"
+      }
+    ],
+    "metrics": {
+      "total_registered_subsystems": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "subsystem_menus": [
+        "tactics/manifest.json",
+        "combat/manifest.json",
+        "items/manifest.json",
+        "campaign/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
+  }
 }

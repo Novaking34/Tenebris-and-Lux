@@ -67,6 +67,67 @@
       "turn_dmg_pct": 8,
       "spread_behavior": "100% circle(1)",
       "description": "Target or grid tile is enveloped in flames. Damages occupants and spreads to adjacent flammable tiles."
+    },
+    {
+      "id": 70,
+      "name": "Tactical Ambush Advantage",
+      "priority": 70,
+      "type": "overworld_advantage",
+      "turns": 2,
+      "atk_pct": 20,
+      "first_strike": true,
+      "stagger_threat_pct": 50,
+      "description": "Initiated by spending TP to ambush foes from the tactical overworld. Grants +20% ATK, first strike priority, and starts the turn battle with 50% staggered enemy poise."
+    },
+    {
+      "id": 71,
+      "name": "Tactical Disadvantage",
+      "priority": 70,
+      "type": "overworld_disadvantage",
+      "turns": 2,
+      "atk_pct": -15,
+      "evasion_mod_pct": -10,
+      "description": "Triggered when overworld TP is depleted or caught unawares. Unit suffers -15% ATK, -10% Evasion, and enemies strike first in the action battle transition."
+    },
+    {
+      "id": 72,
+      "name": "Celerity Surge",
+      "priority": 65,
+      "type": "tactical_celerity",
+      "turns": 3,
+      "agi_pct": 25,
+      "action_speed_mod": 1.5,
+      "description": "Tactical TP reserve fuels a rapid burst of speed. AGI (Celerity) +25%, accelerating action gauges in side-scroll combat."
+    },
+    {
+      "id": 73,
+      "name": "Fortune's Blessing",
+      "priority": 55,
+      "type": "tactical_fortune",
+      "turns": 3,
+      "luk_pct": 30,
+      "crit_rate_pct": 20,
+      "description": "Astute tactical scouting unlocks astral favor. LUK (Fortune) +30%, critical strike chance +20%, and increased battle loot yield."
+    },
+    {
+      "id": 74,
+      "name": "Tactical Pinning",
+      "priority": 75,
+      "type": "tactical_zoc",
+      "turns": 2,
+      "move_points_mod": -99,
+      "def_pct": -20,
+      "description": "Zone-of-Control lockup. Unit is pinned on the tactical grid, unable to expend TP for traversal, and suffers -20% Bastion DEF in turn combat."
+    },
+    {
+      "id": 75,
+      "name": "Tactical Exhaustion",
+      "priority": 80,
+      "type": "tactical_fatigue",
+      "turns": 2,
+      "tp_cost_multiplier": 2.0,
+      "mp_cost_increase_pct": 20,
+      "description": "Exhaustion resulting from depleted TP (<10). Grid movement costs double and spellcasting consumes 20% additional MP."
     }
   ]
 }

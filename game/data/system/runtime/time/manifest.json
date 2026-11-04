@@ -1,45 +1,73 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/time/manifest.json",
-    "id": "data.time.manifest",
-    "layer": "Layer 0 Data / Catalog",
-    "version": "1.0.0",
-    "date": "2026-11-02",
+    "file": "game/data/system/runtime/time/manifest.json",
+    "id": "data.system.time.manifest",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Manifest and menu for all monotonic timing, frame pacing, and latency budget profiles.",
+    "role": "Time Subsystem Manifest indexing frame pacing, monotonic clock & latency profiles.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Timing",
+      "default_profile": "game/data/system/runtime/time/default.json",
+      "high_refresh_profile": "game/data/system/runtime/time/high_refresh.json"
+    },
+    "what_it_enables": [
+      "Monotonic clock frame pacing without time-drift jitter",
+      "Targeted 60 FPS (16.67ms) and 120 FPS (8.33ms) rendering budgets",
+      "Sub-50us simulation turn budgets guaranteeing zero softlocks"
+    ],
     "invariants": [
-      "Every registered profile file must exist in data/time/",
-      "Profiles must declare unique IDs",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+      "Zero dynamic heap allocation (ALLOC_ZERO_HEAP)",
+      "Strict conformance to OmniCode 5-Block Architecture"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.time_menu.v1",
-    "target_subsystem": "core.util.time"
-  },
-  "active_profile": "default",
-  "profiles": [
-    {
-      "id": "default",
-      "display_name": "Standard 60 FPS Engine Timing Profile",
-      "file": "default.json",
-      "description": "60 FPS (16.67 ms) with 50 us turn budget."
+  "block_2_opening": {
+    "pre_conditions": {
+      "clock_source": "CLOCK_MONOTONIC"
     },
-    {
-      "id": "high_refresh",
-      "display_name": "High-Refresh 120 FPS Gaming Profile",
-      "file": "high_refresh.json",
-      "description": "120 FPS (8.33 ms) with 25 us turn budget."
+    "static_declarations": {
+      "schema_id": "tenlux.data.time_menu.v1",
+      "target_subsystem": "core.util.time"
+    },
+    "generic_helper_contracts": {
+      "time_loader": "time_load_config_from_file"
     }
-  ],
-  "_audit": {
-    "profile_count": 2,
-    "active_valid": true
   },
-  "_navigation": {
-    "parent_menu": "../manifest.json",
-    "current_directory": "data/time"
+  "block_3_body": {
+    "active_profile": "default",
+    "profiles": [
+      {
+        "id": "default",
+        "display_name": "Standard 60 FPS Engine Timing Profile",
+        "file": "default.json",
+        "description": "60 FPS (16.67 ms) with 50 us turn budget and 60 Hz tick rate."
+      },
+      {
+        "id": "high_refresh",
+        "display_name": "High-Refresh 120 FPS Gaming Profile",
+        "file": "high_refresh.json",
+        "description": "120 FPS (8.33 ms) with 25 us turn budget and 120 Hz tick rate."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "profile_count": 2,
+      "active_valid": true
+    },
+    "verification_tripwires": [
+      { "name": "FPS_POSITIVE", "rule": "target_fps > 0", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "system/runtime/time"
+    }
   }
 }

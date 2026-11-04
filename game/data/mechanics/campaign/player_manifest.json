@@ -1,40 +1,117 @@
 {
-  "subsystem": "sim.player",
-  "version": "1.0.0",
-  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-  "description": "Master player tracking specification and data manifest for Tenebris and Lux",
-  "data_files": [
-    {
-      "module": "archetypes",
-      "path": "data/player/archetypes.json",
-      "description": "Protagonist character archetypes, base stats, and starter gear"
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/mechanics/campaign/player_manifest.json",
+    "id": "data.player.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Player Tracking Specification and Data Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/mechanics/campaign/",
+      "archetypes_catalog": "archetypes.json",
+      "morality_catalog": "morality.json",
+      "progression_catalog": "progression.json",
+      "inventory_spec": "inventory_spec.json"
     },
-    {
-      "module": "morality_matrix",
-      "path": "data/player/morality_matrix.json",
-      "description": "Moral sway continuum, Bystander Corridor (-50 to +50), and micro-verb telemetry weights"
+    "what_it_enables": [
+      "Protagonist character archetypes, base stats, and starter gear",
+      "Moral sway continuum, Bystander Corridor (-50 to +50), and verb weights",
+      "Level progression curves, attribute ceilings, and resource bounds",
+      "Player inventory capacity (32 slots) and quick-use limits"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during player state updates (ALLOC_ZERO_HEAP)",
+      "HP bounded in [0, 9999]; MP bounded in [0, 999]; TP bounded in [0, 100]",
+      "Resonance bounded in [0, 100]; Moral sway bounded in [-100, +100]",
+      "Gold currency strictly bounded in [0, 999999]"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "hero_subsystem": "hero/sim_state.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
-    {
-      "module": "progression",
-      "path": "data/player/progression.json",
-      "description": "Level progression curves, attribute ceilings, and resource bounds"
+    "static_declarations": {
+      "subsystem": "sim.player",
+      "schema_id": "tenlux.data.player_manifest.v1",
+      "hp_min": 0,
+      "hp_max": 9999,
+      "resonance_min": 0,
+      "resonance_max": 100,
+      "sway_min": -100,
+      "sway_max": 100,
+      "bystander_corridor_min": -50,
+      "bystander_corridor_max": 50,
+      "gold_max": 999999
     },
-    {
-      "module": "inventory_spec",
-      "path": "data/player/inventory_spec.json",
-      "description": "Player inventory capacity, equipment slots, and quick-use limits"
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
     }
-  ],
-  "invariants": {
-    "hp_min": 0,
-    "hp_max": 9999,
-    "resonance_min": 0,
-    "resonance_max": 100,
-    "sway_min": -100,
-    "sway_max": 100,
-    "bystander_corridor_min": -50,
-    "bystander_corridor_max": 50,
-    "gold_max": 999999
+  },
+  "block_3_body": {
+    "data_files": [
+      {
+        "module": "archetypes",
+        "path": "data/player/archetypes.json",
+        "description": "Protagonist character archetypes, base stats, and starter gear"
+      },
+      {
+        "module": "morality_matrix",
+        "path": "data/player/morality_matrix.json",
+        "description": "Moral sway continuum, Bystander Corridor (-50 to +50), and telemetry weights"
+      },
+      {
+        "module": "progression",
+        "path": "data/player/progression.json",
+        "description": "Level progression curves, attribute ceilings, and resource bounds"
+      },
+      {
+        "module": "inventory_spec",
+        "path": "data/player/inventory_spec.json",
+        "description": "Player inventory capacity, equipment slots, and quick-use limits"
+      }
+    ],
+    "invariants": {
+      "hp_min": 0,
+      "hp_max": 9999,
+      "resonance_min": 0,
+      "resonance_max": 100,
+      "sway_min": -100,
+      "sway_max": 100,
+      "bystander_corridor_min": -50,
+      "bystander_corridor_max": 50,
+      "gold_max": 999999
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_HP_BOUNDS",
+        "condition": "current_hp >= 0 && current_hp <= 9999",
+        "action": "Clamp HP to [0, 9999]"
+      },
+      {
+        "id": "TRIPWIRE_SWAY_BOUNDS",
+        "condition": "moral_sway >= -100 && moral_sway <= 100",
+        "action": "Clamp moral sway to [-100, +100]"
+      }
+    ],
+    "metrics": {
+      "registered_data_files": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
   }
 }
-

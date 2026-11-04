@@ -1,0 +1,122 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/mechanics/campaign/manifest.json",
+    "id": "data.campaign.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Campaign Progression, Morality Matrix, Archetypes & Dispatch Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/mechanics/campaign/",
+      "archetypes_catalog": "archetypes.json",
+      "morality_catalog": "morality.json",
+      "progression_catalog": "progression.json",
+      "inventory_spec": "inventory_spec.json",
+      "dispatch_subsystem": "dispatch/manifest.json"
+    },
+    "what_it_enables": [
+      "Protagonist character archetypes, base stats, and starter gear",
+      "Moral sway continuum and 5-route campaign branch matrix",
+      "Level progression curves, attribute ceilings, and resource bounds",
+      "Player inventory capacity (32 slots) and quick-use limits",
+      "Master command dispatcher, alias resolution, and domain routing"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during campaign state updates (ALLOC_ZERO_HEAP)",
+      "HP bounded in [0, 9999]; MP bounded in [0, 999]; TP bounded in [0, 100]",
+      "Moral sway continuum strictly bounded within [-100, +100]",
+      "Bystander Corridor bounded in [-50, +50] for neutral trajectory tracking"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "hero_subsystem": "hero/sim_state.h inclusion",
+      "dispatch_subsystem": "dispatch/dispatcher.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "sim.player",
+      "schema_id": "tenlux.data.campaign.v1",
+      "hp_min": 0,
+      "hp_max": 9999,
+      "mp_min": 0,
+      "mp_max": 999,
+      "tp_min": 0,
+      "tp_max": 100,
+      "resonance_min": 0,
+      "resonance_max": 100,
+      "sway_min": -100,
+      "sway_max": 100,
+      "bystander_corridor_min": -50,
+      "bystander_corridor_max": 50,
+      "gold_max": 999999
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "data_files": [
+      {
+        "module": "archetypes",
+        "path": "archetypes.json",
+        "description": "Protagonist character archetypes, base stats, and starter gear"
+      },
+      {
+        "module": "morality_matrix",
+        "path": "morality.json",
+        "description": "Moral sway continuum, Bystander Corridor (-50 to +50), and telemetry weights"
+      },
+      {
+        "module": "progression",
+        "path": "progression.json",
+        "description": "Level progression curves, attribute ceilings, and resource bounds"
+      },
+      {
+        "module": "inventory_spec",
+        "path": "inventory_spec.json",
+        "description": "Player inventory capacity, equipment slots, and quick-use limits"
+      },
+      {
+        "module": "dispatch",
+        "path": "dispatch/manifest.json",
+        "description": "Master command dispatcher, alias resolution, and domain routing"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_HP_BOUNDS",
+        "condition": "current_hp >= 0 && current_hp <= 9999",
+        "action": "Clamp HP within [0, 9999]"
+      },
+      {
+        "id": "TRIPWIRE_SWAY_BOUNDS",
+        "condition": "moral_sway >= -100 && moral_sway <= 100",
+        "action": "Clamp moral sway continuum to [-100, +100]"
+      }
+    ],
+    "metrics": {
+      "registered_modules": 5,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "dispatch/manifest.json",
+        "../combat/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
+  }
+}

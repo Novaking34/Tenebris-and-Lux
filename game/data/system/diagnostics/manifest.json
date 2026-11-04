@@ -1,0 +1,81 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/system/diagnostics/manifest.json",
+    "id": "data.system.diagnostics.manifest",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Diagnostics Sub-Domain Manifest orchestrating telemetry & debugger.",
+    "where_the_data_lives": {
+      "topology": "System Diagnostics Branch",
+      "telemetry_directory": "game/data/system/diagnostics/telemetry/",
+      "debugger_directory": "game/data/system/diagnostics/debugger/"
+    },
+    "what_it_enables": [
+      "Flight recorder static ring buffer telemetry and category segregation",
+      "64-snapshot time-travel state rewind and deterministic FNV-1a hashing",
+      "Interactive command-line debugger with watchpoints and tripwires"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations (ALLOC_ZERO_HEAP)",
+      "Non-crashing tripwire traps and safe state restoration"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "telemetry_buffer": "Static ring buffer allocated in .bss",
+      "snapshot_capacity": "64 snapshots maximum"
+    },
+    "static_declarations": {
+      "sub_domain_id": "system.diagnostics",
+      "schema_id": "tenlux.data.system_diagnostics.v1",
+      "registered_subsystems": [ "telemetry", "debugger" ]
+    },
+    "generic_helper_contracts": {
+      "log_subsystem": "log/log.h",
+      "debug_subsystem": "debug/debug.h"
+    }
+  },
+  "block_3_body": {
+    "subsystems": [
+      {
+        "id": "telemetry",
+        "title": "Categorized Telemetry & Log Rotation Engine",
+        "manifest_path": "telemetry/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/system/diagnostics/telemetry/",
+        "what_it_enables": "Forensic telemetry, category isolation, static ring buffer."
+      },
+      {
+        "id": "debugger",
+        "title": "Interactive State Rewind & Snapshot Ring Buffer",
+        "manifest_path": "debugger/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/system/diagnostics/debugger/",
+        "what_it_enables": "Time-travel rewind, FNV-1a state hashing, watchpoint traps."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "subsystems_count": 2,
+      "active_count": 2
+    },
+    "verification_tripwires": [
+      { "name": "ZERO_HEAP", "rule": "Zero dynamic allocations", "status": "VERIFIED_PASS" },
+      { "name": "SNAPSHOT_BOUNDS", "rule": "Snapshot count <= 64", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "system/diagnostics",
+      "primary_menu": "telemetry/manifest.json"
+    }
+  }
+}

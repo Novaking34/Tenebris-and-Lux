@@ -1,34 +1,85 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/fonts/manifest.json",
+    "file": "game/data/presentation/ui/fonts/manifest.json",
     "id": "data.fonts.manifest",
     "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Typography and TrueType font rendering subsystem manifest."
-  },
-  "subsystem": {
-    "id": "fonts",
-    "name": "High-Fantasy Typography & Responsive Font Subsystem",
-    "stratum": "Layer 2: Presentation & Viewport",
-    "status": "active",
-    "catalog_files": [
-      "typography.json",
-      "scalers.json"
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Typography and TrueType Font Rendering Subsystem Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/ui/fonts/",
+      "typography_catalog": "typography.json",
+      "scalers_catalog": "scalers.json",
+      "font_binaries": "game/assets/fonts/ (Cinzel, MedievalSharp)"
+    },
+    "what_it_enables": [
+      "High-fantasy typography with proportional responsive scaling",
+      "TrueType font rasterization with Xft and custom metrics caching",
+      "Zero-heap glyph metrics caching with pre-rendered advance tables",
+      "Graceful fallback to ASCII bitmap font in headless environments"
     ],
-    "sub_assemblies": [
-      "font_xft_rasterizer",
-      "font_metrics_cache",
-      "font_responsive_scaler"
-    ],
-    "axioms": [
-      "TrueType font files strictly located in assets/fonts/ with fonts.dir/fonts.scale descriptors",
-      "Zero-heap glyph metrics caching: pre-rendered character advance tables",
-      "Strict aspect ratio preservation: fonts scale proportionally with letterbox/pillarbox",
-      "Graceful fallback: plain ASCII 8x16 bitmap font in headless or unrasterized environments"
+    "invariants": [
+      "Zero dynamic heap allocation during font metric queries (ALLOC_ZERO_HEAP)",
+      "Strict aspect ratio preservation: fonts scale proportionally with letterbox",
+      "Graceful fallback: plain ASCII 8x16 bitmap font in headless or Xft failure",
+      "Font files strictly located within game/assets/fonts/ directory"
     ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/gui.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "gui.fonts",
+      "schema_id": "tenlux.data.fonts.v1",
+      "catalog_files_count": 2
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystem": {
+      "id": "fonts",
+      "name": "High-Fantasy Typography & Responsive Font Subsystem",
+      "stratum": "Layer 2: Presentation & Viewport",
+      "status": "active",
+      "catalog_files": [
+        "typography.json",
+        "scalers.json"
+      ],
+      "sub_assemblies": [
+        "font_xft_rasterizer",
+        "font_metrics_cache",
+        "font_responsive_scaler"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_FONT_METRIC_BOUNDS",
+        "condition": "glyph metrics fit within pre-rendered static advance table",
+        "action": "Clamp glyph dimensions to max cell bounds"
+      }
+    ],
+    "metrics": {
+      "registered_catalogs": 2,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
   }
 }
-

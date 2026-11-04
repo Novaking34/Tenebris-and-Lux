@@ -1,33 +1,144 @@
 {
-  "subsystem": "sim.combat",
-  "version": "1.0.0",
-  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-  "description": "Master data-driven combat mechanics manifest for Tenebris and Lux",
-  "data_files": [
-    {
-      "module": "modes",
-      "path": "data/combat/modes.json",
-      "description": "Battle paradigms: Tactical grid-based, Action resolution, Traditional turn-based"
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/mechanics/combat/manifest.json",
+    "id": "data.combat.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Combat Stances, Formulas, Modes, Skills & States Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/mechanics/combat/",
+      "modes_catalog": "modes.json",
+      "formulas_catalog": "formulas.json",
+      "stances_catalog": "stances.json",
+      "skills_catalog": "skills.json",
+      "states_catalog": "states.json"
     },
-    {
-      "module": "formulas",
-      "path": "data/combat/formulas.json",
-      "description": "Damage, mitigation, splash damage, and poise formula parameters"
+    "what_it_enables": [
+      "4-stance deterministic finite state machine (Neutral, Warding, Striking, Equilibrium)",
+      "Damage mitigation, poise stagger, and flank splash damage calculations",
+      "Transition between tactical grid movement and action-battle / side-scroll mode",
+      "Status effects including TP-driven Ambush Advantage, Pinning, and Celerity"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during combat resolution (ALLOC_ZERO_HEAP)",
+      "Twin Relic resonance strictly bounded within [0, 100] (MAX_RESONANCE)",
+      "Moral sway continuum strictly bounded within [-100, +100]",
+      "Deterministic combat stance state machine with exactly 4 canonical postures"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "combat_subsystem": "combat/combat.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
-    {
-      "module": "stances",
-      "path": "data/combat/stances.json",
-      "description": "4-stance deterministic state machine definitions and transition graph"
+    "static_declarations": {
+      "subsystem": "sim.combat",
+      "schema_id": "tenlux.data.combat.v1",
+      "shield_max": 100,
+      "sword_max": 100,
+      "moral_sway_min": -100,
+      "moral_sway_max": 100,
+      "stance_count": 4,
+      "battle_mode_count": 3,
+      "zero_heap_parsing": true
+    },
+    "generic_helper_contracts": {
+      "formula_loader": "combat_loader_load_formulas",
+      "stance_loader": "combat_loader_load_stances",
+      "path_resolver": "fs_resolve_data_path"
     }
-  ],
-  "invariants": {
-    "shield_max": 100,
-    "sword_max": 100,
-    "moral_sway_min": -100,
-    "moral_sway_max": 100,
-    "stance_count": 4,
-    "battle_mode_count": 3,
-    "zero_heap_parsing": true
+  },
+  "block_3_body": {
+    "data_files": [
+      {
+        "module": "modes",
+        "path": "modes.json",
+        "description": "Battle paradigms: Tactical grid, Action resolution, Traditional turn-based"
+      },
+      {
+        "module": "formulas",
+        "path": "formulas.json",
+        "description": "Damage, mitigation, splash damage, and poise formula parameters"
+      },
+      {
+        "module": "stances",
+        "path": "stances.json",
+        "description": "4-stance deterministic state machine definitions and transition graph"
+      },
+      {
+        "module": "skills",
+        "path": "skills.json",
+        "description": "Active combat skills, relic arts, and tactical ability catalogs"
+      },
+      {
+        "module": "states",
+        "path": "states.json",
+        "description": "Tactical combat states, grid modifiers, and TP overworld transition states"
+      }
+    ],
+    "stances": [
+      {
+        "id": 0,
+        "name": "Neutral (At Ease)",
+        "relic": "Both",
+        "effect": "Balanced stamina recovery, baseline posture"
+      },
+      {
+        "id": 1,
+        "name": "Warding (Lux Barrio)",
+        "relic": "Shield of Lux",
+        "effect": "Radiant barrier, absorbs 25% damage, kinetic reflect"
+      },
+      {
+        "id": 2,
+        "name": "Edge Striking (Cuttatio Tenebris)",
+        "relic": "Sword of Tenebris",
+        "effect": "Lowered center of gravity, sweeping arc + 20% flank splash"
+      },
+      {
+        "id": 3,
+        "name": "Equilibrium (Duo-Loca Bashin n Slash)",
+        "relic": "Twin Relics",
+        "effect": "Harmonic shield bash + abyssal double-cleave targeting raw DEF"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_SPLASH_PERCENT",
+        "condition": "cuttatio_splash_pct == 20",
+        "action": "Fatal halt if splash damage percentage is corrupted"
+      },
+      {
+        "id": "TRIPWIRE_STANCE_COUNT",
+        "condition": "stance_count == 4",
+        "action": "Fatal halt if loaded stances count != 4"
+      }
+    ],
+    "metrics": {
+      "registered_catalogs": 5,
+      "canonical_stances": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "related_subassemblies": [
+        "../tactics/manifest.json",
+        "../items/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "combat_loader_load_formulas",
+      "audit_hook": "combat_loader_preflight"
+    }
   }
 }
-

@@ -1,0 +1,89 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/system/runtime/manifest.json",
+    "id": "data.system.runtime.manifest",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Runtime Sub-Domain Manifest orchestrating math, time, and string cogs.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Branch",
+      "math_directory": "game/data/system/runtime/math/",
+      "time_directory": "game/data/system/runtime/time/",
+      "string_directory": "game/data/system/runtime/string/"
+    },
+    "what_it_enables": [
+      "Mathematical saturation, continuum ranges, and zero-divisor guards",
+      "Monotonic frame pacing for 60/120 FPS targets and sub-50us turns",
+      "Lexical buffer safety and tokenized command parsing"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "monotonic_timer": "CLOCK_MONOTONIC available",
+      "fixed_buffers": "No dynamic memory expansion"
+    },
+    "static_declarations": {
+      "sub_domain_id": "system.runtime",
+      "schema_id": "tenlux.data.system_runtime.v1",
+      "registered_cogs": [ "math", "time", "string" ]
+    },
+    "generic_helper_contracts": {
+      "math_utils": "core/math_utils.h",
+      "time_utils": "core/time_utils.h",
+      "string_utils": "core/string_utils.h"
+    }
+  },
+  "block_3_body": {
+    "subsystems": [
+      {
+        "id": "math",
+        "title": "Mathematics & Bounded Continuum Invariants",
+        "manifest_path": "math/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/system/runtime/math/",
+        "what_it_enables": "Continuum bounds, moral sway [-100, +100], resonance [0, 100]."
+      },
+      {
+        "id": "time",
+        "title": "Monotonic Timing & Frame Pacing Engine",
+        "manifest_path": "time/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/system/runtime/time/",
+        "what_it_enables": "60/120 FPS budgets, frame pacing, monotonic timestamps."
+      },
+      {
+        "id": "string",
+        "title": "Safe Lexical Buffers & Token Lexicon",
+        "manifest_path": "string/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/system/runtime/string/",
+        "what_it_enables": "Safe string copy, path joining, command token matching."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "subsystems_count": 3,
+      "active_count": 3
+    },
+    "verification_tripwires": [
+      { "name": "ZERO_HEAP", "rule": "Zero dynamic allocations", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "system/runtime"
+    }
+  }
+}

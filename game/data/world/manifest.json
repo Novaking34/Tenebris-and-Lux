@@ -1,109 +1,192 @@
 {
-  "subsystem": "sim.world",
-  "version": "1.1.0",
-  "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-  "description": "Continental realm, provincial topology, dynamic map scaling, and multi-tier map datasets",
-  "data_files": [
-    "map_types.json",
-    "overworld.json",
-    "maps.json"
-  ],
-  "provinces": [
-    {
-      "id": 1,
-      "canonical_name": "Dio Village",
-      "loc_code": "LOC_DIO_VILLAGE",
-      "threat_level": 0,
-      "base_vigor": 100,
-      "description": "Ancestral pastoral hamlet in the Sacyran woodlands. Grandma Magolia's hearth, Eric's timber yard, and the starting redoubt of the journey.",
-      "connected_provinces": [2, 5],
-      "key_characters": ["Grandma Magolia", "Eric the Lumberjack", "Monica the Mystic", "John the Thief", "The St. Baron"],
-      "points_of_interest": [
-        "Grandma's Hearth (Save Anchor)",
-        "Eric's Logging Shed (Honesty Litmus)",
-        "Monica's Woodland Shrine (Goddess Lyri)",
-        "Lower District (St. Baron's Debt Bondage)"
-      ]
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/world/manifest.json",
+    "id": "data.world.manifest",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "World Domain Master Manifest indexing geography, battlefields, and terrains.",
+    "where_the_data_lives": {
+      "topology": "World Domain Tree",
+      "geography": "game/data/world/geography/ (realms.json, manifest.json)",
+      "battlefields": "game/data/world/battlefields/ (maps.json, map_types.json)",
+      "terrains": "game/data/world/terrains/ (default.json, manifest.json)"
     },
-    {
-      "id": 2,
-      "canonical_name": "Whispering Woods",
-      "loc_code": "LOC_WHISPERING_WOODS",
-      "threat_level": 1,
-      "base_vigor": 85,
-      "description": "Ancient temperate woodland dividing Dio Village from the central crown territories. Inhabited by wild fauna, Magos, and outlaw scavengers.",
-      "connected_provinces": [1, 3],
-      "key_characters": ["Monica the Mystic", "Bandit Scouts"],
-      "points_of_interest": [
-        "The Forgotten Shrine",
-        "Overgrown Logging Trail",
-        "Medusa's Clearing"
-      ]
+    "what_it_enables": [
+      "Continental provincial topology across Sacyra, Libira, and Dreamscape",
+      "Regional node graph travel with vigor costs and nocturnal rift gating",
+      "Discrete 2D Cartesian tactical battlefield grids (32x32 to 64x64)",
+      "Terrain friction rates, defensive cover modifiers, and line-of-sight bounds"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during world deserialization (ALLOC_ZERO_HEAP)",
+      "All provinces form a connected navigation graph with valid location codes",
+      "Terrain step friction strictly >= 1.0 (eliminates zero-cost infinite traversal)",
+      "Sole overarching existential antagonist is The Dark Lord Usuru"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "world_subsystem": "world/world.h inclusion",
+      "grid_allocation": "Static array bounding grid cells to max 64x64"
     },
-    {
-      "id": 3,
-      "canonical_name": "Sacyra Marches",
-      "loc_code": "LOC_SACYRA_MARCHES",
-      "threat_level": 2,
-      "base_vigor": 70,
-      "description": "Fertile military frontier surrounding the capital. Garrisoned by royal patrols defending against border incursions.",
-      "connected_provinces": [2, 4],
-      "key_characters": ["Royal Vanguard Captains", "Dispatched Couriers"],
-      "points_of_interest": [
-        "Garrison Redoubt",
-        "Great Highway",
-        "Courier Station"
-      ]
+    "static_declarations": {
+      "subsystem": "sim.world",
+      "schema_id": "tenlux.data.world_manifest.v1",
+      "province_count": 6,
+      "max_grid_dimension": 64
     },
-    {
-      "id": 4,
-      "canonical_name": "The Royal Capital",
-      "loc_code": "LOC_ROYAL_CAPITAL",
-      "threat_level": 3,
-      "base_vigor": 50,
-      "description": "The political heart of Sacyra. Site of the High Throne, Sacyra Castle, and the annual Festival of Heroes, currently clouded by King Jihad's gag orders.",
-      "connected_provinces": [3, 6],
-      "key_characters": ["King Jihad", "High Priest Roté", "Commander Gareth (Vanished)"],
-      "points_of_interest": [
-        "The High Throne (The King's Curse Planar Wound)",
-        "Festival Plaza",
-        "Royal Catacombs"
-      ]
-    },
-    {
-      "id": 5,
-      "canonical_name": "The Dreamscape",
-      "loc_code": "LOC_THE_DREAMSCAPE",
-      "threat_level": 4,
-      "base_vigor": 0,
-      "description": "The ethereal astral plane where the First King's soul is marooned, Dream Eaters gather, and Chrono records the Sacyran Chronicles outside temporal decay.",
-      "connected_provinces": [1, 4],
-      "key_characters": ["Chrono the Sage", "The First King (Marooned Soul)", "The Dark Lord"],
-      "points_of_interest": [
-        "Room of Sages (Chrono's Chronicle Ledger)",
-        "The Dream Chamber",
-        "Abyssal Rift"
-      ],
-      "nocturnal_gating": {
-        "requires_dream_compass": true,
-        "start_hour": 20,
-        "end_hour": 4
-      }
-    },
-    {
-      "id": 6,
-      "canonical_name": "Kingdom of Libira",
-      "loc_code": "LOC_KINGDOM_OF_LIBIRA",
-      "threat_level": 3,
-      "base_vigor": 60,
-      "description": "Sparse, remote border province on the outer continental periphery. The ancestral homeland of Usuru and origin of 'The Quiet Complaint'.",
-      "connected_provinces": [4],
-      "key_characters": ["Usuru (Past Sovereign)", "Frontier Outriders"],
-      "points_of_interest": [
-        "The Seven-Day Courier Pass",
-        "Wanderer's Memorial",
-        "Border Outposts"
-      ]
+    "generic_helper_contracts": {
+      "world_verifier": "world_loader_verify_manifest",
+      "map_verifier": "world_loader_verify_maps"
     }
-  ]
+  },
+  "block_3_body": {
+    "branches": [
+      {
+        "id": "geography",
+        "title": "Continental Geography & Provincial Graph",
+        "manifest_path": "geography/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/world/geography/",
+        "what_it_enables": "Province connections, travel vigor, points of interest."
+      },
+      {
+        "id": "battlefields",
+        "title": "Tactical Battlefields & Grid Descriptors",
+        "manifest_path": "battlefields/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/world/battlefields/",
+        "what_it_enables": "Cartesian grid cells, spawn zones, obstacle masks."
+      },
+      {
+        "id": "terrains",
+        "title": "Terrain Friction & Cover Mechanics",
+        "manifest_path": "terrains/manifest.json",
+        "status": "active",
+        "where_it_lives": "game/data/world/terrains/",
+        "what_it_enables": "Friction rates, cover defense bonuses, hazardous tiles."
+      }
+    ],
+    "provinces": [
+      {
+        "id": 1,
+        "canonical_name": "Dio Village",
+        "loc_code": "LOC_DIO_VILLAGE",
+        "threat_level": 0,
+        "base_vigor": 100,
+        "description": "Ancestral pastoral hamlet in the Sacyran woodlands. Grandma Magolia's hearth, Eric's timber yard, and the starting redoubt of the journey.",
+        "connected_provinces": [2, 5],
+        "key_characters": ["Grandma Magolia", "Eric the Lumberjack", "Monica the Mystic", "John the Thief", "The St. Baron"],
+        "points_of_interest": [
+          "Grandma's Hearth (Save Anchor)",
+          "Eric's Logging Shed (Honesty Litmus)",
+          "Monica's Woodland Shrine (Goddess Lyri)",
+          "Lower District (St. Baron's Debt Bondage)"
+        ]
+      },
+      {
+        "id": 2,
+        "canonical_name": "Whispering Woods",
+        "loc_code": "LOC_WHISPERING_WOODS",
+        "threat_level": 1,
+        "base_vigor": 85,
+        "description": "Ancient temperate woodland dividing Dio Village from the central crown territories. Inhabited by wild fauna, Magos, and outlaw scavengers.",
+        "connected_provinces": [1, 3],
+        "key_characters": ["Monica the Mystic", "Bandit Scouts"],
+        "points_of_interest": [
+          "The Forgotten Shrine",
+          "Overgrown Logging Trail",
+          "Medusa's Clearing"
+        ]
+      },
+      {
+        "id": 3,
+        "canonical_name": "Sacyra Marches",
+        "loc_code": "LOC_SACYRA_MARCHES",
+        "threat_level": 2,
+        "base_vigor": 70,
+        "description": "Fertile military frontier surrounding the capital. Garrisoned by royal patrols defending against border incursions.",
+        "connected_provinces": [2, 4],
+        "key_characters": ["Royal Vanguard Captains", "Dispatched Couriers"],
+        "points_of_interest": [
+          "Garrison Redoubt",
+          "Great Highway",
+          "Courier Station"
+        ]
+      },
+      {
+        "id": 4,
+        "canonical_name": "The Royal Capital",
+        "loc_code": "LOC_ROYAL_CAPITAL",
+        "threat_level": 3,
+        "base_vigor": 50,
+        "description": "The political heart of Sacyra. Site of the High Throne, Sacyra Castle, and the annual Festival of Heroes, currently clouded by King Jihad's gag orders.",
+        "connected_provinces": [3, 6],
+        "key_characters": ["King Jihad", "High Priest Roté", "Commander Gareth (Vanished)"],
+        "points_of_interest": [
+          "The High Throne (The King's Curse Planar Wound)",
+          "Festival Plaza",
+          "Royal Catacombs"
+        ]
+      },
+      {
+        "id": 5,
+        "canonical_name": "The Dreamscape",
+        "loc_code": "LOC_THE_DREAMSCAPE",
+        "threat_level": 4,
+        "base_vigor": 0,
+        "description": "The ethereal astral plane where the First King's soul is marooned, Dream Eaters gather, and Chrono records the Sacyran Chronicles outside temporal decay.",
+        "connected_provinces": [1, 4],
+        "key_characters": ["Chrono the Sage", "The First King (Marooned Soul)", "The Dark Lord"],
+        "points_of_interest": [
+          "Room of Sages (Chrono's Chronicle Ledger)",
+          "The Dream Chamber",
+          "Abyssal Rift"
+        ],
+        "nocturnal_gating": {
+          "requires_dream_compass": true,
+          "start_hour": 20,
+          "end_hour": 4
+        }
+      },
+      {
+        "id": 6,
+        "canonical_name": "Kingdom of Libira",
+        "loc_code": "LOC_KINGDOM_OF_LIBIRA",
+        "threat_level": 3,
+        "base_vigor": 60,
+        "description": "Sparse, remote border province on the outer continental periphery. The ancestral homeland of Usuru and origin of 'The Quiet Complaint'.",
+        "connected_provinces": [4],
+        "key_characters": ["Usuru (Past Sovereign)", "Frontier Outriders"],
+        "points_of_interest": [
+          "The Seven-Day Courier Pass",
+          "Wanderer's Memorial",
+          "Border Outposts"
+        ]
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "provinces_registered": 6,
+      "max_threat_level": 4,
+      "nocturnal_routes_count": 1
+    },
+    "verification_tripwires": [
+      { "name": "GRAPH_CONNECTIVITY", "rule": "All provinces have valid connected_provinces", "status": "VERIFIED_PASS" },
+      { "name": "THREAT_BOUNDS", "rule": "threat_level between 0 and 5", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "world"
+    }
+  }
 }

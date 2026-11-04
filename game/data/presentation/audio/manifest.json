@@ -1,36 +1,87 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/audio/manifest.json",
+    "file": "game/data/presentation/audio/manifest.json",
     "id": "data.audio.manifest",
     "layer": "Layer 2: Presentation & Audiovisual",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Audio subsystem manifest specifying bus mixing, SFX cues, and BGM tracks."
-  },
-  "subsystem": {
-    "id": "audio",
-    "name": "Audiovisual Sound & Music Synthesis Subsystem",
-    "stratum": "Layer 2: Presentation & Audiovisual",
-    "status": "active",
-    "catalog_files": [
-      "channels.json",
-      "sfx.json",
-      "bgm.json"
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Audiovisual Sound & Music Synthesis Subsystem Manifest",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/audio/",
+      "channels_catalog": "channels.json",
+      "sfx_catalog": "sfx.json",
+      "bgm_catalog": "bgm.json"
+    },
+    "what_it_enables": [
+      "Multi-channel audio mixing buses (Master, BGM, SFX, Ambience, UI)",
+      "Zero-latency SFX cue dispatch (< 5ms) for combat and UI feedback",
+      "Orchestral BGM streams mapped to provincial biomes and battle modes",
+      "Graceful silent dummy driver fallback in headless/CLI environments"
     ],
-    "sub_assemblies": [
-      "audio_mixer",
-      "audio_sfx_dispatcher",
-      "audio_bgm_streamer",
-      "audio_spatial_emitter"
-    ],
-    "axioms": [
-      "Audio follows simulation events: audio system never drives combat turns",
-      "Zero-latency cue dispatch: SFX triggers execute under 5 milliseconds",
+    "invariants": [
+      "Zero dynamic heap allocations in audio cue routing (ALLOC_ZERO_HEAP)",
+      "Audio strictly follows simulation events: audio never drives combat turns",
       "Deterministic playback priority: critical alerts supersede ambient cues",
-      "Graceful headless degradation: silent dummy driver in headless/terminal CLI mode"
+      "Volume levels strictly clamped within [0, 100] percent"
     ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "audio_subsystem": "audio/audio.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "sim.audio",
+      "schema_id": "tenlux.data.audio.v1",
+      "channel_count": 5
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystem": {
+      "id": "audio",
+      "name": "Audiovisual Sound & Music Synthesis Subsystem",
+      "stratum": "Layer 2: Presentation & Audiovisual",
+      "status": "active",
+      "catalog_files": [
+        "channels.json",
+        "sfx.json",
+        "bgm.json"
+      ],
+      "sub_assemblies": [
+        "audio_mixer",
+        "audio_sfx_dispatcher",
+        "audio_bgm_streamer",
+        "audio_spatial_emitter"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_VOLUME_BOUNDS",
+        "condition": "volume in [0, 100]",
+        "action": "Clamp channel volume to [0, 100]"
+      }
+    ],
+    "metrics": {
+      "registered_catalogs": 3,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
   }
 }
-

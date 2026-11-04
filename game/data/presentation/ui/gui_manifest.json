@@ -1,40 +1,90 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/gui/manifest.json",
+    "file": "game/data/presentation/ui/gui_manifest.json",
     "id": "data.gui.manifest",
     "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-04",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "GUI presentation subsystem manifest specifying palettes, layout, and asset pipelines."
-  },
-  "subsystem": {
-    "id": "gui",
-    "name": "GUI Desktop Viewport & 2.5D Tactical Presentation",
-    "stratum": "Layer 2: Presentation & Viewport",
-    "status": "active",
-    "catalog_files": [
-      "layout.json",
-      "palette.json",
-      "assets.json"
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "GUI Presentation Subsystem Manifest Specifying Layout, Palettes & Assets",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/ui/",
+      "layout_catalog": "layout.json",
+      "palette_reference": "../visuals/palettes/legacy_palette.json",
+      "assets_reference": "../visuals/assets.json"
+    },
+    "what_it_enables": [
+      "Native X11 double-buffered desktop presentation interface",
+      "AABB bounded non-overlapping panel layout engine",
+      "Translation of mouse clicks and keybindings into sim dispatch verbs",
+      "High-DPI responsive scaling for HUD widgets and battle cards"
     ],
-    "sub_assemblies": [
-      "gui_palette",
-      "gui_layout",
-      "gui_widgets",
-      "gui_assets",
-      "gui_view2d",
-      "gui_hud",
-      "gui_core"
-    ],
-    "axioms": [
-      "Presentation follows simulation: GUI never mutates state directly",
+    "invariants": [
+      "Zero dynamic heap allocations in GUI subsystems (ALLOC_ZERO_HEAP)",
+      "Presentation strictly follows simulation: GUI never mutates sim state directly",
       "Double-buffered offscreen rendering eliminates tearing artifacts",
-      "Non-overlapping panel and widget geometry strictly audited via AABB checks",
-      "Asset abstraction guarantees seamless transition from procedural to artist sprites",
-      "Headless fallback cleanly downgrades to CLI in DISPLAY absence"
+      "Headless fallback cleanly downgrades to terminal CLI in DISPLAY absence"
     ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/gui.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "gui.viewport",
+      "schema_id": "tenlux.data.gui.v1",
+      "catalog_files_count": 3
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystem": {
+      "id": "gui",
+      "name": "GUI Desktop Viewport & 2.5D Tactical Presentation",
+      "stratum": "Layer 2: Presentation & Viewport",
+      "status": "active",
+      "catalog_files": [
+        "layout.json",
+        "palette.json",
+        "assets.json"
+      ],
+      "sub_assemblies": [
+        "gui_palette",
+        "gui_layout",
+        "gui_widgets",
+        "gui_assets",
+        "gui_view2d",
+        "gui_hud",
+        "gui_core"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_NON_OVERLAPPING_GEOMETRY",
+        "condition": "panel bounds pass geom_aabb_intersects audits",
+        "action": "Flag layout violation if HUD panels collide"
+      }
+    ],
+    "metrics": {
+      "registered_subassemblies": 7,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path"
+    }
   }
 }
-
