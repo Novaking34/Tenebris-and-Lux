@@ -6,84 +6,129 @@
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.0",
     "interface_rev": "Rev 2",
-    "date": "2026-11-04",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Runtime Sub-Domain Manifest orchestrating math, time, and string cogs.",
+    "role": "Runtime Sub-Domain Master Manifest orchestrating math, time, and string primitives.",
     "where_the_data_lives": {
-      "topology": "System Runtime Branch",
-      "math_directory": "game/data/system/runtime/math/",
-      "time_directory": "game/data/system/runtime/time/",
-      "string_directory": "game/data/system/runtime/string/"
+      "assembly_directory": "game/data/system/runtime/",
+      "math_directory": "math/ (manifest.json, default.json, attributes.json)",
+      "time_directory": "time/ (manifest.json, default.json, high_refresh.json)",
+      "string_directory": "string/ (manifest.json, default.json)"
     },
     "what_it_enables": [
-      "Mathematical saturation, continuum ranges, and zero-divisor guards",
-      "Monotonic frame pacing for 60/120 FPS targets and sub-50us turns",
-      "Lexical buffer safety and tokenized command parsing"
+      "Mathematical saturation, continuum ranges, zero-divisor safety, and Tri-Vital models",
+      "Monotonic frame pacing for 60/120 FPS targets and sub-50us simulation turn budgets",
+      "Lexical buffer safety, canonical stance tokens, and command verb dictionaries",
+      "Zero dynamic heap allocation (ALLOC_ZERO_HEAP) foundation for all higher simulation layers"
     ],
     "invariants": [
-      "Zero dynamic heap allocations (ALLOC_ZERO_HEAP)",
-      "Strict ISO C11 adherence"
+      "Zero dynamic heap allocations across Layer 0 utilities (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "All registered profile paths resolvable via fs_resolve_data_path()",
+      "All timing profiles must use POSIX.1b CLOCK_MONOTONIC timing source"
     ]
   },
   "block_2_opening": {
     "pre_conditions": {
       "monotonic_timer": "CLOCK_MONOTONIC available",
-      "fixed_buffers": "No dynamic memory expansion"
+      "fixed_buffers": "Zero dynamic memory expansion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
     "static_declarations": {
       "sub_domain_id": "system.runtime",
       "schema_id": "tenlux.data.system_runtime.v1",
-      "registered_cogs": [ "math", "time", "string" ]
+      "registered_cogs": [
+        "math",
+        "time",
+        "string"
+      ],
+      "total_subsystems": 3,
+      "total_profiles": 5
     },
     "generic_helper_contracts": {
       "math_utils": "core/math_utils.h",
       "time_utils": "core/time_utils.h",
-      "string_utils": "core/string_utils.h"
+      "string_utils": "core/string_utils.h",
+      "path_resolver": "fs_resolve_data_path"
     }
   },
   "block_3_body": {
     "subsystems": [
       {
         "id": "math",
-        "title": "Mathematics & Bounded Continuum Invariants",
+        "title": "Mathematics, Continuum Limits & Attributes Subsystem",
         "manifest_path": "math/manifest.json",
         "status": "active",
+        "profile_count": 2,
+        "profiles": [
+          "default.json",
+          "attributes.json"
+        ],
         "where_it_lives": "game/data/system/runtime/math/",
-        "what_it_enables": "Continuum bounds, moral sway [-100, +100], resonance [0, 100]."
+        "what_it_enables": "Continuum bounds, moral sway [-100, +100], resonance [0, 100], Tri-Vitals (HP, MP, TP), Hex-Attributes."
       },
       {
         "id": "time",
-        "title": "Monotonic Timing & Frame Pacing Engine",
+        "title": "Monotonic Timing, Frame Pacing & Latency Engine",
         "manifest_path": "time/manifest.json",
         "status": "active",
+        "profile_count": 2,
+        "profiles": [
+          "default.json",
+          "high_refresh.json"
+        ],
         "where_it_lives": "game/data/system/runtime/time/",
-        "what_it_enables": "60/120 FPS budgets, frame pacing, monotonic timestamps."
+        "what_it_enables": "60/120 FPS frame pacing budgets, sub-50us simulation turn budgets, monotonic timestamps."
       },
       {
         "id": "string",
-        "title": "Safe Lexical Buffers & Token Lexicon",
+        "title": "Safe Lexical Buffers & Token Lexicon Subsystem",
         "manifest_path": "string/manifest.json",
         "status": "active",
+        "profile_count": 1,
+        "profiles": [
+          "default.json"
+        ],
         "where_it_lives": "game/data/system/runtime/string/",
-        "what_it_enables": "Safe string copy, path joining, command token matching."
+        "what_it_enables": "Bounded buffer safety, path normalization, 4-posture stance tokens, command verb matching."
       }
     ]
   },
   "block_4_audit": {
-    "audit_metrics": {
-      "subsystems_count": 3,
-      "active_count": 3
-    },
-    "verification_tripwires": [
-      { "name": "ZERO_HEAP", "rule": "Zero dynamic allocations", "status": "VERIFIED_PASS" }
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_ZERO_HEAP",
+        "rule": "Zero dynamic memory allocations (ALLOC_ZERO_HEAP)",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "id": "TRIPWIRE_PROFILES_COUNT",
+        "rule": "total_profiles == 5 across all 3 runtime cogs",
+        "status": "VERIFIED_PASS"
+      }
     ],
+    "metrics": {
+      "subsystems_count": 3,
+      "total_profiles": 5,
+      "active_count": 3,
+      "zero_heap_compliant": true
+    },
     "self_audit_target": "./build/tenebris-lux --audit"
   },
   "block_5_closing": {
     "navigation": {
       "parent_menu": "../manifest.json",
-      "current_directory": "system/runtime"
+      "root_manifest": "../../manifest.json",
+      "subassemblies": [
+        "math/manifest.json",
+        "time/manifest.json",
+        "string/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path",
+      "audit_hook": "manifest_run_preflight"
     }
   }
 }

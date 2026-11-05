@@ -6,14 +6,14 @@
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.0",
     "interface_rev": "Rev 2",
-    "date": "2026-11-04",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "Time Subsystem Manifest indexing frame pacing, monotonic clock & latency profiles.",
     "where_the_data_lives": {
-      "topology": "System Runtime Timing",
-      "default_profile": "game/data/system/runtime/time/default.json",
-      "high_refresh_profile": "game/data/system/runtime/time/high_refresh.json"
+      "assembly_directory": "game/data/system/runtime/time/",
+      "default_profile": "default.json",
+      "high_refresh_profile": "high_refresh.json"
     },
     "what_it_enables": [
       "Monotonic clock frame pacing without time-drift jitter",
@@ -22,19 +22,23 @@
     ],
     "invariants": [
       "Zero dynamic heap allocation (ALLOC_ZERO_HEAP)",
-      "Strict conformance to OmniCode 5-Block Architecture"
+      "Strict conformance to OmniCode 5-Block Architecture",
+      "Monotonic clock source strictly anchored to CLOCK_MONOTONIC"
     ]
   },
   "block_2_opening": {
     "pre_conditions": {
-      "clock_source": "CLOCK_MONOTONIC"
+      "clock_source": "CLOCK_MONOTONIC",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
     "static_declarations": {
+      "subsystem": "core.util.time",
       "schema_id": "tenlux.data.time_menu.v1",
-      "target_subsystem": "core.util.time"
+      "profile_count": 2
     },
     "generic_helper_contracts": {
-      "time_loader": "time_load_config_from_file"
+      "time_loader": "time_load_config_from_file",
+      "path_resolver": "fs_resolve_data_path"
     }
   },
   "block_3_body": {
@@ -55,19 +59,29 @@
     ]
   },
   "block_4_audit": {
-    "audit_metrics": {
-      "profile_count": 2,
-      "active_valid": true
-    },
-    "verification_tripwires": [
-      { "name": "FPS_POSITIVE", "rule": "target_fps > 0", "status": "VERIFIED_PASS" }
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_FPS_POSITIVE",
+        "rule": "target_fps > 0 across all timing profiles",
+        "status": "VERIFIED_PASS"
+      }
     ],
+    "metrics": {
+      "profile_count": 2,
+      "active_valid": true,
+      "zero_heap_compliant": true
+    },
     "self_audit_target": "./build/tenebris-lux --audit"
   },
   "block_5_closing": {
     "navigation": {
       "parent_menu": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
       "current_directory": "system/runtime/time"
+    },
+    "execution_hooks": {
+      "on_load": "time_load_config_from_file",
+      "audit_hook": "time_utils_preflight"
     }
   }
 }

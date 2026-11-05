@@ -6,13 +6,13 @@
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.0",
     "interface_rev": "Rev 2",
-    "date": "2026-11-04",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "String Subsystem Manifest indexing lexical buffers & token lexicon profiles.",
     "where_the_data_lives": {
-      "topology": "System Runtime String Buffers",
-      "default_profile": "game/data/system/runtime/string/default.json"
+      "assembly_directory": "game/data/system/runtime/string/",
+      "default_profile": "default.json"
     },
     "what_it_enables": [
       "Strict memory bounds preventing buffer overruns across text formatting",
@@ -21,19 +21,23 @@
     ],
     "invariants": [
       "Zero dynamic heap allocation (ALLOC_ZERO_HEAP)",
+      "Buffer limits strictly positive",
       "Strict conformance to OmniCode 5-Block Architecture"
     ]
   },
   "block_2_opening": {
     "pre_conditions": {
-      "string_utils": "core/string_utils.h inclusion"
+      "string_utils": "core/string_utils.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
     "static_declarations": {
+      "subsystem": "core.util.string",
       "schema_id": "tenlux.data.string_menu.v1",
-      "target_subsystem": "core.util.string"
+      "profile_count": 1
     },
     "generic_helper_contracts": {
-      "string_loader": "string_load_config_from_file"
+      "string_loader": "string_load_config_from_file",
+      "path_resolver": "fs_resolve_data_path"
     }
   },
   "block_3_body": {
@@ -48,19 +52,29 @@
     ]
   },
   "block_4_audit": {
-    "audit_metrics": {
-      "profile_count": 1,
-      "active_valid": true
-    },
-    "verification_tripwires": [
-      { "name": "BUFFER_BOUNDS", "rule": "max_path_length > 0", "status": "VERIFIED_PASS" }
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_BUFFER_BOUNDS",
+        "rule": "max_path_length > 0 && max_command_length > 0",
+        "status": "VERIFIED_PASS"
+      }
     ],
+    "metrics": {
+      "profile_count": 1,
+      "active_valid": true,
+      "zero_heap_compliant": true
+    },
     "self_audit_target": "./build/tenebris-lux --audit"
   },
   "block_5_closing": {
     "navigation": {
       "parent_menu": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
       "current_directory": "system/runtime/string"
+    },
+    "execution_hooks": {
+      "on_load": "string_load_config_from_file",
+      "audit_hook": "string_utils_preflight"
     }
   }
 }

@@ -6,35 +6,41 @@
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.0",
     "interface_rev": "Rev 2",
-    "date": "2026-11-04",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "Math Subsystem Manifest indexing continuum, bounds & attribute schemas.",
     "where_the_data_lives": {
-      "topology": "System Runtime Mathematics",
-      "default_profile": "game/data/system/runtime/math/default.json",
-      "attributes_spec": "game/data/system/runtime/math/attributes.json"
+      "assembly_directory": "game/data/system/runtime/math/",
+      "default_profile": "default.json",
+      "attributes_spec": "attributes.json"
     },
     "what_it_enables": [
       "Mathematical saturation, safe zero-divisor division, bounded clamping",
       "Resonance boundaries [0, 100] and Moral Sway continuum [-100, +100]",
-      "Tri-Vital (HP, MP, TP) and Hex-Attribute (ATK, DEF, MATK, MDEF, AGI, LUK) models"
+      "Tri-Vital (HP, MP, TP) and Hex-Attribute (ATK, DEF, MATK, MDEF, AGI, LUK) models",
+      "Tactical overworld TP movement rules and overworld-to-battle advantage states"
     ],
     "invariants": [
       "Zero dynamic heap allocation (ALLOC_ZERO_HEAP)",
+      "Resonance ceiling clamped strictly to 100",
+      "Moral sway continuum strictly symmetric [-100, +100]",
       "Strict conformance to OmniCode 5-Block Architecture"
     ]
   },
   "block_2_opening": {
     "pre_conditions": {
-      "math_utils": "core/math_utils.h inclusion"
+      "math_utils": "core/math_utils.h inclusion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
     },
     "static_declarations": {
+      "subsystem": "core.util.math",
       "schema_id": "tenlux.data.math_menu.v1",
-      "target_subsystem": "core.util.math"
+      "profile_count": 2
     },
     "generic_helper_contracts": {
-      "loader": "math_load_config_from_file"
+      "loader": "math_load_config_from_file",
+      "path_resolver": "fs_resolve_data_path"
     }
   },
   "block_3_body": {
@@ -44,7 +50,7 @@
         "id": "default",
         "display_name": "Standard Continental Continuum Baseline",
         "file": "default.json",
-        "description": "Canonical limits: Resonance [0, 100], Moral Sway [-100, +100], Screen 640x360."
+        "description": "Canonical limits: Resonance [0, 100], Moral Sway [-100, +100], Viewport 640x360."
       },
       {
         "id": "attributes",
@@ -55,19 +61,34 @@
     ]
   },
   "block_4_audit": {
-    "audit_metrics": {
-      "profile_count": 2,
-      "active_valid": true
-    },
-    "verification_tripwires": [
-      { "name": "BOUNDS_PASS", "rule": "Resonance max == 100, sway max == 100", "status": "VERIFIED_PASS" }
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_BOUNDS_PASS",
+        "rule": "Resonance max == 100, sway max == 100",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "id": "TRIPWIRE_PROFILES_EXIST",
+        "rule": "default.json and attributes.json exist and parse cleanly",
+        "status": "VERIFIED_PASS"
+      }
     ],
+    "metrics": {
+      "profile_count": 2,
+      "active_valid": true,
+      "zero_heap_compliant": true
+    },
     "self_audit_target": "./build/tenebris-lux --audit"
   },
   "block_5_closing": {
     "navigation": {
       "parent_menu": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
       "current_directory": "system/runtime/math"
+    },
+    "execution_hooks": {
+      "on_load": "math_load_config_from_file",
+      "audit_hook": "math_utils_preflight"
     }
   }
 }
