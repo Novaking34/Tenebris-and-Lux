@@ -1,0 +1,116 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/system/runtime/math/statera_telemetry.json",
+    "id": "data.system.runtime.math.statera_telemetry",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-05",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Conscience ledger, dual virtue/malice accumulation, and Statera resonance mathematics.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Mathematics",
+      "path": "game/data/system/runtime/math/statera_telemetry.json"
+    },
+    "what_it_enables": [
+      "Moral Sway continuum tracking across the 13 canonical continental tiers [-100, +100]",
+      "Independent Cumulative Virtue and Malice accumulators separating active Statera from passive inertia",
+      "Mathematical definition of the Statera Resonance Band (Sway [-25, +25] with high bilateral acts)",
+      "Twin Relic charge balance (Shield of Lux and Sword of Tenebris [0, 100])"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during moral telemetry evaluation (ALLOC_ZERO_HEAP)",
+      "Moral sway continuum strictly bounded within [-100, +100]",
+      "Virtue and Malice accumulators strictly non-negative monotonic sums [0, inf)",
+      "Shield and Sword energies strictly clamped within [0, 100] (MAX_RESONANCE)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "math_utils": "core/math_utils.h inclusion"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.statera_telemetry.v1",
+      "sway_min": -100,
+      "sway_max": 100,
+      "statera_corridor_min": -25,
+      "statera_corridor_max": 25,
+      "bystander_corridor_min": -50,
+      "bystander_corridor_max": 50,
+      "relic_max": 100
+    },
+    "generic_helper_contracts": {
+      "clamp": "math_clamp_int"
+    }
+  },
+  "block_3_body": {
+    "statera_model": {
+      "relic_baselines": {
+        "shield_power_default": 50,
+        "sword_edge_default": 50,
+        "max_resonance": 100
+      },
+      "protagonist_starting_sway": {
+        "elijah": 35,
+        "katrina": -20,
+        "custom_bearer": 0
+      },
+      "conscience_ledger": {
+        "virtue_accumulator": {
+          "variable": "virtue_acc",
+          "scale": [0, "unlimited"],
+          "actions": ["charity_given", "ally_shielded", "mercy_granted", "relic_consecration"]
+        },
+        "malice_accumulator": {
+          "variable": "malice_acc",
+          "scale": [0, "unlimited"],
+          "actions": ["theft_committed", "fleeing_foe_executed", "ruthless_severance", "bribe_taken"]
+        }
+      },
+      "active_statera_classification": {
+        "formula": "is_active_statera = (sway >= -25 && sway <= 25) && (virtue_acc >= 50 && malice_acc >= 50)",
+        "description": "Active Statera represents the wielder who has experienced both extreme light and deep shadow and mastered harmonic synthesis. Passive bystanders have low accumulators (< 50)."
+      },
+      "canonical_moral_tiers": [
+        {"tier": 1, "range": [75, 100], "name": "Path of Radiance (Saint of Mercy)", "route": "ENDING_PATH_RADIANCE"},
+        {"tier": 2, "range": [26, 74], "name": "Radiant Bias (Protector of Sacyra)", "route": "LIGHT_ALIGNMENT"},
+        {"tier": 3, "range": [-25, 25], "name": "Statera (Harmonic Balance)", "route": "ENDING_PATH_STATERA"},
+        {"tier": 4, "range": [-50, 50], "name": "Bystander Corridor (Neutral Stasis)", "route": "ENDING_NEUTRAL_STASIS"},
+        {"tier": 5, "range": [-74, -26], "name": "Abyssal Bias (Scourge of Complacency)", "route": "DARK_ALIGNMENT"},
+        {"tier": 6, "range": [-100, -75], "name": "Path of the Abyssal Sovereign", "route": "ENDING_PATH_ABYSSAL_SOVEREIGN"}
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_SWAY_BOUNDS",
+        "condition": "moral_sway >= -100 && moral_sway <= 100",
+        "action": "Clamp moral sway continuum to [-100, +100]"
+      },
+      {
+        "id": "TRIPWIRE_ACCUMULATOR_NON_NEGATIVE",
+        "condition": "virtue_acc >= 0 && malice_acc >= 0",
+        "action": "Ensure ledger accumulators never decrease or go negative"
+      }
+    ],
+    "metrics": {
+      "tiers_count": 6,
+      "statera_band_span": 50,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_moral_shift": "moral_telemetry_evaluate_statera",
+      "audit_hook": "math_utils_preflight"
+    }
+  }
+}

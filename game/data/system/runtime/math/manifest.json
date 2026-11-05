@@ -5,26 +5,34 @@
     "id": "data.system.math.manifest",
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.0",
-    "interface_rev": "Rev 2",
+    "interface_rev": "Rev 3",
     "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Math Subsystem Manifest indexing continuum, bounds & attribute schemas.",
+    "role": "Math Subsystem Manifest indexing continuum, formulas, attributes, and Statera telemetry.",
     "where_the_data_lives": {
       "assembly_directory": "game/data/system/runtime/math/",
       "default_profile": "default.json",
-      "attributes_spec": "attributes.json"
+      "attributes_spec": "attributes.json",
+      "formulas_sheet": "formulas.json",
+      "exploration_spec": "exploration_stats.json",
+      "subsurface_spec": "combat_subsurface.json",
+      "affinities_matrix": "affinities.json",
+      "statera_telemetry": "statera_telemetry.json"
     },
     "what_it_enables": [
       "Mathematical saturation, safe zero-divisor division, bounded clamping",
-      "Resonance boundaries [0, 100] and Moral Sway continuum [-100, +100]",
-      "Tri-Vital (HP, MP, TP) and Hex-Attribute (ATK, DEF, MATK, MDEF, AGI, LUK) models",
-      "Tactical overworld TP movement rules and overworld-to-battle advantage states"
+      "Tri-Vital (HP, MP, TP) and 8 Exploration Stat (STR, DEX, VIT, INT, WIS, CHA, PER, REP) bidirectional mirroring",
+      "Core mathematical formulas for damage, physical/magical mitigation, hit rate, and exploration checks",
+      "Sub-surface combat parameters (Accuracy, Evasion, Poise, ZOC, Threat, Facing)",
+      "Elemental syntheses (including Statera) and physical damage triad",
+      "Dual-accumulator Conscience Ledger distinguishing active Statera from passive bystander inertia"
     ],
     "invariants": [
-      "Zero dynamic heap allocation (ALLOC_ZERO_HEAP)",
-      "Resonance ceiling clamped strictly to 100",
+      "Zero dynamic heap allocation across all math evaluations (ALLOC_ZERO_HEAP)",
+      "Resonance ceiling clamped strictly to 100 (MAX_RESONANCE)",
       "Moral sway continuum strictly symmetric [-100, +100]",
+      "Mitigation percentage strictly capped within [0, 90] percent",
       "Strict conformance to OmniCode 5-Block Architecture"
     ]
   },
@@ -36,7 +44,8 @@
     "static_declarations": {
       "subsystem": "core.util.math",
       "schema_id": "tenlux.data.math_menu.v1",
-      "profile_count": 2
+      "total_catalogs": 7,
+      "formula_groups_count": 6
     },
     "generic_helper_contracts": {
       "loader": "math_load_config_from_file",
@@ -54,9 +63,39 @@
       },
       {
         "id": "attributes",
-        "display_name": "Attributes, Vitals & Tactical Math Specification",
+        "display_name": "Tri-Vitals & Hex-Combat Attributes",
         "file": "attributes.json",
-        "description": "HP, MP, TP, ATK, DEF, MATK, MDEF, AGI, LUK base stats and TP movement formulas."
+        "description": "HP, MP, TP, ATK, DEF, MATK, MDEF, AGI, LUK base stats and TP grid traversal rules."
+      },
+      {
+        "id": "formulas",
+        "display_name": "Master Formula Specification Sheet",
+        "file": "formulas.json",
+        "description": "Core damage, mitigation, hit resolution, crits, poise stagger, and exploration checks."
+      },
+      {
+        "id": "exploration_stats",
+        "display_name": "8 Exploration Stats & Ability Checks",
+        "file": "exploration_stats.json",
+        "description": "STR, DEX, VIT, INT, WIS, CHA, PER, REP (1-20 scale) paired with combat counterparts."
+      },
+      {
+        "id": "combat_subsurface",
+        "display_name": "Sub-Surface Combat & Positioning Parameters",
+        "file": "combat_subsurface.json",
+        "description": "ACC, EVA, Poise / Flank Vigor, ZOC types, Threat weights, Facing multipliers."
+      },
+      {
+        "id": "affinities",
+        "display_name": "Elemental & Physical Affinity Matrix",
+        "file": "affinities.json",
+        "description": "6 Primal + 7 Compound elements (including Statera), Physical Triad (Slash/Bash/Pierce)."
+      },
+      {
+        "id": "statera_telemetry",
+        "display_name": "Conscience Ledger & Statera Resonance",
+        "file": "statera_telemetry.json",
+        "description": "Separate virtue/malice accumulators, Statera corridor, and 13 moral trajectory tiers."
       }
     ]
   },
@@ -68,13 +107,13 @@
         "status": "VERIFIED_PASS"
       },
       {
-        "id": "TRIPWIRE_PROFILES_EXIST",
-        "rule": "default.json and attributes.json exist and parse cleanly",
+        "id": "TRIPWIRE_CATALOGS_COUNT",
+        "rule": "math catalogs count == 7",
         "status": "VERIFIED_PASS"
       }
     ],
     "metrics": {
-      "profile_count": 2,
+      "total_catalogs": 7,
       "active_valid": true,
       "zero_heap_compliant": true
     },

@@ -1,0 +1,160 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/system/runtime/hotpatch.json",
+    "id": "data.system.runtime.hotpatch",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-05",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Forward-looking hotpatch registry, experimental idea incubator, and emerging metric tracker.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Dynamic Incubator",
+      "path": "game/data/system/runtime/hotpatch.json"
+    },
+    "what_it_enables": [
+      "Centralized tracking of upcoming gameplay mechanics, prototype systems, and new data hooks",
+      "Incubation of experimental combat, dialogue, quest, and exploration features during design iterations",
+      "Zero-code parameter experimentation for game designers without breaking compiled binary contracts",
+      "Traceability between design discussions, offline design sheets, and compiled simulation schemas"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during hotpatch inspection (ALLOC_ZERO_HEAP)",
+      "Strict conformance to the OmniCode 5-Block Lifecycle Protocol",
+      "Experimental entries must declare status (incubating, approved, testing, rejected)",
+      "All numeric formulas must conform to bounded arithmetic constraints"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "system_environment": "Data-driven runtime engine",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.hotpatch.v1",
+      "incubator_status": "ACTIVE_DESIGN_PHASE",
+      "total_incubating_features": 8
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "hotpatch_registry": {
+      "incubating_features": [
+        {
+          "id": "HOTPATCH_WEATHER_SYSTEM",
+          "subsystem": "sim.world.weather",
+          "status": "incubating",
+          "concept": "Dynamic atmospheric weather states modifying battle grids and audio.",
+          "proposed_states": [
+            {"state": "TEMPERATE_CLEAR", "sight_mod": 1.0, "fire_boost_pct": 0},
+            {"state": "ASTRAL_AURORA", "sight_mod": 1.2, "lux_boost_pct": 20, "tenebris_boost_pct": 20},
+            {"state": "ABYSSAL_FOG", "sight_mod": 0.5, "crit_bonus_pct": 10, "tenebris_boost_pct": 25},
+            {"state": "TORRENTIAL_RAIN", "movement_cost_mult": 1.5, "lightning_boost_pct": 30}
+          ]
+        },
+        {
+          "id": "HOTPATCH_ACTION_DUEL_PARRY",
+          "subsystem": "sim.combat.action_duel",
+          "status": "incubating",
+          "concept": "Frame-perfect parry window in side-scroll duel encounters.",
+          "parameters": {
+            "parry_window_frames_60fps": 6,
+            "parry_window_frames_30fps": 3,
+            "deflect_posture_damage_to_attacker": 25,
+            "successful_parry_guarantees_counter": true
+          }
+        },
+        {
+          "id": "HOTPATCH_CAMP_CONVERSATIONS",
+          "subsystem": "sim.social.camp",
+          "status": "incubating",
+          "concept": "Resting at wilderness bonfires triggers companion loyalty dialogues.",
+          "tracked_data": {
+            "affinity_threshold_for_deep_lore": 50,
+            "unlocks_tandem_assists": true,
+            "camp_healing_hp_pct": 50,
+            "camp_healing_mp_pct": 30,
+            "restores_tp_to_max": true
+          }
+        },
+        {
+          "id": "HOTPATCH_RELIC_EMBELLISHMENT_SOCKETS",
+          "subsystem": "sim.relics.sockets",
+          "status": "incubating",
+          "concept": "Forging catalysts into the 3 empty sockets of Shield and Sword.",
+          "socket_slots_per_relic": 3,
+          "eligible_items": [
+            "Ring of Fire (Thermal counter-fire)",
+            "Medusa's Sword (Petrifying edge)",
+            "Lyri's Offering (Restorative ward pulse)"
+          ]
+        },
+        {
+          "id": "HOTPATCH_NEW_GAME_PLUS_TIMELINE",
+          "subsystem": "sim.campaign.chronicle",
+          "status": "incubating",
+          "concept": "Book of Monsters, Book of Items, and timeline bookmarks carry over.",
+          "retained_data": [
+            "book_of_monsters_completion_pct",
+            "book_of_items_catalog_pct",
+            "unlocked_ending_routes",
+            "relic_stance_mastery_ranks"
+          ]
+        },
+        {
+          "id": "HOTPATCH_VOICE_ACTING_AUDIO_CUES",
+          "subsystem": "sim.presentation.audio.voice",
+          "status": "incubating",
+          "concept": "Dialogue speaker tags map directly to audio voiceover clips.",
+          "cue_naming_convention": "VO_{SPEAKER}_{SCENE_ID}_{LINE_ID}.ogg"
+        },
+        {
+          "id": "HOTPATCH_DIEGETIC_PUZZLE_TRIGGERS",
+          "subsystem": "sim.world.puzzles",
+          "status": "incubating",
+          "concept": "Environmental puzzles using Relic channeling and exploration ability checks.",
+          "interaction_types": [
+            "pressure_plate_weight_str",
+            "rune_mirror_channel_lux",
+            "shadow_brazier_channel_tenebris",
+            "statera_dual_conduit"
+          ]
+        },
+        {
+          "id": "HOTPATCH_DYNAMIC_SHOP_TARIFFS",
+          "subsystem": "sim.economy.tariffs",
+          "status": "incubating",
+          "concept": "Shop prices dynamically scale with Reputation (REP) and 4 Pillars standing.",
+          "discount_formula": "price_mult = 1.0 - (reputation / 200.0)"
+        }
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_HOTPATCH_VALIDITY",
+        "condition": "all incubating features declare unique IDs and statuses",
+        "action": "Ensure hotpatch entries are structurally valid"
+      }
+    ],
+    "metrics": {
+      "incubating_features_count": 8,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_hotpatch_query": "hotpatch_resolve_feature",
+      "audit_hook": "hotpatch_preflight"
+    }
+  }
+}
