@@ -1,63 +1,112 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/string/default.json",
-    "id": "data.string.profile.default",
-    "layer": "Layer 0 Data / Configuration",
-    "version": "1.0.0",
-    "date": "2026-11-02",
+    "file": "game/data/system/runtime/string/default.json",
+    "id": "data.system.runtime.string.default",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 2",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Default lexical buffer limits, stance tokens, and command verb dictionary matching Layer 0 string_utils contracts.",
-    "invariants": [
-      "All buffer capacity constants must be strictly positive",
-      "Stance and verb token arrays must contain valid strings",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
-    ]
-  },
-  "_types": {
-    "schema_id": "tenlux.data.string_profile.v1",
-    "target_struct": "string_config_t",
-    "header_binding": "include/util/string/string_utils.h"
-  },
-  "profile": {
-    "id": "default",
-    "display_name": "Standard Continental Lexical Profile",
-    "description": "Standard buffer capacities, stance tokens, and canonical action verb dictionaries.",
-    "max_path_length": 512,
-    "max_name_length": 64,
-    "max_command_length": 128,
-    "max_line_length": 80,
-    "ellipsis": "...",
-    "stances": [
-      "NEUTRAL",
-      "WARDING",
-      "STRIKING",
-      "EQUILIBRIUM"
+    "role": "Default lexical buffer limits, stance tokens, and command verb dictionary.",
+    "where_the_data_lives": {
+      "topology": "System Runtime String Buffers",
+      "path": "game/data/system/runtime/string/default.json"
+    },
+    "what_it_enables": [
+      "Strict memory bounds preventing buffer overruns across text formatting",
+      "Canonical stance tokens matching Layer 1 finite state machine",
+      "Command verb dictionaries for CLI parser and GUI event routers",
+      "Zero-heap path joining and directory extraction utilities"
     ],
-    "action_verbs": [
-      "help",
-      "version",
-      "audit",
-      "cli",
-      "gui",
-      "barrio",
-      "cuttatio",
-      "duo",
-      "stance",
-      "journey",
-      "inspect",
-      "name",
-      "quit"
+    "invariants": [
+      "Zero dynamic heap allocations during string configuration loading (ALLOC_ZERO_HEAP)",
+      "All buffer capacity constants must be strictly positive integers",
+      "Stance and verb token arrays must contain non-empty null-terminated strings",
+      "Max line length discipline bounded to 80 characters for terminal presentation"
     ]
   },
-  "_audit": {
-    "stance_count": 4,
-    "verb_count": 13,
-    "max_line_discipline": 80
+  "block_2_opening": {
+    "pre_conditions": {
+      "string_utils": "core/string_utils.h",
+      "buffer_safety": "str_safe_copy, str_safe_cat"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.string_profile.v1",
+      "target_struct": "string_config_t",
+      "header_binding": "include/core/string_utils.h"
+    },
+    "generic_helper_contracts": {
+      "loader": "string_load_config_from_file",
+      "copy": "str_safe_copy",
+      "cat": "str_safe_cat",
+      "trim": "str_trim"
+    }
   },
-  "_navigation": {
-    "parent_menu": "manifest.json",
-    "menu_index": 1
+  "block_3_body": {
+    "profile": {
+      "id": "default",
+      "display_name": "Standard Continental Lexical Profile",
+      "description": "Standard buffer capacities, stance tokens, and canonical action verb dictionaries.",
+      "max_path_length": 512,
+      "max_name_length": 64,
+      "max_command_length": 128,
+      "max_line_length": 80,
+      "ellipsis": "...",
+      "stances": [
+        "NEUTRAL",
+        "WARDING",
+        "STRIKING",
+        "EQUILIBRIUM"
+      ],
+      "action_verbs": [
+        "help",
+        "version",
+        "audit",
+        "cli",
+        "gui",
+        "barrio",
+        "cuttatio",
+        "duo",
+        "stance",
+        "journey",
+        "inspect",
+        "name",
+        "quit"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_BUFFER_CAPACITY",
+        "condition": "max_path_length >= 256 && max_command_length >= 64",
+        "action": "Fatal halt if lexical buffers are below safe thresholds"
+      },
+      {
+        "id": "TRIPWIRE_STANCE_COUNT",
+        "condition": "stances count == 4",
+        "action": "Fatal halt if stance lexicon deviates from canonical 4 postures"
+      }
+    ],
+    "metrics": {
+      "stance_count": 4,
+      "verb_count": 13,
+      "max_line_discipline": 80,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
+      "menu_index": 1
+    },
+    "execution_hooks": {
+      "on_load": "string_load_config_from_file",
+      "audit_hook": "string_utils_preflight"
+    }
   }
 }
