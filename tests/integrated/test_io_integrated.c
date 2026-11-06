@@ -45,6 +45,7 @@ Stratum: Layer 4 (Verification Suite) | Machine: test.integrated.io
 #include "io/path_finder.h"
 #include "io/json_utils.h"
 #include "io/master_loader.h"
+#include "log/log.h"
 
 #define TEST_ASSERT(cond, msg) \
     do { \
@@ -304,11 +305,21 @@ int main(void)
     printf("  Tenebris and Lux - IO Layer Integrated Test Suite         \n");
     printf("============================================================\n");
 
+    log_config_t log_cfg = log_get_default_config();
+    log_cfg.echo_to_console = false;
+    log_cfg.min_severity = LOG_SEV_TRACE;
+    log_init(&log_cfg);
+
+    LOG_INFO(LOG_CAT_LOG, "IOIntegrated", 0.0f, "Starting IO Integrated Cross-Subsystem Verification Suite");
+
     test_io_integrated_audit();
     test_io_integrated_always_pass();
     test_io_integrated_never_fail();
     test_io_integrated_assertions_and_guarantees();
     test_io_integrated_emergence();
+
+    LOG_INFO(LOG_CAT_LOG, "IOIntegrated", 0.0f, "All 4 sections of IO Integrated Suite passed");
+    log_shutdown();
 
     printf("============================================================\n");
     printf("ALL IO INTEGRATED TESTS PASSED (4/4 Sections Verified)\n");

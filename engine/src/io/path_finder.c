@@ -74,6 +74,7 @@ Tier 3: Internal Engine Foundation Headers
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "io/path_finder.h"
 #include "io/fs_utils.h"
+#include "log/log.h"
 #include "core/string_utils.h"
 #include "core/manifest.h"
 
@@ -276,6 +277,7 @@ bool path_finder_set_data_root(const char *root_path)
 
     str_safe_copy(s_data_root, root_path, sizeof(s_data_root));
     s_data_root_initialized = true;
+    LOG_DEBUG(LOG_CAT_LOG, "PathFinder", 0.0f, "VFS data root configured: '%s'", s_data_root);
     return true;
 }
 

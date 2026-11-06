@@ -77,6 +77,7 @@ Tier 3: Internal Engine Foundation Headers
 #include "io/path_finder.h"
 #include "io/json_utils.h"
 #include "io/fs_utils.h"
+#include "log/log.h"
 #include "core/string_utils.h"
 #include "core/manifest.h"
 
@@ -210,7 +211,13 @@ bool master_loader_load_from_path(master_loader_t *loader,
         return false;
     }
 
-    return master_loader_load_from_memory(loader, buf, bytes_read);
+    bool parsed = master_loader_load_from_memory(loader, buf, bytes_read);
+    if (parsed) {
+        LOG_DEBUG(LOG_CAT_LOG, "MasterLoader", 0.0f,
+                  "Loaded asset from path '%s' (%zu bytes, schema: %s)",
+                  filepath, bytes_read, loader->header.schema_id);
+    }
+    return parsed;
 }
 
 bool master_loader_load(master_loader_t *loader,
@@ -243,7 +250,13 @@ bool master_loader_load(master_loader_t *loader,
         return false;
     }
 
-    return master_loader_load_from_memory(loader, buf, bytes_read);
+    bool parsed = master_loader_load_from_memory(loader, buf, bytes_read);
+    if (parsed) {
+        LOG_DEBUG(LOG_CAT_LOG, "MasterLoader", 0.0f,
+                  "Loaded asset '%s/%s' (%zu bytes, schema: %s)",
+                  domain ? domain : "root", rel_path, bytes_read, loader->header.schema_id);
+    }
+    return parsed;
 }
 
 bool master_loader_validate_schema(const master_loader_t *loader,
