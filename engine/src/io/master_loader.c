@@ -8,7 +8,7 @@
 // @layer         Layer 0: Core Utilities
 // @subsystem     Data & Filesystem Subsystem (util/io)
 // @version       0.1.0
-// @interface_rev Rev 1
+// @interface_rev Rev 2
 // @date          2026-11-05
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
@@ -41,6 +41,7 @@
 //   2. Strict schema ID and version validation before body payload extraction.
 //   3. Resilient fallback support: handles both 5-block and legacy flat JSON.
 //   4. Caller buffers are strictly bounded; all extracted strings null-terminated.
+//   5. Universal 5-Block Lifecycle Protocol enforced across header and source.
 // =============================================================================
 
 // =============================================================================
@@ -56,10 +57,11 @@
 #include <stdio.h>
 #include <string.h>
 
-static const char *const s_master_loader_invariants[3] = {
+static const char *const s_master_loader_invariants[] = {
     "Zero dynamic heap allocation during dataset loading",
     "Strict schema ID and semver validation contract",
-    "Scoped extraction inside Block 3 body with legacy fallback"
+    "Scoped extraction inside Block 3 body with legacy fallback",
+    "Universal 5-Block Lifecycle Protocol enforced across header and source"
 };
 
 const module_metadata_t master_loader_manifest = {
@@ -67,7 +69,7 @@ const module_metadata_t master_loader_manifest = {
     "master_loader.h",
     LAYER_0_CORE_UTIL,
     { 0, 1, 0 },
-    1,
+    2,
     "2026-11-05",
     "Zero-heap universal master data loader and 5-block parser",
     3,
@@ -75,11 +77,12 @@ const module_metadata_t master_loader_manifest = {
     ALLOC_ZERO_HEAP,
     CONCURRENCY_REENTRANT,
     500,
-    3,
+    4,
     {
         s_master_loader_invariants[0],
         s_master_loader_invariants[1],
-        s_master_loader_invariants[2]
+        s_master_loader_invariants[2],
+        s_master_loader_invariants[3]
     },
     master_loader_preflight
 };
@@ -501,6 +504,28 @@ diag_result_t master_loader_preflight(void)
         return res;
     }
 
+    /* Check 4: Block 5 Executable Procedures */
+    loader_header_t hdr;
+    if (!master_loader_execute_inspect("system", "runtime/math/formulas.json", &hdr) ||
+        !hdr.is_5block || strcmp(hdr.schema_id, "tenlux.data.math_formulas.v1") != 0) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "master_loader_execute_inspect failed header inspection.";
+        return res;
+    }
+
+    master_loader_t verified_loader;
+    static char verified_buf[FS_BUFFER_LARGE_BYTES];
+    if (!master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+                                            "tenlux.data.math_formulas.v1",
+                                            verified_buf, sizeof(verified_buf),
+                                            &verified_loader)) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "master_loader_execute_load_verified failed verified load procedure.";
+        return res;
+    }
+
     return res;
 }
 
@@ -512,4 +537,80 @@ bool master_loader_audit(void)
 
 // =============================================================================
 // BLOCK 5: CLOSING BLOCK
+// Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
+// -----------------------------------------------------------------------------
+
+bool master_loader_execute_inspect(const char *domain,
+                                   const char *rel_path,
+                                   loader_header_t *out_header)
+{
+    if (out_header == NULL) {
+        return false;
+    }
+    memset(out_header, 0, sizeof(*out_header));
+
+    if (rel_path == NULL || rel_path[0] == '\0') {
+        return false;
+    }
+
+    char file_buf[FS_BUFFER_MEDIUM_BYTES];
+    master_loader_t loader;
+    if (!master_loader_load(&loader, domain, rel_path, file_buf, sizeof(file_buf))) {
+        return false;
+    }
+
+    *out_header = loader.header;
+    return true;
+}
+
+bool master_loader_execute_load_verified(const char *domain,
+                                         const char *rel_path,
+                                         const char *expected_schema_id,
+                                         char *buf,
+                                         size_t buf_size,
+                                         master_loader_t *out_loader)
+{
+    if (out_loader == NULL || buf == NULL || buf_size == 0 ||
+        rel_path == NULL || rel_path[0] == '\0') {
+        return false;
+    }
+
+    if (!master_loader_load(out_loader, domain, rel_path, buf, buf_size)) {
+        return false;
+    }
+
+    if (expected_schema_id && expected_schema_id[0] != '\0') {
+        if (!master_loader_validate_schema(out_loader, expected_schema_id)) {
+            out_loader->status = LOADER_STATUS_ERR_SCHEMA_MISMATCH;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
+// -----------------------------------------------------------------------------
+
+void master_loader_init(void)
+{
+    path_finder_init();
+    json_utils_init();
+    fs_utils_init();
+}
+
+void master_loader_shutdown(void)
+{
+    json_utils_shutdown();
+    path_finder_shutdown();
+    fs_utils_shutdown();
+}
+
+// =============================================================================
+// End of master_loader.c
 // =============================================================================
