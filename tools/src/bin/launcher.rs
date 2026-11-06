@@ -54,6 +54,7 @@ pub enum LaunchMode {
     Cli,
     Debug,
     Audit,
+    Validate,
     Update,
     Test,
     Install,
@@ -109,11 +110,16 @@ impl LauncherEnv {
                 }
             }
 
-            let data_candidate = root.join("data");
-            if data_candidate.is_dir()
-                && data_candidate.join("manifest.json").is_file()
-            {
-                resolved_data = Some(data_candidate);
+            let data_candidate = if root.join("game/data/manifest.json").is_file() {
+                Some(root.join("game/data"))
+            } else if root.join("data/manifest.json").is_file() {
+                Some(root.join("data"))
+            } else {
+                None
+            };
+
+            if let Some(data_path) = data_candidate {
+                resolved_data = Some(data_path);
                 resolved_root = Some(root.clone());
                 break;
             }
@@ -257,9 +263,10 @@ fn run_interactive_dashboard(env: &LauncherEnv) -> Result<i32, String> {
         println!("  [5] Run System Updater & Recompile Latest Build");
         println!("  [6] Execute Full Automated Verification Suite (CTest)");
         println!("  [7] View Master Guide Documentation");
+        println!("  [8] Run Data Catalog & Schema Validation Audit (game/data/system/)");
         println!("  [0] Exit Launcher");
         println!("-------------------------------------------------------");
-        print!("  Enter selection [1-7, 0]: ");
+        print!("  Enter selection [1-8, 0]: ");
         io::stdout().flush().map_err(|e| e.to_string())?;
 
         let mut input = String::new();
@@ -288,12 +295,25 @@ fn run_interactive_dashboard(env: &LauncherEnv) -> Result<i32, String> {
                 println!("  PDF Book: {:?}", pdf_path);
                 println!("Tip: Read MASTER_GUIDE.md or open the PDF viewer.");
             }
+            "8" => {
+                let val_options = tl_tools::validator::ValidationOptions {
+                    target_domain: "system".to_string(),
+                    strict: false,
+                    verbose: true,
+                    repo_root: env.repo_root.clone(),
+                };
+                let validator = tl_tools::validator::DataValidator::new(val_options);
+                match validator.run_audit() {
+                    Ok(summary) => summary.print_summary("system"),
+                    Err(e) => eprintln!("Validation error: {}", e),
+                }
+            }
             "0" | "q" | "exit" => {
                 println!("Exiting launcher.");
                 return Ok(0);
             }
             _ => {
-                println!("Invalid input. Enter a choice between 0 and 7.");
+                println!("Invalid input. Enter a choice between 0 and 8.");
             }
         }
     }
@@ -346,6 +366,7 @@ fn main() -> ExitCode {
             "-c" | "--cli" => mode = LaunchMode::Cli,
             "-d" | "--debug" => mode = LaunchMode::Debug,
             "-a" | "--audit" => mode = LaunchMode::Audit,
+            "--validate" => mode = LaunchMode::Validate,
             "-u" | "--update" => mode = LaunchMode::Update,
             "-t" | "--test" => mode = LaunchMode::Test,
             "--install" => mode = LaunchMode::Install,
@@ -387,6 +408,26 @@ fn main() -> ExitCode {
         LaunchMode::Cli => launcher_env.spawn_game("--cli"),
         LaunchMode::Debug => launcher_env.spawn_game("--debug"),
         LaunchMode::Audit => launcher_env.spawn_game("--audit"),
+        LaunchMode::Validate => {
+            let val_options = tl_tools::validator::ValidationOptions {
+                target_domain: "system".to_string(),
+                strict: false,
+                verbose: true,
+                repo_root: launcher_env.repo_root.clone(),
+            };
+            let validator = tl_tools::validator::DataValidator::new(val_options);
+            match validator.run_audit() {
+                Ok(summary) => {
+                    summary.print_summary("system");
+                    if summary.is_success(false) {
+                        Ok(0)
+                    } else {
+                        Ok(1)
+                    }
+                }
+                Err(e) => Err(format!("Validation error: {}", e)),
+            }
+        }
         LaunchMode::Update | LaunchMode::Install => launcher_env.run_updater(),
         LaunchMode::Test => launcher_env.run_tests(),
         LaunchMode::Interactive => run_interactive_dashboard(&launcher_env),
