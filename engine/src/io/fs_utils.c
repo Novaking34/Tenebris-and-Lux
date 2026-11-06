@@ -38,6 +38,7 @@
 // =============================================================================
 
 #include "io/fs_utils.h"
+#include "io/path_finder.h"
 #include "core/string_utils.h"
 
 #include <errno.h>
@@ -536,6 +537,16 @@ static const char *s_data_candidate_prefixes[] = {
     "../game/data/presentation/visuals/palettes/%s"
 };
 
+bool fs_set_data_root(const char *root_path)
+{
+    return path_finder_set_data_root(root_path);
+}
+
+const char *fs_get_data_root(void)
+{
+    return path_finder_get_data_root();
+}
+
 bool fs_resolve_data_path(const char *rel_path,
                           char *out_path,
                           size_t out_size)
@@ -543,6 +554,11 @@ bool fs_resolve_data_path(const char *rel_path,
     if (rel_path == NULL || rel_path[0] == '\0' ||
         out_path == NULL || out_size == 0) {
         return false;
+    }
+
+    /* Step 0: Try dynamic path_finder VFS resolver first */
+    if (path_finder_resolve(NULL, rel_path, out_path, out_size)) {
+        return true;
     }
 
     /* Step 1: Direct existence check */

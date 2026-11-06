@@ -45,6 +45,8 @@
 #include "core/manifest.h"
 #include "io/fs_utils.h"
 #include "io/json_utils.h"
+#include "io/path_finder.h"
+#include "io/master_loader.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -172,6 +174,57 @@ static void test_data_always_pass(void)
                     "Extract key from written temp file");
         TEST_ASSERT(strcmp(test_str, "tenlux_ok") == 0, "Temp file key matches");
     }
+
+    /* 1.8 Path Finder & VFS Data Mount Testing */
+    const char *orig_root = path_finder_get_data_root();
+    TEST_ASSERT(orig_root != NULL && orig_root[0] != '\0', "Data root initialized");
+    TEST_ASSERT(path_finder_set_data_root("game/data"), "Set data root to game/data");
+    TEST_ASSERT(strcmp(path_finder_get_data_root(), "game/data") == 0, "Data root query matches");
+
+    char resolved[PATH_FINDER_MAX_PATH];
+    TEST_ASSERT(path_finder_resolve("system", "runtime/math/formulas.json", resolved, sizeof(resolved)),
+                "Path finder resolves system/runtime/math/formulas.json");
+    TEST_ASSERT(fs_is_regular_file(resolved), "Resolved path is regular file");
+
+    char manifest_res[PATH_FINDER_MAX_PATH];
+    TEST_ASSERT(path_finder_find_manifest("system", manifest_res, sizeof(manifest_res)),
+                "Path finder locates system/manifest.json");
+
+    /* 1.9 Master Loader 5-Block Loading & Contract Verification */
+    master_loader_t loader;
+    static char loader_file_buf[FS_BUFFER_LARGE_BYTES];
+    TEST_ASSERT(master_loader_load(&loader, "system", "runtime/math/formulas.json",
+                                   loader_file_buf, sizeof(loader_file_buf)),
+                "Master loader loads 5-block formulas.json");
+    TEST_ASSERT(loader.header.is_5block, "Loaded file recognized as 5-block");
+    TEST_ASSERT(master_loader_validate_schema(&loader, "tenlux.data.math_formulas.v1"),
+                "Master loader validates schema tenlux.data.math_formulas.v1");
+    TEST_ASSERT(master_loader_validate_version(&loader, "0.1.0"),
+                "Master loader validates version 0.1.0");
+
+    char phys_formula[128];
+    TEST_ASSERT(master_loader_get_string(&loader, "physical_damage", "formula",
+                                         phys_formula, sizeof(phys_formula)),
+                "Master loader extracts scoped body string");
+    TEST_ASSERT(strlen(phys_formula) > 10, "Extracted formula string non-empty");
+
+    int mit_cap = 0;
+    TEST_ASSERT(master_loader_get_int(&loader, "physical_mitigation", "mitigation_cap_pct", &mit_cap),
+                "Master loader extracts scoped body int");
+    TEST_ASSERT(mit_cap == 90, "Mitigation cap pct is 90");
+
+    /* 1.10 Array-of-Objects Slicing Primitive */
+    const char *arr_of_objs = "[{\"id\": 101, \"token\": \"alpha\"}, {\"id\": 102, \"token\": \"beta\"}]";
+    char obj_buf[128];
+    TEST_ASSERT(json_array_get_object(arr_of_objs, strlen(arr_of_objs), 0, obj_buf, sizeof(obj_buf)),
+                "json_array_get_object slices object at index 0");
+    int obj_id = 0;
+    TEST_ASSERT(json_get_int(obj_buf, "id", &obj_id) && obj_id == 101, "Object 0 id is 101");
+    TEST_ASSERT(json_array_get_object(arr_of_objs, strlen(arr_of_objs), 1, obj_buf, sizeof(obj_buf)),
+                "json_array_get_object slices object at index 1");
+    TEST_ASSERT(json_get_int(obj_buf, "id", &obj_id) && obj_id == 102, "Object 1 id is 102");
+    TEST_ASSERT(!json_array_get_object(arr_of_objs, strlen(arr_of_objs), 2, obj_buf, sizeof(obj_buf)),
+                "json_array_get_object out-of-bounds index safely returns false");
 
     printf("  [PASS-1] Section 1 passed unconditionally.\n");
 }
@@ -304,6 +357,8 @@ static void test_data_subsystem_audits(void)
     printf("[AUDIT] Running Layer 0 Data Subsystem Pre-Flight Audits...\n");
     TEST_ASSERT(fs_utils_audit(), "fs_utils internal self-audit passed");
     TEST_ASSERT(json_utils_audit(), "json_utils internal self-audit passed");
+    TEST_ASSERT(path_finder_audit(), "path_finder internal self-audit passed");
+    TEST_ASSERT(master_loader_audit(), "master_loader internal self-audit passed");
     printf("[AUDIT] Data subsystem manifests verified.\n");
 }
 

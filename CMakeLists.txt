@@ -121,6 +121,8 @@ set(ENGINE_CORE_SOURCES
 set(ENGINE_IO_SOURCES
     engine/src/io/fs_utils.c
     engine/src/io/json_utils.c
+    engine/src/io/path_finder.c
+    engine/src/io/master_loader.c
 )
 
 set(ENGINE_LOG_SOURCES
@@ -148,6 +150,8 @@ set(ENGINE_UTIL_HEADERS
     engine/include/core/time_utils.h
     engine/include/io/fs_utils.h
     engine/include/io/json_utils.h
+    engine/include/io/path_finder.h
+    engine/include/io/master_loader.h
     engine/include/log/log.h
     engine/include/log/log_fallback.h
     engine/include/debug/debug.h

@@ -46,6 +46,8 @@
 #include "core/manifest.h"
 #include "io/fs_utils.h"
 #include "io/json_utils.h"
+#include "io/path_finder.h"
+#include "io/master_loader.h"
 #include "core/math_utils.h"
 #include "core/geom_utils.h"
 #include "core/string_utils.h"
@@ -93,6 +95,8 @@ static void init_engine_manifest(manifest_registry_t *registry)
     manifest_register(registry, &manifest_utils_manifest);
     manifest_register(registry, &fs_utils_manifest);
     manifest_register(registry, &json_utils_manifest);
+    manifest_register(registry, &path_finder_manifest);
+    manifest_register(registry, &master_loader_manifest);
     manifest_register(registry, &time_utils_manifest);
     manifest_register(registry, &math_utils_manifest);
     manifest_register(registry, &geom_utils_manifest);
@@ -145,12 +149,13 @@ static void print_usage(void)
     /* Step 1: Emit usage banner and option explanations */
     printf("Usage: tenebris-lux [options]\n\n");
     printf("Options:\n");
-    printf("  -h, --help     Show this help message and exit\n");
-    printf("  -v, --version  Show version information and exit\n");
-    printf("  -a, --audit    Run internal invariant audit and exit\n");
-    printf("  -d, --debug    Launch game with interactive debugger enabled\n");
-    printf("  -c, --cli      Launch game in terminal CLI mode\n");
-    printf("  -g, --gui      Launch game in native desktop GUI mode\n");
+    printf("  -h, --help            Show this help message and exit\n");
+    printf("  -v, --version         Show version information and exit\n");
+    printf("  -a, --audit           Run internal invariant audit and exit\n");
+    printf("  -d, --debug           Launch game with interactive debugger enabled\n");
+    printf("  -c, --cli             Launch game in terminal CLI mode\n");
+    printf("  -g, --gui             Launch game in native desktop GUI mode\n");
+    printf("  -r, --data-root <dir> Specify active game data mount directory\n");
 }
 
 /**
@@ -322,29 +327,38 @@ int main(int argc, char *argv[])
     bool force_debug = false;
 
     /* Step 2: Parse command-line arguments */
-    if (argc > 1) {
-        if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
             print_usage();
             return 0;
         }
-        if (strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-v") == 0) {
+        if (strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-v") == 0) {
             print_version();
             return 0;
         }
-        if (strcmp(argv[1], "--audit") == 0 || strcmp(argv[1], "-a") == 0) {
+        if (strcmp(argv[i], "--audit") == 0 || strcmp(argv[i], "-a") == 0) {
             return run_full_subsystem_audit();
         }
-        if (strcmp(argv[1], "--debug") == 0 || strcmp(argv[1], "-d") == 0) {
+        if (strcmp(argv[i], "--debug") == 0 || strcmp(argv[i], "-d") == 0) {
             force_debug = true;
             force_cli = true;
-        } else if (strcmp(argv[1], "--cli") == 0 || strcmp(argv[1], "-c") == 0) {
+        } else if (strcmp(argv[i], "--cli") == 0 || strcmp(argv[i], "-c") == 0) {
             force_cli = true;
-        } else if (strcmp(argv[1], "--gui") == 0 ||
-                   strcmp(argv[1], "-g") == 0) {
+        } else if (strcmp(argv[i], "--gui") == 0 ||
+                   strcmp(argv[i], "-g") == 0) {
             force_gui = true;
+        } else if (strcmp(argv[i], "--data-root") == 0 || strcmp(argv[i], "-r") == 0) {
+            if (i + 1 < argc) {
+                path_finder_set_data_root(argv[++i]);
+            } else {
+                fprintf(stderr, "Error: --data-root requires a directory path.\n");
+                return 1;
+            }
+        } else if (strncmp(argv[i], "--data-root=", 12) == 0) {
+            path_finder_set_data_root(argv[i] + 12);
         } else {
             fprintf(stderr, "Unknown option: %s\nUse --help for usage.\n",
-                    argv[1]);
+                    argv[i]);
             return 1;
         }
     }

@@ -277,6 +277,29 @@ size_t json_array_get_count(const char *arr_start, size_t arr_len);
 bool json_array_get_string(const char *arr_start, size_t arr_len,
                            size_t index, char *out_val, size_t out_size);
 
+/**
+ * @brief Extracts i-th object slice { ... } from JSON array into caller buffer.
+ *
+ * Scans nested braces and quotes without dynamic heap allocations, returning
+ * the complete bounded object string including opening and closing braces.
+ *
+ * ### Ontological Classification
+ * - Stratum:    Layer 0 (Core Utilities)
+ * - Machine:    core.util.json (Zero-Heap JSON Engine)
+ * - Assembly:   Array Inspection & Extraction
+ * - Cog:        Bounded Array Object Slicer
+ *
+ * @param[in]  arr_start Pointer to opening '[' of array.
+ * @param[in]  arr_len   Length of array in bytes.
+ * @param[in]  index     0-based element index.
+ * @param[out] out_obj   Destination buffer for extracted object string.
+ * @param[in]  out_size  Capacity of destination buffer in bytes.
+ *
+ * @return true if object exists and was extracted within buffer bounds; false otherwise.
+ */
+bool json_array_get_object(const char *arr_start, size_t arr_len,
+                           size_t index, char *out_obj, size_t out_size);
+
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine

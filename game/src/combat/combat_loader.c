@@ -37,6 +37,7 @@
 #include "combat/combat_loader.h"
 #include "io/fs_utils.h"
 #include "io/json_utils.h"
+#include "io/master_loader.h"
 #include "core/string_utils.h"
 #include <stdio.h>
 #include <string.h>
@@ -114,17 +115,6 @@ static void apply_fallback_formulas(combat_formulas_t *f)
     f->enemy_equilibrium_mitigation_pct = 20;
 }
 
-static const char *resolve_combat_path(const char *rel_path,
-                                       char *out_buf,
-                                       size_t buf_len)
-{
-    if (fs_resolve_data_path(rel_path, out_buf, buf_len)) {
-        return out_buf;
-    }
-    str_safe_copy(out_buf, rel_path, buf_len);
-    return out_buf;
-}
-
 bool combat_loader_load_formulas(combat_formulas_t *out_formulas)
 {
     if (!out_formulas) {
@@ -134,33 +124,33 @@ bool combat_loader_load_formulas(combat_formulas_t *out_formulas)
     apply_fallback_formulas(out_formulas);
 
     static char s_buf[COMBAT_FILE_BUF_SIZE];
-    char resolved_path[256];
-    resolve_combat_path("data/combat/formulas.json", resolved_path, sizeof(resolved_path));
-
-    if (!fs_file_exists(resolved_path) ||
-        !fs_read_file_contents(resolved_path, s_buf, sizeof(s_buf))) {
+    master_loader_t loader;
+    if (!master_loader_load(&loader, "mechanics", "combat/formulas.json",
+                            s_buf, sizeof(s_buf)) &&
+        !master_loader_load(&loader, "system", "runtime/math/formulas.json",
+                            s_buf, sizeof(s_buf))) {
         return true; /* Safe fallback */
     }
 
     int val = 0;
-    if (json_get_object_int(s_buf, "defend", "standard_ward_boost", &val)) {
+    if (master_loader_get_int(&loader, "defend", "standard_ward_boost", &val)) {
         out_formulas->standard_ward_boost = (int16_t)val;
     }
-    if (json_get_object_int(s_buf, "defend", "lux_barrio_boost", &val)) {
+    if (master_loader_get_int(&loader, "defend", "lux_barrio_boost", &val)) {
         out_formulas->lux_barrio_boost = (int16_t)val;
     }
-    if (json_get_object_int(s_buf, "defend",
+    if (master_loader_get_int(&loader, "defend",
                             "lux_barrio_mitigation_pct", &val)) {
         out_formulas->lux_barrio_mitigation_pct = (int16_t)val;
     }
-    if (json_get_object_int(s_buf, "attack", "cuttatio_splash_pct", &val)) {
+    if (master_loader_get_int(&loader, "attack", "cuttatio_splash_pct", &val)) {
         out_formulas->cuttatio_splash_pct = (int16_t)val;
     }
-    if (json_get_object_int(s_buf, "special",
+    if (master_loader_get_int(&loader, "special",
                             "duo_loca_relic_balance_boost", &val)) {
         out_formulas->duo_loca_relic_balance_boost = (int16_t)val;
     }
-    if (json_get_object_int(s_buf, "enemy_turn",
+    if (master_loader_get_int(&loader, "enemy_turn",
                             "warding_mitigation_pct", &val)) {
         out_formulas->enemy_warding_mitigation_pct = (int16_t)val;
     }
