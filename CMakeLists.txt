@@ -6,9 +6,9 @@
 # @file          CMakeLists.txt
 # @layer         Build & Toolchain Configuration (Layer 0 Infrastructure)
 # @version       0.1.0-dev
-# @interface_rev Rev 4
-# @date          2026-11-03
-# @updated       2026-11-03
+# @interface_rev Rev 5
+# @date          2026-11-06
+# @updated       2026-11-06
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
 # @system        Root CMake Build & Automated Test Orchestration Engine
@@ -17,7 +17,7 @@
 #                2. Zero-warning compilation policy across GCC, Clang (-Wall
 #                   -Wextra -Wpedantic), and MSVC (/W4).
 #                3. Zero external binary runtime downloads (native X11 + POSIX).
-#                4. Multi-tier verification integrated via CTest (19/19).
+#                4. Multi-tier verification integrated via CTest (26/26).
 #                5. Strict 80-column line width discipline across all lines.
 #                6. Domain-split architecture: engine/ (L0/L2) vs game/ (L1/L3).
 #
@@ -33,7 +33,7 @@
 #   - Block 2 (Opening/Objects): Declares compiler objects, C11, and flags.
 #   - Block 3 (Body/Procedure): Compiles engine and game domain targets.
 #   - Block 4 (Audit/Harnesses): Builds four-tier verification test targets.
-#   - Block 5 (Closing/CTest): Registers and executes all 19 automated tests.
+#   - Block 5 (Closing/CTest): Registers and executes all 26 automated tests.
 # ==============================================================================
 
 cmake_minimum_required(VERSION 3.24)
@@ -328,6 +328,14 @@ if(BUILD_TESTING)
     target_include_directories(test_functional PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_functional PRIVATE ${GAME_WARNING_FLAGS})
 
+    # IO Subsystem Functional Assertion & Diagnostic Trace Harness
+    add_executable(test_io_functional
+        tests/functional/test_io_functional.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_io_functional PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_io_functional PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.2: LAYER 0 & LAYER 1 SUBSYSTEM UNIT HARNESSES ]
     # Mission: Verify isolated subsystem contracts across ontological sections.
@@ -431,6 +439,38 @@ if(BUILD_TESTING)
     target_link_libraries(test_gui PRIVATE ${X11_LIBRARIES})
     target_compile_options(test_gui PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Filesystem Utilities Subsystem Unit Test
+    add_executable(test_fs_utils_unit
+        tests/unit/io/test_fs_utils_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_fs_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_fs_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # VFS Pathfinding Subsystem Unit Test
+    add_executable(test_path_finder_unit
+        tests/unit/io/test_path_finder_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_path_finder_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_path_finder_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Zero-Heap JSON Engine Subsystem Unit Test
+    add_executable(test_json_utils_unit
+        tests/unit/io/test_json_utils_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_json_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_json_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Master Data Loader Subsystem Unit Test
+    add_executable(test_master_loader_unit
+        tests/unit/io/test_master_loader_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_master_loader_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_master_loader_unit PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
     # Mission: Verify cross-subsystem coordination, DAG dependencies & runs.
@@ -452,6 +492,14 @@ if(BUILD_TESTING)
     )
     target_include_directories(test_sim_integrated PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_sim_integrated PRIVATE ${GAME_WARNING_FLAGS})
+
+    # IO Layer Cross-Subsystem Integration Harness
+    add_executable(test_io_integrated
+        tests/integrated/test_io_integrated.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_io_integrated PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_io_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.4: LAYER 1 SIMULATION SYSTEM HARNESSES ]
@@ -481,6 +529,14 @@ if(BUILD_TESTING)
     target_compile_options(test_gameplay_scenarios
         PRIVATE ${GAME_WARNING_FLAGS})
 
+    # IO Layer System Stress, Determinism & Fuzz Harness
+    add_executable(test_io_system
+        tests/system/test_io_system.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_io_system PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_io_system PRIVATE ${GAME_WARNING_FLAGS})
+
 # ==============================================================================
 # BLOCK 5: CLOSING BLOCK
 # ( Automated Test Registrations & CTest Verification Suite )
@@ -493,6 +549,7 @@ if(BUILD_TESTING)
 
     # Functional Tests (Individual Cog Debugging)
     add_test(NAME functional_cogs_test COMMAND test_functional)
+    add_test(NAME functional_io_test COMMAND test_io_functional)
 
     # Unit Tests (Subsystems & Modules in Isolation)
     add_test(NAME unit_math_test COMMAND test_math)
@@ -506,10 +563,15 @@ if(BUILD_TESTING)
     add_test(NAME unit_world_test COMMAND test_world)
     add_test(NAME unit_dispatch_test COMMAND test_dispatch)
     add_test(NAME unit_gui_test COMMAND test_gui)
+    add_test(NAME unit_fs_utils_test COMMAND test_fs_utils_unit)
+    add_test(NAME unit_path_finder_test COMMAND test_path_finder_unit)
+    add_test(NAME unit_json_utils_test COMMAND test_json_utils_unit)
+    add_test(NAME unit_master_loader_test COMMAND test_master_loader_unit)
 
     # Integrated Tests (Cross-Subsystem Coordination)
     add_test(NAME integrated_utils_test COMMAND test_utils)
     add_test(NAME integrated_sim_test COMMAND test_sim_integrated)
+    add_test(NAME integrated_io_test COMMAND test_io_integrated)
 
     # System Tests (Full Simulation Invariants & Scenarios)
     add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
@@ -517,12 +579,14 @@ if(BUILD_TESTING)
         NAME system_gameplay_scenarios_test
         COMMAND test_gameplay_scenarios
     )
+    add_test(NAME system_io_test COMMAND test_io_system)
 
     set_tests_properties(
         cli_help_test
         cli_version_test
         subsystem_audit_test
         functional_cogs_test
+        functional_io_test
         unit_math_test
         unit_data_test
         unit_time_test
@@ -534,10 +598,16 @@ if(BUILD_TESTING)
         unit_world_test
         unit_dispatch_test
         unit_gui_test
+        unit_fs_utils_test
+        unit_path_finder_test
+        unit_json_utils_test
+        unit_master_loader_test
         integrated_utils_test
         integrated_sim_test
+        integrated_io_test
         system_game_invariants_test
         system_gameplay_scenarios_test
+        system_io_test
         PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()

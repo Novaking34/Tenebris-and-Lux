@@ -170,6 +170,27 @@ Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
 */
 
 /**
+ * @brief Safely assigns resolved path to caller buffer, rejecting truncation.
+ */
+static bool assign_resolved_path(char *out_path, size_t out_size, const char *src)
+{
+    if (out_path == NULL || out_size == 0) {
+        return false;
+    }
+    if (src == NULL) {
+        out_path[0] = '\0';
+        return false;
+    }
+    size_t len = strlen(src);
+    if (len >= out_size) {
+        out_path[0] = '\0';
+        return false;
+    }
+    memcpy(out_path, src, len + 1);
+    return true;
+}
+
+/**
  * @brief Strips redundant path prefixes (e.g. "../game/data/", "game/data/", "data/").
  *
  * @param[in] path Raw path string.
@@ -301,8 +322,7 @@ bool path_finder_resolve(const char *domain,
 
     /* Candidate 1: Direct file check (rel_path as absolute or relative to CWD) */
     if (fs_is_regular_file(rel_path)) {
-        str_safe_copy(out_path, rel_path, out_size);
-        return true;
+        return assign_resolved_path(out_path, out_size, rel_path);
     }
 
     const char *clean_path = strip_redundant_prefixes(rel_path);
@@ -313,8 +333,7 @@ bool path_finder_resolve(const char *domain,
 
     /* Candidate 2: Direct file check on clean_path */
     if (fs_is_regular_file(clean_path)) {
-        str_safe_copy(out_path, clean_path, out_size);
-        return true;
+        return assign_resolved_path(out_path, out_size, clean_path);
     }
 
     size_t root_count = sizeof(s_fallback_candidate_roots) /
@@ -327,14 +346,12 @@ bool path_finder_resolve(const char *domain,
         char probe[PATH_FINDER_MAX_PATH];
         snprintf(probe, sizeof(probe), "%s/%s/%s", s_data_root, domain, clean_path);
         if (fs_is_regular_file(probe)) {
-            str_safe_copy(out_path, probe, out_size);
-            return true;
+            return assign_resolved_path(out_path, out_size, probe);
         }
 
         snprintf(probe, sizeof(probe), "%s/%s", s_data_root, clean_path);
         if (fs_is_regular_file(probe)) {
-            str_safe_copy(out_path, probe, out_size);
-            return true;
+            return assign_resolved_path(out_path, out_size, probe);
         }
 
         for (size_t r = 0; r < root_count; ++r) {
@@ -344,13 +361,11 @@ bool path_finder_resolve(const char *domain,
             }
             snprintf(probe, sizeof(probe), "%s/%s/%s", cand, domain, clean_path);
             if (fs_is_regular_file(probe)) {
-                str_safe_copy(out_path, probe, out_size);
-                return true;
+                return assign_resolved_path(out_path, out_size, probe);
             }
             snprintf(probe, sizeof(probe), "%s/%s", cand, clean_path);
             if (fs_is_regular_file(probe)) {
-                str_safe_copy(out_path, probe, out_size);
-                return true;
+                return assign_resolved_path(out_path, out_size, probe);
             }
         }
     } else {
@@ -360,8 +375,7 @@ bool path_finder_resolve(const char *domain,
         /* 4.1 Direct within active data root */
         snprintf(probe, sizeof(probe), "%s/%s", s_data_root, clean_path);
         if (fs_is_regular_file(probe)) {
-            str_safe_copy(out_path, probe, out_size);
-            return true;
+            return assign_resolved_path(out_path, out_size, probe);
         }
 
         /* 4.2 Search across canonical domain search paths */
@@ -369,8 +383,7 @@ bool path_finder_resolve(const char *domain,
             snprintf(probe, sizeof(probe), "%s/%s%s", s_data_root,
                      s_domain_search_paths[s], clean_path);
             if (fs_is_regular_file(probe)) {
-                str_safe_copy(out_path, probe, out_size);
-                return true;
+                return assign_resolved_path(out_path, out_size, probe);
             }
         }
 
@@ -379,22 +392,19 @@ bool path_finder_resolve(const char *domain,
             snprintf(probe, sizeof(probe), "%s/system/diagnostics/telemetry/%s",
                      s_data_root, clean_path + 4);
             if (fs_is_regular_file(probe)) {
-                str_safe_copy(out_path, probe, out_size);
-                return true;
+                return assign_resolved_path(out_path, out_size, probe);
             }
         } else if (strncmp(clean_path, "debug/", 6) == 0) {
             snprintf(probe, sizeof(probe), "%s/system/diagnostics/debugger/%s",
                      s_data_root, clean_path + 6);
             if (fs_is_regular_file(probe)) {
-                str_safe_copy(out_path, probe, out_size);
-                return true;
+                return assign_resolved_path(out_path, out_size, probe);
             }
         } else if (strcmp(clean_path, "tactical/terrains.json") == 0) {
             snprintf(probe, sizeof(probe), "%s/world/terrains/default.json",
                      s_data_root);
             if (fs_is_regular_file(probe)) {
-                str_safe_copy(out_path, probe, out_size);
-                return true;
+                return assign_resolved_path(out_path, out_size, probe);
             }
         }
 
@@ -406,30 +416,26 @@ bool path_finder_resolve(const char *domain,
             }
             snprintf(probe, sizeof(probe), "%s/%s", cand, clean_path);
             if (fs_is_regular_file(probe)) {
-                str_safe_copy(out_path, probe, out_size);
-                return true;
+                return assign_resolved_path(out_path, out_size, probe);
             }
             for (size_t s = 0; s < search_count; ++s) {
                 snprintf(probe, sizeof(probe), "%s/%s%s", cand,
                          s_domain_search_paths[s], clean_path);
                 if (fs_is_regular_file(probe)) {
-                    str_safe_copy(out_path, probe, out_size);
-                    return true;
+                    return assign_resolved_path(out_path, out_size, probe);
                 }
             }
             if (strncmp(clean_path, "log/", 4) == 0) {
                 snprintf(probe, sizeof(probe), "%s/system/diagnostics/telemetry/%s",
                          cand, clean_path + 4);
                 if (fs_is_regular_file(probe)) {
-                    str_safe_copy(out_path, probe, out_size);
-                    return true;
+                    return assign_resolved_path(out_path, out_size, probe);
                 }
             } else if (strncmp(clean_path, "debug/", 6) == 0) {
                 snprintf(probe, sizeof(probe), "%s/system/diagnostics/debugger/%s",
                          cand, clean_path + 6);
                 if (fs_is_regular_file(probe)) {
-                    str_safe_copy(out_path, probe, out_size);
-                    return true;
+                    return assign_resolved_path(out_path, out_size, probe);
                 }
             }
         }
@@ -509,21 +515,18 @@ bool path_finder_resolve_asset(const char *asset_category,
         char probe[PATH_FINDER_MAX_PATH];
         snprintf(probe, sizeof(probe), "game/assets/%s/%s", asset_category, asset_name);
         if (fs_is_regular_file(probe)) {
-            str_safe_copy(out_path, probe, out_size);
-            return true;
+            return assign_resolved_path(out_path, out_size, probe);
         }
 
         snprintf(probe, sizeof(probe), "../game/assets/%s/%s", asset_category, asset_name);
         if (fs_is_regular_file(probe)) {
-            str_safe_copy(out_path, probe, out_size);
-            return true;
+            return assign_resolved_path(out_path, out_size, probe);
         }
     }
 
     /* Candidate 2: Direct path check */
     if (fs_is_regular_file(asset_name)) {
-        str_safe_copy(out_path, asset_name, out_size);
-        return true;
+        return assign_resolved_path(out_path, out_size, asset_name);
     }
 
     out_path[0] = '\0';
@@ -571,13 +574,13 @@ diag_result_t path_finder_preflight(void)
     const char *orig = path_finder_get_data_root();
     if (!path_finder_set_data_root("game/data")) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "path_finder_set_data_root rejected valid root.";
         return res;
     }
     if (strcmp(path_finder_get_data_root(), "game/data") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "path_finder_get_data_root did not reflect mounted root.";
         return res;
     }
@@ -585,13 +588,13 @@ diag_result_t path_finder_preflight(void)
     /* Check 3: Resolve root manifest */
     if (!path_finder_find_manifest("", buf, sizeof(buf))) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "path_finder_find_manifest failed to locate root manifest.json.";
         return res;
     }
     if (!fs_is_regular_file(buf)) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "Resolved manifest path is not a regular file.";
         return res;
     }
@@ -599,7 +602,7 @@ diag_result_t path_finder_preflight(void)
     /* Check 4: Resolve domain file */
     if (!path_finder_resolve("system", "runtime/math/default.json", buf, sizeof(buf))) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "path_finder_resolve failed to locate system/runtime/math/default.json.";
         return res;
     }
@@ -609,7 +612,7 @@ diag_result_t path_finder_preflight(void)
     if (!path_finder_execute_resolve("system", "runtime/math/default.json", &info) ||
         !info.exists || !info.is_regular) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "path_finder_execute_resolve failed to construct valid path_resolved_info_t.";
         return res;
     }

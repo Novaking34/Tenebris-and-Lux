@@ -1,57 +1,88 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          json_utils.c
-// @id            core.util.json
-// @layer         Layer 0: Core Utilities
-// @subsystem     Data & Filesystem Subsystem (util/io)
-// @version       0.1.0
-// @interface_rev Rev 3
-// @date          2026-11-05
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-// @system        Zero-Heap JSON Tokenizer & Structured Field Deserializer
-// @role          Fast zero-heap JSON scanning, token classification, bounded
-//                field extraction, array slicing, and procedure execution for
-//                data-driven engine assets.
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Zero-heap, memory-safe JSON parser and key/value token extractor implementation.
-//   Serves as the universal serialization/deserialization primitive for
-//   data-driven profiles, manifests, telemetry channels, combat tables,
-//   and world topologies without pulling in heavy third-party dependencies.
-//   Guarantees non-allocating, deterministic parsing into caller stack buffers.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module in Layer 0).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/caller-supplied buffers).
-//   - Concurrency / Safety:  REENTRANT_PURE (Stateless parser on const char*).
-//   - Latency Budget:        < 50 microseconds per token extraction (O(N) scan).
-//
-// AXIOMATIC INVARIANTS:
-//   1. Zero heap allocations: Strict zero-heap guarantee across all routines.
-//   2. Buffer safety: Extracted strings unconditionally enforce null termination.
-//   3. Fault resilience: Gracefully handles malformed JSON, missing keys, and NULL.
-//   4. Numerical bounds: Safely clamps or validates numerical ranges on conversion.
-//   5. Standardized token limits: Predictable bounds for keys, tokens, and nesting.
-//   6. Universal 5-Block Lifecycle Protocol enforced across header and source.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          json_utils.c
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-06
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Zero-Heap JSON Tokenizer & Structured Field Deserializer
+@role          Fast zero-heap JSON scanning, token classification, bounded
+               field extraction, array slicing, and procedure execution for
+               data-driven engine assets.
+@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Buffer safety: extracted strings unconditionally enforce null-termination.
+               4. Fault resilience: gracefully handles malformed JSON, missing keys, and NULL.
+               5. Numerical bounds: safely clamps or validates numerical ranges on conversion.
+               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Zero-heap, memory-safe JSON parser and key/value token extractor implementation.
+  Serves as the universal serialization/deserialization primitive for
+  data-driven profiles, manifests, telemetry channels, combat tables,
+  and world topologies without pulling in heavy third-party dependencies.
+  Guarantees non-allocating, deterministic parsing into caller stack buffers.
 
-#include "io/json_utils.h"
+  ### For Game Designers & Non-Programmers:
+  Game balance numbers, item statistics, and level layouts are saved in JSON
+  data files. A traditional parser might allocate memory for every single number
+  and text tag, which can crash on memory-constrained hardware or cause stutter.
+  Our zero-heap parser reads data directly where it sits in memory, extracting
+  values in fractions of a microsecond without ever allocating memory.
 
+  ### For Systems Programmers & Engine Architects:
+  This module provides deterministic, O(N) single-pass token extraction:
+  - Scans keys while strictly respecting quoted strings and bracket nesting.
+  - Zero heap usage (malloc/calloc/free strictly prohibited).
+  - Explicitly tagged enums and structs for clean DWARF debugger integration.
+  - Categorized diagnostic severity reporting during pre-flight self-audit.
+================================================================================
+*/
+
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap JSON Engine
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <ctype.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-static const char *const json_invariants[] = {
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "io/json_utils.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Static Axiomatic Invariants & Module Manifest
+--------------------------------------------------------------------------------
+*/
+
+static const char *const json_invariants[4] = {
     "Zero heap allocations: Strict zero-heap guarantee across all routines",
     "Buffer safety: Extracted strings unconditionally enforce null termination",
     "Resilience: Gracefully handles malformed JSON, missing keys, and NULL pointers",
@@ -67,7 +98,7 @@ const module_metadata_t json_utils_manifest = {
     LAYER_0_CORE_UTIL,
     { 0, 1, 0 },
     3,
-    "2026-11-05",
+    "2026-11-06",
     "Zero-heap JSON token locator, typed value extractor, and inspection procedures",
     0,
     { NULL },
@@ -179,6 +210,10 @@ bool json_get_string(const char *json, const char *key, char *out_val,
         out_val[i++] = *val++;
     }
     out_val[i] = '\0';
+
+    if (*val != '"') {
+        return false;
+    }
 
     return true;
 }
@@ -377,6 +412,9 @@ bool json_get_object_string(const char *json, const char *parent_obj_key,
         out_val[i++] = *val++;
     }
     out_val[i] = '\0';
+    if (*val != '"') {
+        return false;
+    }
     return true;
 }
 
@@ -619,6 +657,9 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
                 out_val[i++] = *p++;
             }
             out_val[i] = '\0';
+            if (p >= end || *p != '"') {
+                return false;
+            }
             return true;
         }
 
@@ -763,35 +804,35 @@ diag_result_t json_utils_preflight(void)
     if (!json_get_string(test_json, "name", str_buf, sizeof(str_buf)) ||
         strcmp(str_buf, "Shield of Lux") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_string failed string extraction.";
         return res;
     }
 
     if (!json_get_size_t(test_json, "capacity", &sz_val) || sz_val != 100) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_size_t failed size_t extraction.";
         return res;
     }
 
     if (!json_get_int(test_json, "moral_sway", &int_val) || int_val != -42) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_int failed negative integer extraction.";
         return res;
     }
 
     if (!json_get_bool(test_json, "active", &b_val) || b_val != true) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_bool failed boolean extraction.";
         return res;
     }
 
     if (!json_get_float(test_json, "resonance", &f_val) || f_val < 0.84f || f_val > 0.86f) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_float failed floating point extraction.";
         return res;
     }
@@ -800,14 +841,14 @@ diag_result_t json_utils_preflight(void)
     if (!json_get_object_string(test_json, "_metadata", "version", str_buf, sizeof(str_buf)) ||
         strcmp(str_buf, "1.1.0") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_object_string failed nested extraction.";
         return res;
     }
 
     if (!json_get_object_int(test_json, "_metadata", "layer", &int_val) || int_val != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_object_int failed nested int extraction.";
         return res;
     }
@@ -815,14 +856,14 @@ diag_result_t json_utils_preflight(void)
     if (!json_get_object_float(test_json, "_metadata", "ratio", &f_val) ||
         f_val < 1.49f || f_val > 1.51f) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_object_float failed nested float extraction.";
         return res;
     }
 
     if (!json_get_object_bool(test_json, "_metadata", "enabled", &b_val) || b_val != true) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_get_object_bool failed nested bool extraction.";
         return res;
     }
@@ -833,7 +874,7 @@ diag_result_t json_utils_preflight(void)
     if (!json_find_array(test_json, "tags", &arr_start, &arr_len) ||
         arr_start == NULL || arr_len == 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_find_array failed array boundary discovery.";
         return res;
     }
@@ -841,7 +882,7 @@ diag_result_t json_utils_preflight(void)
     size_t tag_count = json_array_get_count(arr_start, arr_len);
     if (tag_count != 3) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_array_get_count did not match expected count of 3.";
         return res;
     }
@@ -849,7 +890,7 @@ diag_result_t json_utils_preflight(void)
     if (!json_array_get_string(arr_start, arr_len, 0, str_buf, sizeof(str_buf)) ||
         strcmp(str_buf, "relic") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_array_get_string[0] failed.";
         return res;
     }
@@ -857,7 +898,7 @@ diag_result_t json_utils_preflight(void)
     if (!json_array_get_string(arr_start, arr_len, 1, str_buf, sizeof(str_buf)) ||
         strcmp(str_buf, "defensive") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_array_get_string[1] failed.";
         return res;
     }
@@ -865,14 +906,14 @@ diag_result_t json_utils_preflight(void)
     if (!json_array_get_string(arr_start, arr_len, 2, str_buf, sizeof(str_buf)) ||
         strcmp(str_buf, "light") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_array_get_string[2] failed.";
         return res;
     }
 
     if (json_array_get_string(arr_start, arr_len, 3, str_buf, sizeof(str_buf))) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_WARNING;
         res.details = "json_array_get_string returned true for out-of-bounds index.";
         return res;
     }
@@ -882,14 +923,14 @@ diag_result_t json_utils_preflight(void)
     char obj_slice[128];
     if (!json_array_get_object(obj_arr_test, strlen(obj_arr_test), 1, obj_slice, sizeof(obj_slice))) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_array_get_object failed to slice object at index 1.";
         return res;
     }
     int slice_id = 0;
     if (!json_get_int(obj_slice, "id", &slice_id) || slice_id != 20) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_array_get_object extracted corrupt object data.";
         return res;
     }
@@ -899,7 +940,7 @@ diag_result_t json_utils_preflight(void)
     if (!json_inspect_token(test_json, "moral_sway", &tok_view) ||
         !tok_view.exists || tok_view.type != JSON_TYPE_NUMBER) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_inspect_token failed for numeric field.";
         return res;
     }
@@ -907,7 +948,7 @@ diag_result_t json_utils_preflight(void)
     if (!json_inspect_token(test_json, "active", &tok_view) ||
         !tok_view.exists || tok_view.type != JSON_TYPE_BOOLEAN) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_inspect_token failed for boolean field.";
         return res;
     }
@@ -916,7 +957,7 @@ diag_result_t json_utils_preflight(void)
     if (!json_inspect_array(test_json, "tags", &arr_view) ||
         !arr_view.exists || arr_view.count != 3) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_inspect_array failed to construct valid array view.";
         return res;
     }
@@ -926,7 +967,7 @@ diag_result_t json_utils_preflight(void)
     if (!json_execute_extract_string(test_json, "name", exec_buf, sizeof(exec_buf), &res_obj) ||
         !res_obj.success || strcmp(exec_buf, "Shield of Lux") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "json_execute_extract_string failed string extraction procedure.";
         return res;
     }
@@ -934,7 +975,7 @@ diag_result_t json_utils_preflight(void)
     // Check 6: Missing key gracefully returns false
     if (json_get_string(test_json, "nonexistent", str_buf, sizeof(str_buf))) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_WARNING;
         res.details = "json_get_string returned true for missing key.";
         return res;
     }

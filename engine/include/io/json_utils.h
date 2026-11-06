@@ -1,73 +1,101 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          json_utils.h
-// @id            core.util.json
-// @layer         Layer 0: Core Utilities
-// @subsystem     Data & Filesystem Subsystem (util/io)
-// @version       0.1.0
-// @interface_rev Rev 3
-// @date          2026-11-05
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-// @system        Zero-Heap JSON Tokenizer & Structured Field Deserializer
-// @role          Fast zero-heap JSON scanning, token classification, bounded
-//                field extraction, array slicing, and procedure execution for
-//                data-driven engine assets.
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Zero-heap, memory-safe JSON parser and key/value token extractor.
-//   Serves as the universal serialization/deserialization primitive for
-//   data-driven profiles, manifests, telemetry channels, combat tables,
-//   and world topologies without pulling in heavy third-party dependencies.
-//   Guarantees non-allocating, deterministic parsing into caller stack buffers.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module in Layer 0).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/caller-supplied buffers).
-//   - Concurrency / Safety:  REENTRANT_PURE (Stateless parser on const char*).
-//   - Latency Budget:        < 50 microseconds per token extraction (O(N) scan).
-//
-// AXIOMATIC INVARIANTS:
-//   1. Zero dynamic heap allocations: malloc, calloc, realloc, free prohibited.
-//   2. Buffer safety: Extracted strings unconditionally enforce null termination.
-//   3. Fault resilience: Gracefully handles malformed JSON, missing keys, and NULL.
-//   4. Numerical bounds: Safely clamps or validates numerical ranges on conversion.
-//   5. Standardized token limits: Predictable bounds for keys, tokens, and nesting.
-//   6. Universal 5-Block Lifecycle Protocol enforced across header and source.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          json_utils.h
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-06
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Zero-Heap JSON Tokenizer & Structured Field Deserializer
+@role          Fast zero-heap JSON scanning, token classification, bounded
+               field extraction, array slicing, and procedure execution for
+               data-driven engine assets.
+@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Buffer safety: extracted strings unconditionally enforce null-termination.
+               4. Fault resilience: gracefully handles malformed JSON, missing keys, and NULL.
+               5. Numerical bounds: safely clamps or validates numerical ranges on conversion.
+               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
+
+PURPOSE & ARCHITECTURAL ROLE:
+  Zero-heap, memory-safe JSON parser and key/value token extractor.
+  Serves as the universal serialization/deserialization primitive for
+  data-driven profiles, manifests, telemetry channels, combat tables,
+  and world topologies without pulling in heavy third-party dependencies.
+  Guarantees non-allocating, deterministic parsing into caller stack buffers.
+
+  ### For Game Designers & Non-Programmers:
+  Game balance numbers, item statistics, and level layouts are saved in JSON
+  data files. A traditional parser might allocate memory for every single number
+  and text tag, which can crash on memory-constrained hardware or cause stutter.
+  Our zero-heap parser reads data directly where it sits in memory, extracting
+  values in fractions of a microsecond without ever allocating memory.
+
+  ### For Systems Programmers & Engine Architects:
+  This module provides deterministic, O(N) single-pass token extraction:
+  - Scans keys while strictly respecting quoted strings and bracket nesting.
+  - Zero heap usage (malloc/calloc/free strictly prohibited).
+  - Explicitly tagged enums and structs for clean DWARF debugger integration.
+  - Categorized diagnostic severity reporting during pre-flight self-audit.
+================================================================================
+*/
 
 #ifndef TENEBRIS_LUX_UTIL_DATA_JSON_UTILS_H
 #define TENEBRIS_LUX_UTIL_DATA_JSON_UTILS_H
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / TYPES & ONTOLOGY
+Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap JSON Engine
+================================================================================
+*/
 
-#include "core/manifest.h"
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 2.1: PRE-CONDITIONS & CANONICAL TOKEN LIMITS ]
-// -----------------------------------------------------------------------------
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "core/manifest.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Pre-Conditions & Canonical Token Limits
+--------------------------------------------------------------------------------
+*/
 
 #define JSON_MAX_KEY_LEN     64   /**< Maximum key length in bytes. */
 #define JSON_MAX_TOKEN_LEN   128  /**< Maximum token preview string length. */
 #define JSON_MAX_NESTING     16   /**< Maximum supported bracket nesting depth. */
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 2.2: STRUCTURAL ENTITY & OBJECT DEFINITIONS ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Structural Entity & Object Definitions
+--------------------------------------------------------------------------------
+*/
 
 /**
+ * @enum json_value_type
  * @brief Ontological classification of JSON value types.
  */
-typedef enum {
+typedef enum json_value_type {
     JSON_TYPE_UNKNOWN = 0,
     JSON_TYPE_OBJECT,
     JSON_TYPE_ARRAY,
@@ -78,9 +106,10 @@ typedef enum {
 } json_value_type_t;
 
 /**
+ * @struct json_token_view
  * @brief Detailed token view constructed by json_inspect_token.
  */
-typedef struct {
+typedef struct json_token_view {
     json_value_type_t type;      /**< Inferred value type. */
     const char *raw_start;       /**< Pointer to start of value payload. */
     size_t raw_len;              /**< Length in bytes of the value slice. */
@@ -88,9 +117,10 @@ typedef struct {
 } json_token_view_t;
 
 /**
+ * @struct json_array_view
  * @brief Structured array view constructed by json_inspect_array.
  */
-typedef struct {
+typedef struct json_array_view {
     const char *arr_start;       /**< Pointer to opening '['. */
     size_t arr_len;              /**< Total array slice length in bytes. */
     size_t count;                /**< Number of top-level elements. */
@@ -98,9 +128,10 @@ typedef struct {
 } json_array_view_t;
 
 /**
+ * @struct json_extract_result
  * @brief High-level extraction result object constructed by execution procedures.
  */
-typedef struct {
+typedef struct json_extract_result {
     bool success;                /**< true if field was successfully extracted. */
     json_value_type_t type;      /**< Extracted token type. */
     char key[JSON_MAX_KEY_LEN];  /**< Target key name. */
@@ -112,15 +143,19 @@ typedef struct {
  */
 extern const module_metadata_t json_utils_manifest;
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap JSON Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: JSON TOKEN LOCATOR COGS ]
-// Mission: Scan JSON payloads for matching keys while respecting quotes/whitespace.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: JSON Token Locator Cogs
+Mission: Scan JSON payloads for matching keys while respecting quotes/whitespace.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Scans a JSON buffer for a specific top-level or scoped key token.
@@ -137,10 +172,12 @@ extern const module_metadata_t json_utils_manifest;
  */
 const char *json_find_key(const char *json, const char *key);
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: VALUE EXTRACTION COGS ]
-// Mission: Extract typed values (string, integer, size_t, bool, float).
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Value Extraction Cogs
+Mission: Extract typed values (string, integer, size_t, bool, float).
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Extracts a string literal value for a key into a caller-supplied buffer.
@@ -271,10 +308,12 @@ bool json_get_object_float(const char *json, const char *parent_obj_key,
 bool json_get_object_bool(const char *json, const char *parent_obj_key,
                           const char *key, bool *out_val);
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.3: ARRAY INSPECTION & EXTRACTION COGS ]
-// Mission: Scan JSON array boundaries and extract elements without heap usage.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Array Inspection & Extraction Cogs
+Mission: Scan JSON array boundaries and extract elements without heap usage.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Locates an embedded array [ ... ] for a given key.
@@ -330,15 +369,19 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
 bool json_array_get_object(const char *arr_start, size_t arr_len,
                            size_t index, char *out_obj, size_t out_size);
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap JSON Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Verify JSON parsing invariants, string boundary checks, and types.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Machine Self-Audit & Pre-Flight Tripwires
+Mission: Verify JSON parsing invariants, string boundary checks, and types.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Executes machine pre-flight diagnostic checks on JSON parser invariants.
@@ -346,7 +389,7 @@ bool json_array_get_object(const char *arr_start, size_t arr_len,
  * Verifies extraction of strings, integers, negatives, booleans, floats,
  * array slicing, and bounds-checking resilience against truncated inputs.
  *
- * @return diag_result_t reporting SEVERITY_PASS or SEVERITY_FATAL.
+ * @return diag_result_t reporting categorized severity.
  */
 diag_result_t json_utils_preflight(void);
 
@@ -357,14 +400,18 @@ diag_result_t json_utils_preflight(void);
  */
 bool json_utils_audit(void);
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap JSON Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures & Object Constructors
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Inspects a key token, classifies its value type, and constructs a token view.
@@ -403,9 +450,11 @@ bool json_execute_extract_string(const char *json, const char *key,
                                  char *buf, size_t buf_size,
                                  json_extract_result_t *out_result);
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Initializes the zero-heap JSON parsing subsystem.

@@ -472,7 +472,7 @@ diag_result_t fs_utils_preflight(void)
     /* Check 2: Known path probing (/dev/null exists) */
     if (!fs_file_exists("/dev/null")) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "fs_file_exists('/dev/null') unexpectedly returned false.";
         return res;
     }
@@ -480,7 +480,7 @@ diag_result_t fs_utils_preflight(void)
     /* Check 3: Non-existent path probing */
     if (fs_file_exists("/__tenebris_lux_nonexistent_path_xyz__")) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "fs_file_exists unexpectedly detected non-existent path.";
         return res;
     }
@@ -503,7 +503,7 @@ diag_result_t fs_utils_preflight(void)
 
     if (fs_is_regular_file("/dev/null") != false) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "fs_is_regular_file unexpectedly identified /dev/null as regular.";
         return res;
     }
@@ -527,7 +527,7 @@ diag_result_t fs_utils_preflight(void)
     fs_file_info_t info;
     if (!fs_inspect_file("/dev/null", &info) || !info.exists || info.is_regular) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "fs_inspect_file failed on /dev/null.";
         return res;
     }
