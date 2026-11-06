@@ -55,12 +55,16 @@
 pub mod extractor;
 pub mod guide;
 pub mod runner;
+pub mod validator;
 
 pub use extractor::{DemoExtractor, ExtractorTask};
 pub use guide::{MasterGuideBuilder, MasterGuideTask};
 pub use runner::{
     CurationAuditTask, EnvironmentAuditTask, PipelineReport, RunnerContext,
     RunnerEngine, TaskRunner, TaskStatus, TaskTelemetry,
+};
+pub use validator::{
+    DataValidationTask, DataValidator, ValidationOptions, ValidationSummary,
 };
 
 /// Toolchain version identity string.
@@ -78,13 +82,15 @@ pub const TOOL_STANDARD: &str = "Rust 2024 Edition | OmniCode 5-Block Architectu
 /// default developer tasks:
 ///   1. `env_audit` (Environment topology & prerequisites)
 ///   2. `curation_audit` (Game design curation doc verification)
-///   3. `demo_extractor` (Historical 2017-2018 demo extraction)
-///   4. `master_guide` (Unified AsciiDoc, Markdown & PDF publication)
+///   3. `data_validator` (OmniCode 5-Block JSON manifest & data catalog audit)
+///   4. `demo_extractor` (Historical 2017-2018 demo extraction)
+///   5. `master_guide` (Unified AsciiDoc, Markdown & PDF publication)
 pub fn create_default_runner(context: RunnerContext) -> RunnerEngine {
     let mut engine = RunnerEngine::new(context);
     engine
         .register(EnvironmentAuditTask)
         .register(CurationAuditTask)
+        .register(DataValidationTask)
         .register(ExtractorTask)
         .register(MasterGuideTask);
     engine
@@ -115,7 +121,7 @@ pub fn audit_library_invariants() -> Result<(), &'static str> {
 mod tests {
     use super::*;
     use std::fs;
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
 
     #[test]
     fn test_library_invariants_pass() {
@@ -133,29 +139,29 @@ mod tests {
 
     #[test]
     fn test_data_driven_log_manifest_integrity() {
-        let manifest_path = Path::new("../data/log/manifest.json");
-        if !manifest_path.exists() {
-            // Test might be running from repo root or tools/ directory
-            let alt_path = Path::new("data/log/manifest.json");
-            if !alt_path.exists() {
-                return; // Non-blocking if running outside repo root context
-            }
-        }
-        let resolved = if manifest_path.exists() {
-            manifest_path
-        } else {
-            Path::new("data/log/manifest.json")
+        let candidate_paths = [
+            Path::new("game/data/system/diagnostics/telemetry/manifest.json"),
+            Path::new("../game/data/system/diagnostics/telemetry/manifest.json"),
+            Path::new("data/log/manifest.json"),
+            Path::new("../data/log/manifest.json"),
+        ];
+
+        let resolved = match candidate_paths.iter().find(|p| p.exists()) {
+            Some(p) => *p,
+            None => return, // Non-blocking if running outside repo root context
         };
 
         let content = fs::read_to_string(resolved).expect("Failed to read log manifest");
         let val: serde_json::Value =
             serde_json::from_str(&content).expect("Log manifest is not valid JSON");
 
-        let default_setting = val["menu"]["default_setting"]
+        let default_setting = val["block_3_body"]["menu"]["default_setting"]
             .as_str()
+            .or_else(|| val["menu"]["default_setting"].as_str())
             .expect("Missing default_setting");
-        let settings = val["menu"]["settings"]
+        let settings = val["block_3_body"]["menu"]["settings"]
             .as_array()
+            .or_else(|| val["menu"]["settings"].as_array())
             .expect("Settings must be an array");
         assert!(!settings.is_empty(), "Settings menu cannot be empty");
 
@@ -180,7 +186,8 @@ mod tests {
             let setting_val: serde_json::Value = serde_json::from_str(&setting_content)
                 .expect("Setting file is not valid JSON");
             assert!(
-                setting_val["setting"].is_object(),
+                setting_val["block_3_body"]["setting"].is_object()
+                    || setting_val["setting"].is_object(),
                 "Missing 'setting' payload in {:?}",
                 setting_path
             );
@@ -190,6 +197,31 @@ mod tests {
             found_default,
             "Default setting '{}' was not found in registered settings",
             default_setting
+        );
+    }
+
+    #[test]
+    fn test_system_data_catalog_validation() {
+        let candidate_roots = [Path::new("."), Path::new("..")];
+        let root = candidate_roots
+            .iter()
+            .find(|p| p.join("game/data/system").exists())
+            .map(|p| p.canonicalize().unwrap_or_else(|_| p.to_path_buf()))
+            .unwrap_or_else(|| PathBuf::from("."));
+
+        let options = ValidationOptions {
+            target_domain: "system".to_string(),
+            strict: false,
+            verbose: false,
+            repo_root: root,
+        };
+
+        let validator = DataValidator::new(options);
+        let summary = validator.run_audit().expect("Audit execution failed");
+        assert!(
+            summary.is_success(false),
+            "System data validation failed with {} errors",
+            summary.error_count()
         );
     }
 }

@@ -61,6 +61,8 @@ pub enum ToolAction {
     Guide,
     /// Audit the game design curation specification document.
     Curate,
+    /// Validate JSON manifests and catalogs across game/data/.
+    Validate,
     /// Run the entire toolchain pipeline sequentially.
     All,
     /// Run diagnostic environment topology audits.
@@ -121,6 +123,11 @@ impl CliConfig {
                 println!("  [SUMMARY] {}", tel.details);
                 Ok(())
             }
+            ToolAction::Validate => {
+                let tel = engine.run_task("data_validator")?;
+                println!("  [SUMMARY] {}", tel.details);
+                Ok(())
+            }
             ToolAction::Audit => {
                 let tel = engine.run_task("env_audit")?;
                 println!("  [SUMMARY] {}", tel.details);
@@ -147,6 +154,7 @@ impl CliConfig {
         println!("  extract   Extract raw RPG Maker demo data into docs/baseline");
         println!("  guide     Compile unified MASTER_GUIDE (.adoc, .md, .pdf)");
         println!("  curate    Audit game design curation specification");
+        println!("  validate  Audit 5-block JSON manifests and catalogs across game/data/");
         println!("  all       Run full sequential pipeline (Audit -> Curate -> Extract -> Guide)");
         println!("  audit     Run self-diagnostic environment & toolchain audit");
         println!("  version   Print version, author, and architectural provenance");
@@ -196,6 +204,7 @@ pub fn parse_cli_args(args: &[String]) -> CliConfig {
         Some("extract") => ToolAction::Extract,
         Some("guide") => ToolAction::Guide,
         Some("curate") => ToolAction::Curate,
+        Some("validate") => ToolAction::Validate,
         Some("all") => ToolAction::All,
         Some("audit") | Some("--audit") => ToolAction::Audit,
         Some("version") | Some("--version") | Some("-V") => ToolAction::Version,

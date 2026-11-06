@@ -102,7 +102,9 @@ pub fn run_updater_pipeline(repo_root: &Path) -> Result<(), String> {
     if !repo_root.join("CMakeLists.txt").is_file() {
         return Err(format!("CMakeLists.txt not found in {:?}", repo_root));
     }
-    if !repo_root.join("data/manifest.json").is_file() {
+    let has_manifest = repo_root.join("game/data/manifest.json").is_file()
+        || repo_root.join("data/manifest.json").is_file();
+    if !has_manifest {
         return Err(format!("Data catalog root missing in {:?}", repo_root));
     }
     println!("  [PASS] Repository root and core manifests verified.");
@@ -173,6 +175,29 @@ pub fn run_updater_pipeline(repo_root: &Path) -> Result<(), String> {
         return Err("Diagnostic self-audit failed! Aborting update.".into());
     }
     println!("  [PASS] 16/16 module manifests & 7/7 tripwires passed.");
+
+    println!("Running Data Catalog & Schema Validation Audit (game/data/system/)...");
+    let val_options = tl_tools::validator::ValidationOptions {
+        target_domain: "system".to_string(),
+        strict: false,
+        verbose: false,
+        repo_root: repo_root.to_path_buf(),
+    };
+    let validator = tl_tools::validator::DataValidator::new(val_options);
+    let summary = validator
+        .run_audit()
+        .map_err(|e| format!("Data validator execution failed: {}", e))?;
+
+    if !summary.is_success(false) {
+        return Err(format!(
+            "Data catalog validation failed with {} errors! Aborting update.",
+            summary.error_count()
+        ));
+    }
+    println!(
+        "  [PASS] All {} data files in game/data/system/ verified 5-block compliant.",
+        summary.total_files
+    );
 
     /* -------------------------------------------------------------------------
      * Phase 4: Installation & Deployment Sync

@@ -114,5 +114,11 @@ path = "src/bin/launcher.rs"
 name = "updater"
 path = "src/bin/updater.rs"
 
+# Comprehensive data catalog and schema validation audit utility
+[[bin]]
+name = "validator"
+path = "src/bin/validator.rs"
+
+
 
 
