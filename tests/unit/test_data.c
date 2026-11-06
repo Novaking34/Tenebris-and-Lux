@@ -249,6 +249,37 @@ static void test_data_always_pass(void)
     fs_utils_init();
     fs_utils_shutdown();
 
+    /* 1.12 JSON Block 5 Executable Procedures & Object Construction */
+    const char *test_json_proc = "{\"hero_name\": \"Elijah Ro-enheart\", \"base_hp\": 450, \"active\": true, \"inventory\": [\"lux\", \"tenebris\", \"compass\"]}";
+    json_token_view_t tok_view;
+    TEST_ASSERT(json_inspect_token(test_json_proc, "hero_name", &tok_view), "json_inspect_token succeeds on hero_name");
+    TEST_ASSERT(tok_view.exists && tok_view.type == JSON_TYPE_STRING && tok_view.raw_len > 0,
+                "json_inspect_token constructs valid string token view");
+
+    TEST_ASSERT(json_inspect_token(test_json_proc, "base_hp", &tok_view), "json_inspect_token succeeds on base_hp");
+    TEST_ASSERT(tok_view.exists && tok_view.type == JSON_TYPE_NUMBER,
+                "json_inspect_token classifies number type");
+
+    TEST_ASSERT(json_inspect_token(test_json_proc, "active", &tok_view), "json_inspect_token succeeds on active");
+    TEST_ASSERT(tok_view.exists && tok_view.type == JSON_TYPE_BOOLEAN,
+                "json_inspect_token classifies boolean type");
+
+    json_array_view_t arr_view;
+    TEST_ASSERT(json_inspect_array(test_json_proc, "inventory", &arr_view), "json_inspect_array succeeds on inventory");
+    TEST_ASSERT(arr_view.exists && arr_view.count == 3 && arr_view.arr_len > 0,
+                "json_inspect_array constructs valid array view");
+
+    json_extract_result_t extract_res;
+    char ext_buf[64];
+    TEST_ASSERT(json_execute_extract_string(test_json_proc, "hero_name", ext_buf, sizeof(ext_buf), &extract_res),
+                "json_execute_extract_string executes string extraction procedure");
+    TEST_ASSERT(extract_res.success && strcmp(ext_buf, "Elijah Ro-enheart") == 0 &&
+                extract_res.type == JSON_TYPE_STRING && extract_res.value_len > 0,
+                "json_execute_extract_string constructs valid json_extract_result_t");
+
+    json_utils_init();
+    json_utils_shutdown();
+
     printf("  [PASS-1] Section 1 passed unconditionally.\n");
 }
 

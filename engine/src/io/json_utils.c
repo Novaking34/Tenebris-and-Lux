@@ -6,22 +6,26 @@
 // @file          json_utils.c
 // @id            core.util.json
 // @layer         Layer 0: Core Utilities
-// @subsystem     Data & Filesystem Subsystem (util/data)
-// @version       1.1.0
-// @interface_rev Rev 2
-// @date          2026-11-02
-// @updated       2026-11-02
+// @subsystem     Data & Filesystem Subsystem (util/io)
+// @version       0.1.0
+// @interface_rev Rev 3
+// @date          2026-11-05
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
+// @system        Zero-Heap JSON Tokenizer & Structured Field Deserializer
+// @role          Fast zero-heap JSON scanning, token classification, bounded
+//                field extraction, array slicing, and procedure execution for
+//                data-driven engine assets.
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Zero-heap, memory-safe JSON parser and key/value token extractor implementation.
 //   Serves as the universal serialization/deserialization primitive for
 //   data-driven profiles, manifests, telemetry channels, combat tables,
 //   and world topologies without pulling in heavy third-party dependencies.
+//   Guarantees non-allocating, deterministic parsing into caller stack buffers.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Upstream Dependencies: None (Foundational leaf module in Layer 0).
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/caller-supplied buffers).
 //   - Concurrency / Safety:  REENTRANT_PURE (Stateless parser on const char*).
 //   - Latency Budget:        < 50 microseconds per token extraction (O(N) scan).
@@ -29,8 +33,10 @@
 // AXIOMATIC INVARIANTS:
 //   1. Zero heap allocations: Strict zero-heap guarantee across all routines.
 //   2. Buffer safety: Extracted strings unconditionally enforce null termination.
-//   3. Resilience: Gracefully handles malformed JSON, missing keys, and NULL pointers.
+//   3. Fault resilience: Gracefully handles malformed JSON, missing keys, and NULL.
 //   4. Numerical bounds: Safely clamps or validates numerical ranges on conversion.
+//   5. Standardized token limits: Predictable bounds for keys, tokens, and nesting.
+//   6. Universal 5-Block Lifecycle Protocol enforced across header and source.
 // =============================================================================
 
 // =============================================================================
@@ -48,7 +54,8 @@
 static const char *const json_invariants[] = {
     "Zero heap allocations: Strict zero-heap guarantee across all routines",
     "Buffer safety: Extracted strings unconditionally enforce null termination",
-    "Resilience: Gracefully handles malformed JSON, missing keys, and NULL pointers"
+    "Resilience: Gracefully handles malformed JSON, missing keys, and NULL pointers",
+    "Universal 5-Block Lifecycle Protocol enforced across header and source"
 };
 
 /**
@@ -58,20 +65,21 @@ const module_metadata_t json_utils_manifest = {
     "core.util.json",
     "json_utils.h",
     LAYER_0_CORE_UTIL,
-    { 1, 1, 0 },
-    2,
-    "2026-11-02",
-    "Zero-heap JSON token locator and typed value extractor",
+    { 0, 1, 0 },
+    3,
+    "2026-11-05",
+    "Zero-heap JSON token locator, typed value extractor, and inspection procedures",
     0,
     { NULL },
     ALLOC_ZERO_HEAP,
     CONCURRENCY_REENTRANT,
     50,
-    3,
+    4,
     {
         json_invariants[0],
         json_invariants[1],
-        json_invariants[2]
+        json_invariants[2],
+        json_invariants[3]
     },
     json_utils_preflight
 };
@@ -132,13 +140,6 @@ static const char *json_find_key_scoped(const char *json, size_t max_len, const 
     return NULL;
 }
 
-/**
- * @brief Scans a JSON buffer for a specific top-level or scoped key token.
- *
- * @param[in] json Null-terminated JSON buffer.
- * @param[in] key  Null-terminated key name to search for (without quotes).
- * @return Pointer to value position immediately following the colon (:), or NULL.
- */
 const char *json_find_key(const char *json, const char *key)
 {
     /* Scan JSON with unbounded length using scoped scanner */
@@ -150,15 +151,6 @@ const char *json_find_key(const char *json, const char *key)
 // Mission: Extract typed values (string, integer, size_t, bool, float).
 // -----------------------------------------------------------------------------
 
-/**
- * @brief Extracts a string literal value for a key into a caller-supplied buffer.
- *
- * @param[in]  json     Null-terminated JSON buffer.
- * @param[in]  key      Key name to search for.
- * @param[out] out_val  Destination buffer for extracted string.
- * @param[in]  out_size Capacity of destination buffer in bytes.
- * @return true if key was found and value extracted; false otherwise.
- */
 bool json_get_string(const char *json, const char *key, char *out_val,
                      size_t out_size)
 {
@@ -191,14 +183,6 @@ bool json_get_string(const char *json, const char *key, char *out_val,
     return true;
 }
 
-/**
- * @brief Extracts an unsigned size_t integer value for a given key.
- *
- * @param[in]  json    Null-terminated JSON buffer.
- * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination size_t variable.
- * @return true if key was found and parsed; false otherwise.
- */
 bool json_get_size_t(const char *json, const char *key, size_t *out_val)
 {
     /* Step 1: Precondition check */
@@ -228,14 +212,6 @@ bool json_get_size_t(const char *json, const char *key, size_t *out_val)
     return true;
 }
 
-/**
- * @brief Extracts a signed 32-bit int value for a given key.
- *
- * @param[in]  json    Null-terminated JSON buffer.
- * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination int variable.
- * @return true if key was found and parsed; false otherwise.
- */
 bool json_get_int(const char *json, const char *key, int *out_val)
 {
     /* Step 1: Precondition check */
@@ -265,14 +241,6 @@ bool json_get_int(const char *json, const char *key, int *out_val)
     return true;
 }
 
-/**
- * @brief Extracts a boolean value (true or false) for a given key.
- *
- * @param[in]  json    Null-terminated JSON buffer.
- * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination bool variable.
- * @return true if key was found and parsed; false otherwise.
- */
 bool json_get_bool(const char *json, const char *key, bool *out_val)
 {
     /* Step 1: Precondition check */
@@ -298,14 +266,6 @@ bool json_get_bool(const char *json, const char *key, bool *out_val)
     return false;
 }
 
-/**
- * @brief Extracts a floating-point float value for a given key.
- *
- * @param[in]  json    Null-terminated JSON buffer.
- * @param[in]  key     Key name to search for.
- * @param[out] out_val Pointer to destination float variable.
- * @return true if key was found and parsed; false otherwise.
- */
 bool json_get_float(const char *json, const char *key, float *out_val)
 {
     /* Step 1: Precondition check */
@@ -335,15 +295,6 @@ bool json_get_float(const char *json, const char *key, float *out_val)
     return true;
 }
 
-/**
- * @brief Locates embedded sub-object boundaries ({ ... }) for a given key.
- *
- * @param[in]  json          Null-terminated JSON buffer.
- * @param[in]  object_key    Key name containing the object.
- * @param[out] out_obj_start Pointer to opening '{' of the sub-object.
- * @param[out] out_obj_len   Length in bytes of sub-object including '{' and '}'.
- * @return true if sub-object was located and balanced; false otherwise.
- */
 bool json_find_object(const char *json, const char *object_key,
                       const char **out_obj_start, size_t *out_obj_len)
 {
@@ -385,16 +336,6 @@ bool json_find_object(const char *json, const char *object_key,
     return false;
 }
 
-/**
- * @brief Extracts a string value from within an embedded JSON object.
- *
- * @param[in]  json           Null-terminated JSON buffer.
- * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
- * @param[in]  key            Key name to extract inside the object.
- * @param[out] out_val        Destination buffer for extracted string.
- * @param[in]  out_size       Capacity of destination buffer in bytes.
- * @return true if parent object and key were found and parsed; false otherwise.
- */
 bool json_get_object_string(const char *json, const char *parent_obj_key,
                             const char *key, char *out_val, size_t out_size)
 {
@@ -439,15 +380,6 @@ bool json_get_object_string(const char *json, const char *parent_obj_key,
     return true;
 }
 
-/**
- * @brief Extracts a signed 32-bit int value from within an embedded JSON object.
- *
- * @param[in]  json           Null-terminated JSON buffer.
- * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
- * @param[in]  key            Key name to extract inside the object.
- * @param[out] out_val        Pointer to destination int variable.
- * @return true if parent object and key were found and parsed; false otherwise.
- */
 bool json_get_object_int(const char *json, const char *parent_obj_key,
                          const char *key, int *out_val)
 {
@@ -485,15 +417,6 @@ bool json_get_object_int(const char *json, const char *parent_obj_key,
     return true;
 }
 
-/**
- * @brief Extracts a float value from within an embedded JSON object.
- *
- * @param[in]  json           Null-terminated JSON buffer.
- * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
- * @param[in]  key            Key name to extract inside the object.
- * @param[out] out_val        Pointer to destination float variable.
- * @return true if parent object and key were found and parsed; false otherwise.
- */
 bool json_get_object_float(const char *json, const char *parent_obj_key,
                            const char *key, float *out_val)
 {
@@ -531,15 +454,6 @@ bool json_get_object_float(const char *json, const char *parent_obj_key,
     return true;
 }
 
-/**
- * @brief Extracts a boolean value from within an embedded JSON object.
- *
- * @param[in]  json           Null-terminated JSON buffer.
- * @param[in]  parent_obj_key Key name of parent object (or NULL for top-level).
- * @param[in]  key            Key name to extract inside the object.
- * @param[out] out_val        Pointer to destination bool variable.
- * @return true if parent object and key were found and parsed; false otherwise.
- */
 bool json_get_object_bool(const char *json, const char *parent_obj_key,
                           const char *key, bool *out_val)
 {
@@ -583,15 +497,6 @@ bool json_get_object_bool(const char *json, const char *parent_obj_key,
 // Mission: Scan JSON array boundaries and extract elements without heap usage.
 // -----------------------------------------------------------------------------
 
-/**
- * @brief Locates an embedded array [ ... ] for a given key.
- *
- * @param[in]  json          Null-terminated JSON buffer.
- * @param[in]  array_key     Key name containing the array.
- * @param[out] out_arr_start Pointer to the opening '[' of the array.
- * @param[out] out_arr_len   Length in bytes of array including '[' and ']'.
- * @return true if array was located and brackets balanced; false otherwise.
- */
 bool json_find_array(const char *json, const char *array_key,
                      const char **out_arr_start, size_t *out_arr_len)
 {
@@ -633,13 +538,6 @@ bool json_find_array(const char *json, const char *array_key,
     return false;
 }
 
-/**
- * @brief Returns the number of comma-separated elements in a JSON array.
- *
- * @param[in] arr_start Pointer to opening '[' of array.
- * @param[in] arr_len   Length of array in bytes.
- * @return Count of elements in the array.
- */
 size_t json_array_get_count(const char *arr_start, size_t arr_len)
 {
     /* Step 1: Precondition validation */
@@ -680,16 +578,6 @@ size_t json_array_get_count(const char *arr_start, size_t arr_len)
     return count;
 }
 
-/**
- * @brief Extracts i-th string element from JSON array into caller buffer.
- *
- * @param[in]  arr_start Pointer to opening '[' of array.
- * @param[in]  arr_len   Length of array in bytes.
- * @param[in]  index     0-based element index.
- * @param[out] out_val   Destination buffer for extracted string.
- * @param[in]  out_size  Capacity of destination buffer in bytes.
- * @return true if element exists and was extracted; false otherwise.
- */
 bool json_array_get_string(const char *arr_start, size_t arr_len,
                            size_t index, char *out_val, size_t out_size)
 {
@@ -757,16 +645,6 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
     return false;
 }
 
-/**
- * @brief Extracts i-th object slice { ... } from JSON array into caller buffer.
- *
- * @param[in]  arr_start Pointer to opening '[' of array.
- * @param[in]  arr_len   Length of array in bytes.
- * @param[in]  index     0-based element index.
- * @param[out] out_obj   Destination buffer for extracted object string.
- * @param[in]  out_size  Capacity of destination buffer in bytes.
- * @return true if object exists and was extracted within buffer bounds; false otherwise.
- */
 bool json_array_get_object(const char *arr_start, size_t arr_len,
                            size_t index, char *out_obj, size_t out_size)
 {
@@ -836,10 +714,10 @@ diag_result_t json_utils_preflight(void)
 {
     diag_result_t res;
     res.subsystem = json_utils_manifest.module_id;
-    res.check_name = "JSON Key Locator & Typed Field Deserialization";
+    res.check_name = "JSON Key Locator, Typed Field Deserialization & Inspection";
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "JSON utilities: token scan, string, int, bool, float, object & array verified.";
+    res.details = "JSON utilities: token scan, string, int, bool, float, object, array & procedures verified.";
 
     // Check 1: NULL resilience
     char str_buf[32];
@@ -855,7 +733,10 @@ diag_result_t json_utils_preflight(void)
         json_get_float(NULL, "key", &f_val) != false ||
         json_get_object_string(NULL, "obj", "key", str_buf, sizeof(str_buf)) != false ||
         json_find_array(NULL, "arr", NULL, NULL) != false ||
-        json_array_get_count(NULL, 0) != 0) {
+        json_array_get_count(NULL, 0) != 0 ||
+        json_inspect_token(NULL, NULL, NULL) != false ||
+        json_inspect_array(NULL, NULL, NULL) != false ||
+        json_execute_extract_string(NULL, NULL, NULL, 0, NULL) != false) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
         res.details = "json_utils NULL input failed resilience contract.";
@@ -1013,7 +894,44 @@ diag_result_t json_utils_preflight(void)
         return res;
     }
 
-    // Check 5: Missing key gracefully returns false
+    // Check 5: Block 5 Inspection Procedures
+    json_token_view_t tok_view;
+    if (!json_inspect_token(test_json, "moral_sway", &tok_view) ||
+        !tok_view.exists || tok_view.type != JSON_TYPE_NUMBER) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "json_inspect_token failed for numeric field.";
+        return res;
+    }
+
+    if (!json_inspect_token(test_json, "active", &tok_view) ||
+        !tok_view.exists || tok_view.type != JSON_TYPE_BOOLEAN) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "json_inspect_token failed for boolean field.";
+        return res;
+    }
+
+    json_array_view_t arr_view;
+    if (!json_inspect_array(test_json, "tags", &arr_view) ||
+        !arr_view.exists || arr_view.count != 3) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "json_inspect_array failed to construct valid array view.";
+        return res;
+    }
+
+    json_extract_result_t res_obj;
+    char exec_buf[32];
+    if (!json_execute_extract_string(test_json, "name", exec_buf, sizeof(exec_buf), &res_obj) ||
+        !res_obj.success || strcmp(exec_buf, "Shield of Lux") != 0) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "json_execute_extract_string failed string extraction procedure.";
+        return res;
+    }
+
+    // Check 6: Missing key gracefully returns false
     if (json_get_string(test_json, "nonexistent", str_buf, sizeof(str_buf))) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
@@ -1032,7 +950,182 @@ bool json_utils_audit(void)
 
 // =============================================================================
 // BLOCK 5: CLOSING BLOCK
-// ( Teardown & Module Close )
+// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
 // =============================================================================
 
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
+// -----------------------------------------------------------------------------
+
+bool json_inspect_token(const char *json, const char *key, json_token_view_t *out_view)
+{
+    if (out_view == NULL) {
+        return false;
+    }
+    memset(out_view, 0, sizeof(*out_view));
+    out_view->type = JSON_TYPE_UNKNOWN;
+
+    if (json == NULL || key == NULL || key[0] == '\0') {
+        return false;
+    }
+
+    const char *val = json_find_key(json, key);
+    if (val == NULL) {
+        return false;
+    }
+
+    out_view->exists = true;
+    out_view->raw_start = val;
+
+    char c = *val;
+    if (c == '{') {
+        out_view->type = JSON_TYPE_OBJECT;
+        int depth = 0;
+        bool in_str = false;
+        const char *p = val;
+        while (*p != '\0') {
+            if (*p == '"' && (p == val || *(p - 1) != '\\')) {
+                in_str = !in_str;
+            } else if (!in_str) {
+                if (*p == '{') {
+                    depth++;
+                } else if (*p == '}') {
+                    depth--;
+                    if (depth == 0) {
+                        out_view->raw_len = (size_t)(p - val + 1);
+                        return true;
+                    }
+                }
+            }
+            p++;
+        }
+        return false;
+    } else if (c == '[') {
+        out_view->type = JSON_TYPE_ARRAY;
+        int depth = 0;
+        bool in_str = false;
+        const char *p = val;
+        while (*p != '\0') {
+            if (*p == '"' && (p == val || *(p - 1) != '\\')) {
+                in_str = !in_str;
+            } else if (!in_str) {
+                if (*p == '[') {
+                    depth++;
+                } else if (*p == ']') {
+                    depth--;
+                    if (depth == 0) {
+                        out_view->raw_len = (size_t)(p - val + 1);
+                        return true;
+                    }
+                }
+            }
+            p++;
+        }
+        return false;
+    } else if (c == '"') {
+        out_view->type = JSON_TYPE_STRING;
+        const char *p = val + 1;
+        while (*p != '\0') {
+            if (*p == '"' && *(p - 1) != '\\') {
+                out_view->raw_len = (size_t)(p - val + 1);
+                return true;
+            }
+            p++;
+        }
+        return false;
+    } else if (strncmp(val, "true", 4) == 0) {
+        out_view->type = JSON_TYPE_BOOLEAN;
+        out_view->raw_len = 4;
+        return true;
+    } else if (strncmp(val, "false", 5) == 0) {
+        out_view->type = JSON_TYPE_BOOLEAN;
+        out_view->raw_len = 5;
+        return true;
+    } else if (strncmp(val, "null", 4) == 0) {
+        out_view->type = JSON_TYPE_NULL;
+        out_view->raw_len = 4;
+        return true;
+    } else if (isdigit((unsigned char)c) || c == '-' || c == '+') {
+        out_view->type = JSON_TYPE_NUMBER;
+        const char *p = val;
+        while (*p != '\0' && (isdigit((unsigned char)*p) || *p == '.' || *p == '-' ||
+                              *p == '+' || *p == 'e' || *p == 'E')) {
+            p++;
+        }
+        out_view->raw_len = (size_t)(p - val);
+        return true;
+    }
+
+    return false;
+}
+
+bool json_inspect_array(const char *json, const char *array_key, json_array_view_t *out_view)
+{
+    if (out_view == NULL) {
+        return false;
+    }
+    memset(out_view, 0, sizeof(*out_view));
+
+    if (json == NULL || array_key == NULL) {
+        return false;
+    }
+
+    const char *arr_start = NULL;
+    size_t arr_len = 0;
+    if (!json_find_array(json, array_key, &arr_start, &arr_len)) {
+        return false;
+    }
+
+    out_view->exists = true;
+    out_view->arr_start = arr_start;
+    out_view->arr_len = arr_len;
+    out_view->count = json_array_get_count(arr_start, arr_len);
+    return true;
+}
+
+bool json_execute_extract_string(const char *json, const char *key,
+                                 char *buf, size_t buf_size,
+                                 json_extract_result_t *out_result)
+{
+    if (out_result) {
+        memset(out_result, 0, sizeof(*out_result));
+        if (key) {
+            strncpy(out_result->key, key, sizeof(out_result->key) - 1);
+            out_result->key[sizeof(out_result->key) - 1] = '\0';
+        }
+    }
+
+    if (json == NULL || key == NULL || buf == NULL || buf_size == 0) {
+        if (buf && buf_size > 0) {
+            buf[0] = '\0';
+        }
+        return false;
+    }
+
+    bool ok = json_get_string(json, key, buf, buf_size);
+    if (out_result) {
+        out_result->success = ok;
+        out_result->type = ok ? JSON_TYPE_STRING : JSON_TYPE_UNKNOWN;
+        out_result->value_len = ok ? strlen(buf) : 0;
+    }
+
+    return ok;
+}
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
+// -----------------------------------------------------------------------------
+
+void json_utils_init(void)
+{
+    /* Subsystem initialization hook for zero-heap JSON engine */
+}
+
+void json_utils_shutdown(void)
+{
+    /* Subsystem teardown hook for zero-heap JSON engine */
+}
+
+// =============================================================================
 // End of json_utils.c
+// =============================================================================
