@@ -8,7 +8,7 @@
 // @layer         Layer 0: Core Utilities
 // @subsystem     Data & Filesystem Subsystem (util/io)
 // @version       0.1.0
-// @interface_rev Rev 1
+// @interface_rev Rev 2
 // @date          2026-11-05
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
@@ -22,6 +22,7 @@
 //   enabling dynamic data mounting (--data-root=<path>, TL_DATA_ROOT),
 //   5-domain hierarchical routing (system, world, entities, mechanics,
 //   presentation), and safe fallback probing.
+//   Guarantees deterministic path resolution into caller stack buffers.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
 //   - Upstream Dependencies: None (Foundational leaf module in Layer 0).
@@ -32,8 +33,9 @@
 // AXIOMATIC INVARIANTS:
 //   1. Zero heap allocations: All operations utilize caller-supplied buffers.
 //   2. Output safety: All resolved path buffers are unconditionally null-terminated.
-//   3. Bounded capacity: Respects PATH_MAX_LEN (512 bytes) ceiling.
+//   3. Bounded capacity: Respects PATH_FINDER_MAX_PATH (512 bytes) ceiling.
 //   4. Fallback resilience: Probes mounted data root, current dir, and parent dirs.
+//   5. Universal 5-Block Lifecycle Protocol enforced across header and source.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_IO_PATH_FINDER_H
@@ -48,11 +50,27 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-/**
- * Standard path and buffer limits.
- */
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 2.1: PRE-CONDITIONS & PATH LIMITS ]
+// -----------------------------------------------------------------------------
+
 #define PATH_FINDER_MAX_PATH    512
 #define PATH_FINDER_MAX_ROOT    256
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 2.2: STRUCTURAL ENTITY & OBJECT DEFINITIONS ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Detailed path resolution report object constructed by path_finder_execute_resolve.
+ */
+typedef struct {
+    char domain[32];                          /**< Operational domain or empty string. */
+    char rel_path[PATH_FINDER_MAX_PATH];      /**< Requested relative path. */
+    char resolved_path[PATH_FINDER_MAX_PATH]; /**< Resolved accessible disk path. */
+    bool exists;                              /**< true if file exists on disk. */
+    bool is_regular;                          /**< true if path is regular file. */
+} path_resolved_info_t;
 
 /**
  * Manifest record for the Zero-Heap Path Finder Engine.
@@ -169,6 +187,38 @@ bool path_finder_audit(void);
 
 // =============================================================================
 // BLOCK 5: CLOSING BLOCK
+// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Executes dynamic path resolution and constructs a structured report object.
+ *
+ * @param[in]  domain    Operational domain or NULL.
+ * @param[in]  rel_path  Relative path.
+ * @param[out] out_info  Destination report object.
+ *
+ * @return true if file resolved and exists; false otherwise.
+ */
+bool path_finder_execute_resolve(const char *domain,
+                                 const char *rel_path,
+                                 path_resolved_info_t *out_info);
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Initializes the VFS pathfinding subsystem.
+ */
+void path_finder_init(void);
+
+/**
+ * @brief Tears down the VFS pathfinding subsystem.
+ */
+void path_finder_shutdown(void);
 
 #endif /* TENEBRIS_LUX_IO_PATH_FINDER_H */

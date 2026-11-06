@@ -280,6 +280,34 @@ static void test_data_always_pass(void)
     json_utils_init();
     json_utils_shutdown();
 
+    /* 1.13 Path Finder Block 5 Executable Procedures */
+    path_resolved_info_t path_info;
+    TEST_ASSERT(path_finder_execute_resolve("system", "runtime/math/formulas.json", &path_info),
+                "path_finder_execute_resolve succeeds on runtime/math/formulas.json");
+    TEST_ASSERT(path_info.exists && path_info.is_regular && strlen(path_info.resolved_path) > 0,
+                "path_finder_execute_resolve constructs valid path_resolved_info_t");
+    path_finder_init();
+    path_finder_shutdown();
+
+    /* 1.14 Master Loader Block 5 Executable Procedures */
+    loader_header_t hdr_inspect;
+    TEST_ASSERT(master_loader_execute_inspect("system", "runtime/math/formulas.json", &hdr_inspect),
+                "master_loader_execute_inspect inspects 5-block formulas header");
+    TEST_ASSERT(hdr_inspect.is_5block && strcmp(hdr_inspect.schema_id, "tenlux.data.math_formulas.v1") == 0,
+                "master_loader_execute_inspect populates loader_header_t");
+
+    master_loader_t verified_load;
+    char ver_buf[FS_BUFFER_LARGE_BYTES];
+    TEST_ASSERT(master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+                                                    "tenlux.data.math_formulas.v1",
+                                                    ver_buf, sizeof(ver_buf),
+                                                    &verified_load),
+                "master_loader_execute_load_verified executes verified load pipeline");
+    TEST_ASSERT(verified_load.status == LOADER_STATUS_OK && verified_load.header.is_5block,
+                "master_loader_execute_load_verified constructs valid master_loader_t");
+    master_loader_init();
+    master_loader_shutdown();
+
     printf("  [PASS-1] Section 1 passed unconditionally.\n");
 }
 

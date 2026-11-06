@@ -8,7 +8,7 @@
 // @layer         Layer 0: Core Utilities
 // @subsystem     Data & Filesystem Subsystem (util/io)
 // @version       0.1.0
-// @interface_rev Rev 1
+// @interface_rev Rev 2
 // @date          2026-11-05
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
@@ -39,6 +39,7 @@
 //   2. Strict schema ID and version validation before body payload extraction.
 //   3. Resilient fallback support: handles both 5-block and legacy flat JSON.
 //   4. Caller buffers are strictly bounded; all extracted strings null-terminated.
+//   5. Universal 5-Block Lifecycle Protocol enforced across header and source.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_IO_MASTER_LOADER_H
@@ -297,6 +298,57 @@ bool master_loader_audit(void);
 
 // =============================================================================
 // BLOCK 5: CLOSING BLOCK
+// Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Inspects a file's 5-block envelope and populates a loader_header_t object.
+ *
+ * @param[in]  domain     Operational domain ("system", "world", etc.) or NULL.
+ * @param[in]  rel_path   Relative path to target JSON file.
+ * @param[out] out_header Header object populated with metadata & schema contracts.
+ *
+ * @return true if file header was read and parsed successfully; false otherwise.
+ */
+bool master_loader_execute_inspect(const char *domain,
+                                   const char *rel_path,
+                                   loader_header_t *out_header);
+
+/**
+ * @brief High-level pipeline procedure that loads and validates schema contract.
+ *
+ * @param[in]  domain             Operational domain or NULL.
+ * @param[in]  rel_path           Relative path to JSON file.
+ * @param[in]  expected_schema_id Expected schema ID contract.
+ * @param[in]  buf                Caller-supplied destination buffer.
+ * @param[in]  buf_size           Capacity of caller buffer in bytes.
+ * @param[out] out_loader         Configured master loader context.
+ *
+ * @return true if loaded, parsed, and schema contract matched; false otherwise.
+ */
+bool master_loader_execute_load_verified(const char *domain,
+                                         const char *rel_path,
+                                         const char *expected_schema_id,
+                                         char *buf,
+                                         size_t buf_size,
+                                         master_loader_t *out_loader);
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Initializes the unified master loader subsystem.
+ */
+void master_loader_init(void);
+
+/**
+ * @brief Tears down the unified master loader subsystem.
+ */
+void master_loader_shutdown(void);
 
 #endif /* TENEBRIS_LUX_IO_MASTER_LOADER_H */
