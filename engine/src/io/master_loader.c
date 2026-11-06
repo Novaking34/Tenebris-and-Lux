@@ -1,66 +1,95 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          master_loader.c
-// @id            core.io.master_loader
-// @layer         Layer 0: Core Utilities
-// @subsystem     Data & Filesystem Subsystem (util/io)
-// @version       0.1.0
-// @interface_rev Rev 2
-// @date          2026-11-05
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-// @system        Unified Master Data Loading & 5-Block Lifecycle Deserializer
-// @role          Universal central hub for reading, verifying 5-block headers,
-//                validating schema IDs, and decoding payload data into engine tables.
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Zero-heap master data loader for all engine and game subsystems.
-//   Provides a unified ingest pipeline across the 5 operational domains:
-//     1. Resolves paths dynamically via path_finder.
-//     2. Reads files into bounded stack buffers without dynamic allocation.
-//     3. Parses and validates Block 1 (Metadata) and Block 2 (Schema/Contracts).
-//     4. Scopes queries directly into Block 3 (Body), eliminating key collisions.
-//     5. Emits structured error codes from the diagnostics error taxonomy.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies:
-//       io/master_loader.h
-//       io/path_finder.h
-//       io/json_utils.h
-//       io/fs_utils.h
-//       core/string_utils.h
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap allocations).
-//   - Concurrency / Safety:  REENTRANT_PURE on caller-supplied master_loader_t.
-//   - Latency Budget:        < 500 microseconds per dataset load.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Zero dynamic heap allocations across all loading and parsing routines.
-//   2. Strict schema ID and version validation before body payload extraction.
-//   3. Resilient fallback support: handles both 5-block and legacy flat JSON.
-//   4. Caller buffers are strictly bounded; all extracted strings null-terminated.
-//   5. Universal 5-Block Lifecycle Protocol enforced across header and source.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          master_loader.c
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-06
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Unified Master Data Loading & 5-Block Lifecycle Deserializer
+@role          Universal central hub for reading, verifying 5-block headers,
+               validating schema IDs, and decoding payload data into engine tables.
+@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Strict schema ID and version validation before body payload extraction.
+               4. Scoped body isolation: queries target block_3_body, preventing key collisions.
+               5. Caller buffers are strictly bounded; all extracted strings null-terminated.
+               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Zero-heap master data loader implementation.
+  Provides a unified ingest pipeline across the 5 operational domains:
+    1. Resolves paths dynamically via path_finder.
+    2. Reads files into bounded stack buffers without dynamic allocation.
+    3. Parses and validates Block 1 (Metadata) and Block 2 (Schema/Contracts).
+    4. Scopes queries directly into Block 3 (Body), eliminating key collisions.
+    5. Emits structured error codes from the diagnostics error taxonomy.
 
+  ### For Game Designers & Non-Programmers:
+  Instead of each game system writing its own fragile file loader, the master
+  loader acts as a universal customs checkpoint. When loading any game data
+  (weapons, provinces, characters, or formulas), the master loader verifies
+  its identity, confirms its version matches the game version, and extracts
+  the data safely without crashing if an optional number is missing.
+
+  ### For Systems Programmers & Engine Architects:
+  This module provides zero-allocation contract verification and data isolation:
+  - Validates document structure against the OmniCode 5-Block protocol.
+  - Guarantees zero heap allocations during loading, parsing, and extraction.
+  - Tagged structural representations ensuring clean DWARF debugger integration.
+  - Integrated diagnostic telemetry with categorized severity tripwires.
+================================================================================
+*/
+
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: Master Data Loader
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "io/master_loader.h"
 #include "io/path_finder.h"
 #include "io/json_utils.h"
 #include "io/fs_utils.h"
 #include "core/string_utils.h"
-#include <stdio.h>
-#include <string.h>
+#include "core/manifest.h"
 
-static const char *const s_master_loader_invariants[] = {
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Static Axiomatic Invariants & Module Manifest
+--------------------------------------------------------------------------------
+*/
+
+static const char *const s_master_loader_invariants[4] = {
     "Zero dynamic heap allocation during dataset loading",
     "Strict schema ID and semver validation contract",
-    "Scoped extraction inside Block 3 body with legacy fallback",
+    "Scoped extraction inside Block 3 body preventing key collisions",
     "Universal 5-Block Lifecycle Protocol enforced across header and source"
 };
 
@@ -69,8 +98,8 @@ const module_metadata_t master_loader_manifest = {
     "master_loader.h",
     LAYER_0_CORE_UTIL,
     { 0, 1, 0 },
-    2,
-    "2026-11-05",
+    3,
+    "2026-11-06",
     "Zero-heap universal master data loader and 5-block parser",
     3,
     { "core.io.path_finder", "core.util.json", "core.util.fs", NULL },
@@ -145,11 +174,11 @@ bool master_loader_load_from_memory(master_loader_t *loader,
         return true;
     }
 
-    /* Step 4: Graceful legacy fallback - entire payload treated as body */
-    loader->body_start = json_text;
-    loader->body_len = json_len;
-    loader->status = LOADER_STATUS_OK;
-    return true;
+    /* Step 4: Strict 5-block envelope - block_3_body must exist */
+    loader->body_start = NULL;
+    loader->body_len = 0;
+    loader->status = LOADER_STATUS_ERR_BODY_MISSING;
+    return false;
 }
 
 bool master_loader_load_from_path(master_loader_t *loader,
@@ -459,28 +488,28 @@ diag_result_t master_loader_preflight(void)
     if (!master_loader_load(&loader, "system", "runtime/math/formulas.json",
                             file_buf, sizeof(file_buf))) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "master_loader failed to load system/runtime/math/formulas.json.";
         return res;
     }
 
     if (!loader.header.is_5block) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "formulas.json was not identified as a 5-block document.";
         return res;
     }
 
     if (!master_loader_validate_schema(&loader, "tenlux.data.math_formulas.v1")) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "Schema ID validation failed for math formulas.";
         return res;
     }
 
     if (!master_loader_validate_version(&loader, "0.1.0")) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_WARNING;
         res.details = "Version validation failed for math formulas (expected 0.1.0).";
         return res;
     }
@@ -490,7 +519,7 @@ diag_result_t master_loader_preflight(void)
     if (!master_loader_get_string(&loader, "physical_damage", "formula",
                                   formula_str, sizeof(formula_str))) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "Failed to extract physical_damage formula string from body.";
         return res;
     }
@@ -499,7 +528,7 @@ diag_result_t master_loader_preflight(void)
     if (!master_loader_get_int(&loader, "physical_mitigation", "mitigation_cap_pct", &cap_pct) ||
         cap_pct != 90) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "Failed to extract physical_mitigation cap percentage (expected 90).";
         return res;
     }
@@ -509,7 +538,7 @@ diag_result_t master_loader_preflight(void)
     if (!master_loader_execute_inspect("system", "runtime/math/formulas.json", &hdr) ||
         !hdr.is_5block || strcmp(hdr.schema_id, "tenlux.data.math_formulas.v1") != 0) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "master_loader_execute_inspect failed header inspection.";
         return res;
     }
@@ -521,7 +550,7 @@ diag_result_t master_loader_preflight(void)
                                             verified_buf, sizeof(verified_buf),
                                             &verified_loader)) {
         res.passed = false;
-        res.severity = SEVERITY_FATAL;
+        res.severity = SEVERITY_CRITICAL;
         res.details = "master_loader_execute_load_verified failed verified load procedure.";
         return res;
     }
