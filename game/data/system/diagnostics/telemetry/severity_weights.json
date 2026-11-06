@@ -1,0 +1,199 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/system/diagnostics/telemetry/severity_weights.json",
+    "id": "data.system.diagnostics.telemetry.severity_weights",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-05",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Weighted telemetry severity hierarchy, bitmasks, and multi-tier filter thresholds.",
+    "where_the_data_lives": {
+      "path": "game/data/system/diagnostics/telemetry/severity_weights.json",
+      "header_binding": "engine/include/log/log.h"
+    },
+    "what_it_enables": [
+      "Numeric priority weighting for multi-level log filtering and rate limiting",
+      "Bitmask filtering for fast bitwise severity matching in hot loops",
+      "Configurable flush policies and latency budgets per severity tier"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in static ring buffer telemetry",
+      "Higher weight strictly denotes higher diagnostic priority",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "log_subsystem_initialized": true,
+      "severity_enum_aligned": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.severity_weights.v1",
+      "target_enum": "log_severity_t",
+      "max_weight": 100,
+      "min_weight": 0
+    },
+    "generic_helper_contracts": {
+      "severity_evaluator": "log_is_severity_active",
+      "bitmask_matcher": "log_matches_severity_mask"
+    }
+  },
+  "block_3_body": {
+    "severities": [
+      {
+        "id": "FATAL",
+        "rank": 0,
+        "weight": 100,
+        "bitmask_hex": "0x40",
+        "bit_index": 6,
+        "ansi_color": "\u001b[1;31m",
+        "flush_policy": "IMMEDIATE_SYNC_FLUSH",
+        "disk_persistence": "MANDATORY",
+        "console_echo_default": true,
+        "latency_budget_us": 1,
+        "description": "Unrecoverable crash or state corruption. Triggers immediate freeze and dump."
+      },
+      {
+        "id": "CRITICAL",
+        "rank": 1,
+        "weight": 80,
+        "bitmask_hex": "0x20",
+        "bit_index": 5,
+        "ansi_color": "\u001b[1;35m",
+        "flush_policy": "IMMEDIATE_SYNC_FLUSH",
+        "disk_persistence": "MANDATORY",
+        "console_echo_default": true,
+        "latency_budget_us": 5,
+        "description": "Severe failure threatening gameplay loop integrity. Triggers tripwire latch."
+      },
+      {
+        "id": "ERROR",
+        "rank": 2,
+        "weight": 60,
+        "bitmask_hex": "0x10",
+        "bit_index": 4,
+        "ansi_color": "\u001b[0;31m",
+        "flush_policy": "BATCHED_FLUSH",
+        "disk_persistence": "MANDATORY",
+        "console_echo_default": true,
+        "latency_budget_us": 10,
+        "description": "Discrete operation failure with safe fallback or recovery. Breadcrumb logged."
+      },
+      {
+        "id": "WARNING",
+        "rank": 3,
+        "weight": 40,
+        "bitmask_hex": "0x08",
+        "bit_index": 3,
+        "ansi_color": "\u001b[0;33m",
+        "flush_policy": "BATCHED_FLUSH",
+        "disk_persistence": "STANDARD",
+        "console_echo_default": true,
+        "latency_budget_us": 15,
+        "description": "Suspicious condition, boundary saturation clamp, or degraded performance state."
+      },
+      {
+        "id": "INFO",
+        "rank": 4,
+        "weight": 20,
+        "bitmask_hex": "0x04",
+        "bit_index": 2,
+        "ansi_color": "\u001b[0;32m",
+        "flush_policy": "LAZY_BUFFERED",
+        "disk_persistence": "STANDARD",
+        "console_echo_default": true,
+        "latency_budget_us": 15,
+        "description": "Major milestone, turn boundary, stance shift, or narrative state transition."
+      },
+      {
+        "id": "DEBUG",
+        "rank": 5,
+        "weight": 10,
+        "bitmask_hex": "0x02",
+        "bit_index": 1,
+        "ansi_color": "\u001b[0;36m",
+        "flush_policy": "LAZY_BUFFERED",
+        "disk_persistence": "DEBUG_ONLY",
+        "console_echo_default": false,
+        "latency_budget_us": 15,
+        "description": "Granular spatial, coordinate, ZOC, action gauge, or relic charge calculation."
+      },
+      {
+        "id": "TRACE",
+        "rank": 6,
+        "weight": 5,
+        "bitmask_hex": "0x01",
+        "bit_index": 0,
+        "ansi_color": "\u001b[0;37m",
+        "flush_policy": "RING_BUFFER_ONLY",
+        "disk_persistence": "FORENSIC_ONLY",
+        "console_echo_default": false,
+        "latency_budget_us": 10,
+        "description": "High-frequency per-tick calculation, monotonic delta, or microstep cog telemetry."
+      }
+    ],
+    "filter_presets": [
+      {
+        "preset_id": "PRESET_ALL",
+        "description": "Capture all severities without any filter suppression.",
+        "bitmask_hex": "0x7F",
+        "min_weight": 5
+      },
+      {
+        "preset_id": "PRESET_DEVELOPMENT",
+        "description": "All events down to DEBUG, suppressing TRACE to reduce volume.",
+        "bitmask_hex": "0x7E",
+        "min_weight": 10
+      },
+      {
+        "preset_id": "PRESET_STANDARD",
+        "description": "Standard game developer profile capturing INFO and above.",
+        "bitmask_hex": "0x7C",
+        "min_weight": 20
+      },
+      {
+        "preset_id": "PRESET_WARNINGS_ONLY",
+        "description": "Minimal noise profile for automated testing and benchmarks.",
+        "bitmask_hex": "0x78",
+        "min_weight": 40
+      },
+      {
+        "preset_id": "PRESET_ERRORS_ONLY",
+        "description": "Strict error monitoring capturing ERROR, CRITICAL, and FATAL.",
+        "bitmask_hex": "0x70",
+        "min_weight": 60
+      },
+      {
+        "preset_id": "PRESET_PANIC_ONLY",
+        "description": "Emergency triage capturing only system-halting panics.",
+        "bitmask_hex": "0x60",
+        "min_weight": 80
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "severity_count": 7,
+      "preset_count": 6,
+      "highest_weight": 100,
+      "lowest_weight": 5
+    },
+    "verification_tripwires": [
+      { "name": "SEVERITY_ORDERING", "rule": "weights strictly descending from FATAL to TRACE", "status": "VERIFIED_PASS" },
+      { "name": "BITMASK_UNIQUENESS", "rule": "every severity has a unique bit index", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_filter_flag": "--log-filter=<preset_id|weight|mask>"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "sister_catalogs": [ "engine_channels.json", "game_channels.json" ]
+    }
+  }
+}

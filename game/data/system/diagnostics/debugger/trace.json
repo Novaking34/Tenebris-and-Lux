@@ -1,50 +1,90 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/debug/trace.json",
-    "id": "data.debug.profile.trace",
-    "layer": "Layer 0 Data / Configuration",
-    "version": "1.0.0",
-    "date": "2026-11-02",
+    "file": "game/data/system/diagnostics/debugger/trace.json",
+    "id": "data.system.diagnostics.debugger.trace",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 3",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "Deep tracing profile capturing micro-step state snapshots for cog-level inspection.",
-    "invariants": [
+    "where_the_data_lives": {
+      "path": "game/data/system/diagnostics/debugger/trace.json",
+      "header_binding": "engine/include/debug/debug.h"
+    },
+    "what_it_enables": [
       "Every action and state modification generates a persistent snapshot",
       "Full verbose channel tracing enabled without console flooding",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+      "Deterministic 32-bit FNV-1a simulation state hashing per turn"
+    ],
+    "invariants": [
+      "Snapshot ring buffer capacity bounded by DEBUG_MAX_SNAPSHOTS (64)",
+      "Zero dynamic heap memory allocations across all debugger routines",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.debug_profile.v1",
-    "target_struct": "debug_config_t",
-    "header_binding": "include/util/debug/debug.h"
+  "block_2_opening": {
+    "pre_conditions": {
+      "debug_subsystem_initialized": true,
+      "snapshot_ring_buffer_allocated": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.debug_profile.v1",
+      "target_struct": "debug_config_t",
+      "header_binding": "engine/include/debug/debug.h",
+      "max_snapshots_allowed": 64
+    },
+    "generic_helper_contracts": {
+      "profile_loader": "debug_load_config_profile",
+      "fallback_provider": "debug_get_monolith_fallback_config"
+    }
   },
-  "profile": {
-    "id": "trace",
-    "display_name": "Deep Micro-Step Tracing Profile",
-    "description": "Verbose cog-level tracing across all channels with full snapshot history.",
-    "enabled": true,
-    "break_on_error": false,
-    "break_on_tripwire": true,
-    "break_on_sway_breach": true,
-    "break_on_resonance_breach": true,
-    "break_on_hp_zero": false,
-    "break_on_stance_change": false,
-    "max_snapshots": 64,
-    "snapshot_interval_turns": 1,
-    "auto_dump_on_tripwire": true,
-    "interactive_repl": true,
-    "ansi_color": true,
-    "trace_channels": "all"
+  "block_3_body": {
+    "profile": {
+      "id": "trace",
+      "display_name": "Deep Micro-Step Tracing Profile",
+      "description": "Verbose cog-level tracing across all channels with full snapshot history.",
+      "enabled": true,
+      "break_on_error": false,
+      "break_on_tripwire": true,
+      "break_on_sway_breach": true,
+      "break_on_resonance_breach": true,
+      "break_on_hp_zero": false,
+      "break_on_stance_change": false,
+      "max_snapshots": 64,
+      "snapshot_interval_turns": 1,
+      "auto_dump_on_tripwire": true,
+      "interactive_repl": true,
+      "ansi_color": true,
+      "trace_channels": "all",
+      "domain_traps": {
+        "engine_traps_active": true,
+        "game_traps_active": true
+      }
+    }
   },
-  "_audit": {
-    "snapshot_capacity": 64,
-    "trap_guards_active": 3,
-    "verified_zero_heap": true
+  "block_4_audit": {
+    "audit_metrics": {
+      "snapshot_capacity": 64,
+      "trap_guards_active": 3,
+      "verified_zero_heap": true
+    },
+    "verification_tripwires": [
+      { "name": "TRACE_CHANNELS_ALL", "rule": "trace_channels == 'all'", "status": "VERIFIED_PASS" },
+      { "name": "INTERVAL_ONE", "rule": "snapshot_interval_turns == 1", "status": "VERIFIED_PASS" },
+      { "name": "ZERO_HEAP_TRACE", "rule": "Zero dynamic allocations during trace", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
   },
-  "_navigation": {
-    "parent_menu": "manifest.json",
-    "menu_index": 3
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--debug" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "menu_index": 3
+    }
   }
 }

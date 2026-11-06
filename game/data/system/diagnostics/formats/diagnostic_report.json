@@ -1,0 +1,117 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/system/diagnostics/formats/diagnostic_report.json",
+    "id": "data.system.diagnostics.formats.diagnostic_report",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-05",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Specification of the structured post-mortem Diagnostic Audit Report format for automated CI and crash analysis.",
+    "where_the_data_lives": {
+      "path": "game/data/system/diagnostics/formats/diagnostic_report.json",
+      "header_binding": "engine/include/debug/debug.h"
+    },
+    "what_it_enables": [
+      "SARIF-inspired machine-readable JSON diagnostic reports for CI pipelines and GitHub Actions",
+      "Automated aggregation of module preflight verdicts, tripwire latches, and invariant grades",
+      "Actionable developer triage artifacts generated automatically upon CTest failure"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during report structure assembly",
+      "Report generation must succeed even under corrupted simulation states",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "audit_subsystem_initialized": true,
+      "manifest_registry_ready": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.format.diagnostic_report.v1",
+      "format_standard": "SARIF-Inspired Diagnostic Manifest",
+      "mime_type": "application/json"
+    },
+    "generic_helper_contracts": {
+      "report_generator": "audit_generate_diagnostic_report",
+      "report_saver": "audit_write_report_to_disk"
+    }
+  },
+  "block_3_body": {
+    "report_schema": {
+      "run_info": {
+        "engine_version": "0.1.0-dev",
+        "timestamp_iso": "2026-11-05T18:30:00.000000Z",
+        "cli_invocation": "./build/tenebris-lux --audit",
+        "exit_code": 0,
+        "overall_verdict": "ALL PRE-FLIGHT INVARIANTS SATISFIED",
+        "overall_grade": 100
+      },
+      "preflight_modules": {
+        "registered_count": 16,
+        "passed_count": 16,
+        "failed_count": 0,
+        "results": [
+          { "module": "core.util.manifest", "header": "manifest.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.fs", "header": "fs_utils.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.json", "header": "json_utils.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.time", "header": "time_utils.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.math", "header": "math_utils.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.geom", "header": "geom_utils.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.string", "header": "string_utils.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.log", "header": "util/log/log.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "core.util.debug", "header": "debug.h", "rev": 1, "zero_heap": true, "status": "PASS" },
+          { "module": "sim.engine.state", "header": "sim_state.h", "rev": 4, "zero_heap": true, "status": "PASS" },
+          { "module": "sim.engine.combat", "header": "combat.h", "rev": 5, "zero_heap": true, "status": "PASS" },
+          { "module": "sim.engine.items", "header": "items.h", "rev": 2, "zero_heap": true, "status": "PASS" },
+          { "module": "sim.engine.world", "header": "world.h", "rev": 5, "zero_heap": true, "status": "PASS" },
+          { "module": "sim.engine.dispatcher", "header": "dispatcher.h", "rev": 4, "zero_heap": true, "status": "PASS" },
+          { "module": "sim.engine.core", "header": "game.h", "rev": 4, "zero_heap": true, "status": "PASS" },
+          { "module": "gui.viewport.x11", "header": "gui.h", "rev": 2, "zero_heap": true, "status": "PASS" }
+        ]
+      },
+      "invariant_tripwires": {
+        "verified_count": 7,
+        "breached_count": 0,
+        "results": [
+          { "check_id": 1, "title": "Initial twin relic state", "status": "PASS" },
+          { "check_id": 2, "title": "Lux Barrio & Shield ceiling invariant", "status": "PASS" },
+          { "check_id": 3, "title": "Stance state machine transitions", "status": "PASS" },
+          { "check_id": 4, "title": "Diagnostic tripwire caught corrupt state", "status": "PASS" },
+          { "check_id": 5, "title": "GUI viewport layout invariants", "status": "PASS" },
+          { "check_id": 6, "title": "Telemetry subsystem & grade invariants", "status": "PASS" },
+          { "check_id": 7, "title": "Debugger subsystem & state rewind invariants", "status": "PASS" }
+        ]
+      },
+      "post_mortem_telemetry_dump": {
+        "ring_buffer_entries": 64,
+        "latest_entries_retained": 16,
+        "latest_state_hash": "0x811c9dc5"
+      }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "schema_compliance": true,
+      "preflight_module_count": 16,
+      "tripwire_check_count": 7
+    },
+    "verification_tripwires": [
+      { "name": "ALL_PREFLIGHT_PASS", "rule": "failed_count == 0", "status": "VERIFIED_PASS" },
+      { "name": "ALL_TRIPWIRES_PASS", "rule": "breached_count == 0", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "output_report_file": "build/logs/diagnostic_report.json"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "sister_format": "fixed_column.json"
+    }
+  }
+}

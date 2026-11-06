@@ -5,15 +5,15 @@
     "id": "data.system.root",
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.0",
-    "interface_rev": "Rev 2",
-    "date": "2026-11-04",
+    "interface_rev": "Rev 3",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "System Domain Master Manifest orchestrating runtime & diagnostics.",
     "where_the_data_lives": {
       "topology": "System Domain (runtime & diagnostics)",
       "runtime_tree": "game/data/system/runtime/ (math, time, string)",
-      "diagnostics_tree": "game/data/system/diagnostics/ (telemetry, debugger)"
+      "diagnostics_tree": "game/data/system/diagnostics/ (telemetry, debugger, taxonomy, formats)"
     },
     "what_it_enables": [
       "Zero dynamic heap allocations across Layer 0 data profiles",
@@ -112,14 +112,32 @@
         "category": "diagnostics",
         "where_it_lives": "game/data/system/diagnostics/debugger/",
         "what_it_enables": "64 snapshots, FNV-1a hashing, and interactive state rewind."
+      },
+      {
+        "id": "taxonomy",
+        "title": "Error Taxonomy & Tripwire Matrix",
+        "manifest_path": "diagnostics/taxonomy/manifest.json",
+        "status": "active",
+        "category": "diagnostics",
+        "where_it_lives": "game/data/system/diagnostics/taxonomy/",
+        "what_it_enables": "Standardized Engine and Game error classifications, root-cause hints, and latching tripwires."
+      },
+      {
+        "id": "formats",
+        "title": "Log Serialization & Conversion Formats",
+        "manifest_path": "diagnostics/formats/manifest.json",
+        "status": "active",
+        "category": "diagnostics",
+        "where_it_lives": "game/data/system/diagnostics/formats/",
+        "what_it_enables": "Fixed-column text, NDJSON streaming, CSV export, replay event streams, and audit reports."
       }
     ]
   },
   "block_4_audit": {
     "audit_metrics": {
       "sub_domain_count": 2,
-      "subsystem_count": 5,
-      "active_subsystems": 5
+      "subsystem_count": 7,
+      "active_subsystems": 7
     },
     "verification_tripwires": [
       {

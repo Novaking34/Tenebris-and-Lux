@@ -1,62 +1,107 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/log/forensic_telemetry.json",
-    "id": "data.log.setting.forensic_telemetry",
-    "layer": "Layer 0 Data / Configuration",
-    "version": "1.0.0",
-    "date": "2026-10-30",
+    "file": "game/data/system/diagnostics/telemetry/forensic_telemetry.json",
+    "id": "data.system.diagnostics.telemetry.forensic_telemetry",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.0",
+    "interface_rev": "Rev 3",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Forensic telemetry and pre-flight audit flight recorder profile.",
-    "invariants": [
+    "role": "Forensic telemetry and pre-flight audit flight recorder profile capturing microsecond clocks and ring buffer dumps.",
+    "where_the_data_lives": {
+      "path": "game/data/system/diagnostics/telemetry/forensic_telemetry.json",
+      "log_output_directory": "build/logs/",
+      "header_binding": "engine/include/log/log.h"
+    },
+    "what_it_enables": [
       "Full TRACE severity recording microsecond delta monotonic clocks",
       "Ring buffer telemetry recorded and preserved across rotating archives",
-      "Strict conformance to the OmniCode 5-Block Ontological Architecture"
+      "Deep forensic audit trails for non-deterministic drift analysis"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in static ring buffer telemetry",
+      "Microsecond precision verified via CLOCK_MONOTONIC",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
     ]
   },
-  "_types": {
-    "schema_id": "tenlux.data.log_setting.v1",
-    "target_struct": "log_config_t",
-    "header_binding": "include/util/log/log.h"
-  },
-  "setting": {
-    "id": "forensic_telemetry",
-    "display_name": "Forensic Telemetry & Flight Recorder",
-    "description": "Exhaustive instrumentation mode recording monotonic clock drift, moral sway gradient percentages, and 64-slot circular ring buffer dumps.",
-    "log_dir": "logs",
-    "base_filename": "tenebris_lux_telemetry.log",
-    "max_file_size_bytes": 10485760,
-    "max_rotated_files": 25,
-    "min_severity": "TRACE",
-    "save_by_category": true,
-    "echo_to_console": true,
-    "use_colors": true,
-    "telemetry": {
-      "track_sequence_ids": true,
-      "track_monotonic_us": true,
-      "track_iso_timestamps": true,
-      "track_moral_grades": true,
-      "detailed_file_anchors": true,
-      "detailed_func_anchors": true,
-      "detailed_line_anchors": true,
-      "active_categories": [
-        "SYSTEM",
-        "LOG",
-        "EVENT",
-        "MESSAGE",
-        "CHARACTER"
-      ]
+  "block_2_opening": {
+    "pre_conditions": {
+      "log_subsystem_initialized": true,
+      "static_ring_buffer_allocated": true,
+      "high_resolution_clock_available": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.log_setting.v1",
+      "target_struct": "log_config_t",
+      "header_binding": "engine/include/log/log.h",
+      "supported_domains": [ "ENGINE", "GAME" ]
+    },
+    "generic_helper_contracts": {
+      "config_loader": "log_load_config_from_file",
+      "profiler_binding": "log_load_config_profile"
     }
   },
-  "_audit": {
-    "rotation_threshold_kb": 10240,
-    "retention_policy": "Retain 25 timestamped rotated archives",
-    "static_ring_buffer_slots": 64,
-    "telemetry_clock_accuracy": "Microsecond precision via CLOCK_MONOTONIC"
+  "block_3_body": {
+    "setting": {
+      "id": "forensic_telemetry",
+      "display_name": "Forensic Telemetry & Flight Recorder",
+      "description": "Exhaustive instrumentation mode recording monotonic clock drift, moral sway gradient percentages, and 64-slot circular ring buffer dumps.",
+      "log_dir": "logs",
+      "base_filename": "tenebris_lux_telemetry.log",
+      "max_file_size_bytes": 10485760,
+      "max_rotated_files": 25,
+      "min_severity": "TRACE",
+      "save_by_category": true,
+      "echo_to_console": true,
+      "use_colors": true,
+      "telemetry": {
+        "track_sequence_ids": true,
+        "track_monotonic_us": true,
+        "track_iso_timestamps": true,
+        "track_moral_grades": true,
+        "detailed_file_anchors": true,
+        "detailed_func_anchors": true,
+        "detailed_line_anchors": true,
+        "active_categories": [
+          "SYSTEM",
+          "LOG",
+          "EVENT",
+          "MESSAGE",
+          "CHARACTER"
+        ]
+      },
+      "severity_filter_mask": "0x7F",
+      "min_severity_weight": 5,
+      "domain_routing": {
+        "engine_domain_enabled": true,
+        "game_domain_enabled": true,
+        "isolate_domain_files": true
+      }
+    }
   },
-  "_navigation": {
-    "parent_menu": "manifest.json",
-    "menu_index": 4
+  "block_4_audit": {
+    "audit_metrics": {
+      "rotation_threshold_kb": 10240,
+      "retention_policy": "Retain 25 timestamped rotated archives",
+      "static_ring_buffer_slots": 64,
+      "telemetry_clock_accuracy": "Microsecond precision via CLOCK_MONOTONIC"
+    },
+    "verification_tripwires": [
+      { "name": "FORENSIC_DEPTH", "rule": "track_monotonic_us == true", "status": "VERIFIED_PASS" },
+      { "name": "RETENTION_CAP", "rule": "max_rotated_files == 25", "status": "VERIFIED_PASS" },
+      { "name": "ZERO_HEAP_FORENSIC", "rule": "Zero dynamic allocations during write", "status": "VERIFIED_PASS" }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit", "--debug" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "menu_index": 4
+    }
   }
 }
