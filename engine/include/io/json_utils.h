@@ -6,31 +6,37 @@
 // @file          json_utils.h
 // @id            core.util.json
 // @layer         Layer 0: Core Utilities
-// @subsystem     Data & Filesystem Subsystem (util/data)
-// @version       1.1.0
-// @interface_rev Rev 2
-// @date          2026-11-02
-// @updated       2026-11-02
+// @subsystem     Data & Filesystem Subsystem (util/io)
+// @version       0.1.0
+// @interface_rev Rev 3
+// @date          2026-11-05
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
+// @system        Zero-Heap JSON Tokenizer & Structured Field Deserializer
+// @role          Fast zero-heap JSON scanning, token classification, bounded
+//                field extraction, array slicing, and procedure execution for
+//                data-driven engine assets.
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Zero-heap, memory-safe JSON parser and key/value token extractor.
 //   Serves as the universal serialization/deserialization primitive for
 //   data-driven profiles, manifests, telemetry channels, combat tables,
 //   and world topologies without pulling in heavy third-party dependencies.
+//   Guarantees non-allocating, deterministic parsing into caller stack buffers.
 //
 // DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module).
+//   - Upstream Dependencies: None (Foundational leaf module in Layer 0).
 //   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/caller-supplied buffers).
 //   - Concurrency / Safety:  REENTRANT_PURE (Stateless parser on const char*).
 //   - Latency Budget:        < 50 microseconds per token extraction (O(N) scan).
 //
 // AXIOMATIC INVARIANTS:
-//   1. Zero heap allocations: Strict zero-heap guarantee across all routines.
+//   1. Zero dynamic heap allocations: malloc, calloc, realloc, free prohibited.
 //   2. Buffer safety: Extracted strings unconditionally enforce null termination.
-//   3. Resilience: Gracefully handles malformed JSON, missing keys, and NULL pointers.
+//   3. Fault resilience: Gracefully handles malformed JSON, missing keys, and NULL.
 //   4. Numerical bounds: Safely clamps or validates numerical ranges on conversion.
+//   5. Standardized token limits: Predictable bounds for keys, tokens, and nesting.
+//   6. Universal 5-Block Lifecycle Protocol enforced across header and source.
 // =============================================================================
 
 #ifndef TENEBRIS_LUX_UTIL_DATA_JSON_UTILS_H
@@ -44,12 +50,65 @@
 #include "core/manifest.h"
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 2.1: PRE-CONDITIONS & CANONICAL TOKEN LIMITS ]
+// -----------------------------------------------------------------------------
+
+#define JSON_MAX_KEY_LEN     64   /**< Maximum key length in bytes. */
+#define JSON_MAX_TOKEN_LEN   128  /**< Maximum token preview string length. */
+#define JSON_MAX_NESTING     16   /**< Maximum supported bracket nesting depth. */
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 2.2: STRUCTURAL ENTITY & OBJECT DEFINITIONS ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Ontological classification of JSON value types.
+ */
+typedef enum {
+    JSON_TYPE_UNKNOWN = 0,
+    JSON_TYPE_OBJECT,
+    JSON_TYPE_ARRAY,
+    JSON_TYPE_STRING,
+    JSON_TYPE_NUMBER,
+    JSON_TYPE_BOOLEAN,
+    JSON_TYPE_NULL
+} json_value_type_t;
+
+/**
+ * @brief Detailed token view constructed by json_inspect_token.
+ */
+typedef struct {
+    json_value_type_t type;      /**< Inferred value type. */
+    const char *raw_start;       /**< Pointer to start of value payload. */
+    size_t raw_len;              /**< Length in bytes of the value slice. */
+    bool exists;                 /**< true if key was located in buffer. */
+} json_token_view_t;
+
+/**
+ * @brief Structured array view constructed by json_inspect_array.
+ */
+typedef struct {
+    const char *arr_start;       /**< Pointer to opening '['. */
+    size_t arr_len;              /**< Total array slice length in bytes. */
+    size_t count;                /**< Number of top-level elements. */
+    bool exists;                 /**< true if array was located. */
+} json_array_view_t;
+
+/**
+ * @brief High-level extraction result object constructed by execution procedures.
+ */
+typedef struct {
+    bool success;                /**< true if field was successfully extracted. */
+    json_value_type_t type;      /**< Extracted token type. */
+    char key[JSON_MAX_KEY_LEN];  /**< Target key name. */
+    size_t value_len;            /**< Byte length of extracted value. */
+} json_extract_result_t;
 
 /**
  * Manifest record for the Zero-Heap JSON Engine.
- *
- * Exposes compiled module provenance, zero-heap memory guarantee,
- * reentrancy policy, and parser pre-flight audit callback.
  */
 extern const module_metadata_t json_utils_manifest;
 
@@ -70,17 +129,6 @@ extern const module_metadata_t json_utils_manifest;
  * (:), ignoring intervening whitespace. Prevents false positive matches on
  * substring prefixes or keys embedded inside quoted strings.
  *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.json (Zero-Heap JSON Engine)
- * - Assembly:   JSON Token Locator
- * - Cog:        Key Pointer Scanner
- *
- * ### Execution & Resource Contract
- * - Memory Model:   ALLOC_ZERO_HEAP (Stateless pointer scanner).
- * - Concurrency:    REENTRANT_PURE (Thread-safe read-only inspection).
- * - Latency Budget: < 20 microseconds (O(N) linear scan).
- *
  * @param[in] json Null-terminated JSON buffer.
  * @param[in] key  Null-terminated key name to search for (without quotes).
  *
@@ -100,24 +148,12 @@ const char *json_find_key(const char *json, const char *key);
  * Deserializes string properties (e.g. "version": "1.0.0", "name": "Lux").
  * Strips surrounding quotes and guarantees bounded null termination.
  *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.json (Zero-Heap JSON Engine)
- * - Assembly:   Value Extraction
- * - Cog:        Bounded String Field Extractor
- *
- * ### Execution & Resource Contract
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, writes to caller buffer).
- * - Concurrency:    REENTRANT_PURE (Thread-safe on distinct destination buffers).
- * - Latency Budget: < 30 microseconds.
- *
  * @param[in]  json     Null-terminated JSON buffer.
  * @param[in]  key      Key name to search for.
  * @param[out] out_val  Destination buffer for extracted string.
  * @param[in]  out_size Capacity of destination buffer in bytes.
  *
  * @return true if key was found and value extracted; false otherwise.
- *
  * @post out_val[out_size - 1] == '\0' is guaranteed if returning true.
  */
 bool json_get_string(const char *json, const char *key, char *out_val,
@@ -283,12 +319,6 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
  * Scans nested braces and quotes without dynamic heap allocations, returning
  * the complete bounded object string including opening and closing braces.
  *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.json (Zero-Heap JSON Engine)
- * - Assembly:   Array Inspection & Extraction
- * - Cog:        Bounded Array Object Slicer
- *
  * @param[in]  arr_start Pointer to opening '[' of array.
  * @param[in]  arr_len   Length of array in bytes.
  * @param[in]  index     0-based element index.
@@ -314,7 +344,7 @@ bool json_array_get_object(const char *arr_start, size_t arr_len,
  * @brief Executes machine pre-flight diagnostic checks on JSON parser invariants.
  *
  * Verifies extraction of strings, integers, negatives, booleans, floats,
- * and bounds-checking resilience against truncated or malformed inputs.
+ * array slicing, and bounds-checking resilience against truncated inputs.
  *
  * @return diag_result_t reporting SEVERITY_PASS or SEVERITY_FATAL.
  */
@@ -329,7 +359,62 @@ bool json_utils_audit(void);
 
 // =============================================================================
 // BLOCK 5: CLOSING BLOCK
-// ( Include Guard Teardown & Header Close )
+// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Inspects a key token, classifies its value type, and constructs a token view.
+ *
+ * @param[in]  json     Null-terminated JSON buffer.
+ * @param[in]  key      Key name to inspect.
+ * @param[out] out_view Constructed token view object.
+ *
+ * @return true if key was located and view constructed; false otherwise.
+ */
+bool json_inspect_token(const char *json, const char *key, json_token_view_t *out_view);
+
+/**
+ * @brief Inspects an array, measures slice length, counts elements, and constructs view.
+ *
+ * @param[in]  json      Null-terminated JSON buffer.
+ * @param[in]  array_key Array property key name.
+ * @param[out] out_view  Constructed array view object.
+ *
+ * @return true if array was located and view constructed; false otherwise.
+ */
+bool json_inspect_array(const char *json, const char *array_key, json_array_view_t *out_view);
+
+/**
+ * @brief High-level execution procedure that extracts a string and constructs a result object.
+ *
+ * @param[in]  json       Null-terminated JSON buffer.
+ * @param[in]  key        Key name to extract.
+ * @param[out] buf        Caller destination buffer for extracted string.
+ * @param[in]  buf_size   Capacity of destination buffer.
+ * @param[out] out_result Detailed extraction result object.
+ *
+ * @return true if string was extracted within buffer limits; false otherwise.
+ */
+bool json_execute_extract_string(const char *json, const char *key,
+                                 char *buf, size_t buf_size,
+                                 json_extract_result_t *out_result);
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Initializes the zero-heap JSON parsing subsystem.
+ */
+void json_utils_init(void);
+
+/**
+ * @brief Tears down the JSON parsing subsystem.
+ */
+void json_utils_shutdown(void);
 
 #endif /* TENEBRIS_LUX_UTIL_DATA_JSON_UTILS_H */
