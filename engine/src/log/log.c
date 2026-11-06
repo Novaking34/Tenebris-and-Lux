@@ -1,56 +1,76 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          util/log/log.c
-// @id            core.util.log
-// @layer         Layer 0: Core Utilities
-// @version       1.1.0
-// @interface_rev Rev 2
-// @date          2026-10-29
-// @updated       2026-11-02
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Implementation of the high-performance, zero-heap logging, telemetry, and
-//   forensic flight recorder subsystem. Implements strictly aligned, machine-
-//   greppable log formats, ISO 8601 timestamps, microsecond monotonic timing,
-//   gradient grade mapping ([-1.0f, +1.0f] <-> [-100, +100]), automated log file
-//   rotation, categorized sub-folder log routing (character, event, message,
-//   debug, log), and an in-memory circular ring buffer for runtime inspection.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: core.util.manifest, core.util.time, core.util.math
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (All ring buffers statically sized).
-//   - Concurrency / Safety:  REENTRANT_PURE (Synchronized single-writer I/O).
-//   - Latency Budget:        < 15 microseconds per formatted entry write.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Strict monotonic sequence ID numbering (never decreases, wraps on overflow).
-//   2. Gradient grade strictly clamped to [-1.0f, +1.0f] and [-100, +100].
-//   3. Fixed-width tokens guarantee exact column positions for grep/awk parsers.
-//   4. Automated rotation triggers when active file size >= max_file_size_bytes.
-//   5. Static ring buffer never dynamic allocates; overwrites oldest entry.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          log.c
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-06
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Forensic Telemetry & Flight Recorder Engine
+@role          High-performance, zero-heap logging, telemetry, and forensic
+               flight recorder subsystem delivering structured, machine-greppable
+               audit trails with ISO 8601 timestamps, microsecond monotonic deltas,
+               gradient moral grading, automated size rotation, and in-memory
+               circular ring buffering for live viewport HUD inspection.
+@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Monotonic sequence counter: ID strictly increments per entry.
+               4. Gradient grade strictly bounded in [-1.0f, +1.0f] <-> [-100, +100].
+               5. Fixed-width token columns guarantee deterministic regex/grep parsing.
+               6. Automated rotation bounds: active log file never exceeds byte threshold.
+               7. Static memory boundary: in-flight ring buffer never dynamic allocates.
+               8. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 0 (Core Utilities) | Machine: Forensic Telemetry Engine
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Forensic flight recorder and diagnostic audit pipeline for the Tenebris and Lux
+  tactical RPG simulation engine.
+  Integrates directly with data-driven configuration assets residing in
+  system/diagnostics/telemetry/ (manifest.json, default.json, development.json,
+  production.json, quiet.json, combat_focus.json, forensic_telemetry.json)
+  with quarantined emergency fallback protection (log_fallback.h).
+
+  ### For Game Designers & Non-Programmers:
+  Acts as the black-box flight recorder of the game. Every combat action, stance
+  shift, and narrative dialogue prompt is recorded with precise moral sway and
+  timing metrics.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Zero-Heap Memory Model (ALLOC_ZERO_HEAP): All buffers reside in .bss
+    or on caller CPU stack frames.
+  - Multi-tier severity hierarchy with fixed-width formatting.
+  - Dual-destination dispatch: rotating disk files and static ring buffer.
+================================================================================
+*/
 
 #define _POSIX_C_SOURCE 200809L
 
-#include "log/log.h"
-#include "log/log_fallback.h"
-#include "io/fs_utils.h"
-#include "io/json_utils.h"
-#include "core/math_utils.h"
-#include "core/string_utils.h"
-#include "core/time_utils.h"
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
+Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+================================================================================
+*/
 
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdarg.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,11 +79,32 @@
 #include <time.h>
 #include <unistd.h>
 
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "core/manifest.h"
+#include "core/math_utils.h"
+#include "core/string_utils.h"
+#include "core/time_utils.h"
+#include "io/fs_utils.h"
+#include "io/path_finder.h"
+#include "io/json_utils.h"
+#include "io/master_loader.h"
+#include "log/log.h"
+#include "log/log_fallback.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Static Engine State Variables (Quarantined in .bss)
+--------------------------------------------------------------------------------
+*/
+
 static log_config_t s_config;
 static bool s_initialized = false;
 static FILE *s_file = NULL;
 static size_t s_current_bytes = 0;
 static uint64_t s_sequence_counter = 0;
+static size_t s_rotation_count = 0;
 
 static log_tripwire_t s_tripwire_status = LOG_TRIPWIRE_CLEAR;
 static char s_tripwire_details[256] = "All data pipeline tripwires clear.";
@@ -123,11 +164,11 @@ static const char *const s_log_invariants[5] = {
 
 const module_metadata_t log_manifest = {
     "core.util.log",
-    "util/log/log.h",
+    "log/log.h",
     LAYER_0_CORE_UTIL,
-    { 1, 1, 0 },
-    2,
-    "2026-11-02",
+    { 0, 1, 0 },
+    3,
+    "2026-11-06",
     "Forensic telemetry, gradient moral grading, and rotated flight recorder",
     4,
     { "core.util.fs", "core.util.json", "core.util.string", "core.util.time" },
@@ -145,43 +186,50 @@ const module_metadata_t log_manifest = {
     log_preflight
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK / CORE LOGGING ENGINE
-// Stratum: Layer 0 (Core Utilities) | Machine: Forensic Telemetry Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.0: ZERO-HEAP JSON PARSING & DATA-DRIVEN CONFIGURATION ]
-// Mission: Parse JSON data manifests and setting files without dynamic memory.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Profile & Manifest Resolution Cogs
+--------------------------------------------------------------------------------
+*/
 
-static bool read_file_contents(const char *filepath, char *buf, size_t buf_size) {
-    return fs_read_file_contents(filepath, buf, buf_size);
+static void set_tripwire(log_tripwire_t status, const char *msg)
+{
+    s_tripwire_status = status;
+    str_safe_copy(s_tripwire_details, msg, sizeof(s_tripwire_details));
 }
 
-static void get_parent_directory(
-    const char *filepath,
-    char *out_dir,
-    size_t out_size
-) {
-    str_parent_dir(out_dir, out_size, filepath);
+log_tripwire_t log_get_tripwire_status(void)
+{
+    return s_tripwire_status;
 }
 
-/**
- * @brief Converts a human-readable severity string into its typed log_severity_t enum.
- *
- * @param[in]  str     Case-insensitive severity name.
- * @param[out] out_sev Output pointer for parsed severity.
- *
- * @return `true` if matched; `false` if invalid token.
- */
-bool log_severity_from_string(const char *str, log_severity_t *out_sev) {
-    /* Step 1: Precondition check on NULL inputs */
+const char *log_get_tripwire_details(void)
+{
+    return s_tripwire_details;
+}
+
+void log_reset_tripwire(void)
+{
+    s_tripwire_status = LOG_TRIPWIRE_CLEAR;
+    str_safe_copy(
+        s_tripwire_details,
+        "All data pipeline tripwires clear.",
+        sizeof(s_tripwire_details)
+    );
+}
+
+bool log_severity_from_string(const char *str, log_severity_t *out_sev)
+{
     if (str == NULL || out_sev == NULL) {
         return false;
     }
-
-    /* Step 2: Compare against canonical severity tokens */
     if (str_case_eq(str, "FATAL")) {
         *out_sev = LOG_SEV_FATAL;
         return true;
@@ -213,21 +261,11 @@ bool log_severity_from_string(const char *str, log_severity_t *out_sev) {
     return false;
 }
 
-/**
- * @brief Converts a human-readable category string into its typed log_category_t enum.
- *
- * @param[in]  str     Case-insensitive category name.
- * @param[out] out_cat Output pointer for parsed category.
- *
- * @return `true` if matched; `false` if invalid token.
- */
-bool log_category_from_string(const char *str, log_category_t *out_cat) {
-    /* Step 1: Precondition check on NULL inputs */
+bool log_category_from_string(const char *str, log_category_t *out_cat)
+{
     if (str == NULL || out_cat == NULL) {
         return false;
     }
-
-    /* Step 2: Compare against canonical category tokens */
     if (str_case_eq(str, "DEBUG")) {
         *out_cat = LOG_CAT_DEBUG;
         return true;
@@ -251,56 +289,8 @@ bool log_category_from_string(const char *str, log_category_t *out_cat) {
     return false;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: TRIPWIRE SENTINEL ENGINE & DIAGNOSTIC STATE ]
-// Mission: Guard data pipeline against missing or corrupted external assets.
-// -----------------------------------------------------------------------------
-
-static void set_tripwire(log_tripwire_t status, const char *msg) {
-    s_tripwire_status = status;
-    str_safe_copy(s_tripwire_details, msg, sizeof(s_tripwire_details));
-}
-
-/**
- * @brief Returns the current state of the logging data pipeline tripwire.
- *
- * @return Active log_tripwire_t status code.
- */
-log_tripwire_t log_get_tripwire_status(void) {
-    return s_tripwire_status;
-}
-
-/**
- * @brief Returns a detailed message explaining why a tripwire was tripped.
- *
- * @return Null-terminated diagnostic string.
- */
-const char *log_get_tripwire_details(void) {
-    return s_tripwire_details;
-}
-
-/**
- * @brief Resets the tripwire state to CLEAR (used in diagnostic test suites).
- */
-void log_reset_tripwire(void) {
-    s_tripwire_status = LOG_TRIPWIRE_CLEAR;
-    str_safe_copy(
-        s_tripwire_details,
-        "All data pipeline tripwires clear.",
-        sizeof(s_tripwire_details)
-    );
-}
-
-/**
- * @brief Loads a log configuration profile from a specified JSON data file.
- *
- * @param[in]  filepath   Path to JSON setting file (e.g. "data/log/development.json").
- * @param[out] out_config Output configuration structure to populate.
- *
- * @return `true` if successfully parsed; `false` on missing file or syntax error.
- */
-bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
-    /* Step 1: Precondition check on input pointers */
+bool log_load_config_from_file(const char *filepath, log_config_t *out_config)
+{
     if (filepath == NULL || out_config == NULL) {
         set_tripwire(
             LOG_TRIPWIRE_SETTING_INVALID,
@@ -309,27 +299,28 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
         return false;
     }
 
-    /* Step 2: Read file contents from disk into static buffer */
     static char file_buf[8192];
-    if (!read_file_contents(filepath, file_buf, sizeof(file_buf))) {
-        char err_msg[256];
-        snprintf(
-            err_msg,
-            sizeof(err_msg),
-            "Setting file unreadable or missing: %s",
-            filepath
-        );
-        set_tripwire(LOG_TRIPWIRE_SETTING_MISSING, err_msg);
-        return false;
+    master_loader_t loader;
+    bool loaded = master_loader_load_from_path(&loader, filepath, file_buf, sizeof(file_buf));
+    if (!loaded) {
+        if (!fs_read_file_contents(filepath, file_buf, sizeof(file_buf))) {
+            char err_msg[256];
+            snprintf(
+                err_msg,
+                sizeof(err_msg),
+                "Setting file unreadable or missing: %s",
+                filepath
+            );
+            set_tripwire(LOG_TRIPWIRE_SETTING_MISSING, err_msg);
+            return false;
+        }
     }
 
-    /* Step 3: Locate setting JSON scope */
     const char *scope = strstr(file_buf, "\"setting\"");
     if (scope == NULL) {
-        scope = file_buf;
+        scope = (loaded && loader.body_start != NULL) ? loader.body_start : file_buf;
     }
 
-    /* Step 4: Populate default base values */
     memset(out_config, 0, sizeof(*out_config));
     out_config->min_severity = LOG_SEV_TRACE;
     out_config->save_by_category = true;
@@ -337,7 +328,6 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
     out_config->use_colors = true;
     out_config->loaded_from_data = false;
 
-    /* Step 5: Deserialize JSON string, numeric, and boolean tokens */
     char tmp[64];
     if (json_get_string(scope, "id", tmp, sizeof(tmp))) {
         str_safe_copy(out_config->profile_name, tmp, sizeof(out_config->profile_name));
@@ -375,7 +365,6 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
         out_config->use_colors = bool_val;
     }
 
-    /* Step 6: Validate mandatory bounds */
     if (out_config->max_file_size_bytes == 0 || out_config->max_rotated_files == 0) {
         set_tripwire(
             LOG_TRIPWIRE_BOUNDS_VIOLATION,
@@ -389,19 +378,8 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config) {
     return true;
 }
 
-/**
- * @brief Loads the active log configuration profile from a manifest "main menu" file.
- *
- * @param[in]  manifest_path Path to log manifest JSON (NULL for auto-discovery).
- * @param[out] out_config    Output configuration structure to populate.
- *
- * @return `true` if manifest and target profile were loaded; `false` on fallback.
- */
-bool log_load_config_from_manifest(
-    const char *manifest_path,
-    log_config_t *out_config
-) {
-    /* Step 1: Precondition check on destination pointer */
+bool log_load_config_from_manifest(const char *manifest_path, log_config_t *out_config)
+{
     if (out_config == NULL) {
         set_tripwire(
             LOG_TRIPWIRE_MANIFEST_INVALID,
@@ -410,16 +388,21 @@ bool log_load_config_from_manifest(
         return false;
     }
 
-    /* Step 2: Resolve candidate paths dynamically */
-    char resolved_path[256];
+    char resolved_path[PATH_FINDER_MAX_PATH];
     bool found = false;
 
     if (manifest_path != NULL && manifest_path[0] != '\0') {
-        if (fs_resolve_data_path(manifest_path, resolved_path, sizeof(resolved_path))) {
+        if (path_finder_resolve(NULL, manifest_path, resolved_path, sizeof(resolved_path)) ||
+            fs_resolve_data_path(manifest_path, resolved_path, sizeof(resolved_path))) {
+            found = true;
+        } else if (fs_file_exists(manifest_path)) {
+            str_safe_copy(resolved_path, manifest_path, sizeof(resolved_path));
             found = true;
         }
     } else {
-        if (fs_resolve_data_path("telemetry/manifest.json", resolved_path, sizeof(resolved_path)) ||
+        if (path_finder_resolve("system", "diagnostics/telemetry/manifest.json", resolved_path, sizeof(resolved_path)) ||
+            path_finder_resolve("system", "telemetry/manifest.json", resolved_path, sizeof(resolved_path)) ||
+            fs_resolve_data_path("telemetry/manifest.json", resolved_path, sizeof(resolved_path)) ||
             fs_resolve_data_path("log/manifest.json", resolved_path, sizeof(resolved_path))) {
             found = true;
         }
@@ -428,22 +411,23 @@ bool log_load_config_from_manifest(
     if (!found) {
         set_tripwire(
             LOG_TRIPWIRE_MANIFEST_MISSING,
-            "Manifest file data/log/manifest.json not accessible in search paths."
+            "Manifest file system/diagnostics/telemetry/manifest.json not accessible in search paths."
         );
         return false;
     }
 
-    /* Step 3: Read manifest file */
-    static char manifest_buf[8192];
-    if (!read_file_contents(resolved_path, manifest_buf, sizeof(manifest_buf))) {
-        set_tripwire(
-            LOG_TRIPWIRE_MANIFEST_INVALID,
-            "Manifest file unreadable or empty."
-        );
-        return false;
+    static char manifest_buf[16384];
+    master_loader_t loader;
+    if (!master_loader_load_from_path(&loader, resolved_path, manifest_buf, sizeof(manifest_buf))) {
+        if (!fs_read_file_contents(resolved_path, manifest_buf, sizeof(manifest_buf))) {
+            set_tripwire(
+                LOG_TRIPWIRE_MANIFEST_INVALID,
+                "Manifest file unreadable or empty."
+            );
+            return false;
+        }
     }
 
-    /* Step 4: Extract active profile name from menu */
     const char *menu_block = strstr(manifest_buf, "\"menu\"");
     const char *scope = (menu_block != NULL) ? menu_block : manifest_buf;
 
@@ -458,11 +442,14 @@ bool log_load_config_from_manifest(
         }
     }
 
-    /* Step 5: Assemble child setting filepath and load profile */
-    char parent_dir[128];
-    get_parent_directory(resolved_path, parent_dir, sizeof(parent_dir));
+    if (log_load_config_profile(active_id, out_config)) {
+        return true;
+    }
 
-    char setting_path[256];
+    char parent_dir[PATH_FINDER_MAX_PATH];
+    str_parent_dir(parent_dir, sizeof(parent_dir), resolved_path);
+
+    char setting_path[PATH_FINDER_MAX_PATH * 2];
     snprintf(
         setting_path,
         sizeof(setting_path),
@@ -474,16 +461,8 @@ bool log_load_config_from_manifest(
     return log_load_config_from_file(setting_path, out_config);
 }
 
-/**
- * @brief Loads a named configuration profile from the data/log/ directory.
- *
- * @param[in]  profile_name Name of the setting profile to load (e.g. "development").
- * @param[out] out_config   Output configuration structure to populate.
- *
- * @return `true` if found and loaded; `false` otherwise.
- */
-bool log_load_config_profile(const char *profile_name, log_config_t *out_config) {
-    /* Step 1: Validate input parameters */
+bool log_load_config_profile(const char *profile_name, log_config_t *out_config)
+{
     if (profile_name == NULL || profile_name[0] == '\0' || out_config == NULL) {
         set_tripwire(
             LOG_TRIPWIRE_SETTING_INVALID,
@@ -492,188 +471,81 @@ bool log_load_config_profile(const char *profile_name, log_config_t *out_config)
         return false;
     }
 
-    /* Step 2: Check candidate search paths dynamically */
-    char file_req[128];
-    char resolved_profile[256];
+    char file_req[PATH_FINDER_MAX_PATH];
+    char resolved_profile[PATH_FINDER_MAX_PATH];
+
+    /* 1. Primary path: system domain diagnostics/telemetry/<profile>.json */
+    snprintf(file_req, sizeof(file_req), "diagnostics/telemetry/%s.json", profile_name);
+    if (path_finder_resolve("system", file_req, resolved_profile, sizeof(resolved_profile))) {
+        return log_load_config_from_file(resolved_profile, out_config);
+    }
+
+    /* 2. Secondary path: telemetry/<profile>.json */
     snprintf(file_req, sizeof(file_req), "telemetry/%s.json", profile_name);
     if (fs_resolve_data_path(file_req, resolved_profile, sizeof(resolved_profile))) {
         return log_load_config_from_file(resolved_profile, out_config);
     }
+
+    /* 3. Tertiary path: log/<profile>.json */
     snprintf(file_req, sizeof(file_req), "log/%s.json", profile_name);
     if (fs_resolve_data_path(file_req, resolved_profile, sizeof(resolved_profile))) {
         return log_load_config_from_file(resolved_profile, out_config);
     }
+
+    /* 4. Quaternary path: bare <profile>.json */
     snprintf(file_req, sizeof(file_req), "%s.json", profile_name);
     if (fs_resolve_data_path(file_req, resolved_profile, sizeof(resolved_profile))) {
         return log_load_config_from_file(resolved_profile, out_config);
     }
 
-    /* Step 3: Trigger tripwire if profile file was not found */
     char err_msg[128];
     snprintf(err_msg, sizeof(err_msg), "Setting profile '%s' not found.", profile_name);
     set_tripwire(LOG_TRIPWIRE_SETTING_MISSING, err_msg);
     return false;
 }
 
-/**
- * @brief Returns the active configuration profile name (e.g. "development", "fallback").
- *
- * @return Null-terminated string identifying the profile.
- */
-const char *log_get_active_profile_name(void) {
+const char *log_get_active_profile_name(void)
+{
     if (s_config.profile_name[0] != '\0') {
         return s_config.profile_name;
     }
     return "default";
 }
 
-/**
- * @brief Returns whether the active logging subsystem was configured from data sources.
- *
- * @return `true` if loaded from JSON data; `false` if using fallback code page.
- */
-bool log_is_data_driven(void) {
+bool log_is_data_driven(void)
+{
     return s_config.loaded_from_data;
 }
 
-/**
- * @brief Resolves the default runtime configuration for the logging subsystem.
- *
- * ### Machine Role & Mission
- *
- * Implements the data-driven priority contract:
- *   1. Primary Path: Dynamic resolution from 'data/log/manifest.json'.
- *   2. Tripwire Fallback Path: If external data assets are missing or corrupted,
- *      latches the LOG_TRIPWIRE_MANIFEST_MISSING tripwire and immediately
- *      falls back to the quarantined monolithic emergency code page
- *      log_get_monolith_fallback_config() defined in util/log/log_fallback.h.
- *      Unconditionally flags loaded_from_data == false.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.log (Forensic Telemetry Engine)
- * - Assembly:   Subsystem Bootstrap & Configuration
- * - Cog:        Default Configuration Resolver
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic allocations).
- * - Concurrency:    REENTRANT_PURE (Pure value return).
- * - Latency Budget: < 50 microseconds.
- *
- * @return Resolved log_config_t structure (data-driven or tripwire fallback).
- */
-log_config_t log_get_default_config(void) {
+log_config_t log_get_default_config(void)
+{
     log_config_t cfg;
     memset(&cfg, 0, sizeof(cfg));
 
-    /* Step 1: Attempt primary data-driven resolution from manifest "main menu" */
+    /* Primary Path: Dynamic resolution from manifest */
     if (log_load_config_from_manifest(NULL, &cfg)) {
         return cfg;
     }
 
-    /* Step 2: Tripwire trigger - external data pipeline missing or compromised */
+    /* Tripwire Fallback Path: Data pipeline breach triggers fallback monolith */
     set_tripwire(
         LOG_TRIPWIRE_MANIFEST_MISSING,
-        "Data pipeline breach: data/log/manifest.json missing or unreadable; activating tripwire fallback."
+        "Data pipeline breach: telemetry manifest missing; activating tripwire fallback."
     );
 
-    /* Step 3: Populate with quarantined emergency monolithic fallback */
     cfg = log_get_monolith_fallback_config();
     cfg.loaded_from_data = false;
     return cfg;
 }
 
-/**
- * @brief Converts a normalized float grade [-1.0f, +1.0f] to integer percent [-100, +100].
- *
- * @param[in] grade Normalized grade value.
- * @return Integer percentage clamped to [-100, +100].
- */
-int log_grade_to_percent(float grade) {
-    /* Step 1: Clamp floating point input to [-1.0f, +1.0f] */
-    if (grade > 1.0f) {
-        grade = 1.0f;
-    } else if (grade < -1.0f) {
-        grade = -1.0f;
-    }
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Subsystem Lifecycle & File Engine Cogs
+--------------------------------------------------------------------------------
+*/
 
-    /* Step 2: Scale and round with symmetric bias */
-    float scaled = grade * 100.0f;
-    int rounded = (scaled >= 0.0f) ? (int)(scaled + 0.5f) : (int)(scaled - 0.5f);
-    return math_clamp_int(rounded, -100, 100);
-}
-
-/**
- * @brief Converts an integer percent [-100, +100] to a normalized float grade [-1.0f, +1.0f].
- *
- * @param[in] percent Integer percentage [-100, +100].
- * @return Normalized floating-point grade in [-1.0f, +1.0f].
- */
-float log_percent_to_grade(int percent) {
-    int clamped = math_clamp_int(percent, -100, 100);
-    return (float)clamped / 100.0f;
-}
-
-/**
- * @brief Returns the human-readable fixed-width string for a severity level.
- *
- * @param[in] severity Graded severity enum.
- * @return Fixed-width severity label (e.g. "[INFO ]").
- */
-const char *log_severity_name(log_severity_t severity) {
-    if ((size_t)severity < (size_t)LOG_SEV_COUNT) {
-        return s_severity_labels[severity];
-    }
-    return "UNKNOWN ";
-}
-
-/**
- * @brief Returns the human-readable fixed-width string for a category.
- *
- * @param[in] category Domain category enum.
- * @return Fixed-width category label (e.g. "[EVENT ]").
- */
-const char *log_category_name(log_category_t category) {
-    if ((size_t)category < (size_t)LOG_CAT_COUNT) {
-        return s_category_labels[category];
-    }
-    return "UNKNOWN  ";
-}
-
-/**
- * @brief Returns the folder name associated with a category (e.g. "character", "event").
- *
- * @param[in] category Domain category enum.
- * @return Directory name string.
- */
-const char *log_category_dir_name(log_category_t category) {
-    if ((size_t)category < (size_t)LOG_CAT_COUNT) {
-        return s_category_dir_names[category];
-    }
-    return "general";
-}
-
-/**
- * @brief Checks if the logging subsystem has been initialized and is active.
- *
- * @return `true` if initialized and open; `false` otherwise.
- */
-bool log_is_active(void) {
-    return s_initialized;
-}
-
-/**
- * @brief Retrieves the total number of log entries recorded since initialization.
- *
- * @return Cumulative monotonic log count.
- */
-uint64_t log_get_total_entries(void) {
-    return s_sequence_counter;
-}
-
-static void generate_iso_timestamp(char *buf, size_t buf_size) {
+static void generate_iso_timestamp(char *buf, size_t buf_size)
+{
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     struct tm tm_utc;
@@ -694,21 +566,18 @@ static void generate_iso_timestamp(char *buf, size_t buf_size) {
     );
 }
 
-static void ensure_directory(const char *dir) {
+static void ensure_directory(const char *dir)
+{
     fs_ensure_directory(dir);
 }
 
-static void get_log_filepath(char *dest, size_t dest_size, const char *dir, const char *name) {
+static void get_log_filepath(char *dest, size_t dest_size, const char *dir, const char *name)
+{
     str_path_join(dest, dest_size, dir, name);
 }
 
-/**
- * @brief Triggers an immediate log rotation if current file size exceeds threshold.
- *
- * @return `true` if rotation occurred; `false` otherwise.
- */
-bool log_rotate_if_needed(void) {
-    /* Step 1: Check active state and byte threshold */
+bool log_rotate_if_needed(void)
+{
     if (!s_initialized || s_file == NULL) {
         return false;
     }
@@ -716,11 +585,9 @@ bool log_rotate_if_needed(void) {
         return false;
     }
 
-    /* Step 2: Close current active master log file */
     fclose(s_file);
     s_file = NULL;
 
-    /* Step 3: Shift older numbered archives upward (e.g. .24 -> .25) */
     char old_path[512];
     char new_path[512];
 
@@ -734,7 +601,6 @@ bool log_rotate_if_needed(void) {
         rename(old_path, new_path);
     }
 
-    /* Step 4: Promote active base file to .1 archive */
     char base_path[512];
     char first_rot[512];
     get_log_filepath(base_path, sizeof(base_path), s_config.log_dir, s_config.base_filename);
@@ -743,9 +609,9 @@ bool log_rotate_if_needed(void) {
     get_log_filepath(first_rot, sizeof(first_rot), s_config.log_dir, name_first);
     rename(base_path, first_rot);
 
-    /* Step 5: Reopen pristine active master log */
     s_file = fopen(base_path, "a");
     s_current_bytes = 0;
+    s_rotation_count++;
 
     if (s_file != NULL) {
         char iso_ts[32];
@@ -764,7 +630,8 @@ bool log_rotate_if_needed(void) {
     return true;
 }
 
-static void rotate_category_file(log_category_t cat) {
+static void rotate_category_file(log_category_t cat)
+{
     FILE *f = s_cat_files[cat];
     if (f == NULL || s_cat_bytes[cat] < s_config.max_file_size_bytes) {
         return;
@@ -805,27 +672,18 @@ static void rotate_category_file(log_category_t cat) {
     s_cat_bytes[cat] = 0;
 }
 
-/**
- * @brief Initializes the logging subsystem, creates directories, and opens active file.
- *
- * @param[in] config Pointer to logging configuration (NULL uses defaults).
- *
- * @return `true` on successful initialization; `false` on filesystem or config error.
- */
-bool log_init(const log_config_t *config) {
-    /* Step 1: Tear down any existing active logging session */
+bool log_init(const log_config_t *config)
+{
     if (s_initialized) {
         log_shutdown();
     }
 
-    /* Step 2: Resolve runtime configuration */
     if (config != NULL) {
         s_config = *config;
     } else {
         s_config = log_get_default_config();
     }
 
-    /* Step 3: Validate provenance policy */
     if (!s_config.loaded_from_data && !str_case_eq(s_config.profile_name, LOG_FALLBACK_PROFILE_NAME)) {
         if (s_tripwire_status == LOG_TRIPWIRE_CLEAR) {
             set_tripwire(
@@ -836,7 +694,6 @@ bool log_init(const log_config_t *config) {
         return false;
     }
 
-    /* Step 4: Validate directory and filename bounds */
     if (s_config.log_dir[0] == '\0' || s_config.base_filename[0] == '\0') {
         set_tripwire(
             LOG_TRIPWIRE_BOUNDS_VIOLATION,
@@ -853,7 +710,7 @@ bool log_init(const log_config_t *config) {
         return false;
     }
 
-    /* Step 4b: Resolve ephemeral destination between workspace root and build dir */
+    /* Ephemeral sandboxing resolution: route into build/logs if build/ exists */
     if (strcmp(s_config.log_dir, "logs") == 0) {
         struct stat st_build;
         if (stat("build", &st_build) == 0 && S_ISDIR(st_build.st_mode)) {
@@ -868,7 +725,6 @@ bool log_init(const log_config_t *config) {
         }
     }
 
-    /* Step 5: Ensure destination directory exists and open master log file */
     ensure_directory(s_config.log_dir);
 
     char full_path[512];
@@ -879,7 +735,6 @@ bool log_init(const log_config_t *config) {
         return false;
     }
 
-    /* Step 6: Stat initial file size */
     struct stat st;
     if (stat(full_path, &st) == 0) {
         s_current_bytes = (size_t)st.st_size;
@@ -892,7 +747,6 @@ bool log_init(const log_config_t *config) {
         s_cat_bytes[i] = 0;
     }
 
-    /* Step 7: Reset ring buffer and emit system initialization banner */
     s_ring_head = 0;
     s_ring_count = 0;
     s_initialized = true;
@@ -907,23 +761,19 @@ bool log_init(const log_config_t *config) {
         "================================================================================\n",
         iso_ts,
         s_config.profile_name[0] != '\0' ? s_config.profile_name : "custom",
-        s_config.loaded_from_data ? "DATA-DRIVEN (data/log)" : "HARDCODED (fallback)"
+        s_config.loaded_from_data ? "DATA-DRIVEN (system/diagnostics/telemetry)" : "HARDCODED (fallback)"
     );
     fflush(s_file);
 
     return true;
 }
 
-/**
- * @brief Flushes active file streams and shuts down logging subsystem.
- */
-void log_shutdown(void) {
-    /* Step 1: Precondition check on active state */
+void log_shutdown(void)
+{
     if (!s_initialized) {
         return;
     }
 
-    /* Step 2: Flush and close master log file */
     if (s_file != NULL) {
         char iso_ts[32];
         generate_iso_timestamp(iso_ts, sizeof(iso_ts));
@@ -940,7 +790,6 @@ void log_shutdown(void) {
         s_file = NULL;
     }
 
-    /* Step 3: Flush and close category-specific file handles */
     for (size_t i = 0; i < (size_t)LOG_CAT_COUNT; i++) {
         if (s_cat_files[i] != NULL) {
             fflush(s_cat_files[i]);
@@ -952,20 +801,64 @@ void log_shutdown(void) {
     s_initialized = false;
 }
 
-/**
- * @brief Emits a structured log entry into the ring buffer, file, and console.
- *
- * @param[in] severity Graded severity level.
- * @param[in] category Target functional category.
- * @param[in] entity   Entity/Character name (e.g. "Elijah", "Katrina", "System").
- * @param[in] grade    Normalized grade [-1.0f .. +1.0f] (e.g. moral sway or health).
- * @param[in] file     Source file name (__FILE__).
- * @param[in] line     Source line number (__LINE__).
- * @param[in] func     Source function name (__func__).
- * @param[in] fmt      Printf-style format string.
- *
- * @return Monotonic sequence ID assigned to the entry, or 0 on drop/failure.
- */
+bool log_is_active(void)
+{
+    return s_initialized;
+}
+
+uint64_t log_get_total_entries(void)
+{
+    return s_sequence_counter;
+}
+
+int log_grade_to_percent(float grade)
+{
+    if (grade > 1.0f) {
+        grade = 1.0f;
+    } else if (grade < -1.0f) {
+        grade = -1.0f;
+    }
+    float scaled = grade * 100.0f;
+    int rounded = (scaled >= 0.0f) ? (int)(scaled + 0.5f) : (int)(scaled - 0.5f);
+    return math_clamp_int(rounded, -100, 100);
+}
+
+float log_percent_to_grade(int percent)
+{
+    int clamped = math_clamp_int(percent, -100, 100);
+    return (float)clamped / 100.0f;
+}
+
+const char *log_severity_name(log_severity_t severity)
+{
+    if ((size_t)severity < (size_t)LOG_SEV_COUNT) {
+        return s_severity_labels[severity];
+    }
+    return "UNKNOWN ";
+}
+
+const char *log_category_name(log_category_t category)
+{
+    if ((size_t)category < (size_t)LOG_CAT_COUNT) {
+        return s_category_labels[category];
+    }
+    return "UNKNOWN  ";
+}
+
+const char *log_category_dir_name(log_category_t category)
+{
+    if ((size_t)category < (size_t)LOG_CAT_COUNT) {
+        return s_category_dir_names[category];
+    }
+    return "general";
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Formatted Entry Dispatch Cogs
+--------------------------------------------------------------------------------
+*/
+
 uint64_t log_write_entry(
     log_severity_t severity,
     log_category_t category,
@@ -977,16 +870,13 @@ uint64_t log_write_entry(
     const char *fmt,
     ...
 ) {
-    /* Step 1: Verify initialization and severity threshold */
     if (!s_initialized || severity > s_config.min_severity) {
         return 0;
     }
 
-    /* Step 2: Increment monotonic sequence counter */
     s_sequence_counter++;
     uint64_t seq = s_sequence_counter;
 
-    /* Step 3: Populate telemetry entry structure */
     log_entry_t entry;
     memset(&entry, 0, sizeof(entry));
     entry.sequence_id = seq;
@@ -1012,14 +902,14 @@ uint64_t log_write_entry(
     vsnprintf(entry.message, sizeof(entry.message), fmt, args);
     va_end(args);
 
-    /* Step 4: Insert into static circular in-memory ring buffer */
+    /* Insert into static circular in-memory ring buffer */
     s_ring_buffer[s_ring_head] = entry;
     s_ring_head = (s_ring_head + 1) % LOG_RING_BUFFER_CAPACITY;
     if (s_ring_count < LOG_RING_BUFFER_CAPACITY) {
         s_ring_count++;
     }
 
-    /* Step 5: Format human-readable, machine-greppable fixed-width string */
+    /* Format machine-greppable fixed-width string */
     char line_buffer[LOG_MAX_LINE_BUFFER];
     double rel_ms = (double)entry.monotonic_us / 1000.0;
 
@@ -1044,7 +934,7 @@ uint64_t log_write_entry(
         return seq;
     }
 
-    /* Step 6: Master unified file output */
+    /* Master unified file output */
     if (s_file != NULL) {
         fputs(line_buffer, s_file);
         s_current_bytes += (size_t)written;
@@ -1052,7 +942,7 @@ uint64_t log_write_entry(
         log_rotate_if_needed();
     }
 
-    /* Step 7: Category-specific file output */
+    /* Category-specific file output */
     if (s_initialized && s_config.save_by_category && (size_t)category < (size_t)LOG_CAT_COUNT) {
         if (s_cat_files[category] == NULL) {
             const char *dir_name = log_category_dir_name(category);
@@ -1080,7 +970,7 @@ uint64_t log_write_entry(
         }
     }
 
-    /* Step 8: Console output with optional ANSI colors */
+    /* Console output with optional ANSI colors */
     if (s_config.echo_to_console) {
         FILE *out = (severity <= LOG_SEV_ERROR) ? stderr : stdout;
         if (s_config.use_colors && (size_t)severity < (size_t)LOG_SEV_COUNT) {
@@ -1105,17 +995,14 @@ uint64_t log_write_entry(
     return seq;
 }
 
-/**
- * @brief Copies recent log entries from the in-memory circular ring buffer.
- *
- * Entries are copied in chronological order (oldest to newest).
- *
- * @param[out] dest        Output buffer array for log entries.
- * @param[in]  max_entries Maximum entries to copy.
- *
- * @return Number of entries actually copied.
- */
-size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries) {
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.4: Static Ring Buffer & Telemetry Inspection Cogs
+--------------------------------------------------------------------------------
+*/
+
+size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries)
+{
     if (dest == NULL || max_entries == 0 || s_ring_count == 0) {
         return 0;
     }
@@ -1130,17 +1017,8 @@ size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries) {
     return count;
 }
 
-/**
- * @brief Retrieves the top 10-25 most recent log entries in reverse chronological order.
- *
- * Newest entries are placed first, ideal for HUD and on-screen debug consoles.
- *
- * @param[out] dest        Output buffer array for top log entries.
- * @param[in]  max_entries Maximum entries to retrieve (typically 10 to 25).
- *
- * @return Number of entries retrieved.
- */
-size_t log_get_top_entries(log_entry_t *dest, size_t max_entries) {
+size_t log_get_top_entries(log_entry_t *dest, size_t max_entries)
+{
     if (dest == NULL || max_entries == 0) {
         return 0;
     }
@@ -1153,17 +1031,21 @@ size_t log_get_top_entries(log_entry_t *dest, size_t max_entries) {
     return count;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Forensic Telemetry Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+================================================================================
+*/
 
-/**
- * @brief Pre-flight diagnostic check for logging subsystem invariants.
- *
- * @return Diagnostic verification result.
- */
-diag_result_t log_preflight(void) {
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Machine Pre-Flight Tripwires & Audits
+--------------------------------------------------------------------------------
+*/
+
+diag_result_t log_preflight(void)
+{
     diag_result_t res;
     res.passed = true;
     res.severity = SEVERITY_PASS;
@@ -1171,7 +1053,7 @@ diag_result_t log_preflight(void) {
     res.check_name = "grade_mapping_and_buffers";
     res.details = "Grade mapping, labels, and static ring buffer verified.";
 
-    // Audit gradient grade mapping bounds
+    /* Check 1: Audit gradient grade mapping bounds */
     if (log_grade_to_percent(1.0f) != 100 ||
         log_grade_to_percent(-1.0f) != -100 ||
         log_grade_to_percent(0.0f) != 0 ||
@@ -1183,7 +1065,7 @@ diag_result_t log_preflight(void) {
         return res;
     }
 
-    // Audit string labels
+    /* Check 2: Audit string labels */
     if (strcmp(log_severity_name(LOG_SEV_FATAL), "FATAL   ") != 0 ||
         strcmp(log_category_name(LOG_CAT_CHARACTER), "CHARACTER") != 0) {
         res.passed = false;
@@ -1192,7 +1074,7 @@ diag_result_t log_preflight(void) {
         return res;
     }
 
-    // Audit category directory name
+    /* Check 3: Audit category directory name */
     if (strcmp(log_category_dir_name(LOG_CAT_CHARACTER), "character") != 0 ||
         strcmp(log_category_dir_name(LOG_CAT_EVENT), "event") != 0) {
         res.passed = false;
@@ -1201,7 +1083,7 @@ diag_result_t log_preflight(void) {
         return res;
     }
 
-    // Audit string-to-enum conversions
+    /* Check 4: Audit string-to-enum conversions */
     log_severity_t test_sev;
     if (!log_severity_from_string("TRACE", &test_sev) || test_sev != LOG_SEV_TRACE ||
         !log_severity_from_string("fatal", &test_sev) || test_sev != LOG_SEV_FATAL ||
@@ -1224,7 +1106,7 @@ diag_result_t log_preflight(void) {
         return res;
     }
 
-    // Audit data-driven default configuration resolution
+    /* Check 5: Audit data-driven default configuration resolution */
     log_config_t def_cfg = log_get_default_config();
     if (!def_cfg.loaded_from_data || def_cfg.profile_name[0] == '\0') {
         res.passed = false;
@@ -1233,16 +1115,19 @@ diag_result_t log_preflight(void) {
         return res;
     }
 
+    /* Check 6: Audit emergency fallback code page invariants */
+    if (!log_fallback_audit()) {
+        res.passed = false;
+        res.severity = SEVERITY_CRITICAL;
+        res.details = "Monolithic emergency fallback code page failed audit.";
+        return res;
+    }
+
     return res;
 }
 
-/**
- * @brief Diagnostic self-audit verifying formatting buffers, grade clamping, and rotation.
- *
- * @param[in] verbose Enable verbose trace output during audit.
- * @return Diagnostic verification result.
- */
-diag_result_t log_audit(bool verbose) {
+diag_result_t log_audit(bool verbose)
+{
     if (verbose) {
         printf("--- Running Core Utilities: Telemetry Subsystem Diagnostic Audit ---\n");
     }
@@ -1255,16 +1140,16 @@ diag_result_t log_audit(bool verbose) {
         log_init(&test_cfg);
     }
 
-    // Check 1: Preflight self-check
+    /* Check 1: Preflight self-check */
     diag_result_t pre = log_preflight();
     if (!pre.passed) {
-        if (verbose) printf("  [FAIL] log_preflight invariant check failed.\n");
+        if (verbose) printf("  [FAIL] log_preflight invariant check failed: %s\n", pre.details);
         if (!was_initialized) log_shutdown();
         return pre;
     }
     if (verbose) printf("  [PASS] Preflight grade and label invariants verified.\n");
 
-    // Check 2: Percent to grade conversion
+    /* Check 2: Percent to grade conversion */
     float g1 = log_percent_to_grade(100);
     float g2 = log_percent_to_grade(-100);
     float g3 = log_percent_to_grade(0);
@@ -1276,7 +1161,7 @@ diag_result_t log_audit(bool verbose) {
     }
     if (verbose) printf("  [PASS] Percent to grade precision verified.\n");
 
-    // Check 3: Monotonic counter test
+    /* Check 3: Monotonic counter test */
     uint64_t before = log_get_total_entries();
     LOG_INFO(LOG_CAT_DEBUG, "AuditTester", 0.0f, "Audit diagnostic message %d", 42);
     uint64_t after = log_get_total_entries();
@@ -1289,7 +1174,7 @@ diag_result_t log_audit(bool verbose) {
     if (verbose) printf("  [PASS] Sequence counter monotonicity verified (%lu -> %lu).\n",
                         (unsigned long)before, (unsigned long)after);
 
-    // Check 4: Ring buffer entry retrieval
+    /* Check 4: Ring buffer entry retrieval */
     log_entry_t entries[4];
     size_t fetched = log_get_recent_entries(entries, 4);
     if (fetched == 0 || entries[fetched - 1].sequence_id != after) {
@@ -1300,7 +1185,7 @@ diag_result_t log_audit(bool verbose) {
     }
     if (verbose) printf("  [PASS] Ring buffer retrieved %zu recent entries.\n", fetched);
 
-    // Check 5: Top 10-25 entries retrieval (newest first)
+    /* Check 5: Top 10-25 entries retrieval (newest first) */
     log_entry_t top_entries[25];
     size_t top_fetched = log_get_top_entries(top_entries, 25);
     if (top_fetched == 0 || top_entries[0].sequence_id != after) {
@@ -1312,7 +1197,7 @@ diag_result_t log_audit(bool verbose) {
     if (verbose) printf("  [PASS] Top entries retrieved %zu entries (newest ID#%08llu).\n",
                         top_fetched, (unsigned long long)top_entries[0].sequence_id);
 
-    // Check 6: Data-driven configuration loading verification
+    /* Check 6: Data-driven configuration loading verification */
     log_config_t manifest_cfg;
     if (!log_load_config_from_manifest(NULL, &manifest_cfg) || !manifest_cfg.loaded_from_data) {
         diag_result_t err = { false, SEVERITY_CRITICAL, "core.util.log", "data_manifest", "Data-driven manifest loading failed" };
@@ -1325,7 +1210,7 @@ diag_result_t log_audit(bool verbose) {
                manifest_cfg.profile_name, manifest_cfg.base_filename, manifest_cfg.max_file_size_bytes);
     }
 
-    // Check 7: Specific named profile loading verification
+    /* Check 7: Specific named profile loading verification */
     log_config_t quiet_cfg;
     if (log_load_config_profile("quiet", &quiet_cfg)) {
         if (quiet_cfg.min_severity != LOG_SEV_WARNING || quiet_cfg.echo_to_console != false) {
@@ -1339,7 +1224,7 @@ diag_result_t log_audit(bool verbose) {
         }
     }
 
-    // Check 8: Monolithic emergency fallback audit
+    /* Check 8: Monolithic emergency fallback audit */
     if (!log_fallback_audit()) {
         diag_result_t err = { false, SEVERITY_CRITICAL, "core.util.log", "fallback_monolith", "Emergency fallback code page failed audit" };
         if (verbose) printf("  [FAIL] Monolithic fallback code page failed audit.\n");
@@ -1358,18 +1243,36 @@ diag_result_t log_audit(bool verbose) {
     return ok;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Forensic Telemetry Engine
-// Subsystem: util/log
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+================================================================================
+*/
 
-/**
- * Module verification anchor:
- *   - Verified by tests/unit/test_log.c (12/12 unit test suites).
- *   - Audited at boot via Central Manifest pre-flight loose-bolts verification.
- *   - Conforms strictly to OmniCode 5-Block Ontological Architecture.
- */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures & Object Constructors
+--------------------------------------------------------------------------------
+*/
 
-// End of util/log/log.c
-
+bool log_execute_inspect(log_stats_t *out_stats)
+{
+    if (out_stats == NULL) {
+        return false;
+    }
+    memset(out_stats, 0, sizeof(*out_stats));
+    out_stats->total_entries = s_sequence_counter;
+    out_stats->ring_buffer_count = s_ring_count;
+    out_stats->rotation_count = s_rotation_count;
+    out_stats->active_file_bytes = s_current_bytes;
+    out_stats->min_severity = s_config.min_severity;
+    out_stats->is_active = s_initialized;
+    out_stats->loaded_from_data = s_config.loaded_from_data;
+    str_safe_copy(
+        out_stats->active_profile,
+        log_get_active_profile_name(),
+        sizeof(out_stats->active_profile)
+    );
+    return true;
+}
