@@ -75,6 +75,7 @@ Tier 3: Internal Engine Foundation Headers
 #include "io/path_finder.h"
 #include "io/fs_utils.h"
 #include "log/log.h"
+#include "debug/debug.h"
 #include "core/string_utils.h"
 #include "core/manifest.h"
 
@@ -184,6 +185,7 @@ static bool assign_resolved_path(char *out_path, size_t out_size, const char *sr
     }
     size_t len = strlen(src);
     if (len >= out_size) {
+        debug_trap_tripwire("path_finder", "Resolved path length exceeds caller buffer capacity", __FILE__, __LINE__);
         out_path[0] = '\0';
         return false;
     }
@@ -272,6 +274,7 @@ bool path_finder_set_data_root(const char *root_path)
     }
 
     if (strlen(root_path) >= PATH_FINDER_MAX_ROOT) {
+        debug_trap_tripwire("path_finder", "Configured data root exceeds maximum path buffer", __FILE__, __LINE__);
         return false;
     }
 
