@@ -85,7 +85,7 @@ const module_metadata_t item_loader_manifest = {
 
 /**
  * Extracts n-th JSON object slice { ... } from array [ { ... }, { ... } ]
- * into a caller-supplied null-terminated buffer.
+ * into a caller-supplied null-terminated buffer using Layer 0 json_array_get_object.
  */
 static bool slice_array_object(const char *arr_start,
                                size_t arr_len,
@@ -93,53 +93,7 @@ static bool slice_array_object(const char *arr_start,
                                char *out_obj,
                                size_t out_size)
 {
-    if (!arr_start || arr_len < 2 || *arr_start != '[' || !out_obj ||
-        out_size == 0) {
-        if (out_obj && out_size > 0) {
-            out_obj[0] = '\0';
-        }
-        return false;
-    }
-
-    const char *end = arr_start + arr_len;
-    const char *p = arr_start + 1;
-    size_t cur_idx = 0;
-    int depth = 0;
-    bool in_str = false;
-    const char *obj_start = NULL;
-
-    while (p < end - 1) {
-        char c = *p;
-        if (c == '"' && *(p - 1) != '\\') {
-            in_str = !in_str;
-        } else if (!in_str) {
-            if (c == '{') {
-                if (depth == 0) {
-                    obj_start = p;
-                }
-                depth++;
-            } else if (c == '}') {
-                depth--;
-                if (depth == 0 && obj_start != NULL) {
-                    if (cur_idx == target_idx) {
-                        size_t len = (size_t)(p - obj_start + 1);
-                        if (len >= out_size) {
-                            len = out_size - 1;
-                        }
-                        memcpy(out_obj, obj_start, len);
-                        out_obj[len] = '\0';
-                        return true;
-                    }
-                    cur_idx++;
-                    obj_start = NULL;
-                }
-            }
-        }
-        p++;
-    }
-
-    out_obj[0] = '\0';
-    return false;
+    return json_array_get_object(arr_start, arr_len, target_idx, out_obj, out_size);
 }
 
 static bool parse_relic_entry(const char *json_obj, item_def_t *item)

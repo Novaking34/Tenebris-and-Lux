@@ -757,6 +757,71 @@ bool json_array_get_string(const char *arr_start, size_t arr_len,
     return false;
 }
 
+/**
+ * @brief Extracts i-th object slice { ... } from JSON array into caller buffer.
+ *
+ * @param[in]  arr_start Pointer to opening '[' of array.
+ * @param[in]  arr_len   Length of array in bytes.
+ * @param[in]  index     0-based element index.
+ * @param[out] out_obj   Destination buffer for extracted object string.
+ * @param[in]  out_size  Capacity of destination buffer in bytes.
+ * @return true if object exists and was extracted within buffer bounds; false otherwise.
+ */
+bool json_array_get_object(const char *arr_start, size_t arr_len,
+                           size_t index, char *out_obj, size_t out_size)
+{
+    /* Step 1: Precondition check */
+    if (arr_start == NULL || arr_len < 2 || *arr_start != '[' ||
+        out_obj == NULL || out_size == 0) {
+        if (out_obj && out_size > 0) {
+            out_obj[0] = '\0';
+        }
+        return false;
+    }
+
+    /* Step 2: Traverse array tracking string literals and nested brace depth */
+    const char *end = arr_start + arr_len;
+    const char *p = arr_start + 1;
+    size_t cur_idx = 0;
+    int depth = 0;
+    bool in_str = false;
+    const char *obj_start = NULL;
+
+    while (p < end - 1) {
+        char c = *p;
+        if (c == '"' && (p == arr_start || *(p - 1) != '\\')) {
+            in_str = !in_str;
+        } else if (!in_str) {
+            if (c == '{') {
+                if (depth == 0) {
+                    obj_start = p;
+                }
+                depth++;
+            } else if (c == '}') {
+                depth--;
+                if (depth == 0 && obj_start != NULL) {
+                    if (cur_idx == index) {
+                        size_t len = (size_t)(p - obj_start + 1);
+                        if (len >= out_size) {
+                            out_obj[0] = '\0';
+                            return false; /* Buffer overflow protection */
+                        }
+                        memcpy(out_obj, obj_start, len);
+                        out_obj[len] = '\0';
+                        return true;
+                    }
+                    cur_idx++;
+                    obj_start = NULL;
+                }
+            }
+        }
+        p++;
+    }
+
+    out_obj[0] = '\0';
+    return false;
+}
+
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
 // Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
@@ -928,6 +993,23 @@ diag_result_t json_utils_preflight(void)
         res.passed = false;
         res.severity = SEVERITY_FATAL;
         res.details = "json_array_get_string returned true for out-of-bounds index.";
+        return res;
+    }
+
+    // Check 4b: Array Object Slicing
+    const char *obj_arr_test = "[{\"id\": 10, \"code\": \"RELIC_A\"}, {\"id\": 20, \"code\": \"RELIC_B\"}]";
+    char obj_slice[128];
+    if (!json_array_get_object(obj_arr_test, strlen(obj_arr_test), 1, obj_slice, sizeof(obj_slice))) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "json_array_get_object failed to slice object at index 1.";
+        return res;
+    }
+    int slice_id = 0;
+    if (!json_get_int(obj_slice, "id", &slice_id) || slice_id != 20) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "json_array_get_object extracted corrupt object data.";
         return res;
     }
 

@@ -231,6 +231,21 @@ bool fs_is_regular_file(const char *path);
 bool fs_ensure_directory(const char *dir_path);
 
 /**
+ * @brief Sets the active mounted data root for all filesystem resolutions.
+ *
+ * @param[in] root_path Null-terminated path to the mounted data directory.
+ * @return true if accepted; false otherwise.
+ */
+bool fs_set_data_root(const char *root_path);
+
+/**
+ * @brief Gets the active mounted data root directory path.
+ *
+ * @return Null-terminated string representing the mounted data root.
+ */
+const char *fs_get_data_root(void);
+
+/**
  * @brief Dynamically resolves a dataset or configuration file path.
  *
  * Traverses candidate prefix trees across workspace root, build directory,
