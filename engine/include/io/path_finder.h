@@ -1,70 +1,99 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          path_finder.h
-// @id            core.io.path_finder
-// @layer         Layer 0: Core Utilities
-// @subsystem     Data & Filesystem Subsystem (util/io)
-// @version       0.1.0
-// @interface_rev Rev 2
-// @date          2026-11-05
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-// @system        Dynamic Pathfinding & Virtual Data Mount Engine
-// @role          Resolves dataset, asset, and manifest filepaths across
-//                configurable data roots, operational domains, and fallbacks.
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Zero-heap Virtual Filesystem (VFS) path resolution engine.
-//   Decouples the generic C11 engine from fixed physical directory hierarchies,
-//   enabling dynamic data mounting (--data-root=<path>, TL_DATA_ROOT),
-//   5-domain hierarchical routing (system, world, entities, mechanics,
-//   presentation), and safe fallback probing.
-//   Guarantees deterministic path resolution into caller stack buffers.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module in Layer 0).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap allocations).
-//   - Concurrency / Safety:  REENTRANT_PURE on query; main thread for mount.
-//   - Latency Budget:        < 50 microseconds per path resolution query.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Zero heap allocations: All operations utilize caller-supplied buffers.
-//   2. Output safety: All resolved path buffers are unconditionally null-terminated.
-//   3. Bounded capacity: Respects PATH_FINDER_MAX_PATH (512 bytes) ceiling.
-//   4. Fallback resilience: Probes mounted data root, current dir, and parent dirs.
-//   5. Universal 5-Block Lifecycle Protocol enforced across header and source.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          path_finder.h
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-06
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Dynamic Pathfinding & Virtual Data Mount Engine
+@role          Resolves dataset, asset, and manifest filepaths across
+               configurable data roots, operational domains, and fallbacks.
+@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Guaranteed null-termination on all output path buffers.
+               4. Bounded capacity: strictly respects PATH_FINDER_MAX_PATH (512 bytes).
+               5. Fault resilience: safely handles non-existent paths, NULL pointers, 0 bytes.
+               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
+
+PURPOSE & ARCHITECTURAL ROLE:
+  Zero-heap Virtual Filesystem (VFS) path resolution engine.
+  Decouples the generic C11 engine from fixed physical directory hierarchies,
+  enabling dynamic data mounting (--data-root=<path>, TL_DATA_ROOT),
+  5-domain hierarchical routing (system, world, entities, mechanics,
+  presentation), and safe fallback probing.
+  Guarantees deterministic path resolution into caller stack buffers.
+
+  ### For Game Designers & Non-Programmers:
+  When configuring a game, you should not need to hardcode absolute computer
+  paths like "C:/Games/Tenebris/data". The path finder acts like a GPS navigator:
+  you tell it you want "runtime/math/default.json", and it figures out whether
+  the data is stored locally, in an installed game folder, or inside a custom
+  mod package without crashing if a file is relocated.
+
+  ### For Systems Programmers & Engine Architects:
+  This module implements a zero-allocation virtual filesystem (VFS) router:
+  - Multi-tier probing: direct CWD -> active mounted data root -> domain prefixes -> fallback roots.
+  - Prefix normalization: automatically strips redundant parent/data prefixes.
+  - Tagged structural representations ensuring DWARF/GDB inspection cleanliness.
+  - Clean separation from physical POSIX filesystem primitives (fs_utils).
+================================================================================
+*/
 
 #ifndef TENEBRIS_LUX_IO_PATH_FINDER_H
 #define TENEBRIS_LUX_IO_PATH_FINDER_H
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / TYPES & ONTOLOGY
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
 
-#include "core/manifest.h"
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdbool.h>
 #include <stddef.h>
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 2.1: PRE-CONDITIONS & PATH LIMITS ]
-// -----------------------------------------------------------------------------
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "core/manifest.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Pre-Conditions & Path Limits
+--------------------------------------------------------------------------------
+*/
 
 #define PATH_FINDER_MAX_PATH    512
 #define PATH_FINDER_MAX_ROOT    256
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 2.2: STRUCTURAL ENTITY & OBJECT DEFINITIONS ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Structural Entity & Object Definitions
+--------------------------------------------------------------------------------
+*/
 
 /**
+ * @struct path_resolved_info
  * @brief Detailed path resolution report object constructed by path_finder_execute_resolve.
  */
-typedef struct {
+typedef struct path_resolved_info {
     char domain[32];                          /**< Operational domain or empty string. */
     char rel_path[PATH_FINDER_MAX_PATH];      /**< Requested relative path. */
     char resolved_path[PATH_FINDER_MAX_PATH]; /**< Resolved accessible disk path. */
@@ -77,15 +106,19 @@ typedef struct {
  */
 extern const module_metadata_t path_finder_manifest;
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: VIRTUAL DATA ROOT MOUNTING COGS ]
-// Mission: Configure, query, and reset the active mounted game data root.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Virtual Data Root Mounting Cogs
+Mission: Configure, query, and reset the active mounted game data root.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Sets the active data root directory for dynamic game mounting.
@@ -106,10 +139,12 @@ bool path_finder_set_data_root(const char *root_path);
  */
 const char *path_finder_get_data_root(void);
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: DYNAMIC PATH RESOLUTION COGS ]
-// Mission: Resolve domain relative paths to accessible regular files on disk.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Dynamic Path Resolution Cogs
+Mission: Resolve domain relative paths to accessible regular files on disk.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Dynamically resolves a dataset or configuration file path.
@@ -118,7 +153,8 @@ const char *path_finder_get_data_root(void);
  *   1. Direct existence of rel_path.
  *   2. <mounted_data_root>/<domain>/<rel_path> (if domain is non-NULL).
  *   3. <mounted_data_root>/<rel_path>.
- *   4. Workspace fallback candidate prefixes (game/data, ../game/data, data).
+ *   4. Domain search paths across the 5 canonical domains.
+ *   5. Workspace fallback candidate prefixes (game/data, ../game/data, data).
  *
  * @param[in]  domain    Optional domain prefix ("system", "world", "entities",
  *                       "mechanics", "presentation") or NULL.
@@ -161,15 +197,19 @@ bool path_finder_resolve_asset(const char *asset_category,
                                char *out_path,
                                size_t out_size);
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Verify pathfinding invariants, NULL resilience, and mount lifecycle.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Machine Self-Audit & Pre-Flight Tripwires
+Mission: Verify pathfinding invariants, NULL resilience, and mount lifecycle.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Executes machine pre-flight diagnostic checks on path finder invariants.
@@ -185,14 +225,18 @@ diag_result_t path_finder_preflight(void);
  */
 bool path_finder_audit(void);
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures & Object Constructors
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Executes dynamic path resolution and constructs a structured report object.
@@ -207,9 +251,11 @@ bool path_finder_execute_resolve(const char *domain,
                                  const char *rel_path,
                                  path_resolved_info_t *out_info);
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Initializes the VFS pathfinding subsystem.

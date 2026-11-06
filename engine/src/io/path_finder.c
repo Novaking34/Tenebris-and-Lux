@@ -1,64 +1,95 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          path_finder.c
-// @id            core.io.path_finder
-// @layer         Layer 0: Core Utilities
-// @subsystem     Data & Filesystem Subsystem (util/io)
-// @version       0.1.0
-// @interface_rev Rev 2
-// @date          2026-11-05
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-// @system        Dynamic Pathfinding & Virtual Data Mount Engine
-// @role          Resolves dataset, asset, and manifest filepaths across
-//                configurable data roots, operational domains, and fallbacks.
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Zero-heap Virtual Filesystem (VFS) path resolution engine.
-//   Decouples the generic C11 engine from fixed physical directory hierarchies,
-//   enabling dynamic data mounting (--data-root=<path>, TL_DATA_ROOT),
-//   5-domain hierarchical routing (system, world, entities, mechanics,
-//   presentation), and safe fallback probing.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies:
-//       io/path_finder.h
-//       io/fs_utils.h
-//       core/string_utils.h
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap allocations).
-//   - Concurrency / Safety:  REENTRANT_PURE on query; main thread for mount.
-//   - Latency Budget:        < 50 microseconds per path resolution query.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Zero heap allocations: All operations utilize caller-supplied buffers.
-//   2. Output safety: All resolved path buffers are unconditionally null-terminated.
-//   3. Bounded capacity: Respects PATH_FINDER_MAX_PATH (512 bytes) ceiling.
-//   4. Fallback resilience: Probes mounted data root, current dir, and parent dirs.
-//   5. Universal 5-Block Lifecycle Protocol enforced across header and source.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          path_finder.c
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-06
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Dynamic Pathfinding & Virtual Data Mount Engine
+@role          Resolves dataset, asset, and manifest filepaths across
+               configurable data roots, operational domains, and fallbacks.
+@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Guaranteed null-termination on all output path buffers.
+               4. Bounded capacity: strictly respects PATH_FINDER_MAX_PATH (512 bytes).
+               5. Fault resilience: safely handles non-existent paths, NULL pointers, 0 bytes.
+               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Zero-heap Virtual Filesystem (VFS) path resolution engine implementation.
+  Decouples the generic C11 engine from fixed physical directory hierarchies,
+  enabling dynamic data mounting (--data-root=<path>, TL_DATA_ROOT),
+  5-domain hierarchical routing (system, world, entities, mechanics,
+  presentation), and safe fallback probing.
 
+  ### For Game Designers & Non-Programmers:
+  When configuring a game, you should not need to hardcode absolute computer
+  paths like "C:/Games/Tenebris/data". The path finder acts like a GPS navigator:
+  you tell it you want "runtime/math/default.json", and it figures out whether
+  the data is stored locally, in an installed game folder, or inside a custom
+  mod package without crashing if a file is relocated.
+
+  ### For Systems Programmers & Engine Architects:
+  This module implements a zero-allocation virtual filesystem (VFS) router:
+  - Multi-tier probing: direct CWD -> active mounted data root -> domain prefixes -> fallback roots.
+  - Prefix normalization: automatically strips redundant parent/data prefixes.
+  - Tagged structural representations ensuring DWARF/GDB inspection cleanliness.
+  - Clean separation from physical POSIX filesystem primitives (fs_utils).
+================================================================================
+*/
+
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "io/path_finder.h"
 #include "io/fs_utils.h"
 #include "core/string_utils.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "core/manifest.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Static Axiomatic Invariants & Module Manifest
+--------------------------------------------------------------------------------
+*/
 
 static char s_data_root[PATH_FINDER_MAX_ROOT] = "game/data";
 static bool s_data_root_initialized = false;
 
-static const char *const s_path_finder_invariants[] = {
+static const char *const s_path_finder_invariants[4] = {
     "Zero dynamic heap allocations during path resolution",
     "Unconditional null-termination on all resolved paths",
-    "Resilient multi-tier candidate prefix search",
+    "Resilient multi-tier candidate prefix search across 5 domains",
     "Universal 5-Block Lifecycle Protocol enforced across header and source"
 };
 
@@ -67,8 +98,8 @@ const module_metadata_t path_finder_manifest = {
     "path_finder.h",
     LAYER_0_CORE_UTIL,
     { 0, 1, 0 },
-    2,
-    "2026-11-05",
+    3,
+    "2026-11-06",
     "Zero-heap dynamic VFS pathfinder and data mount engine",
     2,
     { "core.util.fs", "core.util.string", NULL, NULL },
@@ -85,18 +116,88 @@ const module_metadata_t path_finder_manifest = {
     path_finder_preflight
 };
 
-static const char *s_fallback_candidate_roots[] = {
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: VFS Domain Search Paths & Fallback Candidate Roots
+--------------------------------------------------------------------------------
+*/
+
+static const char *const s_fallback_candidate_roots[] = {
     "game/data",
     "../game/data",
     "data",
     "../data"
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+static const char *const s_domain_search_paths[] = {
+    "",
+    "system/",
+    "system/runtime/",
+    "system/runtime/math/",
+    "system/runtime/string/",
+    "system/runtime/time/",
+    "system/diagnostics/",
+    "system/diagnostics/telemetry/",
+    "system/diagnostics/debugger/",
+    "system/diagnostics/taxonomy/",
+    "system/diagnostics/formats/",
+    "mechanics/",
+    "mechanics/items/",
+    "mechanics/combat/",
+    "mechanics/tactics/",
+    "mechanics/campaign/",
+    "mechanics/campaign/dispatch/",
+    "world/",
+    "world/geography/",
+    "world/battlefields/",
+    "world/terrains/",
+    "entities/",
+    "entities/classes/",
+    "entities/roster/",
+    "presentation/",
+    "presentation/audio/",
+    "presentation/ui/",
+    "presentation/ui/fonts/",
+    "presentation/visuals/",
+    "presentation/visuals/palettes/"
+};
 
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
+
+/**
+ * @brief Strips redundant path prefixes (e.g. "../game/data/", "game/data/", "data/").
+ *
+ * @param[in] path Raw path string.
+ * @return Pointer within path string advancing past redundant prefixes.
+ */
+static const char *strip_redundant_prefixes(const char *path)
+{
+    if (path == NULL) {
+        return "";
+    }
+    const char *p = path;
+    if (strncmp(p, "../game/data/", 13) == 0) {
+        p += 13;
+    } else if (strncmp(p, "game/data/", 10) == 0) {
+        p += 10;
+    } else if (strncmp(p, "../data/", 8) == 0) {
+        p += 8;
+    } else if (strncmp(p, "data/", 5) == 0) {
+        p += 5;
+    } else if (strncmp(p, "../", 3) == 0) {
+        p += 3;
+    }
+    return p;
+}
+
+/**
+ * @brief Ensures data root is initialized from environment or candidate auto-discovery.
+ */
 static void ensure_data_root_initialized(void)
 {
     if (s_data_root_initialized) {
@@ -111,11 +212,15 @@ static void ensure_data_root_initialized(void)
     }
 
     /* Auto-discover candidate directories */
-    for (size_t i = 0; i < sizeof(s_fallback_candidate_roots)/sizeof(s_fallback_candidate_roots[0]); ++i) {
+    size_t cand_count = sizeof(s_fallback_candidate_roots) /
+                        sizeof(s_fallback_candidate_roots[0]);
+    for (size_t i = 0; i < cand_count; ++i) {
         char test_path[PATH_FINDER_MAX_PATH];
-        snprintf(test_path, sizeof(test_path), "%s/manifest.json", s_fallback_candidate_roots[i]);
+        snprintf(test_path, sizeof(test_path), "%s/manifest.json",
+                 s_fallback_candidate_roots[i]);
         if (fs_file_exists(test_path)) {
-            str_safe_copy(s_data_root, s_fallback_candidate_roots[i], sizeof(s_data_root));
+            str_safe_copy(s_data_root, s_fallback_candidate_roots[i],
+                          sizeof(s_data_root));
             s_data_root_initialized = true;
             return;
         }
@@ -124,6 +229,18 @@ static void ensure_data_root_initialized(void)
     s_data_root_initialized = true;
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Virtual Data Root Mounting Cogs
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Sets the active data root directory for dynamic game mounting.
+ *
+ * @param[in] root_path Null-terminated path to the data root.
+ * @return true if accepted; false otherwise.
+ */
 bool path_finder_set_data_root(const char *root_path)
 {
     if (root_path == NULL || root_path[0] == '\0') {
@@ -141,12 +258,33 @@ bool path_finder_set_data_root(const char *root_path)
     return true;
 }
 
+/**
+ * @brief Retrieves the currently mounted data root path.
+ *
+ * @return Null-terminated string representing active data root.
+ */
 const char *path_finder_get_data_root(void)
 {
     ensure_data_root_initialized();
     return s_data_root;
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Dynamic Path Resolution Cogs
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Dynamically resolves a dataset or configuration file path across domains.
+ *
+ * @param[in]  domain    Optional domain prefix or NULL.
+ * @param[in]  rel_path  Relative path within data tree.
+ * @param[out] out_path  Destination buffer for resolved accessible path.
+ * @param[in]  out_size  Capacity of destination buffer.
+ *
+ * @return true if resolved to regular file; false otherwise.
+ */
 bool path_finder_resolve(const char *domain,
                          const char *rel_path,
                          char *out_path,
@@ -167,47 +305,133 @@ bool path_finder_resolve(const char *domain,
         return true;
     }
 
-    /* Candidate 2: <s_data_root>/<domain>/<rel_path> */
+    const char *clean_path = strip_redundant_prefixes(rel_path);
+    if (clean_path[0] == '\0') {
+        out_path[0] = '\0';
+        return false;
+    }
+
+    /* Candidate 2: Direct file check on clean_path */
+    if (fs_is_regular_file(clean_path)) {
+        str_safe_copy(out_path, clean_path, out_size);
+        return true;
+    }
+
+    size_t root_count = sizeof(s_fallback_candidate_roots) /
+                        sizeof(s_fallback_candidate_roots[0]);
+    size_t search_count = sizeof(s_domain_search_paths) /
+                          sizeof(s_domain_search_paths[0]);
+
+    /* Candidate 3: When explicit domain is specified */
     if (domain && domain[0] != '\0') {
         char probe[PATH_FINDER_MAX_PATH];
-        snprintf(probe, sizeof(probe), "%s/%s/%s", s_data_root, domain, rel_path);
+        snprintf(probe, sizeof(probe), "%s/%s/%s", s_data_root, domain, clean_path);
         if (fs_is_regular_file(probe)) {
             str_safe_copy(out_path, probe, out_size);
             return true;
         }
-    }
 
-    /* Candidate 3: <s_data_root>/<rel_path> */
-    {
+        snprintf(probe, sizeof(probe), "%s/%s", s_data_root, clean_path);
+        if (fs_is_regular_file(probe)) {
+            str_safe_copy(out_path, probe, out_size);
+            return true;
+        }
+
+        for (size_t r = 0; r < root_count; ++r) {
+            const char *cand = s_fallback_candidate_roots[r];
+            if (strcmp(cand, s_data_root) == 0) {
+                continue;
+            }
+            snprintf(probe, sizeof(probe), "%s/%s/%s", cand, domain, clean_path);
+            if (fs_is_regular_file(probe)) {
+                str_safe_copy(out_path, probe, out_size);
+                return true;
+            }
+            snprintf(probe, sizeof(probe), "%s/%s", cand, clean_path);
+            if (fs_is_regular_file(probe)) {
+                str_safe_copy(out_path, probe, out_size);
+                return true;
+            }
+        }
+    } else {
+        /* Candidate 4: Unspecified domain - probe active root across all domains */
         char probe[PATH_FINDER_MAX_PATH];
-        snprintf(probe, sizeof(probe), "%s/%s", s_data_root, rel_path);
+
+        /* 4.1 Direct within active data root */
+        snprintf(probe, sizeof(probe), "%s/%s", s_data_root, clean_path);
         if (fs_is_regular_file(probe)) {
             str_safe_copy(out_path, probe, out_size);
             return true;
         }
-    }
 
-    /* Candidate 4: Multi-tier fallback candidate prefixes */
-    for (size_t i = 0; i < sizeof(s_fallback_candidate_roots)/sizeof(s_fallback_candidate_roots[0]); ++i) {
-        const char *cand = s_fallback_candidate_roots[i];
-        if (strcmp(cand, s_data_root) == 0) {
-            continue; /* Already checked */
-        }
-
-        if (domain && domain[0] != '\0') {
-            char probe[PATH_FINDER_MAX_PATH];
-            snprintf(probe, sizeof(probe), "%s/%s/%s", cand, domain, rel_path);
+        /* 4.2 Search across canonical domain search paths */
+        for (size_t s = 0; s < search_count; ++s) {
+            snprintf(probe, sizeof(probe), "%s/%s%s", s_data_root,
+                     s_domain_search_paths[s], clean_path);
             if (fs_is_regular_file(probe)) {
                 str_safe_copy(out_path, probe, out_size);
                 return true;
             }
         }
 
-        char probe[PATH_FINDER_MAX_PATH];
-        snprintf(probe, sizeof(probe), "%s/%s", cand, rel_path);
-        if (fs_is_regular_file(probe)) {
-            str_safe_copy(out_path, probe, out_size);
-            return true;
+        /* 4.3 Diagnostics sub-domain aliases (telemetry/debugger) */
+        if (strncmp(clean_path, "log/", 4) == 0) {
+            snprintf(probe, sizeof(probe), "%s/system/diagnostics/telemetry/%s",
+                     s_data_root, clean_path + 4);
+            if (fs_is_regular_file(probe)) {
+                str_safe_copy(out_path, probe, out_size);
+                return true;
+            }
+        } else if (strncmp(clean_path, "debug/", 6) == 0) {
+            snprintf(probe, sizeof(probe), "%s/system/diagnostics/debugger/%s",
+                     s_data_root, clean_path + 6);
+            if (fs_is_regular_file(probe)) {
+                str_safe_copy(out_path, probe, out_size);
+                return true;
+            }
+        } else if (strcmp(clean_path, "tactical/terrains.json") == 0) {
+            snprintf(probe, sizeof(probe), "%s/world/terrains/default.json",
+                     s_data_root);
+            if (fs_is_regular_file(probe)) {
+                str_safe_copy(out_path, probe, out_size);
+                return true;
+            }
+        }
+
+        /* 4.4 Search fallback roots */
+        for (size_t r = 0; r < root_count; ++r) {
+            const char *cand = s_fallback_candidate_roots[r];
+            if (strcmp(cand, s_data_root) == 0) {
+                continue;
+            }
+            snprintf(probe, sizeof(probe), "%s/%s", cand, clean_path);
+            if (fs_is_regular_file(probe)) {
+                str_safe_copy(out_path, probe, out_size);
+                return true;
+            }
+            for (size_t s = 0; s < search_count; ++s) {
+                snprintf(probe, sizeof(probe), "%s/%s%s", cand,
+                         s_domain_search_paths[s], clean_path);
+                if (fs_is_regular_file(probe)) {
+                    str_safe_copy(out_path, probe, out_size);
+                    return true;
+                }
+            }
+            if (strncmp(clean_path, "log/", 4) == 0) {
+                snprintf(probe, sizeof(probe), "%s/system/diagnostics/telemetry/%s",
+                         cand, clean_path + 4);
+                if (fs_is_regular_file(probe)) {
+                    str_safe_copy(out_path, probe, out_size);
+                    return true;
+                }
+            } else if (strncmp(clean_path, "debug/", 6) == 0) {
+                snprintf(probe, sizeof(probe), "%s/system/diagnostics/debugger/%s",
+                         cand, clean_path + 6);
+                if (fs_is_regular_file(probe)) {
+                    str_safe_copy(out_path, probe, out_size);
+                    return true;
+                }
+            }
         }
     }
 
@@ -215,6 +439,15 @@ bool path_finder_resolve(const char *domain,
     return false;
 }
 
+/**
+ * @brief Resolves a subsystem manifest path.
+ *
+ * @param[in]  subsystem_path Subsystem directory or manifest path.
+ * @param[out] out_path       Destination buffer for resolved path.
+ * @param[in]  out_size       Capacity of destination buffer.
+ *
+ * @return true if manifest exists; false otherwise.
+ */
 bool path_finder_find_manifest(const char *subsystem_path,
                                char *out_path,
                                size_t out_size)
@@ -247,6 +480,16 @@ bool path_finder_find_manifest(const char *subsystem_path,
     return path_finder_resolve(NULL, subsystem_path, out_path, out_size);
 }
 
+/**
+ * @brief Resolves visual, font, or audio asset paths.
+ *
+ * @param[in]  asset_category Sub-category ("fonts", "visuals", "audio", "palettes").
+ * @param[in]  asset_name     Filename.
+ * @param[out] out_path       Destination buffer for resolved path.
+ * @param[in]  out_size       Capacity of destination buffer.
+ *
+ * @return true if asset file is accessible; false otherwise.
+ */
 bool path_finder_resolve_asset(const char *asset_category,
                                const char *asset_name,
                                char *out_path,
@@ -287,15 +530,19 @@ bool path_finder_resolve_asset(const char *asset_category,
     return false;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Verify pathfinding invariants, NULL resilience, and mount lifecycle.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Machine Self-Audit & Pre-Flight Tripwires
+Mission: Verify pathfinding invariants, NULL resilience, and mount lifecycle.
+--------------------------------------------------------------------------------
+*/
 
 diag_result_t path_finder_preflight(void)
 {
@@ -379,14 +626,18 @@ bool path_finder_audit(void)
     return res.passed && res.severity != SEVERITY_FATAL;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures & Object Constructors
+--------------------------------------------------------------------------------
+*/
 
 bool path_finder_execute_resolve(const char *domain,
                                  const char *rel_path,
@@ -408,7 +659,8 @@ bool path_finder_execute_resolve(const char *domain,
         return false;
     }
 
-    bool ok = path_finder_resolve(domain, rel_path, out_info->resolved_path, sizeof(out_info->resolved_path));
+    bool ok = path_finder_resolve(domain, rel_path, out_info->resolved_path,
+                                  sizeof(out_info->resolved_path));
     if (ok) {
         out_info->exists = fs_file_exists(out_info->resolved_path);
         out_info->is_regular = fs_is_regular_file(out_info->resolved_path);
@@ -417,9 +669,11 @@ bool path_finder_execute_resolve(const char *domain,
     return ok;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+*/
 
 void path_finder_init(void)
 {
@@ -431,6 +685,8 @@ void path_finder_shutdown(void)
     /* Teardown VFS pathfinder state */
 }
 
-// =============================================================================
-// End of path_finder.c
-// =============================================================================
+/*
+================================================================================
+End of path_finder.c
+================================================================================
+*/
