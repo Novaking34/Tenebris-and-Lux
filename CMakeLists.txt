@@ -344,6 +344,14 @@ if(BUILD_TESTING)
     target_include_directories(test_log_functional PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_log_functional PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Debugger Subsystem Functional Assertion & Diagnostic Trace Harness
+    add_executable(test_debug_functional
+        tests/functional/test_debug_functional.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_debug_functional PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_debug_functional PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.2: LAYER 0 & LAYER 1 SUBSYSTEM UNIT HARNESSES ]
     # Mission: Verify isolated subsystem contracts across ontological sections.
@@ -495,6 +503,22 @@ if(BUILD_TESTING)
     target_include_directories(test_log_fallback_unit PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_log_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Debugger Engine Subsystem Unit Test
+    add_executable(test_debug_unit
+        tests/unit/debug/test_debug_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_debug_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_debug_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Emergency Debugging Fallback Monolith Unit Test
+    add_executable(test_debug_fallback_unit
+        tests/unit/debug/test_debug_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_debug_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_debug_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
     # Mission: Verify cross-subsystem coordination, DAG dependencies & runs.
@@ -532,6 +556,14 @@ if(BUILD_TESTING)
     )
     target_include_directories(test_log_integrated PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_log_integrated PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Debugger Subsystem Cross-Pipeline Integration Harness
+    add_executable(test_debug_integrated
+        tests/integrated/test_debug_integrated.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_debug_integrated PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_debug_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.4: LAYER 1 SIMULATION SYSTEM HARNESSES ]
@@ -577,6 +609,14 @@ if(BUILD_TESTING)
     target_include_directories(test_log_system PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_log_system PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Debugger Layer System Stress & High-Turn Rewind Harness
+    add_executable(test_debug_system
+        tests/system/test_debug_system.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_debug_system PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_debug_system PRIVATE ${GAME_WARNING_FLAGS})
+
 # ==============================================================================
 # BLOCK 5: CLOSING BLOCK
 # ( Automated Test Registrations & CTest Verification Suite )
@@ -591,6 +631,7 @@ if(BUILD_TESTING)
     add_test(NAME functional_cogs_test COMMAND test_functional)
     add_test(NAME functional_io_test COMMAND test_io_functional)
     add_test(NAME functional_log_test COMMAND test_log_functional)
+    add_test(NAME functional_debug_test COMMAND test_debug_functional)
 
     # Unit Tests (Subsystems & Modules in Isolation)
     add_test(NAME unit_math_test COMMAND test_math)
@@ -601,6 +642,8 @@ if(BUILD_TESTING)
     add_test(NAME unit_log_engine_test COMMAND test_log_unit)
     add_test(NAME unit_log_fallback_test COMMAND test_log_fallback_unit)
     add_test(NAME unit_debug_test COMMAND test_debug)
+    add_test(NAME unit_debug_engine_test COMMAND test_debug_unit)
+    add_test(NAME unit_debug_fallback_test COMMAND test_debug_fallback_unit)
     add_test(NAME unit_combat_test COMMAND test_combat)
     add_test(NAME unit_items_test COMMAND test_items)
     add_test(NAME unit_world_test COMMAND test_world)
@@ -616,6 +659,7 @@ if(BUILD_TESTING)
     add_test(NAME integrated_sim_test COMMAND test_sim_integrated)
     add_test(NAME integrated_io_test COMMAND test_io_integrated)
     add_test(NAME integrated_log_test COMMAND test_log_integrated)
+    add_test(NAME integrated_debug_test COMMAND test_debug_integrated)
 
     # System Tests (Full Simulation Invariants & Scenarios)
     add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
@@ -625,6 +669,7 @@ if(BUILD_TESTING)
     )
     add_test(NAME system_io_test COMMAND test_io_system)
     add_test(NAME system_log_test COMMAND test_log_system)
+    add_test(NAME system_debug_test COMMAND test_debug_system)
 
     set_tests_properties(
         cli_help_test
@@ -633,6 +678,7 @@ if(BUILD_TESTING)
         functional_cogs_test
         functional_io_test
         functional_log_test
+        functional_debug_test
         unit_math_test
         unit_data_test
         unit_time_test
@@ -641,6 +687,8 @@ if(BUILD_TESTING)
         unit_log_engine_test
         unit_log_fallback_test
         unit_debug_test
+        unit_debug_engine_test
+        unit_debug_fallback_test
         unit_combat_test
         unit_items_test
         unit_world_test
@@ -654,10 +702,12 @@ if(BUILD_TESTING)
         integrated_sim_test
         integrated_io_test
         integrated_log_test
+        integrated_debug_test
         system_game_invariants_test
         system_gameplay_scenarios_test
         system_io_test
         system_log_test
+        system_debug_test
         PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()

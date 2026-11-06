@@ -1,77 +1,119 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          debug.h
-// @id            core.util.debug
-// @layer         Layer 0: Core Utilities
-// @version       1.0.0
-// @interface_rev Rev 1
-// @date          2026-11-02
-// @updated       2026-11-02
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Zero-Heap Interactive Engine Debugger, State Rewind, and Tripwire Inspector.
-//   Provides a cohesive debugging facility for Tenebris and Lux:
-//     1. State Snapshots: Bounded static ring buffer capturing discrete state records.
-//     2. Time-Travel Rewind: Deterministic historical state restoration and diffing.
-//     3. Breakpoints & Watchpoints: Dynamic halt conditions on turns, stances, or sway.
-//     4. Tripwire Traps: Latches anomalies without invoking OS traps or crashing.
-//     5. Visual State Inspector: Formatted state visualizers and snapshot dumps.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: core.util.manifest, core.util.string, core.util.data,
-//                            core.util.time, core.util.log, core.util.debug_fallback
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Pure static ring buffer, zero heap).
-//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Sequential main loop debugger).
-//   - Latency Budget:        < 15 microseconds per snapshot record or inspection.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Zero dynamic heap memory allocations across all debugger routines.
-//   2. Pure Layer 0 independence: Decoupled from Layer 1 simulation structs.
-//   3. Ring buffer capacity bounded by DEBUG_MAX_SNAPSHOTS (64).
-//   4. State hashes are deterministic and bitwise reproducible.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          debug.h
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 3
+@date          2026-11-06
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Interactive Engine Debugger, State Rewind & Tripwire Inspector
+@role          High-performance, zero-heap interactive state debugger, historical
+               state snapshot ring buffer, time-travel rewind, dynamic breakpoints,
+               non-crashing tripwire traps, and ANSI visual state inspection.
+@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Pure Layer 0 independence: Decoupled from Layer 1 simulation structs.
+               4. Ring buffer capacity bounded by DEBUG_MAX_SNAPSHOTS (64).
+               5. State hashes are deterministic and bitwise reproducible (FNV-1a 32-bit).
+               6. Non-crashing diagnostic tripwires with latching error states.
+               7. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-#ifndef TL_UTIL_DEBUG_H
-#define TL_UTIL_DEBUG_H
+PURPOSE & ARCHITECTURAL ROLE:
+  Interactive engine state debugger and diagnostic inspection pipeline for the
+  Tenebris and Lux simulation runtime. Provides:
+    1. State Snapshots: Bounded circular ring buffer in .bss capturing discrete turn records.
+    2. Time-Travel Rewind: Deterministic historical state restoration and diffing.
+    3. Breakpoints & Watchpoints: Dynamic halt conditions on turns, stances, or sway.
+    4. Tripwire Traps: Latches anomalies without invoking crude OS abort() or crashing.
+    5. Visual State Inspector: Formatted state visualizers, snapshot dumps, and ASCII cards.
+  Integrates directly with data-driven configuration assets residing in
+  system/diagnostics/debugger/ (manifest.json, default.json, strict.json, trace.json,
+  snapshot_policy.json, inspection_cards.json) with quarantined fallback protection.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES & STRUCTURES
-// =============================================================================
+  ### For Game Designers & Non-Programmers:
+  Acts like a time-machine control panel for the game simulation. If a combat
+  calculation or narrative event produces unexpected results, you can rewind
+  the game state turn-by-turn to inspect exactly what changed.
 
-#include "core/manifest.h"
-#include "debug/debug_fallback.h"
+  ### For Systems Programmers & Engine Architects:
+  - 100% Zero-Heap Memory Model (ALLOC_ZERO_HEAP): All snapshots reside in static .bss.
+  - Bitwise deterministic 32-bit FNV-1a state hashing to detect simulation drift.
+  - Complete decoupling from Layer 1 structs: uses generic primitive state fields.
+================================================================================
+*/
 
+#ifndef TENEBRIS_LUX_UTIL_DEBUG_H
+#define TENEBRIS_LUX_UTIL_DEBUG_H
+
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / TYPES & ONTOLOGY
+Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "core/manifest.h"
+#include "debug/debug_fallback.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Pre-Conditions & Telemetry Buffer Limits
+--------------------------------------------------------------------------------
+*/
 
 #define DEBUG_MAX_SNAPSHOTS       64
 #define DEBUG_MAX_BREAKPOINTS     16
 #define DEBUG_MAX_NAME_LEN        32
 #define DEBUG_MAX_MSG_LEN         256
 #define DEBUG_MAX_CHANNELS_LEN    64
-#define DEBUG_DEFAULT_PROFILE     "game/data/debug/default.json"
-#define DEBUG_MANIFEST_PATH       "game/data/debug/manifest.json"
+#define DEBUG_DEFAULT_PROFILE     "default"
+#define DEBUG_MANIFEST_PATH       "diagnostics/debugger/manifest.json"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Structural Entity & Object Definitions
+--------------------------------------------------------------------------------
+*/
 
 /**
+ * @enum debug_step_mode
  * @brief Execution stepping mode of the engine debugger.
  */
-typedef enum {
-    DEBUG_STEP_RUN = 0,       /**< Continuous execution until breakpoint/tripwire */
+typedef enum debug_step_mode {
+    DEBUG_STEP_RUN = 0,        /**< Continuous execution until breakpoint/tripwire */
     DEBUG_STEP_OVER_TURN = 1,  /**< Pause at turn boundaries */
     DEBUG_STEP_INTO_COG = 2,   /**< Micro-step individual cog sub-assemblies */
     DEBUG_STEP_PAUSED = 3      /**< Engine is currently paused */
 } debug_step_mode_t;
 
 /**
+ * @enum debug_breakpoint_type
  * @brief Breakpoint condition types.
  */
-typedef enum {
+typedef enum debug_breakpoint_type {
     DEBUG_BREAK_NONE = 0,
     DEBUG_BREAK_TURN,              /**< Break when turn equals target value */
     DEBUG_BREAK_STANCE,            /**< Break when stance equals target stance ID */
@@ -83,9 +125,10 @@ typedef enum {
 } debug_breakpoint_type_t;
 
 /**
- * @brief Latched diagnostic tripwire states for the debugger.
+ * @enum debug_tripwire
+ * @brief Latched diagnostic tripwire states for the debugger data pipeline.
  */
-typedef enum {
+typedef enum debug_tripwire {
     DEBUG_TRIPWIRE_CLEAR = 0,
     DEBUG_TRIPWIRE_MANIFEST_MISSING,
     DEBUG_TRIPWIRE_SETTING_MISSING,
@@ -94,12 +137,13 @@ typedef enum {
 } debug_tripwire_t;
 
 /**
+ * @struct debug_state_fields
  * @brief Decoupled, generic state representation for Layer 0 snapshots.
  *
  * This struct uses fundamental integer and string types so that Layer 0
  * does NOT depend on Layer 1 game state structs.
  */
-typedef struct {
+typedef struct debug_state_fields {
     int turn;
     char hero_name[DEBUG_MAX_NAME_LEN];
     int hp;
@@ -118,9 +162,10 @@ typedef struct {
 } debug_state_fields_t;
 
 /**
- * @brief Frozen state snapshot in the debugger ring buffer.
+ * @struct debug_snapshot
+ * @brief Frozen state snapshot stored in the debugger circular ring buffer.
  */
-typedef struct {
+typedef struct debug_snapshot {
     uint64_t snapshot_id;
     uint64_t timestamp_ms;
     debug_state_fields_t state;
@@ -131,9 +176,10 @@ typedef struct {
 } debug_snapshot_t;
 
 /**
+ * @struct debug_breakpoint
  * @brief Dynamic breakpoint registration descriptor.
  */
-typedef struct {
+typedef struct debug_breakpoint {
     int id;
     debug_breakpoint_type_t type;
     int target_value;
@@ -142,9 +188,10 @@ typedef struct {
 } debug_breakpoint_t;
 
 /**
+ * @struct debug_config
  * @brief Debugger configuration parameters loaded from data or fallback.
  */
-typedef struct debug_config_s {
+typedef struct debug_config {
     bool enabled;
     bool break_on_error;
     bool break_on_tripwire;
@@ -162,20 +209,43 @@ typedef struct debug_config_s {
     bool loaded_from_data;
 } debug_config_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+/**
+ * @struct debug_stats
+ * @brief Aggregate runtime telemetry report constructed by Block 5 execution procedures.
+ */
+typedef struct debug_stats {
+    size_t snapshot_count;        /**< Number of active snapshots in ring buffer. */
+    size_t max_snapshots;         /**< Configured snapshot capacity limit. */
+    size_t breakpoint_count;      /**< Number of active breakpoints registered. */
+    uint32_t traps_triggered;     /**< Number of tripwire traps triggered. */
+    debug_step_mode_t step_mode;  /**< Active stepping execution mode. */
+    bool is_active;               /**< true if debugger is initialized and active. */
+    bool loaded_from_data;        /**< true if loaded from JSON profile. */
+    char active_profile[32];      /**< Name of loaded profile. */
+} debug_stats_t;
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK / CORE DEBUGGER API
-// =============================================================================
+/**
+ * Manifest record for the Zero-Heap Debugger Engine.
+ */
+extern const module_metadata_t debug_manifest;
 
-/* --- Lifecycle & Configuration --- */
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE DEBUGGER API & BUSINESS FUNCTIONS
+Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Subsystem Lifecycle & Configuration Cogs
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Initializes the debugging system with a specific configuration.
  *
- * If config is NULL, attempts to load default profile from data/debug/manifest.json.
+ * If config is NULL, attempts to load default profile from system/diagnostics/debugger/manifest.json.
  * If data loading fails, gracefully activates the monolith fallback.
  *
  * @param[in] config Optional custom configuration, or NULL for data-driven default.
@@ -223,7 +293,11 @@ bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *
  */
 bool debug_load_config_profile(const char *profile_name, debug_config_t *out_config);
 
-/* --- Snapshots & Time-Travel Rewind --- */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Snapshots & Time-Travel Rewind Cogs
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Captures and records a state snapshot into the static ring buffer.
@@ -273,11 +347,15 @@ size_t debug_diff_snapshots(const debug_snapshot_t *s1, const debug_snapshot_t *
                             char *out_buf, size_t buf_len);
 
 /**
- * @brief Computes a deterministic 32-bit hash of a state record.
+ * @brief Computes a deterministic 32-bit FNV-1a hash of a state record.
  */
 uint32_t debug_compute_state_hash(const debug_state_fields_t *fields);
 
-/* --- Breakpoints & Watchpoints --- */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Breakpoints, Watchpoints & Tripwire Traps Cogs
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Registers a dynamic breakpoint.
@@ -311,7 +389,7 @@ bool debug_check_breakpoints(const debug_state_fields_t *fields,
                              char *out_reason, size_t max_len);
 
 /**
- * @brief Traps a tripwire event in the debugger.
+ * @brief Traps a tripwire event in the debugger without crashing.
  */
 void debug_trap_tripwire(const char *subsystem, const char *condition,
                          const char *file, int line);
@@ -331,7 +409,11 @@ const char *debug_get_tripwire_details(void);
  */
 void debug_reset_tripwire(void);
 
-/* --- Stepping & Execution Control --- */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.4: Stepping & Execution Control Cogs
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Sets the execution stepping mode.
@@ -343,7 +425,11 @@ void debug_set_step_mode(debug_step_mode_t mode);
  */
 debug_step_mode_t debug_get_step_mode(void);
 
-/* --- Inspection & State Dumps --- */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.5: Inspection & State Dumps Cogs
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Prints an ANSI-colored or formatted diagnostic dump of the current state.
@@ -355,31 +441,65 @@ void debug_dump_state(const debug_state_fields_t *fields);
  */
 void debug_dump_snapshot_history(void);
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Machine Pre-Flight Tripwires & Audits
+--------------------------------------------------------------------------------
+*/
 
 /**
- * @brief Central module metadata for the debugger utility.
- */
-extern const module_metadata_t debug_manifest;
-
-/**
- * @brief Preflight diagnostic audit routine for central manifest registration.
+ * @brief Pre-flight diagnostic check for debugger subsystem invariants.
+ *
+ * @return Diagnostic verification result reporting categorized diagnostic severity.
  */
 diag_result_t debug_preflight(void);
 
 /**
- * @brief Comprehensive self-audit verifying all debugger invariants.
+ * @brief High-level diagnostic self-audit wrapper for standalone test harnesses.
+ *
+ * @param[in] verbose Enable verbose trace output during audit.
+ * @return diag_result_t diagnostic outcome.
  */
 diag_result_t debug_audit(bool verbose);
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
+================================================================================
+*/
 
-#ifdef __cplusplus
-}
-#endif
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures & Object Constructors
+--------------------------------------------------------------------------------
+*/
 
-#endif // TL_UTIL_DEBUG_H
+/**
+ * @brief Constructs a structured runtime debugger statistics report.
+ *
+ * @param[out] out_stats Destination statistics report object.
+ * @return true if statistics were populated; false on NULL parameter.
+ */
+bool debug_execute_inspect(debug_stats_t *out_stats);
+
+/**
+ * @brief Formats an ASCII inspection card readout for the current simulation state.
+ *
+ * @param[in]  card_id Target template identifier (e.g. "CARD_HERO_VITALS").
+ * @param[in]  fields  State fields to populate card with.
+ * @param[out] out_buf Destination text buffer.
+ * @param[in]  buf_len Size of destination buffer.
+ * @return true if formatted successfully; false on invalid arguments or truncation.
+ */
+bool debug_execute_dump_card(const char *card_id, const debug_state_fields_t *fields,
+                             char *out_buf, size_t buf_len);
+
+#endif /* TENEBRIS_LUX_UTIL_DEBUG_H */

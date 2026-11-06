@@ -78,6 +78,7 @@ Tier 3: Internal Engine Foundation Headers
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "io/fs_utils.h"
 #include "io/path_finder.h"
+#include "debug/debug.h"
 #include "core/string_utils.h"
 #include "core/manifest.h"
 
@@ -238,6 +239,7 @@ bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size,
 
     if (next_char != EOF) {
         buf[buf_size - 1] = '\0';
+        debug_trap_tripwire("fs_utils", "File content exceeds caller bounded buffer capacity", __FILE__, __LINE__);
         return false;
     }
 

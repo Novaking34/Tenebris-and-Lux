@@ -75,6 +75,7 @@ Tier 3: Internal Engine Foundation Headers
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "io/json_utils.h"
+#include "debug/debug.h"
 
 /*
 --------------------------------------------------------------------------------
@@ -1073,6 +1074,7 @@ bool json_inspect_token(const char *json, const char *key, json_token_view_t *ou
             }
             p++;
         }
+        debug_trap_tripwire("json_utils", "Unterminated string literal in token inspection", __FILE__, __LINE__);
         return false;
     } else if (strncmp(val, "true", 4) == 0) {
         out_view->type = JSON_TYPE_BOOLEAN;

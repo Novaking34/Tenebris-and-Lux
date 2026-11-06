@@ -78,6 +78,7 @@ Tier 3: Internal Engine Foundation Headers
 #include "io/json_utils.h"
 #include "io/fs_utils.h"
 #include "log/log.h"
+#include "debug/debug.h"
 #include "core/string_utils.h"
 #include "core/manifest.h"
 
@@ -179,6 +180,7 @@ bool master_loader_load_from_memory(master_loader_t *loader,
     loader->body_start = NULL;
     loader->body_len = 0;
     loader->status = LOADER_STATUS_ERR_BODY_MISSING;
+    debug_trap_tripwire("master_loader", "Missing block_3_body in asset JSON", __FILE__, __LINE__);
     return false;
 }
 
@@ -247,6 +249,7 @@ bool master_loader_load(master_loader_t *loader,
     size_t bytes_read = 0;
     if (!fs_read_file_bounded(loader->resolved_path, buf, buf_size, &bytes_read)) {
         loader->status = LOADER_STATUS_ERR_BUFFER_OVERFLOW;
+        debug_trap_tripwire("master_loader", "Bounded file read failed or capacity exceeded", __FILE__, __LINE__);
         return false;
     }
 
@@ -628,6 +631,7 @@ bool master_loader_execute_load_verified(const char *domain,
     if (expected_schema_id && expected_schema_id[0] != '\0') {
         if (!master_loader_validate_schema(out_loader, expected_schema_id)) {
             out_loader->status = LOADER_STATUS_ERR_SCHEMA_MISMATCH;
+            debug_trap_tripwire("master_loader", "Schema contract verification failed in execute_load_verified", __FILE__, __LINE__);
             return false;
         }
     }
