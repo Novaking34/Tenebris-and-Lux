@@ -226,6 +226,29 @@ static void test_data_always_pass(void)
     TEST_ASSERT(!json_array_get_object(arr_of_objs, strlen(arr_of_objs), 2, obj_buf, sizeof(obj_buf)),
                 "json_array_get_object out-of-bounds index safely returns false");
 
+    /* 1.11 Block 5 Executable Procedures & Object Construction */
+    fs_file_info_t file_info;
+    TEST_ASSERT(fs_inspect_file("game/data/manifest.json", &file_info), "fs_inspect_file succeeds on manifest.json");
+    TEST_ASSERT(file_info.exists && file_info.is_regular && file_info.size_bytes > 0,
+                "fs_inspect_file constructs valid fs_file_info_t object");
+
+    fs_read_result_t read_res;
+    char proc_buf[FS_BUFFER_LARGE_BYTES];
+    TEST_ASSERT(fs_execute_read("game/data/manifest.json", proc_buf, sizeof(proc_buf), &read_res),
+                "fs_execute_read executes bounded read procedure");
+    TEST_ASSERT(read_res.success && read_res.bytes_read > 0 && strlen(read_res.path) > 0,
+                "fs_execute_read constructs valid fs_read_result_t object");
+
+    fs_write_result_t write_res;
+    const char *proc_data = "{\"procedure\": \"tenlux_v010\"}";
+    TEST_ASSERT(fs_execute_write("build/test_exec_proc.tmp", proc_data, strlen(proc_data), &write_res),
+                "fs_execute_write executes bounded write procedure");
+    TEST_ASSERT(write_res.success && write_res.bytes_written == strlen(proc_data),
+                "fs_execute_write constructs valid fs_write_result_t object");
+
+    fs_utils_init();
+    fs_utils_shutdown();
+
     printf("  [PASS-1] Section 1 passed unconditionally.\n");
 }
 
