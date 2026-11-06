@@ -2,34 +2,36 @@
   "block_1_metadata": {
     "project": "Tenebris and Lux",
     "file": "game/data/system/diagnostics/telemetry/manifest.json",
-    "id": "data.system.telemetry.manifest",
+    "id": "data.system.diagnostics.telemetry.manifest",
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.0",
-    "interface_rev": "Rev 2",
-    "date": "2026-11-04",
+    "interface_rev": "Rev 3",
+    "date": "2026-11-05",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Telemetry Subsystem Manifest indexing selectable log settings profiles.",
+    "role": "Telemetry Subsystem Manifest indexing selectable log settings profiles, channel specifications, and severity weights.",
     "where_the_data_lives": {
       "topology": "System Diagnostics Telemetry",
-      "profiles_directory": "game/data/system/diagnostics/telemetry/"
+      "profiles_directory": "game/data/system/diagnostics/telemetry/",
+      "header_binding": "engine/include/log/log.h"
     },
     "what_it_enables": [
       "Static ring buffer log capture in .bss without dynamic allocation",
-      "Categorized file logging across SYSTEM, LOG, EVENT, MESSAGE, CHARACTER",
+      "Multi-domain channel routing separating Engine and Game problems",
       "Log file size rotation and automated archive timestamping",
-      "Dynamic hot-swapping between developer trace mode and quiet CI"
+      "Dynamic hot-swapping between developer trace mode and quiet CI",
+      "Weighted log severities with bitmask filtering and latency budgets"
     ],
     "invariants": [
       "Every menu item resolves to a valid profile within telemetry/",
       "Strict zero-heap memory allocation (ALLOC_ZERO_HEAP)",
-      "Strict conformance to OmniCode 5-Block Architecture"
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
     ]
   },
   "block_2_opening": {
     "pre_conditions": {
-      "log_subsystem": "log/log.h inclusion",
-      "ring_buffer_init": "Ring buffer initialized during log_init"
+      "log_subsystem": "engine/include/log/log.h",
+      "ring_buffer_init": "Ring buffer allocated in .bss during log_init"
     },
     "static_declarations": {
       "schema_id": "tenlux.data.log_menu.v1",
@@ -37,6 +39,7 @@
       "severity_levels": [
         "FATAL", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"
       ],
+      "supported_domains": [ "ENGINE", "GAME" ],
       "categories": [
         "SYSTEM", "LOG", "EVENT", "MESSAGE", "CHARACTER"
       ]
@@ -85,7 +88,7 @@
             "use_colors": true,
             "save_by_category": true,
             "max_file_size_mb": 2,
-            "max_rotated_files": 20
+            "max_rotated_files": 25
           }
         },
         {
@@ -153,24 +156,52 @@
             "use_colors": true,
             "save_by_category": true,
             "max_file_size_mb": 2,
-            "max_rotated_files": 15
+            "max_rotated_files": 20
           }
         }
       ]
-    }
+    },
+    "catalogs": [
+      {
+        "id": "engine_channels",
+        "title": "Layer 0 & Layer 2 Engine Telemetry Channels",
+        "file": "engine_channels.json",
+        "domain": "ENGINE",
+        "description": "Channel definitions for Core, Memory, IO, Viewport, Font, and Time."
+      },
+      {
+        "id": "game_channels",
+        "title": "Layer 1 Game Simulation Telemetry Channels",
+        "file": "game_channels.json",
+        "domain": "GAME",
+        "description": "Channel definitions for Sim, Combat, Stances, Relics, Statera, World, Quest, and Dialogue."
+      },
+      {
+        "id": "severity_weights",
+        "title": "Weighted Telemetry Severity Hierarchy",
+        "file": "severity_weights.json",
+        "description": "Numeric priority weighting, bitmask definitions, and filter thresholds."
+      }
+    ]
   },
   "block_4_audit": {
     "audit_metrics": {
       "setting_count": 6,
+      "catalog_count": 3,
       "max_rotated_files_limit": 25,
       "ring_buffer_entries": 64
     },
     "verification_tripwires": [
-      { "name": "PROFILE_EXISTENCE", "rule": "All 6 profile files exist on disk", "status": "VERIFIED_PASS" }
+      { "name": "PROFILE_EXISTENCE", "rule": "All 6 profile files exist on disk", "status": "VERIFIED_PASS" },
+      { "name": "CATALOG_EXISTENCE", "rule": "All 3 channel and weight catalogs exist on disk", "status": "VERIFIED_PASS" },
+      { "name": "ZERO_HEAP_CHECK", "rule": "Zero dynamic allocations during logging", "status": "VERIFIED_PASS" }
     ],
     "self_audit_target": "./build/tenebris-lux --audit"
   },
   "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit", "--cli", "--gui" ]
+    },
     "navigation": {
       "parent_menu": "../manifest.json",
       "current_directory": "system/diagnostics/telemetry"

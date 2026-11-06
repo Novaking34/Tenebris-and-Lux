@@ -209,6 +209,26 @@
         "what_it_enables": "64-snapshot ring buffer, FNV-1a hashing, and interactive REPL."
       },
       {
+        "id": "taxonomy",
+        "title": "Diagnostic Error Taxonomy & Tripwire Matrix",
+        "description": "Hierarchical error registry, root cause hints, and latching tripwires.",
+        "manifest_path": "system/diagnostics/taxonomy/manifest.json",
+        "status": "active",
+        "category": "system",
+        "where_it_lives": "game/data/system/diagnostics/taxonomy/",
+        "what_it_enables": "Segregation of Engine (0x0xxx) and Game (0x1xxx) errors and safe recovery actions."
+      },
+      {
+        "id": "formats",
+        "title": "Log Serialization & Stream Conversion Formats",
+        "description": "Fixed-column text, NDJSON streams, CSV tables, replays, and SARIF reports.",
+        "manifest_path": "system/diagnostics/formats/manifest.json",
+        "status": "active",
+        "category": "system",
+        "where_it_lives": "game/data/system/diagnostics/formats/",
+        "what_it_enables": "Converting telemetry streams into analytical and regression test datasets."
+      },
+      {
         "id": "classes",
         "title": "Combat Classes & Growth Subsystem",
         "description": "Basic, upgraded, advanced classes, NPC guards, and summons.",
@@ -343,8 +363,8 @@
   "block_4_audit": {
     "audit_metrics": {
       "schema_id": "tenlux.data.root_catalog.v1",
-      "manifest_count": 23,
-      "active_subsystems": 18,
+      "manifest_count": 25,
+      "active_subsystems": 20,
       "domains_count": 5,
       "registered_modules": 16,
       "verified_invariants": 7
