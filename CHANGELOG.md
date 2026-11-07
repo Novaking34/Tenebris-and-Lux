@@ -7,8 +7,8 @@ BLOCK 1: METADATA BLOCK
 @file          CHANGELOG.md
 @layer         Documentation & Release Strata (Layer 3)
 @version       0.1.0-dev
-@interface_rev Rev 2
-@date          2026-11-03
+@interface_rev Rev 4
+@date          2026-11-07
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Dual-Frontend C11 Tactical RPG Engine & Continental Campaign
@@ -43,7 +43,7 @@ This project adheres to [Semantic Versioning (SemVer 2.0.0)](https://semver.org/
 
 | Version | Milestone Name | Status | Release Date | Core Strata & Focus | DevLog Citations |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`0.1.0-dev`** | Tactical Grid Engine & Continental Topology | In Progress | 2026-Q4 | 2D Grid, ZOC, Formations, 5-Screen UI, 10 Endings | DevLogs 013, 014 |
+| **`0.1.0-dev`** | Tactical Grid Engine & Continental Topology | In Progress | 2026-Q4 | 2D Grid, ZOC, Formations, 5-Screen UI, 10 Endings | DevLogs 013, 014, 015 |
 | **`0.0.1`** | Dual-Frontend Interactive Prototype | Verified | 2026-11-03 | C11 Zero-Heap L0/L1, X11 GUI, CLI Debugger, 19 CTests | DevLogs 001–014 |
 | **`0.0.0`** | Historical Genesis & Demo Baseline | Archival | 2014–2018 | RPG Maker MV Prototype, Storyboard, Data Extraction | DevLogs 002, 007 |
 
@@ -95,6 +95,33 @@ The `v0.1.0` milestone transforms the verified interactive prototype into a full
 ---
 
 ## BLOCK 3: BODY CHRONICLE: RELEASES & EVOLUTIONARY MILESTONES
+
+### [0.1.0-dev] - 2026-11-07 (Milestone: The Big Machine & Core Subsystem Elevation)
+
+This release milestone completes the comprehensive modernization of Layer 0 under the **OmniCode Universal 5-Block Lifecycle Protocol (Rev 4)**, establishing the cognitive and mechanical foundation of the engine ([DevLog 015](docs/dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc)):
+
+#### 1. Machine vs. Master Turn Gear Separation & Cog Elevation
+- **The Big Machine (`engine/`)**: Codified universal, lore-agnostic mechanical apparatus handling fixed timesteps, display surfaces, flight logging, and math evaluation.
+- **The Master Turn Gear (`game/`)**: The specific game implementation of *Tenebris and Lux*, driving tactical grid loops, combat stances, hero vitals, and provincial lore.
+- **Elevated Orchestrators**:
+  - `engine/src/core/geom_utils.c`: Elevated letterbox/pillarbox viewport projection, aspect-ratio scaling, and camera containment from `game/src/world/map_scaler.c`.
+  - `engine/src/core/clock_pacer.c`: Fixed-timestep simulation accumulator (canonical 60Hz / 16.666ms steps), lag clamping, and render alpha interpolation.
+  - `engine/src/core/formula_eval.c`: Data-driven battle formula evaluation (mitigation, positional hit chances, crits, moral sway) hydrated from `game/data/system/runtime/math/formulas.json`.
+
+#### 2. Active Iteration Feedback Covenant & Shim Purging
+- Prohibited defensive backwards-compatibility wrappers during active iteration.
+- Purged stale shims and exposed architectural seams directly to the compiler (`-std=c11 -Wall -Wextra -Wpedantic -Werror`).
+- Upgraded every calling site to new tagged types, 3-tier includes, and pre-flight audits.
+
+#### 3. Complete Layer 0 Modernization & Quarantined Fallbacks
+- Standardized all Layer 0 cogs under the 5-block lifecycle protocol: `manifest`, `fs_utils`, `path_finder`, `json_utils`, `master_loader`, `log`, `debug`, `math_utils`, `time_utils`, `string_utils`, `geom_utils`, `clock_pacer`, `formula_eval`.
+- Authored isolated, zero-dependency fallback modules (`*_fallback.[ch]`) for all Layer 0 modules to guarantee build safety and offline testing.
+
+#### 4. Four-Strata Verification Ontology (51/51 CTests Passing)
+- Expanded verification suite from 19 to 51 automated CTests implementing the 4 Ontological Testing Sections (Nominal Baseline, Expected Input, Boundary Stress, Chaos Poisoning).
+- Full 100% pass rate achieved across Unit, Functional, Integrated, and System testing strata.
+
+---
 
 ### [0.0.1] - 2026-11-03 (Milestone: Dual-Frontend Interactive Prototype)
 
@@ -189,7 +216,7 @@ The foundation of *Tenebris and Lux* was established during 2014–2018 in RPG M
 
 Every milestone release is governed by rigorous pre-flight audits and invariant tripwires. The current telemetry baseline confirms 100% verification satisfaction:
 
-### Pre-Flight Diagnostic Audit Manifest (16 Subsystems Registered)
+### Pre-Flight Diagnostic Audit Manifest (20 Subsystems Registered)
 
 ```text
 ================================================================================
@@ -198,14 +225,16 @@ Every milestone release is governed by rigorous pre-flight audits and invariant 
 Subsystem            Source File     Rev  Memory      Status  Description
 --------------------------------------------------------------------------------
 core.util.manifest   manifest.h      r2   Zero-Heap   [PASS]  Pre-flight manifest DAG orchestrator & registry verified.
-core.util.fs         fs_utils.h      r2   Zero-Heap   [PASS]  Zero-heap filesystem I/O, file read, line buffer & write verified.
-core.util.json       json_utils.h    r2   Zero-Heap   [PASS]  JSON utilities: token scan, string, int, bool, float & array verified.
-core.util.time       time_utils.h    r2   Zero-Heap   [PASS]  Monotonic clock stable; sub-ms resolution & ISO timestamp verified.
-core.util.math       math_utils.h    r2   Zero-Heap   [PASS]  Clamping, saturation, zero-divisor safety & normalization verified.
-core.util.geom       geom_utils.h    r2   Zero-Heap   [PASS]  2D AABB geometry & bounds containment verified.
-core.util.string     string_utils.h  r2   Zero-Heap   [PASS]  Buffer safety, NULL resilience, trimming & path joining verified.
-core.util.log        util/log/log.h  r2   Zero-Heap   [PASS]  Grade mapping, labels, and static ring buffer verified.
-core.util.debug      debug.h         r1   Zero-Heap   [PASS]  Debugger preflight: Zero-heap snapshots, deterministic hashing verified.
+core.util.fs         fs_utils.h      r3   Zero-Heap   [PASS]  Zero-heap filesystem I/O, file read, line buffer & write verified.
+core.util.json       json_utils.h    r3   Zero-Heap   [PASS]  JSON utilities: token scan, string, int, bool, float & array verified.
+core.util.time       time_utils.h    r3   Zero-Heap   [PASS]  Monotonic clock stable; sub-ms resolution & ISO timestamp verified.
+core.util.math       math_utils.h    r3   Zero-Heap   [PASS]  Clamping, saturation, zero-divisor safety & normalization verified.
+core.util.geom       geom_utils.h    r3   Zero-Heap   [PASS]  2D AABB geometry & bounds containment verified.
+core.util.string     string_utils.h  r3   Zero-Heap   [PASS]  Buffer safety, NULL resilience, trimming & path joining verified.
+core.util.pacer      clock_pacer.h   r1   Zero-Heap   [PASS]  Fixed-timestep pacer (60Hz) & lag clamp verified.
+core.util.formula    formula_eval.h  r1   Zero-Heap   [PASS]  Battle formula evaluation, mitigation & hit chances verified.
+core.util.log        util/log/log.h  r3   Zero-Heap   [PASS]  Grade mapping, labels, and static ring buffer verified.
+core.util.debug      debug.h         r3   Zero-Heap   [PASS]  Debugger preflight: Zero-heap snapshots, deterministic hashing verified.
 sim.engine.state     sim_state.h     r4   Zero-Heap   [PASS]  State initialization and invariant audit tripwires passed.
 sim.engine.combat    combat.h        r5   Zero-Heap   [PASS]  All modular combat sub-assemblies satisfied pre-flight.
 sim.engine.items     items.h         r2   Zero-Heap   [PASS]  All item sub-assemblies audited cleanly.
@@ -214,11 +243,11 @@ sim.engine.dispatcher dispatcher.h    r4   Zero-Heap   [PASS]  Dispatcher orches
 sim.engine.core      game.h          r4   Zero-Heap   [PASS]  All modular simulation sub-assemblies satisfied pre-flight.
 gui.viewport.x11     gui.h           r2   Zero-Heap   [PASS]  X11 display connected; 2.5D viewport & panel geometry verified.
 --------------------------------------------------------------------------------
-Telemetry: 16 modules registered | 16 Pass | 0 Warn | 0 Critical | 0 Fatal
+Telemetry: 20 modules registered | 20 Pass | 0 Warn | 0 Critical | 0 Fatal
 Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED (System Ready)
 ================================================================================
 Audit Invariant Checks:  7/7 Invariant Checks Passed (Relics, Stances, Tripwires)
-CTest Suite Pass Rate:   19/19 Verification Suites Passed (100% Pass Rate)
+CTest Suite Pass Rate:   51/51 Verification Suites Passed (100% Pass Rate)
 Execution Latency Budget: < 50µs per simulation turn
 Compiler Status:         -Wall -Wextra -Wpedantic Clean (0 Warnings, 0 Errors)
 ================================================================================
@@ -246,3 +275,4 @@ The following master index maps every chronological Developer Log in `docs/dev_l
 | **[DevLog 012](docs/dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc)** | 2026-11-02 | Architecture | *Interactive Debugging System & State Rewind Architecture* | Snapshot ring buffer, FNV-1a hashing, time-travel rewind |
 | **[DevLog 013](docs/dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc)** | 2026-11-03 | Lore & Design | *Morality Architecture, Bystander Corridor & Ten-Ending Matrix* | `[-50, +50]` Bystander Corridor, 10 endings, diegetic relics |
 | **[DevLog 014](docs/dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc)** | 2026-11-03 | Architecture | *High Fantasy Presentation Engine & 5-Screen Architecture* | High-DPI TrueType fonts, 3x zoom, 5-screen navigation UI |
+| **[DevLog 015](docs/dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc)** | 2026-11-07 | Architecture | *The Big Machine, The Master Turn Gear & Core Subsystem Elevation* | Layer 0 complete modernization, cog elevation, 51/51 CTests, fallbacks |

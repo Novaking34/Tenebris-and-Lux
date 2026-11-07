@@ -16,7 +16,7 @@ thematically (`architecture/`, `lore_and_design/`).
 == Calendar Archives
 
 * **xref:2026/10/README.adoc[October 2026 Monthly Chronicle]** (7 Logs)
-* **xref:2026/11/README.adoc[November 2026 Monthly Chronicle]** (6 Logs)
+* **xref:2026/11/README.adoc[November 2026 Monthly Chronicle]** (7 Logs)
 
 == Complete Dev Log Manifest
 
@@ -120,4 +120,14 @@ thematically (`architecture/`, `lore_and_design/`).
     - Implemented dynamic 3x widescreen battlefield zoom with 96x96 sprites and ground foundation apron.
     - Built 5-screen navigation architecture (Tactical Battle, Hero Dossier, 32-Slot Bag, Provincial Map, Deeds Codex).
     - Executed comprehensive v1.4.0 architectural review identifying core strengths, outstanding gaps, and technical debt.
+
+15. **link:2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc[devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc]**  
+    *The Big Machine, The Master Turn Gear & Core Subsystem Elevation* (2026-11-07 | Architecture):
+    - Formalized Rev 4 architectural philosophy: The Big Machine (`engine/`) vs. The Master Turn Gear (`game/`).
+    - Enforced Active Iteration Feedback Covenant: purged stale shims and let compiler seams guide refactoring.
+    - Completed full Layer 0 modernization across `io/`, `log/`, `debug/`, and `core/` under the 5-block lifecycle protocol.
+    - Elevated orchestrator cogs (clock_pacer fixed-step accumulator, formula_eval, geom_utils viewport scaling and 2.5D math).
+    - Built standalone quarantined fallback modules (`*_fallback.[ch]`) with zero dynamic heap allocation.
+    - Expanded automated verification suite to 51/51 passing CTests (100%) and 20 registered engine modules in pre-flight audit.
+
 

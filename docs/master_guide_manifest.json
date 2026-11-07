@@ -1,0 +1,160 @@
+{
+  "block_1_metadata": {
+    "schema": "tenlux.data.master_guide.v1",
+    "version": "1.0.0",
+    "interface_rev": "Rev 1",
+    "date": "2026-11-07",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "title": "Tenebris and Lux: Master Guide Publication Manifest",
+    "invariants": [
+      "Zero missing chapter tolerance during pre-flight audit",
+      "Deterministic volume and chapter sequence matching project ontology",
+      "Dual granularity: unified master compendium and volume books"
+    ]
+  },
+  "block_2_types": {
+    "formats": ["adoc", "md", "pdf"],
+    "pdf_engine": "asciidoctor-pdf",
+    "default_pdf_theme": "default",
+    "toc_levels": 3,
+    "line_discipline_max_cols": 80
+  },
+  "block_3_body": {
+    "volumes": [
+      {
+        "roman": "I",
+        "slug": "world_canon_and_continental_topography",
+        "title": "World Canon, Metaphysics & Continental Topography",
+        "description": "Cosmic neutrality of Lux and Tenebris, chivalric Kingdom of Sacyra, continental realms, and the existential menace of The Dark Lord.",
+        "scan_areas": ["lore/realms"],
+        "chapters": [
+          { "title": "The Primordial Neutrality of Lux and Tenebris", "rel_path": "lore/world_and_lore.adoc" },
+          { "title": "Historical Canon & Macro-Chronology", "rel_path": "lore/genesis_and_historical_canon.adoc" },
+          { "title": "Master Storyboard Sequence (Scenes 01–20)", "rel_path": "lore/master_storyboard_chronicle.adoc" },
+          { "title": "The Past, Present & Future Thematic Triad", "rel_path": "lore/thematic_triad.adoc" },
+          { "title": "Socio-Political Strata of the Kingdom of Sacyra", "rel_path": "lore/characters.adoc" },
+          { "title": "The Six Powers of the Continent", "rel_path": "lore/realms/the_six_powers.adoc" },
+          { "title": "Realm Chronicle: The Kingdom of Libira", "rel_path": "lore/realms/kingdom_of_libira.adoc" },
+          { "title": "Realm Chronicle: The Royal Capital of Sacyra", "rel_path": "lore/realms/the_royal_capital.adoc" },
+          { "title": "Realm Chronicle: The Sacyran Marches", "rel_path": "lore/realms/sacyra_marches.adoc" },
+          { "title": "Realm Chronicle: The Whispering Woods", "rel_path": "lore/realms/whispering_woods.adoc" },
+          { "title": "Realm Chronicle: Dio Village", "rel_path": "lore/realms/dio_village.adoc" },
+          { "title": "Realm Chronicle: The Dreamscape", "rel_path": "lore/realms/the_dreamscape.adoc" },
+          { "title": "High School Inception & TRPG Genesis", "rel_path": "dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc" }
+        ]
+      },
+      {
+        "roman": "II",
+        "slug": "dramatis_personae_and_dual_protagonists",
+        "title": "Dramatis Personae & Dual Protagonist Dynamics",
+        "description": "Comprehensive character dossiers, founding princes, dual protagonist synergies, and regional faction leaders.",
+        "scan_areas": ["lore/characters"],
+        "chapters": [
+          { "title": "Dual Protagonist Dynamics & Tri-Perspective Architecture", "rel_path": "lore/characters/protagonists/dual_protagonist_dynamics.adoc" },
+          { "title": "Elijah Ro-enheart: Vanguard of Lux", "rel_path": "lore/characters/protagonists/elijah_ro_enheart.adoc" },
+          { "title": "Lady Katrina Jaren: The Outrider Blade", "rel_path": "lore/characters/protagonists/katrina_jaren.adoc" },
+          { "title": "The Custom Bearer: Steward of Balance", "rel_path": "lore/characters/protagonists/custom_bearer.adoc" },
+          { "title": "Prince Mi-ren: Sovereign of the Vigil", "rel_path": "lore/characters/founders/prince_mi_ren.adoc" },
+          { "title": "Prince Casatti: The Outrider Blade of Truth", "rel_path": "lore/characters/founders/prince_casatti.adoc" },
+          { "title": "Usuru the Wanderer: Sovereign of Grief", "rel_path": "lore/characters/founders/usuru_the_wanderer.adoc" },
+          { "title": "Chrono: Sage of the Ancient Archives & Dream Guardian", "rel_path": "lore/characters/sages_and_ancients/chrono.adoc" },
+          { "title": "Grandma Magolia: Matriarch of Dio Village", "rel_path": "lore/characters/dio_village/grandma_magolia.adoc" },
+          { "title": "Monica the Mystic & Goddess Lyri", "rel_path": "lore/characters/dio_village/monica_and_lyri.adoc" },
+          { "title": "Eric the Lumberjack & The Moral Litmus", "rel_path": "lore/characters/dio_village/eric_the_lumberjack.adoc" },
+          { "title": "John the Thief & Outlaw Resistance", "rel_path": "lore/characters/dio_village/john_the_thief.adoc" },
+          { "title": "The St. Baron & Feudal Exploitation", "rel_path": "lore/characters/dio_village/st_baron.adoc" },
+          { "title": "High Priest Roté & The Royal Omens", "rel_path": "lore/characters/kingdom_and_court/sir_rote.adoc" },
+          { "title": "King Jihad & The Treasonous Ambition", "rel_path": "lore/characters/kingdom_and_court/king_jihad.adoc" },
+          { "title": "Commander Gareth Ro-enheart & The Vanished Guard", "rel_path": "lore/characters/kingdom_and_court/commander_gareth_ro_enheart.adoc" },
+          { "title": "Threat Dossier: The Dark Lord", "rel_path": "lore/threats/the_dark_lord.adoc" },
+          { "title": "Threat Dossier: Dream Eaters", "rel_path": "lore/threats/dream_eaters.adoc" }
+        ]
+      },
+      {
+        "roman": "III",
+        "slug": "ludology_and_tactical_trpg_mechanics",
+        "title": "Ludology & Tactical TRPG Combat Mechanics",
+        "description": "Grid-based tactical warfare, relic stance machines, terrain modifiers, continuous invariant testing, and game design curation.",
+        "scan_areas": ["game_design"],
+        "chapters": [
+          { "title": "Dual-Layer TRPG Combat Architecture", "rel_path": "game_design/tactical_trpg_system.adoc" },
+          { "title": "The Twin Relics, Combat Stances & Moral Sway", "rel_path": "game_design/relics_and_combat.adoc" },
+          { "title": "Campaign Architecture, The King's Curse & Multi-Ending Specification", "rel_path": "game_design/campaign_structure_and_endings.adoc" },
+          { "title": "The Dreamscape & Temporal Architecture", "rel_path": "game_design/dreamscape_and_temporal_architecture.adoc" },
+          { "title": "World Topography, Provinces & Battlefield Terrain", "rel_path": "game_design/world_topography.adoc" },
+          { "title": "Continuous Invariant Testing Philosophy", "rel_path": "game_design/game_testing.adoc" },
+          { "title": "Game Design Curation & Triaging Matrix", "rel_path": "game_design/demo_baseline/game_design_curation.adoc" }
+        ]
+      },
+      {
+        "roman": "IV",
+        "slug": "demo_baseline_and_historical_archive",
+        "title": "The 2017–2018 Demo Baseline & Historical Archive",
+        "description": "Verified historical baseline extracted from the original RPG Maker MV datasets, detailing the complete scenario script, LeTBS mechanics, grimoire, and systems.",
+        "scan_areas": ["game_design/demo_baseline"],
+        "chapters": [
+          { "title": "Historical Baseline Overview & Provenance", "rel_path": "game_design/demo_baseline/README.adoc" },
+          { "title": "7-Act Narrative Script & Dialogue Walkthrough", "rel_path": "game_design/demo_baseline/scenario_and_walkthrough.adoc" },
+          { "title": "Complete Cast & Tactical Party Compendium", "rel_path": "game_design/demo_baseline/cast_and_characters.adoc" },
+          { "title": "LeTBS Tactical Grid System Specification", "rel_path": "game_design/demo_baseline/combat_and_letbs_mechanics.adoc" },
+          { "title": "Classes, Growth Curves & Learning Trees", "rel_path": "game_design/demo_baseline/classes_and_growth.adoc" },
+          { "title": "The Complete Grimoire (75+ Skills & Formulas)", "rel_path": "game_design/demo_baseline/grimoire_and_skills.adoc" },
+          { "title": "Bestiary, Destructible Props & Troop Formations", "rel_path": "game_design/demo_baseline/bestiary_and_troops.adoc" },
+          { "title": "Armory, Inventory & Key Lore Relics", "rel_path": "game_design/demo_baseline/armory_and_inventory.adoc" },
+          { "title": "Tactical States & Status Ailments Directory", "rel_path": "game_design/demo_baseline/states_and_statuses.adoc" },
+          { "title": "Engine Systems, Time Clock & Switch/Variable Index", "rel_path": "game_design/demo_baseline/systems_switches_variables.adoc" },
+          { "title": "Historical Dataset Evolution & Delta Analysis", "rel_path": "game_design/demo_baseline/dataset_evolution_delta.adoc" }
+        ]
+      },
+      {
+        "roman": "V",
+        "slug": "software_architecture_and_5_block_protocol",
+        "title": "Software Architecture & The 5-Block Invariant Protocol",
+        "description": "System boundaries, layered strata, dual-frontend GUI/CLI, and pre-flight zero-heap diagnostic manifests.",
+        "scan_areas": ["architecture", "code"],
+        "chapters": [
+          { "title": "OmniCode 5-Block Architectural Framework", "rel_path": "architecture/ARCHITECTURE.adoc" },
+          { "title": "Dual-Frontend Presentation Layer (CLI + Native X11)", "rel_path": "architecture/dual_frontend_architecture.adoc" },
+          { "title": "Central Manifest & Pre-Flight Diagnostic Integrity", "rel_path": "architecture/preflight_and_manifest_spec.adoc" },
+          { "title": "Layer 0 Core Utilities Code Tour", "rel_path": "code/core_utilities.adoc" },
+          { "title": "Layer 0 Debugging System & State Rewind", "rel_path": "code/debug_system.adoc" },
+          { "title": "Layer 1 Simulation Engine Code Tour", "rel_path": "code/simulation_engine.adoc" },
+          { "title": "Layer 2 Presentation Viewport Code Tour", "rel_path": "code/presentation_gui.adoc" },
+          { "title": "Layer 4 Verification & Test Suite Code Tour", "rel_path": "code/test_suite.adoc" }
+        ]
+      },
+      {
+        "roman": "VI",
+        "slug": "engineering_chronology_and_dev_logs",
+        "title": "Engineering Chronology & Development Logs",
+        "description": "Living chronological engineering logs recording every architectural milestone and paradigm evolution.",
+        "scan_areas": ["dev_logs/2026/10", "dev_logs/2026/11"],
+        "chapters": [
+          { "title": "DevLog 001: Genesis, Paradigm Pivot & Invariants", "rel_path": "dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc" },
+          { "title": "DevLog 003: Central Manifest & Pre-Flight Spec", "rel_path": "dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc" },
+          { "title": "DevLog 004: Pedagogical Metadata & Active DAG Contracts", "rel_path": "dev_logs/2026/10/architecture/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc" },
+          { "title": "DevLog 005: Ontological Sub-Assemblies & 80-Column Discipline", "rel_path": "dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc" },
+          { "title": "DevLog 006: Source Implementation & Root Pedagogical Commenting", "rel_path": "dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc" },
+          { "title": "DevLog 007: Archival Extraction & The 2017–2018 Demo Baseline", "rel_path": "dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc" },
+          { "title": "DevLog 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing", "rel_path": "dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc" },
+          { "title": "DevLog 009: Macro-History, Thematic Triad & Multi-Ending Architecture", "rel_path": "dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc" },
+          { "title": "DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture", "rel_path": "dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc" },
+          { "title": "DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework", "rel_path": "dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc" },
+          { "title": "DevLog 012: Interactive Debugging System & State Rewind Architecture", "rel_path": "dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc" },
+          { "title": "DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix", "rel_path": "dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc" },
+          { "title": "DevLog 014: High Fantasy Presentation Engine & 5-Screen UI", "rel_path": "dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc" },
+          { "title": "DevLog 015: The Big Machine, Master Turn Gear & Core Subsystem Elevation", "rel_path": "dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc" }
+        ]
+      }
+    ]
+  },
+  "block_4_audit": {
+    "required_volumes": 6,
+    "min_total_chapters": 71
+  },
+  "block_5_closing": {
+    "publisher": "CreativeWorkzStudio Publishing",
+    "status": "APPROVED",
+    "compilation_targets": ["unified_compendium", "volume_books"]
+  }
+}

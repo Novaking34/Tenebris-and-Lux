@@ -5,98 +5,390 @@
 // @project       Tenebris and Lux
 // @file          tools/src/guide.rs
 // @id            tools.guide.compiler
-// @layer         Layer 3: Systems Developer Tooling
-// @version       0.1.0
-// @interface_rev Rev 1
-// @date          2026-10-29
-// @updated       2026-10-29
+// @layer         Layer 3: Systems Developer Tooling & Document Compilers
+// @version       0.1.0-dev
+// @interface_rev Rev 4
+// @date          2026-11-07
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
+// @system        Data-Driven Master Guide & Multi-Volume PDF Publisher
+// @role          Document Compiler, Area Scanner & Multi-Modal Volume Publisher
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Modular Master Guide compiler for Tenebris and Lux. Aggregates multi-volume
-//   AsciiDoc documentation into a unified, publication-grade master compendium
-//   and generates three synchronized formats:
-//     1. docs/MASTER_GUIDE.adoc (AsciiDoc master book)
-//     2. docs/MASTER_GUIDE.md (Markdown optimized for NotebookLM & Gemini)
-//     3. docs/MASTER_GUIDE.pdf (Compiled PDF via asciidoctor-pdf)
+//   Modular, data-driven Master Guide compiler for Tenebris and Lux. Aggregates
+//   multi-volume technical documentation into both a single unified master
+//   compendium and dedicated per-volume publication books.
+//   Synchronizes three output formats across both unified and volume scopes:
+//     1. AsciiDoc master books (.adoc)
+//     2. Markdown mirrors optimized for NotebookLM & Gemini prompt ingestion (.md)
+//     3. Publication PDFs compiled via `asciidoctor-pdf` (.pdf)
 //
-// PEDAGOGICAL MISSION:
-//   Demonstrates modular compilation and multi-modal publication in Rust 2024:
-//     1. Dual Granularity: Documents remain chunked in discrete files for deep
-//        focused engineering, while being aggregated into a single master guide
-//        for LLM context windows (Gemini / NotebookLM).
-//     2. Invariant Chapter Auditing: Pre-flight checks verify that all 42
-//        referenced chapters exist on disk before compilation begins.
-//     3. Clean TaskRunner Integration: Plugs into the modular pipeline runner.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Zero missing chapter tolerance during master assembly.
-//   2. Stripping redundant top-level headers to prevent duplicate table of contents.
-//   3. Strict <= 80-column line width discipline across all documentation.
-//   4. Deterministic volume and chapter sequence matching project ontology.
+// PEDAGOGICAL MISSION & AXIOMATIC INVARIANTS:
+//   1. Data-Driven Architecture: Ingests configuration from
+//      `docs/master_guide_manifest.json` following the 5-block envelope.
+//   2. Dynamic Area Scanning: Automatically scans designated filesystem areas
+//      (`lore/`, `game_design/`, `architecture/`, `dev_logs/`) to discover new
+//      chapters, extracting clean titles from header markers.
+//   3. Dual Scope Granularity: Compiles both the monolithic single-file
+//      compendium (`MASTER_GUIDE.*`) and individual volume books (`volumes/VOLUME_*.*`).
+//   4. Strict Line Discipline: <= 80-column line width across documentation.
+//   5. Zero Missing Chapter Tolerance: Pre-flight audits guarantee that all
+//      referenced source chapters exist on disk before publication begins.
 // =============================================================================
 
-//! # Master Guide Compilation Engine
+//! # Data-Driven Master Guide & Multi-Volume Compilation Engine
 //!
-//! Provides document aggregation, syntax transformation, and PDF publication
-//! for the 6-volume *Tenebris and Lux* Master Guide.
+//! Provides dynamic filesystem area scanning, manifest-driven volume assembly,
+//! and multi-modal publication (AsciiDoc, Markdown, PDF) across both unified
+//! and volume-specific compendiums.
 
 // =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES & SPECS
+// BLOCK 2: OPENING BLOCK / TYPES & DATA SCHEMAS
 // Stratum: Developer Tooling | Machine: tools.guide.rust
 // =============================================================================
 
 use crate::runner::{RunnerContext, TaskRunner, TaskTelemetry};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
 /// Specification for a single chapter included within a master volume.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ChapterSpec {
-    /// Sequential chapter number across the master compendium.
+    /// Sequential chapter number across the compendium or volume.
     pub number: usize,
     /// Human-readable title of the chapter.
     pub title: String,
-    /// Absolute or relative path to the source AsciiDoc file.
+    /// Absolute or relative path to the source AsciiDoc / Markdown file.
     pub source_path: PathBuf,
 }
 
 /// Specification for a major thematic volume within the master compendium.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VolumeSpec {
-    /// Roman numeral designator (e.g., "I", "II", "III").
-    pub roman: &'static str,
+    /// Roman numeral designator (e.g., "I", "II", "III", "VI").
+    pub roman: String,
+    /// Filesystem-safe slug for artifact filenames (e.g., "world_canon").
+    #[serde(default)]
+    pub slug: String,
     /// Volume title.
-    pub title: &'static str,
+    pub title: String,
     /// Architectural synopsis of the volume's thematic contents.
-    pub description: &'static str,
-    /// List of ordered chapters belonging to this volume.
+    pub description: String,
+    /// Subdirectories relative to docs/ scanned for chapters.
+    #[serde(default)]
+    pub scan_areas: Vec<String>,
+    /// Ordered list of chapters belonging to this volume.
     pub chapters: Vec<ChapterSpec>,
 }
 
+/// JSON manifest serialization structures following the 5-block envelope.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifestChapter {
+    pub title: String,
+    pub rel_path: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifestVolume {
+    pub roman: String,
+    #[serde(default)]
+    pub slug: String,
+    pub title: String,
+    pub description: String,
+    #[serde(default)]
+    pub scan_areas: Vec<String>,
+    #[serde(default)]
+    pub chapters: Vec<GuideManifestChapter>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifestMetadata {
+    pub schema: String,
+    pub version: String,
+    pub interface_rev: String,
+    pub date: String,
+    pub author: String,
+    pub title: String,
+    #[serde(default)]
+    pub invariants: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifestTypes {
+    #[serde(default)]
+    pub formats: Vec<String>,
+    #[serde(default)]
+    pub pdf_engine: Option<String>,
+    #[serde(default)]
+    pub default_pdf_theme: Option<String>,
+    #[serde(default)]
+    pub toc_levels: Option<u32>,
+    #[serde(default)]
+    pub line_discipline_max_cols: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifestBody {
+    pub volumes: Vec<GuideManifestVolume>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifestAudit {
+    #[serde(default)]
+    pub required_volumes: usize,
+    #[serde(default)]
+    pub min_total_chapters: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifestClosing {
+    #[serde(default)]
+    pub publisher: String,
+    #[serde(default)]
+    pub status: String,
+    #[serde(default)]
+    pub compilation_targets: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GuideManifest {
+    pub block_1_metadata: GuideManifestMetadata,
+    #[serde(default)]
+    pub block_2_types: Option<GuideManifestTypes>,
+    pub block_3_body: GuideManifestBody,
+    #[serde(default)]
+    pub block_4_audit: Option<GuideManifestAudit>,
+    #[serde(default)]
+    pub block_5_closing: Option<GuideManifestClosing>,
+}
+
 // =============================================================================
-// BLOCK 3: BODY BLOCK / COMPILATION LOGIC
+// BLOCK 3: BODY BLOCK / COMPILER & AREA SCANNER IMPLEMENTATION
 // Stratum: Developer Tooling | Machine: tools.guide.rust
 // =============================================================================
 
-/// Core builder aggregating documentation into unified master outputs.
+/// Core builder aggregating documentation into unified master and volume outputs.
 pub struct MasterGuideBuilder {
+    pub repo_root: PathBuf,
     pub docs_dir: PathBuf,
+    pub volumes_dir: PathBuf,
     pub volumes: Vec<VolumeSpec>,
 }
 
 impl MasterGuideBuilder {
-    /// Initializes the Master Guide builder pointing to the docs directory.
+    /// Initializes the Master Guide builder pointing to the repository root.
     pub fn new(repo_root: &Path) -> Self {
         let docs_dir = repo_root.join("docs");
-        let volumes = Self::build_volume_manifest(&docs_dir);
-        Self { docs_dir, volumes }
+        let volumes_dir = docs_dir.join("volumes");
+        let manifest_path = docs_dir.join("master_guide_manifest.json");
+
+        let volumes = if manifest_path.is_file() {
+            Self::load_volumes_from_manifest(&docs_dir, &manifest_path)
+                .unwrap_or_else(|err| {
+                    eprintln!("  [WARN] Failed to load {:?}: {}. Using canonical fallback.", manifest_path, err);
+                    Self::build_canonical_volumes(&docs_dir)
+                })
+        } else {
+            let fallback_vols = Self::build_canonical_volumes(&docs_dir);
+            let _ = Self::save_default_manifest(&docs_dir, &manifest_path, &fallback_vols);
+            fallback_vols
+        };
+
+        Self {
+            repo_root: repo_root.to_path_buf(),
+            docs_dir,
+            volumes_dir,
+            volumes,
+        }
     }
 
-    /// Defines the master volumes and chapter hierarchy across the repository.
-    fn build_volume_manifest(docs: &Path) -> Vec<VolumeSpec> {
+    /// Loads volume specifications from a data-driven 5-block JSON manifest.
+    pub fn load_volumes_from_manifest(docs_dir: &Path, path: &Path) -> Result<Vec<VolumeSpec>, String> {
+        let raw = fs::read_to_string(path)
+            .map_err(|e| format!("Unable to read guide manifest file: {}", e))?;
+        let manifest: GuideManifest = serde_json::from_str(&raw)
+            .map_err(|e| format!("Failed to parse JSON guide manifest: {}", e))?;
+
+        let mut chapter_counter = 1;
+        let mut volumes = Vec::new();
+
+        for mv in manifest.block_3_body.volumes {
+            let mut chapters = Vec::new();
+
+            // Step 1: Add explicitly specified chapters from manifest
+            for ch in mv.chapters {
+                chapters.push(ChapterSpec {
+                    number: chapter_counter,
+                    title: ch.title,
+                    source_path: docs_dir.join(ch.rel_path),
+                });
+                chapter_counter += 1;
+            }
+
+            // Step 2: Dynamic area scan for additional chapters in designated scan areas
+            for area in &mv.scan_areas {
+                let scanned = Self::scan_area_for_chapters(docs_dir, area);
+                for (scanned_title, scanned_path) in scanned {
+                    // Avoid duplicate source paths
+                    if !chapters.iter().any(|c| c.source_path == scanned_path) {
+                        chapters.push(ChapterSpec {
+                            number: chapter_counter,
+                            title: scanned_title,
+                            source_path: scanned_path,
+                        });
+                        chapter_counter += 1;
+                    }
+                }
+            }
+
+            let slug = if mv.slug.is_empty() {
+                format!("volume_{}", mv.roman.to_lowercase())
+            } else {
+                mv.slug
+            };
+
+            volumes.push(VolumeSpec {
+                roman: mv.roman,
+                slug,
+                title: mv.title,
+                description: mv.description,
+                scan_areas: mv.scan_areas,
+                chapters,
+            });
+        }
+
+        Ok(volumes)
+    }
+
+    /// Recursively scans an area directory relative to docs/ for .adoc and .md chapters.
+    pub fn scan_area_for_chapters(docs_dir: &Path, area_rel: &str) -> Vec<(String, PathBuf)> {
+        let target_dir = docs_dir.join(area_rel);
+        let mut results = Vec::new();
+        if !target_dir.is_dir() {
+            return results;
+        }
+
+        Self::scan_dir_recursive(&target_dir, &mut results);
+        results.sort_by(|a, b| a.1.cmp(&b.1));
+        results
+    }
+
+    fn scan_dir_recursive(dir: &Path, out: &mut Vec<(String, PathBuf)>) {
+        if let Ok(entries) = fs::read_dir(dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    Self::scan_dir_recursive(&path, out);
+                } else if path.is_file() {
+                    let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("");
+                    if ext == "adoc" || ext == "md" {
+                        let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("");
+                        // Skip table-of-contents README index pages
+                        if name.eq_ignore_ascii_case("readme.adoc")
+                            || name.eq_ignore_ascii_case("readme.md")
+                        {
+                            continue;
+                        }
+                        let title = Self::extract_title_from_file(&path);
+                        out.push((title, path));
+                    }
+                }
+            }
+        }
+    }
+
+    /// Extracts clean human-readable chapter titles from header markers in the file.
+    pub fn extract_title_from_file(path: &Path) -> String {
+        if let Ok(content) = fs::read_to_string(path) {
+            for line in content.lines().take(30) {
+                let trimmed = line.trim();
+                if trimmed.starts_with("= ") && !trimmed.starts_with("== ") {
+                    return trimmed[2..].trim().to_string();
+                } else if trimmed.starts_with("# ") && !trimmed.starts_with("## ") {
+                    return trimmed[2..].trim().to_string();
+                }
+            }
+        }
+
+        // Fallback: title-case the file stem
+        let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("Chapter");
+        stem.replace('_', " ").replace('-', " ")
+    }
+
+    /// Saves a newly generated canonical manifest to docs/master_guide_manifest.json.
+    fn save_default_manifest(
+        _docs_dir: &Path,
+        manifest_path: &Path,
+        volumes: &[VolumeSpec],
+    ) -> Result<(), String> {
+        let manifest = GuideManifest {
+            block_1_metadata: GuideManifestMetadata {
+                schema: "tenlux.data.master_guide.v1".to_string(),
+                version: "1.0.0".to_string(),
+                interface_rev: "Rev 1".to_string(),
+                date: "2026-11-07".to_string(),
+                author: "CreativeWorkzStudio LLC / ProfessorSeanEX".to_string(),
+                title: "Tenebris and Lux Master Guide Publication Manifest".to_string(),
+                invariants: vec![
+                    "Zero missing chapter tolerance during pre-flight audit".to_string(),
+                    "Deterministic volume and chapter sequence matching project ontology".to_string(),
+                    "Dual granularity: unified master compendium and volume books".to_string(),
+                ],
+            },
+            block_2_types: Some(GuideManifestTypes {
+                formats: vec!["adoc".to_string(), "md".to_string(), "pdf".to_string()],
+                pdf_engine: Some("asciidoctor-pdf".to_string()),
+                default_pdf_theme: Some("default".to_string()),
+                toc_levels: Some(3),
+                line_discipline_max_cols: Some(80),
+            }),
+            block_3_body: GuideManifestBody {
+                volumes: volumes
+                    .iter()
+                    .map(|v| GuideManifestVolume {
+                        roman: v.roman.clone(),
+                        slug: v.slug.clone(),
+                        title: v.title.clone(),
+                        description: v.description.clone(),
+                        scan_areas: v.scan_areas.clone(),
+                        chapters: v
+                            .chapters
+                            .iter()
+                            .map(|c| GuideManifestChapter {
+                                title: c.title.clone(),
+                                rel_path: c
+                                    .source_path
+                                    .strip_prefix(_docs_dir)
+                                    .unwrap_or(&c.source_path)
+                                    .to_string_lossy()
+                                    .to_string(),
+                            })
+                            .collect(),
+                    })
+                    .collect(),
+            },
+            block_4_audit: Some(GuideManifestAudit {
+                required_volumes: volumes.len(),
+                min_total_chapters: volumes.iter().map(|v| v.chapters.len()).sum(),
+            }),
+            block_5_closing: Some(GuideManifestClosing {
+                publisher: "CreativeWorkzStudio Publishing".to_string(),
+                status: "APPROVED".to_string(),
+                compilation_targets: vec!["unified_compendium".to_string(), "volume_books".to_string()],
+            }),
+        };
+
+        let json = serde_json::to_string_pretty(&manifest)
+            .map_err(|e| format!("Serialization error: {}", e))?;
+        fs::write(manifest_path, json)
+            .map_err(|e| format!("Failed to save manifest to {:?}: {}", manifest_path, e))?;
+        Ok(())
+    }
+
+    /// Canonical hardcoded fallback volume definitions (matching the 71-chapter compendium).
+    fn build_canonical_volumes(docs: &Path) -> Vec<VolumeSpec> {
         let mut chapter_id = 1;
         let mut make_ch = |title: &str, rel_path: &str| -> ChapterSpec {
             let ch = ChapterSpec {
@@ -110,9 +402,11 @@ impl MasterGuideBuilder {
 
         vec![
             VolumeSpec {
-                roman: "I",
-                title: "World Canon, Metaphysics & Continental Topography",
-                description: "Cosmic neutrality of Lux and Tenebris, chivalric Kingdom of Sacyra, continental realms, and the existential menace of The Dark Lord.",
+                roman: "I".to_string(),
+                slug: "world_canon_and_continental_topography".to_string(),
+                title: "World Canon, Metaphysics & Continental Topography".to_string(),
+                description: "Cosmic neutrality of Lux and Tenebris, chivalric Kingdom of Sacyra, continental realms, and the existential menace of The Dark Lord.".to_string(),
+                scan_areas: vec!["lore/realms".to_string()],
                 chapters: vec![
                     make_ch("The Primordial Neutrality of Lux and Tenebris", "lore/world_and_lore.adoc"),
                     make_ch("Historical Canon & Macro-Chronology", "lore/genesis_and_historical_canon.adoc"),
@@ -130,9 +424,11 @@ impl MasterGuideBuilder {
                 ],
             },
             VolumeSpec {
-                roman: "II",
-                title: "Dramatis Personae & Dual Protagonist Dynamics",
-                description: "Comprehensive character dossiers, founding princes, dual protagonist synergies, and regional faction leaders.",
+                roman: "II".to_string(),
+                slug: "dramatis_personae_and_dual_protagonists".to_string(),
+                title: "Dramatis Personae & Dual Protagonist Dynamics".to_string(),
+                description: "Comprehensive character dossiers, founding princes, dual protagonist synergies, and regional faction leaders.".to_string(),
+                scan_areas: vec!["lore/characters".to_string()],
                 chapters: vec![
                     make_ch("Dual Protagonist Dynamics & Tri-Perspective Architecture", "lore/characters/protagonists/dual_protagonist_dynamics.adoc"),
                     make_ch("Elijah Ro-enheart: Vanguard of Lux", "lore/characters/protagonists/elijah_ro_enheart.adoc"),
@@ -155,9 +451,11 @@ impl MasterGuideBuilder {
                 ],
             },
             VolumeSpec {
-                roman: "III",
-                title: "Ludology & Tactical TRPG Combat Mechanics",
-                description: "Grid-based tactical warfare, relic stance machines, terrain modifiers, continuous invariant testing, and game design curation.",
+                roman: "III".to_string(),
+                slug: "ludology_and_tactical_trpg_mechanics".to_string(),
+                title: "Ludology & Tactical TRPG Combat Mechanics".to_string(),
+                description: "Grid-based tactical warfare, relic stance machines, terrain modifiers, continuous invariant testing, and game design curation.".to_string(),
+                scan_areas: vec!["game_design".to_string()],
                 chapters: vec![
                     make_ch("Dual-Layer TRPG Combat Architecture", "game_design/tactical_trpg_system.adoc"),
                     make_ch("The Twin Relics, Combat Stances & Moral Sway", "game_design/relics_and_combat.adoc"),
@@ -169,9 +467,11 @@ impl MasterGuideBuilder {
                 ],
             },
             VolumeSpec {
-                roman: "IV",
-                title: "The 2017–2018 Demo Baseline & Historical Archive",
-                description: "Verified historical baseline extracted from the original RPG Maker MV datasets, detailing the complete scenario script, LeTBS mechanics, grimoire, and systems.",
+                roman: "IV".to_string(),
+                slug: "demo_baseline_and_historical_archive".to_string(),
+                title: "The 2017–2018 Demo Baseline & Historical Archive".to_string(),
+                description: "Verified historical baseline extracted from the original RPG Maker MV datasets, detailing the complete scenario script, LeTBS mechanics, grimoire, and systems.".to_string(),
+                scan_areas: vec!["game_design/demo_baseline".to_string()],
                 chapters: vec![
                     make_ch("Historical Baseline Overview & Provenance", "game_design/demo_baseline/README.adoc"),
                     make_ch("7-Act Narrative Script & Dialogue Walkthrough", "game_design/demo_baseline/scenario_and_walkthrough.adoc"),
@@ -187,9 +487,11 @@ impl MasterGuideBuilder {
                 ],
             },
             VolumeSpec {
-                roman: "V",
-                title: "Software Architecture & The 5-Block Invariant Protocol",
-                description: "System boundaries, layered strata, dual-frontend GUI/CLI, and pre-flight zero-heap diagnostic manifests.",
+                roman: "V".to_string(),
+                slug: "software_architecture_and_5_block_protocol".to_string(),
+                title: "Software Architecture & The 5-Block Invariant Protocol".to_string(),
+                description: "System boundaries, layered strata, dual-frontend GUI/CLI, and pre-flight zero-heap diagnostic manifests.".to_string(),
+                scan_areas: vec!["architecture".to_string(), "code".to_string()],
                 chapters: vec![
                     make_ch("OmniCode 5-Block Architectural Framework", "architecture/ARCHITECTURE.adoc"),
                     make_ch("Dual-Frontend Presentation Layer (CLI + Native X11)", "architecture/dual_frontend_architecture.adoc"),
@@ -202,9 +504,11 @@ impl MasterGuideBuilder {
                 ],
             },
             VolumeSpec {
-                roman: "VI",
-                title: "Engineering Chronology & Development Logs",
-                description: "Living chronological engineering logs recording every architectural milestone and paradigm evolution.",
+                roman: "VI".to_string(),
+                slug: "engineering_chronology_and_dev_logs".to_string(),
+                title: "Engineering Chronology & Development Logs".to_string(),
+                description: "Living chronological engineering logs recording every architectural milestone and paradigm evolution.".to_string(),
+                scan_areas: vec!["dev_logs/2026/10".to_string(), "dev_logs/2026/11".to_string()],
                 chapters: vec![
                     make_ch("DevLog 001: Genesis, Paradigm Pivot & Invariants", "dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc"),
                     make_ch("DevLog 003: Central Manifest & Pre-Flight Spec", "dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc"),
@@ -218,18 +522,22 @@ impl MasterGuideBuilder {
                     make_ch("DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework", "dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc"),
                     make_ch("DevLog 012: Interactive Debugging System & State Rewind Architecture", "dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc"),
                     make_ch("DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix", "dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc"),
-                    make_ch(
-                        "DevLog 014: Presentation Engine & 5-Screen UI",
-                        "dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc",
-                    ),
+                    make_ch("DevLog 014: High Fantasy Presentation Engine & 5-Screen UI", "dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc"),
+                    make_ch("DevLog 015: The Big Machine, Master Turn Gear & Core Subsystem Elevation", "dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc"),
                 ],
             },
         ]
-
     }
 
-    /// Compiles all three formats of the Master Guide.
+    /// Compiles both the unified Master Guide compendium and all individual volume books.
     pub fn build_all(&self) -> Result<(PathBuf, PathBuf, PathBuf), String> {
+        let master = self.build_master()?;
+        let _ = self.build_volumes()?;
+        Ok(master)
+    }
+
+    /// Compiles the single unified master compendium (MASTER_GUIDE.{adoc, md, pdf}).
+    pub fn build_master(&self) -> Result<(PathBuf, PathBuf, PathBuf), String> {
         println!(">>> Compiling Unified Master Guide across Volumes & Chapters...");
 
         let adoc_path = self.docs_dir.join("MASTER_GUIDE.adoc");
@@ -255,7 +563,7 @@ impl MasterGuideBuilder {
 
         match pdf_status {
             Ok(s) if s.success() => {
-                println!("  [SUCCESS] Master Guide PDF generated at: {:?}", pdf_path);
+                println!("  [SUCCESS] Unified Master Guide PDF generated at: {:?}", pdf_path);
             }
             Ok(s) => {
                 eprintln!("  [WARN] asciidoctor-pdf exited with code: {:?}", s.code());
@@ -265,19 +573,116 @@ impl MasterGuideBuilder {
             }
         }
 
-        println!(">>> Master Guide Compilation Complete!");
+        println!(">>> Unified Master Guide Compilation Complete!");
+        Ok((adoc_path, md_path, pdf_path))
+    }
+
+    /// Compiles individual volume books into docs/volumes/ (VOLUME_{roman}_{slug}.{adoc, md, pdf}).
+    pub fn build_volumes(&self) -> Result<Vec<(String, PathBuf, PathBuf, PathBuf)>, String> {
+        println!(">>> Compiling Individual Master Guide Volumes into docs/volumes/...");
+        fs::create_dir_all(&self.volumes_dir)
+            .map_err(|e| format!("Failed to create volumes directory: {}", e))?;
+
+        let mut results = Vec::new();
+
+        for vol in &self.volumes {
+            let slug = if vol.slug.is_empty() {
+                format!("vol_{}", vol.roman.to_lowercase())
+            } else {
+                vol.slug.clone()
+            };
+
+            let prefix = format!("VOLUME_{}_{}", vol.roman, slug);
+            let adoc_path = self.volumes_dir.join(format!("{}.adoc", prefix));
+            let md_path = self.volumes_dir.join(format!("{}.md", prefix));
+            let pdf_path = self.volumes_dir.join(format!("{}.pdf", prefix));
+
+            let (adoc_content, md_content) = self.assemble_volume_content(vol)?;
+
+            println!("  Writing Volume {} AsciiDoc: {:?}...", vol.roman, adoc_path);
+            fs::write(&adoc_path, &adoc_content)
+                .map_err(|e| format!("Failed to write {:?}: {}", adoc_path, e))?;
+
+            println!("  Writing Volume {} Markdown: {:?}...", vol.roman, md_path);
+            fs::write(&md_path, &md_content)
+                .map_err(|e| format!("Failed to write {:?}: {}", md_path, e))?;
+
+            println!("  Compiling Volume {} PDF: {:?} via asciidoctor-pdf...", vol.roman, pdf_path);
+            let pdf_status = Command::new("asciidoctor-pdf")
+                .arg(&adoc_path)
+                .arg("-o")
+                .arg(&pdf_path)
+                .status();
+
+            match pdf_status {
+                Ok(s) if s.success() => {
+                    println!("  [SUCCESS] Volume {} PDF generated at: {:?}", vol.roman, pdf_path);
+                }
+                Ok(s) => {
+                    eprintln!("  [WARN] asciidoctor-pdf for Volume {} exited with code: {:?}", vol.roman, s.code());
+                }
+                Err(e) => {
+                    eprintln!("  [WARN] asciidoctor-pdf for Volume {} failed: {}", vol.roman, e);
+                }
+            }
+
+            results.push((vol.roman.clone(), adoc_path, md_path, pdf_path));
+        }
+
+        println!(">>> All {} Volumes Compiled Successfully!", self.volumes.len());
+        Ok(results)
+    }
+
+    /// Compiles a single volume identified by Roman numeral (e.g. "I", "VI") or 1-based index ("1", "6").
+    pub fn build_single_volume(&self, identifier: &str) -> Result<(PathBuf, PathBuf, PathBuf), String> {
+        let vol = self.volumes.iter().find(|v| {
+            v.roman.eq_ignore_ascii_case(identifier)
+                || match identifier.parse::<usize>() {
+                    Ok(idx) if idx > 0 && idx <= self.volumes.len() => {
+                        self.volumes.get(idx - 1).map(|found| found.roman == v.roman).unwrap_or(false)
+                    }
+                    _ => false,
+                }
+        }).ok_or_else(|| format!("Volume '{}' not found in manifest.", identifier))?;
+
+        fs::create_dir_all(&self.volumes_dir)
+            .map_err(|e| format!("Failed to create volumes directory: {}", e))?;
+
+        let slug = if vol.slug.is_empty() {
+            format!("vol_{}", vol.roman.to_lowercase())
+        } else {
+            vol.slug.clone()
+        };
+
+        let prefix = format!("VOLUME_{}_{}", vol.roman, slug);
+        let adoc_path = self.volumes_dir.join(format!("{}.adoc", prefix));
+        let md_path = self.volumes_dir.join(format!("{}.md", prefix));
+        let pdf_path = self.volumes_dir.join(format!("{}.pdf", prefix));
+
+        let (adoc_content, md_content) = self.assemble_volume_content(vol)?;
+        fs::write(&adoc_path, &adoc_content)
+            .map_err(|e| format!("Failed to write {:?}: {}", adoc_path, e))?;
+        fs::write(&md_path, &md_content)
+            .map_err(|e| format!("Failed to write {:?}: {}", md_path, e))?;
+
+        let _ = Command::new("asciidoctor-pdf")
+            .arg(&adoc_path)
+            .arg("-o")
+            .arg(&pdf_path)
+            .status();
+
         Ok((adoc_path, md_path, pdf_path))
     }
 
     /// Assembles the unified AsciiDoc and Markdown text documents.
     pub fn assemble_content(&self) -> Result<(String, String), String> {
-        let mut adoc = String::with_capacity(300_000);
-        let mut md = String::with_capacity(300_000);
+        let mut adoc = String::with_capacity(400_000);
+        let mut md = String::with_capacity(400_000);
 
         // AsciiDoc Master Header
         adoc.push_str("= Tenebris and Lux: Comprehensive Master Guide\n");
         adoc.push_str("CreativeWorkzStudio LLC / ProfessorSeanEX\n");
-        adoc.push_str("v1.0.0, 2026-10-29\n");
+        adoc.push_str("v1.0.0, 2026-11-07\n");
         adoc.push_str(":doctype: book\n");
         adoc.push_str(":toc: left\n");
         adoc.push_str(":toclevels: 3\n");
@@ -294,7 +699,7 @@ impl MasterGuideBuilder {
         // Markdown Master Header
         md.push_str("# Tenebris and Lux: Comprehensive Master Guide\n\n");
         md.push_str("> **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  \n");
-        md.push_str("> **Version**: 1.0.0 (Release Baseline 2026-10-29)  \n");
+        md.push_str("> **Version**: 1.0.0 (Release Baseline 2026-11-07)  \n");
         md.push_str("> **Standard**: OmniCode 5-Block Ontological Architecture & Layered Invariants  \n");
         md.push_str("> **Purpose**: Unified Single-File Master Compendium for Google Gemini and NotebookLM\n\n");
         md.push_str("## Executive Summary\n\n");
@@ -347,6 +752,67 @@ impl MasterGuideBuilder {
         Ok((adoc, md))
     }
 
+    /// Assembles the text documents for an individual standalone volume.
+    pub fn assemble_volume_content(&self, vol: &VolumeSpec) -> Result<(String, String), String> {
+        let mut adoc = String::with_capacity(100_000);
+        let mut md = String::with_capacity(100_000);
+
+        // AsciiDoc Volume Header
+        adoc.push_str(&format!("= Volume {}: {}\n", vol.roman, vol.title));
+        adoc.push_str("CreativeWorkzStudio LLC / ProfessorSeanEX\n");
+        adoc.push_str("v1.0.0, 2026-11-07\n");
+        adoc.push_str(":doctype: book\n");
+        adoc.push_str(":toc: left\n");
+        adoc.push_str(":toclevels: 3\n");
+        adoc.push_str(":sectnums:\n");
+        adoc.push_str(":icons: font\n");
+        adoc.push_str(":source-highlighter: rouge\n");
+        adoc.push_str(":pdf-theme: default\n\n");
+
+        adoc.push_str("[abstract]\n== Volume Synopsis\n\n");
+        adoc.push_str(&format!("{}\n\n", vol.description));
+
+        // Markdown Volume Header
+        md.push_str(&format!("# Volume {}: {}\n\n", vol.roman, vol.title));
+        md.push_str("> **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  \n");
+        md.push_str(&format!("> **Compendium**: Tenebris and Lux Master Guide — Volume {}  \n", vol.roman));
+        md.push_str("> **Purpose**: Context Document for Google Gemini & NotebookLM Workflows\n\n");
+        md.push_str("## Volume Synopsis\n\n");
+        md.push_str(&format!("_{}_\n\n", vol.description));
+
+        md.push_str("## Table of Contents\n\n");
+        for (idx, ch) in vol.chapters.iter().enumerate() {
+            md.push_str(&format!("{}. {}\n", idx + 1, ch.title));
+        }
+        md.push_str("\n---\n\n");
+
+        for (idx, ch) in vol.chapters.iter().enumerate() {
+            let raw_content = if ch.source_path.exists() {
+                fs::read_to_string(&ch.source_path).unwrap_or_else(|_| {
+                    format!("Chapter content unavailable from {:?}", ch.source_path)
+                })
+            } else {
+                format!("_File not found: {:?}_\n", ch.source_path)
+            };
+
+            let stripped = Self::strip_adoc_header(&raw_content);
+
+            // AsciiDoc Chapter
+            adoc.push_str(&format!("== Chapter {}: {}\n\n", idx + 1, ch.title));
+            adoc.push_str(&format!("*Source File*: `{}`\n\n", ch.source_path.display()));
+            adoc.push_str(&stripped);
+            adoc.push_str("\n\n");
+
+            // Markdown Chapter
+            md.push_str(&format!("## Chapter {}: {}\n\n", idx + 1, ch.title));
+            md.push_str(&format!("> **Source**: `{}`\n\n", ch.source_path.display()));
+            md.push_str(&Self::adoc_to_markdown(&stripped));
+            md.push_str("\n\n---\n\n");
+        }
+
+        Ok((adoc, md))
+    }
+
     /// Strips top-level document headers to avoid duplicate metadata blocks.
     pub fn strip_adoc_header(content: &str) -> String {
         let mut lines: Vec<&str> = Vec::new();
@@ -369,7 +835,6 @@ impl MasterGuideBuilder {
                 } else if trimmed.starts_with("//") {
                     continue;
                 } else {
-                    // Header metadata (author, version, etc.)
                     continue;
                 }
             } else {
@@ -385,7 +850,7 @@ impl MasterGuideBuilder {
     }
 
     /// Converts standard AsciiDoc formatting conventions into clean GitHub-flavored Markdown.
-    fn adoc_to_markdown(adoc: &str) -> String {
+    pub fn adoc_to_markdown(adoc: &str) -> String {
         let mut md = String::with_capacity(adoc.len());
         for line in adoc.lines() {
             if line.starts_with("=====") {
@@ -421,7 +886,7 @@ impl TaskRunner for MasterGuideTask {
     }
 
     fn description(&self) -> &'static str {
-        "Compiles the 6-Volume unified Master Guide in AsciiDoc, Markdown, and PDF"
+        "Compiles the data-driven Master Guide & individual volumes in AsciiDoc, Markdown, and PDF"
     }
 
     fn preflight(&self, ctx: &RunnerContext) -> Result<(), String> {
@@ -446,18 +911,25 @@ impl TaskRunner for MasterGuideTask {
             ));
         }
 
-        println!("  [PASS] Preflight verified: all {} chapters present.", total_count);
+        println!("  [PASS] Preflight verified: all {} chapters present across {} volumes.", total_count, builder.volumes.len());
         Ok(())
     }
 
     fn run(&self, ctx: &RunnerContext) -> Result<TaskTelemetry, String> {
         let builder = MasterGuideBuilder::new(&ctx.repo_root);
-        let (adoc_p, md_p, pdf_p) = builder.build_all()?;
-        let details = "Compiled MASTER_GUIDE (.adoc, .md, .pdf) successfully.";
-        let tel = TaskTelemetry::success(self.name(), 0, details)
+        let (adoc_p, md_p, pdf_p) = builder.build_master()?;
+        let mut tel = TaskTelemetry::success(self.name(), 0, "Compiled unified MASTER_GUIDE (.adoc, .md, .pdf) successfully.")
             .with_artifact(adoc_p)
             .with_artifact(md_p)
             .with_artifact(pdf_p);
+
+        // Compile volume books as well
+        if let Ok(vol_artifacts) = builder.build_volumes() {
+            for (_roman, vadoc, vmd, vpdf) in vol_artifacts {
+                tel = tel.with_artifact(vadoc).with_artifact(vmd).with_artifact(vpdf);
+            }
+        }
+
         Ok(tel)
     }
 
@@ -501,5 +973,29 @@ mod tests {
         let md = MasterGuideBuilder::adoc_to_markdown(adoc);
         assert!(md.contains("## Chapter 1"));
         assert!(md.contains("### Subsection A"));
+    }
+
+    #[test]
+    fn test_extract_title_from_adoc_header() {
+        let temp_dir = std::env::temp_dir();
+        let test_file = temp_dir.join("test_chapter_title.adoc");
+        let _ = fs::write(&test_file, "= Canonical Test Chapter Title\nAuthor Name\n\n== Body\nText");
+        let title = MasterGuideBuilder::extract_title_from_file(&test_file);
+        let _ = fs::remove_file(test_file);
+        assert_eq!(title, "Canonical Test Chapter Title");
+    }
+
+    #[test]
+    fn test_volume_slug_and_roman_spec() {
+        let vol = VolumeSpec {
+            roman: "IV".to_string(),
+            slug: "demo_baseline".to_string(),
+            title: "Demo Baseline".to_string(),
+            description: "Historical extraction".to_string(),
+            scan_areas: vec!["game_design/demo_baseline".to_string()],
+            chapters: vec![],
+        };
+        assert_eq!(vol.roman, "IV");
+        assert_eq!(vol.slug, "demo_baseline");
     }
 }

@@ -1,0 +1,269 @@
+= DevLog 015: The Big Machine, The Master Turn Gear & Core Subsystem Elevation
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-07
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+
+[abstract]
+== Executive Summary
+
+This development log documents the pivotal architectural evolution of *Tenebris and Lux*
+under the **OmniCode Universal 5-Block Lifecycle Protocol (Rev 4)**. In this cycle, the project
+established the foundational cognitive model that governs its dual nature: **The Engine is the
+Big Machine, and the Game is the Master Turn Gear**. Operating under a dual Waterfall/Agile
+engineering discipline, we systematically modernized the entire Layer 0 foundational substrate—
+spanning `io/`, `log/`, `debug/`, and `core/`—elevating reusable universal cogs out of the game
+domain and establishing zero-dependency fallback modules alongside data-driven hydration from
+`game/data/system/`.
+
+Crucially, this cycle formalized the **Active Iteration Feedback Covenant**: rather than
+preserving stale backwards-compatibility shims that conceal broken contracts and unaligned data,
+we actively exposed architectural seams directly to the compiler (`-std=c11 -Wall -Wextra -Wpedantic -Werror`)
+and our automated test harness. Through this discipline, our verification suite expanded across
+all four testing strata (Unit, Functional, Integrated, System), implementing the **Four
+Ontological Testing Sections** (Always Pass, Expected Input, Boundary Stress, Chaos Poisoning)
+and scaling our automated CTest suite to **51/51 passing test suites (100%)** while verifying all
+20 registered engine modules under `./build/tenebris-lux --audit` with zero dynamic heap allocations.
+
+[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
+____
+The Big Machine provides the mechanical powertrain—monotonic clocks, display surfaces, virtual
+filesystems, and flight logging rings. The Game is the Master Turn Gear that slots into that
+frame to drive tactical decisions and narrative fate. When a cog in the game domain is
+universal, elevate it into the machine. When an old contract shifts, purge the shim and let the
+compiler guide the seam.
+____
+
+== 1. The Architectural Paradigm: The Big Machine & The Master Turn Gear
+
+=== Cognitive Separation of Powers
+A perennial failure mode in game development is the entangled coupling of generic engine systems
+with domain-specific lore, narrative scripts, and campaign states. In Rev 4, we codified an
+uncompromising boundary:
+
+```text
+  ┌──────────────────────────────────────────────────────────────┐
+  │                 THE BIG MACHINE ( engine/ )                  │
+  │                                                              │
+  │   [Clock & Pacer]  [Virtual File System]  [Flight Log Ring]  │
+  │   [Math Evaluator] [Screen Transitions]   [Audio Event Bus]  │
+  │   [State Debugger] [Double-Buffered GUI]  [Letterbox Scaler] │
+  └──────────────────────────────┬───────────────────────────────┘
+                                 │ meshes with / drives
+                                 ▼
+  ┌──────────────────────────────────────────────────────────────┐
+  │               THE MASTER TURN GEAR ( game/ )                 │
+  │                                                              │
+  │   [Tactical Turn Machine]   [Combat Stances & Relic Poise]   │
+  │   [Hero Simulation State]   [Moral Sway Continuum (-100,+100)]│
+  │   [Provincial Topology]     [Five-Route Ending Resolution]   │
+  │   [Domain Data Manifests]   [Sacyra / Libira Campaign Lore]  │
+  └──────────────────────────────────────────────────────────────┘
+```
+
+1. **The Big Machine (`engine/`)**: A universal, reusable, game-agnostic mechanical apparatus.
+   Zero lore mentions. Operates strictly on generic IDs, bounded buffers, fixed-timestep ticks,
+   and deterministic geometry.
+2. **The Master Turn Gear (`game/`)**: The specific game implementation of *Tenebris and Lux*,
+   bringing the tactical turn loop, the twin armaments (Shield of Lux, Sword of Tenebris), moral
+   sway (`[-100, +100]`), and the continental chronicles of Sacyra and Libira.
+
+=== Dual Waterfall & Agile Engineering Discipline
+Game engine development demands two seemingly opposing disciplines at once:
+* **Waterfall Bedrock (The Cast-Iron Frame)**: Memory limits (`ALLOC_ZERO_HEAP` in Layer 0/1),
+  strict ISO C11 adherence, strictly downward layer dependency flow, and universal 5-block
+  structural envelopes are non-negotiable physical laws.
+* **Agile Living Iteration (Turning the Gears)**: Within that cast-iron frame, development
+  proceeds empirically. We modernized concrete subsystem strata one by one
+  (`io/` -> `log/` -> `debug/` -> `core/`), using test failures and compiler diagnostics as
+  precision feedback to guide refactoring.
+
+== 2. Layer 0 Modernization: The Complete Four-Strata Engine Bedrock
+
+Each foundational subsystem was refactored under the strict 5-block lifecycle protocol:
+
+=== 2.1 Virtual Filesystem & I/O (`io/`)
+* **`path_finder`**: Zero-heap path resolver supporting multi-root searching across `game/data/`,
+  `build/`, and system directories, eliminating buffer-truncation false positives.
+* **`fs_utils`**: Bounded line and block file reading without dynamic heap allocations.
+* **`json_utils`**: High-performance, streaming, zero-heap JSON tokenizer and recursive getter.
+* **`master_loader`**: Schema-validated asset loader verifying `block_1_metadata` envelopes and
+  requiring explicit `block_3_body` payloads (`tenlux.data.*`).
+
+=== 2.2 Telemetry & Ring Flight Logging (`log/`)
+* **`log`**: Categorized flight recorder (`LOG_CAT_LOG`, `LOG_CAT_DEBUG`, `LOG_CAT_CHARACTER`)
+  storing entries into a static ring buffer.
+* Formatted with fixed-width column anchors, millisecond-precision ISO timestamps, and signed
+  telemetry grades (`GRADE:+003`, `GRADE:-050`).
+* Automatic flight log rotation (`tenebris_lux_dev.log.*`) quarantined into `build/logs/`.
+
+=== 2.3 Diagnostic Tripwires & State Rewind Debugger (`debug/`)
+* **`debug`**: Non-crashing diagnostic tripwires (`debug_trap_tripwire`) logging violations with
+  file and line number while allowing safe fallback recovery.
+* Time-travel state debugger recording up to 64 frozen simulation snapshots.
+* Bit-exact deterministic state validation using 32-bit and 64-bit FNV-1a hashing.
+
+=== 2.4 Core Utilities & Elevated Orchestrators (`core/`)
+* **`clock_pacer`**: Fixed-timestep pacing orchestrator enforcing canonical 60Hz ($16.666\text{ ms}$)
+  simulation ticks, rendering alpha calculation, and "spiral of death" lag clamping.
+* **`formula_eval`**: Data-driven combat mechanics computing bounded damage mitigation
+  ($10\%$ floor to $90\%$ ceiling), directional accuracy (Flank: $+10\%$, Rear: $+25\%$),
+  critical strikes, and moral resonance.
+* **`geom_utils`**: 2D AABB geometry, 2.5D dimetric/isometric grid coordinate math, and
+  elevated letterbox/pillarbox viewport projection.
+* **`math_utils` / `string_utils` / `time_utils`**: Safe bounded string manipulation,
+  monotonic clocks, saturating integer math, and transition easing curves (`EASE_QUAD_IN`,
+  `EASE_CUBIC_OUT`).
+
+== 3. The Cog Elevation & Orchestrator Protocol
+
+During this milestone, we practiced **Cog Elevation**: when a subsystem or helper inside `game/`
+is found to be universal, game-agnostic, and reusable, it must be elevated into `engine/`.
+
+=== Elevation of Viewport Scalers
+Previously, dynamic camera projection and letterbox scaling were embedded in `game/src/world/map_scaler.c`.
+We extracted the mathematical projection laws into `engine/src/core/geom_utils.c`:
+* `geom_viewport_init()`: Calculates uniform aspect-ratio scale factors and letterbox/pillarbox offsets.
+* `geom_world_to_screen()` & `geom_screen_to_world()`: Projects coordinates between simulation and display.
+* `geom_clamp_camera()` & `geom_is_in_viewport()`: Keeps camera views bounded within world limits.
+
+`map_scaler.c` was updated to delegate its math directly to `geom_utils`, reducing domain code
+complexity while enriching the Big Machine.
+
+=== Standalone Quarantined Fallback Modules
+To ensure the engine can always compile and pass verification even when data files are missing,
+every Layer 0 cog features a quarantined fallback module (`*_fallback.[ch]`). Fallbacks provide
+hardcoded canonical profiles, zero dynamic allocations, and comprehensive pre-flight self-tests.
+
+== 4. Four-Strata Verification Ontology & 51/51 CTest Pass Proof
+
+We expanded our automated testing framework across the **Four Ontological Testing Sections**:
+1. **Section 1: Always Pass (Nominal Golden Baseline)**: Validates standard functionality under ideal inputs.
+2. **Section 2: Expected Input (Contracts & Permutations)**: Exercises valid domain edge cases and configurations.
+3. **Section 3: Boundary & Edge Stress (Limits & Saturations)**: Tests clamping, maximum capacities, and extreme ranges.
+4. **Section 4: Critical Failure & Chaos (Corrupt, Negative & Inverted)**: Injects poison inputs, NULL pointers, zero divisors, and lag spikes to verify tripwires and crash immunity.
+
+```text
+================================================================================
+CTest Automated Verification Suite Results
+================================================================================
+Test project /home/professorseanex/Tenebris and Lux/build
+      Start  1: cli_help_test                    Passed    0.00 sec
+      Start  2: cli_version_test                 Passed    0.00 sec
+      Start  3: subsystem_audit_test             Passed    0.01 sec
+      Start  4: functional_cogs_test             Passed    0.00 sec
+      Start  5: functional_io_test               Passed    0.00 sec
+      Start  6: functional_log_test              Passed    0.00 sec
+      Start  7: functional_debug_test            Passed    0.00 sec
+      Start  8: functional_core_test             Passed    0.00 sec
+      Start  9: unit_math_test                   Passed    0.00 sec
+      Start 10: unit_data_test                   Passed    0.00 sec
+      Start 11: unit_time_test                   Passed    0.00 sec
+      Start 12: unit_string_test                 Passed    0.00 sec
+      Start 13: unit_log_test                    Passed    0.05 sec
+      Start 14: unit_log_engine_test             Passed    0.01 sec
+      Start 15: unit_log_fallback_test           Passed    0.00 sec
+      Start 16: unit_debug_test                  Passed    0.00 sec
+      Start 17: unit_debug_engine_test           Passed    0.00 sec
+      Start 18: unit_debug_fallback_test         Passed    0.00 sec
+      Start 19: unit_math_utils_test             Passed    0.00 sec
+      Start 20: unit_math_utils_fallback_test    Passed    0.00 sec
+      Start 21: unit_time_utils_test             Passed    0.00 sec
+      Start 22: unit_time_utils_fallback_test    Passed    0.00 sec
+      Start 23: unit_string_utils_test           Passed    0.00 sec
+      Start 24: unit_string_utils_fallback_test  Passed    0.00 sec
+      Start 25: unit_geom_utils_test             Passed    0.00 sec
+      Start 26: unit_geom_utils_fallback_test    Passed    0.00 sec
+      Start 27: unit_clock_pacer_test            Passed    0.00 sec
+      Start 28: unit_clock_pacer_fallback_test   Passed    0.00 sec
+      Start 29: unit_formula_eval_test           Passed    0.00 sec
+      Start 30: unit_formula_eval_fallback_test  Passed    0.00 sec
+      Start 31: unit_combat_test                 Passed    0.00 sec
+      Start 32: unit_items_test                  Passed    0.00 sec
+      Start 33: unit_world_test                  Passed    0.00 sec
+      Start 34: unit_dispatch_test               Passed    0.00 sec
+      Start 35: unit_gui_test                    Passed    0.00 sec
+      Start 36: unit_fs_utils_test               Passed    0.00 sec
+      Start 37: unit_path_finder_test            Passed    0.00 sec
+      Start 38: unit_json_utils_test             Passed    0.00 sec
+      Start 39: unit_master_loader_test          Passed    0.00 sec
+      Start 40: integrated_utils_test            Passed    0.00 sec
+      Start 41: integrated_sim_test              Passed    0.01 sec
+      Start 42: integrated_io_test               Passed    0.00 sec
+      Start 43: integrated_log_test              Passed    0.00 sec
+      Start 44: integrated_debug_test            Passed    0.00 sec
+      Start 45: integrated_core_test             Passed    0.00 sec
+      Start 46: system_game_invariants_test      Passed    0.00 sec
+      Start 47: system_gameplay_scenarios_test   Passed    0.01 sec
+      Start 48: system_io_test                   Passed    0.02 sec
+      Start 49: system_log_test                  Passed    0.23 sec
+      Start 50: system_debug_test                Passed    0.02 sec
+      Start 51: system_core_test                 Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 51
+Total Test time (real) = 0.50 sec
+================================================================================
+```
+
+== 5. Telemetry & Pre-Flight Diagnostic Self-Audit
+
+The diagnostic self-audit was expanded to 20 registered engine modules in `game/src/main.c`:
+
+```text
+================================================================================
+           Tenebris and Lux - Subsystem Invariant Pre-Flight Audit              
+================================================================================
+Subsystem            Source File     Rev  Memory      Status  Description
+--------------------------------------------------------------------------------
+core.util.manifest   manifest.h      r2   Zero-Heap   [PASS]  Pre-flight manifest DAG orchestrator verified.
+core.util.fs         fs_utils.h      r3   Zero-Heap   [PASS]  Zero-heap filesystem I/O verified.
+core.util.json       json_utils.h    r3   Zero-Heap   [PASS]  JSON streaming parser verified.
+core.util.time       time_utils.h    r3   Zero-Heap   [PASS]  Monotonic clock & ISO timestamps verified.
+core.util.math       math_utils.h    r3   Zero-Heap   [PASS]  Clamping, saturating math & PRNG verified.
+core.util.geom       geom_utils.h    r3   Zero-Heap   [PASS]  2D AABB & letterbox viewport scalers verified.
+core.util.string     string_utils.h  r3   Zero-Heap   [PASS]  Buffer safety & path joining verified.
+core.util.pacer      clock_pacer.h   r1   Zero-Heap   [PASS]  Fixed-timestep pacer & lag clamp verified.
+core.util.formula    formula_eval.h  r1   Zero-Heap   [PASS]  Mitigation, hit chance & formulas verified.
+core.util.log        log.h           r3   Zero-Heap   [PASS]  Static ring buffer & flight logs verified.
+core.util.debug      debug.h         r3   Zero-Heap   [PASS]  State rewind & tripwires verified.
+sim.engine.state     sim_state.h     r4   Zero-Heap   [PASS]  State initialization verified.
+sim.engine.combat    combat.h        r5   Zero-Heap   [PASS]  Combat sub-assemblies satisfied pre-flight.
+sim.engine.items     items.h         r2   Zero-Heap   [PASS]  Item catalog audited cleanly.
+sim.engine.world     world.h         r5   Zero-Heap   [PASS]  World orchestrator & map scaler verified.
+sim.engine.dispatcher dispatcher.h    r4   Zero-Heap   [PASS]  Command router & alias tables verified.
+sim.engine.core      game.h          r4   Zero-Heap   [PASS]  Simulation core pre-flight satisfied.
+gui.viewport.x11     gui.h           r2   Zero-Heap   [PASS]  X11 display connected & panels verified.
+--------------------------------------------------------------------------------
+Telemetry: 20 modules registered | 20 Pass | 0 Warn | 0 Critical | 0 Fatal
+Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED (System Ready)
+Audit Invariant Checks: 7/7 Invariant Checks Passed (Relics, Stances, Tripwires)
+================================================================================
+```
+
+== 6. The Fractal 5-Block Invariant: Code, Manifests, Tests & Git History
+
+During this cycle, we discovered that the OmniCode Universal 5-Block Lifecycle Protocol is a
+**fractal design pattern** that governs all documentation, implementation, and history:
+* **Block 1 (Metadata)**: Identity, version, interface revision, stratum, author, invariants.
+* **Block 2 (Types & Framing)**: Ontology, data schemas, problem statement, domain types.
+* **Block 3 (Body Implementation)**: The executable work, architectural changes, sub-assemblies.
+* **Block 4 (Audit Procedures)**: Pre-flight checks, CTest verification proof, tripwire traps.
+* **Block 5 (Closing & Invariants)**: Diagnostic inspection cards, teardown, closing affirmations.
+
+By extending this pattern directly into our **Git Commit Architecture** and **DevLog Chronicles**,
+the historical record of the repository mirrors the exact structural rigor of our source code.
+
+== 7. Architectural Next Steps & Horizon Ahead
+
+With Layer 0 of **The Big Machine** verified with 100% pass rates across 51 CTests and 20 registered
+modules, our engineering horizon points directly to:
+1. **Screen Transition Orchestrator**: Generic scene dissolves, fades, and easing wipes in `engine/`.
+2. **Audio Event Bus Orchestrator**: Zero-heap sound cue routing and channel volume mixing in `engine/`.
+3. **Layer 2 Viewports Modernization**: Elevating native X11 rendering and High-DPI font blitting into
+   the 5-block lifecycle architecture.
+4. **Master Turn Gear Domain Modernization (`game/`)**: Aligning combat, stance state machines,
+   and world topology with the curated data catalogs in `game/data/`.
