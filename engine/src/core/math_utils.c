@@ -1,68 +1,79 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          math_utils.c
-// @id            core.util.math
-// @layer         Layer 0: Core Utilities
-// @version       1.0.0
-// @interface_rev Rev 1
-// @date          2026-10-26
-// @updated       2026-10-26
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Pure implementation of bounded integer arithmetic, clamping functions,
-//   and equilibrium nudging algorithms. Serves as the mathematical foundation
-//   guardrailing resource limits, relic charges, and gameplay meters.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/register, zero heap).
-//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic).
-//   - Latency Budget:        < 1 microsecond per calculation.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Deterministic pure calculation with zero side effects.
-//   2. Never overflows across standard 32-bit signed integer limits.
-//   3. Non-positive maximums in ratio scaling safely return 0 without SIGFPE.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          math_utils.c
+@id            core.util.math
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 4
+@date          2026-11-07
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Mathematics & Geometry Subsystem (core/math)
+@role          Bounded Arithmetic, Easing Curves & Ratio Scaler Primitives
+@invariants    1. Clamping guarantees: min_val <= math_clamp_int(v, min, max) <= max_val.
+               2. Saturating safety: Never overflows or underflows signed integer limits.
+               3. Zero divisor immunity: Safe yield of fallback on non-positive maximums.
+               4. Pure determinism: Stateless, reentrant, zero dynamic heap (ALLOC_ZERO_HEAP).
+               5. Easing bounds: Inputs and outputs strictly clamped in [0.0f, 1.0f].
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Pure implementation of bounded integer arithmetic, saturating mathematical
+  primitives, transition easing curves, and Xorshift32 PRNG. Ingests canonical
+  limits from game/data/system/runtime/math/default.json via master_loader.
+================================================================================
+*/
 
-#include "core/math_utils.h"
-#include "io/fs_utils.h"
-#include "io/json_utils.h"
-#include "core/string_utils.h"
+/*
+================================================================================
+BLOCK 2: OPENING / STATIC DATA BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
+================================================================================
+*/
+
+/* --- Tier 1: Standard Library Headers --- */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <math.h>
+
+/* --- Tier 2: Core Engine Specifications & Subsystems --- */
+#include "core/math_utils.h"
+#include "core/math_utils_fallback.h"
+#include "core/manifest.h"
+#include "core/string_utils.h"
+#include "io/master_loader.h"
+#include "io/path_finder.h"
+#include "io/json_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 static const char *const math_invariants[] = {
     "Form precedes fullness: min <= math_clamp_int <= max",
     "Saturating arithmetic never overflows bounds",
     "Zero divisor and negative ratio protection",
     "Stateless, pure, and reentrant execution",
-    "Normalized [0.0, 1.0] and percentage [0, 100] conversion bounds"
+    "Easing curves strictly clamped to [0.0, 1.0]"
 };
 
 const module_metadata_t math_utils_manifest = {
     "core.util.math",
     "math_utils.h",
     LAYER_0_CORE_UTIL,
-    { 1, 1, 0 },
-    2,                          // interface_rev
-    "2026-11-02",               // last_updated
-    "Mathematical invariant clamping, bounded arithmetic, and normalization primitives",
-    0,                          // dependency_count
-    { NULL },                   // dependencies
-    ALLOC_ZERO_HEAP,            // alloc_policy
-    CONCURRENCY_REENTRANT,      // concurrency
-    1,                          // max_budget_us
+    { 0, 1, 0 },
+    4,                          /* interface_rev */
+    "2026-11-07",               /* last_updated */
+    "Mathematical invariant clamping, bounded arithmetic, easing curves, and data-driven profiles",
+    0,                          /* dependency_count: foundational leaf cog */
+    { NULL },                   /* dependencies */
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_REENTRANT,      /* concurrency */
+    2,                          /* max_budget_us */
     5,
     {
         math_invariants[0],
@@ -74,291 +85,175 @@ const module_metadata_t math_utils_manifest = {
     math_utils_preflight
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY / CORE MATHEMATICAL LOGIC BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: INTEGER CLAMPING & SATURATION COGS ]
-// Mission: Guardrail calculations against integer overflow and underflow.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Clamps a signed integer to a closed interval [min_val, max_val].
- *
- * Serves as a foundational mathematical guardrail preventing overflow,
- * underflow, or boundary corruption across player statistics, resonance
- * meters, and moral sway values. If min_val > max_val, boundaries swap.
- *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.math (Bounded Arithmetic Engine)
- * - Assembly:   Integer Clamping & Saturation
- * - Cog:        Scalar Interval Clamp Primitive
- *
- * ### Execution & Resource Contract
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1) branching).
- *
- * @param[in] val     The raw input integer to evaluate.
- * @param[in] min_val Lower boundary limit (inclusive).
- * @param[in] max_val Upper boundary limit (inclusive).
- *
- * @return Clamped value satisfying min_val <= result <= max_val.
- *
- * @pre  min_val <= max_val under normal operation.
- * @post Result resides strictly within [min_val, max_val].
- */
 int math_clamp_int(int val, int min_val, int max_val)
 {
-    /* Step 1: Self-healing inversion check (swap if boundaries inverted) */
+    if (min_val > max_val) {
+        debug_trap_tripwire("math", "min_val > max_val inverted in math_clamp_int", __FILE__, __LINE__);
+        int tmp = min_val;
+        min_val = max_val;
+        max_val = tmp;
+    }
+
+    if (val < min_val) return min_val;
+    if (val > max_val) return max_val;
+    return val;
+}
+
+float math_clamp_float(float val, float min_val, float max_val)
+{
+    if (min_val > max_val) {
+        debug_trap_tripwire("math", "min_val > max_val inverted in math_clamp_float", __FILE__, __LINE__);
+        float tmp = min_val;
+        min_val = max_val;
+        max_val = tmp;
+    }
+
+    if (val < min_val) return min_val;
+    if (val > max_val) return max_val;
+    return val;
+}
+
+int math_saturating_sub(int val, int sub_val)
+{
+    if (sub_val <= 0) return val;
+    if (val <= sub_val) return 0;
+    return val - sub_val;
+}
+
+int math_saturating_add(int val, int add_val, int max_val)
+{
+    if (add_val <= 0) return val;
+    if (val >= max_val) return max_val;
+    if (max_val - val <= add_val) return max_val;
+    return val + add_val;
+}
+
+int math_nudge_toward(int val, int target, int step)
+{
+    if (step <= 0) return val;
+
+    if (val < target) {
+        if (target - val <= step) return target;
+        return val + step;
+    } else if (val > target) {
+        if (val - target <= step) return target;
+        return val - step;
+    }
+    return target;
+}
+
+int math_scale_ratio(int val, int max_val, int target_scale)
+{
+    if (max_val <= 0 || val <= 0 || target_scale <= 0) {
+        if (max_val <= 0) {
+            debug_trap_tripwire("math", "Non-positive max_val in math_scale_ratio", __FILE__, __LINE__);
+        }
+        return 0;
+    }
+
+    int64_t numerator = (int64_t)val * (int64_t)target_scale;
+    return (int)(numerator / max_val);
+}
+
+int math_safe_div_int(int numerator, int denominator, int fallback_val)
+{
+    if (denominator == 0) {
+        debug_trap_tripwire("math", "Division by zero in math_safe_div_int", __FILE__, __LINE__);
+        return fallback_val;
+    }
+    return numerator / denominator;
+}
+
+float math_safe_div_float(float numerator, float denominator, float fallback_val)
+{
+    if (fabsf(denominator) < 1e-7f) {
+        debug_trap_tripwire("math", "Division by zero in math_safe_div_float", __FILE__, __LINE__);
+        return fallback_val;
+    }
+    return numerator / denominator;
+}
+
+int math_normalized_to_percent(float norm)
+{
+    float clamped = math_clamp_float(norm, 0.0f, 1.0f);
+    return (int)(clamped * 100.0f + 0.5f);
+}
+
+float math_percent_to_normalized(int percent)
+{
+    int clamped = math_clamp_int(percent, 0, 100);
+    return (float)clamped / 100.0f;
+}
+
+float math_ease_linear(float t)
+{
+    return math_clamp_float(t, 0.0f, 1.0f);
+}
+
+float math_ease_quad_in(float t)
+{
+    float c = math_clamp_float(t, 0.0f, 1.0f);
+    return c * c;
+}
+
+float math_ease_quad_out(float t)
+{
+    float c = math_clamp_float(t, 0.0f, 1.0f);
+    return c * (2.0f - c);
+}
+
+float math_ease_cubic_inout(float t)
+{
+    float c = math_clamp_float(t, 0.0f, 1.0f);
+    if (c < 0.5f) {
+        return 4.0f * c * c * c;
+    } else {
+        float f = ((2.0f * c) - 2.0f);
+        return 0.5f * f * f * f + 1.0f;
+    }
+}
+
+uint32_t math_prng_next(uint32_t *state)
+{
+    if (state == NULL) return 0;
+    if (*state == 0) *state = 0x243F6A88; /* Canonical constant seed */
+
+    uint32_t x = *state;
+    x ^= x << 13;
+    x ^= x >> 17;
+    x ^= x << 5;
+    *state = x;
+    return x;
+}
+
+int math_prng_range(uint32_t *state, int min_val, int max_val)
+{
     if (min_val > max_val) {
         int tmp = min_val;
         min_val = max_val;
         max_val = tmp;
     }
 
-    /* Step 2: Enforce lower boundary floor */
-    if (val < min_val) {
-        return min_val;
-    }
+    uint32_t span = (uint32_t)(max_val - min_val + 1);
+    if (span == 0) return min_val;
 
-    /* Step 3: Enforce upper boundary ceiling */
-    if (val > max_val) {
-        return max_val;
-    }
-
-    /* Step 4: Value already resides cleanly within [min_val, max_val] */
-    return val;
+    return min_val + (int)(math_prng_next(state) % span);
 }
 
-/**
- * @brief Subtracts an integer value with saturation at zero (non-negative floor).
- *
- * Prevents negative resource anomalies when spending player stamina,
- * deducting relic resonance charges, or applying damage to enemy threat vigor.
- *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.math (Bounded Arithmetic Engine)
- * - Assembly:   Integer Clamping & Saturation
- * - Cog:        Saturating Subtraction Primitive
- *
- * ### Execution & Resource Contract
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] val     Current base value (e.g., remaining hit points).
- * @param[in] sub_val Amount to subtract (negative values safely treated as 0).
- *
- * @return max(0, val - sub_val).
- *
- * @post Return value is guaranteed to be non-negative (>= 0).
- */
-int math_saturating_sub(int val, int sub_val)
-{
-    /* Step 1: Guard against negative subtraction inputs (no-op) */
-    if (sub_val < 0) {
-        return val;
-    }
-
-    /* Step 2: Underflow protection: floor at zero if deduction exceeds val */
-    return (val >= sub_val) ? (val - sub_val) : 0;
-}
-
-/**
- * @brief Adds an integer value with saturation at an upper ceiling limit.
- *
- * Safely charges relic resonance, restores shield barrier power, and
- * accumulates progress counters without overflowing beyond max capacity.
- *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.math (Bounded Arithmetic Engine)
- * - Assembly:   Integer Clamping & Saturation
- * - Cog:        Saturating Addition Primitive
- *
- * ### Execution & Resource Contract
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] val     Current base value (e.g., current shield charge).
- * @param[in] add_val Amount to add (negative values safely treated as 0).
- * @param[in] max_val Upper ceiling threshold (e.g., MAX_RESONANCE = 100).
- *
- * @return min(max_val, val + add_val).
- *
- * @post Return value never exceeds max_val.
- */
-int math_saturating_add(int val, int add_val, int max_val)
-{
-    /* Step 1: Guard against negative addition inputs (no-op) */
-    if (add_val < 0) {
-        return val;
-    }
-
-    /* Step 2: Compute sum in signed register */
-    int sum = val + add_val;
-
-    /* Step 3: Clamp to ceiling if sum breaches maximum capacity */
-    return (sum > max_val) ? max_val : sum;
-}
-
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: EQUILIBRIUM & RATIO SCALING COGS ]
-// Mission: Nudge values toward stability and compute safe UI scale ratios.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Nudges an integer toward a target by at most a specified step size.
- *
- * Provides smooth convergence toward equilibrium states without overshoot.
- * Used to slowly decay heightened moral sway toward cosmic center (0).
- *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.math (Bounded Arithmetic Engine)
- * - Assembly:   Equilibrium & Ratio Scaling
- * - Cog:        Equilibrium Convergence Primitive
- *
- * ### Execution & Resource Contract
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] val    Current source value.
- * @param[in] target Target equilibrium anchor to approach.
- * @param[in] step   Maximum distance step to advance per invocation.
- *
- * @return Converged value guaranteed not to overshoot target.
- */
-int math_nudge_toward(int val, int target, int step)
-{
-    /* Step 1: Absolute step magnitude normalization */
-    if (step < 0) {
-        step = -step;
-    }
-
-    /* Step 2: Forward approach with overshoot clamp */
-    if (val < target) {
-        int next = val + step;
-        return (next > target) ? target : next;
-    }
-
-    /* Step 3: Backward approach with undershoot clamp */
-    if (val > target) {
-        int next = val - step;
-        return (next < target) ? target : next;
-    }
-
-    /* Step 4: Value is already at target equilibrium anchor */
-    return target;
-}
-
-/**
- * @brief Scales an integer value by a ratio safely mapped to a target dimension.
- *
- * Converts numerical gameplay meters into pixel widths for HUD progress bars.
- * Includes explicit division-by-zero immunity and 64-bit overflow guardrails.
- *
- * ### Ontological Classification
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.math (Bounded Arithmetic Engine)
- * - Assembly:   Equilibrium & Ratio Scaling
- * - Cog:        Safe Ratio Scaling Primitive
- *
- * ### Execution & Resource Contract
- * - Memory Model:   ALLOC_ZERO_HEAP (64-bit temporary intermediate math).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] val          Current meter value (0 <= val <= max_val).
- * @param[in] max_val      Maximum meter capacity (safe if <= 0).
- * @param[in] target_scale Target pixel width or range.
- *
- * @return Scaled integer residing within [0, target_scale].
- */
-int math_scale_ratio(int val, int max_val, int target_scale)
-{
-    /* Step 1: Zero divisor & negative value defense (prevents SIGFPE) */
-    if (max_val <= 0 || val <= 0) {
-        return 0;
-    }
-
-    /* Step 2: Saturated ceiling shortcut */
-    if (val >= max_val) {
-        return target_scale;
-    }
-
-    /* Step 3: Safe 64-bit intermediate multiplication to avoid overflow */
-    return (int)(((long long)val * target_scale) / max_val);
-}
-
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.3: NORMALIZATION & PERCENTAGE CONVERSION COGS ]
-// Mission: Translate floating-point normalizations [0.0, 1.0] to integer percentages [0, 100].
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Converts a normalized float [0.0, 1.0] into an integer percent [0, 100].
- *
- * @param[in] norm Floating-point normalized factor.
- * @return Clamped integer percentage in [0, 100].
- */
-int math_normalized_to_percent(float norm)
-{
-    /* Step 1: Clamping lower and upper bounds */
-    if (norm <= 0.0f) {
-        return 0;
-    }
-    if (norm >= 1.0f) {
-        return 100;
-    }
-
-    /* Step 2: Rounded scaling */
-    return (int)(norm * 100.0f + 0.5f);
-}
-
-/**
- * @brief Converts an integer percentage [0, 100] into a normalized factor [0.0, 1.0].
- *
- * @param[in] percent Integer percentage.
- * @return Clamped normalized float in [0.0, 1.0].
- */
-float math_percent_to_normalized(int percent)
-{
-    /* Step 1: Clamping bounds */
-    if (percent <= 0) {
-        return 0.0f;
-    }
-    if (percent >= 100) {
-        return 1.0f;
-    }
-
-    /* Step 2: Floating-point normalization */
-    return (float)percent / 100.0f;
-}
-
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.4: DATA-DRIVEN CONFIGURATION & FALLBACK TRIPWIRES ]
-// Mission: Load continuum parameters from external JSON with hardcoded fallbacks.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Returns hardcoded fallback mathematical continuum configuration.
- *
- * @return Baseline math_config_t with canonical limits.
- */
 math_config_t math_get_default_config(void)
 {
     math_config_t cfg;
     memset(&cfg, 0, sizeof(cfg));
+
     str_safe_copy(cfg.id, "default", sizeof(cfg.id));
-    str_safe_copy(cfg.display_name, "Standard Continental Continuum Baseline", sizeof(cfg.display_name));
+    str_safe_copy(cfg.display_name, "Canonical Continuum Limits", sizeof(cfg.display_name));
     cfg.resonance_min = 0;
     cfg.resonance_max = 100;
     cfg.moral_sway_min = -100;
@@ -367,201 +262,165 @@ math_config_t math_get_default_config(void)
     cfg.equilibrium_band = 25;
     cfg.radiance_overload_threshold = 75;
     cfg.abyssal_eclipse_threshold = -75;
-    cfg.viewport_width = 800;
-    cfg.viewport_height = 600;
+    cfg.viewport_width = 640;
+    cfg.viewport_height = 360;
     cfg.percent_ceiling = 100;
+    cfg.loaded_from_data = false;
+
     return cfg;
 }
 
-/**
- * @brief Loads a mathematical configuration profile from a JSON file.
- *
- * @param[in]  filepath   Null-terminated path to profile JSON.
- * @param[out] out_config Destination configuration structure.
- * @return true if loaded from file; false if fallback was triggered.
- */
-bool math_load_config_from_file(const char *filepath, math_config_t *out_config)
+bool math_load_config_from_file(const char *profile_path, math_config_t *out_config)
 {
     if (out_config == NULL) {
+        debug_trap_tripwire("math", "NULL out_config passed to math_load_config_from_file", __FILE__, __LINE__);
         return false;
     }
 
     *out_config = math_get_default_config();
 
-    if (filepath == NULL || filepath[0] == '\0') {
+    const char *target_rel = profile_path;
+    if (target_rel == NULL || target_rel[0] == '\0') {
+        target_rel = "runtime/math/default.json";
+    }
+
+    /* Strip potential 'system/' prefix if caller passed full subpath */
+    if (strncmp(target_rel, "system/", 7) == 0) {
+        target_rel += 7;
+    }
+
+    master_loader_t loader;
+    char file_buf[8192];
+    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+        LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "Math", -0.2f,
+                   "Failed to load profile '%s', falling back to defaults (GRADE:-020)", target_rel);
         return false;
     }
 
-    char resolved[FS_PATH_MAX];
-    const char *target = filepath;
-    if (fs_resolve_data_path(filepath, resolved, sizeof(resolved))) {
-        target = resolved;
-    }
+    master_loader_get_string(&loader, "profile", "id", out_config->id, sizeof(out_config->id));
+    master_loader_get_string(&loader, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
+    master_loader_get_int(&loader, "profile", "resonance_min", &out_config->resonance_min);
+    master_loader_get_int(&loader, "profile", "resonance_max", &out_config->resonance_max);
+    master_loader_get_int(&loader, "profile", "moral_sway_min", &out_config->moral_sway_min);
+    master_loader_get_int(&loader, "profile", "moral_sway_max", &out_config->moral_sway_max);
+    master_loader_get_int(&loader, "profile", "equilibrium_anchor", &out_config->equilibrium_anchor);
+    master_loader_get_int(&loader, "profile", "equilibrium_band", &out_config->equilibrium_band);
+    master_loader_get_int(&loader, "profile", "radiance_overload_threshold", &out_config->radiance_overload_threshold);
+    master_loader_get_int(&loader, "profile", "abyssal_eclipse_threshold", &out_config->abyssal_eclipse_threshold);
+    master_loader_get_int(&loader, "profile", "viewport_width", &out_config->viewport_width);
+    master_loader_get_int(&loader, "profile", "viewport_height", &out_config->viewport_height);
+    master_loader_get_int(&loader, "profile", "percent_ceiling", &out_config->percent_ceiling);
+    out_config->loaded_from_data = true;
 
-    char buf[FS_BUFFER_MEDIUM_BYTES];
-    bool loaded = fs_read_file_contents(target, buf, sizeof(buf));
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "game/%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "../%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "../game/%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-
-    if (!loaded) {
-        return false;
-    }
-
-    json_get_object_string(buf, "profile", "id", out_config->id, sizeof(out_config->id));
-    json_get_object_string(buf, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
-    json_get_object_int(buf, "profile", "resonance_min", &out_config->resonance_min);
-    json_get_object_int(buf, "profile", "resonance_max", &out_config->resonance_max);
-    json_get_object_int(buf, "profile", "moral_sway_min", &out_config->moral_sway_min);
-    json_get_object_int(buf, "profile", "moral_sway_max", &out_config->moral_sway_max);
-    json_get_object_int(buf, "profile", "equilibrium_anchor", &out_config->equilibrium_anchor);
-    json_get_object_int(buf, "profile", "equilibrium_band", &out_config->equilibrium_band);
-    json_get_object_int(buf, "profile", "radiance_overload_threshold", &out_config->radiance_overload_threshold);
-    json_get_object_int(buf, "profile", "abyssal_eclipse_threshold", &out_config->abyssal_eclipse_threshold);
-    json_get_object_int(buf, "profile", "viewport_width", &out_config->viewport_width);
-    json_get_object_int(buf, "profile", "viewport_height", &out_config->viewport_height);
-    json_get_object_int(buf, "profile", "percent_ceiling", &out_config->percent_ceiling);
-
+    LOG_RECORD(LOG_SEV_DEBUG, LOG_CAT_LOG, "Math", 0.0f,
+               "Hydrated math profile '%s' from data (GRADE:+000)", out_config->id);
     return true;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Validate mathematical axioms and arithmetic ceilings prior to boot.
-// -----------------------------------------------------------------------------
-
-/**
- * Pre-flight diagnostic check evaluating bounded arithmetic invariants.
- *
- * ### Machine Role & Mission
- *
- * Executed during engine boot by the Central Manifest orchestrator.
- * Confirms that integer clamping, saturating addition/subtraction,
- * division-by-zero resilience, and equilibrium convergence operate correctly.
- *
- * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
- */
 diag_result_t math_utils_preflight(void)
 {
     diag_result_t res;
     res.subsystem = math_utils_manifest.module_id;
-    res.check_name = "Clamping & Saturating Bounds";
+    res.check_name = "Clamping, Saturation & Easing Bounds";
 
-    /* Check 1: Clamping bounds, inversion recovery, and exact values */
-    if (math_clamp_int(150, 0, 100) != 100 ||
-        math_clamp_int(-50, 0, 100) != 0 ||
-        math_clamp_int(50, 0, 100) != 50 ||
-        math_clamp_int(0, 0, 0) != 0) {
+    if (!math_utils_audit()) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: math_clamp_int failed boundary invariant.";
-        return res;
-    }
-
-    /* Check 2: Saturating arithmetic underflow & overflow bounds */
-    if (math_saturating_sub(10, 15) != 0 ||
-        math_saturating_sub(20, 5) != 15 ||
-        math_saturating_sub(0, 10) != 0 ||
-        math_saturating_add(90, 20, 100) != 100 ||
-        math_saturating_add(50, 20, 100) != 70 ||
-        math_saturating_add(10, -5, 100) != 10) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: Saturating arithmetic violated bounds.";
-        return res;
-    }
-
-    /* Check 3: Zero divisor & negative input protection in math_scale_ratio */
-    if (math_scale_ratio(50, 0, 100) != 0 ||
-        math_scale_ratio(-10, 100, 100) != 0 ||
-        math_scale_ratio(50, -100, 100) != 0 ||
-        math_scale_ratio(50, 100, 200) != 100) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: math_scale_ratio failed zero-divisor defense.";
-        return res;
-    }
-
-    /* Check 4: Nudge directionality and overshoot protection */
-    if (math_nudge_toward(10, 0, 3) != 7 ||
-        math_nudge_toward(-10, 0, 3) != -7 ||
-        math_nudge_toward(2, 0, 5) != 0 ||
-        math_nudge_toward(-2, 0, 5) != 0) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: math_nudge_toward overshot target anchor.";
-        return res;
-    }
-
-    /* Check 5: Normalization and percentage conversion bounds */
-    if (math_normalized_to_percent(0.85f) != 85 ||
-        math_normalized_to_percent(-0.5f) != 0 ||
-        math_normalized_to_percent(1.5f) != 100 ||
-        math_percent_to_normalized(85) < 0.84f ||
-        math_percent_to_normalized(85) > 0.86f ||
-        math_percent_to_normalized(-10) != 0.0f ||
-        math_percent_to_normalized(150) != 1.0f) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: math normalization / percentage failed bounds.";
-        return res;
-    }
-
-    /* Check 6: Data-driven configuration profile loading and hardcoded fallback */
-    math_config_t default_cfg = math_get_default_config();
-    if (default_cfg.resonance_min != 0 || default_cfg.resonance_max != 100 ||
-        default_cfg.moral_sway_min != -100 || default_cfg.moral_sway_max != 100 ||
-        default_cfg.equilibrium_band != 25) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: math_get_default_config failed canonical invariant.";
-        return res;
-    }
-
-    math_config_t loaded_cfg;
-    if (math_load_config_from_file(NULL, &loaded_cfg) != false) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: math_load_config_from_file(NULL) failed fallback contract.";
+        res.details = "Fatal: math_utils failed invariant audit.";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "Clamping, saturation, zero-divisor safety, normalization & config profiles verified.";
+    res.details = "Clamping, saturating arithmetic, easing curves & PRNG verified.";
     return res;
 }
 
-/**
- * Standalone boolean self-audit wrapper for regression test suites.
- *
- * @return `true` if all mathematical invariant tripwires pass cleanly.
- */
 bool math_utils_audit(void)
 {
-    diag_result_t pf = math_utils_preflight();
-    return pf.passed && (pf.severity != SEVERITY_FATAL);
+    /* Check 1: Clamping bounds and boundary swapping */
+    if (math_clamp_int(150, 0, 100) != 100) return false;
+    if (math_clamp_int(-50, 0, 100) != 0) return false;
+    if (math_clamp_int(50, 0, 100) != 50) return false;
+    if (math_clamp_int(50, 100, 0) != 50) return false; /* Swapped clamp */
+
+    /* Check 2: Saturating arithmetic underflow & overflow bounds */
+    if (math_saturating_sub(10, 15) != 0) return false;
+    if (math_saturating_sub(20, 5) != 15) return false;
+    if (math_saturating_add(90, 20, 100) != 100) return false;
+    if (math_saturating_add(50, 20, 100) != 70) return false;
+
+    /* Check 3: Zero divisor & negative input protection */
+    if (math_scale_ratio(50, 0, 100) != 0) return false;
+    if (math_scale_ratio(50, 100, 200) != 100) return false;
+    if (math_safe_div_int(50, 0, 99) != 99) return false;
+    if (math_safe_div_int(50, 5, 99) != 10) return false;
+
+    /* Check 4: Nudge directionality and overshoot protection */
+    if (math_nudge_toward(10, 0, 3) != 7) return false;
+    if (math_nudge_toward(-10, 0, 3) != -7) return false;
+    if (math_nudge_toward(2, 0, 5) != 0) return false;
+
+    /* Check 5: Normalization and percentage conversion bounds */
+    if (math_normalized_to_percent(0.85f) != 85) return false;
+    if (math_normalized_to_percent(-0.5f) != 0) return false;
+    if (math_normalized_to_percent(1.5f) != 100) return false;
+    if (math_percent_to_normalized(85) < 0.84f || math_percent_to_normalized(85) > 0.86f) return false;
+
+    /* Check 6: Easing curves within [0.0, 1.0] */
+    if (fabsf(math_ease_linear(0.0f)) > 1e-5f) return false;
+    if (fabsf(math_ease_linear(1.0f) - 1.0f) > 1e-5f) return false;
+    if (fabsf(math_ease_quad_in(0.5f) - 0.25f) > 1e-5f) return false;
+    if (fabsf(math_ease_quad_out(0.5f) - 0.75f) > 1e-5f) return false;
+    if (fabsf(math_ease_cubic_inout(0.5f) - 0.5f) > 1e-5f) return false;
+
+    /* Check 7: PRNG determinism */
+    uint32_t seed = 42;
+    uint32_t r1 = math_prng_next(&seed);
+    uint32_t r2 = math_prng_next(&seed);
+    if (r1 == r2 || seed == 42) return false;
+
+    return true;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+================================================================================
+*/
 
-// End of math_utils.c
+bool math_execute_dump_card(const math_config_t *config, char *out_buf, size_t buf_size)
+{
+    if (config == NULL || out_buf == NULL || buf_size < 300) {
+        return false;
+    }
+
+    int written = snprintf(
+        out_buf, buf_size,
+        ".----------------------------------------------------------.\n"
+        "|              MATHEMATICAL CONTINUUM CARD                 |\n"
+        "|----------------------------------------------------------|\n"
+        "| Profile Identifier : %-36s|\n"
+        "| Resonance Limits   : [%3d, %3d]                              |\n"
+        "| Moral Sway Limits  : [%4d, %+4d]                           |\n"
+        "| Equilibrium Band   : +/- %-32d|\n"
+        "| Overload Thresholds: Lux >= %+d | Tenebris <= %d       |\n"
+        "| Data Hydration     : %-36s|\n"
+        "'----------------------------------------------------------'\n",
+        config->id, config->resonance_min, config->resonance_max,
+        config->moral_sway_min, config->moral_sway_max,
+        config->equilibrium_band,
+        config->radiance_overload_threshold, config->abyssal_eclipse_threshold,
+        config->loaded_from_data ? "ACTIVE (game/data/system/runtime)" : "FALLBACK (Static Hardcoded)");
+
+    return (written > 0 && (size_t)written < buf_size);
+}
+
+/* End of math_utils.c */

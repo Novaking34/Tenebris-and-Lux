@@ -172,6 +172,10 @@ static void test_log_system_assertions_and_guarantees(void)
     str_safe_copy(cfg.log_dir, "build/logs/system_tokens", sizeof(cfg.log_dir));
     str_safe_copy(cfg.base_filename, "token_test.log", sizeof(cfg.base_filename));
 
+    char log_path[256];
+    snprintf(log_path, sizeof(log_path), "%s/%s", cfg.log_dir, cfg.base_filename);
+    unlink(log_path);
+
     TEST_ASSERT(log_init(&cfg), "Initialized for token parsing check");
 
     uint64_t seq = LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_EVENT, "Elijah", 0.75f, "Testing token alignment");
@@ -180,10 +184,7 @@ static void test_log_system_assertions_and_guarantees(void)
     log_shutdown();
 
     /* Read master log file and verify column alignment */
-    char log_path[256];
-    snprintf(log_path, sizeof(log_path), "%s/%s", cfg.log_dir, cfg.base_filename);
-
-    char file_content[8192];
+    char file_content[32768];
     TEST_ASSERT(fs_read_file_contents(log_path, file_content, sizeof(file_content)), "Read token test log");
 
     /* Verify fixed-width token anchors */

@@ -1,47 +1,53 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          string_utils.c
-// @id            core.util.string
-// @layer         Layer 0: Core Utilities
-// @version       1.0.0
-// @interface_rev Rev 1
-// @date          2026-10-26
-// @updated       2026-10-26
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Pure implementation of bounded string copies, in-place whitespace
-//   trimming, and ASCII case-insensitive substring searching. Guarantees
-//   memory safety, zero heap allocations, and NULL resilience for all text.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (In-place or caller buffers).
-//   - Concurrency / Safety:  REENTRANT_PURE (Pure reentrant buffer operations).
-//   - Latency Budget:        < 10 microseconds per operation.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Safe buffer bounds: dst[dst_size - 1] is unconditionally null.
-//   2. Pointer safety: Handles NULL pointers gracefully without crashes.
-//   3. Zero dynamic allocations.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          string_utils.c
+@id            core.util.string
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 4
+@date          2026-11-07
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Safe String Manipulation Subsystem (core/string)
+@role          Bounded String Operations, FNV-1a Hashing, Path & Case Primitives
+@invariants    1. Safe buffer bounds: dst[dst_size - 1] is unconditionally null-terminated.
+               2. Pointer safety: Handles NULL pointers gracefully without crashes or SIGSEGV.
+               3. Zero dynamic heap allocations (ALLOC_ZERO_HEAP: in-place or caller buffers).
+               4. Reentrancy: Stateless, deterministic buffer transformations.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Memory-safe string copying, concatenation, in-place whitespace trimming, case-
+  folding, FNV-1a hashing, and canonical path assembling. Ingests lexical limits from
+  game/data/system/runtime/string/ via master_loader.
+================================================================================
+*/
 
-#include "core/string_utils.h"
-#include "io/fs_utils.h"
-#include "io/json_utils.h"
+/*
+================================================================================
+BLOCK 2: OPENING / STATIC DATA BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
+================================================================================
+*/
 
+/* --- Tier 1: Standard Library Headers --- */
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+/* --- Tier 2: Core Engine Specifications & Subsystems --- */
+#include "core/string_utils.h"
+#include "core/string_utils_fallback.h"
+#include "core/manifest.h"
+#include "io/master_loader.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 static const char *const string_invariants[] = {
     "Form precedes fullness: Safe null-termination guaranteed",
@@ -55,15 +61,15 @@ const module_metadata_t string_utils_manifest = {
     "core.util.string",
     "string_utils.h",
     LAYER_0_CORE_UTIL,
-    { 1, 1, 0 },
-    2,                          // interface_rev
-    "2026-11-02",               // last_updated
-    "Safe string copying, in-place trimming, case-insensitive matching, and path manipulation",
-    0,                          // dependency_count
-    { NULL },                   // dependencies
-    ALLOC_ZERO_HEAP,            // alloc_policy
-    CONCURRENCY_REENTRANT,      // concurrency
-    10,                         // max_budget_us
+    { 0, 1, 0 },
+    4,                          /* interface_rev */
+    "2026-11-07",               /* last_updated */
+    "Safe string copying, concatenation, trimming, case-folding, FNV-1a hashing, and path manipulation",
+    0,                          /* dependency_count: leaf foundational cog */
+    { NULL },                   /* dependencies */
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_REENTRANT,      /* concurrency */
+    5,                          /* max_budget_us */
     5,
     {
         string_invariants[0],
@@ -75,276 +81,200 @@ const module_metadata_t string_utils_manifest = {
     string_utils_preflight
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY / CORE STRING LOGIC BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: MEMORY-SAFE BUFFER OPERATIONS ]
-// Mission: Guardrail string copying and trimming against memory bugs.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Copies a source string into a destination buffer with bounded termination.
- *
- * ### Machine Role & Mission
- *
- * Core text safety primitive replacing dangerous standard `strcpy`/`strncpy`.
- * Guarantees that the destination buffer is always properly null-terminated at
- * `dst[dst_size - 1]`, preventing buffer overruns and memory leaks.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.string (Safe String Engine)
- * - Assembly:   Memory-Safe Buffer Operations
- * - Cog:        Bounded Safe String Copy
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (In-place caller-supplied buffer).
- * - Concurrency:    REENTRANT_PURE (Thread-safe on distinct buffers).
- * - Latency Budget: < 5 microseconds execution time (O(N) bounded).
- *
- * @param[out] dst      Destination memory buffer.
- * @param[in]  src      Source null-terminated string (safe if NULL).
- * @param[in]  dst_size Capacity of destination buffer in bytes.
- *
- * @post `dst[dst_size - 1] == '\0'` if `dst != NULL` and `dst_size > 0`.
- *
- * @note If `src` is NULL or `dst_size` is 0, safely writes empty or no-ops.
- */
 void str_safe_copy(char *dst, const char *src, size_t dst_size)
 {
-    /* Step 1: Precondition validation (ignore invalid destination buffers) */
     if (dst == NULL || dst_size == 0) {
         return;
     }
 
-    /* Step 2: Graceful handling of NULL source string */
     if (src == NULL) {
         dst[0] = '\0';
         return;
     }
 
-    /* Step 3: Bounded copy copying at most dst_size - 1 characters */
-    strncpy(dst, src, dst_size - 1);
-
-    /* Step 4: Unconditional terminal null-byte anchor */
-    dst[dst_size - 1] = '\0';
+    size_t i = 0;
+    while (i + 1 < dst_size && src[i] != '\0') {
+        dst[i] = src[i];
+        i++;
+    }
+    dst[i] = '\0';
 }
 
-/**
- * @brief Trims leading and trailing ASCII whitespace in-place within a buffer.
- *
- * ### Machine Role & Mission
- *
- * Cleans user CLI and dialogue inputs before command parsing and keyword
- * dispatch. Compacts string in-place without dynamic heap reallocations.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.string (Safe String Engine)
- * - Assembly:   Memory-Safe Buffer Operations
- * - Cog:        In-Place Whitespace Trimmer
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, in-place memmove).
- * - Concurrency:    REENTRANT_PURE (Thread-safe on caller memory).
- * - Latency Budget: < 5 microseconds execution time (O(N)).
- *
- * @param[in,out] str Null-terminated string buffer to mutate in-place.
- */
+size_t str_safe_concat(char *dst, const char *src, size_t dst_size)
+{
+    if (dst == NULL || dst_size == 0) return 0;
+    if (src == NULL) return strlen(dst);
+
+    size_t dst_len = strlen(dst);
+    size_t src_len = strlen(src);
+
+    if (dst_len >= dst_size) {
+        dst[dst_size - 1] = '\0';
+        return dst_len + src_len;
+    }
+
+    size_t avail = dst_size - dst_len - 1;
+    size_t copy_len = (src_len < avail) ? src_len : avail;
+
+    memcpy(dst + dst_len, src, copy_len);
+    dst[dst_len + copy_len] = '\0';
+
+    return dst_len + src_len;
+}
+
 void str_trim_inplace(char *str)
 {
-    /* Step 1: Null pointer check */
-    if (str == NULL) {
+    if (str == NULL || str[0] == '\0') {
         return;
     }
 
-    /* Step 2: Scan past leading whitespace characters */
     char *start = str;
-    while (isspace((unsigned char)*start)) {
+    while (*start != '\0' && isspace((unsigned char)*start)) {
         start++;
     }
 
-    /* Step 3: Shift trimmed text to buffer origin if leading space existed */
-    if (start != str) {
-        memmove(str, start, strlen(start) + 1);
-    }
-
-    /* Step 4: Check if string is now empty */
-    if (*str == '\0') {
+    if (*start == '\0') {
+        str[0] = '\0';
         return;
     }
 
-    /* Step 5: Scan backward from the end and prune trailing whitespace */
-    char *end = str + strlen(str) - 1;
-    while (end >= str && isspace((unsigned char)*end)) {
-        *end = '\0';
+    char *end = start + strlen(start) - 1;
+    while (end > start && isspace((unsigned char)*end)) {
         end--;
+    }
+    *(end + 1) = '\0';
+
+    if (start != str) {
+        memmove(str, start, strlen(start) + 1);
     }
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: CASE-INSENSITIVE TEXT MATCHING COGS ]
-// Mission: Parse player command verbs and dialogue responses flexibly.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Compares two null-terminated strings for equality ignoring ASCII case.
- *
- * ### Machine Role & Mission
- *
- * Provides forgiving command verb parsing in the CLI ('WARD' vs 'ward',
- * 'Strike' vs 'strike'), allowing seamless user interaction.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.string (Safe String Engine)
- * - Assembly:   Case-Insensitive Text Matching
- * - Cog:        Case-Insensitive String Comparator
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 5 microseconds execution time (O(min(len_a, len_b))).
- *
- * @param[in] a First null-terminated string (safe if NULL).
- * @param[in] b Second null-terminated string (safe if NULL).
- *
- * @return `true` if strings match character-for-character ignoring case.
- */
 bool str_case_eq(const char *a, const char *b)
 {
-    /* Step 1: Pointer identity & NULL safety checks */
-    if (a == NULL || b == NULL) {
-        return (a == b);
-    }
+    if (a == b) return true;
+    if (a == NULL || b == NULL) return false;
 
-    /* Step 2: Character-by-character case-folded traversal */
-    while (*a && *b) {
+    while (*a != '\0' && *b != '\0') {
         if (tolower((unsigned char)*a) != tolower((unsigned char)*b)) {
             return false;
         }
         a++;
         b++;
     }
-
-    /* Step 3: Confirm simultaneous termination */
     return (*a == '\0' && *b == '\0');
 }
 
-/**
- * @brief Searches for a case-insensitive substring match within a haystack string.
- *
- * ### Machine Role & Mission
- *
- * Enables flexible natural language input parsing for command aliases
- * and dialogue keyword evaluation.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.string (Safe String Engine)
- * - Assembly:   Case-Insensitive Text Matching
- * - Cog:        Case-Insensitive Substring Matcher
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, stack indices only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 10 microseconds execution time (O(N * M)).
- *
- * @param[in] haystack The parent text to scan (safe if NULL).
- * @param[in] needle   The substring pattern to find (safe if NULL).
- *
- * @return `true` if `needle` occurs within `haystack` ignoring case.
- */
 bool str_contains_nocase(const char *haystack, const char *needle)
 {
-    /* Step 1: Precondition check on NULL inputs */
-    if (haystack == NULL || needle == NULL) {
-        return false;
-    }
+    if (haystack == NULL || needle == NULL) return false;
+    if (*needle == '\0') return true;
 
-    /* Step 2: Empty needle is trivially contained in any haystack */
-    if (*needle == '\0') {
-        return true;
-    }
-
-    /* Step 3: Length verification to prevent out-of-bounds scanning */
-    size_t n_len = strlen(needle);
     size_t h_len = strlen(haystack);
-    if (n_len > h_len) {
-        return false;
-    }
+    size_t n_len = strlen(needle);
+    if (n_len > h_len) return false;
 
-    /* Step 4: Sliding window substring match */
     for (size_t i = 0; i <= h_len - n_len; i++) {
         size_t j = 0;
         while (j < n_len &&
-               tolower((unsigned char)haystack[i + j]) ==
-               tolower((unsigned char)needle[j])) {
+               tolower((unsigned char)haystack[i + j]) == tolower((unsigned char)needle[j])) {
             j++;
         }
         if (j == n_len) {
             return true;
         }
     }
-
     return false;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.3: PATH & DIRECTORY STRING MANIPULATION COGS ]
-// Mission: Safe extraction of parent directories and safe path joining.
-// -----------------------------------------------------------------------------
+bool str_starts_with(const char *str, const char *prefix)
+{
+    if (str == NULL || prefix == NULL) return false;
+    size_t p_len = strlen(prefix);
+    return strncmp(str, prefix, p_len) == 0;
+}
 
-/**
- * @brief Extracts the directory component of a filepath into a destination buffer.
- *
- * @param[out] out_dir   Destination buffer.
- * @param[in]  out_size  Capacity of destination buffer in bytes.
- * @param[in]  filepath  Source null-terminated filepath.
- *
- * @return `true` if directory was extracted within bounds; `false` on error/NULL.
- */
+bool str_ends_with(const char *str, const char *suffix)
+{
+    if (str == NULL || suffix == NULL) return false;
+    size_t str_len = strlen(str);
+    size_t s_len = strlen(suffix);
+    if (s_len > str_len) return false;
+    return strcmp(str + str_len - s_len, suffix) == 0;
+}
+
+bool str_to_lower(char *dst, const char *src, size_t dst_size)
+{
+    if (dst == NULL || src == NULL || dst_size == 0) return false;
+    size_t i = 0;
+    while (i + 1 < dst_size && src[i] != '\0') {
+        dst[i] = (char)tolower((unsigned char)src[i]);
+        i++;
+    }
+    dst[i] = '\0';
+    return true;
+}
+
+bool str_to_upper(char *dst, const char *src, size_t dst_size)
+{
+    if (dst == NULL || src == NULL || dst_size == 0) return false;
+    size_t i = 0;
+    while (i + 1 < dst_size && src[i] != '\0') {
+        dst[i] = (char)toupper((unsigned char)src[i]);
+        i++;
+    }
+    dst[i] = '\0';
+    return true;
+}
+
+uint32_t str_fnv1a32(const char *str)
+{
+    if (str == NULL) return 0;
+    uint32_t hash = 0x811C9DC5;
+    while (*str != '\0') {
+        hash ^= (uint8_t)*str++;
+        hash *= 0x01000193;
+    }
+    return hash;
+}
+
+uint64_t str_fnv1a64(const char *str)
+{
+    if (str == NULL) return 0;
+    uint64_t hash = 0xCBF29CE484222325ULL;
+    while (*str != '\0') {
+        hash ^= (uint8_t)*str++;
+        hash *= 0x100000001B3ULL;
+    }
+    return hash;
+}
+
 bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
 {
-    /* Step 1: Precondition check */
-    if (out_dir == NULL || out_size == 0) {
-        return false;
-    }
-    out_dir[0] = '\0';
-
-    if (filepath == NULL || filepath[0] == '\0') {
+    if (out_dir == NULL || out_size == 0 || filepath == NULL) {
         return false;
     }
 
-    /* Step 2: Locate last slash separator */
     const char *last_slash = strrchr(filepath, '/');
-    if (!last_slash) {
-        // No directory component; default to current directory "."
+    if (last_slash == NULL) {
         str_safe_copy(out_dir, ".", out_size);
         return true;
     }
 
-    /* Step 3: Handle root directory case */
     size_t dir_len = (size_t)(last_slash - filepath);
     if (dir_len == 0) {
-        // Root directory "/"
         str_safe_copy(out_dir, "/", out_size);
         return true;
     }
 
-    /* Step 4: Capacity check before bounded copy */
     if (dir_len >= out_size) {
+        debug_trap_tripwire("string", "Parent directory length exceeds buffer capacity", __FILE__, __LINE__);
         return false;
     }
 
@@ -353,25 +283,13 @@ bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
     return true;
 }
 
-/**
- * @brief Safely joins a directory path and filename with a single intervening separator.
- *
- * @param[out] dest      Destination memory buffer.
- * @param[in]  dest_size Capacity of destination buffer in bytes.
- * @param[in]  dir       Directory path prefix (e.g. "data/log").
- * @param[in]  filename  File component (e.g. "default.json").
- *
- * @return `true` if joined successfully within bounds; `false` on error/NULL.
- */
 bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *filename)
 {
-    /* Step 1: Precondition check */
     if (dest == NULL || dest_size == 0) {
         return false;
     }
     dest[0] = '\0';
 
-    /* Step 2: Handle NULL or empty filename */
     if (filename == NULL || filename[0] == '\0') {
         if (dir != NULL) {
             str_safe_copy(dest, dir, dest_size);
@@ -380,41 +298,28 @@ bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *fi
         return false;
     }
 
-    /* Step 3: Handle NULL or empty directory */
     if (dir == NULL || dir[0] == '\0') {
         str_safe_copy(dest, filename, dest_size);
         return true;
     }
 
-    /* Step 4: Format with single separator */
     size_t dir_len = strlen(dir);
-    bool has_trailing_slash = (dir[dir_len - 1] == '/');
+    bool needs_slash = (dir_len > 0 && dir[dir_len - 1] != '/');
 
-    int written = 0;
-    if (has_trailing_slash) {
-        written = snprintf(dest, dest_size, "%s%s", dir, filename);
-    } else {
-        written = snprintf(dest, dest_size, "%s/%s", dir, filename);
+    int written = snprintf(dest, dest_size, "%s%s%s", dir, needs_slash ? "/" : "", filename);
+    if (written < 0 || (size_t)written >= dest_size) {
+        debug_trap_tripwire("string", "Joined path length exceeds destination buffer capacity", __FILE__, __LINE__);
+        dest[dest_size - 1] = '\0';
+        return false;
     }
-
-    return (written > 0 && (size_t)written < dest_size);
+    return true;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.4: DATA-DRIVEN LEXICAL CONFIGURATION & FALLBACK TRIPWIRES ]
-// Mission: Load lexical bounds and dictionaries from JSON with hardcoded fallback.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Returns the hardcoded fallback lexical configuration profile.
- *
- * @return Default baseline string_config_t with canonical bounds.
- */
 string_config_t string_get_default_config(void)
 {
-    /* Step 1: Zero-initialize and populate canonical defaults */
     string_config_t cfg;
     memset(&cfg, 0, sizeof(cfg));
+
     str_safe_copy(cfg.id, "default", sizeof(cfg.id));
     str_safe_copy(cfg.display_name, "Standard Continental Lexical Profile", sizeof(cfg.display_name));
     cfg.max_path_length = 512;
@@ -422,246 +327,154 @@ string_config_t string_get_default_config(void)
     cfg.max_command_length = 128;
     cfg.max_line_length = 80;
     str_safe_copy(cfg.ellipsis, "...", sizeof(cfg.ellipsis));
+    cfg.loaded_from_data = false;
+
     return cfg;
 }
 
-/**
- * @brief Loads a lexical configuration profile from a JSON file.
- *
- * @param[in]  filepath   Null-terminated path to profile JSON.
- * @param[out] out_config Destination configuration structure.
- *
- * @return `true` if loaded from file; `false` if fallback tripwire was triggered.
- */
-bool string_load_config_from_file(const char *filepath, string_config_t *out_config)
+bool string_load_config_from_file(const char *profile_path, string_config_t *out_config)
 {
-    /* Step 1: Safety check on destination */
     if (out_config == NULL) {
+        debug_trap_tripwire("string", "NULL out_config passed to string_load_config_from_file", __FILE__, __LINE__);
         return false;
     }
 
-    /* Step 2: Initialize with default fallback config */
     *out_config = string_get_default_config();
 
-    if (filepath == NULL || filepath[0] == '\0') {
+    const char *target_rel = profile_path;
+    if (target_rel == NULL || target_rel[0] == '\0') {
+        target_rel = "runtime/string/default.json";
+    }
+
+    if (strncmp(target_rel, "system/", 7) == 0) {
+        target_rel += 7;
+    }
+
+    master_loader_t loader;
+    char file_buf[8192];
+    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+        LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "String", -0.2f,
+                   "Failed to load string profile '%s', falling back to defaults (GRADE:-020)", target_rel);
         return false;
     }
 
-    /* Step 3: Read file contents with fallback relative path */
-    char resolved[FS_PATH_MAX];
-    const char *target = filepath;
-    if (fs_resolve_data_path(filepath, resolved, sizeof(resolved))) {
-        target = resolved;
-    }
+    master_loader_get_string(&loader, "profile", "id", out_config->id, sizeof(out_config->id));
+    master_loader_get_string(&loader, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
+    master_loader_get_size_t(&loader, "profile", "max_path_length", &out_config->max_path_length);
+    master_loader_get_size_t(&loader, "profile", "max_name_length", &out_config->max_name_length);
+    master_loader_get_size_t(&loader, "profile", "max_command_length", &out_config->max_command_length);
+    master_loader_get_size_t(&loader, "profile", "max_line_length", &out_config->max_line_length);
+    master_loader_get_string(&loader, "profile", "ellipsis", out_config->ellipsis, sizeof(out_config->ellipsis));
+    out_config->loaded_from_data = true;
 
-    char buf[FS_BUFFER_MEDIUM_BYTES];
-    bool loaded = fs_read_file_contents(target, buf, sizeof(buf));
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "game/%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "../%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "../game/%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-
-    if (!loaded) {
-        return false;
-    }
-
-    /* Step 4: Parse JSON fields */
-    json_get_object_string(buf, "profile", "id", out_config->id, sizeof(out_config->id));
-    json_get_object_string(buf, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
-    json_get_size_t(buf, "max_path_length", &out_config->max_path_length);
-    json_get_size_t(buf, "max_name_length", &out_config->max_name_length);
-    json_get_size_t(buf, "max_command_length", &out_config->max_command_length);
-    json_get_size_t(buf, "max_line_length", &out_config->max_line_length);
-    json_get_object_string(buf, "profile", "ellipsis", out_config->ellipsis, sizeof(out_config->ellipsis));
-
+    LOG_RECORD(LOG_SEV_DEBUG, LOG_CAT_LOG, "String", 0.0f,
+               "Hydrated string profile '%s' (Path: %zu, Line: %zu) (GRADE:+000)",
+               out_config->id, out_config->max_path_length, out_config->max_line_length);
     return true;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Verify string buffer safety, NULL resilience, and trimming.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Pre-flight diagnostic check evaluating safe string invariants.
- *
- * ### Machine Role & Mission
- *
- * Invoked during pre-flight boot by the Central Manifest orchestrator.
- * Confirms buffer truncation safety, unconditional null termination,
- * NULL pointer resilience, whitespace trimming, and case-folding.
- *
- * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
- */
 diag_result_t string_utils_preflight(void)
 {
     diag_result_t res;
     res.subsystem = string_utils_manifest.module_id;
-    res.check_name = "Buffer Bounds & NULL Safety";
+    res.check_name = "Buffer Bounds, Trimming & Hashing Safety";
 
-    /* Test 1: Buffer truncation and null-termination safety */
-    char buf[8];
-    memset(buf, 'Z', sizeof(buf));
-    str_safe_copy(buf, "0123456789ABCDEF", sizeof(buf));
-    if (buf[sizeof(buf) - 1] != '\0' || strlen(buf) != 7 ||
-        strcmp(buf, "0123456") != 0) {
+    if (!string_utils_audit()) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_safe_copy failed buffer null-termination.";
-        return res;
-    }
-
-    /* Test 2: NULL pointer resilience */
-    str_safe_copy(NULL, "valid", 10);
-    str_safe_copy(buf, NULL, sizeof(buf));
-    if (buf[0] != '\0') {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_safe_copy did not initialize on NULL src.";
-        return res;
-    }
-    str_trim_inplace(NULL);
-    if (!str_case_eq(NULL, NULL) || str_case_eq("a", NULL) ||
-        str_case_eq(NULL, "b")) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_case_eq failed NULL comparison contract.";
-        return res;
-    }
-    if (str_contains_nocase(NULL, "test") ||
-        str_contains_nocase("test", NULL)) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_contains_nocase faulted on NULL pointer.";
-        return res;
-    }
-
-    /* Test 3: In-place whitespace trimming edge cases */
-    char t1[16] = "";
-    str_trim_inplace(t1);
-    if (t1[0] != '\0') {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_trim_inplace corrupted empty string.";
-        return res;
-    }
-
-    char t2[16] = "   \t  \n ";
-    str_trim_inplace(t2);
-    if (t2[0] != '\0') {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_trim_inplace failed on whitespace string.";
-        return res;
-    }
-
-    char t3[32] = " \t  Shield of Lux \r\n ";
-    str_trim_inplace(t3);
-    if (strcmp(t3, "Shield of Lux") != 0) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_trim_inplace corrupted padded token.";
-        return res;
-    }
-
-    /* Test 4: Case-insensitive matching */
-    if (!str_case_eq("TENEBRIS", "tenebris") ||
-        str_case_eq("tenebris", "lux") ||
-        !str_contains_nocase("Kingdom of Sacyra", "sacyra") ||
-        str_contains_nocase("Sacyra", "Abyss")) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: Case-insensitive string matching logic error.";
-        return res;
-    }
-
-    /* Test 5: Path parent and path joining */
-    char path_buf[64];
-    if (!str_parent_dir(path_buf, sizeof(path_buf), "data/log/manifest.json") ||
-        strcmp(path_buf, "data/log") != 0) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_parent_dir failed parent directory extraction.";
-        return res;
-    }
-
-    if (!str_parent_dir(path_buf, sizeof(path_buf), "manifest.json") ||
-        strcmp(path_buf, ".") != 0) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_parent_dir failed default dot fallback.";
-        return res;
-    }
-
-    if (!str_path_join(path_buf, sizeof(path_buf), "data/log", "default.json") ||
-        strcmp(path_buf, "data/log/default.json") != 0) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_path_join failed path concatenation.";
-        return res;
-    }
-
-    if (!str_path_join(path_buf, sizeof(path_buf), "data/log/", "default.json") ||
-        strcmp(path_buf, "data/log/default.json") != 0) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: str_path_join produced duplicate slash.";
-        return res;
-    }
-
-    /* Test 6: Data-driven configuration profile loading and hardcoded fallback */
-    string_config_t default_cfg = string_get_default_config();
-    if (default_cfg.max_path_length != 512 || default_cfg.max_line_length != 80 ||
-        strcmp(default_cfg.ellipsis, "...") != 0) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: string_get_default_config failed canonical invariant.";
-        return res;
-    }
-
-    string_config_t loaded_cfg;
-    if (string_load_config_from_file(NULL, &loaded_cfg) != false) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: string_load_config_from_file(NULL) failed fallback contract.";
+        res.details = "Fatal: string_utils failed invariant audit.";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "Buffer safety, NULL resilience, trimming, path joining & config profiles verified.";
+    res.details = "Safe copy, concatenation, trimming, case-folding & FNV-1a verified.";
     return res;
 }
 
-/**
- * @brief Standalone boolean self-audit wrapper for regression test suites.
- *
- * @return `true` if all string invariant tripwires pass cleanly.
- */
 bool string_utils_audit(void)
 {
-    diag_result_t pf = string_utils_preflight();
-    return pf.passed && (pf.severity != SEVERITY_FATAL);
+    /* Test 1: Bounded copying and null termination */
+    char buf[8];
+    memset(buf, 'Z', sizeof(buf));
+    str_safe_copy(buf, "1234567890", sizeof(buf));
+    if (buf[7] != '\0' || strcmp(buf, "1234567") != 0) {
+        return false;
+    }
+
+    /* Test 2: In-place whitespace trimming */
+    char trim_buf[32];
+    str_safe_copy(trim_buf, "   Tenebris and Lux   ", sizeof(trim_buf));
+    str_trim_inplace(trim_buf);
+    if (strcmp(trim_buf, "Tenebris and Lux") != 0) {
+        return false;
+    }
+
+    /* Test 3: Safe concatenation */
+    char cat_buf[16];
+    str_safe_copy(cat_buf, "Light", sizeof(cat_buf));
+    str_safe_concat(cat_buf, " & Dark", sizeof(cat_buf));
+    if (strcmp(cat_buf, "Light & Dark") != 0) return false;
+
+    /* Test 4: Case-insensitive equality and substring search */
+    if (!str_case_eq("WARDING", "warding")) return false;
+    if (str_case_eq("WARDING", "striking")) return false;
+    if (!str_contains_nocase("Raising Shield of Lux", "shield")) return false;
+    if (str_contains_nocase("Raising Shield of Lux", "darkness")) return false;
+
+    /* Test 5: FNV-1a deterministic hashing */
+    uint32_t h1 = str_fnv1a32("test_string");
+    uint32_t h2 = str_fnv1a32("test_string");
+    if (h1 == 0 || h1 != h2) return false;
+
+    /* Test 6: Path assembly */
+    char joined[64];
+    if (!str_path_join(joined, sizeof(joined), "game/data", "manifest.json")) return false;
+    if (strcmp(joined, "game/data/manifest.json") != 0) return false;
+
+    char parent[64];
+    if (!str_parent_dir(parent, sizeof(parent), "game/data/manifest.json")) return false;
+    if (strcmp(parent, "game/data") != 0) return false;
+
+    return true;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+================================================================================
+*/
 
-// End of string_utils.c
+bool string_execute_dump_card(const string_config_t *config, char *out_buf, size_t buf_size)
+{
+    if (config == NULL || out_buf == NULL || buf_size < 300) {
+        return false;
+    }
+
+    int written = snprintf(
+        out_buf, buf_size,
+        ".----------------------------------------------------------.\n"
+        "|              LEXICAL BOUNDS INSPECTION CARD              |\n"
+        "|----------------------------------------------------------|\n"
+        "| Profile Identifier : %-36s|\n"
+        "| Max Path Length    : %4zu bytes                             |\n"
+        "| Max Name Length    : %4zu bytes                             |\n"
+        "| Max Command Length : %4zu bytes                             |\n"
+        "| Max Line Length    : %4zu bytes                             |\n"
+        "| Data Hydration     : %-36s|\n"
+        "'----------------------------------------------------------'\n",
+        config->id, config->max_path_length, config->max_name_length,
+        config->max_command_length, config->max_line_length,
+        config->loaded_from_data ? "ACTIVE (game/data/system/runtime)" : "FALLBACK (Static Hardcoded)");
+
+    return (written > 0 && (size_t)written < buf_size);
+}
+
+/* End of string_utils.c */

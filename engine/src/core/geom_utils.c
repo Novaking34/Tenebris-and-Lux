@@ -1,46 +1,83 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          geom_utils.c
-// @id            core.util.geom
-// @layer         Layer 0: Core Utilities
-// @version       1.0.0
-// @interface_rev Rev 1
-// @date          2026-10-26
-// @updated       2026-10-26
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Pure implementation of 2D bounding boxes (geom_rect_t), point containment,
-//   and axis-aligned bounding box (AABB) intersection tests. Provides spatial
-//   foundations for HUD buttons, tactical grid tiles, and layout audits.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack value structures).
-//   - Concurrency / Safety:  REENTRANT_PURE (Stateless, deterministic).
-//   - Latency Budget:        < 2 microseconds per hit-test.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Exact AABB intersection: overlapping boundaries return true.
-//   2. Non-negative width and height normalization on creation.
-//   3. Zero dynamic memory allocation.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          geom_utils.c
+@id            core.util.geom
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 4
+@date          2026-11-07
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        2D/2.5D Spatial Geometry Subsystem (core/geom)
+@role          2D Bounding Boxes, Viewport Scaling, Camera Projections & Isometric Math
+@invariants    1. Non-negative dimensions: geom_make_rect clamps negative w or h to 0.
+               2. Screen-space coordinates: Origin (0,0) at top-left.
+               3. Scale factor S > 0.0f strictly guaranteed.
+               4. Screen-to-world and world-to-screen transforms are exact inverses.
+               5. Camera clamp strictly bounds camera inside [0, max_world - view_size].
+               6. Zero dynamic heap allocations (ALLOC_ZERO_HEAP: stack value structures).
+               7. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Pure implementation of 2D bounding boxes (geom_rect_t), point containment,
+  and axis-aligned bounding box (AABB) intersection tests. Elevated universal
+  viewport projection, isotropic scaling, letterboxing/pillarboxing, camera
+  clamping, and 2.5D classic isometric/dimetric grid transformations.
+================================================================================
+*/
 
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
+Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/geom_utils.h"
+#include "core/geom_utils_fallback.h"
+#include "core/manifest.h"
+#include "core/math_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Axiomatic Invariants & Central Manifest Anchor
+--------------------------------------------------------------------------------
+*/
 
 static const char *const geom_invariants[] = {
     "Form precedes fullness: w >= 0 and h >= 0 clamped",
     "Screen space origin: (0,0) at top-left",
     "Exact AABB intersection reflexivity: r intersects r",
+    "Scale factor S > 0.0f strictly guaranteed",
+    "Screen-to-world and world-to-screen transforms are exact inverses",
+    "Camera clamp enforces 0 <= cam <= world_max - view_size",
     "Zero dynamic heap allocations"
 };
 
@@ -48,65 +85,41 @@ const module_metadata_t geom_utils_manifest = {
     "core.util.geom",
     "geom_utils.h",
     LAYER_0_CORE_UTIL,
-    { 1, 1, 0 },
-    2,                          // interface_rev
-    "2026-11-02",               // last_updated
-    "2D geometry structures, bounding box collisions and hit-testing",
-    0,                          // dependency_count
-    { NULL },                   // dependencies
-    ALLOC_ZERO_HEAP,            // alloc_policy
-    CONCURRENCY_REENTRANT,      // concurrency
-    2,                          // max_budget_us
-    4,
+    { 0, 1, 0 },
+    4,                          /* interface_rev */
+    "2026-11-07",               /* last_updated */
+    "2D bounding boxes, elevated viewport scaling, camera projections and 2.5D isometric math",
+    0,                          /* dependency_count: foundational leaf cog */
+    { NULL },                   /* dependencies */
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_REENTRANT,      /* concurrency */
+    5,                          /* max_budget_us */
+    7,
     {
         geom_invariants[0],
         geom_invariants[1],
         geom_invariants[2],
-        geom_invariants[3]
+        geom_invariants[3],
+        geom_invariants[4],
+        geom_invariants[5],
+        geom_invariants[6]
     },
     geom_utils_preflight
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE ENGINE IMPLEMENTATION
+Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: RECTANGLE CONSTRUCTORS & HIT-TESTING COGS ]
-// Mission: Construct validated bounding boxes and perform hit-testing.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Rectangle Constructors & Hit-Testing Implementation
+--------------------------------------------------------------------------------
+*/
 
-/**
- * @brief Constructs a validated 2D rectangle with non-negative dimensions.
- *
- * ### Machine Role & Mission
- *
- * Primary constructor for layout boundaries and interactive regions.
- * Automatically clamps any negative width or height arguments to 0.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.geom (2D Spatial Geometry Engine)
- * - Assembly:   Rectangle Constructors & Hit-Testing
- * - Cog:        Normalized Bounding Box Factory
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Passed and returned by value on stack).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] x Top-left horizontal origin coordinate.
- * @param[in] y Top-left vertical origin coordinate.
- * @param[in] w Desired width (negative inputs clamped to 0).
- * @param[in] h Desired height (negative inputs clamped to 0).
- *
- * @return Normalized geom_rect_t satisfying w >= 0 and h >= 0.
- *
- * @post return.w >= 0 and return.h >= 0.
- */
 geom_rect_t geom_make_rect(int x, int y, int w, int h)
 {
     /* Step 1: Allocate output value struct on CPU registers/stack */
@@ -122,34 +135,6 @@ geom_rect_t geom_make_rect(int x, int y, int w, int h)
     return r;
 }
 
-/**
- * @brief Tests whether a 2D screen-space point lies within a bounding box.
- *
- * ### Machine Role & Mission
- *
- * Evaluates cursor clicks and hover events against interactive GUI buttons
- * and tactical map grid tiles. Points on the top/left edges are included;
- * points on bottom/right edges are excluded (half-open interval [x, x+w)).
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.geom (2D Spatial Geometry Engine)
- * - Assembly:   Rectangle Constructors & Hit-Testing
- * - Cog:        Point-in-Rectangle Hit Tester
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] px Target horizontal test coordinate.
- * @param[in] py Target vertical test coordinate.
- * @param[in] r  Target bounding box to evaluate against.
- *
- * @return true if (px, py) resides inside r; false otherwise.
- */
 bool geom_point_in_rect(int px, int py, geom_rect_t r)
 {
     /* Step 1: Evaluate horizontal inclusion [r.x, r.x + r.w] */
@@ -162,77 +147,23 @@ bool geom_point_in_rect(int px, int py, geom_rect_t r)
     return in_x && in_y;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: AABB COLLISION & BOUNDS AUDIT COGS ]
-// Mission: Detect spatial overlaps and verify containment within viewports.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Tests whether two 2D Axis-Aligned Bounding Boxes (AABBs) intersect.
- *
- * ### Machine Role & Mission
- *
- * Detects overlapping UI widgets during diagnostic pre-flight audits,
- * preventing button collisions and visual clipping. Also detects combat
- * unit collisions on the tactical strategy grid.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.geom (2D Spatial Geometry Engine)
- * - Assembly:   AABB Collision & Bounds Auditing
- * - Cog:        Axis-Aligned Bounding Box Overlap Intersector
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] a First bounding box.
- * @param[in] b Second bounding box.
- *
- * @return true if a and b share any interior area; false otherwise.
- */
 bool geom_rect_intersects(geom_rect_t a, geom_rect_t b)
 {
-    /* Step 1: Separating Axis Theorem (SAT) on X-axis */
+    /* Step 1: Guard against degenerate rectangles with zero area */
+    if (a.w <= 0 || a.h <= 0 || b.w <= 0 || b.h <= 0) {
+        return false;
+    }
+
+    /* Step 2: Separating Axis Theorem (SAT) on X-axis */
     bool overlap_x = (a.x < b.x + b.w) && (a.x + a.w > b.x);
 
-    /* Step 2: Separating Axis Theorem (SAT) on Y-axis */
+    /* Step 3: Separating Axis Theorem (SAT) on Y-axis */
     bool overlap_y = (a.y < b.y + b.h) && (a.y + a.h > b.y);
 
-    /* Step 3: Intersection requires simultaneous overlap on both axes */
+    /* Step 4: Intersection requires simultaneous overlap on both axes */
     return overlap_x && overlap_y;
 }
 
-/**
- * @brief Validates that a bounding box is completely contained within bounds.
- *
- * ### Machine Role & Mission
- *
- * Enforces layout boundary contracts ensuring that GUI cards and buttons
- * never clip outside the desktop X11 presentation window dimensions.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.geom (2D Spatial Geometry Engine)
- * - Assembly:   AABB Collision & Bounds Auditing
- * - Cog:        Viewport Containment Verifier
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, CPU registers only).
- * - Concurrency:    REENTRANT_PURE (Stateless, deterministic, thread-safe).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @param[in] r     Target bounding box to test.
- * @param[in] max_w Maximum viewport width boundary.
- * @param[in] max_h Maximum viewport height boundary.
- *
- * @return true if r is completely inside [0, max_w] x [0, max_h].
- */
 bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h)
 {
     /* Step 1: Negative origin rejection */
@@ -250,36 +181,241 @@ bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h)
         return false;
     }
 
-    /* Step 4: All 4 corner bounds strictly satisfied */
+    /* Step 4: All boundaries strictly satisfied */
     return true;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
-// =============================================================================
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Universal Viewport Scaler & Camera Projection Implementation
+--------------------------------------------------------------------------------
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Verify geometric invariants, hit-testing accuracy, and AABB overlap.
-// -----------------------------------------------------------------------------
+void geom_viewport_init(geom_viewport_t *vp,
+                        uint32_t screen_w, uint32_t screen_h,
+                        uint32_t target_w, uint32_t target_h)
+{
+    /* Step 1: Guard against NULL viewport pointer */
+    if (vp == NULL) {
+        debug_trap_tripwire("geom", "NULL viewport pointer passed to geom_viewport_init", __FILE__, __LINE__);
+        return;
+    }
 
-/**
- * Pre-flight diagnostic check evaluating 2D spatial invariants.
- *
- * ### Machine Role & Mission
- *
- * Invoked during pre-flight boot by the Central Manifest orchestrator.
- * Confirms non-negative dimension clamping, point hit-testing,
- * AABB intersection reflexivity, and viewport containment verification.
- *
- * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
- */
+    /* Step 2: Apply canonical fallback defaults for degenerate arguments */
+    if (screen_w == 0) screen_w = GEOM_FALLBACK_TARGET_W;
+    if (screen_h == 0) screen_h = GEOM_FALLBACK_TARGET_H;
+    if (target_w == 0) target_w = GEOM_FALLBACK_TARGET_W;
+    if (target_h == 0) target_h = GEOM_FALLBACK_TARGET_H;
+
+    vp->screen_w = screen_w;
+    vp->screen_h = screen_h;
+    vp->target_w = target_w;
+    vp->target_h = target_h;
+
+    /* Step 3: Compute uniform isotropic scale multiplier */
+    float scale_x = (float)screen_w / (float)target_w;
+    float scale_y = (float)screen_h / (float)target_h;
+    float scale = (scale_x < scale_y) ? scale_x : scale_y;
+
+    if (scale <= 0.001f) {
+        debug_trap_tripwire("geom", "Viewport scale factor collapsed <= 0.001f, clamped to 1.0f", __FILE__, __LINE__);
+        scale = 1.0f;
+    }
+    vp->scale_factor = scale;
+
+    /* Step 4: Compute centering offsets for letterbox or pillarbox */
+    float scaled_w = (float)target_w * scale;
+    float scaled_h = (float)target_h * scale;
+
+    vp->offset_x = (int32_t)(((float)screen_w - scaled_w) * 0.5f);
+    vp->offset_y = (int32_t)(((float)screen_h - scaled_h) * 0.5f);
+
+    LOG_RECORD(LOG_SEV_DEBUG, LOG_CAT_LOG, "Geom", 0.0f,
+               "Viewport initialized: %ux%u -> %ux%u (scale: %.2f, offset: %d, %d)",
+               screen_w, screen_h, target_w, target_h, vp->scale_factor, vp->offset_x, vp->offset_y);
+}
+
+bool geom_world_to_screen(int32_t world_x, int32_t world_y,
+                          int32_t cam_x, int32_t cam_y,
+                          const geom_viewport_t *vp,
+                          int32_t *out_screen_x, int32_t *out_screen_y)
+{
+    /* Step 1: Precondition check */
+    if (vp == NULL || out_screen_x == NULL || out_screen_y == NULL) {
+        return false;
+    }
+
+    /* Step 2: Compute relative offset from camera */
+    int32_t rel_x = world_x - cam_x;
+    int32_t rel_y = world_y - cam_y;
+
+    /* Step 3: Apply uniform scaling */
+    float scaled_x = (float)rel_x * vp->scale_factor;
+    float scaled_y = (float)rel_y * vp->scale_factor;
+
+    /* Step 4: Apply centering offsets */
+    *out_screen_x = (int32_t)scaled_x + vp->offset_x;
+    *out_screen_y = (int32_t)scaled_y + vp->offset_y;
+    return true;
+}
+
+bool geom_screen_to_world(int32_t screen_x, int32_t screen_y,
+                          int32_t cam_x, int32_t cam_y,
+                          const geom_viewport_t *vp,
+                          int32_t *out_world_x, int32_t *out_world_y)
+{
+    /* Step 1: Precondition check */
+    if (vp == NULL || out_world_x == NULL || out_world_y == NULL) {
+        return false;
+    }
+    if (vp->scale_factor <= 0.0001f) {
+        debug_trap_tripwire("geom", "Degenerate scale factor in geom_screen_to_world", __FILE__, __LINE__);
+        return false;
+    }
+
+    /* Step 2: Subtract centering offsets */
+    int32_t unoffset_x = screen_x - vp->offset_x;
+    int32_t unoffset_y = screen_y - vp->offset_y;
+
+    /* Step 3: Invert scale factor */
+    float unscaled_x = (float)unoffset_x / vp->scale_factor;
+    float unscaled_y = (float)unoffset_y / vp->scale_factor;
+
+    /* Step 4: Re-add camera position anchor */
+    *out_world_x = (int32_t)unscaled_x + cam_x;
+    *out_world_y = (int32_t)unscaled_y + cam_y;
+    return true;
+}
+
+void geom_clamp_camera(int32_t *cam_x, int32_t *cam_y,
+                       int32_t max_world_w, int32_t max_world_h,
+                       int32_t view_w, int32_t view_h)
+{
+    /* Step 1: Precondition check */
+    if (cam_x == NULL || cam_y == NULL) {
+        return;
+    }
+
+    /* Step 2: Compute maximum camera positions preventing void display */
+    int32_t max_cam_x = max_world_w - view_w;
+    int32_t max_cam_y = max_world_h - view_h;
+    if (max_cam_x < 0) max_cam_x = 0;
+    if (max_cam_y < 0) max_cam_y = 0;
+
+    /* Step 3: Clamp camera into [0, max_cam] */
+    *cam_x = math_clamp_int(*cam_x, 0, max_cam_x);
+    *cam_y = math_clamp_int(*cam_y, 0, max_cam_y);
+}
+
+bool geom_is_in_viewport(int32_t world_x, int32_t world_y,
+                         int32_t cam_x, int32_t cam_y,
+                         int32_t view_w, int32_t view_h)
+{
+    int32_t rel_x = world_x - cam_x;
+    int32_t rel_y = world_y - cam_y;
+
+    return (rel_x >= 0 && rel_x <= view_w &&
+            rel_y >= 0 && rel_y <= view_h);
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: 2D/2.5D Isometric & Tactical Distance Implementation
+--------------------------------------------------------------------------------
+*/
+
+bool geom_grid_to_screen_iso(geom_grid_coord_t grid, geom_iso_config_t cfg,
+                             int32_t origin_x, int32_t origin_y,
+                             int32_t *out_screen_x, int32_t *out_screen_y)
+{
+    /* Step 1: Precondition checks */
+    if (out_screen_x == NULL || out_screen_y == NULL) {
+        return false;
+    }
+    if (cfg.tile_width <= 0 || cfg.tile_height <= 0) {
+        debug_trap_tripwire("geom", "Non-positive tile dimensions in geom_grid_to_screen_iso", __FILE__, __LINE__);
+        return false;
+    }
+
+    /* Step 2: Compute diamond half-extents */
+    int32_t half_w = cfg.tile_width / 2;
+    int32_t half_h = cfg.tile_height / 2;
+
+    /* Step 3: Apply 2:1 dimetric projection and elevation lift */
+    *out_screen_x = origin_x + (grid.tile_x - grid.tile_y) * half_w;
+    *out_screen_y = origin_y + (grid.tile_x + grid.tile_y) * half_h - (grid.elevation_z * cfg.elevation_step);
+    return true;
+}
+
+bool geom_screen_to_grid_iso(int32_t screen_x, int32_t screen_y,
+                             geom_iso_config_t cfg,
+                             int32_t origin_x, int32_t origin_y,
+                             int32_t *out_tile_x, int32_t *out_tile_y)
+{
+    /* Step 1: Precondition checks */
+    if (out_tile_x == NULL || out_tile_y == NULL) {
+        return false;
+    }
+    if (cfg.tile_width <= 0 || cfg.tile_height <= 0) {
+        debug_trap_tripwire("geom", "Non-positive tile dimensions in geom_screen_to_grid_iso", __FILE__, __LINE__);
+        return false;
+    }
+
+    /* Step 2: Compute diamond half-extents and delta from origin */
+    int32_t half_w = cfg.tile_width / 2;
+    int32_t half_h = cfg.tile_height / 2;
+    int32_t dx = screen_x - origin_x;
+    int32_t dy = screen_y - origin_y;
+
+    /* Step 3: Invert 2:1 dimetric projection matrix */
+    float fx = ((float)dx / (float)half_w + (float)dy / (float)half_h) * 0.5f;
+    float fy = ((float)dy / (float)half_h - (float)dx / (float)half_w) * 0.5f;
+
+    /* Step 4: Floor to nearest grid cell index */
+    *out_tile_x = (int32_t)(fx >= 0.0f ? fx : fx - 1.0f);
+    *out_tile_y = (int32_t)(fy >= 0.0f ? fy : fy - 1.0f);
+    return true;
+}
+
+int32_t geom_distance_manhattan(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+{
+    int32_t dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
+    int32_t dy = (y1 > y2) ? (y1 - y2) : (y2 - y1);
+    return dx + dy;
+}
+
+int32_t geom_distance_chebyshev(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+{
+    int32_t dx = (x1 > x2) ? (x1 - x2) : (x2 - x1);
+    int32_t dy = (y1 > y2) ? (y1 - y2) : (y2 - y1);
+    return (dx > dy) ? dx : dy;
+}
+
+int64_t geom_distance_euclidean_sq(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+{
+    int64_t dx = (int64_t)x1 - (int64_t)x2;
+    int64_t dy = (int64_t)y1 - (int64_t)y2;
+    return (dx * dx) + (dy * dy);
+}
+
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK / TRIPWIRES
+Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Machine Pre-Flight Tripwire & Self-Audit Procedures
+--------------------------------------------------------------------------------
+*/
+
 diag_result_t geom_utils_preflight(void)
 {
     diag_result_t res;
     res.subsystem = geom_utils_manifest.module_id;
-    res.check_name = "AABB Overlap & Bounds Integrity";
+    res.check_name = "2D/2.5D Spatial & Viewport Invariant Integrity";
 
     /* Test 1: Negative dimension clamping */
     geom_rect_t rn = geom_make_rect(10, 10, -5, -20);
@@ -332,25 +468,93 @@ diag_result_t geom_utils_preflight(void)
         return res;
     }
 
+    /* Test 5: Elevated viewport scaling and inversion roundtrip */
+    geom_viewport_t vp;
+    geom_viewport_init(&vp, 1920, 1080, 640, 360);
+    if (vp.scale_factor < 2.99f || vp.scale_factor > 3.01f) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Viewport 1920x1080 scale factor != 3.0";
+        return res;
+    }
+
+    int32_t scr_x = 0, scr_y = 0;
+    geom_world_to_screen(120, 70, 100, 50, &vp, &scr_x, &scr_y);
+    int32_t inv_x = 0, inv_y = 0;
+    geom_screen_to_world(scr_x, scr_y, 100, 50, &vp, &inv_x, &inv_y);
+    if (inv_x != 120 || inv_y != 70) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: World-to-screen inversion roundtrip failed.";
+        return res;
+    }
+
+    /* Test 6: 2.5D Isometric projection and distance metrics */
+    geom_iso_config_t iso_cfg = { 32, 16, 8 };
+    geom_grid_coord_t g = { 5, 5, 0 };
+    int32_t iso_sx = 0, iso_sy = 0;
+    geom_grid_to_screen_iso(g, iso_cfg, 320, 180, &iso_sx, &iso_sy);
+    if (iso_sx != 320 || iso_sy != (180 + (5 + 5) * 8)) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: geom_grid_to_screen_iso failed origin projection.";
+        return res;
+    }
+
+    if (geom_distance_manhattan(2, 3, 5, 7) != 7 ||
+        geom_distance_chebyshev(2, 3, 5, 7) != 4 ||
+        geom_distance_euclidean_sq(0, 0, 3, 4) != 25) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details = "Fatal: Tactical grid distance metrics failed.";
+        return res;
+    }
+
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "2D AABB geometry & bounds containment verified.";
+    res.details = "2D AABB geometry, viewport scalers & 2.5D projections verified.";
     return res;
 }
 
-/**
- * Standalone boolean self-audit wrapper for regression test suites.
- *
- * @return `true` if all geometric invariant tripwires pass cleanly.
- */
 bool geom_utils_audit(void)
 {
     diag_result_t pf = geom_utils_preflight();
     return pf.passed && (pf.severity != SEVERITY_FATAL);
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / DIAGNOSTIC CARD DUMP & TEARDOWN
+================================================================================
+*/
 
-// End of geom_utils.c
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Diagnostic ASCII Status Card Generator
+--------------------------------------------------------------------------------
+*/
+
+bool geom_execute_dump_card(const geom_viewport_t *vp, char *out_buf, size_t buf_size)
+{
+    if (vp == NULL || out_buf == NULL || buf_size < 300) {
+        return false;
+    }
+
+    int written = snprintf(
+        out_buf, buf_size,
+        ".----------------------------------------------------------.\n"
+        "|               VIEWPORT SPATIAL METRICS CARD              |\n"
+        "|----------------------------------------------------------|\n"
+        "| Physical Resolution: %4ux%-4u px                            |\n"
+        "| Reference Viewport : %4ux%-4u px                            |\n"
+        "| Uniform Scale Factor: %6.3f                               |\n"
+        "| Pillarbox Offset X : %5d px                              |\n"
+        "| Letterbox Offset Y : %5d px                              |\n"
+        "'----------------------------------------------------------'\n",
+        vp->screen_w, vp->screen_h, vp->target_w, vp->target_h,
+        vp->scale_factor, vp->offset_x, vp->offset_y);
+
+    return (written > 0 && (size_t)written < buf_size);
+}
+
+/* End of geom_utils.c */

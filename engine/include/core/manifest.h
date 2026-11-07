@@ -1,61 +1,64 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          manifest.h
-// @id            core.util.manifest
-// @layer         Layer 0: Core Utilities
-// @version       1.0.0
-// @interface_rev Rev 2
-// @date          2026-10-26
-// @updated       2026-10-26
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Central manifest registry and pre-flight system verification types.
-//   Transforms file metadata into compiled, machine-inspectable contracts and
-//   enforces the "loose bolts" pre-flight verification policy.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack and static memory).
-//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, static capacity).
-//   - Latency Budget:        < 5 milliseconds total pre-flight evaluation.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Static allocation bounds: Capacity hard-capped at MANIFEST_MAX_MODULES.
-//   2. Severity taxonomy: PASS < INFO < WARN < CRITICAL < FATAL.
-//   3. Fatal errors unconditionally halt boot; critical faults downgrade.
-//   4. Active DAG dependency validation: Missing dependencies trigger FATAL.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          manifest.h
+@id            core.util.manifest
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 4
+@date          2026-11-07
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Central Manifest Registry & Pre-Flight DAG Policy Engine
+@role          Metadata Types, DAG Dependency Graph & Pre-Flight Contracts
+@invariants    1. Zero dynamic heap allocations (ALLOC_ZERO_HEAP: stack/static only).
+               2. Static allocation bounds: Capacity hard-capped at MANIFEST_MAX_MODULES.
+               3. Severity taxonomy: PASS < INFO < WARNING < CRITICAL < FATAL.
+               4. Fatal errors unconditionally halt boot; critical faults downgrade.
+               5. Active DAG dependency validation: Missing dependencies trigger FATAL.
 
-#ifndef TENEBRIS_LUX_MANIFEST_H
-#define TENEBRIS_LUX_MANIFEST_H
+PURPOSE & ARCHITECTURAL ROLE:
+  Central manifest registry and pre-flight system verification types.
+  Transforms module metadata into compiled, machine-inspectable contracts and
+  enforces the "loose bolts" pre-flight verification policy across all engine
+  and game simulation strata before runtime simulation commences.
+================================================================================
+*/
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
-// =============================================================================
+#ifndef TENEBRIS_LUX_CORE_MANIFEST_H
+#define TENEBRIS_LUX_CORE_MANIFEST_H
 
+/*
+================================================================================
+BLOCK 2: OPENING / TYPES & STATIC DATA BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
+================================================================================
+*/
+
+/* --- Tier 1: Standard Library Headers --- */
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
+/* --- Tier 2: Core Engine Specifications & Bounds --- */
 #define MANIFEST_MAX_MODULES      32
 #define MANIFEST_MAX_INVARIANTS   8
 #define MANIFEST_MAX_DEPENDENCIES 4
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 2.1: ARCHITECTURAL METADATA ENUMS & STRUCTS ]
-// Mission: Define structural strata, allocation models, and fault severities.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+[ SUB-ASSEMBLY 2.1: ARCHITECTURAL METADATA ENUMS & STRUCTS ]
+Mission: Define structural strata, allocation models, and fault severities.
+--------------------------------------------------------------------------------
+*/
 
 /**
- * Architectural layer strata within the hierarchical engine topology.
+ * @brief Architectural layer strata within the hierarchical engine topology.
  */
-typedef enum {
+typedef enum module_layer {
     LAYER_0_CORE_UTIL = 0, /**< Layer 0: Foundational zero-dependency utils. */
     LAYER_1_SIMULATION,    /**< Layer 1: Headless game simulation engine. */
     LAYER_2_PRESENTATION,  /**< Layer 2: Graphical and text viewports. */
@@ -65,9 +68,9 @@ typedef enum {
 } module_layer_t;
 
 /**
- * Memory allocation contract governing a module's execution model.
+ * @brief Memory allocation contract governing a module's execution model.
  */
-typedef enum {
+typedef enum alloc_policy {
     ALLOC_ZERO_HEAP = 0, /**< 100% stack or static layout; zero dynamic heap. */
     ALLOC_FIXED_POOL,    /**< Pre-allocated fixed-capacity buffer pools. */
     ALLOC_ARENA,         /**< Frame/scene temporary arena allocation. */
@@ -75,18 +78,18 @@ typedef enum {
 } alloc_policy_t;
 
 /**
- * Concurrency and reentrancy guarantees declared by a module.
+ * @brief Concurrency and reentrancy guarantees declared by a module.
  */
-typedef enum {
+typedef enum concurrency_policy {
     CONCURRENCY_REENTRANT = 0, /**< Thread-safe, stateless pure functions. */
     CONCURRENCY_THREAD_LOCAL,  /**< Thread-local state isolation. */
     CONCURRENCY_MAIN_THREAD    /**< Main-thread execution affinity (GUI). */
 } concurrency_policy_t;
 
 /**
- * Five-tier diagnostic fault severity taxonomy for pre-flight machine audits.
+ * @brief Five-tier diagnostic fault severity taxonomy for pre-flight machine audits.
  */
-typedef enum {
+typedef enum diag_severity {
     SEVERITY_PASS = 0, /**< Invariant holds cleanly; full readiness. */
     SEVERITY_INFO,     /**< Informational notice; no operational effect. */
     SEVERITY_WARNING,  /**< Non-fatal anomaly logged; execution proceeds. */
@@ -95,9 +98,9 @@ typedef enum {
 } diag_severity_t;
 
 /**
- * Aggregate pre-flight engine readiness state.
+ * @brief Aggregate pre-flight engine readiness state.
  */
-typedef enum {
+typedef enum preflight_status {
     PREFLIGHT_STATUS_OK = 0,    /**< Subsystems passed pre-flight audits. */
     PREFLIGHT_STATUS_WARNINGS,   /**< Non-fatal notices logged; system ready. */
     PREFLIGHT_STATUS_DOWNGRADED, /**< Critical fault downgraded to safe mode. */
@@ -105,9 +108,9 @@ typedef enum {
 } preflight_status_t;
 
 /**
- * Individual diagnostic check outcome record.
+ * @brief Individual diagnostic check outcome record.
  */
-typedef struct {
+typedef struct diag_result {
     bool passed;               /**< Boolean pass/fail indicator. */
     diag_severity_t severity;  /**< Severity classification of the finding. */
     const char *subsystem;     /**< Identifier of the audited subsystem. */
@@ -116,16 +119,14 @@ typedef struct {
 } diag_result_t;
 
 /**
- * Compiled module metadata node binding identity, contracts, and tripwires.
- *
- * ### Machine Role & Mission
+ * @brief Compiled module metadata node binding identity, contracts, and tripwires.
  *
  * Serves as the static identity card for every source module in the engine.
  * Declares architectural stratum, interface revision, full ISO update date,
  * memory model, concurrency guarantees, DAG upstream dependencies, and the
  * machine self-audit function pointer.
  */
-typedef struct {
+typedef struct module_metadata {
     /* 1. Identity & Provenance */
     const char *module_id;          /**< Canonical module ID. */
     const char *file_name;          /**< Header file name. */
@@ -156,15 +157,17 @@ typedef struct {
     diag_result_t (*preflight_check)(void); /**< Diagnostic callback. */
 } module_metadata_t;
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 2.2: CENTRAL REGISTRY RECORD ]
-// Mission: Fixed-capacity zero-heap storage for all registered engine modules.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+[ SUB-ASSEMBLY 2.2: CENTRAL REGISTRY RECORD ]
+Mission: Fixed-capacity zero-heap storage for all registered engine modules.
+--------------------------------------------------------------------------------
+*/
 
 /**
- * Central registry tracking registered modules, audit results, and status.
+ * @brief Central registry tracking registered modules, audit results, and status.
  */
-typedef struct {
+typedef struct manifest_registry {
     const module_metadata_t *modules[MANIFEST_MAX_MODULES];
     diag_result_t results[MANIFEST_MAX_MODULES];
     size_t count;
@@ -175,21 +178,15 @@ typedef struct {
     preflight_status_t status;
 } manifest_registry_t;
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
-// =============================================================================
-
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: CENTRAL REGISTRY LIFECYCLE & REGISTRATION COGS ]
-// Mission: Initialize registry storage and register subsystem metadata nodes.
-// -----------------------------------------------------------------------------
+/*
+================================================================================
+BLOCK 3: BODY / CORE REGISTRY API BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
+================================================================================
+*/
 
 /**
  * @brief Initializes a central manifest registry to zeroed, pristine state.
- *
- * Prepares the zero-heap registry storage prior to module registration.
- * Wipes registered pointers and resets diagnostic tally counters.
  *
  * @param[out] registry Pointer to uninitialized caller-allocated registry structure.
  */
@@ -203,16 +200,10 @@ void manifest_registry_init(manifest_registry_t *registry);
  *
  * @param[in,out] registry Target registry collecting module records.
  * @param[in]     module   Pointer to static immutable module metadata record.
- *
  * @return true if registration succeeded; false on duplicate ID or overflow.
  */
 bool manifest_register(manifest_registry_t *registry,
                        const module_metadata_t *module);
-
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: DAG DEPENDENCY RESOLUTION & PRE-FLIGHT EVALUATION ]
-// Mission: Execute DAG dependency graph audits and pre-flight machine checks.
-// -----------------------------------------------------------------------------
 
 /**
  * @brief Executes full pre-flight evaluation across all registered engine modules.
@@ -222,22 +213,12 @@ bool manifest_register(manifest_registry_t *registry,
  * Step 3: Computes final system policy readiness state.
  *
  * @param[in,out] registry Initialized registry with registered modules.
- *
  * @return Overall preflight status (OK, WARNINGS, DOWNGRADED, HALT_FATAL).
  */
 preflight_status_t manifest_run_preflight(manifest_registry_t *registry);
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.3: TELEMETRY REPORTING & SERIALIZATION COGS ]
-// Mission: Format pre-flight telemetry tables and serialize taxonomy strings.
-// -----------------------------------------------------------------------------
-
 /**
  * @brief Prints a formatted 80-column ASCII pre-flight audit report to stdout.
- *
- * Displays build telemetry timestamp, target standard, and an inspection
- * matrix containing module ID, header file, revision, allocation model,
- * status tag, and diagnostic trace.
  *
  * @param[in] registry Evaluated registry instance.
  */
@@ -283,15 +264,12 @@ const char *manifest_alloc_policy_to_str(alloc_policy_t policy);
  */
 const char *manifest_concurrency_to_str(concurrency_policy_t policy);
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
-// =============================================================================
-
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Verify registry capacity bounds, duplicate rejection, and policies.
-// -----------------------------------------------------------------------------
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
+================================================================================
+*/
 
 /**
  * @brief Manifest metadata record for the Central Manifest Registry module.
@@ -314,9 +292,22 @@ diag_result_t manifest_utils_preflight(void);
  */
 bool manifest_audit(void);
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// ( Include Guard Teardown & Header Close )
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+================================================================================
+*/
 
-#endif /* TENEBRIS_LUX_MANIFEST_H */
+/**
+ * @brief Renders a 60-column terminal-friendly ASCII inspection card of the registry.
+ *
+ * @param[in]  registry Pointer to evaluated registry.
+ * @param[out] out_buf  Destination buffer for ASCII card output.
+ * @param[in]  buf_size Size of destination buffer in bytes.
+ * @return true if rendered successfully; false on NULL or truncation.
+ */
+bool manifest_execute_dump_card(const manifest_registry_t *registry,
+                               char *out_buf,
+                               size_t buf_size);
+
+#endif /* TENEBRIS_LUX_CORE_MANIFEST_H */

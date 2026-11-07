@@ -113,9 +113,17 @@ set(COMMON_INCLUDES
 set(ENGINE_CORE_SOURCES
     engine/src/core/manifest.c
     engine/src/core/math_utils.c
+    engine/src/core/math_utils_fallback.c
     engine/src/core/geom_utils.c
+    engine/src/core/geom_utils_fallback.c
     engine/src/core/string_utils.c
+    engine/src/core/string_utils_fallback.c
     engine/src/core/time_utils.c
+    engine/src/core/time_utils_fallback.c
+    engine/src/core/clock_pacer.c
+    engine/src/core/clock_pacer_fallback.c
+    engine/src/core/formula_eval.c
+    engine/src/core/formula_eval_fallback.c
 )
 
 set(ENGINE_IO_SOURCES
@@ -145,9 +153,17 @@ set(ENGINE_UTIL_SOURCES
 set(ENGINE_UTIL_HEADERS
     engine/include/core/manifest.h
     engine/include/core/math_utils.h
+    engine/include/core/math_utils_fallback.h
     engine/include/core/geom_utils.h
+    engine/include/core/geom_utils_fallback.h
     engine/include/core/string_utils.h
+    engine/include/core/string_utils_fallback.h
     engine/include/core/time_utils.h
+    engine/include/core/time_utils_fallback.h
+    engine/include/core/clock_pacer.h
+    engine/include/core/clock_pacer_fallback.h
+    engine/include/core/formula_eval.h
+    engine/include/core/formula_eval_fallback.h
     engine/include/io/fs_utils.h
     engine/include/io/json_utils.h
     engine/include/io/path_finder.h
@@ -352,6 +368,15 @@ if(BUILD_TESTING)
     target_include_directories(test_debug_functional PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_debug_functional PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Core Utilities Subsystem Functional Assertion & Diagnostic Trace Harness
+    add_executable(test_core_functional
+        tests/functional/test_core_functional.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_core_functional PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_core_functional PRIVATE m)
+    target_compile_options(test_core_functional PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.2: LAYER 0 & LAYER 1 SUBSYSTEM UNIT HARNESSES ]
     # Mission: Verify isolated subsystem contracts across ontological sections.
@@ -519,6 +544,108 @@ if(BUILD_TESTING)
     target_include_directories(test_debug_fallback_unit PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_debug_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Core Mathematics Engine Unit Test
+    add_executable(test_math_utils_unit
+        tests/unit/core/test_math_utils_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_math_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_math_utils_unit PRIVATE m)
+    target_compile_options(test_math_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Mathematics Fallback Monolith Unit Test
+    add_executable(test_math_utils_fallback_unit
+        tests/unit/core/test_math_utils_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_math_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_math_utils_fallback_unit PRIVATE m)
+    target_compile_options(test_math_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Time Engine Unit Test
+    add_executable(test_time_utils_unit
+        tests/unit/core/test_time_utils_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_time_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_time_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Time Fallback Monolith Unit Test
+    add_executable(test_time_utils_fallback_unit
+        tests/unit/core/test_time_utils_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_time_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_time_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Safe String Engine Unit Test
+    add_executable(test_string_utils_unit
+        tests/unit/core/test_string_utils_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_string_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_string_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Safe String Fallback Monolith Unit Test
+    add_executable(test_string_utils_fallback_unit
+        tests/unit/core/test_string_utils_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_string_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_string_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Geometry & Viewport Engine Unit Test
+    add_executable(test_geom_utils_unit
+        tests/unit/core/test_geom_utils_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_geom_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_geom_utils_unit PRIVATE m)
+    target_compile_options(test_geom_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Geometry Fallback Monolith Unit Test
+    add_executable(test_geom_utils_fallback_unit
+        tests/unit/core/test_geom_utils_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_geom_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_geom_utils_fallback_unit PRIVATE m)
+    target_compile_options(test_geom_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Frame Pacing Orchestrator Unit Test
+    add_executable(test_clock_pacer_unit
+        tests/unit/core/test_clock_pacer_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_clock_pacer_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_clock_pacer_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Frame Pacing Fallback Monolith Unit Test
+    add_executable(test_clock_pacer_fallback_unit
+        tests/unit/core/test_clock_pacer_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_clock_pacer_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_clock_pacer_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Battle Formula Orchestrator Unit Test
+    add_executable(test_formula_eval_unit
+        tests/unit/core/test_formula_eval_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_formula_eval_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_formula_eval_unit PRIVATE m)
+    target_compile_options(test_formula_eval_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Battle Formula Fallback Monolith Unit Test
+    add_executable(test_formula_eval_fallback_unit
+        tests/unit/core/test_formula_eval_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_formula_eval_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_formula_eval_fallback_unit PRIVATE m)
+    target_compile_options(test_formula_eval_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
     # Mission: Verify cross-subsystem coordination, DAG dependencies & runs.
@@ -564,6 +691,15 @@ if(BUILD_TESTING)
     )
     target_include_directories(test_debug_integrated PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_debug_integrated PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Core Utilities Cross-Pipeline Integration Harness
+    add_executable(test_core_integrated
+        tests/integrated/test_core_integrated.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_core_integrated PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_core_integrated PRIVATE m)
+    target_compile_options(test_core_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.4: LAYER 1 SIMULATION SYSTEM HARNESSES ]
@@ -617,6 +753,15 @@ if(BUILD_TESTING)
     target_include_directories(test_debug_system PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_debug_system PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Core Utilities Layer System Stress & Pacing Cadence Harness
+    add_executable(test_core_system
+        tests/system/test_core_system.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_core_system PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_core_system PRIVATE m)
+    target_compile_options(test_core_system PRIVATE ${GAME_WARNING_FLAGS})
+
 # ==============================================================================
 # BLOCK 5: CLOSING BLOCK
 # ( Automated Test Registrations & CTest Verification Suite )
@@ -632,6 +777,7 @@ if(BUILD_TESTING)
     add_test(NAME functional_io_test COMMAND test_io_functional)
     add_test(NAME functional_log_test COMMAND test_log_functional)
     add_test(NAME functional_debug_test COMMAND test_debug_functional)
+    add_test(NAME functional_core_test COMMAND test_core_functional)
 
     # Unit Tests (Subsystems & Modules in Isolation)
     add_test(NAME unit_math_test COMMAND test_math)
@@ -644,6 +790,18 @@ if(BUILD_TESTING)
     add_test(NAME unit_debug_test COMMAND test_debug)
     add_test(NAME unit_debug_engine_test COMMAND test_debug_unit)
     add_test(NAME unit_debug_fallback_test COMMAND test_debug_fallback_unit)
+    add_test(NAME unit_math_utils_test COMMAND test_math_utils_unit)
+    add_test(NAME unit_math_utils_fallback_test COMMAND test_math_utils_fallback_unit)
+    add_test(NAME unit_time_utils_test COMMAND test_time_utils_unit)
+    add_test(NAME unit_time_utils_fallback_test COMMAND test_time_utils_fallback_unit)
+    add_test(NAME unit_string_utils_test COMMAND test_string_utils_unit)
+    add_test(NAME unit_string_utils_fallback_test COMMAND test_string_utils_fallback_unit)
+    add_test(NAME unit_geom_utils_test COMMAND test_geom_utils_unit)
+    add_test(NAME unit_geom_utils_fallback_test COMMAND test_geom_utils_fallback_unit)
+    add_test(NAME unit_clock_pacer_test COMMAND test_clock_pacer_unit)
+    add_test(NAME unit_clock_pacer_fallback_test COMMAND test_clock_pacer_fallback_unit)
+    add_test(NAME unit_formula_eval_test COMMAND test_formula_eval_unit)
+    add_test(NAME unit_formula_eval_fallback_test COMMAND test_formula_eval_fallback_unit)
     add_test(NAME unit_combat_test COMMAND test_combat)
     add_test(NAME unit_items_test COMMAND test_items)
     add_test(NAME unit_world_test COMMAND test_world)
@@ -660,6 +818,7 @@ if(BUILD_TESTING)
     add_test(NAME integrated_io_test COMMAND test_io_integrated)
     add_test(NAME integrated_log_test COMMAND test_log_integrated)
     add_test(NAME integrated_debug_test COMMAND test_debug_integrated)
+    add_test(NAME integrated_core_test COMMAND test_core_integrated)
 
     # System Tests (Full Simulation Invariants & Scenarios)
     add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
@@ -670,6 +829,7 @@ if(BUILD_TESTING)
     add_test(NAME system_io_test COMMAND test_io_system)
     add_test(NAME system_log_test COMMAND test_log_system)
     add_test(NAME system_debug_test COMMAND test_debug_system)
+    add_test(NAME system_core_test COMMAND test_core_system)
 
     set_tests_properties(
         cli_help_test
@@ -679,6 +839,7 @@ if(BUILD_TESTING)
         functional_io_test
         functional_log_test
         functional_debug_test
+        functional_core_test
         unit_math_test
         unit_data_test
         unit_time_test
@@ -689,6 +850,18 @@ if(BUILD_TESTING)
         unit_debug_test
         unit_debug_engine_test
         unit_debug_fallback_test
+        unit_math_utils_test
+        unit_math_utils_fallback_test
+        unit_time_utils_test
+        unit_time_utils_fallback_test
+        unit_string_utils_test
+        unit_string_utils_fallback_test
+        unit_geom_utils_test
+        unit_geom_utils_fallback_test
+        unit_clock_pacer_test
+        unit_clock_pacer_fallback_test
+        unit_formula_eval_test
+        unit_formula_eval_fallback_test
         unit_combat_test
         unit_items_test
         unit_world_test
@@ -703,11 +876,13 @@ if(BUILD_TESTING)
         integrated_io_test
         integrated_log_test
         integrated_debug_test
+        integrated_core_test
         system_game_invariants_test
         system_gameplay_scenarios_test
         system_io_test
         system_log_test
         system_debug_test
+        system_core_test
         PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()

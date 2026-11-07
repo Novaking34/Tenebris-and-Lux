@@ -1,54 +1,62 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          time_utils.c
-// @id            core.util.time
-// @layer         Layer 0: Core Utilities
-// @version       1.0.0
-// @interface_rev Rev 1
-// @date          2026-10-26
-// @updated       2026-10-26
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Implementation of high-resolution POSIX monotonic clock queries and
-//   frame sleep pacing routines for simulation and GUI loops. Guarantees
-//   drift-free timing, frame pacing, and microsecond benchmark metrics.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: None (Foundational leaf module).
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (100% stack/static, zero heap).
-//   - Concurrency / Safety:  REENTRANT_PURE (Thread-safe, non-blocking time).
-//   - Latency Budget:        < 5 microseconds per query.
-//
-// AXIOMATIC INVARIANTS:
-//   1. Monotonic precision without clock drift or leap adjustments.
-//   2. Strictly non-decreasing clock ticks across thread contexts (t2 >= t1).
-//   3. Non-negative frame sleep clamp.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          time_utils.c
+@id            core.util.time
+@layer         Layer 0: Core Utilities
+@version       0.1.0-dev
+@interface_rev Rev 4
+@date          2026-11-07
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        High-Resolution Timing Subsystem (core/time)
+@role          Monotonic Clocks, Delta Timing, Frame Pacing & ISO Timestamps
+@invariants    1. Monotonic precision: CLOCK_MONOTONIC queries never step backwards (t2 >= t1).
+               2. Non-negative sleep clamp: Negative sleep requests safely clamped to zero.
+               3. ISO 8601 UTC timestamp format: YYYY-MM-DDTHH:MM:SSZ (21 bytes null-terminated).
+               4. Zero dynamic heap allocations (ALLOC_ZERO_HEAP: stack/static only).
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  High-resolution monotonic timer queries, microsecond delta profiling, frame sleep
+  pacing, and ISO 8601 calendar timestamp formatting. Ingests canonical frame budgets
+  and latency limits from game/data/system/runtime/time/ via master_loader.
+================================================================================
+*/
+
+/*
+================================================================================
+BLOCK 2: OPENING / STATIC DATA BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
+================================================================================
+*/
 
 #define _POSIX_C_SOURCE 199309L
 
-#include "core/time_utils.h"
-#include "io/fs_utils.h"
-#include "io/json_utils.h"
-#include "core/string_utils.h"
+/* --- Tier 1: Standard Library Headers --- */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <time.h>
+#include <unistd.h>
+
+/* --- Tier 2: Core Engine Specifications & Subsystems --- */
+#include "core/time_utils.h"
+#include "core/time_utils_fallback.h"
+#include "core/manifest.h"
+#include "core/string_utils.h"
+#include "io/master_loader.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 static const char *const time_invariants[] = {
-    "Monotonicity: t2 >= t1 strictly enforced",
-    "POSIX CLOCK_MONOTONIC timing source",
-    "Non-negative sleep duration safety",
+    "Monotonicity: t2 >= t1 strictly enforced across queries",
+    "POSIX CLOCK_MONOTONIC high-resolution timing source",
+    "Non-negative sleep duration safety clamping",
     "ISO 8601 UTC calendar timestamp formatting bounds"
 };
 
@@ -56,15 +64,15 @@ const module_metadata_t time_utils_manifest = {
     "core.util.time",
     "time_utils.h",
     LAYER_0_CORE_UTIL,
-    { 1, 1, 0 },
-    2,                          // interface_rev
-    "2026-11-02",               // last_updated
-    "High-resolution monotonic timer, frame sleep, and ISO timestamp utilities",
-    0,                          // dependency_count
-    { NULL },                   // dependencies
-    ALLOC_ZERO_HEAP,            // alloc_policy
-    CONCURRENCY_REENTRANT,      // concurrency
-    5,                          // max_budget_us
+    { 0, 1, 0 },
+    4,                          /* interface_rev */
+    "2026-11-07",               /* last_updated */
+    "High-resolution monotonic timer, delta profiling, frame sleep, and ISO timestamps",
+    0,                          /* dependency_count: leaf foundational cog */
+    { NULL },                   /* dependencies */
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_REENTRANT,      /* concurrency */
+    5,                          /* max_budget_us */
     4,
     {
         time_invariants[0],
@@ -75,379 +83,275 @@ const module_metadata_t time_utils_manifest = {
     time_utils_preflight
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY / CORE TIMING LOGIC BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: MONOTONIC CLOCKS & FRAME PACING COGS ]
-// Mission: Drift-free monotonic time measurement and frame sleep pacing.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Queries current monotonic clock time in milliseconds.
- *
- * ### Machine Role & Mission
- *
- * Provides accurate, drift-free timestamping for frame rate calculations,
- * simulation delta timing, and GUI render pacing.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.time (High-Resolution Timing Engine)
- * - Assembly:   Monotonic Clocks & Frame Pacing
- * - Cog:        Millisecond Monotonic Clock
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, stack timespec).
- * - Concurrency:    REENTRANT_PURE (Thread-safe, non-blocking system call).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @return Double precision timestamp in elapsed milliseconds.
- *
- * @post Guaranteed non-decreasing value across sequential invocations.
- */
 double time_get_monotonic_ms(void)
 {
-    /* Step 1: Query POSIX monotonic hardware clock */
     struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-
-    /* Step 2: Convert seconds and nanoseconds into floating-point ms */
-    return (double)ts.tv_sec * 1000.0 + (double)ts.tv_nsec / 1000000.0;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
+        debug_trap_tripwire("time", "clock_gettime(CLOCK_MONOTONIC) failed", __FILE__, __LINE__);
+        return 0.0;
+    }
+    return ((double)ts.tv_sec * 1000.0) + ((double)ts.tv_nsec / 1000000.0);
 }
 
-/**
- * @brief Queries current monotonic clock time in microseconds.
- *
- * ### Machine Role & Mission
- *
- * Used for high-precision micro-benchmarking of simulation turn latency
- * (< 50 us frame budget requirement for 60 FPS headroom).
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.time (High-Resolution Timing Engine)
- * - Assembly:   Monotonic Clocks & Frame Pacing
- * - Cog:        Microsecond Monotonic Clock
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, stack timespec).
- * - Concurrency:    REENTRANT_PURE (Thread-safe, non-blocking system call).
- * - Latency Budget: < 1 microsecond execution time (O(1)).
- *
- * @return Double precision timestamp in elapsed microseconds.
- */
 double time_get_monotonic_us(void)
 {
-    /* Step 1: Query POSIX monotonic hardware clock */
     struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-
-    /* Step 2: Convert seconds and nanoseconds into floating-point us */
-    return (double)ts.tv_sec * 1000000.0 + (double)ts.tv_nsec / 1000.0;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
+        debug_trap_tripwire("time", "clock_gettime(CLOCK_MONOTONIC) failed", __FILE__, __LINE__);
+        return 0.0;
+    }
+    return ((double)ts.tv_sec * 1000000.0) + ((double)ts.tv_nsec / 1000.0);
 }
 
-/**
- * @brief Suspends thread execution for a specified duration in milliseconds.
- *
- * ### Machine Role & Mission
- *
- * Regulates simulation loop tick rates and prevents busy-wait CPU spinning
- * when desktop X11 presentation rate exceeds target 60 FPS refresh cycles.
- *
- * ### Ontological Classification
- *
- * - Stratum:    Layer 0 (Core Utilities)
- * - Machine:    core.util.time (High-Resolution Timing Engine)
- * - Assembly:   Monotonic Clocks & Frame Pacing
- * - Cog:        Precision Frame Sleeper
- *
- * ### Execution & Resource Contract
- *
- * - Memory Model:   ALLOC_ZERO_HEAP (Zero dynamic heap, stack timespec).
- * - Concurrency:    CONCURRENCY_MAIN_THREAD (Yields calling OS thread).
- * - Latency Budget: Sleeps caller for duration; negative clamped to 0.
- *
- * @param[in] ms Target sleep duration in milliseconds (safe if <= 0).
- */
 void time_sleep_ms(double ms)
 {
-    /* Step 1: Precondition validation (non-positive durations safely no-op) */
+    if (ms < 0.0) {
+        debug_trap_tripwire("time", "Negative duration passed to time_sleep_ms", __FILE__, __LINE__);
+        return;
+    }
+
     if (ms <= 0.0) {
         return;
     }
 
-    /* Step 2: Separate into integer seconds and remainder nanoseconds */
     struct timespec req;
     req.tv_sec = (time_t)(ms / 1000.0);
-    req.tv_nsec = (long)((ms - (double)req.tv_sec * 1000.0) * 1000000.0);
+    req.tv_nsec = (long)((ms - (double)(req.tv_sec * 1000.0)) * 1000000.0);
 
-    /* Step 3: Yield thread execution via POSIX high-resolution nanosleep */
+    if (req.tv_nsec >= 1000000000L) {
+        req.tv_sec += 1;
+        req.tv_nsec -= 1000000000L;
+    }
+
     nanosleep(&req, NULL);
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: CALENDAR & ISO TIMESTAMP COGS ]
-// Mission: Format UTC calendar timestamps for telemetry headers and audit logs.
-// -----------------------------------------------------------------------------
+double time_get_delta_ms(double start_ms, double end_ms)
+{
+    if (end_ms < start_ms) {
+        debug_trap_tripwire("time", "end_ms < start_ms in time_get_delta_ms", __FILE__, __LINE__);
+        return 0.0;
+    }
+    return end_ms - start_ms;
+}
 
-/**
- * @brief Formats the current UTC calendar time as an ISO 8601 timestamp string.
- *
- * @param[out] buf      Caller-supplied memory destination buffer.
- * @param[in]  buf_size Byte capacity of destination buffer (must be >= 21).
- *
- * @return `true` if timestamp was successfully written; `false` on NULL or small buffer.
- */
+double time_get_delta_us(double start_us, double end_us)
+{
+    if (end_us < start_us) {
+        debug_trap_tripwire("time", "end_us < start_us in time_get_delta_us", __FILE__, __LINE__);
+        return 0.0;
+    }
+    return end_us - start_us;
+}
+
+bool time_is_elapsed_ms(double start_ms, double interval_ms)
+{
+    if (interval_ms <= 0.0) return true;
+    double now = time_get_monotonic_ms();
+    return (now >= start_ms) && ((now - start_ms) >= interval_ms);
+}
+
 bool time_get_iso_timestamp(char *buf, size_t buf_size)
 {
-    /* Step 1: Buffer capacity check (ISO 8601 UTC requires >= 21 bytes) */
     if (buf == NULL || buf_size < 21) {
-        if (buf && buf_size > 0) {
-            buf[0] = '\0';
-        }
+        debug_trap_tripwire("time", "Insufficient buffer capacity for ISO timestamp", __FILE__, __LINE__);
         return false;
     }
 
-    /* Step 2: Query system calendar time and convert to UTC tm */
-    time_t now = time(NULL);
-    struct tm tm_buf;
-    if (gmtime_r(&now, &tm_buf) == NULL) {
-        buf[0] = '\0';
+    time_t raw_time = time(NULL);
+    struct tm utc_tm;
+
+    if (gmtime_r(&raw_time, &utc_tm) == NULL) {
+        debug_trap_tripwire("time", "gmtime_r failed", __FILE__, __LINE__);
         return false;
     }
 
-    /* Step 3: Format ISO 8601 string */
-    int written = snprintf(buf, buf_size, "%04d-%02d-%02dT%02d:%02d:%02dZ",
-                           tm_buf.tm_year + 1900,
-                           tm_buf.tm_mon + 1,
-                           tm_buf.tm_mday,
-                           tm_buf.tm_hour,
-                           tm_buf.tm_min,
-                           tm_buf.tm_sec);
+    int written = snprintf(
+        buf, buf_size, "%04d-%02d-%02dT%02d:%02d:%02dZ",
+        utc_tm.tm_year + 1900, utc_tm.tm_mon + 1, utc_tm.tm_mday,
+        utc_tm.tm_hour, utc_tm.tm_min, utc_tm.tm_sec);
 
     return (written > 0 && (size_t)written < buf_size);
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.3: DATA-DRIVEN TIMING CONFIGURATION & FALLBACK TRIPWIRES ]
-// Mission: Load frame pacing profiles from external JSON with hardcoded fallback.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Returns hardcoded fallback frame timing configuration profile (60 FPS baseline).
- *
- * @return Default baseline time_config_t with canonical limits.
- */
 time_config_t time_get_default_config(void)
 {
-    /* Step 1: Zero-initialize and populate 60 FPS canonical values */
     time_config_t cfg;
     memset(&cfg, 0, sizeof(cfg));
+
     str_safe_copy(cfg.id, "default", sizeof(cfg.id));
-    str_safe_copy(cfg.display_name, "Standard 60 FPS Engine Timing Profile", sizeof(cfg.display_name));
+    str_safe_copy(cfg.display_name, "Canonical 60 FPS Pacing Baseline", sizeof(cfg.display_name));
     cfg.target_fps = 60;
     cfg.frame_budget_ms = 16.666667;
     cfg.turn_latency_budget_us = 50.0;
-    cfg.preflight_latency_budget_us = 1000.0;
-    cfg.disk_query_budget_us = 500.0;
-    cfg.token_extraction_budget_us = 50.0;
+    cfg.preflight_latency_budget_us = 5000.0;
+    cfg.disk_query_budget_us = 100.0;
+    cfg.token_extraction_budget_us = 20.0;
     cfg.tick_rate_hz = 60;
+    cfg.loaded_from_data = false;
+
     return cfg;
 }
 
-/**
- * @brief Loads a frame timing configuration profile from a JSON file.
- *
- * @param[in]  filepath   Null-terminated path to profile JSON.
- * @param[out] out_config Destination configuration structure.
- *
- * @return `true` if loaded from file; `false` if fallback tripwire was triggered.
- */
-bool time_load_config_from_file(const char *filepath, time_config_t *out_config)
+bool time_load_config_from_file(const char *profile_path, time_config_t *out_config)
 {
-    /* Step 1: Precondition check */
     if (out_config == NULL) {
+        debug_trap_tripwire("time", "NULL out_config passed to time_load_config_from_file", __FILE__, __LINE__);
         return false;
     }
 
-    /* Step 2: Seed with canonical default */
     *out_config = time_get_default_config();
 
-    if (filepath == NULL || filepath[0] == '\0') {
+    const char *target_rel = profile_path;
+    if (target_rel == NULL || target_rel[0] == '\0') {
+        target_rel = "runtime/time/default.json";
+    }
+
+    if (strncmp(target_rel, "system/", 7) == 0) {
+        target_rel += 7;
+    }
+
+    master_loader_t loader;
+    char file_buf[8192];
+    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+        LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "Time", -0.2f,
+                   "Failed to load time profile '%s', falling back to defaults (GRADE:-020)", target_rel);
         return false;
     }
 
-    /* Step 3: Load JSON file with alternate relative path support */
-    char resolved[FS_PATH_MAX];
-    const char *target = filepath;
-    if (fs_resolve_data_path(filepath, resolved, sizeof(resolved))) {
-        target = resolved;
+    master_loader_get_string(&loader, "profile", "id", out_config->id, sizeof(out_config->id));
+    master_loader_get_string(&loader, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
+    master_loader_get_int(&loader, "profile", "target_fps", &out_config->target_fps);
+
+    float f_budget = 0.0f;
+    if (master_loader_get_float(&loader, "profile", "frame_budget_ms", &f_budget)) {
+        out_config->frame_budget_ms = (double)f_budget;
+    }
+    if (master_loader_get_float(&loader, "profile", "turn_latency_budget_us", &f_budget)) {
+        out_config->turn_latency_budget_us = (double)f_budget;
+    }
+    if (master_loader_get_float(&loader, "profile", "preflight_latency_budget_us", &f_budget)) {
+        out_config->preflight_latency_budget_us = (double)f_budget;
+    }
+    if (master_loader_get_float(&loader, "profile", "disk_query_budget_us", &f_budget)) {
+        out_config->disk_query_budget_us = (double)f_budget;
+    }
+    if (master_loader_get_float(&loader, "profile", "token_extraction_budget_us", &f_budget)) {
+        out_config->token_extraction_budget_us = (double)f_budget;
     }
 
-    char buf[FS_BUFFER_MEDIUM_BYTES];
-    bool loaded = fs_read_file_contents(target, buf, sizeof(buf));
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "game/%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "../%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
-    if (!loaded) {
-        char alt_path[FS_PATH_MAX];
-        snprintf(alt_path, sizeof(alt_path), "../game/%s", filepath);
-        loaded = fs_read_file_contents(alt_path, buf, sizeof(buf));
-    }
+    master_loader_get_int(&loader, "profile", "tick_rate_hz", &out_config->tick_rate_hz);
+    out_config->loaded_from_data = true;
 
-    if (!loaded) {
-        return false;
-    }
-
-    /* Step 4: Deserialize JSON timing properties */
-    json_get_object_string(buf, "profile", "id", out_config->id, sizeof(out_config->id));
-    json_get_object_string(buf, "profile", "display_name", out_config->display_name, sizeof(out_config->display_name));
-    json_get_object_int(buf, "profile", "target_fps", &out_config->target_fps);
-
-    float f_val = 0.0f;
-    if (json_get_object_float(buf, "profile", "frame_budget_ms", &f_val)) {
-        out_config->frame_budget_ms = (double)f_val;
-    }
-    if (json_get_object_float(buf, "profile", "turn_latency_budget_us", &f_val)) {
-        out_config->turn_latency_budget_us = (double)f_val;
-    }
-    if (json_get_object_float(buf, "profile", "preflight_latency_budget_us", &f_val)) {
-        out_config->preflight_latency_budget_us = (double)f_val;
-    }
-    if (json_get_object_float(buf, "profile", "disk_query_budget_us", &f_val)) {
-        out_config->disk_query_budget_us = (double)f_val;
-    }
-    if (json_get_object_float(buf, "profile", "token_extraction_budget_us", &f_val)) {
-        out_config->token_extraction_budget_us = (double)f_val;
-    }
-
-    json_get_object_int(buf, "profile", "tick_rate_hz", &out_config->tick_rate_hz);
-
+    LOG_RECORD(LOG_SEV_DEBUG, LOG_CAT_LOG, "Time", 0.0f,
+               "Hydrated time profile '%s' (FPS: %d, Frame: %.2f ms) (GRADE:+000)",
+               out_config->id, out_config->target_fps, out_config->frame_budget_ms);
     return true;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Validate clock monotonicity, sleep resolution, and ISO timestamps.
-// -----------------------------------------------------------------------------
-
-/**
- * @brief Pre-flight diagnostic check evaluating monotonic clock and calendar invariants.
- *
- * ### Machine Role & Mission
- *
- * Invoked during pre-flight boot by the Central Manifest orchestrator.
- * Confirms that consecutive clock queries never step backwards in time,
- * that high-resolution thread sleep operates reliably, and that ISO
- * timestamps format correctly.
- *
- * @return Diagnostic check outcome reporting SEVERITY_PASS or SEVERITY_FATAL.
- */
 diag_result_t time_utils_preflight(void)
 {
     diag_result_t res;
     res.subsystem = time_utils_manifest.module_id;
     res.check_name = "Monotonicity, Resolution & Calendar Timestamps";
 
-    /* Test 1 (Fatal Check): Consecutive queries must never tick backwards */
-    double prev = time_get_monotonic_us();
-    for (int i = 0; i < 100; i++) {
-        double curr = time_get_monotonic_us();
-        if (curr < prev) {
-            res.passed = false;
-            res.severity = SEVERITY_FATAL;
-            res.details = "Fatal: Monotonic clock ticked backwards!";
-            return res;
-        }
-        prev = curr;
-    }
-
-    /* Test 2 (Warning Check): Sleep delta measurement */
-    double t_start = time_get_monotonic_ms();
-    time_sleep_ms(1.0);
-    double t_end = time_get_monotonic_ms();
-    double slept = t_end - t_start;
-
-    if (slept < 0.5) {
-        res.passed = true;
-        res.severity = SEVERITY_WARNING;
-        res.details = "Warning: Timer sleep resolution is coarse (< 0.5ms).";
-        return res;
-    }
-
-    /* Test 3 (Fatal Check): ISO timestamp formatting bounds */
-    char ts_buf[32];
-    if (!time_get_iso_timestamp(ts_buf, sizeof(ts_buf))) {
+    if (!time_utils_audit()) {
         res.passed = false;
         res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: time_get_iso_timestamp failed buffer formatting.";
-        return res;
-    }
-
-    // Verify small buffer bounds rejection
-    if (time_get_iso_timestamp(ts_buf, 10)) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: time_get_iso_timestamp allowed undersized buffer.";
-        return res;
-    }
-
-    /* Test 4 (Fatal Check): Data-driven configuration profile loading and hardcoded fallback */
-    time_config_t default_cfg = time_get_default_config();
-    if (default_cfg.target_fps != 60 || default_cfg.turn_latency_budget_us < 49.0 ||
-        default_cfg.tick_rate_hz != 60) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: time_get_default_config failed canonical invariant.";
-        return res;
-    }
-
-    time_config_t loaded_cfg;
-    if (time_load_config_from_file(NULL, &loaded_cfg) != false) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details = "Fatal: time_load_config_from_file(NULL) failed fallback contract.";
+        res.details = "Fatal: time_utils failed invariant audit.";
         return res;
     }
 
     res.passed = true;
     res.severity = SEVERITY_PASS;
-    res.details = "Monotonic clock stable; sub-ms resolution, ISO timestamp & config profiles verified.";
+    res.details = "Monotonic clocks, delta timers & ISO timestamps verified.";
     return res;
 }
 
-/**
- * @brief Standalone boolean self-audit wrapper for regression test suites.
- *
- * @return `true` if all timing invariant tripwires pass cleanly.
- */
 bool time_utils_audit(void)
 {
-    diag_result_t pf = time_utils_preflight();
-    return pf.passed && pf.severity != SEVERITY_FATAL;
+    /* Test 1: Monotonicity across consecutive queries */
+    double prev = time_get_monotonic_us();
+    for (int i = 0; i < 100; i++) {
+        double curr = time_get_monotonic_us();
+        if (curr < prev) {
+            return false;
+        }
+        prev = curr;
+    }
+
+    /* Test 2: ISO 8601 formatting length and anchor characters */
+    char ts_buf[32];
+    if (!time_get_iso_timestamp(ts_buf, sizeof(ts_buf))) {
+        return false;
+    }
+    if (strlen(ts_buf) != 20 || ts_buf[10] != 'T' || ts_buf[19] != 'Z') {
+        return false;
+    }
+
+    /* Test 3: Insufficient buffer capacity rejects safely */
+    char small_buf[10];
+    if (time_get_iso_timestamp(small_buf, sizeof(small_buf))) {
+        return false;
+    }
+
+    /* Test 4: Delta timing calculation */
+    double d1 = time_get_delta_ms(100.0, 150.0);
+    if (d1 < 49.99 || d1 > 50.01) return false;
+    if (time_get_delta_ms(150.0, 100.0) != 0.0) return false; /* Reversed timestamps safely clamped */
+
+    /* Test 5: Default configuration bounds */
+    time_config_t def = time_get_default_config();
+    if (def.target_fps != 60 || def.frame_budget_ms < 16.0 || def.frame_budget_ms > 17.0) {
+        return false;
+    }
+
+    return true;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+================================================================================
+*/
 
-// End of time_utils.c
+bool time_execute_dump_card(const time_config_t *config, char *out_buf, size_t buf_size)
+{
+    if (config == NULL || out_buf == NULL || buf_size < 300) {
+        return false;
+    }
+
+    int written = snprintf(
+        out_buf, buf_size,
+        ".----------------------------------------------------------.\n"
+        "|               TIME PACING INSPECTION CARD                |\n"
+        "|----------------------------------------------------------|\n"
+        "| Profile Identifier : %-36s|\n"
+        "| Target Framerate   : %2d FPS                                 |\n"
+        "| Frame Budget       : %6.2f ms                             |\n"
+        "| Turn Latency Limit : %6.2f us                             |\n"
+        "| Simulation Rate    : %2d Hz                                  |\n"
+        "| Data Hydration     : %-36s|\n"
+        "'----------------------------------------------------------'\n",
+        config->id, config->target_fps, config->frame_budget_ms,
+        config->turn_latency_budget_us, config->tick_rate_hz,
+        config->loaded_from_data ? "ACTIVE (game/data/system/runtime)" : "FALLBACK (Static Hardcoded)");
+
+    return (written > 0 && (size_t)written < buf_size);
+}
+
+/* End of time_utils.c */
