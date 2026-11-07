@@ -52,6 +52,8 @@
 #include "core/geom_utils.h"
 #include "core/string_utils.h"
 #include "core/time_utils.h"
+#include "core/clock_pacer.h"
+#include "core/formula_eval.h"
 #include "log/log.h"
 #include "debug/debug.h"
 
@@ -101,6 +103,8 @@ static void init_engine_manifest(manifest_registry_t *registry)
     manifest_register(registry, &math_utils_manifest);
     manifest_register(registry, &geom_utils_manifest);
     manifest_register(registry, &string_utils_manifest);
+    manifest_register(registry, &clock_pacer_manifest);
+    manifest_register(registry, &formula_eval_manifest);
     manifest_register(registry, &log_manifest);
     manifest_register(registry, &debug_manifest);
 
@@ -254,6 +258,26 @@ static int run_full_subsystem_audit(void)
         return 1;
     }
     printf("[PASS] Test 0b: Debugger subsystem & state rewind invariants verified.\n");
+
+    /* Step 2d: Run frame pacing orchestrator diagnostic audit */
+    if (!clock_pacer_audit()) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Clock pacer orchestrator audit failed");
+        fprintf(stderr, "[FAIL] Clock pacer orchestrator audit failed.\n");
+        debug_shutdown();
+        log_shutdown();
+        return 1;
+    }
+    printf("[PASS] Test 0c: Frame pacing & accumulator invariants verified.\n");
+
+    /* Step 2e: Run battle formula orchestrator diagnostic audit */
+    if (!formula_eval_audit()) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Formula evaluator orchestrator audit failed");
+        fprintf(stderr, "[FAIL] Formula evaluator orchestrator audit failed.\n");
+        debug_shutdown();
+        log_shutdown();
+        return 1;
+    }
+    printf("[PASS] Test 0d: Battle formulas & affinity invariants verified.\n");
 
     /* Step 3: Run simulation engine invariant audit */
     if (game_run_self_audit() != 0) {
