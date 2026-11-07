@@ -119,6 +119,11 @@ path = "src/bin/updater.rs"
 name = "validator"
 path = "src/bin/validator.rs"
 
+# Canonical Git commit message and milestone tag auditing utility
+[[bin]]
+name = "git_validator"
+path = "src/bin/git_validator.rs"
+
 
 
 

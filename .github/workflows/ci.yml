@@ -6,16 +6,18 @@
 # @file          ci.yml
 # @layer         Continuous Integration & Quality Assurance (Layer 4 Infrastructure)
 # @version       0.1.0-dev
-# @interface_rev Rev 1
-# @date          2026-11-03
+# @interface_rev Rev 4
+# @date          2026-11-07
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
 # @system        GitHub Actions CI Pipeline
-# @role          Continuous Verification, CTest Automation & Compendium Build
-# @invariants    1. ISO C11 strict compilation (-Wall -Wextra -Wpedantic).
-#                2. 100% CTest pass rate across all 19 verification suites.
-#                3. 16/16 pre-flight subsystem self-audit pass.
-#                4. Rust Master Guide toolchain compiles without errors.
+# @role          Continuous Verification, Git Ledger Audit, CTest Automation & Compendium Build
+# @invariants    1. ISO C11 strict compilation (-Wall -Wextra -Wpedantic -Werror).
+#                2. 100% CTest pass rate across all 51 verification suites.
+#                3. 20/20 pre-flight subsystem self-audit pass (GRADE:+100).
+#                4. Universal 5-block git commit message & release tag validation.
+#                5. Rust Developer Toolchain unit tests compile and pass cleanly.
+#                6. Master Guide multi-volume compiler generates all compendiums.
 # ==============================================================================
 
 name: CI Verification
@@ -31,16 +33,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository with Full History
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential libx11-dev libxft-dev
+          sudo apt-get install -y cmake build-essential libx11-dev libxft-dev asciidoctor
 
       - name: Set up Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Audit Git Commits & Milestone Release Tags (Universal 5-Block Protocol)
+        run: cargo run --manifest-path tools/Cargo.toml --bin git_validator
+
+      - name: Audit System Data Schemas & Manifests
+        run: cargo run --manifest-path tools/Cargo.toml --bin validator -- system
+
+      - name: Execute Rust Developer Toolchain Tests (19/19 Tests)
+        run: cargo test --manifest-path tools/Cargo.toml
 
       - name: Configure CMake (Debug)
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
@@ -48,11 +61,11 @@ jobs:
       - name: Build Engine, Simulation & Test Harnesses
         run: cmake --build build --config Debug
 
-      - name: Execute CTest Verification Suite (19/19 Suites)
+      - name: Execute CTest Verification Suite (51/51 Suites)
         run: ctest --test-dir build -C Debug --output-on-failure
 
-      - name: Execute Pre-Flight Self-Audit & Invariant Tripwires
+      - name: Execute Pre-Flight Self-Audit & Invariant Tripwires (20/20 Modules)
         run: ./build/tenebris-lux --audit
 
-      - name: Build Master Guide Documentation via Rust Toolchain
-        run: cargo run --manifest-path tools/Cargo.toml --bin master_guide
+      - name: Compile Master Guide Volumes & Compendium via Rust Toolchain
+        run: cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --all

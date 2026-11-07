@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .githooks/commit-msg
+# @layer         Developer Tooling & VCS Hooks (Layer 3 Infrastructure)
+# @version       0.1.0-dev
+# @interface_rev Rev 1
+# @date          2026-11-07
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        Git Client-Side Verification Hook
+# @role          Enforces Universal 5-Block Lifecycle Protocol on Commit Messages
+# @invariants    1. Rejects commits lacking canonical 5-block structure.
+#                2. Rejects commits lacking conventional commit prefixes.
+#                3. Executes compiled Rust git_validator utility.
+# ==============================================================================
+
+COMMIT_MSG_FILE="$1"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+if [ ! -f "$COMMIT_MSG_FILE" ]; then
+    echo "[HOOK ERROR] Commit message file not found: $COMMIT_MSG_FILE" >&2
+    exit 1
+fi
+
+# Run native Rust git_validator in hook mode
+cargo run --quiet --manifest-path "$REPO_ROOT/tools/Cargo.toml" --bin git_validator -- --hook "$COMMIT_MSG_FILE"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo "" >&2
+    echo "================================================================================" >&2
+    echo " [GIT HOOK BLOCKED] Commit message rejected by Universal 5-Block Validator!    " >&2
+    echo "================================================================================" >&2
+    echo " Your commit message must adhere to the OmniCode Universal 5-Block Protocol:    " >&2
+    echo "   <type>(<scope>): <subject line>                                              " >&2
+    echo "   BLOCK 1: METADATA & REVISION RECORD                                          " >&2
+    echo "   BLOCK 2: REASON FOR CHANGE & PROBLEM STATEMENT                               " >&2
+    echo "   BLOCK 3: ARCHITECTURAL MODIFICATIONS & ELEVATIONS                             " >&2
+    echo "   BLOCK 4: VERIFICATION, TRIPWIRES & PASS PROOF                                " >&2
+    echo "   BLOCK 5: INVARIANT COVENANTS & CLOSING AFFIRMATIONS                           " >&2
+    echo "================================================================================" >&2
+    exit 1
+fi
+
+exit 0
