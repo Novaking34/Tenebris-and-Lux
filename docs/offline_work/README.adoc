@@ -54,4 +54,15 @@ and the multi-ending campaign architecture.
   • Save Systems, NG+ Timeline Tree (Chrono's Chronicle Ledger) & Speedrunner Routing +
   • Historical Reconciliations across Folders 1 & 2 (Maps 002–004, 006, 008, 020–031) +
   • Architectural Reflection on Philosophy and Low-Level Code Unity
+
+| **xref:Offline-Work-4.adoc[Offline-Work-4.adoc]** +
+  (and `Offline-Work-4.md`)
+| AsciiDoc / Markdown
+| • Master Stat & Category Sheet: Character Identity, Growth & Vocation Affinity +
+  • Core 9 Combat Stats & Bidirectional 8 Exploration Stats (Level 1 / Level 5 baselines) +
+  • Sub-Surface Combat Parameters: Accuracy, Evasion, Move Points, Facing, ZOC & Poise +
+  • Elemental & Physical Damage Matrix: 6 Apex Elements, Secondaries & Status Multipliers +
+  • Relic Resonance (Shield Power / Sword Edge), Stances (0–3) & Moral Sway Continuum +
+  • Interpersonal Bonds (Elijah-Katrina Dynamic), Party Affinity & 4 Kingdom Pillars +
+  • Economy (Gold, Contraband), Diegetic Archives & Monotonic Calendar World-State
 |===

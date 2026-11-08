@@ -1,202 +1,236 @@
-= Codebase Tour: Core Utilities Layer (Layer 0)
+= Codebase Tour: Layer 0 Core Utilities Subsystem
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.1.0, 2026-11-02
+v1.0.0, 2026-11-07
 :doctype: article
 :toc: left
 :toclevels: 3
 :sectnums:
 :icons: font
 :source-highlighter: rouge
+:experimental:
 
 [abstract]
 == Overview
 
-This document provides a technical walkthrough of the foundational utilities in
-Layer 0 (`include/util/` and `src/util/`). Following the Layered Invariant Discipline
-and the OmniCode 5-Block Ontological Architecture, Layer 0 is partitioned into five
-dedicated subsystem domains (`data/`, `log/`, `math/`, `string/`, `time/`), anchored
-at the root exclusively by the Central Pre-Flight Manifest (`manifest.h` and
-`manifest.c`). Layer 0 enforces zero dynamic heap allocations (`ALLOC_ZERO_HEAP`),
-complete reentrancy, sub-microsecond latency budgets, and data-driven configuration
-loading with resilient fallback tripwires.
+This document provides a technical walkthrough and architectural manual for the
+*Layer 0 Core Utilities Subsystem* (`engine/include/core/` and `engine/src/core/`).
+Representing the mathematical, geometric, temporal, and string foundations of **The Big Machine**,
+the Core Utilities stratum provides bounded arithmetic, 2D AABB geometry, monotonic clock pacing,
+fixed-timestep simulation accumulators, memory-bounded string manipulation, and data-driven formula
+evaluation. Strict adherence to `ALLOC_ZERO_HEAP`, reentrancy, sub-microsecond latency budgets,
+and quarantined emergency fallbacks ensure that foundational operations never wrap around integer
+bounds, leak memory, or introduce non-deterministic time dilation.
 
-== 1. Layer 0 Directory Strata & Subsystem Architecture
+'''
 
-The directory hierarchy strictly organizes utilities into domain sub-assemblies:
+== 1. Architectural Philosophy & Mission
+
+At the very bedrock of the engine frame lies Layer 0 Core Utilities:
 
 [source,text]
 ----
-include/util/                        src/util/
-├── manifest.h   [Root Anchor]       ├── manifest.c    [Root Anchor]
-├── data/                            ├── data/
-│   ├── fs_utils.h                   │   ├── fs_utils.c
-│   └── json_utils.h                 │   └── json_utils.c
-├── log/                             ├── log/
-│   ├── log.h                        │   ├── log.c
-│   └── log_fallback.h               │   └── log_fallback.c
-├── math/                            ├── math/
-│   ├── math_utils.h                 │   ├── math_utils.c
-│   └── geom_utils.h                 │   └── geom_utils.c
-├── string/                          ├── string/
-│   └── string_utils.h               │   └── string_utils.c
-└── time/                            └── time/
-    └── time_utils.h                     └── time_utils.c
+┌────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 0 CORE UTILITIES SUBSYSTEM                     │
+│                                                                        │
+│   [math_utils]       Bounded Math, Saturation Arithmetic, Lerp, Clamp  │
+│   [geom_utils]       2D Bounding Boxes (AABB) & Non-Overlap Tripwires  │
+│   [time_utils]       Monotonic High-Res Clock & Calendar Progression   │
+│   [clock_pacer]      60 Hz Fixed Timestep Accumulator & Lag Clamping   │
+│   [string_utils]     Bounded Zero-Heap String Safety & Formatted Print │
+│   [formula_eval]     Data-Driven Math Formula & Affinity Evaluator     │
+│   [Orchestrators]    Screen Transitions & Audio Event Dispatch Bus     │
+│   [Fallbacks]        Quarantined Zero-Dependency Safety Nets           │
+└────────────────────────────────────────────────────────────────────────┘
 ----
 
-Only `manifest.h` and `manifest.c` reside at the root of `include/util/` and
-`src/util/`. All utility headers are imported via explicit stratum paths
-(e.g., `#include "util/data/fs_utils.h"`, `#include "util/string/string_utils.h"`).
+=== Key Architectural Pillars
+1. **Zero Dynamic Heap Allocations (`ALLOC_ZERO_HEAP`)**:
+   Pure reentrant C11 functions operating solely on CPU registers, primitive values,
+   and caller-provided stack buffers.
+2. **Saturation Arithmetic & Overflow Clamping**:
+   Mathematical utilities enforce saturation clamping; calculations never wrap around
+   `INT32_MAX` or underflow `INT32_MIN`.
+3. **Decoupled Simulation Timestep**:
+   `clock_pacer` decouples fixed simulation updates (exactly 60 Hz / 16.666ms) from variable
+   physical render frame rates, calculating fractional interpolation alphas (`render_alpha`).
+4. **Data-Driven Formula Evaluation**:
+   Formulas for damage, mitigations, and affinity interactions are evaluated through
+   `formula_eval` driven by JSON manifests in `game/data/system/runtime/math/` rather than
+   hardcoding arithmetic in C sources.
+5. **Quarantined Fallback Isolation**:
+   Every core utility module is paired with a standalone, zero-dependency `*_fallback.[ch]`
+   module ensuring zero-configuration compilation and hermetic test isolation.
 
-== 2. Filesystem & JSON Engines (`util/data/`)
+'''
 
-=== 2.1 Filesystem Utilities (`fs_utils.h` & `fs_utils.c`)
+== 2. Subsystem Layout & File Manifest
 
-Provides a zero-heap POSIX filesystem abstraction layer for bounded configuration
-reading, safe atomic file writing, and progressive directory provisioning.
+[source,text]
+----
+engine/include/core/
+├── math_utils.h              // Bounded math, clamping, interpolation, rounding
+├── math_utils_fallback.h     // Standalone minimal math fallback
+├── geom_utils.h              // 2D AABB geometry, point-in-rect, intersection
+├── geom_utils_fallback.h     // Standalone geometric fallback
+├── time_utils.h              // Monotonic clock querying & calendar time
+├── time_utils_fallback.h     // Standalone monotonic time fallback
+├── clock_pacer.h             // Fixed-timestep simulation pacer & lag defense
+├── clock_pacer_fallback.h    // Minimal fixed-tick accumulator fallback
+├── string_utils.h            // Safe bounded string copying, format & trimming
+├── string_utils_fallback.h   // Minimal string safety fallback
+├── formula_eval.h            // Data-driven formula evaluator
+├── formula_eval_fallback.h   // Static arithmetic evaluation fallback
+├── audio_bus.h               // Universal audio event dispatch bus
+└── screen_transition.h       // Screen fading & transition orchestrator
+
+engine/src/core/
+├── math_utils.c              // Mathematical implementations & saturation clamps
+├── math_utils_fallback.c     // Quarantined math fallback implementation
+├── geom_utils.c              // AABB collision and bounds validation
+├── geom_utils_fallback.c     // Quarantined geometry fallback implementation
+├── time_utils.c              // POSIX clock_gettime monotonic queries
+├── time_utils_fallback.c     // Quarantined time query fallback
+├── clock_pacer.c             // Timestep accumulation & render interpolation
+├── clock_pacer_fallback.c    // Quarantined clock pacer fallback
+├── string_utils.c            // Safe bounded string functions
+├── string_utils_fallback.c   // Quarantined string fallback implementation
+├── formula_eval.c            // Expression evaluation and parameter binding
+├── formula_eval_fallback.c   // Quarantined formula evaluator fallback
+├── audio_bus.c               // Audio cue dispatch orchestrator
+└── screen_transition.c       // Transition easing curve evaluator
+----
+
+'''
+
+== 3. Core Engine Cogs & API Tour
+
+=== 3.1 Bounded Math & Saturation Arithmetic (`math_utils.[ch]`)
+
+Guarantees that mathematical calculations remain strictly bounded within defined intervals:
 
 [source,c]
 ----
-bool fs_file_exists(const char *path);
-long fs_get_file_size(const char *path);
-bool fs_is_regular_file(const char *path);
-bool fs_read_file_contents(const char *filepath, char *buf, size_t buf_size);
-bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size, size_t *out_bytes_read);
-bool fs_write_file_contents(const char *filepath, const char *data, size_t data_len);
-bool fs_ensure_directory(const char *dir_path);
+/* Clamping primitives */
+int32_t math_clamp_i32(int32_t val, int32_t min, int32_t max);
+float   math_clamp_float(float val, float min, float max);
+double  math_clamp_double(double val, double min, double max);
+
+/* Saturation arithmetic preventing integer overflow / underflow */
+int32_t math_sadd_i32(int32_t a, int32_t b);
+int32_t math_ssub_i32(int32_t a, int32_t b);
+
+/* Linear interpolation and percentage scaling */
+float   math_lerp_float(float a, float b, float t);
+int32_t math_scale_pct(int32_t base, int32_t pct);
 ----
 
-* **Standard Buffer Capacities**:
-** `FS_BUFFER_SMALL_BYTES` (1,024 B): Headers and status tokens.
-** `FS_BUFFER_MEDIUM_BYTES` (8,192 B): Standard configuration profiles (< 8 KB).
-** `FS_BUFFER_LARGE_BYTES` (32,768 B): Aggregate manifests and catalogs.
-** `FS_BUFFER_MAX_CONFIG` (65,536 B): Maximum supported configuration ceiling.
+=== 3.2 2D AABB Geometry & Layout Tripwires (`geom_utils.[ch]`)
 
-=== 2.2 JSON Utilities (`json_utils.h` & `json_utils.c`)
-
-Implements a stateless, zero-heap JSON scanner and deserializer capable of
-extracting primitive fields, scoped object properties, and array elements:
+Defines 2D axis-aligned bounding boxes (AABB) for desktop HUD panels, button hits, and tactical grid coordinates:
 
 [source,c]
 ----
-const char *json_find_key(const char *json, const char *key);
-bool json_get_string(const char *json, const char *key, char *out_val, size_t out_size);
-bool json_get_size_t(const char *json, const char *key, size_t *out_val);
-bool json_get_int(const char *json, const char *key, int *out_val);
-bool json_get_bool(const char *json, const char *key, bool *out_val);
-bool json_get_float(const char *json, const char *key, float *out_val);
-bool json_find_object(const char *json, const char *object_key, const char **out_obj_start, size_t *out_obj_len);
-bool json_get_object_string(const char *json, const char *parent_obj_key, const char *key, char *out_val, size_t out_size);
-bool json_get_object_int(const char *json, const char *parent_obj_key, const char *key, int *out_val);
-bool json_find_array(const char *json, const char *array_key, const char **out_arr_start, size_t *out_arr_len);
-size_t json_array_get_count(const char *arr_start, size_t arr_len);
-bool json_array_get_string(const char *arr_start, size_t arr_len, size_t index, char *out_val, size_t out_size);
+typedef struct {
+    int32_t x;
+    int32_t y;
+    int32_t width;
+    int32_t height;
+} geom_rect_t;
+
+/* Collision and containment queries */
+bool geom_rect_contains_point(const geom_rect_t *r, int32_t px, int32_t py);
+bool geom_aabb_intersects(const geom_rect_t *a, const geom_rect_t *b);
+bool geom_rect_fits_inside(const geom_rect_t *inner, const geom_rect_t *outer);
 ----
 
-== 3. Mathematical Invariant Utilities (`util/math/`)
+*Invariants Enforced*:
+* Rect widths and heights must be non-negative.
+* HUD panel manifests are audited against `geom_aabb_intersects` to prevent layout overlaps.
 
-=== 3.1 Bounded Arithmetic (`math_utils.h` & `math_utils.c`)
+=== 3.3 Monotonic Time & Clock Pacing (`time_utils.[ch]`, `clock_pacer.[ch]`)
 
-Enforces numerical bounds, saturating reductions, ratio scaling, and normalization:
+Provides nanosecond-precision monotonic timing and decouples simulation updates from render FPS:
 
 [source,c]
 ----
-int math_clamp_int(int val, int min_val, int max_val);
-int math_saturating_sub(int val, int sub_val);
-int math_saturating_add(int val, int add_val, int max_val);
-int math_nudge_toward(int val, int target, int step);
-int math_scale_ratio(int val, int max_val, int target_scale);
-int math_normalized_to_percent(float norm);
-float math_percent_to_normalized(int percent);
-math_config_t math_get_default_config(void);
-bool math_load_config_from_file(const char *filepath, math_config_t *out_config);
+/* High-resolution monotonic clock query */
+uint64_t time_monotonic_now_ns(void);
+double   time_delta_ms(uint64_t start_ns, uint64_t end_ns);
+
+/* Fixed-timestep clock pacer */
+typedef struct {
+    double fixed_step_ms;       /* Standard: 16.666667 ms (60 Hz) */
+    double accumulator_ms;     /* Accumulated unprocessed frame time */
+    double max_delta_clamp_ms; /* Maximum lag spike clamp (100.0 ms) */
+    uint32_t max_substeps;     /* Max simulation steps per render (3) */
+} clock_pacer_t;
+
+void clock_pacer_init(clock_pacer_t *pacer, double step_ms, double clamp_ms, uint32_t max_substeps);
+bool clock_pacer_tick(clock_pacer_t *pacer, double frame_delta_ms, double *out_render_alpha);
 ----
 
-=== 3.2 2D Geometry Utilities (`geom_utils.h` & `geom_utils.c`)
+*Lag Spike Defense*:
+* If an OS hitch stalls execution (> 100ms), `clock_pacer_tick` clamps the delta to `max_delta_clamp_ms`
+  and executes at most `max_substeps` (3 ticks). This prevents the dreaded "spiral of death" where
+  the CPU stalls trying to catch up with accumulated time debt.
 
-Manages screen-space rectangular coordinates and AABB intersection checks:
+=== 3.4 Bounded String Safety (`string_utils.[ch]`)
+
+Eliminates buffer overflow vulnerabilities (`strcpy`, `strcat`, `sprintf` are strictly forbidden):
 
 [source,c]
 ----
-geom_rect_t geom_make_rect(int x, int y, int w, int h);
-bool geom_point_in_rect(int px, int py, geom_rect_t r);
-bool geom_rect_intersects(geom_rect_t a, geom_rect_t b);
-bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h);
+/* Guaranteed null-terminated bounded copy */
+size_t str_copy_safe(char *dest, size_t dest_size, const char *src);
+
+/* Bounded string concatenation */
+size_t str_concat_safe(char *dest, size_t dest_size, const char *src);
+
+/* In-place whitespace trimming and case conversion */
+void str_trim(char *str);
+void str_to_lower(char *str);
+void str_to_upper(char *str);
 ----
 
-== 4. Lexical & String Utilities (`util/string/`)
+=== 3.5 Data-Driven Formula Evaluator (`formula_eval.[ch]`)
 
-Provides safe string copying, in-place whitespace trimming, case-folding,
-and filesystem path operations:
+Parses and computes bounded mathematical formulas loaded from `formulas.json` (e.g. physical attack,
+magical mitigation, poise damage):
 
 [source,c]
 ----
-void str_safe_copy(char *dst, const char *src, size_t dst_size);
-void str_trim_inplace(char *str);
-bool str_case_eq(const char *s1, const char *s2);
-bool str_contains_nocase(const char *haystack, const char *needle);
-bool str_parent_dir(char *dest, size_t dest_size, const char *path);
-bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *filename);
-string_config_t string_get_default_config(void);
-bool string_load_config_from_file(const char *filepath, string_config_t *out_config);
+typedef struct {
+    int32_t attacker_atk;
+    int32_t defender_def;
+    int32_t weapon_might;
+    int32_t stance_mult_pct;
+    int32_t affinity_mult_pct;
+} formula_combat_params_t;
+
+/* Computes final damage ensuring result is clamped to [1, 9999] */
+int32_t formula_eval_physical_damage(const formula_combat_params_t *params);
 ----
 
-== 5. Monotonic Timing Utilities (`util/time/`)
+=== 3.6 Universal Engine Orchestrators
 
-Provides drift-free monotonic timing, frame pacing, and ISO 8601 calendar stamps:
+* **Audio Event Bus (`audio_bus.[ch]`)**:
+  Zero-heap queue routing audio cue events (`sfx_ward_lux_barrio`, `sfx_strike_cuttatio_tenebris`)
+  to mixing channels without directly binding simulation to hardware sound drivers.
+* **Screen Transition Orchestrator (`screen_transition.[ch]`)**:
+  Manages screen fading, wipes, iris dissolves, and easing curves (`EASE_LINEAR`, `EASE_QUAD_IN`, `EASE_CUBIC_OUT`)
+  between scene and screen changes.
 
-[source,c]
-----
-double time_get_monotonic_ms(void);
-double time_get_monotonic_us(void);
-void time_sleep_ms(double ms);
-bool time_get_iso_timestamp(char *buf, size_t buf_size);
-time_config_t time_get_default_config(void);
-bool time_load_config_from_file(const char *filepath, time_config_t *out_config);
-----
+'''
 
-== 6. Logging & Telemetry Subsystem (`util/log/`)
+== 4. Verification & Testing Matrix
 
-Implements forensic logging with categorization, sequence IDs, microsecond
-monotonic timestamps, moral grades, log rotation, and console echoing:
-
-[source,c]
-----
-void log_init(void);
-void log_shutdown(void);
-void log_write(log_severity_t severity, log_category_t cat, const char *channel, int moral_grade, const char *fmt, ...);
-bool log_apply_setting(const char *setting_name);
-log_config_t log_get_default_config(void);
-bool log_load_setting_from_file(const char *filepath, log_config_t *out_config);
-----
-
-== 7. Central Manifest & Pre-Flight Registry (`manifest.h` & `manifest.c`)
-
-Binds compiled provenance, versioning, DAG dependencies, resource budgets,
-and pre-flight audit function pointers for all registered engine modules:
-
-[source,c]
-----
-void manifest_registry_init(manifest_registry_t *registry);
-bool manifest_register(manifest_registry_t *registry, const module_metadata_t *module);
-preflight_status_t manifest_run_preflight(manifest_registry_t *registry);
-void manifest_print_report(const manifest_registry_t *registry);
-----
-
-=== 7.1 Pre-Flight Verification Telemetry
-
-All 14 registered modules execute automated pre-flight self-audits before runtime:
-
-* `core.util.manifest` (r2): Static capacity and duplicate rejection.
-* `core.util.fs` (r2): Path probing, bounded reading, and directory creation.
-* `core.util.json` (r2): Token scanning, scoped object, and array deserialization.
-* `core.util.time` (r2): Clock monotonicity, sub-ms sleep, and config profiles.
-* `core.util.math` (r2): Clamping, saturation, zero-divisor safety, and config profiles.
-* `core.util.geom` (r2): 2D AABB collision detection and bounds containment.
-* `core.util.string` (r2): Buffer safety, trimming, path joining, and config profiles.
-* `core.util.log` (r2): Telemetry formatting, ring buffer, and profile switching.
-* `sim.engine.state` (r3): State invariant enforcement and tripwires.
-* `sim.engine.combat` (r3): Stance transitions and skill mechanics.
-* `sim.engine.world` (r3): Provincial node routing and threat tiers.
-* `sim.engine.dispatcher` (r3): Command parsing and token dispatching.
-* `sim.engine.core` (r2): Unified simulation loop.
-* `gui.viewport.x11` (r1): Double-buffered viewport and button bounds.
+The Core Utilities subsystem is continuously verified across 4 ontological test tiers:
+1. **Functional Tests (`tests/functional/test_core_functional.c`)**:
+   Verifies saturation arithmetic, bounding rect containment, and string truncation.
+2. **Unit Tests (`tests/unit/core/test_*_unit.c` and `*_fallback_test.c`)**:
+   Individual unit test binaries for each of the 6 core modules and their fallback companions.
+3. **Integrated Tests (`tests/integrated/test_core_integrated.c`)**:
+   Verifies multi-cog cooperation (pacer driving formula evaluator and geometry updates).
+4. **System Tests (`tests/system/test_core_system.c`)**:
+   Stress tests clock pacing across 60 FPS, 144 FPS, and simulated 100ms hitch drops,
+   confirming strict determinism and zero dynamic memory leaks.

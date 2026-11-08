@@ -117,7 +117,9 @@
           { "title": "Dual-Frontend Presentation Layer (CLI + Native X11)", "rel_path": "architecture/dual_frontend_architecture.adoc" },
           { "title": "Central Manifest & Pre-Flight Diagnostic Integrity", "rel_path": "architecture/preflight_and_manifest_spec.adoc" },
           { "title": "Layer 0 Core Utilities Code Tour", "rel_path": "code/core_utilities.adoc" },
-          { "title": "Layer 0 Debugging System & State Rewind", "rel_path": "code/debug_system.adoc" },
+          { "title": "Layer 0 Zero-Heap I/O Pipeline Subsystem", "rel_path": "code/io_pipeline.adoc" },
+          { "title": "Layer 0 Categorized Flight Logging Subsystem", "rel_path": "code/logging_system.adoc" },
+          { "title": "Layer 0 State Debugger & Diagnostic Engine", "rel_path": "code/debug_system.adoc" },
           { "title": "Layer 1 Simulation Engine Code Tour", "rel_path": "code/simulation_engine.adoc" },
           { "title": "Layer 2 Presentation Viewport Code Tour", "rel_path": "code/presentation_gui.adoc" },
           { "title": "Layer 4 Verification & Test Suite Code Tour", "rel_path": "code/test_suite.adoc" }
@@ -150,7 +152,7 @@
   },
   "block_4_audit": {
     "required_volumes": 6,
-    "min_total_chapters": 71
+    "min_total_chapters": 73
   },
   "block_5_closing": {
     "publisher": "CreativeWorkzStudio Publishing",

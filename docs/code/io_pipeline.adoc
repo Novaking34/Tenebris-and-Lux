@@ -1,0 +1,190 @@
+= Codebase Tour: Layer 0 Zero-Heap I/O Pipeline Subsystem
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v1.0.0, 2026-11-07
+:doctype: article
+:toc: left
+:toclevels: 3
+:sectnums:
+:icons: font
+:source-highlighter: rouge
+:experimental:
+
+[abstract]
+== Overview
+
+This document provides a technical walkthrough and architectural manual for the
+*Layer 0 Zero-Heap I/O Pipeline Subsystem* (`engine/include/io/` and `engine/src/io/`).
+Forming the physical filesystem and serialization apparatus of **The Big Machine**,
+the I/O subsystem orchestrates zero-heap POSIX virtual filesystem abstractions,
+resilient hierarchical path resolution, bounded streaming JSON parsing, and pre-flight
+manifest validation across all data manifests in `game/data/`. Strict adherence to the
+`ALLOC_ZERO_HEAP` contract, complete reentrancy, sub-millisecond throughput budgets,
+and quarantined emergency fallbacks ensure that disk access never compromises simulation
+determinism.
+
+'''
+
+== 1. Architectural Philosophy & Mission
+
+In tactical RPG game engine development, file loading is typically a primary source
+of runtime memory leaks, heap fragmentation, and non-deterministic latencies. The
+Tenebris and Lux engine solves this through the **Layered Invariant Discipline**:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 0 ZERO-HEAP I/O SUBSYSTEM                       │
+│                                                                        │
+│   [fs_utils]         Bounded POSIX VFS, Atomic Writes, Sizing          │
+│   [path_finder]      Repository Root Anchoring & Relative Resolution   │
+│   [json_utils]       Streaming Memory-Bounded JSON Tokenizer & Parser  │
+│   [master_loader]    Pre-Flight Manifest DAG Registration & Audit      │
+└────────────────────────────────────────────────────────────────────────┘
+----
+
+=== Key Architectural Pillars
+1. **Zero Dynamic Heap Allocations (`ALLOC_ZERO_HEAP`)**:
+   All I/O operations execute against static buffers or caller-provided fixed-size
+   memory slices (`FS_BUFFER_SMALL_BYTES`, `FS_BUFFER_LARGE_BYTES`). `malloc`, `calloc`,
+   and `realloc` are strictly forbidden.
+2. **Explicit Stratum Paths**:
+   No forwarder headers exist. Code imports exact subsystems:
+   `#include "io/fs_utils.h"`, `#include "io/path_finder.h"`,
+   `#include "io/json_utils.h"`, `#include "io/master_loader.h"`.
+3. **Dual Development Discipline**:
+   Bedrock filesystem invariants are fixed and immovable (Waterfall); error handling,
+   relative directory discovery, and schema tokens iteratively adapt (Agile).
+4. **Quarantined Fallback Isolation**:
+   Every production module (`*_engine.c` or standard `.c`) is paired with an isolated,
+   zero-dependency fallback implementation (`*_fallback.[ch]`). Fallbacks serve as
+   compilation safety nets and unit test harnesses—never runtime crutches.
+
+'''
+
+== 2. Subsystem Layout & File Manifest
+
+[source,text]
+----
+engine/include/io/
+├── fs_utils.h              // Bounded POSIX filesystem abstractions
+├── fs_utils_fallback.h     // Zero-dependency filesystem fallback
+├── path_finder.h           // Hierarchical repository root & path resolution
+├── path_finder_fallback.h  // Static path resolution fallback
+├── json_utils.h            // Zero-heap JSON tokenizer and query engine
+├── json_utils_fallback.h   // Embedded JSON parsing fallback
+├── master_loader.h         // Central pre-flight manifest DAG loader & auditor
+└── master_loader_fallback.h// Standalone manifest fallback
+
+engine/src/io/
+├── fs_utils.c              // File existence, size queries, atomic read/write
+├── fs_utils_fallback.c     // Isolated minimal POSIX read/write implementation
+├── path_finder.c           // Upward directory traversal & anchor matching
+├── path_finder_fallback.c  // Direct path resolver fallback
+├── json_utils.c            // Token stream parser, string/int/bool extraction
+├── json_utils_fallback.c   // Isolated key-value tokenizer fallback
+├── master_loader.c         // Master DAG traversal, schema verification
+└── master_loader_fallback.c// Static pre-flight manifest fallback
+----
+
+'''
+
+== 3. Core Engine Cogs & API Tour
+
+=== 3.1 Filesystem Utilities (`fs_utils.[ch]`)
+
+`fs_utils` provides safe, bounds-checked POSIX operations. File buffers are strictly
+capped by compile-time limits (`FS_BUFFER_SMALL_BYTES = 4096`, `FS_BUFFER_LARGE_BYTES = 32768`).
+
+[source,c]
+----
+/* File existence and metadata queries */
+bool fs_file_exists(const char *path);
+bool fs_dir_exists(const char *path);
+long fs_get_file_size(const char *path);
+
+/* Bounded zero-heap read and atomic write operations */
+bool fs_read_file(const char *path, char *out_buf, size_t buf_size, size_t *out_len);
+bool fs_write_file_atomic(const char *path, const char *data, size_t len);
+bool fs_ensure_directory(const char *dir_path);
+----
+
+*Invariants Enforced*:
+* Buffer sizes must be non-zero and pointers must not be null.
+* Writing uses temporary `.tmp` staging followed by `rename` for atomic file replacement.
+* All open file descriptors are guaranteed closed upon return, preventing leakages.
+
+=== 3.2 Path Resolution Engine (`path_finder.[ch]`)
+
+`path_finder` resolves canonical paths relative to the project root, regardless of whether
+the binary was launched from `build/`, `build/bin/`, or the repository root.
+
+[source,c]
+----
+/* Resolves repository root by walking upward until CMakeLists.txt and game/ exist */
+bool path_resolve_repo_root(char *out_path, size_t out_size);
+
+/* Resolves game data manifest paths (e.g. "presentation/audio/channels.json") */
+bool path_resolve_data(const char *rel_path, char *out_path, size_t out_size);
+
+/* Resolves runtime log destination directory */
+bool path_resolve_log_dir(char *out_path, size_t out_size);
+----
+
+*Invariants Enforced*:
+* Reaches maximum depth of 8 upward parent traversals before reporting failure.
+* Path concatenation performs strict boundary clamping against buffer overflow.
+
+=== 3.3 Zero-Heap JSON Tokenizer & Parser (`json_utils.[ch]`)
+
+`json_utils` reads structured 5-block JSON data without building dynamic AST trees on
+the heap. It scans memory buffers sequentially, extracting keys, numerical attributes,
+boolean flags, and nested objects into caller-allocated structs.
+
+[source,c]
+----
+/* Token stream inspection */
+bool json_extract_string(const char *json, const char *key, char *out_buf, size_t max_len);
+bool json_extract_int(const char *json, const char *key, int *out_val);
+bool json_extract_double(const char *json, const char *key, double *out_val);
+bool json_extract_bool(const char *json, const char *key, bool *out_val);
+
+/* 5-Block Envelope Verification */
+bool json_validate_5_blocks(const char *json);
+bool json_extract_block_1_metadata(const char *json, json_block_1_t *out_meta);
+----
+
+*Invariants Enforced*:
+* Zero recursion: nested objects are resolved via linear character offsets.
+* Syntax errors, truncated quotes, or unmatched brackets fail immediately with diagnostics.
+
+=== 3.4 Pre-Flight Master Loader & DAG Auditor (`master_loader.[ch]`)
+
+The `master_loader` is invoked during Step 0 of application startup (`game/src/main.c`).
+It parses `game/data/manifest.json` and recursively registers all subsystem manifests
+(`system/`, `presentation/`, `mechanics/`, `world/`) into an active dependency graph.
+
+[source,c]
+----
+/* Central pre-flight initialization */
+bool master_loader_init(const char *root_manifest_path);
+
+/* Subsystem audit sweep verifying existence and schema integrity */
+bool master_loader_verify_all_catalogs(void);
+
+/* Retrieval of active data configuration */
+const master_manifest_t *master_loader_get_manifest(void);
+----
+
+'''
+
+== 4. Verification & Testing Matrix
+
+The I/O subsystem is continuously verified by 4 ontological test tiers:
+1. **Functional Cog Tests (`tests/functional/test_io_functional.c`)**:
+   Verifies isolated functions (`fs_file_exists`, `path_resolve_repo_root`, `json_extract_string`).
+2. **Unit Subsystem Tests (`tests/unit/io/test_fs_utils_unit.c`, `test_path_finder_unit.c`, `test_json_utils_unit.c`)**:
+   Audits boundary conditions, buffer clipping, missing files, and malformed JSON envelopes.
+3. **Integrated Pipeline Tests (`tests/integrated/test_io_integrated.c`)**:
+   Traverses the entire manifest DAG, reading real catalogs and validating cross-references.
+4. **System Replay Scenarios (`tests/system/test_io_system.c`)**:
+   Executes continuous read/write cycles simulating multi-turn game autosaves under zero heap leaks.

@@ -1,25 +1,35 @@
 = Codebase Architecture & Implementation Index
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
+v1.0.0, 2026-11-07
 :doctype: article
 :icons: font
 
 [abstract]
 == Overview
 
-This directory provides deep-dive walkthroughs of the source code implementation across
-the simulation engine, presentation viewport, and test suites.
+This directory provides deep-dive walkthroughs and technical specifications of the
+source code implementation across the five layered strata of **The Big Machine**
+(`engine/`) and **The Master Turn Gear** (`game/`).
 
 == Implementation Manifest
 
-1. **[core_utilities.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/core_utilities.adoc)**  
-   *Layer 0 Core Utilities Walkthrough*: `include/util/` and `src/util/`. Details math clamping, string utilities, 2D geometry hit-testing, and monotonic timing primitives.
+1. **xref:core_utilities.adoc[core_utilities.adoc]** +
+   *Layer 0 Core Utilities*: `engine/src/core/` and `engine/include/core/`. Details bounded math, saturation arithmetic, 2D AABB geometry, monotonic time, 60 Hz fixed-timestep clock pacing, bounded string safety, formula evaluation, and universal orchestrators (audio bus, screen transitions).
 
-2. **[simulation_engine.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/simulation_engine.adoc)**  
-   *Layer 1 Core Simulation Walkthrough*: `include/sim/game.h` and `src/sim/game.c`. Details memory layouts, the `player_state_t` struct, universal action dispatching, and self-auditing routines.
+2. **xref:io_pipeline.adoc[io_pipeline.adoc]** +
+   *Layer 0 Zero-Heap I/O Pipeline*: `engine/src/io/` and `engine/include/io/`. Details the bounded POSIX VFS (`fs_utils`), upward repository path resolution (`path_finder`), streaming memory-bounded JSON parsing (`json_utils`), and pre-flight master manifest loading (`master_loader`).
 
-3. **[presentation_gui.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/presentation_gui.adoc)**  
-   *Layer 2 Native Graphical Viewport*: `include/gui/gui.h` and `src/gui/gui.c`. Details native POSIX X11 double-buffering, 32-bit ARGB TrueColor visual negotiation, event dispatching, and layout auditing.
+3. **xref:logging_system.adoc[logging_system.adoc]** +
+   *Layer 0 Categorized Flight Logging*: `engine/src/log/` and `engine/include/log/`. Details severity taxonomy (`LOG_LEVEL_TRACE`..`FATAL`), engine vs. game channel bitmasks, the 256-entry zero-heap circular ring buffer, automatic rolling log rotation, and data-driven telemetry profiles.
 
-4. **[test_suite.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/code/test_suite.adoc)**  
-   *Layer 4 Game Dev Test Suite Walkthrough*: `tests/test_utils.c`, `tests/test_game_invariants.c`, and `tests/test_gameplay_scenarios.c`. Details CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and microsecond latency benchmarks.
+4. **xref:debug_system.adoc[debug_system.adoc]** +
+   *Layer 0 State Debugger & Diagnostics*: `engine/src/debug/` and `engine/include/debug/`. Details frozen state snapshot ring buffers, deterministic FNV-1a 32-bit state hashing, forensic stream exporters (NDJSON, CSV, Diagnostic Report), live ASCII inspection cards, active tripwire matrix, and time-travel state rewind.
+
+5. **xref:simulation_engine.adoc[simulation_engine.adoc]** +
+   *Layer 1 Simulation Engine*: `game/src/` and `game/include/` (`combat/`, `hero/`, `relics/`, `world/`, `ending/`, `dispatch/`). Details pure headless TRPG simulation, twin relic stance state machines, moral sway continuum `[-100, +100]`, and action dispatching.
+
+6. **xref:presentation_gui.adoc[presentation_gui.adoc]** +
+   *Layer 2 Presentation Viewports*: `engine/src/viewport/` and `engine/include/viewport/`. Details native POSIX X11 double-buffering, letterbox/pillarbox responsive scalers (640x360 baseline), TrueType typography (`Cinzel`, `MedievalSharp`), 5-screen alternate views, and 2.5D dimetric grid projection.
+
+7. **xref:test_suite.adoc[test_suite.adoc]** +
+   *Layer 4 Verification & Ontological Test Suite*: `tests/` (`functional/`, `unit/`, `integrated/`, `system/`). Details 51 CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and automated sub-millisecond benchmarking.

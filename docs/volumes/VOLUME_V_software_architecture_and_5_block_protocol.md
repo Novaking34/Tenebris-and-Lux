@@ -14,11 +14,13 @@ _System boundaries, layered strata, dual-frontend GUI/CLI, and pre-flight zero-h
 2. Dual-Frontend Presentation Layer (CLI + Native X11)
 3. Central Manifest & Pre-Flight Diagnostic Integrity
 4. Layer 0 Core Utilities Code Tour
-5. Layer 0 Debugging System & State Rewind
-6. Layer 1 Simulation Engine Code Tour
-7. Layer 2 Presentation Viewport Code Tour
-8. Layer 4 Verification & Test Suite Code Tour
-9. Technical Specification: Data-Driven Architecture & Manifest System
+5. Layer 0 Zero-Heap I/O Pipeline Subsystem
+6. Layer 0 Categorized Flight Logging Subsystem
+7. Layer 0 State Debugger & Diagnostic Engine
+8. Layer 1 Simulation Engine Code Tour
+9. Layer 2 Presentation Viewport Code Tour
+10. Layer 4 Verification & Test Suite Code Tour
+11. Technical Specification: Data-Driven Architecture & Manifest System
 
 ---
 
@@ -583,323 +585,806 @@ env -u DISPLAY ./build/tenebris-lux --audit
 [abstract]
 ## Overview
 
-This document provides a technical walkthrough of the foundational utilities in
-Layer 0 (`include/util/` and `src/util/`). Following the Layered Invariant Discipline
-and the OmniCode 5-Block Ontological Architecture, Layer 0 is partitioned into five
-dedicated subsystem domains (`data/`, `log/`, `math/`, `string/`, `time/`), anchored
-at the root exclusively by the Central Pre-Flight Manifest (`manifest.h` and
-`manifest.c`). Layer 0 enforces zero dynamic heap allocations (`ALLOC_ZERO_HEAP`),
-complete reentrancy, sub-microsecond latency budgets, and data-driven configuration
-loading with resilient fallback tripwires.
+This document provides a technical walkthrough and architectural manual for the
+*Layer 0 Core Utilities Subsystem* (`engine/include/core/` and `engine/src/core/`).
+Representing the mathematical, geometric, temporal, and string foundations of **The Big Machine**,
+the Core Utilities stratum provides bounded arithmetic, 2D AABB geometry, monotonic clock pacing,
+fixed-timestep simulation accumulators, memory-bounded string manipulation, and data-driven formula
+evaluation. Strict adherence to `ALLOC_ZERO_HEAP`, reentrancy, sub-microsecond latency budgets,
+and quarantined emergency fallbacks ensure that foundational operations never wrap around integer
+bounds, leak memory, or introduce non-deterministic time dilation.
 
-## 1. Layer 0 Directory Strata & Subsystem Architecture
-
-The directory hierarchy strictly organizes utilities into domain sub-assemblies:
-
-[source,text]
-----
-include/util/                        src/util/
-├── manifest.h   [Root Anchor]       ├── manifest.c    [Root Anchor]
-├── data/                            ├── data/
-│   ├── fs_utils.h                   │   ├── fs_utils.c
-│   └── json_utils.h                 │   └── json_utils.c
-├── log/                             ├── log/
-│   ├── log.h                        │   ├── log.c
-│   └── log_fallback.h               │   └── log_fallback.c
-├── math/                            ├── math/
-│   ├── math_utils.h                 │   ├── math_utils.c
-│   └── geom_utils.h                 │   └── geom_utils.c
-├── string/                          ├── string/
-│   └── string_utils.h               │   └── string_utils.c
-└── time/                            └── time/
-    └── time_utils.h                     └── time_utils.c
-----
-
-Only `manifest.h` and `manifest.c` reside at the root of `include/util/` and
-`src/util/`. All utility headers are imported via explicit stratum paths
-(e.g., `#include "util/data/fs_utils.h"`, `#include "util/string/string_utils.h"`).
-
-## 2. Filesystem & JSON Engines (`util/data/`)
-
-### 2.1 Filesystem Utilities (`fs_utils.h` & `fs_utils.c`)
-
-Provides a zero-heap POSIX filesystem abstraction layer for bounded configuration
-reading, safe atomic file writing, and progressive directory provisioning.
-
-[source,c]
-----
-bool fs_file_exists(const char *path);
-long fs_get_file_size(const char *path);
-bool fs_is_regular_file(const char *path);
-bool fs_read_file_contents(const char *filepath, char *buf, size_t buf_size);
-bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size, size_t *out_bytes_read);
-bool fs_write_file_contents(const char *filepath, const char *data, size_t data_len);
-bool fs_ensure_directory(const char *dir_path);
-----
-
-* **Standard Buffer Capacities**:
-** `FS_BUFFER_SMALL_BYTES` (1,024 B): Headers and status tokens.
-** `FS_BUFFER_MEDIUM_BYTES` (8,192 B): Standard configuration profiles (< 8 KB).
-** `FS_BUFFER_LARGE_BYTES` (32,768 B): Aggregate manifests and catalogs.
-** `FS_BUFFER_MAX_CONFIG` (65,536 B): Maximum supported configuration ceiling.
-
-### 2.2 JSON Utilities (`json_utils.h` & `json_utils.c`)
-
-Implements a stateless, zero-heap JSON scanner and deserializer capable of
-extracting primitive fields, scoped object properties, and array elements:
-
-[source,c]
-----
-const char *json_find_key(const char *json, const char *key);
-bool json_get_string(const char *json, const char *key, char *out_val, size_t out_size);
-bool json_get_size_t(const char *json, const char *key, size_t *out_val);
-bool json_get_int(const char *json, const char *key, int *out_val);
-bool json_get_bool(const char *json, const char *key, bool *out_val);
-bool json_get_float(const char *json, const char *key, float *out_val);
-bool json_find_object(const char *json, const char *object_key, const char **out_obj_start, size_t *out_obj_len);
-bool json_get_object_string(const char *json, const char *parent_obj_key, const char *key, char *out_val, size_t out_size);
-bool json_get_object_int(const char *json, const char *parent_obj_key, const char *key, int *out_val);
-bool json_find_array(const char *json, const char *array_key, const char **out_arr_start, size_t *out_arr_len);
-size_t json_array_get_count(const char *arr_start, size_t arr_len);
-bool json_array_get_string(const char *arr_start, size_t arr_len, size_t index, char *out_val, size_t out_size);
-----
-
-## 3. Mathematical Invariant Utilities (`util/math/`)
-
-### 3.1 Bounded Arithmetic (`math_utils.h` & `math_utils.c`)
-
-Enforces numerical bounds, saturating reductions, ratio scaling, and normalization:
-
-[source,c]
-----
-int math_clamp_int(int val, int min_val, int max_val);
-int math_saturating_sub(int val, int sub_val);
-int math_saturating_add(int val, int add_val, int max_val);
-int math_nudge_toward(int val, int target, int step);
-int math_scale_ratio(int val, int max_val, int target_scale);
-int math_normalized_to_percent(float norm);
-float math_percent_to_normalized(int percent);
-math_config_t math_get_default_config(void);
-bool math_load_config_from_file(const char *filepath, math_config_t *out_config);
-----
-
-### 3.2 2D Geometry Utilities (`geom_utils.h` & `geom_utils.c`)
-
-Manages screen-space rectangular coordinates and AABB intersection checks:
-
-[source,c]
-----
-geom_rect_t geom_make_rect(int x, int y, int w, int h);
-bool geom_point_in_rect(int px, int py, geom_rect_t r);
-bool geom_rect_intersects(geom_rect_t a, geom_rect_t b);
-bool geom_rect_within_bounds(geom_rect_t r, int max_w, int max_h);
-----
-
-## 4. Lexical & String Utilities (`util/string/`)
-
-Provides safe string copying, in-place whitespace trimming, case-folding,
-and filesystem path operations:
-
-[source,c]
-----
-void str_safe_copy(char *dst, const char *src, size_t dst_size);
-void str_trim_inplace(char *str);
-bool str_case_eq(const char *s1, const char *s2);
-bool str_contains_nocase(const char *haystack, const char *needle);
-bool str_parent_dir(char *dest, size_t dest_size, const char *path);
-bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *filename);
-string_config_t string_get_default_config(void);
-bool string_load_config_from_file(const char *filepath, string_config_t *out_config);
-----
-
-## 5. Monotonic Timing Utilities (`util/time/`)
-
-Provides drift-free monotonic timing, frame pacing, and ISO 8601 calendar stamps:
-
-[source,c]
-----
-double time_get_monotonic_ms(void);
-double time_get_monotonic_us(void);
-void time_sleep_ms(double ms);
-bool time_get_iso_timestamp(char *buf, size_t buf_size);
-time_config_t time_get_default_config(void);
-bool time_load_config_from_file(const char *filepath, time_config_t *out_config);
-----
-
-## 6. Logging & Telemetry Subsystem (`util/log/`)
-
-Implements forensic logging with categorization, sequence IDs, microsecond
-monotonic timestamps, moral grades, log rotation, and console echoing:
-
-[source,c]
-----
-void log_init(void);
-void log_shutdown(void);
-void log_write(log_severity_t severity, log_category_t cat, const char *channel, int moral_grade, const char *fmt, ...);
-bool log_apply_setting(const char *setting_name);
-log_config_t log_get_default_config(void);
-bool log_load_setting_from_file(const char *filepath, log_config_t *out_config);
-----
-
-## 7. Central Manifest & Pre-Flight Registry (`manifest.h` & `manifest.c`)
-
-Binds compiled provenance, versioning, DAG dependencies, resource budgets,
-and pre-flight audit function pointers for all registered engine modules:
-
-[source,c]
-----
-void manifest_registry_init(manifest_registry_t *registry);
-bool manifest_register(manifest_registry_t *registry, const module_metadata_t *module);
-preflight_status_t manifest_run_preflight(manifest_registry_t *registry);
-void manifest_print_report(const manifest_registry_t *registry);
-----
-
-### 7.1 Pre-Flight Verification Telemetry
-
-All 14 registered modules execute automated pre-flight self-audits before runtime:
-
-* `core.util.manifest` (r2): Static capacity and duplicate rejection.
-* `core.util.fs` (r2): Path probing, bounded reading, and directory creation.
-* `core.util.json` (r2): Token scanning, scoped object, and array deserialization.
-* `core.util.time` (r2): Clock monotonicity, sub-ms sleep, and config profiles.
-* `core.util.math` (r2): Clamping, saturation, zero-divisor safety, and config profiles.
-* `core.util.geom` (r2): 2D AABB collision detection and bounds containment.
-* `core.util.string` (r2): Buffer safety, trimming, path joining, and config profiles.
-* `core.util.log` (r2): Telemetry formatting, ring buffer, and profile switching.
-* `sim.engine.state` (r3): State invariant enforcement and tripwires.
-* `sim.engine.combat` (r3): Stance transitions and skill mechanics.
-* `sim.engine.world` (r3): Provincial node routing and threat tiers.
-* `sim.engine.dispatcher` (r3): Command parsing and token dispatching.
-* `sim.engine.core` (r2): Unified simulation loop.
-* `gui.viewport.x11` (r1): Double-buffered viewport and button bounds.
-
-
----
-
-## Chapter 5: Layer 0 Debugging System & State Rewind
-
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/debug_system.adoc`
+'''
 
 ## 1. Architectural Philosophy & Mission
 
-The *Interactive State Debugger & Time-Travel Rewind Subsystem* (`util/debug/`)
-forms a critical zero-heap component of the Layer 0 Core Utilities. Conceived to
-provide deterministic state inspection, non-invasive telemetry tracing, and historical
-state restoration, the debugger enables developers and test harnesses to observe game
-evolution turn-by-turn.
+At the very bedrock of the engine frame lies Layer 0 Core Utilities:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 0 CORE UTILITIES SUBSYSTEM                     │
+│                                                                        │
+│   [math_utils]       Bounded Math, Saturation Arithmetic, Lerp, Clamp  │
+│   [geom_utils]       2D Bounding Boxes (AABB) & Non-Overlap Tripwires  │
+│   [time_utils]       Monotonic High-Res Clock & Calendar Progression   │
+│   [clock_pacer]      60 Hz Fixed Timestep Accumulator & Lag Clamping   │
+│   [string_utils]     Bounded Zero-Heap String Safety & Formatted Print │
+│   [formula_eval]     Data-Driven Math Formula & Affinity Evaluator     │
+│   [Orchestrators]    Screen Transitions & Audio Event Dispatch Bus     │
+│   [Fallbacks]        Quarantined Zero-Dependency Safety Nets           │
+└────────────────────────────────────────────────────────────────────────┘
+----
 
 ### Key Architectural Pillars
+1. **Zero Dynamic Heap Allocations (`ALLOC_ZERO_HEAP`)**:
+   Pure reentrant C11 functions operating solely on CPU registers, primitive values,
+   and caller-provided stack buffers.
+2. **Saturation Arithmetic & Overflow Clamping**:
+   Mathematical utilities enforce saturation clamping; calculations never wrap around
+   `INT32_MAX` or underflow `INT32_MIN`.
+3. **Decoupled Simulation Timestep**:
+   `clock_pacer` decouples fixed simulation updates (exactly 60 Hz / 16.666ms) from variable
+   physical render frame rates, calculating fractional interpolation alphas (`render_alpha`).
+4. **Data-Driven Formula Evaluation**:
+   Formulas for damage, mitigations, and affinity interactions are evaluated through
+   `formula_eval` driven by JSON manifests in `game/data/system/runtime/math/` rather than
+   hardcoding arithmetic in C sources.
+5. **Quarantined Fallback Isolation**:
+   Every core utility module is paired with a standalone, zero-dependency `*_fallback.[ch]`
+   module ensuring zero-configuration compilation and hermetic test isolation.
 
-* *Decoupled State Representation*: Layer 0 declares `debug_state_fields_t` composed
-  entirely of primitive integer and string fields. Layer 1 simulation engine
-  (`sim/game.c`) provides bidirectional conversion adapters, ensuring strict unidirectional
-  dependency boundaries (Layer 0 never depends on Layer 1).
-* *Zero-Heap Allocation Guarantee (`ALLOC_ZERO_HEAP`)*: The entire state snapshot history
-  lives in a static circular ring buffer with a default capacity of 64 snapshots,
-  guaranteeing deterministic execution without runtime dynamic memory allocation.
-* *Deterministic State Hashing*: Evaluates an FNV-1a 32-bit hash across all simulation
-  fields to verify state conservation and detect data corruption or unexpected state drift.
-* *Bi-Directional Time-Travel*: Allows instantaneous rewinding of the live player
-  simulation to any historical snapshot index, facilitating automated replay validation
-  and breakpoint debugging.
-* *Quarantined Emergency Fallback*: If `data/debug/` JSON configurations are missing or
-  corrupt, the system falls back to an immutable monolithic fallback code page
-  (`debug_fallback.c`), avoiding crashes or loose-bolt failures.
+'''
 
-## 2. Subsystem Layout & Strata
-
-[source,text]
-----
-include/util/debug/
-├── debug.h              // Public OmniCode 5-Block Debugger Interface
-└── debug_fallback.h     // Quarantined Emergency Monolith Fallback Header
-
-src/util/debug/
-├── debug.c              // Core Debugger Implementation & Ring Buffer Engine
-└── debug_fallback.c     // Quarantined Emergency Monolith Code Page
-
-data/debug/
-├── manifest.json        // Debug Catalog & Active Profile Pointer
-├── default.json         // Balanced Developer Debugging Baseline Profile
-├── strict.json          // Rigid Invariant Enforcement & Break-on-Error Profile
-└── trace.json           // Verbose Cog-Level Telemetry Tracing Profile
-----
-
-## 3. Core Mechanics & Invariants
-
-### 3.1 Frozen State Snapshot Ring Buffer
-
-State snapshots capture the full state of the simulation at turn or action
-boundaries. Each snapshot records:
-
-* `snapshot_id`: Monotonically increasing 64-bit integer.
-* `timestamp_ms`: High-resolution monotonic millisecond timestamp.
-* `state`: Decoupled `debug_state_fields_t` containing turn, hero identity, HP, MP,
-  TP, twin relic resonance (Shield of Lux, Sword of Tenebris), stance ID, moral sway,
-  and provincial location.
-* `last_command` and `last_arg`: Textual representation of the verb and parameter.
-* `state_hash`: 32-bit FNV-1a checksum of the state fields.
-* `log_sequence_id`: Sequence counter from the forensic logging engine, binding
-  snapshots directly to telemetry traces.
-
-### 3.2 Dynamic Breakpoints & Tripwire Traps
-
-The debugger supports dynamic breakpoint registration across 7 distinct condition types:
-
-[cols="1,2,2", options="header"]
-|===
-| Breakpoint Type | Target Parameter | Trigger Condition
-| `DEBUG_BREAK_TURN` | Target Turn Number | Turn counter equals target value.
-| `DEBUG_BREAK_STANCE` | Target Stance ID | Combat stance matches target.
-| `DEBUG_BREAK_SWAY_RANGE` | Target Sway Bound | Absolute sway exceeds threshold.
-| `DEBUG_BREAK_RESONANCE_BREACH` | Target Resonance | Relic exceeds target limit.
-| `DEBUG_BREAK_HP_THRESHOLD` | Target HP Floor | Player health drops below value.
-| `DEBUG_BREAK_LOCATION` | Target Province ID | Player enters target province.
-| `DEBUG_BREAK_TRIPWIRE` | Tripwire State | Any engine tripwire activates.
-|===
-
-### 3.3 State Differential Analysis (`debug_diff_snapshots`)
-
-The differential engine evaluates two arbitrary snapshots in time and generates a
-human-readable diff table highlighting exact numerical deltas:
+## 2. Subsystem Layout & File Manifest
 
 [source,text]
 ----
-Snapshot Diff: #1 (Turn 1) -> #2 (Turn 2)
---------------------------------------------------
-  HP:           100 -> 90 (-10)
-  Shield (Lux): 50 -> 45 (-5)
-  Sword (Ten):  50 -> 55 (+5)
-  Moral Sway:   0 -> 5 (+5)
-  State Hash:   0xAA851EE1 -> 0xB79D3C20
+engine/include/core/
+├── math_utils.h              // Bounded math, clamping, interpolation, rounding
+├── math_utils_fallback.h     // Standalone minimal math fallback
+├── geom_utils.h              // 2D AABB geometry, point-in-rect, intersection
+├── geom_utils_fallback.h     // Standalone geometric fallback
+├── time_utils.h              // Monotonic clock querying & calendar time
+├── time_utils_fallback.h     // Standalone monotonic time fallback
+├── clock_pacer.h             // Fixed-timestep simulation pacer & lag defense
+├── clock_pacer_fallback.h    // Minimal fixed-tick accumulator fallback
+├── string_utils.h            // Safe bounded string copying, format & trimming
+├── string_utils_fallback.h   // Minimal string safety fallback
+├── formula_eval.h            // Data-driven formula evaluator
+├── formula_eval_fallback.h   // Static arithmetic evaluation fallback
+├── audio_bus.h               // Universal audio event dispatch bus
+└── screen_transition.h       // Screen fading & transition orchestrator
+
+engine/src/core/
+├── math_utils.c              // Mathematical implementations & saturation clamps
+├── math_utils_fallback.c     // Quarantined math fallback implementation
+├── geom_utils.c              // AABB collision and bounds validation
+├── geom_utils_fallback.c     // Quarantined geometry fallback implementation
+├── time_utils.c              // POSIX clock_gettime monotonic queries
+├── time_utils_fallback.c     // Quarantined time query fallback
+├── clock_pacer.c             // Timestep accumulation & render interpolation
+├── clock_pacer_fallback.c    // Quarantined clock pacer fallback
+├── string_utils.c            // Safe bounded string functions
+├── string_utils_fallback.c   // Quarantined string fallback implementation
+├── formula_eval.c            // Expression evaluation and parameter binding
+├── formula_eval_fallback.c   // Quarantined formula evaluator fallback
+├── audio_bus.c               // Audio cue dispatch orchestrator
+└── screen_transition.c       // Transition easing curve evaluator
 ----
 
-## 4. Interactive CLI Integration
+'''
 
-When launched with the `--debug` (or `-d`) flag, the engine activates interactive
-debug commands during gameplay:
+## 3. Core Engine Cogs & API Tour
 
-* `inspect`: Emits a formatted ASCII diagnostic card displaying hero stats, relic
-  resonance, active stance, moral sway, state hash, and latched tripwires.
-* `history`: Displays a tabular timeline of recorded snapshots across the circular buffer.
-* `snap <reason>`: Forces the immediate capture of a named state snapshot.
-* `rewind <index>`: Restores player simulation state to a previous snapshot index.
-* `debug help`: Displays syntax and documentation for debug commands.
+### 3.1 Bounded Math & Saturation Arithmetic (`math_utils.[ch]`)
 
-## 5. Verification & Audit Contract
+Guarantees that mathematical calculations remain strictly bounded within defined intervals:
 
-The debugger provides two automated audit entry points:
+[source,c]
+----
+/* Clamping primitives */
+int32_t math_clamp_i32(int32_t val, int32_t min, int32_t max);
+float   math_clamp_float(float val, float min, float max);
+double  math_clamp_double(double val, double min, double max);
 
-1. `debug_preflight()`: Evaluates pre-flight loose bolts (zero-heap memory bounds,
-   hash determinism, and fallback readiness) for central manifest registration.
-2. `debug_audit(verbose)`: Comprehensive self-audit executing 6 invariant checks
-   covering snapshot capture, state hashing, time-travel rewind, diffing, and
-   breakpoint evaluation.
+/* Saturation arithmetic preventing integer overflow / underflow */
+int32_t math_sadd_i32(int32_t a, int32_t b);
+int32_t math_ssub_i32(int32_t a, int32_t b);
+
+/* Linear interpolation and percentage scaling */
+float   math_lerp_float(float a, float b, float t);
+int32_t math_scale_pct(int32_t base, int32_t pct);
+----
+
+### 3.2 2D AABB Geometry & Layout Tripwires (`geom_utils.[ch]`)
+
+Defines 2D axis-aligned bounding boxes (AABB) for desktop HUD panels, button hits, and tactical grid coordinates:
+
+[source,c]
+----
+typedef struct {
+    int32_t x;
+    int32_t y;
+    int32_t width;
+    int32_t height;
+} geom_rect_t;
+
+/* Collision and containment queries */
+bool geom_rect_contains_point(const geom_rect_t *r, int32_t px, int32_t py);
+bool geom_aabb_intersects(const geom_rect_t *a, const geom_rect_t *b);
+bool geom_rect_fits_inside(const geom_rect_t *inner, const geom_rect_t *outer);
+----
+
+*Invariants Enforced*:
+* Rect widths and heights must be non-negative.
+* HUD panel manifests are audited against `geom_aabb_intersects` to prevent layout overlaps.
+
+### 3.3 Monotonic Time & Clock Pacing (`time_utils.[ch]`, `clock_pacer.[ch]`)
+
+Provides nanosecond-precision monotonic timing and decouples simulation updates from render FPS:
+
+[source,c]
+----
+/* High-resolution monotonic clock query */
+uint64_t time_monotonic_now_ns(void);
+double   time_delta_ms(uint64_t start_ns, uint64_t end_ns);
+
+/* Fixed-timestep clock pacer */
+typedef struct {
+    double fixed_step_ms;       /* Standard: 16.666667 ms (60 Hz) */
+    double accumulator_ms;     /* Accumulated unprocessed frame time */
+    double max_delta_clamp_ms; /* Maximum lag spike clamp (100.0 ms) */
+    uint32_t max_substeps;     /* Max simulation steps per render (3) */
+} clock_pacer_t;
+
+void clock_pacer_init(clock_pacer_t *pacer, double step_ms, double clamp_ms, uint32_t max_substeps);
+bool clock_pacer_tick(clock_pacer_t *pacer, double frame_delta_ms, double *out_render_alpha);
+----
+
+*Lag Spike Defense*:
+* If an OS hitch stalls execution (> 100ms), `clock_pacer_tick` clamps the delta to `max_delta_clamp_ms`
+  and executes at most `max_substeps` (3 ticks). This prevents the dreaded "spiral of death" where
+  the CPU stalls trying to catch up with accumulated time debt.
+
+### 3.4 Bounded String Safety (`string_utils.[ch]`)
+
+Eliminates buffer overflow vulnerabilities (`strcpy`, `strcat`, `sprintf` are strictly forbidden):
+
+[source,c]
+----
+/* Guaranteed null-terminated bounded copy */
+size_t str_copy_safe(char *dest, size_t dest_size, const char *src);
+
+/* Bounded string concatenation */
+size_t str_concat_safe(char *dest, size_t dest_size, const char *src);
+
+/* In-place whitespace trimming and case conversion */
+void str_trim(char *str);
+void str_to_lower(char *str);
+void str_to_upper(char *str);
+----
+
+### 3.5 Data-Driven Formula Evaluator (`formula_eval.[ch]`)
+
+Parses and computes bounded mathematical formulas loaded from `formulas.json` (e.g. physical attack,
+magical mitigation, poise damage):
+
+[source,c]
+----
+typedef struct {
+    int32_t attacker_atk;
+    int32_t defender_def;
+    int32_t weapon_might;
+    int32_t stance_mult_pct;
+    int32_t affinity_mult_pct;
+} formula_combat_params_t;
+
+/* Computes final damage ensuring result is clamped to [1, 9999] */
+int32_t formula_eval_physical_damage(const formula_combat_params_t *params);
+----
+
+### 3.6 Universal Engine Orchestrators
+
+* **Audio Event Bus (`audio_bus.[ch]`)**:
+  Zero-heap queue routing audio cue events (`sfx_ward_lux_barrio`, `sfx_strike_cuttatio_tenebris`)
+  to mixing channels without directly binding simulation to hardware sound drivers.
+* **Screen Transition Orchestrator (`screen_transition.[ch]`)**:
+  Manages screen fading, wipes, iris dissolves, and easing curves (`EASE_LINEAR`, `EASE_QUAD_IN`, `EASE_CUBIC_OUT`)
+  between scene and screen changes.
+
+'''
+
+## 4. Verification & Testing Matrix
+
+The Core Utilities subsystem is continuously verified across 4 ontological test tiers:
+1. **Functional Tests (`tests/functional/test_core_functional.c`)**:
+   Verifies saturation arithmetic, bounding rect containment, and string truncation.
+2. **Unit Tests (`tests/unit/core/test_*_unit.c` and `*_fallback_test.c`)**:
+   Individual unit test binaries for each of the 6 core modules and their fallback companions.
+3. **Integrated Tests (`tests/integrated/test_core_integrated.c`)**:
+   Verifies multi-cog cooperation (pacer driving formula evaluator and geometry updates).
+4. **System Tests (`tests/system/test_core_system.c`)**:
+   Stress tests clock pacing across 60 FPS, 144 FPS, and simulated 100ms hitch drops,
+   confirming strict determinism and zero dynamic memory leaks.
 
 
 ---
 
-## Chapter 6: Layer 1 Simulation Engine Code Tour
+## Chapter 5: Layer 0 Zero-Heap I/O Pipeline Subsystem
+
+> **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/io_pipeline.adoc`
+
+[abstract]
+## Overview
+
+This document provides a technical walkthrough and architectural manual for the
+*Layer 0 Zero-Heap I/O Pipeline Subsystem* (`engine/include/io/` and `engine/src/io/`).
+Forming the physical filesystem and serialization apparatus of **The Big Machine**,
+the I/O subsystem orchestrates zero-heap POSIX virtual filesystem abstractions,
+resilient hierarchical path resolution, bounded streaming JSON parsing, and pre-flight
+manifest validation across all data manifests in `game/data/`. Strict adherence to the
+`ALLOC_ZERO_HEAP` contract, complete reentrancy, sub-millisecond throughput budgets,
+and quarantined emergency fallbacks ensure that disk access never compromises simulation
+determinism.
+
+'''
+
+## 1. Architectural Philosophy & Mission
+
+In tactical RPG game engine development, file loading is typically a primary source
+of runtime memory leaks, heap fragmentation, and non-deterministic latencies. The
+Tenebris and Lux engine solves this through the **Layered Invariant Discipline**:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 0 ZERO-HEAP I/O SUBSYSTEM                       │
+│                                                                        │
+│   [fs_utils]         Bounded POSIX VFS, Atomic Writes, Sizing          │
+│   [path_finder]      Repository Root Anchoring & Relative Resolution   │
+│   [json_utils]       Streaming Memory-Bounded JSON Tokenizer & Parser  │
+│   [master_loader]    Pre-Flight Manifest DAG Registration & Audit      │
+└────────────────────────────────────────────────────────────────────────┘
+----
+
+### Key Architectural Pillars
+1. **Zero Dynamic Heap Allocations (`ALLOC_ZERO_HEAP`)**:
+   All I/O operations execute against static buffers or caller-provided fixed-size
+   memory slices (`FS_BUFFER_SMALL_BYTES`, `FS_BUFFER_LARGE_BYTES`). `malloc`, `calloc`,
+   and `realloc` are strictly forbidden.
+2. **Explicit Stratum Paths**:
+   No forwarder headers exist. Code imports exact subsystems:
+   `#include "io/fs_utils.h"`, `#include "io/path_finder.h"`,
+   `#include "io/json_utils.h"`, `#include "io/master_loader.h"`.
+3. **Dual Development Discipline**:
+   Bedrock filesystem invariants are fixed and immovable (Waterfall); error handling,
+   relative directory discovery, and schema tokens iteratively adapt (Agile).
+4. **Quarantined Fallback Isolation**:
+   Every production module (`*_engine.c` or standard `.c`) is paired with an isolated,
+   zero-dependency fallback implementation (`*_fallback.[ch]`). Fallbacks serve as
+   compilation safety nets and unit test harnesses—never runtime crutches.
+
+'''
+
+## 2. Subsystem Layout & File Manifest
+
+[source,text]
+----
+engine/include/io/
+├── fs_utils.h              // Bounded POSIX filesystem abstractions
+├── fs_utils_fallback.h     // Zero-dependency filesystem fallback
+├── path_finder.h           // Hierarchical repository root & path resolution
+├── path_finder_fallback.h  // Static path resolution fallback
+├── json_utils.h            // Zero-heap JSON tokenizer and query engine
+├── json_utils_fallback.h   // Embedded JSON parsing fallback
+├── master_loader.h         // Central pre-flight manifest DAG loader & auditor
+└── master_loader_fallback.h// Standalone manifest fallback
+
+engine/src/io/
+├── fs_utils.c              // File existence, size queries, atomic read/write
+├── fs_utils_fallback.c     // Isolated minimal POSIX read/write implementation
+├── path_finder.c           // Upward directory traversal & anchor matching
+├── path_finder_fallback.c  // Direct path resolver fallback
+├── json_utils.c            // Token stream parser, string/int/bool extraction
+├── json_utils_fallback.c   // Isolated key-value tokenizer fallback
+├── master_loader.c         // Master DAG traversal, schema verification
+└── master_loader_fallback.c// Static pre-flight manifest fallback
+----
+
+'''
+
+## 3. Core Engine Cogs & API Tour
+
+### 3.1 Filesystem Utilities (`fs_utils.[ch]`)
+
+`fs_utils` provides safe, bounds-checked POSIX operations. File buffers are strictly
+capped by compile-time limits (`FS_BUFFER_SMALL_BYTES = 4096`, `FS_BUFFER_LARGE_BYTES = 32768`).
+
+[source,c]
+----
+/* File existence and metadata queries */
+bool fs_file_exists(const char *path);
+bool fs_dir_exists(const char *path);
+long fs_get_file_size(const char *path);
+
+/* Bounded zero-heap read and atomic write operations */
+bool fs_read_file(const char *path, char *out_buf, size_t buf_size, size_t *out_len);
+bool fs_write_file_atomic(const char *path, const char *data, size_t len);
+bool fs_ensure_directory(const char *dir_path);
+----
+
+*Invariants Enforced*:
+* Buffer sizes must be non-zero and pointers must not be null.
+* Writing uses temporary `.tmp` staging followed by `rename` for atomic file replacement.
+* All open file descriptors are guaranteed closed upon return, preventing leakages.
+
+### 3.2 Path Resolution Engine (`path_finder.[ch]`)
+
+`path_finder` resolves canonical paths relative to the project root, regardless of whether
+the binary was launched from `build/`, `build/bin/`, or the repository root.
+
+[source,c]
+----
+/* Resolves repository root by walking upward until CMakeLists.txt and game/ exist */
+bool path_resolve_repo_root(char *out_path, size_t out_size);
+
+/* Resolves game data manifest paths (e.g. "presentation/audio/channels.json") */
+bool path_resolve_data(const char *rel_path, char *out_path, size_t out_size);
+
+/* Resolves runtime log destination directory */
+bool path_resolve_log_dir(char *out_path, size_t out_size);
+----
+
+*Invariants Enforced*:
+* Reaches maximum depth of 8 upward parent traversals before reporting failure.
+* Path concatenation performs strict boundary clamping against buffer overflow.
+
+### 3.3 Zero-Heap JSON Tokenizer & Parser (`json_utils.[ch]`)
+
+`json_utils` reads structured 5-block JSON data without building dynamic AST trees on
+the heap. It scans memory buffers sequentially, extracting keys, numerical attributes,
+boolean flags, and nested objects into caller-allocated structs.
+
+[source,c]
+----
+/* Token stream inspection */
+bool json_extract_string(const char *json, const char *key, char *out_buf, size_t max_len);
+bool json_extract_int(const char *json, const char *key, int *out_val);
+bool json_extract_double(const char *json, const char *key, double *out_val);
+bool json_extract_bool(const char *json, const char *key, bool *out_val);
+
+/* 5-Block Envelope Verification */
+bool json_validate_5_blocks(const char *json);
+bool json_extract_block_1_metadata(const char *json, json_block_1_t *out_meta);
+----
+
+*Invariants Enforced*:
+* Zero recursion: nested objects are resolved via linear character offsets.
+* Syntax errors, truncated quotes, or unmatched brackets fail immediately with diagnostics.
+
+### 3.4 Pre-Flight Master Loader & DAG Auditor (`master_loader.[ch]`)
+
+The `master_loader` is invoked during Step 0 of application startup (`game/src/main.c`).
+It parses `game/data/manifest.json` and recursively registers all subsystem manifests
+(`system/`, `presentation/`, `mechanics/`, `world/`) into an active dependency graph.
+
+[source,c]
+----
+/* Central pre-flight initialization */
+bool master_loader_init(const char *root_manifest_path);
+
+/* Subsystem audit sweep verifying existence and schema integrity */
+bool master_loader_verify_all_catalogs(void);
+
+/* Retrieval of active data configuration */
+const master_manifest_t *master_loader_get_manifest(void);
+----
+
+'''
+
+## 4. Verification & Testing Matrix
+
+The I/O subsystem is continuously verified by 4 ontological test tiers:
+1. **Functional Cog Tests (`tests/functional/test_io_functional.c`)**:
+   Verifies isolated functions (`fs_file_exists`, `path_resolve_repo_root`, `json_extract_string`).
+2. **Unit Subsystem Tests (`tests/unit/io/test_fs_utils_unit.c`, `test_path_finder_unit.c`, `test_json_utils_unit.c`)**:
+   Audits boundary conditions, buffer clipping, missing files, and malformed JSON envelopes.
+3. **Integrated Pipeline Tests (`tests/integrated/test_io_integrated.c`)**:
+   Traverses the entire manifest DAG, reading real catalogs and validating cross-references.
+4. **System Replay Scenarios (`tests/system/test_io_system.c`)**:
+   Executes continuous read/write cycles simulating multi-turn game autosaves under zero heap leaks.
+
+
+---
+
+## Chapter 6: Layer 0 Categorized Flight Logging Subsystem
+
+> **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/logging_system.adoc`
+
+[abstract]
+## Overview
+
+This document provides a technical walkthrough and architectural manual for the
+*Layer 0 Categorized Flight Logging Subsystem* (`engine/include/log/` and `engine/src/log/`).
+As the telemetry and flight-recorder apparatus of **The Big Machine**, the logging
+subsystem provides zero-heap circular ring recording, categorized channel routing,
+sub-microsecond message dispatch, automatic log rotation, and data-driven telemetry
+profiles driven by JSON manifests in `game/data/system/diagnostics/telemetry/`.
+With strict enforcement of `ALLOC_ZERO_HEAP`, thread-safe reentrancy, and quarantined
+emergency fallbacks, logging diagnostics can run continuously without affecting frame
+pacing or deterministic simulation outcomes.
+
+'''
+
+## 1. Architectural Philosophy & Mission
+
+Logging in *Tenebris and Lux* is not a crude wrapper around `printf`. It is an
+engineered **Flight Recorder**:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 0 FLIGHT LOGGING SUBSYSTEM                     │
+│                                                                        │
+│   [Severity Taxonomy]   TRACE (0) -> DEBUG -> INFO -> WARN -> ERROR    │
+│   [Channel Separation]  Engine Strata (VFS, GUI) vs. Game Domain (Sim) │
+│   [Ring Recording]      Zero-Heap In-Memory Ring Buffer (256 Entries)  │
+│   [Disk Rotation]       Automatic Rolling Log Files (.log.0 .. .log.3) │
+│   [Telemetry Profiles]  Development / Production / Quiet / Combat      │
+│   [Quarantined Fallback]Zero-Dependency Emergency Monolith Safety Net  │
+└────────────────────────────────────────────────────────────────────────┘
+----
+
+### Key Architectural Pillars
+1. **Zero Dynamic Heap Allocations (`ALLOC_ZERO_HEAP`)**:
+   Log messages are formatted into fixed-size stack buffers (`LOG_LINE_MAX_LEN = 256`).
+   The circular ring buffer resides in a static BSS structure, allocating zero bytes at runtime.
+2. **Channel Separation (Engine vs. Game)**:
+   Telemetry is segregated into dedicated channel masks:
+   * *Engine Channels*: `LOG_CHAN_CORE`, `LOG_CHAN_IO`, `LOG_CHAN_VIEWPORT`, `LOG_CHAN_MEMORY`.
+   * *Game Domain Channels*: `LOG_CHAN_SIM`, `LOG_CHAN_COMBAT`, `LOG_CHAN_HERO`, `LOG_CHAN_RELICS`.
+3. **Flight-Recorder Rotation**:
+   When active log files reach `LOG_MAX_FILE_BYTES` (typically 256 KB), the engine
+   automatically rolls the active file to `.log.0`, `.log.1`, `.log.2`, preventing unbounded
+   disk growth.
+4. **Quarantined Fallback Isolation**:
+   If filesystem I/O fails or logging configurations are unavailable, the quarantined
+   fallback (`log_fallback.[ch]`) seamlessly routes critical alerts to standard error
+   without risking process crashes.
+
+'''
+
+## 2. Subsystem Layout & File Manifest
+
+[source,text]
+----
+engine/include/log/
+├── log.h              // Public 5-block logging interface & convenience macros
+├── log_engine.h       // Internal telemetry engine, channel masks & ring buffer
+└── log_fallback.h     // Quarantined zero-dependency emergency fallback
+
+engine/src/log/
+├── log.c              // Public routing facade meshing engine with fallback
+├── log_engine.c       // Ring buffer allocation, disk flusher, log rotation
+└── log_fallback.c     // Direct-to-stream emergency fallback implementation
+
+game/data/system/diagnostics/telemetry/
+├── manifest.json      // Subsystem catalog and active telemetry profile
+├── development.json   // Verbose trace profile for local feature engineering
+├── production.json    // Strict warnings/errors profile for deployment
+├── quiet.json         // Silent profile suppressing non-critical messages
+└── combat_focus.json  // High-frequency combat and stance telemetry profile
+----
+
+'''
+
+## 3. Core Engine Cogs & API Tour
+
+### 3.1 Severity Taxonomy & Public Macros (`log.h`)
+
+Logging levels are strictly ordered integers from `0` to `5`:
+
+[source,c]
+----
+typedef enum {
+    LOG_LEVEL_TRACE = 0,  /**< Detailed frame-by-frame and state tracing */
+    LOG_LEVEL_DEBUG = 1,  /**< Diagnostic inspection and subsystem transitions */
+    LOG_LEVEL_INFO  = 2,  /**< Milestone lifecycle events and state milestones */
+    LOG_LEVEL_WARN  = 3,  /**< Non-fatal invariant warnings and clamping alerts */
+    LOG_LEVEL_ERROR = 4,  /**< Critical contract breaches and component errors */
+    LOG_LEVEL_FATAL = 5   /**< Fatal unrecoverable anomalies halting engine */
+} log_level_t;
+----
+
+Developers log through standardized macros that automatically capture call site metadata
+(`__FILE__`, `__LINE__`):
+
+[source,c]
+----
+#define LOG_TRACE(chan, fmt, ...) log_dispatch(LOG_LEVEL_TRACE, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_DEBUG(chan, fmt, ...) log_dispatch(LOG_LEVEL_DEBUG, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_INFO(chan, fmt, ...)  log_dispatch(LOG_LEVEL_INFO,  chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_WARN(chan, fmt, ...)  log_dispatch(LOG_LEVEL_WARN,  chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_ERROR(chan, fmt, ...) log_dispatch(LOG_LEVEL_ERROR, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+#define LOG_FATAL(chan, fmt, ...) log_dispatch(LOG_LEVEL_FATAL, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
+----
+
+### 3.2 In-Memory Flight Recorder Ring Buffer (`log_engine.[ch]`)
+
+The logging engine maintains a static circular ring buffer holding the most recent
+`LOG_RING_CAPACITY` log records (default 256):
+
+[source,c]
+----
+typedef struct {
+    uint64_t timestamp_ns;
+    log_level_t level;
+    uint32_t channel;
+    char message[LOG_LINE_MAX_LEN];
+} log_record_t;
+
+/* Retrieves historical records from the circular ring */
+size_t log_ring_get_entries(log_record_t *out_records, size_t max_count);
+
+/* Flushes buffered ring messages to disk during shutdown or crash diagnostics */
+void log_engine_flush(void);
+----
+
+*Invariants Enforced*:
+* Ring wrapping uses modulo arithmetic with zero memory reallocations.
+* Timestamps are queried from the monotonic clock (`CLOCK_MONOTONIC`) in nanoseconds.
+
+### 3.3 Log Rotation & Disk Archiving
+
+Log files are placed strictly within `build/logs/` (or configured directory), maintaining
+a rolling archive:
+
+[source,c]
+----
+/* Evaluates current log file size and rotates if exceeding threshold */
+void log_engine_rotate_if_needed(void);
+----
+
+When `tenebris_lux_dev.log` exceeds its limit:
+1. `tenebris_lux_dev.log.2` is rolled to `.log.3` (or truncated).
+2. `tenebris_lux_dev.log.1` is rolled to `.log.2`.
+3. `tenebris_lux_dev.log.0` is rolled to `.log.1`.
+4. `tenebris_lux_dev.log` is renamed to `.log.0`.
+5. A fresh `tenebris_lux_dev.log` is opened with Block 1 provenance headers.
+
+### 3.4 Quarantined Fallback Isolation (`log_fallback.[ch]`)
+
+If the target log path is not writable or `log_engine_init` encounters an invariant breach:
+* The facade immediately routes all logging calls to `log_fallback_dispatch`.
+* Messages format into stack buffers and output directly to `stdout`/`stderr` using `vsnprintf`.
+* Zero allocations, zero file locks, and zero recursion risk.
+
+'''
+
+## 4. Verification & Testing Matrix
+
+Logging telemetry is continuously verified through 4 test strata:
+1. **Functional Tests (`tests/functional/test_log_functional.c`)**:
+   Verifies level formatting, channel bitmask filtering, and prefix formatting.
+2. **Unit Tests (`tests/unit/log/test_log_unit.c`, `test_log_engine_unit.c`, `test_log_fallback_unit.c`)**:
+   Tests circular ring buffer overflow, multi-file log rotation, and fallback isolation.
+3. **Integrated Tests (`tests/integrated/test_log_integrated.c`)**:
+   Tests concurrent multi-subsystem logging with active simulation events.
+4. **System Tests (`tests/system/test_log_system.c`)**:
+   Simulates 10,000 rapid log events, verifying zero memory leaks, file descriptor conservation,
+   and file size bounding.
+
+
+---
+
+## Chapter 7: Layer 0 State Debugger & Diagnostic Engine
+
+> **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/debug_system.adoc`
+
+[abstract]
+## Overview
+
+This document provides a technical walkthrough and architectural manual for the
+*Layer 0 State Debugger & Diagnostic Engine Subsystem* (`engine/include/debug/` and `engine/src/debug/`).
+Serving as the diagnostic instrumentation and state-conservation apparatus of **The Big Machine**,
+the debugger subsystem provides zero-heap frozen simulation snapshots, deterministic FNV-1a 32-bit
+state hashing, multi-format forensic exports (Fixed-column, Tabular CSV, Structured NDJSON, Diagnostic Reports),
+live ASCII inspection cards, an active Invariant Tripwire Matrix, and time-travel state rewind.
+With strict enforcement of `ALLOC_ZERO_HEAP`, complete reentrancy, and quarantined emergency
+fallbacks, developers and automated test suites can audit turn-by-turn game state without introducing
+heisenbugs or simulation drift.
+
+'''
+
+## 1. Architectural Philosophy & Mission
+
+Debugging a tactical RPG requiring absolute simulation determinism cannot rely on
+intrusive print statements or ad-hoc debugger attachments. The Tenebris and Lux
+engine implements an **Observable State Machine**:
+
+[source,text]
+----
+┌────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 0 STATE DEBUGGER SUBSYSTEM                     │
+│                                                                        │
+│   [Snapshot Ring]        Zero-Heap Ring of 64 Frozen Sim States        │
+│   [FNV-1a Hashing]       Deterministic 32-Bit State Conservation Hash  │
+│   [Forensic Formats]     NDJSON Stream, Tabular CSV, Diagnostic Report │
+│   [ASCII Cards]          Terminal HUD & Vitals / Relics Inspection     │
+│   [Tripwire Matrix]      Active Invariant Boundary Checks & Tripping   │
+│   [Interactive REPL]     Turn-by-Turn Stepper & State Rewind Engine    │
+│   [Quarantined Fallback] Zero-Dependency Standalone Fallback Safety Net│
+└────────────────────────────────────────────────────────────────────────┘
+----
+
+### Key Architectural Pillars
+1. **Decoupled State Representation (`debug_state_fields_t`)**:
+   Layer 0 declares an immutable state representation composed strictly of primitive
+   integers and bounded character buffers. Layer 1 (`sim_state.h`) maps its domain
+   structs into this structure, strictly preserving the downward dependency flow.
+2. **Zero-Heap Allocation Guarantee (`ALLOC_ZERO_HEAP`)**:
+   The entire snapshot history (default capacity 64 snapshots) resides in a static ring
+   buffer in the BSS segment. Dynamic allocation is prohibited.
+3. **Deterministic FNV-1a State Hashing**:
+   Evaluates a 32-bit Fowler–Noll–Vo prime hash across all state fields at every simulation
+   step, ensuring that identical turns always yield identical checksums.
+4. **Multi-Format Forensic Telemetry**:
+   Exports structured state streams in NDJSON (for automated visualizers), CSV (for spreadsheet analysis),
+   and human-readable Diagnostic Reports.
+5. **Quarantined Fallback Isolation**:
+   If diagnostics manifests are damaged or file output fails, the quarantined fallback
+   (`debug_fallback.[ch]`) maintains state hashing and console inspection capabilities.
+
+'''
+
+## 2. Subsystem Layout & File Manifest
+
+[source,text]
+----
+engine/include/debug/
+├── debug.h              // Public 5-block interface, types, REPL API & tripwires
+├── debug_engine.h       // Internal state snapshot ring, formats & card renderers
+└── debug_fallback.h     // Quarantined zero-dependency emergency fallback
+
+engine/src/debug/
+├── debug.c              // Public facade routing state captures & REPL loop
+├── debug_engine.c       // Ring buffer, FNV-1a hasher, multi-format export engines
+└── debug_fallback.c     // Quarantined emergency fallback implementation
+
+game/data/system/diagnostics/debugger/
+├── manifest.json        // Debug catalog and active profile bindings
+├── default.json         // Standard developer debugging baseline profile
+├── strict.json          // Rigid tripwire policy halting on any invariant breach
+├── trace.json           // High-frequency cog-level trace profile
+├── snapshot_policy.json // Ring buffer capacity, retention, and rewind limits
+└── inspection_cards.json// ASCII layout definitions for terminal HUD cards
+----
+
+'''
+
+## 3. Core Engine Cogs & API Tour
+
+### 3.1 State Representation & Frozen Snapshot Ring (`debug_engine.[ch]`)
+
+Simulation state is converted into `debug_state_fields_t` and captured at turn boundaries:
+
+[source,c]
+----
+typedef struct {
+    uint32_t turn_count;
+    int32_t  moral_sway;         /* [-100, +100] */
+    uint32_t stance;             /* 0: Neutral, 1: Warding, 2: Striking, 3: Eq */
+    uint32_t hero_hp;
+    uint32_t hero_mp;
+    uint32_t hero_tp;
+    uint32_t shield_power;       /* [0, 100] */
+    uint32_t sword_edge;         /* [0, 100] */
+    uint32_t active_enemies;
+    uint32_t state_hash_fnv1a;   /* 32-bit checksum */
+    uint64_t timestamp_ns;
+} debug_state_snapshot_t;
+
+/* Captures a snapshot into the circular ring buffer */
+bool debug_engine_record_snapshot(const debug_state_fields_t *fields);
+
+/* Retrieves historical snapshots by relative turn offset (0 = current, 1 = previous) */
+const debug_state_snapshot_t *debug_engine_get_snapshot(size_t index);
+----
+
+### 3.2 Deterministic FNV-1a Hashing
+
+Calculated across the raw byte image of the state fields using the standard FNV-1a offset basis
+(`0x811C9DC5`) and prime (`0x01000193`):
+
+[source,c]
+----
+uint32_t debug_compute_state_hash(const debug_state_fields_t *fields);
+----
+
+*Invariants Enforced*:
+* Any state change—whether 1 point of HP or 1 tick of Moral Sway—alters the hash value.
+* Replays that produce divergent hashes at identical turn indices trigger instant tripwire alarms.
+
+### 3.3 Multi-Format Forensic Exporters
+
+The diagnostic engine provides memory-bounded formatters writing into caller buffers:
+
+[source,c]
+----
+/* Generates single-line newline-delimited JSON record for stream ingestion */
+size_t debug_format_ndjson(const debug_state_snapshot_t *s, char *out_buf, size_t max_len);
+
+/* Generates comma-separated tabular record for spreadsheets */
+size_t debug_format_csv(const debug_state_snapshot_t *s, char *out_buf, size_t max_len);
+
+/* Generates human-readable multi-line forensic audit report */
+size_t debug_format_report(const debug_state_snapshot_t *s, char *out_buf, size_t max_len);
+----
+
+### 3.4 Live ASCII Inspection Cards
+
+For headless CLI and terminal developers, the engine formats high-density ASCII inspection cards:
+
+[source,text]
+----
+┌─────────────────────────────────────────────────────────────┐
+│ TENEBRIS AND LUX - HERO DOSSIER & COMBAT VITALS             │
+├─────────────────────────────────────────────────────────────┤
+│ Turn: 0012 | Stance: EQUILIBRIUM [3] | Sway: +35 (Virtue)   │
+│ HP: [████████████░░░░] 450/650 | MP: 090/130 | TP: 045/100  │
+│ Shield of Lux: 075% [WARD READY] | Sword of Tenebris: 060%  │
+│ Active Enemies: 02 | State Hash: 0x8A4F12D9                 │
+└─────────────────────────────────────────────────────────────┘
+----
+
+### 3.5 Active Invariant Tripwire Matrix
+
+Configured via `game/data/system/diagnostics/taxonomy/tripwire_matrix.json`, tripwires enforce
+system bounds at runtime:
+
+[source,c]
+----
+typedef enum {
+    TRIPWIRE_HP_BOUNDS,         /* Hero HP within [0, Max HP] */
+    TRIPWIRE_SWAY_BOUNDS,       /* Moral Sway within [-100, +100] */
+    TRIPWIRE_RELIC_BOUNDS,      /* Shield & Sword power within [0, 100] */
+    TRIPWIRE_HASH_INTEGRITY     /* State hash matches expected replayed hash */
+} tripwire_id_t;
+
+bool debug_check_tripwire(tripwire_id_t id, const debug_state_fields_t *state);
+----
+
+*Actions on Breach*:
+* In `strict` profile: immediately aborts simulation tick, emits forensic dump, and halts.
+* In `default` profile: clamps the out-of-bounds variable, emits `LOG_WARN`, and continues.
+
+### 3.6 Interactive REPL & State Rewind (`--debug`)
+
+When launched with `tenebris_lux --debug`:
+* The engine pauses between simulation turns, launching a lightweight interactive terminal prompt.
+* Commands supported: `step`, `inspect`, `history`, `rewind <N>`, `dump <format>`, `quit`.
+* `rewind <N>` re-hydrates the live Layer 1 simulation directly from historical snapshot `N`.
+
+'''
+
+## 4. Verification & Testing Matrix
+
+The state debugger is continuously validated across 4 test tiers:
+1. **Functional Tests (`tests/functional/test_debug_functional.c`)**:
+   Verifies FNV-1a hash distribution, card string formatting, and tripwire evaluations.
+2. **Unit Tests (`tests/unit/debug/test_debug_unit.c`, `test_debug_engine_unit.c`, `test_debug_fallback_unit.c`)**:
+   Tests circular ring buffer overflow, state rewind restoration, and fallback isolation.
+3. **Integrated Tests (`tests/integrated/test_debug_integrated.c`)**:
+   Integrates debugger captures with live combat actions and stance state transitions.
+4. **System Tests (`tests/system/test_debug_system.c`)**:
+   Executes 500 consecutive simulation turns, verifying continuous hash conservation,
+   zero dynamic memory leaks, and snapshot indexing precision.
+
+
+---
+
+## Chapter 8: Layer 1 Simulation Engine Code Tour
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/simulation_engine.adoc`
 
@@ -972,7 +1457,7 @@ enabling automated continuous integration testing without relying on crude proce
 
 ---
 
-## Chapter 7: Layer 2 Presentation Viewport Code Tour
+## Chapter 9: Layer 2 Presentation Viewport Code Tour
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/presentation_gui.adoc`
 
@@ -1109,7 +1594,7 @@ The presentation stratum is validated via `tests/unit/test_gui_unit.c` across fo
 
 ---
 
-## Chapter 8: Layer 4 Verification & Test Suite Code Tour
+## Chapter 10: Layer 4 Verification & Test Suite Code Tour
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/code/test_suite.adoc`
 
@@ -1278,7 +1763,7 @@ ctest --test-dir build -C Debug --output-on-failure
 
 ---
 
-## Chapter 9: Technical Specification: Data-Driven Architecture & Manifest System
+## Chapter 11: Technical Specification: Data-Driven Architecture & Manifest System
 
 > **Source**: `/home/professorseanex/Tenebris and Lux/docs/architecture/data_driven_architecture.adoc`
 
