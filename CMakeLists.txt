@@ -349,12 +349,18 @@ if(BUILD_TESTING)
     # [ SUB-ASSEMBLY 4.1: FUNCTIONAL DEBUGGING HARNESS ]
     # Mission: Isolate and debug individual cogs with step-by-step telemetry.
     # --------------------------------------------------------------------------
+    # Grand Functional Orchestrator & Giant Function Registry (52 Registered Cogs)
     add_executable(test_functional
         tests/functional/test_functional.c
-        ${ENGINE_UTIL_SOURCES}
+        ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_functional PRIVATE ${COMMON_INCLUDES})
+    target_include_directories(test_functional PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_functional PRIVATE ${X11_LIBRARIES} m)
     target_compile_options(test_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # IO Subsystem Functional Assertion & Diagnostic Trace Harness
@@ -390,58 +396,110 @@ if(BUILD_TESTING)
     target_link_libraries(test_core_functional PRIVATE m)
     target_compile_options(test_core_functional PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Audio Subsystem Functional Assertion Harness
+    add_executable(test_audio_functional
+        tests/functional/test_audio_functional.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_audio_functional PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_audio_functional PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Viewport & Movie Reel Functional Assertion Harness
+    add_executable(test_viewport_functional
+        tests/functional/test_viewport_functional.c
+        ${ENGINE_VIEWPORT_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_viewport_functional PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_viewport_functional PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_viewport_functional PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.2: LAYER 0 & LAYER 1 SUBSYSTEM UNIT HARNESSES ]
+    # [ SUB-ASSEMBLY 4.2: LAYER 0, LAYER 1 & LAYER 2 SUBSYSTEM UNIT HARNESSES ]
     # Mission: Verify isolated subsystem contracts across ontological sections.
     # --------------------------------------------------------------------------
 
-    # Math & Geometry Subsystem Unit Test
-    add_executable(test_math
-        tests/unit/test_math.c
+    # Presentation GUI Palette Unit Test
+    add_executable(test_gui_palette_unit
+        tests/unit/viewport/test_gui_palette_unit.c
+        engine/src/viewport/styling/gui_palette.c
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_math PRIVATE ${COMMON_INCLUDES})
-    target_compile_options(test_math PRIVATE ${GAME_WARNING_FLAGS})
+    target_include_directories(test_gui_palette_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_gui_palette_unit PRIVATE ${X11_LIBRARIES})
+    target_compile_options(test_gui_palette_unit PRIVATE ${GAME_WARNING_FLAGS})
 
-    # Data & Filesystem Subsystem Unit Test
-    add_executable(test_data
-        tests/unit/test_data.c
+    # Presentation GUI Layout Unit Test
+    add_executable(test_gui_layout_unit
+        tests/unit/viewport/test_gui_layout_unit.c
+        engine/src/viewport/hud/gui_layout.c
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_data PRIVATE ${COMMON_INCLUDES})
-    target_compile_options(test_data PRIVATE ${GAME_WARNING_FLAGS})
+    target_include_directories(test_gui_layout_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_gui_layout_unit PRIVATE ${GAME_WARNING_FLAGS})
 
-    # High-Resolution Timing Subsystem Unit Test
-    add_executable(test_time
-        tests/unit/test_time.c
+    # Presentation GUI Screens Unit Test
+    add_executable(test_gui_screens_unit
+        tests/unit/viewport/test_gui_screens_unit.c
+        ${ENGINE_VIEWPORT_SOURCES}
+        ${GAME_SIM_SOURCES}
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_time PRIVATE ${COMMON_INCLUDES})
-    target_compile_options(test_time PRIVATE ${GAME_WARNING_FLAGS})
+    target_include_directories(test_gui_screens_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_gui_screens_unit PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_gui_screens_unit PRIVATE ${GAME_WARNING_FLAGS})
 
-    # Safe String Subsystem Unit Test
-    add_executable(test_string
-        tests/unit/test_string.c
+    # Presentation GUI Widgets Unit Test
+    add_executable(test_gui_widgets_unit
+        tests/unit/viewport/test_gui_widgets_unit.c
+        engine/src/viewport/hud/gui_widgets.c
+        engine/src/viewport/hud/gui_layout.c
+        engine/src/viewport/styling/gui_palette.c
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_string PRIVATE ${COMMON_INCLUDES})
-    target_compile_options(test_string PRIVATE ${GAME_WARNING_FLAGS})
+    target_include_directories(test_gui_widgets_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_gui_widgets_unit PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_gui_widgets_unit PRIVATE ${GAME_WARNING_FLAGS})
 
-    # Forensic Telemetry & Logging Subsystem Unit Test
-    add_executable(test_log
-        tests/unit/test_log.c
+    # Presentation GUI Fonts Unit Test
+    add_executable(test_gui_fonts_unit
+        tests/unit/viewport/test_gui_fonts_unit.c
+        engine/src/viewport/styling/gui_fonts.c
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_log PRIVATE ${COMMON_INCLUDES})
-    target_compile_options(test_log PRIVATE ${GAME_WARNING_FLAGS})
+    target_include_directories(test_gui_fonts_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_gui_fonts_unit PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_gui_fonts_unit PRIVATE ${GAME_WARNING_FLAGS})
 
-    # Interactive State Debugger & Rewind Subsystem Unit Test
-    add_executable(test_debug
-        tests/unit/test_debug.c
+    # Presentation GUI Assets Unit Test
+    add_executable(test_gui_assets_unit
+        tests/unit/viewport/test_gui_assets_unit.c
+        engine/src/viewport/styling/gui_assets.c
+        engine/src/viewport/styling/gui_palette.c
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_debug PRIVATE ${COMMON_INCLUDES})
-    target_compile_options(test_debug PRIVATE ${GAME_WARNING_FLAGS})
+    target_include_directories(test_gui_assets_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_gui_assets_unit PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_gui_assets_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Combat Subsystem Unit Test
     add_executable(test_combat
@@ -479,19 +537,47 @@ if(BUILD_TESTING)
     target_include_directories(test_dispatch PRIVATE ${COMMON_INCLUDES})
     target_compile_options(test_dispatch PRIVATE ${GAME_WARNING_FLAGS})
 
-    # Presentation GUI & 2.5D Viewport Subsystem Unit Test
-    add_executable(test_gui
-        tests/unit/test_gui_unit.c
+    # Presentation GUI View2D Unit Test
+    add_executable(test_gui_view2d_unit
+        tests/unit/viewport/test_gui_view2d_unit.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_gui PRIVATE
+    target_include_directories(test_gui_view2d_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui PRIVATE ${X11_LIBRARIES})
-    target_compile_options(test_gui PRIVATE ${GAME_WARNING_FLAGS})
+    target_link_libraries(test_gui_view2d_unit PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_gui_view2d_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Presentation GUI HUD Unit Test
+    add_executable(test_gui_hud_unit
+        tests/unit/viewport/test_gui_hud_unit.c
+        ${ENGINE_VIEWPORT_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_gui_hud_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_gui_hud_unit PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_gui_hud_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Presentation GUI Raster Unit Test
+    add_executable(test_gui_raster_unit
+        tests/unit/viewport/test_gui_raster_unit.c
+        ${ENGINE_VIEWPORT_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_gui_raster_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_gui_raster_unit PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_gui_raster_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Filesystem Utilities Subsystem Unit Test
     add_executable(test_fs_utils_unit
@@ -669,7 +755,7 @@ if(BUILD_TESTING)
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_reel_unit PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(test_reel_unit PRIVATE ${X11_LIBRARIES} m)
     target_compile_options(test_reel_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Audio Event Bus & Mixer Subsystem Unit Test
@@ -689,16 +775,22 @@ if(BUILD_TESTING)
     target_compile_options(test_audio_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
+    # [ SUB-ASSEMBLY 4.3: LAYER 0, LAYER 1 & LAYER 2 INTEGRATED HARNESSES ]
     # Mission: Verify cross-subsystem coordination, DAG dependencies & runs.
     # --------------------------------------------------------------------------
 
-    # Cross-Utility Integration Harness
+    # Grand Integrated Engine Utilities & Audiovisual Harness
     add_executable(test_utils
         tests/integrated/test_utils.c
+        ${ENGINE_VIEWPORT_SOURCES}
+        ${GAME_SIM_SOURCES}
         ${ENGINE_UTIL_SOURCES}
     )
-    target_include_directories(test_utils PRIVATE ${COMMON_INCLUDES})
+    target_include_directories(test_utils PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_utils PRIVATE ${X11_LIBRARIES} m)
     target_compile_options(test_utils PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Cross-Subsystem Integration Harness
@@ -743,8 +835,31 @@ if(BUILD_TESTING)
     target_link_libraries(test_core_integrated PRIVATE m)
     target_compile_options(test_core_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Audio Subsystem Cross-Pipeline Integration Harness
+    add_executable(test_audio_integrated
+        tests/integrated/test_audio_integrated.c
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_audio_integrated PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_audio_integrated PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Viewport Subsystem Cross-Pipeline Integration Harness
+    add_executable(test_viewport_integrated
+        tests/integrated/test_viewport_integrated.c
+        ${ENGINE_VIEWPORT_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_viewport_integrated PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_viewport_integrated PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_viewport_integrated PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.4: LAYER 1 SIMULATION SYSTEM HARNESSES ]
+    # [ SUB-ASSEMBLY 4.4: LAYER 1 & LAYER 2 SYSTEM HARNESSES ]
     # Mission: Verify state limits, stance state machine, scenarios & latency.
     # --------------------------------------------------------------------------
 
@@ -804,6 +919,28 @@ if(BUILD_TESTING)
     target_link_libraries(test_core_system PRIVATE m)
     target_compile_options(test_core_system PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Audio Layer System Stress & Golden Replay Harness
+    add_executable(test_audio_system
+        tests/system/test_audio_system.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_audio_system PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_audio_system PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Viewport Layer System Stress, Resizing & Movie Reel Enduro Harness
+    add_executable(test_viewport_system
+        tests/system/test_viewport_system.c
+        ${ENGINE_VIEWPORT_SOURCES}
+        ${GAME_SIM_SOURCES}
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_viewport_system PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_viewport_system PRIVATE ${X11_LIBRARIES} m)
+    target_compile_options(test_viewport_system PRIVATE ${GAME_WARNING_FLAGS})
+
 # ==============================================================================
 # BLOCK 5: CLOSING BLOCK
 # ( Automated Test Registrations & CTest Verification Suite )
@@ -814,24 +951,16 @@ if(BUILD_TESTING)
     add_test(NAME cli_version_test COMMAND tenebris-lux --version)
     add_test(NAME subsystem_audit_test COMMAND tenebris-lux --audit)
 
-    # Functional Tests (Individual Cog Debugging)
+    # Functional Tests (Individual Cog & Pipeline Debugging)
     add_test(NAME functional_cogs_test COMMAND test_functional)
     add_test(NAME functional_io_test COMMAND test_io_functional)
     add_test(NAME functional_log_test COMMAND test_log_functional)
     add_test(NAME functional_debug_test COMMAND test_debug_functional)
     add_test(NAME functional_core_test COMMAND test_core_functional)
+    add_test(NAME functional_audio_test COMMAND test_audio_functional)
+    add_test(NAME functional_viewport_test COMMAND test_viewport_functional)
 
-    # Unit Tests (Subsystems & Modules in Isolation)
-    add_test(NAME unit_math_test COMMAND test_math)
-    add_test(NAME unit_data_test COMMAND test_data)
-    add_test(NAME unit_time_test COMMAND test_time)
-    add_test(NAME unit_string_test COMMAND test_string)
-    add_test(NAME unit_log_test COMMAND test_log)
-    add_test(NAME unit_log_engine_test COMMAND test_log_unit)
-    add_test(NAME unit_log_fallback_test COMMAND test_log_fallback_unit)
-    add_test(NAME unit_debug_test COMMAND test_debug)
-    add_test(NAME unit_debug_engine_test COMMAND test_debug_unit)
-    add_test(NAME unit_debug_fallback_test COMMAND test_debug_fallback_unit)
+    # Unit Tests: Core Subsystems
     add_test(NAME unit_math_utils_test COMMAND test_math_utils_unit)
     add_test(NAME unit_math_utils_fallback_test COMMAND test_math_utils_fallback_unit)
     add_test(NAME unit_time_utils_test COMMAND test_time_utils_unit)
@@ -844,18 +973,42 @@ if(BUILD_TESTING)
     add_test(NAME unit_clock_pacer_fallback_test COMMAND test_clock_pacer_fallback_unit)
     add_test(NAME unit_formula_eval_test COMMAND test_formula_eval_unit)
     add_test(NAME unit_formula_eval_fallback_test COMMAND test_formula_eval_fallback_unit)
-    add_test(NAME unit_combat_test COMMAND test_combat)
-    add_test(NAME unit_items_test COMMAND test_items)
-    add_test(NAME unit_world_test COMMAND test_world)
-    add_test(NAME unit_dispatch_test COMMAND test_dispatch)
-    add_test(NAME unit_gui_test COMMAND test_gui)
-    add_test(NAME unit_reel_test COMMAND test_reel_unit)
-    add_test(NAME unit_audio_bus_test COMMAND test_audio_bus_unit)
-    add_test(NAME unit_audio_fallback_test COMMAND test_audio_fallback_unit)
+
+    # Unit Tests: IO Subsystems
     add_test(NAME unit_fs_utils_test COMMAND test_fs_utils_unit)
     add_test(NAME unit_path_finder_test COMMAND test_path_finder_unit)
     add_test(NAME unit_json_utils_test COMMAND test_json_utils_unit)
     add_test(NAME unit_master_loader_test COMMAND test_master_loader_unit)
+
+    # Unit Tests: Telemetry Logging Subsystems
+    add_test(NAME unit_log_engine_test COMMAND test_log_unit)
+    add_test(NAME unit_log_fallback_test COMMAND test_log_fallback_unit)
+
+    # Unit Tests: State Debugger Subsystems
+    add_test(NAME unit_debug_engine_test COMMAND test_debug_unit)
+    add_test(NAME unit_debug_fallback_test COMMAND test_debug_fallback_unit)
+
+    # Unit Tests: Audio Subsystems
+    add_test(NAME unit_audio_bus_test COMMAND test_audio_bus_unit)
+    add_test(NAME unit_audio_fallback_test COMMAND test_audio_fallback_unit)
+
+    # Unit Tests: Viewport Subsystems (1:1 Parity for each code file)
+    add_test(NAME unit_reel_test COMMAND test_reel_unit)
+    add_test(NAME unit_gui_palette_test COMMAND test_gui_palette_unit)
+    add_test(NAME unit_gui_layout_test COMMAND test_gui_layout_unit)
+    add_test(NAME unit_gui_screens_test COMMAND test_gui_screens_unit)
+    add_test(NAME unit_gui_widgets_test COMMAND test_gui_widgets_unit)
+    add_test(NAME unit_gui_fonts_test COMMAND test_gui_fonts_unit)
+    add_test(NAME unit_gui_assets_test COMMAND test_gui_assets_unit)
+    add_test(NAME unit_gui_view2d_test COMMAND test_gui_view2d_unit)
+    add_test(NAME unit_gui_hud_test COMMAND test_gui_hud_unit)
+    add_test(NAME unit_gui_raster_test COMMAND test_gui_raster_unit)
+
+    # Unit Tests: Game Simulation Subsystems
+    add_test(NAME unit_combat_test COMMAND test_combat)
+    add_test(NAME unit_items_test COMMAND test_items)
+    add_test(NAME unit_world_test COMMAND test_world)
+    add_test(NAME unit_dispatch_test COMMAND test_dispatch)
 
     # Integrated Tests (Cross-Subsystem Coordination)
     add_test(NAME integrated_utils_test COMMAND test_utils)
@@ -864,17 +1017,18 @@ if(BUILD_TESTING)
     add_test(NAME integrated_log_test COMMAND test_log_integrated)
     add_test(NAME integrated_debug_test COMMAND test_debug_integrated)
     add_test(NAME integrated_core_test COMMAND test_core_integrated)
+    add_test(NAME integrated_audio_test COMMAND test_audio_integrated)
+    add_test(NAME integrated_viewport_test COMMAND test_viewport_integrated)
 
-    # System Tests (Full Simulation Invariants & Scenarios)
+    # System Tests (Full Simulation Invariants, Scenarios & Long-Running Endurance)
     add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
-    add_test(
-        NAME system_gameplay_scenarios_test
-        COMMAND test_gameplay_scenarios
-    )
+    add_test(NAME system_gameplay_scenarios_test COMMAND test_gameplay_scenarios)
     add_test(NAME system_io_test COMMAND test_io_system)
     add_test(NAME system_log_test COMMAND test_log_system)
     add_test(NAME system_debug_test COMMAND test_debug_system)
     add_test(NAME system_core_test COMMAND test_core_system)
+    add_test(NAME system_audio_test COMMAND test_audio_system)
+    add_test(NAME system_viewport_test COMMAND test_viewport_system)
 
     set_tests_properties(
         cli_help_test
@@ -885,16 +1039,8 @@ if(BUILD_TESTING)
         functional_log_test
         functional_debug_test
         functional_core_test
-        unit_math_test
-        unit_data_test
-        unit_time_test
-        unit_string_test
-        unit_log_test
-        unit_log_engine_test
-        unit_log_fallback_test
-        unit_debug_test
-        unit_debug_engine_test
-        unit_debug_fallback_test
+        functional_audio_test
+        functional_viewport_test
         unit_math_utils_test
         unit_math_utils_fallback_test
         unit_time_utils_test
@@ -907,30 +1053,46 @@ if(BUILD_TESTING)
         unit_clock_pacer_fallback_test
         unit_formula_eval_test
         unit_formula_eval_fallback_test
-        unit_combat_test
-        unit_items_test
-        unit_world_test
-        unit_dispatch_test
-        unit_gui_test
-        unit_reel_test
-        unit_audio_bus_test
-        unit_audio_fallback_test
         unit_fs_utils_test
         unit_path_finder_test
         unit_json_utils_test
         unit_master_loader_test
+        unit_log_engine_test
+        unit_log_fallback_test
+        unit_debug_engine_test
+        unit_debug_fallback_test
+        unit_audio_bus_test
+        unit_audio_fallback_test
+        unit_reel_test
+        unit_gui_palette_test
+        unit_gui_layout_test
+        unit_gui_screens_test
+        unit_gui_widgets_test
+        unit_gui_fonts_test
+        unit_gui_assets_test
+        unit_gui_view2d_test
+        unit_gui_hud_test
+        unit_gui_raster_test
+        unit_combat_test
+        unit_items_test
+        unit_world_test
+        unit_dispatch_test
         integrated_utils_test
         integrated_sim_test
         integrated_io_test
         integrated_log_test
         integrated_debug_test
         integrated_core_test
+        integrated_audio_test
+        integrated_viewport_test
         system_game_invariants_test
         system_gameplay_scenarios_test
         system_io_test
         system_log_test
         system_debug_test
         system_core_test
+        system_audio_test
+        system_viewport_test
         PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()

@@ -49,11 +49,11 @@
 #include <string.h>
 
 static const char *const TAB_LABELS[GUI_NUM_TABS] = {
-    "1: Tactical Battle",
-    "2: Hero Dossier",
-    "3: Inventory",
-    "4: World Map",
-    "5: Chronicle Codex"
+    "Tactical [F1]",
+    "Status [F2]",
+    "Inventory [F3]",
+    "World Map [F4]",
+    "Chronicle [F5]"
 };
 
 // =============================================================================
@@ -77,13 +77,14 @@ void gui_screens_render_tab_bar(void *display, unsigned long dr, void *gc,
     const gui_font_catalog_t *cat = (const gui_font_catalog_t *)fonts;
 
     int total_tabs = GUI_NUM_TABS;
-    int tab_w = (pnl->width - 40 - (total_tabs * 8)) / total_tabs;
-    if (tab_w < 110) tab_w = 110;
-    int tab_h = 28;
-    int start_y = pnl->y + pnl->height - tab_h - 4;
+    int tab_w = 110;
+    int tab_h = 24;
+    int tab_gap = 6;
+    int start_y = pnl->y + (pnl->height > tab_h ? (pnl->height - tab_h) / 2 : 0);
+    int start_x = pnl->x + 240;
 
     for (int i = 0; i < total_tabs; i++) {
-        int tx = pnl->x + 20 + i * (tab_w + 8);
+        int tx = start_x + i * (tab_w + tab_gap);
         bool is_active = ((gui_screen_mode_t)i == active);
 
         unsigned long bg = is_active ? pal->btn_hover : pal->panel;
@@ -110,10 +111,10 @@ void gui_screens_render_tab_bar(void *display, unsigned long dr, void *gc,
         int label_len = (int)strlen(TAB_LABELS[i]);
         int tw = (cat != NULL) ?
             gui_fonts_measure_width(cat, GUI_FONT_UI, TAB_LABELS[i]) :
-            (label_len * 9);
+            (label_len * 8);
         int text_x = tx + ((tab_w - tw) / 2);
         if (text_x < tx + 4) text_x = tx + 4;
-        XDrawString(d, draw, g, text_x, start_y + (tab_h / 2) + 5,
+        XDrawString(d, draw, g, text_x, start_y + (tab_h / 2) + 4,
                     TAB_LABELS[i], label_len);
     }
 }
@@ -127,17 +128,18 @@ bool gui_screens_handle_tab_click(const gui_panel_rect_t *pnl,
     }
 
     int total_tabs = GUI_NUM_TABS;
-    int tab_w = (pnl->width - 40 - (total_tabs * 8)) / total_tabs;
-    if (tab_w < 110) tab_w = 110;
-    int tab_h = 28;
-    int start_y = pnl->y + pnl->height - tab_h - 4;
+    int tab_w = 110;
+    int tab_h = 24;
+    int tab_gap = 6;
+    int start_y = pnl->y + (pnl->height > tab_h ? (pnl->height - tab_h) / 2 : 0);
+    int start_x = pnl->x + 240;
 
     if (cy < start_y || cy > start_y + tab_h) {
         return false;
     }
 
     for (int i = 0; i < total_tabs; i++) {
-        int tx = pnl->x + 20 + i * (tab_w + 8);
+        int tx = start_x + i * (tab_w + tab_gap);
         if (cx >= tx && cx <= tx + tab_w) {
             *out_screen = (gui_screen_mode_t)i;
             return true;
@@ -661,7 +663,7 @@ void gui_screen_render_chronicle_codex(void *display, unsigned long dr,
 
 bool gui_screens_audit(void)
 {
-    gui_panel_rect_t pnl = { 10, 10, 840, 70, "Header" };
+    gui_panel_rect_t pnl = { 10, 10, 840, 32, "Header" };
     gui_screen_mode_t mode;
 
     /* Click outside tabs returns false */
@@ -669,10 +671,37 @@ bool gui_screens_audit(void)
         return false;
     }
 
-    /* Click inside Tab 0 (Tactical Battle) returns true */
-    if (!gui_screens_handle_tab_click(&pnl, 35, 55, &mode) ||
+    /* Click inside Tab 0 (Tactical [F1]) returns true: start_x=250, y=20 */
+    if (!gui_screens_handle_tab_click(&pnl, 260, 20, &mode) ||
         mode != GUI_SCREEN_TACTICAL) {
         return false;
+    }
+
+    return true;
+}
+
+bool gui_screens_preflight(void)
+{
+    if (!gui_screens_audit()) {
+        return false;
+    }
+
+    gui_panel_rect_t pnl = { 10, 10, 840, 32, "Header" };
+    gui_screen_mode_t mode;
+
+    /* Test all 5 tabs */
+    int tab_w = 110;
+    int tab_gap = 6;
+    int start_x = pnl.x + 240;
+    for (int i = 0; i < GUI_NUM_TABS; i++) {
+        int cx = start_x + (i * (tab_w + tab_gap)) + (tab_w / 2);
+        int cy = pnl.y + (pnl.height / 2);
+        if (!gui_screens_handle_tab_click(&pnl, cx, cy, &mode)) {
+            return false;
+        }
+        if ((int)mode != i) {
+            return false;
+        }
     }
 
     return true;

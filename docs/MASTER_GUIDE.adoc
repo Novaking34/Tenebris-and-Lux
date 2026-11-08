@@ -13218,6 +13218,7 @@ The audio subsystem is validated by two dedicated unit test harnesses:
 * `tests/unit/audio/test_audio_fallback_unit.c`: Validates the quarantined emergency fallback profile,
   provenance tagging (`loaded_from_data == false`), and fallback profile application to the live bus.
 
+
 == Chapter 75: Layer 4 Verification & Test Suite Code Tour
 
 *Source File*: `/home/professorseanex/Tenebris and Lux/docs/code/test_suite.adoc`

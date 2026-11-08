@@ -108,6 +108,10 @@ bool audio_bus_post_event(const audio_event_t *event)
         return false;
     }
 
+    if ((int)event->channel < 0 || event->channel >= AUDIO_CHANNEL_COUNT) {
+        return false;
+    }
+
     if (s_audio_bus.count >= AUDIO_BUS_QUEUE_CAPACITY) {
         s_audio_bus.stats.dropped_events++;
         return false;
