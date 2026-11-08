@@ -1,153 +1,223 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/gui/assets.json",
-    "id": "gui.assets.catalog",
-    "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "file": "game/data/presentation/visuals/assets.json",
+    "id": "data.presentation.visuals.assets",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Asset abstraction registry binding procedural graphics and artist sprites."
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Asset abstraction registry binding procedural graphics and artist sprites.",
+    "where_the_data_lives": {
+      "topology": "Presentation Visuals Architecture",
+      "path": "game/data/presentation/visuals/assets.json",
+      "parent_manifest": "game/data/presentation/visuals/manifest.json"
+    },
+    "what_it_enables": [
+      "Decoupled asset abstraction: procedural vector generators with artist PNG overrides",
+      "Entity visual anchors and bounding dimensions (32x32 character, 48x24 iso tile)",
+      "Procedural crest generators for Elijah, Katrina, Casatti, and Abyssal adversaries",
+      "Relic icon bindings for the Shield of Lux and Sword of Tenebris"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in asset lookup (ALLOC_ZERO_HEAP)",
+      "Asset keys and numerical identifiers must be globally unique",
+      "Every asset must specify a valid procedural fallback generator",
+      "Visual rendering never mutates simulation entity state"
+    ]
   },
-  "asset_pipeline": {
-    "procedural_fallback_enabled": true,
-    "spritesheet_directory": "assets/sprites/",
-    "texture_filtering": "nearest_neighbor",
-    "artist_contribution_mode": "drop_in_manifest"
-  },
-  "assets": [
-    {
-      "id": 1,
-      "key": "hero_elijah",
-      "name": "Elijah Ro-enheart (The Steadfast Vanguard)",
-      "kind": "character",
-      "width": 32,
-      "height": 32,
-      "elevation_anchor": "bottom_center",
-      "procedural_generator": "procedural_knight_crest",
-      "artist_asset_path": "assets/sprites/characters/elijah_32x32.png",
-      "status": "procedural_active"
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_assets": "viewport/gui_assets.h",
+      "gui_types": "viewport/gui_types.h"
     },
-    {
-      "id": 2,
-      "key": "hero_katrina",
-      "name": "Lady Katrina Jaren (Guild Outrider)",
-      "kind": "character",
-      "width": 32,
-      "height": 32,
-      "elevation_anchor": "bottom_center",
-      "procedural_generator": "procedural_rogue_crest",
-      "artist_asset_path": "assets/sprites/characters/katrina_32x32.png",
-      "status": "procedural_active"
+    "static_declarations": {
+      "schema_id": "tenlux.data.visuals.assets.v1",
+      "target_struct": "gui_asset_registry_t",
+      "header_binding": "include/viewport/gui_assets.h"
     },
-    {
-      "id": 3,
-      "key": "hero_casatti",
-      "name": "Prince Casatti (The Frontier Outrider)",
-      "kind": "character",
-      "width": 32,
-      "height": 32,
-      "elevation_anchor": "bottom_center",
-      "procedural_generator": "procedural_prince_crest",
-      "artist_asset_path": "assets/sprites/characters/casatti_32x32.png",
-      "status": "procedural_active"
+    "generic_helper_contracts": {
+      "loader": "gui_assets_load_registry",
+      "resolver": "gui_assets_resolve_render_proc"
     },
-    {
-      "id": 10,
-      "key": "enemy_dream_eater",
-      "name": "Dream Eater (Astral Aberration)",
-      "kind": "monster",
-      "width": 32,
-      "height": 32,
-      "elevation_anchor": "bottom_center",
-      "procedural_generator": "procedural_abyssal_nucleus",
-      "artist_asset_path": "assets/sprites/enemies/dream_eater_32x32.png",
-      "status": "procedural_active"
-    },
-    {
-      "id": 11,
-      "key": "enemy_shadow_stalker",
-      "name": "ShadowStalker (Vanguard Threat)",
-      "kind": "monster",
-      "width": 32,
-      "height": 32,
-      "elevation_anchor": "bottom_center",
-      "procedural_generator": "procedural_shadow_fiend",
-      "artist_asset_path": "assets/sprites/enemies/shadow_stalker_32x32.png",
-      "status": "procedural_active"
-    },
-    {
-      "id": 20,
-      "key": "tile_cobblestone",
-      "name": "Sacyran Cobblestone",
-      "kind": "terrain",
-      "width": 48,
-      "height": 24,
-      "elevation_capable": true,
-      "procedural_generator": "procedural_cobblestone_diamond",
-      "artist_asset_path": "assets/sprites/tiles/cobblestone_iso_48x24.png",
-      "status": "procedural_active"
-    },
-    {
-      "id": 21,
-      "key": "tile_grass",
-      "name": "Verdant Sacyran Meadow",
-      "kind": "terrain",
-      "width": 48,
-      "height": 24,
-      "elevation_capable": true,
-      "procedural_generator": "procedural_grass_diamond",
-      "artist_asset_path": "assets/sprites/tiles/grass_iso_48x24.png",
-      "status": "procedural_active"
-    },
-    {
-      "id": 22,
-      "key": "tile_stone_wall",
-      "name": "Bastion Rampart Wall",
-      "kind": "architecture",
-      "width": 48,
-      "height": 48,
-      "elevation_capable": true,
-      "procedural_generator": "procedural_stone_wall_block",
-      "artist_asset_path": "assets/sprites/tiles/stone_wall_iso_48x48.png",
-      "status": "procedural_active"
-    },
-    {
-      "id": 23,
-      "key": "tile_void_crag",
-      "name": "Libiran Void Fissure",
-      "kind": "terrain",
-      "width": 48,
-      "height": 24,
-      "elevation_capable": true,
-      "procedural_generator": "procedural_void_crag_diamond",
-      "artist_asset_path": "assets/sprites/tiles/void_crag_iso_48x24.png",
-      "status": "procedural_active"
-    },
-    {
-      "id": 30,
-      "key": "relic_shield_lux",
-      "name": "The Shield of Lux (Aegis of Radiance)",
-      "kind": "relic_icon",
-      "width": 24,
-      "height": 24,
-      "elevation_anchor": "center",
-      "procedural_generator": "procedural_shield_heraldry",
-      "artist_asset_path": "assets/sprites/icons/shield_lux_24x24.png",
-      "status": "procedural_active"
-    },
-    {
-      "id": 31,
-      "key": "relic_sword_tenebris",
-      "name": "The Sword of Tenebris (Edge of Severance)",
-      "kind": "relic_icon",
-      "width": 24,
-      "height": 24,
-      "elevation_anchor": "center",
-      "procedural_generator": "procedural_sword_heraldry",
-      "artist_asset_path": "assets/sprites/icons/sword_tenebris_24x24.png",
-      "status": "procedural_active"
+    "capacities": {
+      "max_assets": 64,
+      "default_texture_filtering": "nearest_neighbor"
     }
-  ]
+  },
+  "block_3_body": {
+    "asset_pipeline": {
+      "procedural_fallback_enabled": true,
+      "spritesheet_directory": "assets/sprites/",
+      "texture_filtering": "nearest_neighbor",
+      "artist_contribution_mode": "drop_in_manifest"
+    },
+    "assets": [
+      {
+        "id": 1,
+        "key": "hero_elijah",
+        "name": "Elijah Ro-enheart (The Steadfast Vanguard)",
+        "kind": "character",
+        "width": 32,
+        "height": 32,
+        "elevation_anchor": "bottom_center",
+        "procedural_generator": "procedural_knight_crest",
+        "artist_asset_path": "assets/sprites/characters/elijah_32x32.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 2,
+        "key": "hero_katrina",
+        "name": "Lady Katrina Jaren (Guild Outrider)",
+        "kind": "character",
+        "width": 32,
+        "height": 32,
+        "elevation_anchor": "bottom_center",
+        "procedural_generator": "procedural_rogue_crest",
+        "artist_asset_path": "assets/sprites/characters/katrina_32x32.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 3,
+        "key": "hero_casatti",
+        "name": "Prince Casatti (The Frontier Outrider)",
+        "kind": "character",
+        "width": 32,
+        "height": 32,
+        "elevation_anchor": "bottom_center",
+        "procedural_generator": "procedural_prince_crest",
+        "artist_asset_path": "assets/sprites/characters/casatti_32x32.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 10,
+        "key": "enemy_dream_eater",
+        "name": "Dream Eater (Astral Aberration)",
+        "kind": "monster",
+        "width": 32,
+        "height": 32,
+        "elevation_anchor": "bottom_center",
+        "procedural_generator": "procedural_abyssal_nucleus",
+        "artist_asset_path": "assets/sprites/enemies/dream_eater_32x32.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 11,
+        "key": "enemy_shadow_stalker",
+        "name": "ShadowStalker (Vanguard Threat)",
+        "kind": "monster",
+        "width": 32,
+        "height": 32,
+        "elevation_anchor": "bottom_center",
+        "procedural_generator": "procedural_shadow_fiend",
+        "artist_asset_path": "assets/sprites/enemies/shadow_stalker_32x32.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 20,
+        "key": "tile_cobblestone",
+        "name": "Sacyran Cobblestone",
+        "kind": "terrain",
+        "width": 48,
+        "height": 24,
+        "elevation_capable": true,
+        "procedural_generator": "procedural_cobblestone_diamond",
+        "artist_asset_path": "assets/sprites/tiles/cobblestone_iso_48x24.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 21,
+        "key": "tile_grass",
+        "name": "Verdant Sacyran Meadow",
+        "kind": "terrain",
+        "width": 48,
+        "height": 24,
+        "elevation_capable": true,
+        "procedural_generator": "procedural_grass_diamond",
+        "artist_asset_path": "assets/sprites/tiles/grass_iso_48x24.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 22,
+        "key": "tile_stone_wall",
+        "name": "Bastion Rampart Wall",
+        "kind": "architecture",
+        "width": 48,
+        "height": 48,
+        "elevation_capable": true,
+        "procedural_generator": "procedural_stone_wall_block",
+        "artist_asset_path": "assets/sprites/tiles/stone_wall_iso_48x48.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 23,
+        "key": "tile_void_crag",
+        "name": "Libiran Void Fissure",
+        "kind": "terrain",
+        "width": 48,
+        "height": 24,
+        "elevation_capable": true,
+        "procedural_generator": "procedural_void_crag_diamond",
+        "artist_asset_path": "assets/sprites/tiles/void_crag_iso_48x24.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 30,
+        "key": "relic_shield_lux",
+        "name": "The Shield of Lux (Aegis of Radiance)",
+        "kind": "relic_icon",
+        "width": 24,
+        "height": 24,
+        "elevation_anchor": "center",
+        "procedural_generator": "procedural_shield_heraldry",
+        "artist_asset_path": "assets/sprites/icons/shield_lux_24x24.png",
+        "status": "procedural_active"
+      },
+      {
+        "id": 31,
+        "key": "relic_sword_tenebris",
+        "name": "The Sword of Tenebris (Edge of Severance)",
+        "kind": "relic_icon",
+        "width": 24,
+        "height": 24,
+        "elevation_anchor": "center",
+        "procedural_generator": "procedural_sword_heraldry",
+        "artist_asset_path": "assets/sprites/icons/sword_tenebris_24x24.png",
+        "status": "procedural_active"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_ASSET_UNIQUE_KEYS",
+        "condition": "all asset keys and ids must be unique",
+        "action": "Audit fails on duplicate asset registration"
+      },
+      {
+        "id": "TRIPWIRE_ASSET_DIMENSIONS",
+        "condition": "width > 0 && height > 0",
+        "action": "Reject asset if width or height is non-positive"
+      }
+    ],
+    "metrics": {
+      "registered_assets": 11,
+      "procedural_fallback_active": true,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "menu_index": 2
+    },
+    "execution_hooks": {
+      "on_load": "gui_assets_load_catalog",
+      "audit_hook": "gui_assets_preflight"
+    }
+  }
 }
-

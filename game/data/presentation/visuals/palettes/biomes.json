@@ -1,79 +1,143 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/palettes/biomes.json",
-    "id": "data.palettes.biomes",
-    "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "file": "game/data/presentation/visuals/palettes/biomes.json",
+    "id": "data.presentation.visuals.palettes.biomes",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "2D tactical grid terrain tile colors and environmental palette definitions."
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "2D tactical grid terrain tile colors and environmental palette definitions for High Fantasy Hope.",
+    "where_the_data_lives": {
+      "topology": "Presentation Palettes Architecture",
+      "path": "game/data/presentation/visuals/palettes/biomes.json",
+      "parent_manifest": "game/data/presentation/visuals/palettes/manifest.json"
+    },
+    "what_it_enables": [
+      "Provincial biome environmental color palettes (Sacyra, Libira, Dreamscape, Academy Frost)",
+      "Vibrant high fantasy environments: lush royal grasslands, sun-warmed dunes, crystalline glacial spires",
+      "Celestial Dreamscape styling: shimmering starlight and radiant chimes instead of sterile darkness",
+      "24-bit RGB hardware color lookup tables without runtime heap allocation"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in palette lookup (ALLOC_ZERO_HEAP)",
+      "All palette entries strictly conform to 24-bit 0xRRGGBB hex notation",
+      "The world is real to the touch, dark in places, but fundamentally illuminated by hope",
+      "Visual presentation color mapping never alters terrain simulation geometry"
+    ]
   },
-  "biomes": [
-    {
-      "id": "biome_sacyra_plains",
-      "name": "Sacyran Grasslands & Royal Meadows",
-      "tiles": {
-        "plains_base": "0x2A4D34",
-        "plains_highlight": "0x3E6B4B",
-        "plains_flower": "0xDE6B48",
-        "forest_canopy": "0x1B3824",
-        "forest_trunk": "0x4A3319",
-        "water_shallow": "0x285973",
-        "water_deep": "0x17384A",
-        "stone_road": "0x4A505C",
-        "wall_stone": "0x333740",
-        "grid_border": "0x1E3B27"
-      }
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_palette": "viewport/gui_palette.h",
+      "tilesets": "visuals/tilesets.json"
     },
-    {
-      "id": "biome_dreamscape",
-      "name": "The Nocturnal Dream Chamber",
-      "tiles": {
-        "plains_base": "0x161A29",
-        "plains_highlight": "0x252C42",
-        "plains_flower": "0x7888BA",
-        "forest_canopy": "0x0F121C",
-        "forest_trunk": "0x2B2738",
-        "water_shallow": "0x2A3E63",
-        "water_deep": "0x131E33",
-        "stone_road": "0x353B52",
-        "wall_stone": "0x242838",
-        "grid_border": "0x1E2336"
-      }
+    "static_declarations": {
+      "schema_id": "tenlux.data.visuals.palettes.biomes.v1",
+      "target_struct": "gui_biome_palette_t",
+      "header_binding": "include/viewport/gui_palette.h"
     },
-    {
-      "id": "biome_libira_desert",
-      "name": "Arid Frontier of Libira",
-      "tiles": {
-        "plains_base": "0x7A5B35",
-        "plains_highlight": "0x9E7848",
-        "plains_flower": "0xC49A5C",
-        "forest_canopy": "0x4A3E26",
-        "forest_trunk": "0x5C3A1E",
-        "water_shallow": "0x3E6B7A",
-        "water_deep": "0x24424D",
-        "stone_road": "0x6E5E4A",
-        "wall_stone": "0x4D4133",
-        "grid_border": "0x5E4527"
-      }
+    "generic_helper_contracts": {
+      "loader": "gui_palette_load_biomes",
+      "color_resolver": "gui_palette_get_biome_color"
     },
-    {
-      "id": "biome_academy_frost",
-      "name": "Northern Academy Glacial Spire",
-      "tiles": {
-        "plains_base": "0x4A6B82",
-        "plains_highlight": "0x6B93AD",
-        "plains_flower": "0xB0D4E8",
-        "forest_canopy": "0x2F4A5E",
-        "forest_trunk": "0x2C3B47",
-        "water_shallow": "0x26526B",
-        "water_deep": "0x132E3D",
-        "stone_road": "0x526373",
-        "wall_stone": "0x3B4752",
-        "grid_border": "0x385264"
-      }
+    "capacities": {
+      "max_biomes": 16,
+      "colors_per_biome": 16
     }
-  ]
+  },
+  "block_3_body": {
+    "biomes": [
+      {
+        "id": "biome_sacyra_plains",
+        "name": "Sacyran Grasslands & Royal Meadows",
+        "tiles": {
+          "plains_base": "0x2E6F40",
+          "plains_highlight": "0x489E5B",
+          "plains_flower": "0xF4A261",
+          "forest_canopy": "0x1B4328",
+          "forest_trunk": "0x5C3E21",
+          "water_shallow": "0x3898EC",
+          "water_deep": "0x214E80",
+          "stone_road": "0x606D85",
+          "wall_stone": "0x434D63",
+          "grid_border": "0x245532"
+        }
+      },
+      {
+        "id": "biome_dreamscape",
+        "name": "The Nocturnal Dream Chamber (Celestial Starlight)",
+        "tiles": {
+          "plains_base": "0x181E34",
+          "plains_highlight": "0x2E3B66",
+          "plains_flower": "0x9EB5FF",
+          "forest_canopy": "0x101426",
+          "forest_trunk": "0x383254",
+          "water_shallow": "0x3E5FA0",
+          "water_deep": "0x1E2E59",
+          "stone_road": "0x4A567D",
+          "wall_stone": "0x333B57",
+          "grid_border": "0x273152"
+        }
+      },
+      {
+        "id": "biome_libira_desert",
+        "name": "Arid Frontier of Libira (Sun-Warmed Sands)",
+        "tiles": {
+          "plains_base": "0x9E7540",
+          "plains_highlight": "0xC49A5C",
+          "plains_flower": "0xE86850",
+          "forest_canopy": "0x5A4C30",
+          "forest_trunk": "0x734825",
+          "water_shallow": "0x4EA8B8",
+          "water_deep": "0x2A6B7A",
+          "stone_road": "0x8C7860",
+          "wall_stone": "0x635442",
+          "grid_border": "0x785A32"
+        }
+      },
+      {
+        "id": "biome_academy_frost",
+        "name": "Northern Academy Glacial Spire (Aurora Glades)",
+        "tiles": {
+          "plains_base": "0x5A82A0",
+          "plains_highlight": "0x88B4D4",
+          "plains_flower": "0xD0EEFF",
+          "forest_canopy": "0x3B627D",
+          "forest_trunk": "0x384857",
+          "water_shallow": "0x3E85A8",
+          "water_deep": "0x1B4B69",
+          "stone_road": "0x6E8599",
+          "wall_stone": "0x4F6475",
+          "grid_border": "0x476880"
+        }
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_BIOME_HEX_FORMAT",
+        "condition": "all biome tile colors match valid 0xRRGGBB format",
+        "action": "Fallback to base meadow green 0x2E6F40 on invalid hex"
+      }
+    ],
+    "metrics": {
+      "registered_biomes": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
+      "menu_index": 2
+    },
+    "execution_hooks": {
+      "on_load": "gui_palette_load_biomes",
+      "audit_hook": "gui_palette_biomes_preflight"
+    }
+  }
 }
-

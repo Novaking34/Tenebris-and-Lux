@@ -1,70 +1,141 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/audio/channels.json",
-    "id": "data.audio.channels",
+    "file": "game/data/presentation/audio/channels.json",
+    "id": "data.presentation.audio.channels",
     "layer": "Layer 2: Presentation & Audiovisual",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Audio bus mixing channels, concurrency limits, and attenuation curves."
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Audio bus mixing channels, concurrency limits, and attenuation curves.",
+    "where_the_data_lives": {
+      "topology": "Presentation Audio Architecture",
+      "path": "game/data/presentation/audio/channels.json"
+    },
+    "what_it_enables": [
+      "Multi-channel audio mixing buses (Master, BGM, BGS, SFX Combat, SFX Tactical, UI, Stinger)",
+      "Hardware limiter protection and sample rate normalization (48 kHz)",
+      "Zero dynamic heap allocation audio cue routing",
+      "Ducking attenuation matrix between combat stingers and background audio"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in audio cue routing (ALLOC_ZERO_HEAP)",
+      "Audio bus polyphony must be strictly positive",
+      "Volume percentages bounded between 0 and 100",
+      "Audio strictly follows simulation events: audio never drives combat turns"
+    ]
   },
-  "master": {
-    "volume_pct": 100,
-    "sample_rate_hz": 48000,
-    "channels": 2,
-    "buffer_size_samples": 1024,
-    "limiter_enabled": true
-  },
-  "buses": [
-    {
-      "id": "bus_bgm",
-      "name": "Background Music",
-      "volume_pct": 75,
-      "max_polyphony": 1,
-      "ducking_source": false,
-      "fade_in_default_ms": 1200,
-      "fade_out_default_ms": 1500
+  "block_2_opening": {
+    "pre_conditions": {
+      "audio_bus": "core/audio_bus.h",
+      "sample_rate": 48000
     },
-    {
-      "id": "bus_bgs",
-      "name": "Background Soundscapes & Ambience",
-      "volume_pct": 60,
-      "max_polyphony": 2,
-      "ducking_source": false,
-      "fade_in_default_ms": 2000,
-      "fade_out_default_ms": 2000
+    "static_declarations": {
+      "schema_id": "tenlux.data.audio.channels.v1",
+      "target_struct": "audio_mixer_config_t",
+      "header_binding": "include/core/audio_bus.h"
     },
-    {
-      "id": "bus_sfx_combat",
-      "name": "Combat Sound Effects",
-      "volume_pct": 90,
-      "max_polyphony": 8,
-      "ducking_source": true,
-      "duck_ratio": 0.8
+    "generic_helper_contracts": {
+      "loader": "audio_bus_load_channels",
+      "dispatch": "audio_bus_dispatch_event"
     },
-    {
-      "id": "bus_sfx_tactical",
-      "name": "Tactical Grid Movement & Selection",
-      "volume_pct": 80,
-      "max_polyphony": 4,
-      "ducking_source": false
-    },
-    {
-      "id": "bus_ui",
-      "name": "User Interface Audio Cues",
-      "volume_pct": 85,
-      "max_polyphony": 3,
-      "ducking_source": false
-    },
-    {
-      "id": "bus_stinger",
-      "name": "Music Effects & Triumph Stingers",
-      "volume_pct": 95,
-      "max_polyphony": 1,
-      "ducking_source": true,
-      "duck_ratio": 0.5
+    "capacities": {
+      "max_buses": 16,
+      "max_polyphony_per_bus": 16,
+      "buffer_size_samples": 1024
     }
-  ]
+  },
+  "block_3_body": {
+    "master": {
+      "volume_pct": 100,
+      "sample_rate_hz": 48000,
+      "channels": 2,
+      "buffer_size_samples": 1024,
+      "limiter_enabled": true
+    },
+    "buses": [
+      {
+        "id": "bus_bgm",
+        "name": "Background Music",
+        "volume_pct": 75,
+        "max_polyphony": 1,
+        "ducking_source": false,
+        "fade_in_default_ms": 1200,
+        "fade_out_default_ms": 1500
+      },
+      {
+        "id": "bus_bgs",
+        "name": "Background Soundscapes & Ambience",
+        "volume_pct": 60,
+        "max_polyphony": 2,
+        "ducking_source": false,
+        "fade_in_default_ms": 2000,
+        "fade_out_default_ms": 2000
+      },
+      {
+        "id": "bus_sfx_combat",
+        "name": "Combat Sound Effects",
+        "volume_pct": 90,
+        "max_polyphony": 8,
+        "ducking_source": true,
+        "duck_ratio": 0.8
+      },
+      {
+        "id": "bus_sfx_tactical",
+        "name": "Tactical Grid Movement & Selection",
+        "volume_pct": 80,
+        "max_polyphony": 4,
+        "ducking_source": false
+      },
+      {
+        "id": "bus_ui",
+        "name": "User Interface Audio Cues",
+        "volume_pct": 85,
+        "max_polyphony": 3,
+        "ducking_source": false
+      },
+      {
+        "id": "bus_stinger",
+        "name": "Music Effects & Triumph Stingers",
+        "volume_pct": 95,
+        "max_polyphony": 1,
+        "ducking_source": true,
+        "duck_ratio": 0.5
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_AUDIO_VOLUME_BOUNDS",
+        "condition": "volume_pct >= 0 && volume_pct <= 100",
+        "action": "Clamp volume to [0, 100] and log warning"
+      },
+      {
+        "id": "TRIPWIRE_AUDIO_POLYPHONY_BOUNDS",
+        "condition": "max_polyphony > 0 && max_polyphony <= 16",
+        "action": "Halt mixer initialization on polyphony overflow"
+      }
+    ],
+    "metrics": {
+      "sample_rate_hz": 48000,
+      "active_buses": 6,
+      "limiter_enabled": true,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "menu_index": 1
+    },
+    "execution_hooks": {
+      "on_load": "audio_bus_load_channels",
+      "audit_hook": "audio_bus_preflight"
+    }
+  }
 }
-

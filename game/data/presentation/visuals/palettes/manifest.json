@@ -5,11 +5,11 @@
     "id": "data.palettes.manifest",
     "layer": "Layer 2: Presentation & Viewport",
     "version": "0.1.0",
-    "interface_rev": "Rev 2",
-    "date": "2026-11-04",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Color Palette Subsystem Manifest Specifying Themes, Biomes & Relic Hues",
+    "role": "Color Palette Subsystem Manifest Specifying High Fantasy Hope Themes, Biomes & Relic Hues",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/visuals/palettes/",
       "themes_catalog": "themes.json",
@@ -19,13 +19,15 @@
     },
     "what_it_enables": [
       "Strict 24-bit RGB and 32-bit ARGB hex formatting (0xRRGGBB, 0xAARRGGBB)",
-      "Dynamic moral sway interpolation between Lux gold (#D4AF37) and Tenebris violet (#4A0E4E)",
-      "Biome-specific environmental tinting across forests, plains, ruins, and astral voids",
+      "Dynamic moral sway interpolation between Solar gold (#F0CE78) and Twilight violet (#8A78C8)",
+      "High Fantasy Realism: grounded and real to the touch in shadows, but predominantly illuminated by hope",
+      "Biome-specific environmental tinting across royal meadows, starlit celestial chambers, and sun-warmed dunes",
       "WCAG AAA compliance (min 7:1 contrast ratio) for HUD text over backdrops"
     ],
     "invariants": [
       "Zero dynamic heap allocations in palette lookup (ALLOC_ZERO_HEAP)",
       "All palette values strictly conform to 24-bit or 32-bit hex colors",
+      "The aesthetic is fundamentally a journey of hope, balance, and tactile realism",
       "Moral sway interpolation must evaluate smoothly between -100 and +100",
       "Static 32-entry lookup tables (LUT) eliminate runtime allocations"
     ]

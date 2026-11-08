@@ -5,14 +5,15 @@
     "id": "data.ui.manifest",
     "layer": "Layer 2: Presentation & Viewport",
     "version": "0.1.0",
-    "interface_rev": "Rev 1",
-    "date": "2026-11-04",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "Desktop HUD, Panel Layouts & Viewport Manifest",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/ui/",
       "layout_catalog": "layout.json",
+      "screens_catalog": "screens.json",
       "gui_manifest_alias": "gui_manifest.json",
       "fonts_subsystem": "fonts/manifest.json"
     },
@@ -57,6 +58,11 @@
         "description": "HUD panel coordinate geometry, AABB bounds, and view containers"
       },
       {
+        "id": "screens",
+        "file": "screens.json",
+        "description": "5-Screen presentation view modes, navigation tabs, and modal states"
+      },
+      {
         "id": "fonts",
         "file": "fonts/manifest.json",
         "description": "TrueType font rendering, typography styles, and responsive scalers"
@@ -72,7 +78,7 @@
       }
     ],
     "metrics": {
-      "registered_catalogs": 2,
+      "registered_catalogs": 3,
       "zero_heap_compliant": true
     }
   },

@@ -1,0 +1,119 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/presentation/audio/ambience.json",
+    "id": "data.presentation.audio.ambience",
+    "layer": "Layer 2: Presentation & Audiovisual",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Background soundscapes, environmental loops, and ambient audio cues.",
+    "where_the_data_lives": {
+      "topology": "Presentation Audio Architecture",
+      "path": "game/data/presentation/audio/ambience.json",
+      "parent_manifest": "game/data/presentation/audio/manifest.json"
+    },
+    "what_it_enables": [
+      "Layered background soundscapes (BGS) playing beneath music and dialogue",
+      "Biome-specific environmental atmosphere (wind, water, distant wildlife, ethereal hum)",
+      "Continuous seamless looping with gentle volume fading on province boundaries",
+      "Ducking attenuation during dialogue cutscenes and victory fanfare"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in audio cue routing (ALLOC_ZERO_HEAP)",
+      "Ambience routed strictly to bus_bgs mixing bus",
+      "Volume scale bounded within [0.0, 1.0]",
+      "Audio strictly follows simulation events: audio never drives combat turns"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "audio_bus": "core/audio_bus.h",
+      "mixing_buses": "channels.json"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.audio.ambience.v1",
+      "target_struct": "audio_ambience_cue_t",
+      "header_binding": "include/core/audio_bus.h"
+    },
+    "generic_helper_contracts": {
+      "player": "audio_ambience_play",
+      "fader": "audio_ambience_fade"
+    },
+    "capacities": {
+      "max_ambience_tracks": 16,
+      "crossfade_ms": 2000
+    }
+  },
+  "block_3_body": {
+    "ambience_tracks": [
+      {
+        "id": "bgs_sacyra_meadow",
+        "name": "Sacyran Grassland Breeze & Rustling Leaves",
+        "bus": "bus_bgs",
+        "asset_path": "assets/audio/ambience/sacyra_meadow.ogg",
+        "volume_scale": 0.65,
+        "fade_in_ms": 2000,
+        "fade_out_ms": 2000,
+        "description": "Gentle temperate wind rustling through tall blades with soft insect chirps."
+      },
+      {
+        "id": "bgs_libira_desert_winds",
+        "name": "Libiran Dune Howl & Dust Swirls",
+        "bus": "bus_bgs",
+        "asset_path": "assets/audio/ambience/libira_dunes.ogg",
+        "volume_scale": 0.60,
+        "fade_in_ms": 2500,
+        "fade_out_ms": 2000,
+        "description": "Dry, gusting desert wind carrying fine grit across abandoned stone outposts."
+      },
+      {
+        "id": "bgs_dreamscape_hum",
+        "name": "Astral Void Resonance & Ethereal Chimes",
+        "bus": "bus_bgs",
+        "asset_path": "assets/audio/ambience/dreamscape_hum.ogg",
+        "volume_scale": 0.70,
+        "fade_in_ms": 3000,
+        "fade_out_ms": 3000,
+        "description": "Deep low-frequency cosmic drone punctuated by shimmering clockwork echoes."
+      },
+      {
+        "id": "bgs_river_rapids",
+        "name": "Rushing Water & Rapids",
+        "bus": "bus_bgs",
+        "asset_path": "assets/audio/ambience/river_rapids.ogg",
+        "volume_scale": 0.55,
+        "fade_in_ms": 1500,
+        "fade_out_ms": 1500,
+        "description": "Vigorous mountain stream tumbling across polished river stones."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_AMBIENCE_VOLUME_RANGE",
+        "condition": "volume_scale >= 0.0 && volume_scale <= 1.0",
+        "action": "Clamp ambience volume scale to valid interval [0.0, 1.0]"
+      }
+    ],
+    "metrics": {
+      "registered_ambience_tracks": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "menu_index": 4
+    },
+    "execution_hooks": {
+      "on_load": "audio_ambience_load_catalog",
+      "audit_hook": "audio_ambience_preflight"
+    }
+  }
+}

@@ -1,114 +1,186 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/textures/tilesets.json",
-    "id": "data.textures.tilesets",
-    "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "file": "game/data/presentation/visuals/tilesets.json",
+    "id": "data.presentation.visuals.tilesets",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Tactical grid terrain tilesets, passability collision masks, and autotile metadata."
-  },
-  "tile_size": 32,
-  "tilesets": [
-    {
-      "id": "tileset_sacyra_plains",
-      "name": "Sacyra Continental Plains & Forest",
-      "file": "assets/textures/tilesets/sacyra_plains_256x256.png",
-      "tiles": [
-        {
-          "tile_id": 0,
-          "name": "Grassland Clear",
-          "passable": true,
-          "friction_mult": 1.0,
-          "cover_pct": 0,
-          "procedural_color": "0x2A4D34"
-        },
-        {
-          "tile_id": 1,
-          "name": "Grassland Meadow (Flowers)",
-          "passable": true,
-          "friction_mult": 1.0,
-          "cover_pct": 5,
-          "procedural_color": "0x3E6B4B"
-        },
-        {
-          "tile_id": 2,
-          "name": "Cobblestone Path",
-          "passable": true,
-          "friction_mult": 0.9,
-          "cover_pct": 0,
-          "procedural_color": "0x4A505C"
-        },
-        {
-          "tile_id": 3,
-          "name": "Dense Forest Thicket",
-          "passable": true,
-          "friction_mult": 1.5,
-          "cover_pct": 20,
-          "procedural_color": "0x1B3824"
-        },
-        {
-          "tile_id": 4,
-          "name": "Stone Rampart Wall",
-          "passable": false,
-          "friction_mult": 99.0,
-          "cover_pct": 50,
-          "blocks_los": true,
-          "procedural_color": "0x333740"
-        },
-        {
-          "tile_id": 5,
-          "name": "River Rapids",
-          "passable": false,
-          "friction_mult": 99.0,
-          "cover_pct": 0,
-          "blocks_los": false,
-          "procedural_color": "0x17384A"
-        }
-      ]
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Tactical grid terrain tilesets, passability collision masks, and autotile metadata.",
+    "where_the_data_lives": {
+      "topology": "Presentation Visuals Architecture",
+      "path": "game/data/presentation/visuals/tilesets.json",
+      "parent_manifest": "game/data/presentation/visuals/manifest.json"
     },
-    {
-      "id": "tileset_dreamscape",
-      "name": "The Nocturnal Dream Chamber",
-      "file": "assets/textures/tilesets/dreamscape_256x256.png",
-      "tiles": [
-        {
-          "tile_id": 10,
-          "name": "Ethereal Floor",
-          "passable": true,
-          "friction_mult": 1.0,
-          "cover_pct": 0,
-          "procedural_color": "0x161A29"
-        },
-        {
-          "tile_id": 11,
-          "name": "Memory Fragment",
-          "passable": true,
-          "friction_mult": 1.2,
-          "cover_pct": 10,
-          "procedural_color": "0x252C42"
-        },
-        {
-          "tile_id": 12,
-          "name": "Planar Abyss",
-          "passable": false,
-          "friction_mult": 99.0,
-          "cover_pct": 0,
-          "blocks_los": false,
-          "procedural_color": "0x0A0D14"
-        },
-        {
-          "tile_id": 13,
-          "name": "Chrono's Sundial",
-          "passable": false,
-          "friction_mult": 99.0,
-          "cover_pct": 30,
-          "blocks_los": true,
-          "procedural_color": "0xD4AF37"
-        }
-      ]
+    "what_it_enables": [
+      "Tactical grid tile visual definitions for Sacyra Plains, Forests, and Nocturnal Dream Chamber",
+      "Physical terrain properties: movement friction multipliers, cover percentages, line-of-sight obstruction",
+      "Procedural hex color fallback if external PNG tileset sheets are absent",
+      "Decoupled rendering: presentation grid projects simulation grid terrain coordinates"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during tile coordinate resolution (ALLOC_ZERO_HEAP)",
+      "Standard tile size: strictly 32 pixels baseline",
+      "Friction multiplier must be non-negative",
+      "Cover percentage bounded within [0, 100]"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_view2d": "viewport/gui_view2d.h",
+      "palettes": "visuals/palettes/biomes.json"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.visuals.tilesets.v1",
+      "target_struct": "gui_tileset_catalog_t",
+      "header_binding": "include/viewport/gui_assets.h"
+    },
+    "generic_helper_contracts": {
+      "loader": "gui_tilesets_load_catalog",
+      "tile_lookup": "gui_tilesets_get_tile"
+    },
+    "capacities": {
+      "max_tilesets": 16,
+      "max_tiles_per_tileset": 64,
+      "base_tile_size": 32
     }
-  ]
+  },
+  "block_3_body": {
+    "tile_size": 32,
+    "tilesets": [
+      {
+        "id": "tileset_sacyra_plains",
+        "name": "Sacyra Continental Plains & Forest",
+        "file": "assets/textures/tilesets/sacyra_plains_256x256.png",
+        "tiles": [
+          {
+            "tile_id": 0,
+            "name": "Grassland Clear",
+            "passable": true,
+            "friction_mult": 1.0,
+            "cover_pct": 0,
+            "procedural_color": "0x2A4D34"
+          },
+          {
+            "tile_id": 1,
+            "name": "Grassland Meadow (Flowers)",
+            "passable": true,
+            "friction_mult": 1.0,
+            "cover_pct": 5,
+            "procedural_color": "0x3E6B4B"
+          },
+          {
+            "tile_id": 2,
+            "name": "Cobblestone Path",
+            "passable": true,
+            "friction_mult": 0.9,
+            "cover_pct": 0,
+            "procedural_color": "0x4A505C"
+          },
+          {
+            "tile_id": 3,
+            "name": "Dense Forest Thicket",
+            "passable": true,
+            "friction_mult": 1.5,
+            "cover_pct": 20,
+            "procedural_color": "0x1B3824"
+          },
+          {
+            "tile_id": 4,
+            "name": "Stone Rampart Wall",
+            "passable": false,
+            "friction_mult": 99.0,
+            "cover_pct": 50,
+            "blocks_los": true,
+            "procedural_color": "0x333740"
+          },
+          {
+            "tile_id": 5,
+            "name": "River Rapids",
+            "passable": false,
+            "friction_mult": 99.0,
+            "cover_pct": 0,
+            "blocks_los": false,
+            "procedural_color": "0x17384A"
+          }
+        ]
+      },
+      {
+        "id": "tileset_dreamscape",
+        "name": "The Nocturnal Dream Chamber",
+        "file": "assets/textures/tilesets/dreamscape_256x256.png",
+        "tiles": [
+          {
+            "tile_id": 10,
+            "name": "Ethereal Floor",
+            "passable": true,
+            "friction_mult": 1.0,
+            "cover_pct": 0,
+            "procedural_color": "0x161A29"
+          },
+          {
+            "tile_id": 11,
+            "name": "Memory Fragment",
+            "passable": true,
+            "friction_mult": 1.2,
+            "cover_pct": 10,
+            "procedural_color": "0x252C42"
+          },
+          {
+            "tile_id": 12,
+            "name": "Planar Abyss",
+            "passable": false,
+            "friction_mult": 99.0,
+            "cover_pct": 0,
+            "blocks_los": false,
+            "procedural_color": "0x0A0D14"
+          },
+          {
+            "tile_id": 13,
+            "name": "Chrono's Sundial",
+            "passable": false,
+            "friction_mult": 99.0,
+            "cover_pct": 30,
+            "blocks_los": true,
+            "procedural_color": "0xD4AF37"
+          }
+        ]
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_TILESET_SIZE",
+        "condition": "tile_size == 32",
+        "action": "Clamp baseline tile size to canonical 32 pixels"
+      },
+      {
+        "id": "TRIPWIRE_COVER_BOUNDS",
+        "condition": "cover_pct >= 0 && cover_pct <= 100",
+        "action": "Clamp cover percentage to [0, 100]"
+      }
+    ],
+    "metrics": {
+      "registered_tilesets": 2,
+      "total_tiles": 10,
+      "base_tile_size": 32,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "menu_index": 4
+    },
+    "execution_hooks": {
+      "on_load": "gui_tilesets_load_catalog",
+      "audit_hook": "gui_tilesets_preflight"
+    }
+  }
 }
-

@@ -1,0 +1,137 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/presentation/ui/screens.json",
+    "id": "data.presentation.ui.screens",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "5-Screen presentation view modes, navigation tabs, and modal states.",
+    "where_the_data_lives": {
+      "topology": "Presentation UI Architecture",
+      "path": "game/data/presentation/ui/screens.json",
+      "parent_manifest": "game/data/presentation/ui/manifest.json"
+    },
+    "what_it_enables": [
+      "5 Canonical presentation screens (Tactical, Status, Inventory, World Map, Chronicle)",
+      "Top navigation tab bar inside header banner with hotkey bindings (F1-F5)",
+      "Dedicated full-canvas viewports for hero dossier, 32-slot inventory, and provincial maps",
+      "Idempotent screen switching with zero state mutation"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during screen switching (ALLOC_ZERO_HEAP)",
+      "Exactly 5 canonical navigation screens registered",
+      "Screen navigation is read-only: switching screens never mutates simulation turn state",
+      "All alternate screens strictly honor viewport bounding rectangle"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_screens": "viewport/gui_screens.h",
+      "screen_types": "viewport/gui_types.h"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.ui.screens.v1",
+      "target_struct": "gui_tab_t",
+      "header_binding": "include/viewport/gui_screens.h"
+    },
+    "generic_helper_contracts": {
+      "tab_renderer": "gui_screens_render_tab_bar",
+      "hit_checker": "gui_screens_check_tab_click"
+    },
+    "capacities": {
+      "num_screens": 5,
+      "num_tabs": 5
+    }
+  },
+  "block_3_body": {
+    "screens": [
+      {
+        "id": "GUI_SCREEN_TACTICAL",
+        "index": 0,
+        "name": "Tactical Grid Viewport",
+        "tab_label": "Tactical [F1]",
+        "hotkey": "1",
+        "f_key": "F1",
+        "description": "2.5D Dimetric and 2D Orthographic tactical battlefield grid with combat vitals."
+      },
+      {
+        "id": "GUI_SCREEN_STATUS",
+        "index": 1,
+        "name": "Protagonist Hero Dossier",
+        "tab_label": "Hero [F2]",
+        "hotkey": "2",
+        "f_key": "F2",
+        "description": "Full protagonist dossier, hex-attributes, stance proficiencies, and titles."
+      },
+      {
+        "id": "GUI_SCREEN_INVENTORY",
+        "index": 2,
+        "name": "Armament & Relic Bag",
+        "tab_label": "Inventory [F3]",
+        "hotkey": "3",
+        "f_key": "F3",
+        "description": "32-Slot item bag, twin armaments (Shield/Sword), Grandma's Watch, and consumables."
+      },
+      {
+        "id": "GUI_SCREEN_WORLD_MAP",
+        "index": 3,
+        "name": "Provincial Realm Topology",
+        "tab_label": "World [F4]",
+        "hotkey": "4",
+        "f_key": "F4",
+        "description": "Continental map of Sacyra, Libira, and the Great Mau with travel routes."
+      },
+      {
+        "id": "GUI_SCREEN_CHRONICLE",
+        "index": 4,
+        "name": "Historical Deeds Chronicle",
+        "tab_label": "Codex [F5]",
+        "hotkey": "5",
+        "f_key": "F5",
+        "description": "Narrative chronicle feed, lore compendium chapters, and campaign milestones."
+      }
+    ],
+    "tab_bar_geometry": {
+      "x_offset": 300,
+      "y_offset": 8,
+      "tab_width": 100,
+      "tab_height": 32,
+      "tab_gap": 6
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_SCREEN_COUNT",
+        "condition": "screens.length == 5",
+        "action": "Ensure exactly 5 presentation screen tabs are registered"
+      },
+      {
+        "id": "TRIPWIRE_TAB_BOUNDS",
+        "condition": "tab_bar fits completely within header banner panel width",
+        "action": "Clamp tab geometry if header banner boundary is exceeded"
+      }
+    ],
+    "metrics": {
+      "registered_screens": 5,
+      "navigation_tabs": 5,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "menu_index": 2
+    },
+    "execution_hooks": {
+      "on_load": "gui_screens_load_catalog",
+      "audit_hook": "gui_screens_preflight"
+    }
+  }
+}

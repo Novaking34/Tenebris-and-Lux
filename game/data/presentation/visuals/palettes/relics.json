@@ -1,38 +1,111 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/palettes/relics.json",
-    "id": "data.palettes.relics",
-    "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "file": "game/data/presentation/visuals/palettes/relics.json",
+    "id": "data.presentation.visuals.palettes.relics",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Dynamic visual glow gradients and aura hues for the Twin Relics and Moral Sway."
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Dynamic visual glow gradients and aura hues for the Twin Relics and Moral Sway.",
+    "where_the_data_lives": {
+      "topology": "Presentation Palettes Architecture",
+      "path": "game/data/presentation/visuals/palettes/relics.json",
+      "parent_manifest": "game/data/presentation/visuals/palettes/manifest.json"
+    },
+    "what_it_enables": [
+      "Dynamic aura resonance gradients for the Shield of Lux (Radiant Solar Gold) and Sword of Tenebris (Twilight Amethyst)",
+      "Continuous moral sway continuum color interpolation across [-100, +100] centered on vibrant equilibrium",
+      "Enduring hope visualization: radiant dawn amber bursts and triumphant celestial overloads",
+      "Tactile weight: grounded quiescent metallic bases rising to brilliant luminous clarity"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in aura gradient interpolation (ALLOC_ZERO_HEAP)",
+      "The game is grounded and real to the touch, dark in places, but fundamentally illuminated by hope",
+      "Moral sway spectrum values strictly bounded between -100 and +100",
+      "Aura pulse frequencies must be strictly positive"
+    ]
   },
-  "shield_of_lux": {
-    "quiescent": "0x6E5828",
-    "resonance_low": "0xA88B38",
-    "resonance_mid": "0xD4AF37",
-    "resonance_high": "0xF0CE78",
-    "overload": "0xFFE9A8",
-    "aura_pulse_hz": 1.2
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_palette": "viewport/gui_palette.h",
+      "relics_subsystem": "relics/inventory.h"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.visuals.palettes.relics.v1",
+      "target_struct": "gui_relic_palette_t",
+      "header_binding": "include/viewport/gui_palette.h"
+    },
+    "generic_helper_contracts": {
+      "loader": "gui_palette_load_relics",
+      "sway_interpolator": "gui_palette_interpolate_moral_sway"
+    },
+    "capacities": {
+      "moral_sway_min": -100,
+      "moral_sway_max": 100,
+      "color_depth_bits": 24
+    }
   },
-  "sword_of_tenebris": {
-    "quiescent": "0x382854",
-    "resonance_low": "0x5C428A",
-    "resonance_mid": "0x7856B3",
-    "resonance_high": "0x8A78C8",
-    "overload": "0xB8A8E8",
-    "aura_pulse_hz": 1.8
+  "block_3_body": {
+    "shield_of_lux": {
+      "quiescent": "0x8C7030",
+      "resonance_low": "0xB89438",
+      "resonance_mid": "0xE5BC45",
+      "resonance_high": "0xF4D26E",
+      "overload": "0xFFF0B8",
+      "aura_pulse_hz": 1.2,
+      "description": "The Aegis of Radiance: enduring protective hope shining with the warmth of the rising sun."
+    },
+    "sword_of_tenebris": {
+      "quiescent": "0x453066",
+      "resonance_low": "0x6A4C9C",
+      "resonance_mid": "0x8B65CC",
+      "resonance_high": "0xA47FE8",
+      "overload": "0xCEB8FF",
+      "aura_pulse_hz": 1.8,
+      "description": "The Edge of Severance: solemn twilight gravity cutting away despair to restore balanced harmony."
+    },
+    "moral_sway_spectrum": {
+      "malice_deep_minus_100": "0x9E1C27",
+      "malice_mid_minus_50": "0xD63D47",
+      "malice_light_minus_25": "0xEB5757",
+      "equilibrium_zero": "0x2ECC71",
+      "virtue_light_plus_25": "0x27AE60",
+      "virtue_mid_plus_50": "0xF1C40F",
+      "virtue_apex_plus_100": "0xFFE066"
+    }
   },
-  "moral_sway_spectrum": {
-    "malice_deep_minus_100": "0x8B0000",
-    "malice_mid_minus_50": "0xC92A2A",
-    "malice_light_minus_25": "0xE03131",
-    "equilibrium_zero": "0x40C057",
-    "virtue_light_plus_25": "0x2F9E44",
-    "virtue_mid_plus_50": "0x2B8A3E",
-    "virtue_apex_plus_100": "0xFFD700"
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_SWAY_RANGE",
+        "condition": "moral_sway >= -100 && moral_sway <= 100",
+        "action": "Clamp moral sway input before color lookup"
+      },
+      {
+        "id": "TRIPWIRE_PULSE_HZ_POSITIVE",
+        "condition": "aura_pulse_hz > 0.0",
+        "action": "Clamp aura pulse frequency to minimum 0.1 Hz"
+      }
+    ],
+    "metrics": {
+      "sway_gradient_stops": 7,
+      "relic_auras": 2,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
+      "menu_index": 3
+    },
+    "execution_hooks": {
+      "on_load": "gui_palette_load_relics",
+      "audit_hook": "gui_palette_relics_preflight"
+    }
   }
 }
-

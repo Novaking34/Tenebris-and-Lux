@@ -1,99 +1,169 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/fonts/typography.json",
-    "id": "data.fonts.typography",
-    "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "file": "game/data/presentation/ui/fonts/typography.json",
+    "id": "data.presentation.ui.fonts.typography",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Functional typographic roles, font face bindings, and baseline metrics."
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Functional typographic roles, font face bindings, and baseline metrics.",
+    "where_the_data_lives": {
+      "topology": "Presentation Typography Architecture",
+      "path": "game/data/presentation/ui/fonts/typography.json",
+      "parent_manifest": "game/data/presentation/ui/fonts/manifest.json"
+    },
+    "what_it_enables": [
+      "High-fantasy typography bindings with Cinzel, Cinzel Decorative, and MedievalSharp",
+      "Hierarchical typographic roles across title banners, headers, narrative body, and HUD vitals",
+      "Pre-computed line heights and letter spacing metrics for pixel-perfect blitting",
+      "Proportional point size scaling across desktop resolutions"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in font metric queries (ALLOC_ZERO_HEAP)",
+      "Font point sizes must be strictly positive",
+      "All font files must exist within game/assets/fonts/",
+      "Graceful fallback to ASCII bitmap font in headless or unrasterizable environments"
+    ]
   },
-  "font_families": [
-    {
-      "id": "font_cinzel_decorative",
-      "file": "assets/fonts/CinzelDecorative-Bold.ttf",
-      "style": "serif_ornate",
-      "weight": "bold"
+  "block_2_opening": {
+    "pre_conditions": {
+      "font_subsystem": "viewport/gui_fonts.h",
+      "ttf_binaries": "game/assets/fonts/"
     },
-    {
-      "id": "font_cinzel_bold",
-      "file": "assets/fonts/Cinzel-Bold.ttf",
-      "style": "serif_classical",
-      "weight": "bold"
+    "static_declarations": {
+      "schema_id": "tenlux.data.ui.fonts.typography.v1",
+      "target_struct": "gui_font_catalog_t",
+      "header_binding": "include/viewport/gui_fonts.h"
     },
-    {
-      "id": "font_medieval_sharp",
-      "file": "assets/fonts/MedievalSharp.ttf",
-      "style": "gothic_vernacular",
-      "weight": "regular"
+    "generic_helper_contracts": {
+      "loader": "gui_fonts_load_catalog",
+      "role_lookup": "gui_fonts_get_role"
+    },
+    "capacities": {
+      "max_font_families": 8,
+      "max_typographic_roles": 16
     }
-  ],
-  "typography_roles": [
-    {
-      "role": "title_banner",
-      "font_id": "font_cinzel_decorative",
-      "base_pt": 22,
-      "line_height_px": 28,
-      "letter_spacing_px": 2,
-      "description": "Continental title banner and triumph splash screens"
-    },
-    {
-      "role": "header_screen",
-      "font_id": "font_cinzel_bold",
-      "base_pt": 16,
-      "line_height_px": 22,
-      "letter_spacing_px": 1,
-      "description": "5-Screen architecture primary navigation headers"
-    },
-    {
-      "role": "header_panel",
-      "font_id": "font_cinzel_bold",
-      "base_pt": 13,
-      "line_height_px": 18,
-      "letter_spacing_px": 1,
-      "description": "Window frame headers (Status, Chronicle, Viewport, Actions)"
-    },
-    {
-      "role": "body_narrative",
-      "font_id": "font_medieval_sharp",
-      "base_pt": 11,
-      "line_height_px": 16,
-      "letter_spacing_px": 0,
-      "description": "Compendium lore chapters, item flavor descriptions, and chronicle feeds"
-    },
-    {
-      "role": "hud_vital_numbers",
-      "font_id": "font_cinzel_bold",
-      "base_pt": 12,
-      "line_height_px": 16,
-      "letter_spacing_px": 1,
-      "description": "HP/MP/TP gauges, stance percentage meters, and turn timers"
-    },
-    {
-      "role": "dialogue_speaker",
-      "font_id": "font_cinzel_bold",
-      "base_pt": 13,
-      "line_height_px": 18,
-      "letter_spacing_px": 1,
-      "description": "Character portrait nameplate in cinematic dialogue frames"
-    },
-    {
-      "role": "dialogue_speech",
-      "font_id": "font_medieval_sharp",
-      "base_pt": 12,
-      "line_height_px": 18,
-      "letter_spacing_px": 0,
-      "description": "Spoken dialogue text inside character speech boxes"
-    },
-    {
-      "role": "tactical_grid_labels",
-      "font_id": "font_cinzel_bold",
-      "base_pt": 9,
-      "line_height_px": 12,
-      "letter_spacing_px": 0,
-      "description": "Cell coordinate labels, movement cost badges, and floating damage numbers"
+  },
+  "block_3_body": {
+    "font_families": [
+      {
+        "id": "font_cinzel_decorative",
+        "file": "assets/fonts/CinzelDecorative-Bold.ttf",
+        "style": "serif_ornate",
+        "weight": "bold"
+      },
+      {
+        "id": "font_cinzel_bold",
+        "file": "assets/fonts/Cinzel-Bold.ttf",
+        "style": "serif_classical",
+        "weight": "bold"
+      },
+      {
+        "id": "font_medieval_sharp",
+        "file": "assets/fonts/MedievalSharp.ttf",
+        "style": "gothic_vernacular",
+        "weight": "regular"
+      }
+    ],
+    "typography_roles": [
+      {
+        "role": "title_banner",
+        "font_id": "font_cinzel_decorative",
+        "base_pt": 22,
+        "line_height_px": 28,
+        "letter_spacing_px": 2,
+        "description": "Continental title banner and triumph splash screens"
+      },
+      {
+        "role": "header_screen",
+        "font_id": "font_cinzel_bold",
+        "base_pt": 16,
+        "line_height_px": 22,
+        "letter_spacing_px": 1,
+        "description": "5-Screen architecture primary navigation headers"
+      },
+      {
+        "role": "header_panel",
+        "font_id": "font_cinzel_bold",
+        "base_pt": 13,
+        "line_height_px": 18,
+        "letter_spacing_px": 1,
+        "description": "Window frame headers (Status, Chronicle, Viewport, Actions)"
+      },
+      {
+        "role": "body_narrative",
+        "font_id": "font_medieval_sharp",
+        "base_pt": 11,
+        "line_height_px": 16,
+        "letter_spacing_px": 0,
+        "description": "Compendium lore chapters, item flavor descriptions, and chronicle feeds"
+      },
+      {
+        "role": "hud_vital_numbers",
+        "font_id": "font_cinzel_bold",
+        "base_pt": 12,
+        "line_height_px": 16,
+        "letter_spacing_px": 1,
+        "description": "HP/MP/TP gauges, stance percentage meters, and turn timers"
+      },
+      {
+        "role": "dialogue_speaker",
+        "font_id": "font_cinzel_bold",
+        "base_pt": 13,
+        "line_height_px": 18,
+        "letter_spacing_px": 1,
+        "description": "Character portrait nameplate in cinematic dialogue frames"
+      },
+      {
+        "role": "dialogue_speech",
+        "font_id": "font_medieval_sharp",
+        "base_pt": 12,
+        "line_height_px": 18,
+        "letter_spacing_px": 0,
+        "description": "Spoken dialogue text inside character speech boxes"
+      },
+      {
+        "role": "tactical_grid_labels",
+        "font_id": "font_cinzel_bold",
+        "base_pt": 9,
+        "line_height_px": 12,
+        "letter_spacing_px": 0,
+        "description": "Cell coordinate labels, movement cost badges, and floating damage numbers"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_BASE_PT_RANGE",
+        "condition": "base_pt >= 6 && base_pt <= 48",
+        "action": "Clamp font point sizes to legible interval [6, 48]"
+      },
+      {
+        "id": "TRIPWIRE_LINE_HEIGHT_BOUNDS",
+        "condition": "line_height_px >= base_pt",
+        "action": "Enforce line height at least equal to point size to prevent overlapping lines"
+      }
+    ],
+    "metrics": {
+      "registered_font_families": 3,
+      "registered_roles": 8,
+      "zero_heap_compliant": true
     }
-  ]
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
+      "menu_index": 1
+    },
+    "execution_hooks": {
+      "on_load": "gui_fonts_load_typography",
+      "audit_hook": "gui_fonts_preflight"
+    }
+  }
 }
-

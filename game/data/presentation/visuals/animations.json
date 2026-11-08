@@ -1,66 +1,135 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/textures/animations.json",
-    "id": "data.textures.animations",
-    "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "file": "game/data/presentation/visuals/animations.json",
+    "id": "data.presentation.visuals.animations",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Frame timing sequences and animation clips for tactical combatants."
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Frame timing sequences and animation clips for tactical combatants.",
+    "where_the_data_lives": {
+      "topology": "Presentation Visuals Architecture",
+      "path": "game/data/presentation/visuals/animations.json",
+      "parent_manifest": "game/data/presentation/visuals/manifest.json"
+    },
+    "what_it_enables": [
+      "Deterministic sprite animation clocks driven by fixed simulation ticks",
+      "Combat animation sequencing: Ward of Lux, Cuttatio Tenebris, and Stagger",
+      "Seamless integration with audio cue triggers on key attack/ward frames",
+      "Procedural vector tween fallback when raster sprite sheets are missing"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in animation clock evaluation (ALLOC_ZERO_HEAP)",
+      "Frame counts must be strictly positive",
+      "Frame durations strictly bounded between 16ms and 2000ms",
+      "Animation state strictly decoupled from combat simulation state"
+    ]
   },
-  "animation_clips": [
-    {
-      "id": "anim_idle",
-      "name": "Stance Idle Breathing",
-      "loop": true,
-      "frame_count": 4,
-      "frame_duration_ms": 250,
-      "frames": [0, 1, 2, 1]
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/gui.h",
+      "spritesheets": "visuals/spritesheets.json"
     },
-    {
-      "id": "anim_walk",
-      "name": "Grid Cell Traversal Walk",
-      "loop": true,
-      "frame_count": 4,
-      "frame_duration_ms": 150,
-      "frames": [0, 1, 2, 3]
+    "static_declarations": {
+      "schema_id": "tenlux.data.visuals.animations.v1",
+      "target_struct": "gui_animation_catalog_t",
+      "header_binding": "include/viewport/gui_assets.h"
     },
-    {
-      "id": "anim_ward_lux",
-      "name": "Raise Shield of Lux (Lux Barrio)",
-      "loop": false,
-      "frame_count": 3,
-      "frame_duration_ms": 100,
-      "frames": [0, 2, 3],
-      "sfx_cue": "sfx_ward_lux_barrio"
+    "generic_helper_contracts": {
+      "evaluator": "gui_animation_evaluate_frame",
+      "sfx_trigger": "gui_animation_trigger_sfx"
     },
-    {
-      "id": "anim_strike_tenebris",
-      "name": "Cuttatio Tenebris Sweeping Arc",
-      "loop": false,
-      "frame_count": 4,
-      "frame_duration_ms": 75,
-      "frames": [0, 1, 2, 3],
-      "sfx_cue": "sfx_strike_cuttatio_tenebris"
-    },
-    {
-      "id": "anim_stagger",
-      "name": "Kinetic Poise Stagger / Recoil",
-      "loop": false,
-      "frame_count": 2,
-      "frame_duration_ms": 200,
-      "frames": [1, 0],
-      "sfx_cue": "sfx_shield_stagger"
-    },
-    {
-      "id": "anim_vanquish",
-      "name": "Vanquished Dissolution (Twilight Fade)",
-      "loop": false,
-      "frame_count": 4,
-      "frame_duration_ms": 120,
-      "frames": [0, 1, 2, 3]
+    "capacities": {
+      "max_animation_clips": 32,
+      "max_frames_per_clip": 16
     }
-  ]
+  },
+  "block_3_body": {
+    "animation_clips": [
+      {
+        "id": "anim_idle",
+        "name": "Stance Idle Breathing",
+        "loop": true,
+        "frame_count": 4,
+        "frame_duration_ms": 250,
+        "frames": [0, 1, 2, 1]
+      },
+      {
+        "id": "anim_walk",
+        "name": "Grid Cell Traversal Walk",
+        "loop": true,
+        "frame_count": 4,
+        "frame_duration_ms": 150,
+        "frames": [0, 1, 2, 3]
+      },
+      {
+        "id": "anim_ward_lux",
+        "name": "Raise Shield of Lux (Lux Barrio)",
+        "loop": false,
+        "frame_count": 3,
+        "frame_duration_ms": 100,
+        "frames": [0, 2, 3],
+        "sfx_cue": "sfx_ward_lux_barrio"
+      },
+      {
+        "id": "anim_strike_tenebris",
+        "name": "Cuttatio Tenebris Sweeping Arc",
+        "loop": false,
+        "frame_count": 4,
+        "frame_duration_ms": 75,
+        "frames": [0, 1, 2, 3],
+        "sfx_cue": "sfx_strike_cuttatio_tenebris"
+      },
+      {
+        "id": "anim_stagger",
+        "name": "Kinetic Poise Stagger / Recoil",
+        "loop": false,
+        "frame_count": 2,
+        "frame_duration_ms": 200,
+        "frames": [1, 0],
+        "sfx_cue": "sfx_shield_stagger"
+      },
+      {
+        "id": "anim_vanquish",
+        "name": "Vanquished Dissolution (Twilight Fade)",
+        "loop": false,
+        "frame_count": 4,
+        "frame_duration_ms": 120,
+        "frames": [0, 1, 2, 3]
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_FRAME_DURATION",
+        "condition": "frame_duration_ms >= 16 && frame_duration_ms <= 2000",
+        "action": "Clamp animation frame duration to [16, 2000] ms"
+      },
+      {
+        "id": "TRIPWIRE_FRAME_COUNT_POSITIVE",
+        "condition": "frame_count > 0 && frame_count <= 16",
+        "action": "Clamp frame count to maximum 16 frames per clip"
+      }
+    ],
+    "metrics": {
+      "registered_animation_clips": 6,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "menu_index": 1
+    },
+    "execution_hooks": {
+      "on_load": "gui_animations_load_catalog",
+      "audit_hook": "gui_animations_preflight"
+    }
+  }
 }
-

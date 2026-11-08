@@ -1,99 +1,169 @@
 {
-  "_metadata": {
+  "block_1_metadata": {
     "project": "Tenebris and Lux",
-    "file": "data/textures/spritesheets.json",
-    "id": "data.textures.spritesheets",
-    "layer": "Layer 2: Presentation & Viewport",
-    "version": "1.0.0",
-    "date": "2026-11-03",
+    "file": "game/data/presentation/visuals/spritesheets.json",
+    "id": "data.presentation.visuals.spritesheets",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.0",
+    "interface_rev": "Rev 4",
+    "date": "2026-11-07",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-    "role": "Character and entity sprite sheet atlas definitions and cell coordinates."
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Character and entity sprite sheet atlas definitions and cell coordinates.",
+    "where_the_data_lives": {
+      "topology": "Presentation Visuals Architecture",
+      "path": "game/data/presentation/visuals/spritesheets.json",
+      "parent_manifest": "game/data/presentation/visuals/manifest.json"
+    },
+    "what_it_enables": [
+      "4-Directional sprite sheet slicing (South=0, West=1, East=2, North=3)",
+      "Uniform 32x32 pixel cell grids with custom pivot anchor coordinates",
+      "Procedural sprite generator binding for characters, companions, and adversaries",
+      "Seamless integration with animation clips and directional facing logic"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during sprite atlas lookup (ALLOC_ZERO_HEAP)",
+      "Standard cell size: strictly 32x32 pixels",
+      "Direction indices must strictly map to [0=South, 1=West, 2=East, 3=North]",
+      "All sprite sheet paths must specify valid procedural fallback generators"
+    ]
   },
-  "cell_size": {
-    "width": 32,
-    "height": 32
-  },
-  "sheets": [
-    {
-      "id": "sheet_elijah",
-      "name": "Elijah Ro-enheart (The Steadfast Vanguard)",
-      "file": "assets/textures/sprites/characters/elijah_sheet_128x128.png",
-      "procedural_generator": "procedural_vanguard_shield",
-      "cols": 4,
-      "rows": 4,
-      "anchor_x": 16,
-      "anchor_y": 30,
-      "directions": {
-        "south": 0,
-        "west": 1,
-        "east": 2,
-        "north": 3
-      }
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_assets": "viewport/gui_assets.h",
+      "animations": "visuals/animations.json"
     },
-    {
-      "id": "sheet_katrina",
-      "name": "Lady Katrina Jaren (Guild Outrider)",
-      "file": "assets/textures/sprites/characters/katrina_sheet_128x128.png",
-      "procedural_generator": "procedural_outrider_sword",
-      "cols": 4,
-      "rows": 4,
-      "anchor_x": 16,
-      "anchor_y": 30,
-      "directions": {
-        "south": 0,
-        "west": 1,
-        "east": 2,
-        "north": 3
-      }
+    "static_declarations": {
+      "schema_id": "tenlux.data.visuals.spritesheets.v1",
+      "target_struct": "gui_spritesheet_catalog_t",
+      "header_binding": "include/viewport/gui_assets.h"
     },
-    {
-      "id": "sheet_observer",
-      "name": "The Custom Bearer (Steward of Balance)",
-      "file": "assets/textures/sprites/characters/observer_sheet_128x128.png",
-      "procedural_generator": "procedural_steward_relics",
-      "cols": 4,
-      "rows": 4,
-      "anchor_x": 16,
-      "anchor_y": 30,
-      "directions": {
-        "south": 0,
-        "west": 1,
-        "east": 2,
-        "north": 3
-      }
+    "generic_helper_contracts": {
+      "loader": "gui_spritesheets_load_catalog",
+      "frame_resolver": "gui_spritesheets_get_cell_rect"
     },
-    {
-      "id": "sheet_dream_eater",
-      "name": "Dream Eater (Nocturnal Predator)",
-      "file": "assets/textures/sprites/enemies/dream_eater_sheet_128x128.png",
-      "procedural_generator": "procedural_shadow_fiend",
-      "cols": 4,
-      "rows": 4,
-      "anchor_x": 16,
-      "anchor_y": 28,
-      "directions": {
-        "south": 0,
-        "west": 1,
-        "east": 2,
-        "north": 3
-      }
-    },
-    {
-      "id": "sheet_guard",
-      "name": "Sacyran Royal Guard",
-      "file": "assets/textures/sprites/npc/guard_sheet_128x128.png",
-      "procedural_generator": "procedural_imperial_guard",
-      "cols": 4,
-      "rows": 4,
-      "anchor_x": 16,
-      "anchor_y": 30,
-      "directions": {
-        "south": 0,
-        "west": 1,
-        "east": 2,
-        "north": 3
-      }
+    "capacities": {
+      "max_spritesheets": 32,
+      "base_cell_size": 32
     }
-  ]
+  },
+  "block_3_body": {
+    "cell_size": {
+      "width": 32,
+      "height": 32
+    },
+    "sheets": [
+      {
+        "id": "sheet_elijah",
+        "name": "Elijah Ro-enheart (The Steadfast Vanguard)",
+        "file": "assets/textures/sprites/characters/elijah_sheet_128x128.png",
+        "procedural_generator": "procedural_vanguard_shield",
+        "cols": 4,
+        "rows": 4,
+        "anchor_x": 16,
+        "anchor_y": 30,
+        "directions": {
+          "south": 0,
+          "west": 1,
+          "east": 2,
+          "north": 3
+        }
+      },
+      {
+        "id": "sheet_katrina",
+        "name": "Lady Katrina Jaren (Guild Outrider)",
+        "file": "assets/textures/sprites/characters/katrina_sheet_128x128.png",
+        "procedural_generator": "procedural_outrider_sword",
+        "cols": 4,
+        "rows": 4,
+        "anchor_x": 16,
+        "anchor_y": 30,
+        "directions": {
+          "south": 0,
+          "west": 1,
+          "east": 2,
+          "north": 3
+        }
+      },
+      {
+        "id": "sheet_observer",
+        "name": "The Custom Bearer (Steward of Balance)",
+        "file": "assets/textures/sprites/characters/observer_sheet_128x128.png",
+        "procedural_generator": "procedural_steward_relics",
+        "cols": 4,
+        "rows": 4,
+        "anchor_x": 16,
+        "anchor_y": 30,
+        "directions": {
+          "south": 0,
+          "west": 1,
+          "east": 2,
+          "north": 3
+        }
+      },
+      {
+        "id": "sheet_dream_eater",
+        "name": "Dream Eater (Nocturnal Predator)",
+        "file": "assets/textures/sprites/enemies/dream_eater_sheet_128x128.png",
+        "procedural_generator": "procedural_shadow_fiend",
+        "cols": 4,
+        "rows": 4,
+        "anchor_x": 16,
+        "anchor_y": 28,
+        "directions": {
+          "south": 0,
+          "west": 1,
+          "east": 2,
+          "north": 3
+        }
+      },
+      {
+        "id": "sheet_guard",
+        "name": "Sacyran Royal Guard",
+        "file": "assets/textures/sprites/npc/guard_sheet_128x128.png",
+        "procedural_generator": "procedural_imperial_guard",
+        "cols": 4,
+        "rows": 4,
+        "anchor_x": 16,
+        "anchor_y": 30,
+        "directions": {
+          "south": 0,
+          "west": 1,
+          "east": 2,
+          "north": 3
+        }
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_SPRITESHEET_CELL_SIZE",
+        "condition": "cell_size.width == 32 && cell_size.height == 32",
+        "action": "Clamp cell dimensions to standard 32x32 pixels"
+      },
+      {
+        "id": "TRIPWIRE_DIRECTIONS_INDEXING",
+        "condition": "south == 0 && west == 1 && east == 2 && north == 3",
+        "action": "Enforce canonical 4-directional row mapping"
+      }
+    ],
+    "metrics": {
+      "registered_spritesheets": 5,
+      "cell_dimensions": "32x32",
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "menu_index": 3
+    },
+    "execution_hooks": {
+      "on_load": "gui_spritesheets_load_catalog",
+      "audit_hook": "gui_spritesheets_preflight"
+    }
+  }
 }
-
