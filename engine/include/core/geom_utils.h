@@ -91,7 +91,7 @@ Sub-Assembly 2.2: 2D Spatial Bounding Box & Point Records
 /**
  * Axis-Aligned Bounding Box (AABB) in 2D discrete integer screen space.
  */
-typedef struct {
+typedef struct geom_rect {
     int x; /**< Top-left horizontal coordinate in screen space. */
     int y; /**< Top-left vertical coordinate in screen space. */
     int w; /**< Bounding box width (horizontal extent, w >= 0). */
@@ -101,7 +101,7 @@ typedef struct {
 /**
  * Discrete 2D point coordinate.
  */
-typedef struct {
+typedef struct geom_point2d {
     int32_t x; /**< Horizontal coordinate. */
     int32_t y; /**< Vertical coordinate. */
 } geom_point2d_t;

@@ -42,7 +42,9 @@
 #include "relics/items.h"
 #include "world/world.h"
 #include "dispatch/dispatcher.h"
-#include "viewport/gui.h"
+#include "viewport/raster/gui.h"
+#include "viewport/reel/reel.h"
+#include "audio/audio.h"
 #include "core/manifest.h"
 #include "io/fs_utils.h"
 #include "io/json_utils.h"
@@ -279,6 +281,26 @@ static int run_full_subsystem_audit(void)
     }
     printf("[PASS] Test 0d: Battle formulas & affinity invariants verified.\n");
 
+    /* Step 2f: Run audio bus orchestrator diagnostic audit */
+    if (!audio_bus_preflight_audit()) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Audio event bus audit failed");
+        fprintf(stderr, "[FAIL] Audio event bus orchestrator audit failed.\n");
+        debug_shutdown();
+        log_shutdown();
+        return 1;
+    }
+    printf("[PASS] Test 0e: Audio event bus & multi-channel mixer invariants verified.\n");
+
+    /* Step 2g: Run Movie Reel presentation orchestrator diagnostic audit */
+    if (!reel_audit()) {
+        LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Movie Reel orchestrator audit failed");
+        fprintf(stderr, "[FAIL] Movie Reel orchestrator audit failed.\n");
+        debug_shutdown();
+        log_shutdown();
+        return 1;
+    }
+    printf("[PASS] Test 0f: Movie Reel scene strip & depth kinematics invariants verified.\n");
+
     /* Step 3: Run simulation engine invariant audit */
     if (game_run_self_audit() != 0) {
         LOG_CRITICAL(LOG_CAT_LOG, "Audit", -0.8f, "Core game simulation audit failed");
@@ -300,10 +322,10 @@ static int run_full_subsystem_audit(void)
 
     /* Step 5: Report comprehensive pass summary */
     printf("============================================================\n");
-    printf("Audit Result: ALL INVARIANT CHECKS PASSED (7/7 + Pre-Flight)\n");
+    printf("Audit Result: ALL INVARIANT CHECKS PASSED (9/9 + Pre-Flight)\n");
     printf("============================================================\n");
 
-    LOG_INFO(LOG_CAT_LOG, "Audit", 1.0f, "All invariant checks passed successfully (7/7 + Pre-Flight)");
+    LOG_INFO(LOG_CAT_LOG, "Audit", 1.0f, "All invariant checks passed successfully (9/9 + Pre-Flight)");
     debug_shutdown();
     log_shutdown();
     return 0;

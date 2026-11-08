@@ -39,9 +39,10 @@
 // Stratum: Layer 4 (Verification Suite) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui.h"
-#include "viewport/gui_fonts.h"
-#include "viewport/gui_screens.h"
+#include "viewport/raster/gui.h"
+#include "viewport/styling/gui_fonts.h"
+#include "viewport/reel/gui_screens.h"
+#include "viewport/reel/reel.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -208,6 +209,9 @@ static void test_gui_assertions_and_guarantees(void)
 
     /* 3.7 Alternate screens tab navigation audit */
     TEST_ASSERT(gui_screens_audit(), "alternate screens audit verified");
+
+    /* 3.8 Movie Reel & scene depth kinematics audit */
+    TEST_ASSERT(reel_audit(), "Movie Reel audit verified");
 
     printf("  [AXIOM-3] Section 3 passed: Layout & projection axioms hold.\n");
 }

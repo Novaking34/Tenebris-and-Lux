@@ -46,13 +46,13 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui_types.h"
-#include "viewport/gui_palette.h"
-#include "viewport/gui_layout.h"
-#include "viewport/gui_widgets.h"
-#include "viewport/gui_assets.h"
-#include "viewport/gui_view2d.h"
-#include "viewport/gui_hud.h"
+#include "viewport/raster/gui_types.h"
+#include "viewport/styling/gui_palette.h"
+#include "viewport/hud/gui_layout.h"
+#include "viewport/hud/gui_widgets.h"
+#include "viewport/styling/gui_assets.h"
+#include "viewport/raster/gui_view2d.h"
+#include "viewport/hud/gui_hud.h"
 
 #include "ending/game.h"
 #include "core/manifest.h"

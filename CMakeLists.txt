@@ -143,11 +143,17 @@ set(ENGINE_DEBUG_SOURCES
     engine/src/debug/debug_fallback.c
 )
 
+set(ENGINE_AUDIO_SOURCES
+    engine/src/audio/audio_bus.c
+    engine/src/audio/audio_fallback.c
+)
+
 set(ENGINE_UTIL_SOURCES
     ${ENGINE_CORE_SOURCES}
     ${ENGINE_IO_SOURCES}
     ${ENGINE_LOG_SOURCES}
     ${ENGINE_DEBUG_SOURCES}
+    ${ENGINE_AUDIO_SOURCES}
 )
 
 set(ENGINE_UTIL_HEADERS
@@ -172,6 +178,10 @@ set(ENGINE_UTIL_HEADERS
     engine/include/log/log_fallback.h
     engine/include/debug/debug.h
     engine/include/debug/debug_fallback.h
+    engine/include/audio/audio_types.h
+    engine/include/audio/audio_bus.h
+    engine/include/audio/audio_fallback.h
+    engine/include/audio/audio.h
 )
 
 # ------------------------------------------------------------------------------
@@ -270,28 +280,31 @@ set(GAME_SIM_HEADERS
 # ------------------------------------------------------------------------------
 
 set(ENGINE_VIEWPORT_SOURCES
-    engine/src/viewport/gui_palette.c
-    engine/src/viewport/gui_fonts.c
-    engine/src/viewport/gui_layout.c
-    engine/src/viewport/gui_widgets.c
-    engine/src/viewport/gui_assets.c
-    engine/src/viewport/gui_view2d.c
-    engine/src/viewport/gui_hud.c
-    engine/src/viewport/gui_screens.c
-    engine/src/viewport/gui.c
+    engine/src/viewport/raster/gui.c
+    engine/src/viewport/raster/gui_view2d.c
+    engine/src/viewport/hud/gui_hud.c
+    engine/src/viewport/hud/gui_layout.c
+    engine/src/viewport/hud/gui_widgets.c
+    engine/src/viewport/reel/gui_screens.c
+    engine/src/viewport/reel/reel.c
+    engine/src/viewport/styling/gui_palette.c
+    engine/src/viewport/styling/gui_fonts.c
+    engine/src/viewport/styling/gui_assets.c
 )
 
 set(ENGINE_VIEWPORT_HEADERS
-    engine/include/viewport/gui_types.h
-    engine/include/viewport/gui_palette.h
-    engine/include/viewport/gui_fonts.h
-    engine/include/viewport/gui_layout.h
-    engine/include/viewport/gui_widgets.h
-    engine/include/viewport/gui_assets.h
-    engine/include/viewport/gui_view2d.h
-    engine/include/viewport/gui_hud.h
-    engine/include/viewport/gui_screens.h
-    engine/include/viewport/gui.h
+    engine/include/viewport/viewport.h
+    engine/include/viewport/raster/gui_types.h
+    engine/include/viewport/raster/gui.h
+    engine/include/viewport/raster/gui_view2d.h
+    engine/include/viewport/hud/gui_hud.h
+    engine/include/viewport/hud/gui_layout.h
+    engine/include/viewport/hud/gui_widgets.h
+    engine/include/viewport/reel/gui_screens.h
+    engine/include/viewport/reel/reel.h
+    engine/include/viewport/styling/gui_palette.h
+    engine/include/viewport/styling/gui_fonts.h
+    engine/include/viewport/styling/gui_assets.h
 )
 
 # ------------------------------------------------------------------------------
@@ -646,6 +659,35 @@ if(BUILD_TESTING)
     target_link_libraries(test_formula_eval_fallback_unit PRIVATE m)
     target_compile_options(test_formula_eval_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Presentation Movie Reel & Scene Depth Unit Test
+    add_executable(test_reel_unit
+        tests/unit/viewport/test_reel_unit.c
+        engine/src/viewport/reel/reel.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_reel_unit PRIVATE
+        ${COMMON_INCLUDES}
+        ${X11_INCLUDE_DIR}
+    )
+    target_link_libraries(test_reel_unit PRIVATE ${X11_LIBRARIES})
+    target_compile_options(test_reel_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Audio Event Bus & Mixer Subsystem Unit Test
+    add_executable(test_audio_bus_unit
+        tests/unit/audio/test_audio_bus_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_audio_bus_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_audio_bus_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Emergency Audio Fallback Profile Unit Test
+    add_executable(test_audio_fallback_unit
+        tests/unit/audio/test_audio_fallback_unit.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_audio_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_audio_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
     # --------------------------------------------------------------------------
     # [ SUB-ASSEMBLY 4.3: LAYER 0 & LAYER 1 INTEGRATED HARNESSES ]
     # Mission: Verify cross-subsystem coordination, DAG dependencies & runs.
@@ -807,6 +849,9 @@ if(BUILD_TESTING)
     add_test(NAME unit_world_test COMMAND test_world)
     add_test(NAME unit_dispatch_test COMMAND test_dispatch)
     add_test(NAME unit_gui_test COMMAND test_gui)
+    add_test(NAME unit_reel_test COMMAND test_reel_unit)
+    add_test(NAME unit_audio_bus_test COMMAND test_audio_bus_unit)
+    add_test(NAME unit_audio_fallback_test COMMAND test_audio_fallback_unit)
     add_test(NAME unit_fs_utils_test COMMAND test_fs_utils_unit)
     add_test(NAME unit_path_finder_test COMMAND test_path_finder_unit)
     add_test(NAME unit_json_utils_test COMMAND test_json_utils_unit)
@@ -867,6 +912,9 @@ if(BUILD_TESTING)
         unit_world_test
         unit_dispatch_test
         unit_gui_test
+        unit_reel_test
+        unit_audio_bus_test
+        unit_audio_fallback_test
         unit_fs_utils_test
         unit_path_finder_test
         unit_json_utils_test

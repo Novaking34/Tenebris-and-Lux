@@ -37,9 +37,9 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui_hud.h"
-#include "viewport/gui_widgets.h"
-#include "viewport/gui_fonts.h"
+#include "viewport/hud/gui_hud.h"
+#include "viewport/hud/gui_widgets.h"
+#include "viewport/styling/gui_fonts.h"
 #include "ending/game.h"
 #include "hero/sim_state.h"
 

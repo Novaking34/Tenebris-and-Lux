@@ -43,7 +43,7 @@
 /**
  * High Fantasy semantic typography roles.
  */
-typedef enum {
+typedef enum gui_font_role {
     GUI_FONT_TITLE = 0,    /**< Grand heroic header: Cinzel / Bookman 24px */
     GUI_FONT_SUBTITLE,     /**< Section headers: Cinzel / Palladio 18px */
     GUI_FONT_STORY,        /**< Narrative chronicle prose: MedievalSharp 16px */
@@ -54,7 +54,7 @@ typedef enum {
 /**
  * Typography catalog state.
  */
-typedef struct {
+typedef struct gui_font_catalog {
     void *fonts[GUI_FONT_COUNT]; /**< Opaque XFontStruct pointers */
     bool is_loaded;
 } gui_font_catalog_t;

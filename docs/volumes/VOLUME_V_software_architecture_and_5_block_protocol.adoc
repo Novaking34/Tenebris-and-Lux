@@ -1431,80 +1431,109 @@ enabling automated continuous integration testing without relying on crude proce
 == Overview
 
 This document provides a comprehensive architectural and code walkthrough of the modular Layer 2
-Presentation engine implemented in `include/gui/` and `src/gui/`. It details the decomposition of
-the graphical frontend into specialized sub-assemblies (`gui_palette`, `gui_layout`, `gui_widgets`,
-`gui_assets`, `gui_view2d`, `gui_hud`), the 2.5D diamond dimetric isometric projection engine with
-elevation prisms, the Asset Abstraction Layer for future artist drop-in assets, and the 60 FPS
-double-buffered X11 event loop.
+Presentation engine implemented in `engine/include/viewport/` and `engine/src/viewport/`.
+Decomposed into four specialized sub-assemblies (`viewport/raster/`, `viewport/hud/`,
+`viewport/reel/`, `viewport/styling/`), the system implements the **Movie Reel Architecture**:
+a continuous cinematic scene film strip traversed via horizontal Push/Pull transitions, with
+vertical Pop-Out/Sink-In depth kinematics, high fantasy palette blending, and a 60 FPS
+double-buffered X11 presentation pump.
 
-== 1. The Modular GUI Sub-Assembly Architecture
+== 1. The Movie Reel Mental Model & Subfolder Strata
 
-To prevent monolithic bloat and maintain strict separation of concerns, the presentation engine is
-partitioned into six single-responsibility sub-assemblies:
+The viewport subsystem is structured into four cohesive sub-assemblies matching its mechanical
+mental model:
+
+```text
+engine/
+├── include/viewport/
+│   ├── viewport.h              <-- Master Viewport Umbrella Header
+│   ├── raster/                 <-- Low-level double-buffered X11 rasterization & 2.5D math
+│   │   ├── gui.h
+│   │   ├── gui_types.h
+│   │   └── gui_view2d.h
+│   ├── hud/                    <-- Desktop HUD panels, layout bounding boxes, and action dock
+│   │   ├── gui_hud.h
+│   │   ├── gui_layout.h
+│   │   └── gui_widgets.h
+│   ├── reel/                   <-- The Movie Reel engine & canonical screen frames
+│   │   ├── reel.h
+│   │   └── gui_screens.h
+│   └── styling/                <-- Visual palettes, TrueType fonts, and asset abstraction
+│       ├── gui_palette.h
+│       ├── gui_fonts.h
+│       └── gui_assets.h
+└── src/viewport/
+    ├── raster/
+    ├── hud/
+    ├── reel/
+    └── styling/
+```
 
 [cols="1,2,2", options="header"]
 |===
-| Sub-Assembly | Source Files | Architectural Responsibility
-| `gui_types` | `include/gui/gui_types.h` | Shared geometry, view modes, color, asset, and widget structs.
-| `gui_palette` | `gui_palette.c`, `gui_palette.h` | 24-bit RGB / 32-bit ARGB colormap binding and 3D elevation shading.
-| `gui_layout` | `gui_layout.c`, `gui_layout.h` | Window partitioning into 5 disjoint panels with AABB non-overlap audits.
-| `gui_widgets` | `gui_widgets.c`, `gui_widgets.h` | Interactive buttons, case-insensitive hotkeys, and progress/relic meters.
-| `gui_assets` | `gui_assets.c`, `gui_assets.h` | Asset Abstraction Layer and procedural geometric vector art synthesizers.
-| `gui_view2d` | `gui_view2d.c`, `gui_view2d.h` | 2D Flat / 2.5D Isometric tactical world viewport with elevation blocks.
-| `gui_hud` | `gui_hud.c`, `gui_hud.h` | Heads-Up Display: banner, vitals, twin relics, moral sway, and chronicle log.
-| `gui_core` | `gui.c`, `gui.h` | Master facade, X11 double-buffer backbuffer, and 60 FPS event dispatcher.
+| Sub-Assembly | Source Stratum | Architectural Mission
+| `raster/` | `gui.c`, `gui_view2d.c` | Double-buffered X11 context, 2.5D diamond isometric projection, letterbox/pillarbox scalers.
+| `hud/` | `gui_hud.c`, `gui_layout.c`, `gui_widgets.c` | Desktop HUD, 5 disjoint panels, non-overlapping AABB audits, interactive action dock.
+| `reel/` | `reel.c`, `gui_screens.c` | The Movie Reel orchestrator: horizontal scene strip (push/pull) and vertical modal depth (pop out/sink in).
+| `styling/` | `gui_palette.c`, `gui_fonts.c`, `gui_assets.c` | Radiant hope colormaps, TrueType typography (`Cinzel`, `MedievalSharp`), procedural vector art abstraction.
 |===
 
-== 2. Desktop Panel Zoning & Layout Invariants
+== 2. The Movie Reel: Horizontal Motion & Vertical Depth
 
-The presentation viewport ($860 \times 620$ pixels) is partitioned into five distinct presentation
-zones designed with 10px outer margins and 8px inter-panel gutters:
+The core conceptual paradigm of the Rev 4 presentation engine is the **Movie Reel**:
 
 ```text
-┌────────────────────────────────────────────────────────────────────────┐
-│ Header Banner (840 x 48 px): Title, Realm Province, Dynastic Cycle     │
-├─────────────────────────────────────────┬──────────────────────────────┤
-│                                         │ Status & Inspection          │
-│ 2D / 2.5D Tactical World Viewport       │ (260 x 374 px):              │
-│ (570 x 374 px):                         │ - Protagonist Vitals (HP/MP) │
-│ - Diamond isometric tile grid           │ - Twin Relic Meters          │
-│ - 3D elevation ramparts & daises        │ - Stance & Moral Sway        │
-│ - Depth-sorted entity Painter queue     │ - Active Threat Vitals       │
-│ - Movement & attack range highlights    │                              │
-├─────────────────────────────────────────┼──────────────────────────────┤
-│ Narrative Chronicle Log (570 x 162 px): │ Command Dock (260 x 162 px): │
-│ - 6-line bounded FIFO event ring-buffer │ - 3x3 Tactical Action Grid   │
-│ - Color-coded channels & gold highlight │ - Ward, Strike, Balance, etc.│
-└─────────────────────────────────────────┴──────────────────────────────┘
+                           POP OUT (Z-Depth / Up)
+                           ▲ [Modals, Inspection Cards, Dialogues]
+                           │
+[Scene 0: TACTICAL] <==== PUSH / PULL ====> [Scene 1: STATUS] <====> [Scene 2: INVENTORY] ...
+(Film Cell Frame)          (Left / Right)     (Film Cell Frame)        (Film Cell Frame)
+                           │
+                           ▼ [Terrain Floor, Fog, Sunken Canvas]
+                           SINK IN (Z-Depth / Down)
 ```
 
-Every panel bounding box is mathematically audited via `gui_layout_audit()` using Layer 0
-`geom_rect_intersects()` and `geom_rect_within_bounds()` to guarantee zero visual collisions.
+=== 2.1 Horizontal Axis: Push and Pull (Left and Right)
+Scenes and screens are treated as consecutive frames along a physical celluloid reel strip:
+* **Push Right (`REEL_DIR_PUSH_RIGHT`)**: Advancing forward along the reel to a subsequent screen
+  (e.g., from `GUI_SCREEN_TACTICAL` [F1] to `GUI_SCREEN_STATUS` [F2]). The active scene slides
+  leftward as the new scene arrives from the right.
+* **Pull Left (`REEL_DIR_PULL_LEFT`)**: Rewinding backward along the reel to a prior screen
+  (e.g., returning from `GUI_SCREEN_STATUS` [F2] back to `GUI_SCREEN_TACTICAL` [F1]). The active
+  scene slides rightward as the prior scene is pulled back in.
+* **Smooth-Step Kinematics**: Horizontal transition progress is evaluated using normalized Hermite
+  interpolation ($S(t) = 3t^2 - 2t^3$) scaled to the viewport width, guaranteeing fluid motion
+  without visual tearing.
+
+=== 2.2 Vertical Axis: Pop Out and Sink In (Up and Down)
+Within any active scene on the reel, visual elements possess continuous $Z$-elevation depth:
+* **Pop Out (`REEL_DEPTH_POPPED = +1`)**: Elements elevate upward toward the viewer
+  ($\Delta Y = -16\text{ px}$, scale $1.05\times$, full $1.0$ opacity, drop shadow). Used for
+  dialogue boxes, relic inspection modals, victory fanfares, and action tooltips.
+* **Sink In (`REEL_DEPTH_SUNKEN = -1`)**: Elements submerge downward into the background canvas
+  ($\Delta Y = +12\text{ px}$, scale $0.95\times$, attenuated $0.60$ opacity, ambient recess).
+  Used for background terrain tiles, ambient fog layers, and sunken meters when a modal pops out.
+* **Surface (`REEL_DEPTH_SURFACE = 0`)**: The neutral baseline scene plane ($\Delta Y = 0$, scale $1.0$, alpha $1.0$).
 
 == 3. The 2.5D Tactical Isometric Engine
 
-The game features dual visual projection modes toggleable at runtime via the `[M]` key:
-* `GUI_VIEW_2D_FLAT`: Orthographic top-down grid ($38 \times 38$ px cells) for overworld travel.
+The tactical battlefield features dual visual projection modes toggleable via `[M]`:
+* `GUI_VIEW_2D_FLAT`: Classic orthographic top-down grid ($38 \times 38$ px cells) for overworld travel.
 * `GUI_VIEW_25D_ISOMETRIC`: Diamond dimetric projection ($48 \times 24$ px tiles) with vertical
-  $Z$-axis elevation prisms ($8$ px per elevation level) for tactical battles.
+  $Z$-axis elevation prisms ($8$ px per elevation level) for tactical skirmishes.
 
-=== Isometric Mathematical Formulation:
-Given discrete 3D grid coordinates $(gx, gy, gz)$, tile width $W$, tile height $H$, elevation scale
-$E$, and screen origin $(X_0, Y_0)$:
-
+=== Isometric Projection & Unprojection Reciprocity:
 [stem]
 ++++
-screen_x = X_0 + (gx - gy) \cdot \frac{W}{2}
+\text{screen\_x} = X_0 + (gx - gy) \cdot \frac{W}{2}
 ++++
 
 [stem]
 ++++
-screen_y = Y_0 + (gx + gy) \cdot \frac{H}{2} - gz \cdot E
+\text{screen\_y} = Y_0 + (gx + gy) \cdot \frac{H}{2} - gz \cdot E
 ++++
 
-=== Unprojection Reciprocity:
-Translating mouse clicks $(sx, sy)$ on ground plane $gz$ back to discrete grid $(gx, gy)$:
-
+Unprojecting mouse clicks $(sx, sy)$ on ground plane $gz$ back to discrete grid $(gx, gy)$:
 [stem]
 ++++
 gx = \left\lfloor \frac{sx - X_0}{W} + \frac{sy + gz \cdot E - Y_0}{H} + 0.5 \right\rfloor
@@ -1515,49 +1544,169 @@ gx = \left\lfloor \frac{sx - X_0}{W} + \frac{sy + gz \cdot E - Y_0}{H} + 0.5 \ri
 gy = \left\lfloor \frac{sy + gz \cdot E - Y_0}{H} - \frac{sx - X_0}{W} + 0.5 \right\rfloor
 ++++
 
-=== 3D Prism Shading & Elevation Blocks:
-When a tile has height $gz > 0$ (such as perimeter ramparts or altar daises), `gui_view2d.c`
-extrudes a 3-face shaded isometric cube:
-1. **Front-Left Face**: Extruded downward by $gz \cdot E$, shaded at $75\%$ brightness.
-2. **Front-Right Face**: Extruded downward by $gz \cdot E$, shaded at $55\%$ brightness (shadow).
-3. **Top Diamond Face**: Rendered with ambient highlight at $115\%$ brightness.
+== 4. Non-Anonymous Type Invariant Covenant
 
-=== Painter's Algorithm Depth Sorting:
-Entities (Elijah, Katrina, Dream Eater, ShadowStalker) are inserted into a depth-sorted render queue
-keyed by:
-
-[stem]
-++++
-depth\_key = (gx + gy) \cdot 1000 + gz \cdot 10 + layer\_bias
-++++
-
-Rendering from lowest to highest depth key guarantees that foreground characters cleanly occlude
-background terrain and entities without depth buffer hardware dependencies.
-
-== 4. The Asset Abstraction Layer
-
-To ensure the game looks visually striking immediately while gracefully welcoming future hand-drawn
-sprites from artists, `gui_assets.c` implements an **Asset Abstraction Layer**:
-
-1. **Asset Identity Registry**: Maps canonical asset IDs (`ASSET_HERO_ELIJAH`, `ASSET_ENEMY_DREAM_EATER`,
-   `ASSET_TILE_COBBLESTONE`, `ASSET_RELIC_SHIELD_LUX`) to dimension specifications and target filepaths.
-2. **Procedural Fallback Synthesizer**: In the absence of an external image, procedural vector
-   generators draw character heraldry (e.g., Elijah's golden heater shield and ivory helm, Dream
-   Eater's ethereal violet diamond nucleus with orbiting motes).
-3. **Drop-in Artist Binding**: Calling `gui_assets_bind_external(id, path)` marks the asset as
-   `ASSET_KIND_BITMAP`, routing draw calls to the spritesheet blitter without modifying simulation logic.
+In strict compliance with engine architectural invariants, **all structs and enums** throughout
+the viewport and reel strata are explicitly tagged:
+* `typedef enum gui_screen_mode { ... } gui_screen_mode_t;`
+* `typedef enum reel_direction { ... } reel_direction_t;`
+* `typedef enum reel_state { ... } reel_state_t;`
+* `typedef enum reel_depth { ... } reel_depth_t;`
+* `typedef struct reel_depth_element { ... } reel_depth_element_t;`
+* `typedef struct reel { ... } reel_t;`
+* `typedef struct gui_palette { ... } gui_palette_t;`
+* `typedef struct gui_layout { ... } gui_layout_t;`
+* `typedef struct gui_button { ... } gui_button_t;`
 
 == 5. Verification Telemetry
 
-The presentation stratum is validated via `tests/unit/test_gui_unit.c` across four ontological sections:
-* **Section 1 (Always Pass)**: Verifies default layout geometry, palette alpha opacity, and 9-button grid.
-* **Section 2 (Never Fail)**: Validates negative shading factor clamping, out-of-bounds click safety,
-  and case-insensitive hotkey resolution.
-* **Section 3 (Assertion & Guarantee)**: Enforces AABB panel pairwise disjointness, projection
-  reciprocity, and chronicle FIFO ring-buffer shift.
-* **Section 4 (Emergence)**: Probes X11 display availability and runs full self-audit pre-flight checks.
+The presentation stratum is verified by `tests/unit/test_gui_unit.c` and `tests/unit/viewport/test_reel_unit.c`
+across the four ontological testing tiers:
+1. **Section 1 (Always Pass)**: Baseline layout bounds, reel default state, and 9-button command dock.
+2. **Section 2 (Never Fail)**: Out-of-bounds click safety, negative duration clamping, and element capacity limits.
+3. **Section 3 (Axioms & Tripwires)**: AABB panel disjointness, projection reciprocity, push/pull kinematics,
+   and pop-out/sink-in elevation vectors.
+4. **Section 4 (Emergence)**: Full `gui_audit_layout()` and `reel_audit()` preflight execution.
 
-== Chapter 10: Layer 4 Verification & Test Suite Code Tour
+== Chapter 10: Layer 0/2 Audio Event Bus & Mixer Subsystem
+
+*Source File*: `/home/professorseanex/Tenebris and Lux/docs/code/audio_subsystem.adoc`
+
+[abstract]
+== Overview
+
+This document provides a comprehensive architectural and code walkthrough of the dedicated Audio
+subsystem implemented in `engine/include/audio/` and `engine/src/audio/`. Operating as an
+essential stratum of **The Big Machine**, the audio subsystem provides a multi-channel mixing
+bus (Master, BGM, Ambience, Combat SFX, Tactical SFX, UI, Stingers), a zero-heap circular ring
+buffer event queue, bounded volume attenuation, high-priority ducking matrices, and a quarantined
+monolithic fallback profile.
+
+== 1. Architectural Philosophy: The Decoupled Audio Machine
+
+In traditional game engines, audio drivers are often tightly coupled to simulation loops or low-level
+OS sound APIs (ALSA, PulseAudio, WASAPI). In *Tenebris and Lux*, the audio architecture strictly obeys
+the **Machine vs. Master Turn Gear Separation**:
+
+```text
+┌────────────────────────────────────────────────────────┐
+│             THE MASTER TURN GEAR ( game/ )             │
+│   • Combat Actions (Ward, Strike, Balance)             │
+│   • Tactical Grid Stepping & Cursor Selection          │
+│   • Narrative Dialogues & Scene Transitions            │
+└───────────────────────────┬────────────────────────────┘
+                            │ dispatches symbolic events
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│            THE AUDIO EVENT BUS ( engine/audio/ )       │
+│   • Circular Ring Buffer Event Queue (128 slots)       │
+│   • Zero-Heap Dynamic Event Routing (ALLOC_ZERO_HEAP)  │
+│   • Multi-Channel Gain & Ducking Matrix                │
+│   • Quarantined Emergency Fallback Profile             │
+└───────────────────────────┬────────────────────────────┘
+                            │ polls decoupled events
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│             AUDIO BACKEND / SOUND DRIVER               │
+│   (POSIX Audio, Hardware DSP, or Headless Null Sink)   │
+└────────────────────────────────────────────────────────┘
+```
+
+=== Axiomatic Invariants:
+1. **Zero Dynamic Heap Allocations (`ALLOC_ZERO_HEAP`)**: The event bus allocates zero bytes on the
+   heap; all queues, channels, and cue manifests reside in static, reentrant memory.
+2. **Read-Only Simulation Influence**: Audio strictly follows simulation events. Audio playback
+   never gates, blocks, or alters simulation state transitions or turn resolution.
+3. **Hardware Limiter & Bounded Gain**: All channel volume levels are strictly clamped to $[0.0, 1.0]$.
+4. **All Structs and Enums Explicitly Named**: Zero anonymous structs or enums.
+
+== 2. Subsystem File Layout & Header Structure
+
+The audio subsystem is cleanly partitioned into public interfaces, implementations, and fallback:
+
+```text
+engine/
+├── include/audio/
+│   ├── audio.h              <-- Master Audio Umbrella Header
+│   ├── audio_types.h        <-- Channel enums, event packets, cue manifests, stats
+│   ├── audio_bus.h          <-- Public event posting, polling, channel volume API
+│   └── audio_fallback.h     <-- Quarantined emergency fallback profile header
+└── src/audio/
+    ├── audio_bus.c          <-- Circular ring buffer, channel gain, event routing
+    └── audio_fallback.c     <-- Monolithic emergency fallback profile implementation
+```
+
+== 3. Multi-Channel Mixer Architecture
+
+The audio bus implements seven canonical mixing channels matching `game/data/presentation/audio/channels.json`:
+
+[cols="1,2,1,2", options="header"]
+|===
+| Channel Enum | Canonical Channel Name | Default Gain | Role & Attenuation Behavior
+| `AUDIO_CHANNEL_MASTER` | Master Output Bus | 100% | Controls overall presentation master gain.
+| `AUDIO_CHANNEL_BGM` | Background Music | 75% | Loopable orchestral streams; ducked under stingers.
+| `AUDIO_CHANNEL_AMBIENCE` | Soundscapes & Ambience | 60% | Environmental biome loops (wind, meadow hum, dunes).
+| `AUDIO_CHANNEL_SFX_COMBAT` | Combat Sound Effects | 90% | Strikes, spell chants, Lux Barrio barrier wards.
+| `AUDIO_CHANNEL_SFX_TACTICAL` | Tactical Grid Audio | 80% | Footsteps, tile selection, zone-of-control pings.
+| `AUDIO_CHANNEL_UI` | User Interface | 85% | Button clicks, tab switches, stance toggle cues.
+| `AUDIO_CHANNEL_STINGER` | Fanfares & Stingers | 95% | Victory stingers, battle intro fanfares (ducking source).
+|===
+
+== 4. Non-Anonymous Ontological Types
+
+In strict conformance with project governance standards, all data structures and enumerations are explicitly named:
+
+```c
+typedef enum audio_channel {
+    AUDIO_CHANNEL_MASTER = 0,
+    AUDIO_CHANNEL_BGM,
+    AUDIO_CHANNEL_AMBIENCE,
+    AUDIO_CHANNEL_SFX_COMBAT,
+    AUDIO_CHANNEL_SFX_TACTICAL,
+    AUDIO_CHANNEL_UI,
+    AUDIO_CHANNEL_STINGER,
+    AUDIO_CHANNEL_COUNT
+} audio_channel_t;
+
+typedef enum audio_event_type {
+    AUDIO_EVENT_NONE = 0,
+    AUDIO_EVENT_PLAY_SFX,
+    AUDIO_EVENT_STOP_SFX,
+    AUDIO_EVENT_PLAY_BGM,
+    AUDIO_EVENT_STOP_BGM,
+    AUDIO_EVENT_CROSSFADE_BGM,
+    AUDIO_EVENT_PLAY_AMBIENCE,
+    AUDIO_EVENT_STOP_AMBIENCE,
+    AUDIO_EVENT_CROSSFADE_AMBIENCE,
+    AUDIO_EVENT_PLAY_STINGER,
+    AUDIO_EVENT_SET_VOLUME,
+    AUDIO_EVENT_MUTE_CHANNEL,
+    AUDIO_EVENT_STOP_ALL
+} audio_event_type_t;
+
+typedef struct audio_event {
+    audio_event_type_t type;
+    audio_channel_t channel;
+    char cue_id[AUDIO_MAX_CUE_ID_LEN];
+    float volume;
+    float pan;
+    float pitch;
+    float fade_duration_sec;
+    bool loop;
+    uint64_t timestamp_us;
+} audio_event_t;
+```
+
+== 5. Verification Telemetry
+
+The audio subsystem is validated by two dedicated unit test harnesses:
+* `tests/unit/audio/test_audio_bus_unit.c`: Validates channel default gains, null guards, volume clamping,
+  128-event ring buffer capacity, FIFO queue order preservation, and high-watermark telemetry.
+* `tests/unit/audio/test_audio_fallback_unit.c`: Validates the quarantined emergency fallback profile,
+  provenance tagging (`loaded_from_data == false`), and fallback profile application to the live bus.
+
+
+== Chapter 11: Layer 4 Verification & Test Suite Code Tour
 
 *Source File*: `/home/professorseanex/Tenebris and Lux/docs/code/test_suite.adoc`
 
@@ -1723,7 +1872,7 @@ ctest --test-dir build -C Debug --output-on-failure
 ./build/test_gameplay_scenarios # Gameplay scenarios & latency benchmark
 ----
 
-== Chapter 11: Technical Specification: Data-Driven Architecture & Manifest System
+== Chapter 12: Technical Specification: Data-Driven Architecture & Manifest System
 
 *Source File*: `/home/professorseanex/Tenebris and Lux/docs/architecture/data_driven_architecture.adoc`
 

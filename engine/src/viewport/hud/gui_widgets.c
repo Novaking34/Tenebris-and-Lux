@@ -34,15 +34,15 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui_widgets.h"
-#include "viewport/gui_layout.h"
+#include "viewport/hud/gui_widgets.h"
+#include "viewport/hud/gui_layout.h"
 #include "core/math_utils.h"
 
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <string.h>
 
-typedef struct {
+typedef struct btn_template {
     const char *label;
     const char *command;
     char hotkey;

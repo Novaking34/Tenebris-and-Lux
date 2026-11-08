@@ -122,6 +122,7 @@
           { "title": "Layer 0 State Debugger & Diagnostic Engine", "rel_path": "code/debug_system.adoc" },
           { "title": "Layer 1 Simulation Engine Code Tour", "rel_path": "code/simulation_engine.adoc" },
           { "title": "Layer 2 Presentation Viewport Code Tour", "rel_path": "code/presentation_gui.adoc" },
+          { "title": "Layer 0/2 Audio Event Bus & Mixer Subsystem", "rel_path": "code/audio_subsystem.adoc" },
           { "title": "Layer 4 Verification & Test Suite Code Tour", "rel_path": "code/test_suite.adoc" }
         ]
       },

@@ -35,7 +35,7 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui_fonts.h"
+#include "viewport/styling/gui_fonts.h"
 #include "log/log.h"
 
 #include <X11/Xlib.h>

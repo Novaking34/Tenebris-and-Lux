@@ -33,7 +33,7 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui_layout.h"
+#include "viewport/hud/gui_layout.h"
 #include "core/math_utils.h"
 #include <stdio.h>
 

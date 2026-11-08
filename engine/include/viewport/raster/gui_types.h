@@ -59,7 +59,7 @@
 /**
  * Presentation screen views and modal navigation states.
  */
-typedef enum {
+typedef enum gui_screen_mode {
     GUI_SCREEN_TACTICAL = 0,    /**< 2.5D / 2D Tactical battlefield & combat */
     GUI_SCREEN_STATUS,          /**< Full protagonist dossier & attributes */
     GUI_SCREEN_INVENTORY,       /**< Bag, key items, Grandma's Watch */
@@ -70,7 +70,7 @@ typedef enum {
 /**
  * Top navigation tab descriptor.
  */
-typedef struct {
+typedef struct gui_tab {
     int x;
     int y;
     int width;
@@ -83,7 +83,7 @@ typedef struct {
 /**
  * Display view mode for the tactical world viewport.
  */
-typedef enum {
+typedef enum gui_view_mode {
     GUI_VIEW_2D_FLAT = 0,         /**< Classic orthographic top-down grid */
     GUI_VIEW_25D_ISOMETRIC = 1    /**< Tactical dimetric grid with Z-height */
 } gui_view_mode_t;
@@ -91,7 +91,7 @@ typedef enum {
 /**
  * Hardware and software color palette representation.
  */
-typedef struct {
+typedef struct gui_palette {
     unsigned long bg;             /**< Obsidian canvas */
     unsigned long panel;          /**< Granite panel background */
     unsigned long border;         /**< Carved stone rim */
@@ -119,7 +119,7 @@ typedef struct {
 /**
  * Named bounding box representing a major desktop presentation zone.
  */
-typedef struct {
+typedef struct gui_panel_rect {
     int x;
     int y;
     int width;
@@ -130,7 +130,7 @@ typedef struct {
 /**
  * Unified desktop presentation layout geometry.
  */
-typedef struct {
+typedef struct gui_layout {
     int window_width;
     int window_height;
     gui_panel_rect_t header;       /**< Top title banner and cycle indicator */
@@ -143,7 +143,7 @@ typedef struct {
 /**
  * Interactive button widget definition in screen coordinates.
  */
-typedef struct {
+typedef struct gui_button {
     int x;
     int y;
     int width;
@@ -158,7 +158,7 @@ typedef struct {
 /**
  * Scrollable ring-buffer storing recent chronicle narrative events.
  */
-typedef struct {
+typedef struct gui_log {
     char lines[GUI_MAX_LOG_LINES][GUI_LOG_ENTRY_LEN];
     int count;
 } gui_log_t;
@@ -166,7 +166,7 @@ typedef struct {
 /**
  * Canonical asset identifier for characters, monsters, terrain, and relics.
  */
-typedef enum {
+typedef enum gui_asset_id {
     ASSET_NONE = 0,
     ASSET_HERO_ELIJAH = 1,
     ASSET_HERO_KATRINA = 2,
@@ -188,7 +188,7 @@ typedef enum {
 /**
  * Asset pipeline origin and representation kind.
  */
-typedef enum {
+typedef enum gui_asset_kind {
     ASSET_KIND_PROCEDURAL = 0,    /**< Synthesized geometric vector art */
     ASSET_KIND_BITMAP = 1         /**< External PNG/BMP artist spritesheet */
 } gui_asset_kind_t;
@@ -196,7 +196,7 @@ typedef enum {
 /**
  * Asset specification in the Asset Abstraction Layer.
  */
-typedef struct {
+typedef struct gui_asset {
     gui_asset_id_t id;
     const char *name;
     gui_asset_kind_t kind;
@@ -208,7 +208,7 @@ typedef struct {
 /**
  * Isometric screen point with elevation depth.
  */
-typedef struct {
+typedef struct gui_iso_point {
     int screen_x;
     int screen_y;
     int elevation_z;
@@ -217,7 +217,7 @@ typedef struct {
 /**
  * Discrete grid coordinate.
  */
-typedef struct {
+typedef struct gui_grid_coord {
     int gx;
     int gy;
 } gui_grid_coord_t;
@@ -225,7 +225,7 @@ typedef struct {
 /**
  * Depth-sorted entity render packet for the Painter's Algorithm.
  */
-typedef struct {
+typedef struct gui_depth_entity {
     int depth_key;                /**< (gx + gy) * 1000 + gz * 10 */
     int screen_x;
     int screen_y;

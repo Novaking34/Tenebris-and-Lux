@@ -29,7 +29,10 @@ source code implementation across the five layered strata of **The Big Machine**
    *Layer 1 Simulation Engine*: `game/src/` and `game/include/` (`combat/`, `hero/`, `relics/`, `world/`, `ending/`, `dispatch/`). Details pure headless TRPG simulation, twin relic stance state machines, moral sway continuum `[-100, +100]`, and action dispatching.
 
 6. **xref:presentation_gui.adoc[presentation_gui.adoc]** +
-   *Layer 2 Presentation Viewports*: `engine/src/viewport/` and `engine/include/viewport/`. Details native POSIX X11 double-buffering, letterbox/pillarbox responsive scalers (640x360 baseline), TrueType typography (`Cinzel`, `MedievalSharp`), 5-screen alternate views, and 2.5D dimetric grid projection.
+   *Layer 2 Presentation Viewports*: `engine/src/viewport/` and `engine/include/viewport/` (`raster/`, `hud/`, `reel/`, `styling/`). Details the Movie Reel architecture: horizontal Push/Pull scene transitions across 5 canonical screens, vertical Pop-Out/Sink-In depth kinematics, high fantasy palettes, and 2.5D dimetric grid projection.
 
-7. **xref:test_suite.adoc[test_suite.adoc]** +
-   *Layer 4 Verification & Ontological Test Suite*: `tests/` (`functional/`, `unit/`, `integrated/`, `system/`). Details 51 CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and automated sub-millisecond benchmarking.
+7. **xref:audio_subsystem.adoc[audio_subsystem.adoc]** +
+   *Layer 0/2 Audio Event Bus & Mixer*: `engine/src/audio/` and `engine/include/audio/`. Details the 7-channel mixing bus (Master, BGM, Ambience, Combat SFX, Tactical SFX, UI, Stingers), zero-heap 128-event ring buffer, attenuation matrices, and quarantined emergency fallback profile.
+
+8. **xref:test_suite.adoc[test_suite.adoc]** +
+   *Layer 4 Verification & Ontological Test Suite*: `tests/` (`functional/`, `unit/`, `integrated/`, `system/`). Details 54 CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and automated sub-millisecond benchmarking.

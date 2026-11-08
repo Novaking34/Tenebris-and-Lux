@@ -42,7 +42,7 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui_types.h"
+#include "viewport/raster/gui_types.h"
 #include "hero/sim_state.h"
 #include <stdbool.h>
 

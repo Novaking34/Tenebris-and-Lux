@@ -39,9 +39,10 @@
 // Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 // =============================================================================
 
-#include "viewport/gui.h"
-#include "viewport/gui_fonts.h"
-#include "viewport/gui_screens.h"
+#include "viewport/raster/gui.h"
+#include "viewport/styling/gui_fonts.h"
+#include "viewport/reel/gui_screens.h"
+#include "viewport/reel/reel.h"
 #include "log/log.h"
 #include "core/time_utils.h"
 
@@ -58,6 +59,7 @@ static gui_font_catalog_t s_fonts;
 static gui_log_t      s_log;
 static gui_view_mode_t s_view_mode = GUI_VIEW_25D_ISOMETRIC;
 static gui_screen_mode_t s_screen_mode = GUI_SCREEN_TACTICAL;
+static reel_t         s_reel;
 
 /**
  * Toggles EWMH fullscreen state via _NET_WM_STATE_FULLSCREEN client message.
@@ -159,6 +161,7 @@ int gui_run(player_state_t *state)
     gui_layout_update(&s_layout, cur_win_w, cur_win_h);
     gui_widgets_init_buttons(&s_layout, s_buttons, GUI_NUM_BUTTONS);
     gui_assets_init();
+    reel_init(&s_reel, (int32_t)GUI_SCREEN_TACTICAL, GUI_NUM_TABS);
 
     /* Step 5: Initialize chronicle narrative log */
     s_log.count = 0;
@@ -213,6 +216,7 @@ int gui_run(player_state_t *state)
                 gui_screen_mode_t clicked_screen;
                 if (gui_screens_handle_tab_click(&s_layout.header,
                                                  bx, by, &clicked_screen)) {
+                    reel_navigate(&s_reel, (int32_t)clicked_screen, 0.20f);
                     s_screen_mode = clicked_screen;
                     static const char *const tab_names[GUI_NUM_TABS] = {
                         "Tactical Battle",
@@ -292,26 +296,32 @@ int gui_run(player_state_t *state)
                 }
 
                 if (ks == XK_Escape) {
+                    reel_navigate(&s_reel, (int32_t)GUI_SCREEN_TACTICAL, 0.20f);
                     s_screen_mode = GUI_SCREEN_TACTICAL;
                     gui_hud_log_append(&s_log,
                         "Returned to Tactical Battle View.");
                 } else if (ks == XK_1 || key == '1') {
+                    reel_navigate(&s_reel, (int32_t)GUI_SCREEN_TACTICAL, 0.20f);
                     s_screen_mode = GUI_SCREEN_TACTICAL;
                     gui_hud_log_append(&s_log,
                         "Switched screen: Tactical Battle View.");
                 } else if (ks == XK_2 || key == '2' || key == 'i') {
+                    reel_navigate(&s_reel, (int32_t)GUI_SCREEN_STATUS, 0.20f);
                     s_screen_mode = GUI_SCREEN_STATUS;
                     gui_hud_log_append(&s_log,
                         "Switched screen: Protagonist Hero Dossier.");
                 } else if (ks == XK_3 || key == '3' || key == 'u') {
+                    reel_navigate(&s_reel, (int32_t)GUI_SCREEN_INVENTORY, 0.20f);
                     s_screen_mode = GUI_SCREEN_INVENTORY;
                     gui_hud_log_append(&s_log,
                         "Switched screen: 32-Slot Bag & Key Relics.");
                 } else if (ks == XK_4 || key == '4' || key == 'o') {
+                    reel_navigate(&s_reel, (int32_t)GUI_SCREEN_WORLD_MAP, 0.20f);
                     s_screen_mode = GUI_SCREEN_WORLD_MAP;
                     gui_hud_log_append(&s_log,
                         "Switched screen: Provincial Realm Topology.");
                 } else if (ks == XK_5 || key == '5' || key == 'c') {
+                    reel_navigate(&s_reel, (int32_t)GUI_SCREEN_CHRONICLE, 0.20f);
                     s_screen_mode = GUI_SCREEN_CHRONICLE;
                     gui_hud_log_append(&s_log,
                         "Switched screen: Deeds & Lore Codex.");
@@ -351,6 +361,9 @@ int gui_run(player_state_t *state)
         }
 
         /* Step 7: Compose complete frame onto backbuffer */
+        reel_update(&s_reel, 0.0166f, cur_win_w);
+        s_screen_mode = (gui_screen_mode_t)reel_get_current_screen(&s_reel);
+
         XSetForeground(display, gc, s_palette.bg);
         XFillRectangle(display, backbuffer, gc, 0, 0,
                        (unsigned int)cur_win_w, (unsigned int)cur_win_h);
@@ -517,6 +530,11 @@ bool gui_audit_layout(void)
 
     /* Step 8: Alternate screen navigation audit */
     if (!gui_screens_audit()) {
+        return false;
+    }
+
+    /* Step 9: Movie Reel & scene depth audit */
+    if (!reel_audit()) {
         return false;
     }
 
