@@ -1,0 +1,97 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/input/manifest.json",
+    "id": "engine.config.input.root",
+    "layer": "Layer 0: Core Utilities / Input Architecture",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Input Sub-Domain Manifest orchestrating action bindings, keyboard hotkeys, and controller profiles.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Input Configuration Sub-Domain",
+      "path": "engine/config/input/manifest.json",
+      "parent_manifest": "engine/config/manifest.json"
+    },
+    "what_it_enables": [
+      "Decoupled symbolic action mappings for tactical movement, stance switches, and UI navigation",
+      "Configurable keyboard and mouse hotkey slots with primary and secondary bindings",
+      "Standard gamepad controller mappings, thumbstick axes, and deadzone thresholds",
+      "Key repeat delay and rate policies for crisp tactical grid navigation",
+      "Zero dynamic heap allocations during input event resolution (ALLOC_ZERO_HEAP)"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across input configuration (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "All action binding profiles must be 5-block compliant and statically verifiable",
+      "Essential navigation actions must always possess at least one primary binding"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "input_subsystem": "viewport/raster/gui.h",
+      "key_event_processing": "gui.c / XLookupKeysym"
+    },
+    "static_declarations": {
+      "subdomain_id": "input",
+      "schema_id": "tenlux.engine.input_manifest.v1",
+      "target_stratum": "Layer 0 / Input Architecture",
+      "profiles": [ "default.json", "gamepad.json" ]
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve",
+      "master_loader": "master_loader_load"
+    },
+    "capacities": {
+      "profile_count": 2,
+      "max_actions": 32
+    }
+  },
+  "block_3_body": {
+    "profiles": [
+      {
+        "id": "default",
+        "title": "Default Keyboard & Mouse Action Bindings",
+        "file": "default.json",
+        "path": "engine/config/input/default.json",
+        "status": "active",
+        "description": "Standard QWERTY / Arrow keys action bindings, repeat rate, and system hotkeys."
+      },
+      {
+        "id": "gamepad",
+        "title": "Standard Gamepad & Controller Profile",
+        "file": "gamepad.json",
+        "path": "engine/config/input/gamepad.json",
+        "status": "active",
+        "description": "Controller button mappings, D-pad navigation, shoulder triggers, and analog deadzones."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "profile_count": 2,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "PROFILE_EXISTENCE",
+        "rule": "default.json and gamepad.json must exist on disk",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit" ]
+    },
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 5
+    }
+  }
+}
+

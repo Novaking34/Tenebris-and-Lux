@@ -7,9 +7,9 @@ BLOCK 1: METADATA BLOCK
 @file          formula_eval.c
 @id            core.util.formula_eval
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Formula & Combat Mathematics Orchestrator (core/formula)
@@ -23,10 +23,20 @@ BLOCK 1: METADATA BLOCK
 
 PURPOSE & ARCHITECTURAL ROLE:
   Implementation of the universal formula and combat mathematics orchestrator.
-  Ingests combat curves and caps from game/data/system/runtime/math/formulas.json.
+  Ingests combat curves and caps from engine/config/runtime/math/formulas.json.
   Provides bounded physical and magical damage calculation, defense mitigation,
   hit probability resolution, critical strikes, poise depletion, and exploration
   ability checks.
+
+  ### For Game Designers & Non-Programmers:
+  This module powers all numbers in combat: weapon swings, magic spells, shield
+  blocks, and critical hits. It ensures that changing formulas.json immediately
+  updates game balance without needing to rewrite C code.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Deterministic, pure reentrant calculations: stateless execution.
+  - Zero dynamic heap allocation: operates on caller stack structures.
+  - Ingests data schemas via master_loader (tenlux.data.math_formulas.v1).
 ================================================================================
 */
 
@@ -155,14 +165,11 @@ bool formula_eval_load_config_from_file(const char *profile_path, formula_eval_c
     if (target_rel == NULL || target_rel[0] == '\0') {
         target_rel = "runtime/math/formulas.json";
     }
-    if (strncmp(target_rel, "system/", 7) == 0) {
-        target_rel += 7;
-    }
 
     /* Step 4: Ingest JSON asset via master_loader */
     master_loader_t loader;
     char file_buf[8192];
-    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+    if (!master_loader_load(&loader, "config", target_rel, file_buf, sizeof(file_buf))) {
         LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "Formula", -0.2f,
                    "Failed to load formula policy '%s', falling back to defaults", target_rel);
         return false;
@@ -449,13 +456,17 @@ bool formula_eval_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK / DIAGNOSTIC CARD DUMP & TEARDOWN
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Combat Mathematics Orchestrator
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Diagnostic ASCII Status Card Generator
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -484,5 +495,13 @@ bool formula_eval_execute_dump_card(const formula_eval_t *eval, char *out_buf, s
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of formula_eval.c */

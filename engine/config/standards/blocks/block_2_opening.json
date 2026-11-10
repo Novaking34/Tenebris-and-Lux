@@ -1,0 +1,75 @@
+{
+  "$schema": "tenlux.engine.standards.block_2.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/standards/blocks/block_2_opening.json",
+    "id": "engine.standards.block_2",
+    "layer": "Layer 0: Core Foundation Strata",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-09",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "C11 Engine Block 2 Opening Specialization",
+    "role": "Specification for Engine Header Include Guards & Type Sub-Assemblies",
+    "invariants": [
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Zero domain bleed (Anti-Domain-Bleed Covenant 11)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "language": "ISO C11 (-std=c11)",
+      "standards_version": "Rev 5"
+    },
+    "static_declarations": {
+      "include_guard_prefix": "TENEBRIS_LUX_",
+      "enforce_matching_endif_comment": true,
+      "required_sub_assemblies": [
+        "Sub-Assembly 2.1",
+        "Sub-Assembly 2.2",
+        "Sub-Assembly 2.3",
+        "Sub-Assembly 2.4"
+      ]
+    }
+  },
+  "block_3_body": {
+    "include_tiers": [
+      "Tier 1: ISO C11 Standard Library Headers",
+      "Tier 2: External Library Dependencies",
+      "Tier 3: Internal Engine Foundation Headers"
+    ],
+    "anti_domain_bleed": {
+      "forbidden_path_prefixes": [
+        "hero/",
+        "combat/",
+        "world/",
+        "relics/",
+        "ending/",
+        "dispatch/"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "tiers_enforced": 3,
+      "sub_assemblies_count": 4
+    },
+    "verification_tripwires": [
+      {
+        "name": "ANTI_DOMAIN_BLEED",
+        "rule": "Zero forbidden game prefixes in engine includes",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "audit_enabled": true,
+    "verify_include_guard": true
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "home_dir": "engine/config/standards/blocks"
+    },
+    "severity": "error"
+  }
+}

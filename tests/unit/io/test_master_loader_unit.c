@@ -146,7 +146,7 @@ static void test_master_loader_always_pass(void)
     /* 1.6 Loading real dataset from disk via path */
     master_loader_t disk_loader;
     char file_buf[8192];
-    bool p_ok = master_loader_load_from_path(&disk_loader, "game/data/system/runtime/math/formulas.json",
+    bool p_ok = master_loader_load_from_path(&disk_loader, "engine/config/runtime/math/formulas.json",
                                              file_buf, sizeof(file_buf));
     TEST_ASSERT(p_ok && disk_loader.status == LOADER_STATUS_OK, "master_loader_load_from_path succeeds on formulas.json");
     TEST_ASSERT(master_loader_validate_schema(&disk_loader, "tenlux.data.math_formulas.v1"), "formulas.json schema valid");
@@ -154,18 +154,18 @@ static void test_master_loader_always_pass(void)
     /* 1.7 Domain-scoped loading */
     master_loader_t dom_loader;
     char dom_buf[8192];
-    bool d_ok = master_loader_load(&dom_loader, "system", "runtime/math/formulas.json", dom_buf, sizeof(dom_buf));
+    bool d_ok = master_loader_load(&dom_loader, "config", "runtime/math/formulas.json", dom_buf, sizeof(dom_buf));
     TEST_ASSERT(d_ok && dom_loader.status == LOADER_STATUS_OK, "master_loader_load (domain-scoped) succeeds");
 
     /* 1.8 Block 5 Execution Procedures */
     loader_header_t hdr;
-    bool insp_ok = master_loader_execute_inspect("system", "runtime/math/formulas.json", &hdr);
+    bool insp_ok = master_loader_execute_inspect("config", "runtime/math/formulas.json", &hdr);
     TEST_ASSERT(insp_ok && hdr.is_5block && strcmp(hdr.schema_id, "tenlux.data.math_formulas.v1") == 0,
                 "master_loader_execute_inspect succeeds");
 
     master_loader_t v_loader;
     char v_buf[8192];
-    bool v_ok = master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+    bool v_ok = master_loader_execute_load_verified("config", "runtime/math/formulas.json",
                                                     "tenlux.data.math_formulas.v1",
                                                     v_buf, sizeof(v_buf), &v_loader);
     TEST_ASSERT(v_ok && v_loader.status == LOADER_STATUS_OK, "master_loader_execute_load_verified succeeds");
@@ -191,10 +191,10 @@ static void test_master_loader_never_fail(void)
     bool b_val = false;
 
     /* 2.1 NULL parameter resilience */
-    TEST_ASSERT(!master_loader_load(NULL, "system", "file.json", buf, sizeof(buf)), "load(NULL loader)");
-    TEST_ASSERT(!master_loader_load(&loader, "system", NULL, buf, sizeof(buf)), "load(NULL rel_path)");
-    TEST_ASSERT(!master_loader_load(&loader, "system", "file.json", NULL, sizeof(buf)), "load(NULL buf)");
-    TEST_ASSERT(!master_loader_load(&loader, "system", "file.json", buf, 0), "load(0 buf_size)");
+    TEST_ASSERT(!master_loader_load(NULL, "config", "file.json", buf, sizeof(buf)), "load(NULL loader)");
+    TEST_ASSERT(!master_loader_load(&loader, "config", NULL, buf, sizeof(buf)), "load(NULL rel_path)");
+    TEST_ASSERT(!master_loader_load(&loader, "config", "file.json", NULL, sizeof(buf)), "load(NULL buf)");
+    TEST_ASSERT(!master_loader_load(&loader, "config", "file.json", buf, 0), "load(0 buf_size)");
     TEST_ASSERT(!master_loader_load_from_path(NULL, "path.json", buf, sizeof(buf)), "load_from_path(NULL loader)");
     TEST_ASSERT(!master_loader_load_from_path(&loader, NULL, buf, sizeof(buf)), "load_from_path(NULL path)");
     TEST_ASSERT(!master_loader_load_from_memory(NULL, s_golden_envelope, 10), "load_from_memory(NULL loader)");
@@ -218,7 +218,7 @@ static void test_master_loader_never_fail(void)
 
     /* 2.3 Non-existent files and paths */
     char fail_buf[512];
-    bool f_not_found = master_loader_load(&loader, "system", "non_existent_file_xyz_999.json", fail_buf, sizeof(fail_buf));
+    bool f_not_found = master_loader_load(&loader, "config", "non_existent_file_xyz_999.json", fail_buf, sizeof(fail_buf));
     TEST_ASSERT(!f_not_found && loader.status == LOADER_STATUS_ERR_NOT_FOUND, "Non-existent file returns LOADER_STATUS_ERR_NOT_FOUND");
 
     /* 2.4 Document without block_3_body */
@@ -241,7 +241,7 @@ static void test_master_loader_never_fail(void)
 
     master_loader_t vld;
     char vld_buf[8192];
-    bool vld_fail = master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+    bool vld_fail = master_loader_execute_load_verified("config", "runtime/math/formulas.json",
                                                         "mismatched.schema.contract.v99",
                                                         vld_buf, sizeof(vld_buf), &vld);
     TEST_ASSERT(!vld_fail && vld.status == LOADER_STATUS_ERR_SCHEMA_MISMATCH, "Schema mismatch in execute_load_verified reports error");
@@ -262,7 +262,7 @@ static void test_master_loader_assertions_and_guarantees(void)
     /* 3.1 Buffer overflow detection */
     master_loader_t ovf_loader;
     char tiny_buf[16];
-    bool ovf_ok = master_loader_load(&ovf_loader, "system", "runtime/math/formulas.json", tiny_buf, sizeof(tiny_buf));
+    bool ovf_ok = master_loader_load(&ovf_loader, "config", "runtime/math/formulas.json", tiny_buf, sizeof(tiny_buf));
     TEST_ASSERT(!ovf_ok && ovf_loader.status == LOADER_STATUS_ERR_BUFFER_OVERFLOW, "Buffer overflow accurately detected");
 
     /* 3.2 Status error code domain mapping */
@@ -293,7 +293,7 @@ static void test_master_loader_emergence(void)
     master_loader_init();
 
     /* Lifecycle Step 2: Multi-step pipeline on live project data */
-    const char *target_domain = "system";
+    const char *target_domain = "config";
     const char *target_rel = "diagnostics/telemetry/manifest.json";
     const char *expected_schema = "tenlux.data.log_menu.v1";
 

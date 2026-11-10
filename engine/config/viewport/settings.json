@@ -1,0 +1,115 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/viewport/settings.json",
+    "id": "engine.config.viewport.settings",
+    "layer": "Layer 0: Core Utilities / Viewport Presentation",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Viewport & Display Settings Profile driving active resolution, window mode, framerate, scaling, and theme selection.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Viewport Configuration Sub-Domain",
+      "path": "engine/config/viewport/settings.json",
+      "parent_manifest": "engine/config/viewport/manifest.json"
+    },
+    "what_it_enables": [
+      "User display configuration for resolution presets and window presentation",
+      "Dynamic switching between windowed, borderless letterbox, and fullscreen",
+      "Target frame pacing synchronizing with 30, 60, or 120 FPS display modes",
+      "Active UI color theme selection across the 5 canonical High Fantasy themes",
+      "UI scaling factor adjustment maintaining integer pixel alignment",
+      "Zero dynamic heap allocations during display settings queries (ALLOC_ZERO_HEAP)"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across display settings ingestion (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Aspect ratio must strictly conserve 16:9 canvas via letterbox/pillarbox",
+      "Display preset must match a valid entry in scalers.json",
+      "Active theme must match a valid entry in themes.json"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "display_subsystem": "viewport/raster/gui.h",
+      "scalers_catalog": "engine/config/viewport/scalers.json",
+      "themes_catalog": "engine/config/viewport/themes.json"
+    },
+    "static_declarations": {
+      "subdomain_id": "viewport",
+      "schema_id": "tenlux.engine.viewport.settings.v1",
+      "target_stratum": "Layer 0 / Viewport Presentation",
+      "default_preset": "desktop_windowed",
+      "default_theme": "high_fantasy_hope"
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve",
+      "master_loader": "master_loader_load"
+    },
+    "capacities": {
+      "supported_window_modes": 3,
+      "supported_fps_targets": 5
+    }
+  },
+  "block_3_body": {
+    "display": {
+      "active_preset": "desktop_windowed",
+      "window_mode": "windowed",
+      "width": 860,
+      "height": 620,
+      "vsync": true,
+      "target_fps": 60,
+      "active_theme": "high_fantasy_hope",
+      "ui_scale": 1.25,
+      "letterbox_color": "0x000000",
+      "show_fps_counter": false,
+      "fullscreen_exclusive": false
+    },
+    "options_catalog": {
+      "window_modes": [
+        { "id": "windowed", "name": "Windowed (Resizable)", "description": "Standard windowed desktop frame" },
+        { "id": "borderless_letterbox", "name": "Borderless Letterbox", "description": "Desktop resolution with aspect-ratio letterboxing" },
+        { "id": "fullscreen", "name": "Exclusive Fullscreen", "description": "Full display takeover via X11 / hardware modesetting" }
+      ],
+      "target_fps_options": [ 30, 60, 120, 144, 240 ],
+      "ui_scale_options": [ 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0 ],
+      "preset_reference": "scalers.json",
+      "theme_reference": "themes.json",
+      "layout_reference": "layout.json",
+      "typography_reference": "typography.json"
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "active_preset_valid": true,
+      "active_theme_valid": true,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "PRESET_RESOLUTION_BOUNDS",
+        "rule": "width >= 640 && height >= 360",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "TARGET_FPS_BOUNDS",
+        "rule": "target_fps >= 30 && target_fps <= 240",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 1
+    }
+  }
+}
+

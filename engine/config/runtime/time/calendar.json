@@ -1,0 +1,130 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/runtime/time/calendar.json",
+    "id": "engine.config.runtime.time.calendar",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Diegetic monotonic calendar, 24h diurnal cycle, and nocturnal Dreamscape timing.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Timing",
+      "path": "engine/config/runtime/time/calendar.json"
+    },
+    "what_it_enables": [
+      "Monotonic tracking of Seconds, Minutes, Hours (24h), Days (1-7), Weeks (1-4), Months (1-12), and Years",
+      "Diurnal illumination phases: Daytime, Dusk, Nocturnal Void, and Dawn",
+      "Nocturnal Dreamscape Window (20:00 to 04:00) driving slumber trials and void incursions",
+      "Festival of Accord countdown and calendar event dispatching"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during calendar ticks (ALLOC_ZERO_HEAP)",
+      "Hours bounded strictly in [0, 23]; Minutes and Seconds bounded in [0, 59]",
+      "Day of week bounded in [1, 7]; Months bounded in [1, 12]",
+      "Time progresses forward monotonically; cannot reverse without explicit Debugger rewind"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "time_utils": "core/time_utils.h",
+      "clock_source": "CLOCK_MONOTONIC"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.time_calendar.v1",
+      "hours_per_day": 24,
+      "days_per_week": 7,
+      "weeks_per_month": 4,
+      "months_per_year": 12,
+      "days_per_year": 336
+    },
+    "generic_helper_contracts": {
+      "now": "time_monotonic_now_ns"
+    }
+  },
+  "block_3_body": {
+    "calendar_system": {
+      "time_scale": {
+        "seconds_per_game_minute": 1.0,
+        "minutes_per_game_hour": 60,
+        "hours_per_game_day": 24,
+        "description": "Standard narrative pacing: 24 real minutes equals one full 24-hour game day."
+      },
+      "diurnal_phases": [
+        {
+          "phase": "DAWN",
+          "start_hour": 4,
+          "end_hour": 6,
+          "ambient_light_pct": 60,
+          "description": "First light breaking over Dio Village; fog lifts."
+        },
+        {
+          "phase": "DAYTIME",
+          "start_hour": 6,
+          "end_hour": 18,
+          "ambient_light_pct": 100,
+          "description": "Standard market hours, road patrols active, NPC shops open."
+        },
+        {
+          "phase": "DUSK",
+          "start_hour": 18,
+          "end_hour": 20,
+          "ambient_light_pct": 50,
+          "description": "Long shadows stretch; market stalls close; town guards light torches."
+        },
+        {
+          "phase": "NOCTURNAL_DREAMSCAPE",
+          "start_hour": 20,
+          "end_hour": 4,
+          "ambient_light_pct": 20,
+          "dreamscape_portal_open": true,
+          "description": "The Cosmic Veil thins. Dream Eaters manifest and slumber trials unlock."
+        }
+      ],
+      "starting_world_state": {
+        "year": 1,
+        "month": 1,
+        "week": 1,
+        "day": 1,
+        "hour": 8,
+        "minute": 0,
+        "second": 0,
+        "festival_countdown_days": 14,
+        "veil_stability": 100,
+        "truth_discovery_index": 0
+      }
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_HOUR_BOUNDS",
+        "condition": "hour >= 0 && hour < 24",
+        "action": "Clamp hour to valid 24h range; flag audit alert on corruption"
+      },
+      {
+        "id": "TRIPWIRE_MINUTE_BOUNDS",
+        "condition": "minute >= 0 && minute < 60",
+        "action": "Clamp minute to valid 60-minute range"
+      }
+    ],
+    "metrics": {
+      "days_in_year": 336,
+      "phases_count": 4,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_tick": "time_calendar_tick",
+      "audit_hook": "time_utils_preflight"
+    }
+  }
+}

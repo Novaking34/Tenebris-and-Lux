@@ -1,0 +1,99 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/debugger/default.json",
+    "id": "engine.config.diagnostics.debugger.default",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Default debugger configuration profile balancing snapshot frequency, inspection dumps, and tripwires.",
+    "where_the_data_lives": {
+      "path": "engine/config/diagnostics/debugger/default.json",
+      "header_binding": "engine/include/debug/debug.h"
+    },
+    "what_it_enables": [
+      "Zero-heap 64-snapshot ring buffer allocation in .bss",
+      "Automatic snapshot capture on turn boundaries and tripwire triggers",
+      "Interactive command-line state REPL with ANSI color highlighting"
+    ],
+    "invariants": [
+      "Snapshot ring buffer capacity must not exceed DEBUG_MAX_SNAPSHOTS (64)",
+      "Tripwire traps must latch deterministically without crashing the engine",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "debug_subsystem_initialized": true,
+      "snapshot_ring_buffer_allocated": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.debug_profile.v1",
+      "target_struct": "debug_config_t",
+      "header_binding": "engine/include/debug/debug.h",
+      "max_snapshots_allowed": 64
+    },
+    "generic_helper_contracts": {
+      "profile_loader": "debug_load_config_profile",
+      "fallback_provider": "debug_get_monolith_fallback_config"
+    }
+  },
+  "block_3_body": {
+    "profile": {
+      "id": "default",
+      "display_name": "Standard Developer Debugging Baseline",
+      "description": "Balanced state snapshot ring buffer, tripwire traps, and balanced turn tracing.",
+      "enabled": true,
+      "break_on_error": false,
+      "break_on_tripwire": true,
+      "break_on_sway_breach": true,
+      "break_on_resonance_breach": true,
+      "break_on_hp_zero": true,
+      "break_on_stance_change": false,
+      "max_snapshots": 64,
+      "snapshot_interval_turns": 1,
+      "auto_dump_on_tripwire": true,
+      "interactive_repl": true,
+      "ansi_color": true,
+      "trace_channels": "sim,combat,world,dispatcher",
+      "domain_traps": {
+        "engine_traps_active": true,
+        "game_traps_active": true
+      }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "snapshot_capacity": 64,
+      "trap_guards_active": 4,
+      "verified_zero_heap": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "SNAPSHOT_CAP",
+        "rule": "max_snapshots <= 64",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "TRIPWIRE_DUMP",
+        "rule": "auto_dump_on_tripwire == true",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [
+        "--debug"
+      ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "menu_index": 1
+    }
+  }
+}

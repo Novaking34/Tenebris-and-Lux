@@ -1,0 +1,66 @@
+{
+  "$schema": "tenlux.engine.standards.block_5.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/standards/blocks/block_5_closing.json",
+    "id": "engine.standards.block_5",
+    "layer": "Layer 0: Core Foundation Strata",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-09",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "C11 Engine Block 5 Closing Specialization",
+    "role": "Specification for Engine Procedures, Dump Cards & Lifecycle Teardown",
+    "invariants": [
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Universal two-sub-assembly Block 5 architecture (5.1 Dump Cards & 5.2 Lifecycle)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "language": "ISO C11 (-std=c11)",
+      "standards_version": "Rev 5"
+    },
+    "static_declarations": {
+      "required_sub_assemblies": [
+        "Sub-Assembly 5.1",
+        "Sub-Assembly 5.2"
+      ],
+      "sub_assembly_5_1_name": "Executable Procedures, Inspection & Diagnostic Cards",
+      "sub_assembly_5_2_name": "Subsystem Lifecycle Initialization & Teardown"
+    }
+  },
+  "block_3_body": {
+    "dump_card_suffix": "_execute_dump_card",
+    "lifecycle_init_suffix": "_init",
+    "lifecycle_shutdown_suffix": "_shutdown",
+    "lifecycle_teardown_suffix": "_teardown",
+    "stateless_exemption_literal": "None. (Stateless module / pure stack-allocated execution).",
+    "pure_types_statutory_text": "Operational rasterization, subsystem lifecycle initialization, and diagnostic dump cards are declared in",
+    "facade_umbrella_statutory_text": "Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards Cross-References"
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "sub_assemblies_count": 2,
+      "dump_card_width": 60
+    },
+    "verification_tripwires": [
+      {
+        "name": "DUMP_CARD_REQUIREMENT",
+        "rule": "Every operational header declares _execute_dump_card",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "audit_enabled": true,
+    "require_dump_card_on_operational": true,
+    "require_stateless_note_or_lifecycle": true
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "home_dir": "engine/config/standards/blocks"
+    },
+    "severity": "error"
+  }
+}

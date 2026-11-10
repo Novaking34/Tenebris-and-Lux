@@ -1,68 +1,133 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          gui.c
-// @id            gui.viewport.x11
-// @layer         Layer 2: Presentation & Viewport
-// @version       1.2.0
-// @interface_rev Rev 2
-// @date          2026-11-03
-// @updated       2026-11-03
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Master presentation orchestrator and event dispatcher for native desktop
-//   X11 double-buffered rendering. Coordinates the 2D/2.5D tactical viewport,
-//   HUD, command dock, and narrative chronicle while enforcing dynamic
-//   responsive resizing, full-screen switching, and zero-tearing contracts.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: gui/gui.h, sim/core/game.h, util/log/log.h,
-//                            util/time/time_utils.h
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Static structures, zero heap).
-//   - Concurrency / Safety:  CONCURRENCY_MAIN_THREAD (Main thread event loop).
-//   - Latency Budget:        < 16,666 microseconds per frame (60 FPS budget).
-//
-// AXIOMATIC INVARIANTS:
-//   1. Presentation follows simulation: GUI never mutates state directly.
-//   2. Double-buffered rendering guarantees zero visual tearing.
-//   3. Non-overlapping button and panel geometry verified by AABB audits.
-//   4. Dynamic layout recalibration adapts smoothly to full-screen/resizing.
-//   5. Headless fallback cleanly downgrades to CLI in DISPLAY absence.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          gui.c
+@id            viewport.raster.gui
+@layer         Layer 2: Presentation & Viewport
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Desktop X11 Double-Buffered Viewport & Presentation Orchestrator
+@role          Master presentation facade coordinating X11 display, double-buffered
+               pixmaps, palettes, layout, widgets, procedural assets, HUD, and 2D/2.5D rendering.
+@invariants    1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. Presentation follows simulation: GUI is strictly read-only and never mutates sim state.
+               4. Double-buffered rendering: off-screen pixmap blits to window, guaranteeing zero tearing.
+               5. Non-overlapping button and panel geometry passes strict pairwise AABB audits.
+               6. Headless resilience: gracefully falls back to dummy/CLI mode when DISPLAY is absent.
+               7. Frame budget: < 16,666 microseconds per frame (60 FPS rendering target).
+               8. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Master presentation facade and orchestrator for the desktop X11 double-buffered
+  viewport and 2.5D tactical engine. Coordinates color palettes, panel layouts,
+  widgets, asset synthesis, HUD, and 2D/2.5D rendering pipelines while translating
+  user input events into universal simulation commands.
 
+  ### For Game Designers & Non-Programmers:
+  This is the master graphics engine that opens the game window on your screen,
+  draws the map, characters, and menus into an off-screen canvas, and then flips
+  it to the screen 60 times a second so that there is no screen flickering or tearing.
+
+  ### For Systems Programmers & Engine Architects:
+  - Native X11 double-buffered surface management (Pixmap, GC, XSync).
+  - Zero heap allocation: all draw commands write to pre-allocated buffers.
+  - Decoupled from simulation: receives read-only state pointers and outputs command tokens.
+  - Headless-safe fallback allowing automated CI testing without an active X server.
+================================================================================
+*/
+
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
+Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy: 3-Tier Downward Architecture
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (X11)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+
+/* --- Tier 2: External Dependencies --- */
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/keysym.h>
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "viewport/raster/gui.h"
 #include "viewport/styling/gui_fonts.h"
 #include "viewport/reel/gui_screens.h"
 #include "viewport/reel/reel.h"
+#include "hero/sim_state.h"
+#include "ending/game.h"
 #include "log/log.h"
 #include "core/time_utils.h"
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
-#include <stdio.h>
-#include <string.h>
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Static Presentation State Registers
+--------------------------------------------------------------------------------
+Pre-allocated static singletons for display layout, widgets, and fonts.
+--------------------------------------------------------------------------------
+*/
 
-static gui_layout_t   s_layout;
-static gui_button_t   s_buttons[GUI_NUM_BUTTONS];
-static gui_palette_t  s_palette;
+static gui_layout_t       s_layout;
+static gui_button_t       s_buttons[GUI_NUM_BUTTONS];
+static gui_palette_t      s_palette;
 static gui_font_catalog_t s_fonts;
-static gui_log_t      s_log;
-static gui_view_mode_t s_view_mode = GUI_VIEW_25D_ISOMETRIC;
-static gui_screen_mode_t s_screen_mode = GUI_SCREEN_TACTICAL;
-static reel_t         s_reel;
+static gui_log_t          s_log;
+static gui_view_mode_t    s_view_mode = GUI_VIEW_25D_ISOMETRIC;
+static gui_screen_mode_t  s_screen_mode = GUI_SCREEN_TACTICAL;
+static reel_t             s_reel;
+
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+================================================================================
+Mission: Desktop display availability queries and presentation business logic.
+All execution loops and lifecycle hooks are quarantined in Block 5.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Desktop Presentation Query & Event Routing
+--------------------------------------------------------------------------------
+Probing display connectivity, screen routing, and event dispatch logic.
+--------------------------------------------------------------------------------
+*/
 
 /**
- * Toggles EWMH fullscreen state via _NET_WM_STATE_FULLSCREEN client message.
+ * @brief Toggles EWMH fullscreen state via _NET_WM_STATE_FULLSCREEN client message.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Switches the game window between windowed mode and borderless fullscreen mode.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Dispatches ClientMessage event with _NET_WM_STATE_TOGGLE to the root window.
+ *
+ * @param[in] d X11 Display pointer.
+ * @param[in] w X11 Window handle.
  */
 static void toggle_fullscreen(Display *d, Window w)
 {
@@ -86,11 +151,19 @@ static void toggle_fullscreen(Display *d, Window w)
                SubstructureNotifyMask | SubstructureRedirectMask, &xev);
 }
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
-// =============================================================================
-
+/**
+ * @brief Probes whether a graphical X11 display server is reachable.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Checks if a graphical screen is available to open a window on; returns false
+ * if running headless in a terminal or automated test.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Attempts XOpenDisplay(NULL) and closes immediately. Returns true if non-null,
+ * false if connection fails or DISPLAY environment variable is unset.
+ *
+ * @return true if an X11 server is accessible; false in headless contexts.
+ */
 bool gui_is_available(void)
 {
     Display *d = XOpenDisplay(NULL);
@@ -101,6 +174,221 @@ bool gui_is_available(void)
     return true;
 }
 
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+================================================================================
+Mission: Verify incoming parameters, contracts, and schema invariants;
+validate standalone function execution and system stability for Block 5.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Contract, Input & Cog Verification Cogs
+Mission: Verify received parameters, configuration contracts, and data provenance;
+verify that declared subsystem cogs run properly as standalone units.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Audits all interactive button rectangles and panels for AABB collisions.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Ensures that no buttons overlap each other and all panels stay inside the window boundaries.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Exhaustive pairwise AABB collision audit across layout panels and command dock buttons.
+ *
+ * @return true if all panels and buttons reside inside viewport and do not overlap; else false.
+ */
+bool gui_audit_layout(void)
+{
+    gui_layout_t layout;
+    gui_layout_get_default(&layout);
+
+    /* Step 1: Panel non-overlap and containment */
+    if (!gui_layout_audit(&layout)) {
+        return false;
+    }
+
+    /* Step 2: Widget button bounds and non-overlap */
+    gui_button_t test_btns[GUI_NUM_BUTTONS];
+    gui_widgets_init_buttons(&layout, test_btns, GUI_NUM_BUTTONS);
+    if (!gui_widgets_audit(test_btns, GUI_NUM_BUTTONS,
+                           GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT)) {
+        return false;
+    }
+
+    /* Step 3: Color palette arithmetic */
+    if (!gui_palette_audit()) {
+        return false;
+    }
+
+    /* Step 4: Asset catalog integrity */
+    if (!gui_assets_audit()) {
+        return false;
+    }
+
+    /* Step 5: 2D / 2.5D Viewport projection reciprocity */
+    if (!gui_view2d_audit()) {
+        return false;
+    }
+
+    /* Step 6: HUD chronicle ring buffer */
+    if (!gui_hud_audit()) {
+        return false;
+    }
+
+    /* Step 7: Typography catalog fallback audit */
+    if (!gui_fonts_audit()) {
+        return false;
+    }
+
+    /* Step 8: Alternate screen navigation audit */
+    if (!gui_screens_audit()) {
+        return false;
+    }
+
+    /* Step 9: Movie Reel & scene depth audit */
+    if (!reel_audit()) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Standalone boolean audit wrapper executing layout verification and display checks.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Automated check verifying that the graphics engine and screen layout are ready to draw.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Primary audit entry point for viewport rasterizer. Delegates directly to gui_audit_layout().
+ *
+ * @return true if all layout, widget, palette, asset, and view invariants pass; else false.
+ */
+bool gui_audit(void)
+{
+    return gui_audit_layout();
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.2: Machine Self-Audit & Pre-Flight Validation Tripwires
+Mission: Validate holistic system invariants, tripwires, and subsystem stability;
+provide pre-flight clearance handshake before advancing to Block 5 execution.
+--------------------------------------------------------------------------------
+*/
+
+static const char *const gui_invariants[] = {
+    "Double-buffered native X11 rendering with zero-tear guarantees",
+    "Universal action dispatch without direct simulation mutation",
+    "Non-overlapping panel and button geometry bounded within viewport",
+    "Dynamic layout recalibration adapts smoothly to full-screen/resizing",
+    "Headless fallback cleanly downgrades to CLI in DISPLAY absence"
+};
+
+const module_metadata_t gui_manifest = {
+    "gui.viewport.x11",
+    "gui.h",
+    LAYER_2_PRESENTATION,
+    { 1, 2, 0 },
+    2,                          /* interface_rev */
+    "2026-11-03",               /* last_updated */
+    "Desktop presentation viewport, HUD, and 2.5D tactical isometric engine",
+    4,                          /* dependency_count */
+    { "sim.engine.core", "core.util.geom", "core.util.time", "core.util.log" },
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_MAIN_THREAD,    /* concurrency */
+    16666,                      /* max_budget_us */
+    5,
+    {
+        gui_invariants[0],
+        gui_invariants[1],
+        gui_invariants[2],
+        gui_invariants[3],
+        gui_invariants[4]
+    },
+    gui_preflight
+};
+
+/**
+ * @brief Pre-flight diagnostic callback probing display accessibility and layout.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Runs startup diagnostics to verify that all interface elements fit on screen without overlap.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Manifest preflight hook running `gui_audit_layout()` and checking `gui_is_available()`.
+ * Returns PASS or CRITICAL.
+ *
+ * @return Diagnostic check outcome reporting SEVERITY_PASS or CRITICAL.
+ */
+diag_result_t gui_preflight(void)
+{
+    diag_result_t res;
+    res.subsystem = gui_manifest.module_id;
+    res.check_name = "Layout Bounds, 2.5D Viewport & Display Accessibility";
+
+    if (!gui_audit_layout()) {
+        res.passed = false;
+        res.severity = SEVERITY_FATAL;
+        res.details =
+            "Fatal: Viewport bounds exceeded, button overlap, or math error.";
+        return res;
+    }
+
+    if (!gui_is_available()) {
+        res.passed = false;
+        res.severity = SEVERITY_CRITICAL;
+        res.details =
+            "X11 display not detected ($DISPLAY empty); safe CLI fallback.";
+        return res;
+    }
+
+    res.passed = true;
+    res.severity = SEVERITY_PASS;
+    res.details =
+        "X11 display connected; 2.5D viewport & panel geometry verified.";
+    return res;
+}
+
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 2 (Presentation & Viewport) | Subsystem: Native X11 Viewport Pump
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+Mission: Run operational execution procedures, format terminal-friendly ASCII
+status cards, and construct structured telemetry inspection objects.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Launches the native X11 double-buffered presentation loop.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Opens the main game window, starts the 60 FPS animation loop, listens for keyboard
+ * and mouse clicks, and displays the game until the player closes the window.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Main presentation pump. Creates X11 window, off-screen Pixmap, and GC. Polls
+ * XPending event queue, dispatches user input, updates Movie Reel kinematics,
+ * composes backbuffer frame, and blits via XCopyArea at 60 FPS.
+ *
+ * @param[in,out] state Active simulation player state.
+ * @return Exit status code (0 on clean exit).
+ */
 int gui_run(player_state_t *state)
 {
     if (state == NULL) {
@@ -161,6 +449,8 @@ int gui_run(player_state_t *state)
     gui_layout_update(&s_layout, cur_win_w, cur_win_h);
     gui_widgets_init_buttons(&s_layout, s_buttons, GUI_NUM_BUTTONS);
     gui_assets_init();
+    int resolved_assets = gui_assets_resolve_available();
+    LOG_INFO(LOG_CAT_LOG, "GUI", 0.0f, "GUI assets initialized: %d external bitmaps resolved", resolved_assets);
     reel_init(&s_reel, (int32_t)GUI_SCREEN_TACTICAL, GUI_NUM_TABS);
 
     /* Step 5: Initialize chronicle narrative log */
@@ -448,128 +738,47 @@ int gui_run(player_state_t *state)
     return 0;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
-// =============================================================================
-
-static const char *const gui_invariants[] = {
-    "Double-buffered native X11 rendering with zero-tear guarantees",
-    "Universal action dispatch without direct simulation mutation",
-    "Non-overlapping panel and button geometry bounded within viewport",
-    "Dynamic layout recalibration adapts smoothly to full-screen/resizing",
-    "Headless fallback cleanly downgrades to CLI in DISPLAY absence"
-};
-
-const module_metadata_t gui_manifest = {
-    "gui.viewport.x11",
-    "gui.h",
-    LAYER_2_PRESENTATION,
-    { 1, 2, 0 },
-    2,                          // interface_rev
-    "2026-11-03",               // last_updated
-    "Desktop presentation viewport, HUD, and 2.5D tactical isometric engine",
-    4,                          // dependency_count
-    { "sim.engine.core", "core.util.geom", "core.util.time", "core.util.log" },
-    ALLOC_ZERO_HEAP,            // alloc_policy
-    CONCURRENCY_MAIN_THREAD,    // concurrency
-    16666,                      // max_budget_us
-    5,
-    {
-        gui_invariants[0],
-        gui_invariants[1],
-        gui_invariants[2],
-        gui_invariants[3],
-        gui_invariants[4]
-    },
-    gui_preflight
-};
-
-bool gui_audit_layout(void)
+/**
+ * @brief Formats an ASCII diagnostic dump card representing Native X11 Viewport subsystem state.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Generates a clean text card summarizing display server availability, target dimensions,
+ * frame rate, and pre-flight audit status.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Writes a formatted 60-column diagnostic summary into `buffer` within `capacity` bytes.
+ */
+int gui_execute_dump_card(char *buffer, size_t capacity)
 {
-    gui_layout_t layout;
-    gui_layout_get_default(&layout);
-
-    /* Step 1: Panel non-overlap and containment */
-    if (!gui_layout_audit(&layout)) {
-        return false;
+    if (buffer == NULL || capacity == 0) {
+        return -1;
     }
 
-    /* Step 2: Widget button bounds and non-overlap */
-    gui_button_t test_btns[GUI_NUM_BUTTONS];
-    gui_widgets_init_buttons(&layout, test_btns, GUI_NUM_BUTTONS);
-    if (!gui_widgets_audit(test_btns, GUI_NUM_BUTTONS,
-                           GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT)) {
-        return false;
-    }
+    bool avail = gui_is_available();
+    diag_result_t diag = gui_preflight();
 
-    /* Step 3: Color palette arithmetic */
-    if (!gui_palette_audit()) {
-        return false;
-    }
-
-    /* Step 4: Asset catalog integrity */
-    if (!gui_assets_audit()) {
-        return false;
-    }
-
-    /* Step 5: 2D / 2.5D Viewport projection reciprocity */
-    if (!gui_view2d_audit()) {
-        return false;
-    }
-
-    /* Step 6: HUD chronicle ring buffer */
-    if (!gui_hud_audit()) {
-        return false;
-    }
-
-    /* Step 7: Typography catalog fallback audit */
-    if (!gui_fonts_audit()) {
-        return false;
-    }
-
-    /* Step 8: Alternate screen navigation audit */
-    if (!gui_screens_audit()) {
-        return false;
-    }
-
-    /* Step 9: Movie Reel & scene depth audit */
-    if (!reel_audit()) {
-        return false;
-    }
-
-    return true;
+    return snprintf(buffer, capacity,
+        "============================================================\n"
+        " VIEWPORT RASTER SUBSYSTEM DIAGNOSTIC CARD                 \n"
+        "============================================================\n"
+        " Subsystem       : Native X11 Double-Buffered Viewport      \n"
+        " Display Server  : %-41s\n"
+        " Target Dim      : %-41s\n"
+        " Target FPS      : %-41d\n"
+        " Pre-Flight Audit: %-41s\n"
+        "============================================================\n",
+        avail ? "AVAILABLE" : "HEADLESS / UNAVAILABLE",
+        "1280x720 (Logical 640x360)",
+        60,
+        diag.severity == SEVERITY_PASS ? "PASSED" : "FAILED");
 }
 
-diag_result_t gui_preflight(void)
-{
-    diag_result_t res;
-    res.subsystem = gui_manifest.module_id;
-    res.check_name = "Layout Bounds, 2.5D Viewport & Display Accessibility";
-
-    if (!gui_audit_layout()) {
-        res.passed = false;
-        res.severity = SEVERITY_FATAL;
-        res.details =
-            "Fatal: Viewport bounds exceeded, button overlap, or math error.";
-        return res;
-    }
-
-    if (!gui_is_available()) {
-        res.passed = false;
-        res.severity = SEVERITY_CRITICAL;
-        res.details =
-            "X11 display not detected ($DISPLAY empty); safe CLI fallback.";
-        return res;
-    }
-
-    res.passed = true;
-    res.severity = SEVERITY_PASS;
-    res.details =
-        "X11 display connected; 2.5D viewport & panel geometry verified.";
-    return res;
-}
-
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+Mission: Manage subsystem lifecycle, allocate runtime ring buffers,
+open/close file streams, and tear down hardware handles.
+--------------------------------------------------------------------------------
+None. (Pure procedural loop; lifecycle allocations scoped to gui_run frame).
+--------------------------------------------------------------------------------
+*/

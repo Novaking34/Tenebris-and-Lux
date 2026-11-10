@@ -1,0 +1,118 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/telemetry/quiet.json",
+    "id": "engine.config.diagnostics.telemetry.quiet",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Ultra-low overhead quiet profile for headless simulation benchmarking and automated CI/CD runs.",
+    "where_the_data_lives": {
+      "path": "engine/config/diagnostics/telemetry/quiet.json",
+      "log_output_directory": "build/logs/",
+      "header_binding": "engine/include/log/log.h"
+    },
+    "what_it_enables": [
+      "Minimum severity set to WARNING to eliminate I/O latency bottlenecks",
+      "Per-turn latency overhead capped strictly under 50 microseconds",
+      "Silent headless test verification ideal for automated CTest runs"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in static ring buffer telemetry",
+      "Console echo strictly disabled to maximize throughput",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "log_subsystem_initialized": true,
+      "static_ring_buffer_allocated": true,
+      "headless_environment_ready": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.log_setting.v1",
+      "target_struct": "log_config_t",
+      "header_binding": "engine/include/log/log.h",
+      "supported_domains": [
+        "ENGINE",
+        "GAME"
+      ]
+    },
+    "generic_helper_contracts": {
+      "config_loader": "log_load_config_from_file",
+      "profiler_binding": "log_load_config_profile"
+    }
+  },
+  "block_3_body": {
+    "setting": {
+      "id": "quiet",
+      "display_name": "Quiet Headless CI & Benchmark",
+      "description": "Minimal overhead (< 50\u00b5s tick target) for automated CTest runs. Suppresses console echoing and captures only WARNING, ERROR, and FATAL events.",
+      "log_dir": "logs",
+      "base_filename": "tenebris_lux_ci.log",
+      "max_file_size_bytes": 1048576,
+      "max_rotated_files": 10,
+      "min_severity": "WARNING",
+      "save_by_category": false,
+      "echo_to_console": false,
+      "use_colors": false,
+      "telemetry": {
+        "track_sequence_ids": true,
+        "track_monotonic_us": false,
+        "track_iso_timestamps": false,
+        "track_moral_grades": false,
+        "active_categories": [
+          "SYSTEM",
+          "LOG"
+        ]
+      },
+      "severity_filter_mask": "0x78",
+      "min_severity_weight": 40,
+      "domain_routing": {
+        "engine_domain_enabled": true,
+        "game_domain_enabled": true,
+        "isolate_domain_files": false
+      }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "rotation_threshold_kb": 1024,
+      "retention_policy": "Retain 10 timestamped rotated archives",
+      "latency_budget_target_us": 50,
+      "headless_safe": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "NO_ECHO",
+        "rule": "echo_to_console == false",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "SEVERITY_WARNING_PLUS",
+        "rule": "min_severity >= WARNING",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "ZERO_HEAP_QUIET",
+        "rule": "Zero dynamic allocations during write",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [
+        "--cli"
+      ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "menu_index": 5
+    }
+  }
+}

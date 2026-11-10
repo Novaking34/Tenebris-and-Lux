@@ -17,12 +17,12 @@
       "data into 5 operational domains matching simulation data movement."
     ],
     "where_the_data_lives": {
-      "topology": "5-Domain Hierarchical Tree with 2-3 levels of depth",
-      "domain_1_system": "game/data/system/ (runtime & diagnostics)",
-      "domain_2_world": "game/data/world/ (geography, battlefields, terrains)",
-      "domain_3_entities": "game/data/entities/ (roster & classes)",
-      "domain_4_mechanics": "game/data/mechanics/ (tactics, combat, items, campaign)",
-      "domain_5_presentation": "game/data/presentation/ (ui, audio, visuals)"
+      "topology": "Layered Dual Data Taxonomy (engine/config/ mechanical profiles & game/data/ RPG lore)",
+      "engine_configs": "engine/config/ (runtime, diagnostics, viewport, audio)",
+      "domain_1_world": "game/data/world/ (geography, battlefields, terrains)",
+      "domain_2_entities": "game/data/entities/ (roster & classes)",
+      "domain_3_mechanics": "game/data/mechanics/ (tactics, combat, items, campaign)",
+      "domain_4_presentation": "game/data/presentation/ (ui, audio, visuals)"
     },
     "what_the_data_enables": [
       "Decoupled headless deterministic TRPG simulation execution",
@@ -88,11 +88,11 @@
     },
     "domains": [
       {
-        "id": "system",
-        "title": "System Domain: Platform Invariants & Telemetry",
-        "manifest_path": "system/manifest.json",
+        "id": "config",
+        "title": "Standalone Engine Configuration & Diagnostics",
+        "manifest_path": "../../engine/config/manifest.json",
         "status": "active",
-        "where_it_lives": "game/data/system/",
+        "where_it_lives": "engine/config/",
         "what_it_enables": [
           "Zero-heap bounded math clamping and safe division guards",
           "60 FPS and 120 FPS high-refresh frame budgets and monotonic clocks",
@@ -162,70 +162,70 @@
         "id": "log",
         "title": "Logging & Diagnostic Telemetry Subsystem",
         "description": "Log runtime configurations, static ring buffers, and rotation.",
-        "manifest_path": "system/diagnostics/telemetry/manifest.json",
+        "manifest_path": "../../engine/config/diagnostics/telemetry/manifest.json",
         "status": "active",
-        "category": "system",
-        "where_it_lives": "game/data/system/diagnostics/telemetry/",
+        "category": "config",
+        "where_it_lives": "engine/config/diagnostics/telemetry/",
         "what_it_enables": "Forensic telemetry, category isolation, and ring buffer writes."
       },
       {
         "id": "math",
         "title": "Mathematical Continuum & Invariant Subsystem",
         "description": "Resonance limits, moral sway continuum [-100, +100], and bands.",
-        "manifest_path": "system/runtime/math/manifest.json",
+        "manifest_path": "../../engine/config/runtime/math/manifest.json",
         "status": "active",
-        "category": "system",
-        "where_it_lives": "game/data/system/runtime/math/",
+        "category": "config",
+        "where_it_lives": "engine/config/runtime/math/",
         "what_it_enables": "Clamping arithmetic, zero-divisor safety, and normalization."
       },
       {
         "id": "time",
         "title": "Monotonic Timing & Frame Pacing Subsystem",
         "description": "60/120 FPS budgets, frame pacing, and sub-50us simulation turns.",
-        "manifest_path": "system/runtime/time/manifest.json",
+        "manifest_path": "../../engine/config/runtime/time/manifest.json",
         "status": "active",
-        "category": "system",
-        "where_it_lives": "game/data/system/runtime/time/",
+        "category": "config",
+        "where_it_lives": "engine/config/runtime/time/",
         "what_it_enables": "Deterministic frame pacing, sub-ms timestamps, and tick rates."
       },
       {
         "id": "string",
         "title": "Lexical Buffer & Command Tokens Subsystem",
         "description": "Buffer limits, stance tokens, and canonical action verb dictionaries.",
-        "manifest_path": "system/runtime/string/manifest.json",
+        "manifest_path": "../../engine/config/runtime/string/manifest.json",
         "status": "active",
-        "category": "system",
-        "where_it_lives": "game/data/system/runtime/string/",
+        "category": "config",
+        "where_it_lives": "engine/config/runtime/string/",
         "what_it_enables": "Bounded string operations, token lexicons, and path joining."
       },
       {
         "id": "debug",
         "title": "Interactive Engine Debugger & State Rewind Subsystem",
         "description": "State snapshots, rewind, tripwire traps, and trace logs.",
-        "manifest_path": "system/diagnostics/debugger/manifest.json",
+        "manifest_path": "../../engine/config/diagnostics/debugger/manifest.json",
         "status": "active",
-        "category": "system",
-        "where_it_lives": "game/data/system/diagnostics/debugger/",
+        "category": "config",
+        "where_it_lives": "engine/config/diagnostics/debugger/",
         "what_it_enables": "64-snapshot ring buffer, FNV-1a hashing, and interactive REPL."
       },
       {
         "id": "taxonomy",
         "title": "Diagnostic Error Taxonomy & Tripwire Matrix",
         "description": "Hierarchical error registry, root cause hints, and latching tripwires.",
-        "manifest_path": "system/diagnostics/taxonomy/manifest.json",
+        "manifest_path": "../../engine/config/diagnostics/taxonomy/manifest.json",
         "status": "active",
-        "category": "system",
-        "where_it_lives": "game/data/system/diagnostics/taxonomy/",
+        "category": "config",
+        "where_it_lives": "engine/config/diagnostics/taxonomy/",
         "what_it_enables": "Segregation of Engine (0x0xxx) and Game (0x1xxx) errors and safe recovery actions."
       },
       {
         "id": "formats",
         "title": "Log Serialization & Stream Conversion Formats",
         "description": "Fixed-column text, NDJSON streams, CSV tables, replays, and SARIF reports.",
-        "manifest_path": "system/diagnostics/formats/manifest.json",
+        "manifest_path": "../../engine/config/diagnostics/formats/manifest.json",
         "status": "active",
-        "category": "system",
-        "where_it_lives": "game/data/system/diagnostics/formats/",
+        "category": "config",
+        "where_it_lives": "engine/config/diagnostics/formats/",
         "what_it_enables": "Converting telemetry streams into analytical and regression test datasets."
       },
       {
@@ -439,7 +439,7 @@
     "navigation": {
       "home_dir": "data",
       "root_manifest": "manifest.json",
-      "primary_menu": "system/diagnostics/telemetry/manifest.json",
+      "primary_menu": "presentation/manifest.json",
       "emergency_fallback": "monolith_fallback_profile"
     }
   }

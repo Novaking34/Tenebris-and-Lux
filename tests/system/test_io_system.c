@@ -79,15 +79,15 @@ static void test_io_system_always_pass(void)
 {
     printf("  [PASS-1] Running Section 1: Always Pass (System Dataset Tree Sweep)...\n");
 
-    /* Canonical system datasets that must always resolve and load cleanly */
+    /* Canonical config datasets that must always resolve and load cleanly */
     static const struct {
         const char *domain;
         const char *rel_path;
         const char *expected_schema;
     } s_core_datasets[] = {
-        {"system", "runtime/math/formulas.json", "tenlux.data.math_formulas.v1"},
-        {"system", "diagnostics/telemetry/manifest.json", "tenlux.data.log_menu.v1"},
-        {"system", "diagnostics/taxonomy/error_codes.json", "tenlux.data.error_taxonomy.v1"}
+        {"config", "runtime/math/formulas.json", "tenlux.data.math_formulas.v1"},
+        {"config", "diagnostics/telemetry/manifest.json", "tenlux.data.log_menu.v1"},
+        {"config", "diagnostics/taxonomy/error_codes.json", "tenlux.data.error_taxonomy.v1"}
     };
 
     const size_t dataset_count = sizeof(s_core_datasets) / sizeof(s_core_datasets[0]);
@@ -192,7 +192,7 @@ static void test_io_system_assertions_and_guarantees(void)
     {
         master_loader_t loader0;
         char buf0[8192];
-        bool ok0 = master_loader_load(&loader0, "system", "runtime/math/formulas.json", buf0, sizeof(buf0));
+        bool ok0 = master_loader_load(&loader0, "config", "runtime/math/formulas.json", buf0, sizeof(buf0));
         TEST_ASSERT(ok0 && loader0.status == LOADER_STATUS_OK, "Pass 0 load succeeds");
         baseline_len = loader0.body_len;
         baseline_status = loader0.status;
@@ -204,7 +204,7 @@ static void test_io_system_assertions_and_guarantees(void)
     for (int pass = 1; pass <= REPLAY_PASSES; ++pass) {
         master_loader_t loader;
         char buf[8192];
-        bool ok = master_loader_load(&loader, "system", "runtime/math/formulas.json", buf, sizeof(buf));
+        bool ok = master_loader_load(&loader, "config", "runtime/math/formulas.json", buf, sizeof(buf));
         TEST_ASSERT(ok, "Replay pass succeeded");
         TEST_ASSERT(loader.status == baseline_status, "Replay status matches baseline");
         TEST_ASSERT(loader.body_len == baseline_len, "Replay body length matches baseline");

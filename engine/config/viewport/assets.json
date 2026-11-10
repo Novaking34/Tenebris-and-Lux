@@ -1,0 +1,234 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/viewport/assets.json",
+    "id": "engine.config.viewport.assets",
+    "layer": "Layer 0: Core Utilities / Viewport Presentation",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Generic engine asset registry binding slots to asset paths and procedural fallbacks.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Viewport Configuration Architecture",
+      "path": "engine/config/viewport/assets.json",
+      "parent_manifest": "engine/config/manifest.json"
+    },
+    "what_it_enables": [
+      "Decoupled asset slot abstraction with generic engine identifiers",
+      "Direct asset path fast-lookup with O(1) existence checks",
+      "Procedural fallback floor guaranteed when external files are omitted",
+      "Consistent bounding dimensions for entities (32x32) and isometric tiles (48x24)"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in asset lookup (ALLOC_ZERO_HEAP)",
+      "Asset paths are strictly optional; missing paths fall back to procedural synthesis",
+      "Procedural fallback floor covenant: engine is 100% playable without external assets",
+      "Numerical slot identifiers must align with gui_asset_id_t enum"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_assets": "viewport/styling/gui_assets.h",
+      "gui_types": "viewport/raster/gui_types.h"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.engine.viewport.assets.v1",
+      "target_struct": "gui_asset_registry_t",
+      "header_binding": "include/viewport/styling/gui_assets.h"
+    },
+    "generic_helper_contracts": {
+      "loader": "gui_assets_load_registry",
+      "path_resolver": "path_finder_resolve_with_hint"
+    },
+    "capacities": {
+      "max_asset_slots": 64,
+      "default_filtering": "nearest_neighbor"
+    }
+  },
+  "block_3_body": {
+    "asset_paths": {
+      "root": "game/assets/",
+      "sprites": "game/assets/sprites/",
+      "characters": "game/assets/sprites/characters/",
+      "monsters": "game/assets/sprites/monsters/",
+      "tilesets": "game/assets/textures/tilesets/",
+      "relics": "game/assets/sprites/relics/",
+      "vfx": "game/assets/sprites/vfx/"
+    },
+    "asset_pipeline": {
+      "procedural_fallback_enabled": true,
+      "spritesheet_directory": "game/assets/sprites/",
+      "texture_filtering": "nearest_neighbor"
+    },
+    "slots": [
+      {
+        "slot_id": 1,
+        "name": "ENTITY_PROTAGONIST_1",
+        "kind": "character",
+        "width": 32,
+        "height": 32,
+        "asset_path": "game/assets/sprites/characters/elijah_32x32.png",
+        "procedural_generator": "procedural_knight_crest"
+      },
+      {
+        "slot_id": 2,
+        "name": "ENTITY_PROTAGONIST_2",
+        "kind": "character",
+        "width": 32,
+        "height": 32,
+        "asset_path": "game/assets/sprites/characters/katrina_32x32.png",
+        "procedural_generator": "procedural_rogue_crest"
+      },
+      {
+        "slot_id": 3,
+        "name": "ENTITY_PROTAGONIST_3",
+        "kind": "character",
+        "width": 32,
+        "height": 32,
+        "asset_path": "game/assets/sprites/characters/casatti_32x32.png",
+        "procedural_generator": "procedural_prince_crest"
+      },
+      {
+        "slot_id": 10,
+        "name": "ENTITY_ENEMY_MINION_1",
+        "kind": "monster",
+        "width": 32,
+        "height": 32,
+        "asset_path": "game/assets/sprites/monsters/dream_eater_32x32.png",
+        "procedural_generator": "procedural_aberration_crest"
+      },
+      {
+        "slot_id": 11,
+        "name": "ENTITY_ENEMY_MINION_2",
+        "kind": "monster",
+        "width": 32,
+        "height": 32,
+        "asset_path": "game/assets/sprites/monsters/shadow_stalker_32x32.png",
+        "procedural_generator": "procedural_stalker_crest"
+      },
+      {
+        "slot_id": 12,
+        "name": "ENTITY_BOSS_1",
+        "kind": "monster",
+        "width": 48,
+        "height": 48,
+        "asset_path": "game/assets/sprites/monsters/usuru_avatar_48x48.png",
+        "procedural_generator": "procedural_dark_lord_crest"
+      },
+      {
+        "slot_id": 20,
+        "name": "TILE_PATH",
+        "kind": "tile",
+        "width": 48,
+        "height": 24,
+        "asset_path": "game/assets/textures/tilesets/cobblestone_48x24.png",
+        "procedural_generator": "procedural_iso_cobblestone"
+      },
+      {
+        "slot_id": 21,
+        "name": "TILE_PLAINS",
+        "kind": "tile",
+        "width": 48,
+        "height": 24,
+        "asset_path": "game/assets/textures/tilesets/grass_48x24.png",
+        "procedural_generator": "procedural_iso_grass"
+      },
+      {
+        "slot_id": 22,
+        "name": "TILE_STRUCTURE",
+        "kind": "tile",
+        "width": 48,
+        "height": 24,
+        "asset_path": "game/assets/textures/tilesets/stone_wall_48x24.png",
+        "procedural_generator": "procedural_iso_wall"
+      },
+      {
+        "slot_id": 23,
+        "name": "TILE_HAZARD",
+        "kind": "tile",
+        "width": 48,
+        "height": 24,
+        "asset_path": "game/assets/textures/tilesets/void_crag_48x24.png",
+        "procedural_generator": "procedural_iso_void"
+      },
+      {
+        "slot_id": 24,
+        "name": "TILE_LIQUID",
+        "kind": "tile",
+        "width": 48,
+        "height": 24,
+        "asset_path": "game/assets/textures/tilesets/water_48x24.png",
+        "procedural_generator": "procedural_iso_water"
+      },
+      {
+        "slot_id": 30,
+        "name": "RELIC_DEFENSIVE",
+        "kind": "relic",
+        "width": 24,
+        "height": 24,
+        "asset_path": "game/assets/sprites/relics/shield_lux_24x24.png",
+        "procedural_generator": "procedural_relic_shield"
+      },
+      {
+        "slot_id": 31,
+        "name": "RELIC_OFFENSIVE",
+        "kind": "relic",
+        "width": 24,
+        "height": 24,
+        "asset_path": "game/assets/sprites/relics/sword_tenlux_24x24.png",
+        "procedural_generator": "procedural_relic_blade"
+      },
+      {
+        "slot_id": 40,
+        "name": "VFX_BARRIER",
+        "kind": "vfx",
+        "width": 32,
+        "height": 32,
+        "asset_path": "game/assets/sprites/vfx/barrier_lux_32x32.png",
+        "procedural_generator": "procedural_vfx_barrier"
+      },
+      {
+        "slot_id": 41,
+        "name": "VFX_SLASH",
+        "kind": "vfx",
+        "width": 32,
+        "height": 32,
+        "asset_path": "game/assets/sprites/vfx/slash_tenebris_32x32.png",
+        "procedural_generator": "procedural_vfx_slash"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_SLOT_BOUNDS",
+        "condition": "slot_id >= 1 && slot_id <= 64",
+        "action": "Ensure slot identifiers fall within valid enum ranges"
+      },
+      {
+        "id": "TRIPWIRE_FALLBACK_PRESENT",
+        "condition": "procedural_generator != NULL",
+        "action": "Ensure procedural fallback floor is guaranteed"
+      }
+    ],
+    "metrics": {
+      "slot_count": 14,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 3
+    },
+    "execution_hooks": {
+      "on_load": "gui_assets_load_registry",
+      "audit_hook": "gui_assets_audit_preflight"
+    }
+  }
+}
+

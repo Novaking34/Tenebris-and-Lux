@@ -1,0 +1,33 @@
+{
+  "$schema": "tenlux.tools.block_5_closing.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "layer": "Developer Tooling Strata",
+    "version": "0.1.0",
+    "system": "OmniCode Protocol Block 5 Generic Standards",
+    "role": "Specification for Block 5 Closing, Execution & Lifecycle"
+  },
+  "block_2_opening": {
+    "block_marker": "BLOCK 5: CLOSING BLOCK",
+    "required_sub_assemblies": [
+      "Sub-Assembly 5.1",
+      "Sub-Assembly 5.2"
+    ]
+  },
+  "block_3_body": {
+    "dump_card_suffix": "_execute_dump_card",
+    "stateless_exemption_literal": "None. (Stateless module / pure stack-allocated execution).",
+    "stateful_lifecycle_init_suffix": "_init",
+    "stateful_lifecycle_shutdown_suffix": "_shutdown",
+    "exempt_archetypes": ["pure_types", "facade_umbrella"]
+  },
+  "block_4_audit": {
+    "audit_enabled": true,
+    "require_dump_card_on_operational": true,
+    "require_stateless_note_or_lifecycle": true
+  },
+  "block_5_closing": {
+    "rejection_action": "fail_file"
+  }
+}
+

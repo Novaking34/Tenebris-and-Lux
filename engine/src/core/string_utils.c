@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          string_utils.c
-@id            core.util.string
+@id            core.string
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Safe String Manipulation Subsystem (core/string)
@@ -18,11 +18,24 @@ BLOCK 1: METADATA BLOCK
                2. Pointer safety: Handles NULL pointers gracefully without crashes or SIGSEGV.
                3. Zero dynamic heap allocations (ALLOC_ZERO_HEAP: in-place or caller buffers).
                4. Reentrancy: Stateless, deterministic buffer transformations.
+               5. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
 PURPOSE & ARCHITECTURAL ROLE:
   Memory-safe string copying, concatenation, in-place whitespace trimming, case-
   folding, FNV-1a hashing, and canonical path assembling. Ingests lexical limits from
-  game/data/system/runtime/string/ via master_loader.
+  engine/config/runtime/string/ via master_loader.
+
+  ### For Game Designers & Non-Programmers:
+  Handles all text operations in the game (character names, dialogue lines,
+  and inventory titles) safely. It guarantees that long text lines are cleanly
+  bounded rather than spilling outside memory or crashing the game.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Zero-Heap Memory Model (ALLOC_ZERO_HEAP): Operates entirely on caller stack.
+  - Hard null-termination invariant: destination buffers are unconditionally
+    null-terminated even upon truncation.
+  - Deterministic 32-bit FNV-1a string hashing for O(1) identifier comparisons.
+  - In-place whitespace trimming and ASCII case-folding routines.
 ================================================================================
 */
 
@@ -82,10 +95,16 @@ const module_metadata_t string_utils_manifest = {
 };
 
 /*
-================================================================================
+===============================================================================
 BLOCK 3: BODY / CORE STRING LOGIC BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
-================================================================================
+===============================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Memory-Safe Buffer Operations
+--------------------------------------------------------------------------------
 */
 
 void str_safe_copy(char *dst, const char *src, size_t dst_size)
@@ -155,6 +174,12 @@ void str_trim_inplace(char *str)
         memmove(str, start, strlen(start) + 1);
     }
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Case Conversion & Text Matching Cogs
+--------------------------------------------------------------------------------
+*/
 
 bool str_case_eq(const char *a, const char *b)
 {
@@ -233,6 +258,12 @@ bool str_to_upper(char *dst, const char *src, size_t dst_size)
     return true;
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Deterministic Hashing (FNV-1a)
+--------------------------------------------------------------------------------
+*/
+
 uint32_t str_fnv1a32(const char *str)
 {
     if (str == NULL) return 0;
@@ -254,6 +285,12 @@ uint64_t str_fnv1a64(const char *str)
     }
     return hash;
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.4: Path & Directory String Manipulation Cogs
+--------------------------------------------------------------------------------
+*/
 
 bool str_parent_dir(char *out_dir, size_t out_size, const char *filepath)
 {
@@ -315,6 +352,12 @@ bool str_path_join(char *dest, size_t dest_size, const char *dir, const char *fi
     return true;
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.5: Data-Driven Lexical Configuration Cogs
+--------------------------------------------------------------------------------
+*/
+
 string_config_t string_get_default_config(void)
 {
     string_config_t cfg;
@@ -346,13 +389,9 @@ bool string_load_config_from_file(const char *profile_path, string_config_t *out
         target_rel = "runtime/string/default.json";
     }
 
-    if (strncmp(target_rel, "system/", 7) == 0) {
-        target_rel += 7;
-    }
-
     master_loader_t loader;
     char file_buf[8192];
-    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+    if (!master_loader_load(&loader, "config", target_rel, file_buf, sizeof(file_buf))) {
         LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "String", -0.2f,
                    "Failed to load string profile '%s', falling back to defaults (GRADE:-020)", target_rel);
         return false;
@@ -448,8 +487,18 @@ bool string_utils_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Safe String Engine
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
 */
 
 bool string_execute_dump_card(const string_config_t *config, char *out_buf, size_t buf_size)
@@ -476,5 +525,13 @@ bool string_execute_dump_card(const string_config_t *config, char *out_buf, size
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of string_utils.c */

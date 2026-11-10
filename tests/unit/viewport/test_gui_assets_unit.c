@@ -89,6 +89,24 @@ static void test_assets_always_pass(void)
     bool audit_ok = gui_assets_audit();
     TEST_ASSERT(audit_ok, "gui_assets_audit passes unconditionally");
 
+    /* 1.4 Optional external asset resolution & procedural fallback */
+    int proc_before = gui_assets_count_by_kind(ASSET_KIND_PROCEDURAL);
+    TEST_ASSERT(proc_before > 0, "Procedural count is positive before resolution");
+    TEST_ASSERT(gui_assets_is_procedural(ASSET_HERO_ELIJAH), "Elijah is procedural by default");
+
+    int resolved = gui_assets_resolve_available();
+    TEST_ASSERT(resolved >= 0, "Resolution count is non-negative");
+    if (resolved > 0) {
+        TEST_ASSERT(gui_assets_count_by_kind(ASSET_KIND_BITMAP) == resolved,
+                    "Bitmap count matches resolved assets");
+    }
+
+    /* Reset back to procedural ensures test reproducibility */
+    gui_assets_reset_to_procedural();
+    TEST_ASSERT(gui_assets_count_by_kind(ASSET_KIND_PROCEDURAL) == proc_before,
+                "Reset restored procedural count");
+    TEST_ASSERT(gui_assets_is_procedural(ASSET_HERO_ELIJAH), "Elijah is procedural after reset");
+
     printf("  [PASS-1] Section 1 passed unconditionally.\n");
 }
 
@@ -206,3 +224,4 @@ int main(void)
     printf("============================================================\n");
     return 0;
 }
+

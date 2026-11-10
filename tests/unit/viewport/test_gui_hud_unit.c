@@ -84,6 +84,12 @@ static void test_hud_always_pass(void)
     bool audit_ok = gui_hud_audit();
     TEST_ASSERT(audit_ok, "gui_hud_audit passes unconditionally");
 
+    /* 1.3 HUD diagnostic dump card */
+    char card[512];
+    int card_len = gui_hud_execute_dump_card(card, sizeof(card));
+    TEST_ASSERT(card_len > 0, "gui_hud_execute_dump_card returns valid byte length");
+    TEST_ASSERT(strstr(card, "VIEWPORT HUD SUBSYSTEM DIAGNOSTIC CARD") != NULL, "Card contains title");
+
     printf("  [PASS-1] Section 1 passed unconditionally.\n");
 }
 
@@ -122,6 +128,11 @@ static void test_hud_never_fail(void)
     gui_hud_render_header(NULL, 0, NULL, NULL, &pal, NULL);
     gui_hud_render_status(NULL, 0, NULL, &status_rect, NULL, &pal, NULL);
     gui_hud_render_chronicle(NULL, 0, NULL, &chronicle_rect, NULL, &pal, NULL);
+
+    /* 2.4 Diagnostic card with NULL/zero capacity */
+    char dummy[64];
+    TEST_ASSERT(gui_hud_execute_dump_card(NULL, 0) == -1, "gui_hud_execute_dump_card handles NULL buffer safely");
+    TEST_ASSERT(gui_hud_execute_dump_card(dummy, 0) == -1, "gui_hud_execute_dump_card handles zero capacity safely");
 
     printf("  [PASS-2] Section 2 passed unconditionally.\n");
 }
@@ -205,3 +216,4 @@ int main(void)
     printf("============================================================\n");
     return 0;
 }
+

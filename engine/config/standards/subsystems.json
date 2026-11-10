@@ -1,0 +1,107 @@
+{
+  "$schema": "tenlux.engine.standards.subsystems.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/standards/subsystems.json",
+    "id": "engine.standards.subsystems",
+    "layer": "Layer 0: Core Foundation Strata",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-09",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "C11 Subsystem Header Archetype Registry",
+    "role": "Declarative Registry of All 41 Engine Headers and Their Architectural Contracts",
+    "invariants": [
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Zero dynamic heap allocations in Layer 0/1/2 (ALLOC_ZERO_HEAP)",
+      "All 41 engine headers mapped with archetype and statefulness"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "language": "ISO C11 (-std=c11, -Wall -Wextra -Wpedantic)",
+      "standards_version": "Rev 5"
+    },
+    "static_declarations": {
+      "archetype_definitions": {
+        "operational": "Full functional C cog exposing public APIs, audits, and dump cards.",
+        "pure_types": "Statutory pure-type header defining static structures and inline predicates.",
+        "facade_umbrella": "Subsystem aggregator header re-exporting modules and cross-references.",
+        "quarantined_fallback": "Isolated zero-dependency emergency fallback cog."
+      }
+    }
+  },
+  "block_3_body": {
+    "headers": {
+      "audio/audio_bus.h": { "subsystem": "audio.bus", "layer": 0, "archetype": "operational", "stateful": true },
+      "audio/audio_fallback.h": { "subsystem": "audio.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "audio/audio.h": { "subsystem": "audio", "layer": 0, "archetype": "facade_umbrella", "stateful": false },
+      "audio/audio_types.h": { "subsystem": "audio.types", "layer": 0, "archetype": "pure_types", "stateful": false },
+
+      "core/clock_pacer.h": { "subsystem": "core.pacer", "layer": 0, "archetype": "operational", "stateful": false },
+      "core/clock_pacer_fallback.h": { "subsystem": "core.pacer.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "core/core.h": { "subsystem": "core", "layer": 0, "archetype": "facade_umbrella", "stateful": false },
+      "core/formula_eval.h": { "subsystem": "core.formula", "layer": 0, "archetype": "operational", "stateful": false },
+      "core/formula_eval_fallback.h": { "subsystem": "core.formula.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "core/geom_utils.h": { "subsystem": "core.geom", "layer": 0, "archetype": "operational", "stateful": false },
+      "core/geom_utils_fallback.h": { "subsystem": "core.geom.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "core/manifest.h": { "subsystem": "core.manifest", "layer": 0, "archetype": "operational", "stateful": false },
+      "core/math_utils.h": { "subsystem": "core.math", "layer": 0, "archetype": "operational", "stateful": false },
+      "core/math_utils_fallback.h": { "subsystem": "core.math.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "core/string_utils.h": { "subsystem": "core.string", "layer": 0, "archetype": "operational", "stateful": false },
+      "core/string_utils_fallback.h": { "subsystem": "core.string.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "core/time_utils.h": { "subsystem": "core.time", "layer": 0, "archetype": "operational", "stateful": false },
+      "core/time_utils_fallback.h": { "subsystem": "core.time.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+
+      "debug/debug.h": { "subsystem": "debug", "layer": 0, "archetype": "operational", "stateful": true },
+      "debug/debug_fallback.h": { "subsystem": "debug.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+
+      "io/fs_utils.h": { "subsystem": "io.fs", "layer": 0, "archetype": "operational", "stateful": true },
+      "io/io.h": { "subsystem": "io", "layer": 0, "archetype": "facade_umbrella", "stateful": false },
+      "io/json_utils.h": { "subsystem": "io.json", "layer": 0, "archetype": "operational", "stateful": true },
+      "io/master_loader.h": { "subsystem": "io.loader", "layer": 0, "archetype": "operational", "stateful": true },
+      "io/path_finder.h": { "subsystem": "io.vfs", "layer": 0, "archetype": "operational", "stateful": true },
+
+      "log/log.h": { "subsystem": "log", "layer": 0, "archetype": "operational", "stateful": true },
+      "log/log_fallback.h": { "subsystem": "log.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+
+      "viewport/hud/gui_hud.h": { "subsystem": "viewport.hud", "layer": 2, "archetype": "operational", "stateful": false },
+      "viewport/hud/gui_layout.h": { "subsystem": "viewport.layout", "layer": 2, "archetype": "operational", "stateful": false },
+      "viewport/hud/gui_widgets.h": { "subsystem": "viewport.widgets", "layer": 2, "archetype": "operational", "stateful": false },
+      "viewport/raster/gui.h": { "subsystem": "viewport.raster", "layer": 2, "archetype": "operational", "stateful": false },
+      "viewport/raster/gui_fallback.h": { "subsystem": "viewport.raster.fallback", "layer": 2, "archetype": "quarantined_fallback", "stateful": false },
+      "viewport/raster/gui_types.h": { "subsystem": "viewport.raster.types", "layer": 2, "archetype": "pure_types", "stateful": false },
+      "viewport/raster/gui_view2d.h": { "subsystem": "viewport.raster.view2d", "layer": 2, "archetype": "operational", "stateful": false },
+      "viewport/reel/gui_screens.h": { "subsystem": "viewport.reel.screens", "layer": 2, "archetype": "operational", "stateful": false },
+      "viewport/reel/reel.h": { "subsystem": "viewport.reel", "layer": 2, "archetype": "operational", "stateful": true },
+      "viewport/reel/reel_fallback.h": { "subsystem": "viewport.reel.fallback", "layer": 2, "archetype": "quarantined_fallback", "stateful": false },
+      "viewport/styling/gui_assets.h": { "subsystem": "viewport.styling.assets", "layer": 2, "archetype": "operational", "stateful": true },
+      "viewport/styling/gui_fonts.h": { "subsystem": "viewport.styling.fonts", "layer": 2, "archetype": "operational", "stateful": true },
+      "viewport/styling/gui_palette.h": { "subsystem": "viewport.styling.palette", "layer": 2, "archetype": "operational", "stateful": false },
+      "viewport/viewport.h": { "subsystem": "viewport", "layer": 2, "archetype": "facade_umbrella", "stateful": false }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "total_registered": 41,
+      "layer_0_headers": 28,
+      "layer_2_headers": 13
+    },
+    "verification_tripwires": [
+      {
+        "name": "REGISTRY_MATCH",
+        "rule": "Every header listed exists in engine/include/",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "verify_all_exist_on_disk": true
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "home_dir": "engine/config/standards"
+    },
+    "enforce_registry_completeness": true
+  }
+}

@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          clock_pacer_fallback.c
+@id            core.pacer.fallback
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Clock & Frame Pacing Orchestrator Subsystem (core/pacing)
@@ -25,6 +26,17 @@ PURPOSE & ARCHITECTURAL ROLE:
   for the frame pacing orchestrator engine. Serves as an isolated, compile-time
   fallback baseline quarantined outside main production pathways to guarantee
   that production uses the data-driven pipeline.
+
+  ### For Game Designers & Non-Programmers:
+  If the timing configuration files are missing or damaged during engine boot,
+  this code page acts like an emergency mechanical clock escapement. It keeps
+  the game simulation running at a steady 60 frames per second instead of
+  spiraling out of control or freezing.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Static Compile-Time Constants: Zero dynamic heap allocation.
+  - Generates immutable, bounds-checked fallback pacing configurations on stack.
+  - Delta clamping math strictly bound to [0.0, 100.0] milliseconds.
 ================================================================================
 */
 
@@ -46,6 +58,7 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -157,8 +170,56 @@ bool clock_pacer_fallback_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Frame Pacing Orchestrator
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
 ================================================================================
 */
 
-/* End of clock_pacer_fallback.c */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
+*/
+
+size_t clock_pacer_fallback_execute_dump_card(char *out_buf, size_t buf_size)
+{
+    if (out_buf == NULL || buf_size == 0) {
+        return 0;
+    }
+    clock_pacer_fallback_config_t cfg = clock_pacer_fallback_get_config();
+    int written = snprintf(
+        out_buf, buf_size,
+        "============================================================\n"
+        "         CLOCK PACER FALLBACK STATUS & CAPACITIES           \n"
+        "============================================================\n"
+        "Profile ID:    %s\n"
+        "Display Name:  %s\n"
+        "Data-Driven:   NO (Emergency Hardcoded)\n"
+        "Fixed Step:    %.2f ms (60 FPS)\n"
+        "Max Clamp:     %.2f ms\n"
+        "Max Substeps:  %u\n"
+        "Max Debt:      %.2f ms\n"
+        "============================================================\n",
+        cfg.id,
+        cfg.display_name,
+        cfg.fixed_step_ms,
+        cfg.max_delta_clamp_ms,
+        cfg.max_substeps,
+        cfg.max_debt_ms
+    );
+    if (written < 0 || (size_t)written >= buf_size) {
+        return 0;
+    }
+    return (size_t)written;
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/

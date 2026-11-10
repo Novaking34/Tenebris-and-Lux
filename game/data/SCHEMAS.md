@@ -6,9 +6,9 @@ BLOCK 1: METADATA BLOCK
 @project       Tenebris and Lux
 @file          game/data/SCHEMAS.md
 @layer         Layer 1 / Layer 0 Integration (Data-Driven Architecture)
-@version       0.1.0-dev
-@interface_rev Rev 1
-@date          2026-11-03
+@version       0.1.1-dev
+@interface_rev Rev 2
+@date          2026-11-08
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Tactical RPG Data Schemas Specification & Roadmap Note
@@ -18,24 +18,27 @@ BLOCK 1: METADATA BLOCK
                3. Strict JSON conformance parsed via Layer 0 json_utils tokenizer.
                4. Bounded integer coordinates and non-negative movement costs.
                5. Dual relic & stance affinity modifiers strictly normalized.
+               6. Dual Data Taxonomy: engine/config/ (mechanical) vs game/data/ (lore).
 
 PURPOSE & ARCHITECTURAL INTENT:
   Establishes the architectural design blueprint and conceptual contract for
-  upcoming tactical data schemas in Tenebris and Lux. Formalizes the data
-  models for discrete 2D grid topologies, Movement Points (MP) budgeting,
-  Zone-of-Control (ZOC) physics, terrain friction modifiers, and tactical
-  party formation matrices prior to full C11 parser implementation.
+  tactical data schemas and presentation manifests in Tenebris and Lux.
+  Formalizes the data models for discrete 2D grid topologies, Movement Points
+  (MP) budgeting, Zone-of-Control (ZOC) physics, terrain friction modifiers,
+  presentation spritesheet/tileset atlases, audio cue routing, and the
+  separation of engine configuration profiles (engine/config/) from domain
+  game manifests (game/data/).
 ================================================================================
 -->
 
 # Tactical Strategy RPG Data Schemas Specification
 
 > **Project**: Tenebris and Lux  
-> **Milestone**: `0.1.0-dev`  
+> **Milestone**: `0.1.1-dev` (Standalone Engine Decoupling & Presentation Alignment)  
 > **Standard**: OmniCode 5-Block Ontological Architecture & Layered Invariant Discipline  
 > **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  
 > **Repository**: [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux)  
-> **Subsystem**: Data-Driven Tactical Simulation Contracts (`data/`)
+> **Subsystem**: Data-Driven Tactical Simulation Contracts (`game/data/` & `engine/config/`)
 
 ---
 
@@ -43,11 +46,11 @@ PURPOSE & ARCHITECTURAL INTENT:
 
 As *Tenebris and Lux* advances from a turn-based stance combat loop into a deep **Tactical Strategy RPG Grid Engine** across continental Sacyra, the underlying simulation requires formal, externalized data schemas.
 
-Rather than hardcoding grid dimensions, terrain penalties, formation offsets, or unit mobility into C11 source files, the **Data-Driven Architecture** externalizes these mechanics into validated, zero-heap-parseable JSON manifests. This architectural note serves as the design contract and roadmap for upcoming tactical schemas.
+Rather than hardcoding grid dimensions, terrain penalties, formation offsets, or unit mobility into C11 source files, the **Data-Driven Architecture** externalizes these mechanics into validated, zero-heap-parseable JSON manifests. This architectural note serves as the design contract and roadmap for tactical and presentation schemas.
 
 ```text
                   ┌─────────────────────────────────────────┐
-                  │          data/manifest.json             │
+                  │          game/data/manifest.json        │
                   │        (Root Subsystem Catalog)         │
                   └────────────────────┬────────────────────┘
                                        │
@@ -57,7 +60,25 @@ Rather than hardcoding grid dimensions, terrain penalties, formation offsets, or
 │  world/       │              │ mechanics/    │              │ entities/     │
 │  battlefields/│              │  tactics/     │              │  classes/     │
 │  terrains/    │              │  combat/      │              │  roster/      │
-└───────────────┘              └───────────────┘              └───────────────┘
+└───────┬───────┘              └───────┬───────┘              └───────┬───────┘
+        │                              │                              │
+        └──────────────────────────────┼──────────────────────────────┘
+                                       ▼
+                       ┌───────────────────────────────┐
+                       │  presentation/                │
+                       │   visuals/ (spritesheets)     │
+                       │   audio/ (sfx, bgm, ambience) │
+                       │   ui/ (layout, screens)       │
+                       └───────────────────────────────┘
+                                       │
+                                       ▼
+                       ┌───────────────────────────────┐
+                       │  engine/config/ (VFS Fallback)│
+                       │   runtime/ (time, math)       │
+                       │   diagnostics/ (telemetry)    │
+                       │   viewport/ (font scalers)    │
+                       │   audio/ (bus channels)       │
+                       └───────────────────────────────┘
 ```
 
 ---
@@ -119,6 +140,26 @@ Tactical deployment utilizes an 8-slot relative positioning grid representing ta
 
 * **Vanguard Perks**: +10% Stance Strike damage, takes brunt of frontline ZOC threat.
 * **Rearguard Protection**: Cannot be targeted by direct single-target melee strikes while Vanguard slots are occupied.
+
+### 2.6 Presentation Schemas & The Dual Data Taxonomy
+
+In accordance with the **Dual Data Taxonomy Covenant** (`AGENTS.md` Rev 5), configuration data is strictly separated into mechanical engine profiles (`engine/config/`) and narrative RPG manifests (`game/data/`):
+
+1. **Engine Configuration Profiles (`engine/config/`)**:
+   * `runtime/`: Mathematical epsilon tolerances, clock pacer policies (30/60/120fps), safe string bounds.
+   * `diagnostics/`: Telemetry severity channel bitmasks, debugger snapshot rings, tripwire matrices.
+   * `viewport/`: Target display resolutions (640x360), letterbox/pillarbox font scalers.
+   * `audio/`: Multi-channel audio bus mixers, polyphony caps, ducking attenuation matrices.
+2. **Game Presentation Manifests (`game/data/presentation/`)**:
+   * `visuals/assets.json` (`tenlux.data.visuals.assets.v1`): Binds character crests (Elijah, Katrina, Casatti, Dark Lord Usuru), terrain tiles, and relic icons to optional on-disk PNGs with procedural fallback generators.
+   * `visuals/spritesheets.json` (`tenlux.data.visuals.spritesheets.v1`): Maps 4-directional 32x32 character spritesheet atlases (`128x128.png`).
+   * `visuals/tilesets.json` (`tenlux.data.visuals.tilesets.v1`): Defines tactical 2.5D/2D terrain atlases (`256x256.png`) with passability collision bitmasks.
+   * `audio/sfx.json` (`tenlux.data.audio.sfx.v1`): 10 combat, tactical, and UI sound effect cues routed to zero-heap mixing buses.
+   * `audio/bgm.json` (`tenlux.data.audio.bgm.v1`): 5 regional soundtrack themes with sample-accurate loop points.
+   * `audio/ambience.json` (`tenlux.data.audio.ambience.v1`): 4 environmental biome soundscapes.
+3. **Procedural Fallback Floor Covenant**:
+   * External PNG and WAV files in `game/assets/` are strictly optional progressive enhancements.
+   * In their absence, the engine operates on `ASSET_KIND_PROCEDURAL` (vector silhouettes and waveform generators) with zero fatal halts.
 
 ---
 
@@ -287,11 +328,16 @@ Tactical deployment utilizes an 8-slot relative positioning grid representing ta
 ## BLOCK 5: ROADMAP & IMPLEMENTATION HOOKS
 
 > **Cognitive Role in the Mind: Engineering Execution & Milestone Linkage**  
-> Tracks integration steps as the engine moves through the `v0.1.0-dev` lifecycle.
+> Tracks integration steps as the engine moves through the `v0.1.1-dev` lifecycle.
 
 * [x] **Architecture Blueprint**: Establish formal data schema specification (`game/data/SCHEMAS.md`).
-* [x] **5-Domain Directory Architecture**: Reorganize data into 5 operational domains (`system/`, `world/`, `entities/`, `mechanics/`, `presentation/`).
-* [x] **Dynamic Path Resolution**: Implement `fs_resolve_data_path()` with legacy translation across all engine/game loaders.
+* [x] **Decoupled Architecture & Presentation Linkers**: Decouple engine configuration (`engine/config/`) from game RPG lore (`game/data/`), routing presentation config through `game/data/presentation/config/` linkers.
+* [x] **Dual Data Taxonomy**: Establish `engine/config/` for engine mechanical tuning profiles decoupled from `game/data/` RPG lore.
+* [x] **Layered VFS Resolution**: Upgrade `path_finder` to resolve configs from `game/config/` with fallback to `engine/config/`, and data from `game/data/`.
+* [x] **Procedural Fallback Floor**: Verify engine boots, renders, and sounds 100% with or without external assets.
+* [x] **Native Compiled Asset Toolchain**: Standalone Rust asset generator (`asset_generator`) synthesizes 41/41 visual and audio assets without dynamic interpreters.
+* [x] **Standalone Engine Header Decoupling**: Purge game domain headers from `engine/include/viewport/` via opaque forward declarations.
 * [ ] **C11 Struct Definitions**: Define `tactical_terrain_t` and `formation_matrix_t` in `game/include/world/` and `game/include/combat/`.
 * [ ] **Zero-Heap Tokenizer Integration**: Wire `json_utils` into `world_loader.c` and `combat_loader.c` to parse tactical schemas.
+* [ ] **Data-Driven Presentation Registration**: Wire runtime manifest ingestion into `gui_assets_load_catalog()` and audio cue dispatchers.
 * [ ] **Tripwire Audit Routine**: Register `audit_tactical_schemas()` in `engine/include/core/manifest.h` and verify under `./build/tenebris-lux --audit`.

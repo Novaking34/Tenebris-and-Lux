@@ -82,7 +82,7 @@ static void test_io_integrated_always_pass(void)
     /* 1.1 Ingest System Math Formulas Dataset */
     master_loader_t math_loader;
     char math_buf[8192];
-    bool m_ok = master_loader_load(&math_loader, "system", "runtime/math/formulas.json",
+    bool m_ok = master_loader_load(&math_loader, "config", "runtime/math/formulas.json",
                                    math_buf, sizeof(math_buf));
     TEST_ASSERT(m_ok && math_loader.status == LOADER_STATUS_OK, "Pipeline loads math formulas dataset");
     TEST_ASSERT(math_loader.header.is_5block, "Math formulas has valid 5-block envelope");
@@ -92,7 +92,7 @@ static void test_io_integrated_always_pass(void)
     /* 1.2 Ingest Telemetry Manifest Dataset */
     master_loader_t telem_loader;
     char telem_buf[8192];
-    bool t_ok = master_loader_load(&telem_loader, "system", "diagnostics/telemetry/manifest.json",
+    bool t_ok = master_loader_load(&telem_loader, "config", "diagnostics/telemetry/manifest.json",
                                    telem_buf, sizeof(telem_buf));
     TEST_ASSERT(t_ok && telem_loader.status == LOADER_STATUS_OK, "Pipeline loads telemetry manifest");
     TEST_ASSERT(master_loader_validate_schema(&telem_loader, "tenlux.data.log_menu.v1"),
@@ -101,7 +101,7 @@ static void test_io_integrated_always_pass(void)
     /* 1.3 Ingest Error Codes Taxonomy Dataset */
     master_loader_t err_loader;
     char err_buf[32768];
-    bool e_ok = master_loader_load(&err_loader, "system", "diagnostics/taxonomy/error_codes.json",
+    bool e_ok = master_loader_load(&err_loader, "config", "diagnostics/taxonomy/error_codes.json",
                                    err_buf, sizeof(err_buf));
     TEST_ASSERT(e_ok && err_loader.status == LOADER_STATUS_OK, "Pipeline loads error codes taxonomy");
     TEST_ASSERT(master_loader_validate_schema(&err_loader, "tenlux.data.error_taxonomy.v1"),
@@ -143,17 +143,17 @@ static void test_io_integrated_never_fail(void)
     /* 2.1 Pipeline resilience to missing dataset files */
     master_loader_t loader;
     char buf[1024];
-    bool miss_ok = master_loader_load(&loader, "system", "non_existent_manifest_xyz.json", buf, sizeof(buf));
+    bool miss_ok = master_loader_load(&loader, "config", "non_existent_manifest_xyz.json", buf, sizeof(buf));
     TEST_ASSERT(!miss_ok && loader.status == LOADER_STATUS_ERR_NOT_FOUND, "Missing dataset safely sets ERR_NOT_FOUND");
 
     /* 2.2 Pipeline resilience to undersized destination buffers */
     char tiny_buf[16];
-    bool ovf_ok = master_loader_load(&loader, "system", "runtime/math/formulas.json", tiny_buf, sizeof(tiny_buf));
+    bool ovf_ok = master_loader_load(&loader, "config", "runtime/math/formulas.json", tiny_buf, sizeof(tiny_buf));
     TEST_ASSERT(!ovf_ok && loader.status == LOADER_STATUS_ERR_BUFFER_OVERFLOW, "Buffer overflow trapped safely");
 
     /* 2.3 Pipeline resilience to schema contract violations */
     char math_buf[8192];
-    bool v_fail = master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+    bool v_fail = master_loader_execute_load_verified("config", "runtime/math/formulas.json",
                                                       "unauthorized.schema.contract.v999",
                                                       math_buf, sizeof(math_buf), &loader);
     TEST_ASSERT(!v_fail && loader.status == LOADER_STATUS_ERR_SCHEMA_MISMATCH,
@@ -249,14 +249,14 @@ static void test_io_integrated_emergence(void)
 
     /* Step 2: Inspect */
     loader_header_t hdr;
-    bool insp_ok = master_loader_execute_inspect("system", "runtime/math/formulas.json", &hdr);
+    bool insp_ok = master_loader_execute_inspect("config", "runtime/math/formulas.json", &hdr);
     TEST_ASSERT(insp_ok && hdr.is_5block, "Envelope inspection succeeded");
     TEST_ASSERT(strcmp(hdr.schema_id, "tenlux.data.math_formulas.v1") == 0, "Schema matched");
 
     /* Step 3: Verified load */
     master_loader_t loader;
     char buffer[8192];
-    bool load_ok = master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+    bool load_ok = master_loader_execute_load_verified("config", "runtime/math/formulas.json",
                                                        "tenlux.data.math_formulas.v1",
                                                        buffer, sizeof(buffer), &loader);
     TEST_ASSERT(load_ok, "Verified load succeeded");

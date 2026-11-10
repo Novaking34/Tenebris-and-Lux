@@ -1,0 +1,180 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/runtime/math/combat_subsurface.json",
+    "id": "engine.config.runtime.math.combat_subsurface",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Sub-surface combat parameters: Accuracy, Evasion, Poise, ZOC, Facing, and Aggro.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Mathematics",
+      "path": "engine/config/runtime/math/combat_subsurface.json"
+    },
+    "what_it_enables": [
+      "Tactical positioning: Frontal mitigation, Flank critical boost (+15%), Rear unguarded severance",
+      "Poise / Flank Vigor threshold tracking (stagger occurs at 0 Vigor)",
+      "Zone-of-Control (ZOC) pin rules (Heavy ZOC, Infiltrator bypass, Stance-driven dynamic ZOC)",
+      "AI threat and aggro targeting weights (Vanguard 150%, Infiltrator 70%)",
+      "Frame-perfect counter and deflection rates in action battle duels"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during sub-surface resolution (ALLOC_ZERO_HEAP)",
+      "Poise / Flank Vigor bounded strictly in [0, 100]",
+      "Facing multipliers strictly bounded (Front: 1.0x or 0.6x warded, Flank: +15% crit, Rear: unguarded)",
+      "Threat weights strictly non-negative"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "math_utils": "core/math_utils.h inclusion"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.combat_subsurface.v1",
+      "max_poise": 100,
+      "facing_directions_count": 4
+    },
+    "generic_helper_contracts": {
+      "clamp": "math_clamp_int"
+    }
+  },
+  "block_3_body": {
+    "subsurface_parameters": {
+      "accuracy_and_evasion": {
+        "elijah": {
+          "acc_pct": 95,
+          "eva_pct": 5
+        },
+        "katrina": {
+          "acc_pct": 98,
+          "eva_pct": 15,
+          "stealth_eva_pct": 40
+        },
+        "custom_bearer": {
+          "acc_pct": 95,
+          "eva_pct": 10
+        },
+        "modifiers": {
+          "blind_penalty_pct": -50,
+          "thicket_cover_bonus_pct": 15,
+          "stealth_bonus_pct": 25
+        }
+      },
+      "critical_parameters": {
+        "elijah": {
+          "crit_rate_pct": 5,
+          "crit_damage_pct": 150
+        },
+        "katrina": {
+          "crit_rate_pct": 12,
+          "crit_damage_pct": 175
+        },
+        "custom_bearer": {
+          "crit_rate_pct": 8,
+          "crit_damage_pct": 150
+        },
+        "flank_bonus_pct": 15,
+        "rear_guaranteed_crit": true
+      },
+      "tactical_mobility": {
+        "base_move_points": 4,
+        "elijah_range_tiles": [
+          3,
+          4
+        ],
+        "katrina_range_tiles": [
+          4,
+          5
+        ],
+        "custom_bearer_range_tiles": [
+          3,
+          5
+        ]
+      },
+      "facing_and_orientation": {
+        "FRONT": {
+          "damage_mult": 1.0,
+          "phalanx_ward_mult": 0.6,
+          "crit_bonus_pct": 0,
+          "description": "Direct frontal clash. Shield block threshold active."
+        },
+        "FLANK": {
+          "damage_mult": 1.0,
+          "crit_bonus_pct": 15,
+          "description": "Side angle bypassing primary shield plane. +15% critical rate."
+        },
+        "REAR": {
+          "damage_mult": 1.25,
+          "crit_bonus_pct": 100,
+          "unguardable": true,
+          "description": "Blind strike from behind. Bypasses block entirely; guaranteed critical."
+        }
+      },
+      "zone_of_control": {
+        "elijah": {
+          "type": "HEAVY_ZOC",
+          "effect": "Halts enemy traversal on adjacent grid tiles unless warded."
+        },
+        "katrina": {
+          "type": "INFILTRATOR",
+          "effect": "Completely ignores enemy ZOC interception lines."
+        },
+        "custom_bearer": {
+          "type": "DYNAMIC",
+          "effect": "Inherits Heavy ZOC in Warding Stance; Infiltrator in Striking Stance."
+        }
+      },
+      "poise_and_vigor": {
+        "elijah_baseline": 90,
+        "katrina_baseline": 50,
+        "custom_bearer_baseline": 70,
+        "stagger_threshold": 0
+      },
+      "threat_and_aggro": {
+        "elijah_weight_pct": 150,
+        "katrina_weight_pct": 70,
+        "custom_bearer_weight_pct": 100,
+        "provoke_boost_pct": 100
+      },
+      "counter_and_deflect": {
+        "elijah_base_pct": 15,
+        "elijah_aura_pct": 70,
+        "katrina_base_pct": 10,
+        "timed_ward_action_duel_block_pct": 100
+      }
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_POISE_LIMITS",
+        "condition": "poise >= 0 && poise <= max_poise",
+        "action": "Clamp poise to [0, 100]"
+      },
+      {
+        "id": "TRIPWIRE_FACING_VALIDITY",
+        "condition": "facing in ['FRONT', 'FLANK', 'REAR']",
+        "action": "Fallback to FRONT on invalid facing angle"
+      }
+    ],
+    "metrics": {
+      "facing_directions": 3,
+      "zoc_types": 3,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json"
+    },
+    "execution_hooks": {
+      "on_combat_step": "combat_apply_subsurface_math",
+      "audit_hook": "math_utils_preflight"
+    }
+  }
+}

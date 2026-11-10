@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          log_fallback.c
+@id            log.fallback
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Forensic Telemetry & Flight Recorder Engine
@@ -26,6 +27,17 @@ PURPOSE & ARCHITECTURAL ROLE:
   for the logging engine. Serves as an isolated, compile-time fallback
   baseline quarantined outside of main production pathways to guarantee that
   production uses the data-driven pipeline.
+
+  ### For Game Designers & Non-Programmers:
+  If someone deletes or corrupts the game's configuration files while the game
+  is booting, this module acts like an emergency backup generator. It allows
+  the game to write an emergency error log instead of crashing without explanation.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Static Compile-Time Constants: Zero dynamic memory allocation.
+  - Emergency bootstrap: Generates an immutable, bounds-checked log_config_t
+    structure on the caller CPU stack.
+  - Explicit provenance tagging: loaded_from_data is strictly false.
 ================================================================================
 */
 
@@ -47,6 +59,7 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
 #include <string.h>
 
 /* --- Tier 2: External Dependencies (None) --- */
@@ -242,16 +255,28 @@ bool log_fallback_audit(void)
 BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
 Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Executable Procedures & Object Constructors
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+Mission: Run operational execution procedures, format terminal-friendly ASCII
+status cards, and construct structured telemetry inspection objects.
 --------------------------------------------------------------------------------
 */
 
 /**
  * @brief Populates caller configuration with inspected fallback state.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Retrieves the emergency backup logging configuration parameters.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Reentrant zero-heap inspection procedure populating a `log_config_t` object
+ * with static compile-time fallback defaults.
  *
  * @param[out] out_cfg Destination configuration structure to populate.
  * @return true on successful population; false on NULL argument.
@@ -264,3 +289,62 @@ bool log_fallback_execute_inspect(log_config_t *out_cfg)
     *out_cfg = log_get_monolith_fallback_config();
     return true;
 }
+
+/**
+ * @brief Formats an ASCII diagnostic inspection card for logging fallback parameters.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Displays a clean text summary of the emergency fallback logging configuration.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Renders a standardized 60-column fixed-width ASCII status card into `out_buf`.
+ * Requires at least 320 bytes buffer capacity.
+ *
+ * @param[in]  cfg      Optional configuration pointer (or NULL for default fallback).
+ * @param[out] out_buf  Destination character buffer (minimum 320 bytes).
+ * @param[in]  buf_size Size of destination buffer.
+ * @return true if inspection card was formatted cleanly; false on error or truncation.
+ */
+bool log_fallback_execute_dump_card(const log_config_t *cfg, char *out_buf, size_t buf_size)
+{
+    if (out_buf == NULL || buf_size < 320) {
+        return false;
+    }
+    log_config_t local_cfg;
+    if (cfg == NULL) {
+        if (!log_fallback_execute_inspect(&local_cfg)) {
+            return false;
+        }
+        cfg = &local_cfg;
+    }
+    int written = snprintf(
+        out_buf, buf_size,
+        "+------------------------------------------------------------+\n"
+        "| FORENSIC TELEMETRY FALLBACK CONFIG CARD                    |\n"
+        "+------------------------------------------------------------+\n"
+        "| Profile Name   : %-41s |\n"
+        "| Log Directory  : %-41s |\n"
+        "| Base Filename  : %-41s |\n"
+        "| Max File Size  : %-41zu |\n"
+        "| Max Rotations  : %-41zu |\n"
+        "| Data Driven    : %-41s |\n"
+        "+------------------------------------------------------------+",
+        cfg->profile_name,
+        cfg->log_dir,
+        cfg->base_filename,
+        cfg->max_file_size_bytes,
+        cfg->max_rotated_files,
+        cfg->loaded_from_data ? "TRUE" : "FALSE (Static Hardcoded Fallback)"
+    );
+    return written > 0 && (size_t)written < buf_size;
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+Mission: Manage subsystem lifecycle, allocate runtime ring buffers,
+open/close file streams, and tear down hardware handles.
+--------------------------------------------------------------------------------
+None. (Stateless fallback module).
+--------------------------------------------------------------------------------
+*/

@@ -12,7 +12,7 @@
     "role": "GUI Presentation Subsystem Manifest Specifying Layout, Palettes & Assets",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/ui/",
-      "layout_catalog": "layout.json",
+      "layout_linker": "../config/layout.json",
       "palette_reference": "../visuals/palettes/legacy_palette.json",
       "assets_reference": "../visuals/assets.json"
     },
@@ -50,7 +50,7 @@
       "stratum": "Layer 2: Presentation & Viewport",
       "status": "active",
       "catalog_files": [
-        "layout.json",
+        "../config/layout.json",
         "palette.json",
         "assets.json"
       ],

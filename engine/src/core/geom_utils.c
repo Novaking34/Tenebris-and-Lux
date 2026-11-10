@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          geom_utils.c
-@id            core.util.geom
+@id            core.geom
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        2D/2.5D Spatial Geometry Subsystem (core/geom)
@@ -27,6 +27,16 @@ PURPOSE & ARCHITECTURAL ROLE:
   and axis-aligned bounding box (AABB) intersection tests. Elevated universal
   viewport projection, isotropic scaling, letterboxing/pillarboxing, camera
   clamping, and 2.5D classic isometric/dimetric grid transformations.
+
+  ### For Game Designers & Non-Programmers:
+  Provides the spatial layout and math for buttons, HUD meters, tactical grid
+  diamonds, and camera tracking. Ensures the game always centers properly on
+  any display with classic black bars (letterboxing) instead of stretching.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Stack Allocation: Zero heap usage (ALLOC_ZERO_HEAP).
+  - Exact roundtrip coordinate reversibility: screen_to_world(world_to_screen(p)) == p.
+  - Dimetric 2:1 isometric projection matrix for classic tactical grid rendering.
 ================================================================================
 */
 
@@ -524,13 +534,17 @@ bool geom_utils_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK / DIAGNOSTIC CARD DUMP & TEARDOWN
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: 2D/2.5D Spatial Geometry Engine
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Diagnostic ASCII Status Card Generator
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -556,5 +570,13 @@ bool geom_execute_dump_card(const geom_viewport_t *vp, char *out_buf, size_t buf
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of geom_utils.c */

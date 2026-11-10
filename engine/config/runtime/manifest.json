@@ -1,0 +1,161 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/runtime/manifest.json",
+    "id": "engine.config.runtime.root",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Runtime Sub-Domain Master Manifest orchestrating math, time, string primitives & the hotpatch incubator.",
+    "where_the_data_lives": {
+      "assembly_directory": "engine/config/runtime/",
+      "math_directory": "math/ (manifest.json, default.json, attributes.json, formulas.json, exploration_stats.json, combat_subsurface.json, affinities.json, statera_telemetry.json)",
+      "time_directory": "time/ (manifest.json, default.json, high_refresh.json, low_spec_30fps.json, pacing_policy.json, calendar.json)",
+      "string_directory": "string/ (manifest.json, default.json, lexicon.json)",
+      "hotpatch_incubator": "hotpatch.json"
+    },
+    "what_it_enables": [
+      "Mathematical saturation, continuum ranges, zero-divisor safety, and Tri-Vital models",
+      "Core damage, mitigation, hit resolution, crits, and exploration check formulas",
+      "The 8 Exploration stats (STR, DEX, VIT, INT, WIS, CHA, PER, REP) paired with combat stats",
+      "Sub-surface combat parameters: Accuracy, Evasion, Poise / Flank Vigor, ZOC, Threat, and Facing",
+      "The 6 Primal and 7 Compound Elements including Statera (Lux + Tenebris harmonic synthesis)",
+      "Dual-accumulator Conscience Ledger distinguishing active Statera from passive bystander inertia",
+      "Multi-tier frame pacing: 30 FPS (Low-Spec), 60 FPS (Standard), and 120 FPS (High-Refresh)",
+      "Lag spike defense, delta clamping, and fixed simulation timestep decoupling physics from framerate",
+      "Diegetic calendar tracking diurnal day/night cycles and nocturnal Dreamscape portals",
+      "Dialogue engine formatting, quest states, puzzle verbs, and canonical Statera stance lexicon",
+      "The hotpatch incubator registry tracking emerging mechanics, prototypes, and future design hooks",
+      "Zero dynamic heap allocation (ALLOC_ZERO_HEAP) foundation for all higher simulation layers"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across Layer 0 utilities (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "All registered profile paths resolvable via fs_resolve_data_path()",
+      "All timing profiles must use POSIX.1b CLOCK_MONOTONIC timing source"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "monotonic_timer": "CLOCK_MONOTONIC available",
+      "fixed_buffers": "Zero dynamic memory expansion",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "sub_domain_id": "runtime",
+      "schema_id": "tenlux.data.system_runtime.v1",
+      "registered_cogs": [
+        "math",
+        "time",
+        "string"
+      ],
+      "total_subsystems": 3,
+      "total_catalogs": 15
+    },
+    "generic_helper_contracts": {
+      "math_utils": "core/math_utils.h",
+      "time_utils": "core/time_utils.h",
+      "string_utils": "core/string_utils.h",
+      "path_resolver": "fs_resolve_data_path"
+    }
+  },
+  "block_3_body": {
+    "subsystems": [
+      {
+        "id": "math",
+        "title": "Mathematics, Continuum Limits, Formulas & Attributes Subsystem",
+        "manifest_path": "math/manifest.json",
+        "status": "active",
+        "catalog_count": 7,
+        "catalogs": [
+          "default.json",
+          "attributes.json",
+          "formulas.json",
+          "exploration_stats.json",
+          "combat_subsurface.json",
+          "affinities.json",
+          "statera_telemetry.json"
+        ],
+        "where_it_lives": "engine/config/runtime/math/",
+        "what_it_enables": "Continuum bounds, moral sway [-100, +100], resonance [0, 100], Tri-Vitals (HP, MP, TP), 8 Exploration stats, formulas, subsurface parameters, affinities, and Statera telemetry."
+      },
+      {
+        "id": "time",
+        "title": "Monotonic Timing, Frame Pacing, Lag Resilience & Calendar Engine",
+        "manifest_path": "time/manifest.json",
+        "status": "active",
+        "catalog_count": 5,
+        "catalogs": [
+          "default.json",
+          "high_refresh.json",
+          "low_spec_30fps.json",
+          "pacing_policy.json",
+          "calendar.json"
+        ],
+        "where_it_lives": "engine/config/runtime/time/",
+        "what_it_enables": "30/60/120 FPS budgets, lag spike clamp (100ms), fixed timestep simulation, diurnal day/night cycles, nocturnal Dreamscape window."
+      },
+      {
+        "id": "string",
+        "title": "Safe Lexical Buffers, Dialogue Schemas, Quest & Puzzle Lexicon",
+        "manifest_path": "string/manifest.json",
+        "status": "active",
+        "catalog_count": 2,
+        "catalogs": [
+          "default.json",
+          "lexicon.json"
+        ],
+        "where_it_lives": "engine/config/runtime/string/",
+        "what_it_enables": "Bounded buffer safety, path normalization, 4-posture stance tokens (including Statera), dialogue speakers, quest states, and puzzle interaction verbs."
+      }
+    ],
+    "incubators": [
+      {
+        "id": "hotpatch",
+        "title": "Emerging Ideas & Experimental Features Hotpatch Registry",
+        "file": "hotpatch.json",
+        "status": "active",
+        "what_it_enables": "Tracking experimental mechanics: dynamic weather, action duel parries, camp conversations, relic sockets, and NG+ chronometry."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_ZERO_HEAP",
+        "rule": "Zero dynamic memory allocations (ALLOC_ZERO_HEAP)",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "id": "TRIPWIRE_TOTAL_CATALOGS",
+        "rule": "total_catalogs == 15 across all runtime branches",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "metrics": {
+      "subsystems_count": 3,
+      "total_catalogs": 15,
+      "incubating_features": 8,
+      "zero_heap_compliant": true
+    },
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "subassemblies": [
+        "math/manifest.json",
+        "time/manifest.json",
+        "string/manifest.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "fs_resolve_data_path",
+      "audit_hook": "manifest_run_preflight"
+    }
+  }
+}

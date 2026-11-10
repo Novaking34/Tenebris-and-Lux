@@ -7,9 +7,9 @@ BLOCK 1: METADATA BLOCK
 @file          clock_pacer.c
 @id            core.util.clock_pacer
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Clock & Frame Pacing Orchestrator Subsystem (core/pacing)
@@ -26,7 +26,17 @@ PURPOSE & ARCHITECTURAL ROLE:
   Implementation of the universal clock and frame pacing orchestrator cog.
   Provides decoupled fixed simulation steps (16.666ms) with accumulator management,
   lag spike clamping preventing simulation death spirals, and render alpha interpolation.
-  Ingests pacing policies from game/data/system/runtime/time/pacing_policy.json.
+  Ingests pacing policies from engine/config/runtime/time/pacing_policy.json.
+
+  ### For Game Designers & Non-Programmers:
+  This system ensures the game plays at the exact same physical speed on a 60Hz
+  office monitor, a 144Hz gaming laptop, or a handheld device. If the computer
+  stutters, it prevents the game from speeding up like fast-forward to catch up.
+
+  ### For Systems Programmers & Engine Architects:
+  - Fixed-timestep simulation accumulator pattern (`dt = 16.666ms`).
+  - Strict upper bound on frame delta (`100ms`) preventing death-spiral freezes.
+  - Normalized render interpolation alpha (`alpha = remainder / dt`) in `[0.0, 1.0]`.
 ================================================================================
 */
 
@@ -148,19 +158,16 @@ bool clock_pacer_load_config_from_file(const char *profile_path, clock_pacer_con
     /* Step 2: Fallback initialization in case file read fails */
     *out_config = clock_pacer_get_default_config();
 
-    /* Step 3: Resolve target path in game/data/system/ */
+    /* Step 3: Resolve target path in engine/config/ */
     const char *target_rel = profile_path;
     if (target_rel == NULL || target_rel[0] == '\0') {
         target_rel = "runtime/time/pacing_policy.json";
-    }
-    if (strncmp(target_rel, "system/", 7) == 0) {
-        target_rel += 7;
     }
 
     /* Step 4: Ingest JSON manifest via master_loader */
     master_loader_t loader;
     char file_buf[8192];
-    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+    if (!master_loader_load(&loader, "config", target_rel, file_buf, sizeof(file_buf))) {
         LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "Pacer", -0.2f,
                    "Failed to load pacing policy '%s', falling back to defaults", target_rel);
         return false;
@@ -422,13 +429,17 @@ bool clock_pacer_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK / DIAGNOSTIC CARD DUMP & TEARDOWN
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Clock & Pacing Orchestrator
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Diagnostic ASCII Inspection Card Generator
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -460,5 +471,13 @@ bool clock_pacer_execute_dump_card(const clock_pacer_t *pacer, char *out_buf, si
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of clock_pacer.c */

@@ -1,0 +1,105 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/debugger/strict.json",
+    "id": "engine.config.diagnostics.debugger.strict",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Strict debugging profile activating immediate breakpoint traps on any warning, error, or stance breach.",
+    "where_the_data_lives": {
+      "path": "engine/config/diagnostics/debugger/strict.json",
+      "header_binding": "engine/include/debug/debug.h"
+    },
+    "what_it_enables": [
+      "Immediate breakpoint traps on any error, tripwire, or stance state anomaly",
+      "Zero-tolerance halting on moral sway or relic resonance breaches",
+      "Interactive state inspection and automatic memory dump upon failure"
+    ],
+    "invariants": [
+      "Any state anomaly must halt simulation turns and report diagnostic context",
+      "Stance changes are treated as interactive breakpoints for inspection",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "debug_subsystem_initialized": true,
+      "snapshot_ring_buffer_allocated": true,
+      "interactive_terminal_active": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.debug_profile.v1",
+      "target_struct": "debug_config_t",
+      "header_binding": "engine/include/debug/debug.h",
+      "max_snapshots_allowed": 64
+    },
+    "generic_helper_contracts": {
+      "profile_loader": "debug_load_config_profile",
+      "fallback_provider": "debug_get_monolith_fallback_config"
+    }
+  },
+  "block_3_body": {
+    "profile": {
+      "id": "strict",
+      "display_name": "Strict Invariant & Assertion Trap Profile",
+      "description": "Halts immediately on any state breach, stance violation, or warning/error telemetry.",
+      "enabled": true,
+      "break_on_error": true,
+      "break_on_tripwire": true,
+      "break_on_sway_breach": true,
+      "break_on_resonance_breach": true,
+      "break_on_hp_zero": true,
+      "break_on_stance_change": true,
+      "max_snapshots": 64,
+      "snapshot_interval_turns": 1,
+      "auto_dump_on_tripwire": true,
+      "interactive_repl": true,
+      "ansi_color": true,
+      "trace_channels": "all",
+      "domain_traps": {
+        "engine_traps_active": true,
+        "game_traps_active": true
+      }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "snapshot_capacity": 64,
+      "trap_guards_active": 6,
+      "verified_zero_heap": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "BREAK_ON_ERROR",
+        "rule": "break_on_error == true",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "BREAK_ON_STANCE",
+        "rule": "break_on_stance_change == true",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "ZERO_HEAP_STRICT",
+        "rule": "Zero dynamic allocations during debug",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [
+        "--debug"
+      ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "menu_index": 2
+    }
+  }
+}

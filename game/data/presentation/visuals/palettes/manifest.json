@@ -12,7 +12,7 @@
     "role": "Color Palette Subsystem Manifest Specifying High Fantasy Hope Themes, Biomes & Relic Hues",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/visuals/palettes/",
-      "themes_catalog": "themes.json",
+      "themes_linker": "../../config/themes.json",
       "biomes_catalog": "biomes.json",
       "relics_catalog": "relics.json",
       "legacy_palette": "legacy_palette.json"
@@ -53,7 +53,7 @@
       "stratum": "Layer 2: Presentation & Viewport",
       "status": "active",
       "catalog_files": [
-        "themes.json",
+        "../../config/themes.json",
         "biomes.json",
         "relics.json",
         "legacy_palette.json"

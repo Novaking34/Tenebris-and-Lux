@@ -1,0 +1,194 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/telemetry/engine_channels.json",
+    "id": "engine.config.diagnostics.telemetry.engine_channels",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Specification of low-level Layer 0 Core Utilities and Layer 2 Viewport telemetry channels.",
+    "where_the_data_lives": {
+      "path": "engine/config/diagnostics/telemetry/engine_channels.json",
+      "engine_source_layers": [
+        "Layer 0 (Core/IO/Log/Debug)",
+        "Layer 2 (Viewport/X11)"
+      ],
+      "log_sink": "build/logs/engine.log"
+    },
+    "what_it_enables": [
+      "Dedicated isolation of engine-level infrastructure failures",
+      "Per-channel latency budgets, ring buffer quotas, and dispatch rules",
+      "Instant discrimination between engine defects and gameplay simulation bugs"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across all engine telemetry channels",
+      "Per-entry formatted write latency must not exceed channel latency budget",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "engine_logging_active": true,
+      "static_ring_buffer_ready": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.engine_channels.v1",
+      "channel_domain": "ENGINE",
+      "registered_channel_count": 6
+    },
+    "generic_helper_contracts": {
+      "channel_router": "log_route_channel_entry",
+      "sink_flusher": "log_flush_channel_buffer"
+    }
+  },
+  "block_3_body": {
+    "channels": [
+      {
+        "channel_id": "ENG_CORE",
+        "name": "Engine Core Utilities",
+        "description": "Monotonic clock precision, safe bounded arithmetic, string buffer safety, and DAG pre-flight audits.",
+        "layer": "Layer 0: Core Utilities",
+        "latency_budget_us": 10,
+        "default_min_severity": "DEBUG",
+        "sink_file": "build/logs/engine_core.log",
+        "tracked_telemetry": [
+          "safe_div_zero_intercepts",
+          "clamp_boundary_saturations",
+          "monotonic_us_drift",
+          "dag_preflight_verdicts"
+        ],
+        "qol_diagnostics": {
+          "auto_breadcrumb": true,
+          "report_source_loc": true
+        }
+      },
+      {
+        "channel_id": "ENG_MEMORY",
+        "name": "Engine Memory & Invariant Tripwires",
+        "description": "Strict enforcement of ALLOC_ZERO_HEAP contracts, static BSS ring buffer capacity, and stack watermark monitoring.",
+        "layer": "Layer 0: Core Utilities",
+        "latency_budget_us": 5,
+        "default_min_severity": "TRACE",
+        "sink_file": "build/logs/engine_memory.log",
+        "tracked_telemetry": [
+          "heap_allocation_traps",
+          "ring_buffer_occupancy",
+          "snapshot_buffer_depth",
+          "stack_watermark_headroom"
+        ],
+        "qol_diagnostics": {
+          "latch_on_heap_attempt": true,
+          "emergency_core_dump": true
+        }
+      },
+      {
+        "channel_id": "ENG_IO",
+        "name": "Engine Filesystem & JSON Parser",
+        "description": "Non-blocking disk I/O, file bounds validation, JSON token scanner telemetry, and log file size rotation.",
+        "layer": "Layer 0: Core Utilities",
+        "latency_budget_us": 15,
+        "default_min_severity": "INFO",
+        "sink_file": "build/logs/engine_io.log",
+        "tracked_telemetry": [
+          "file_rotation_triggers",
+          "json_token_scan_errors",
+          "path_resolution_lookups",
+          "bytes_written_counter"
+        ],
+        "qol_diagnostics": {
+          "log_failed_paths": true,
+          "fallback_to_monolith": true
+        }
+      },
+      {
+        "channel_id": "ENG_VIEWPORT",
+        "name": "Presentation & Native X11 Viewport",
+        "description": "Native X11 window connection, event pump polling, double-buffer swap timing, and 640x360 letterbox/pillarbox scalers.",
+        "layer": "Layer 2: Presentation & Viewports",
+        "latency_budget_us": 20,
+        "default_min_severity": "INFO",
+        "sink_file": "build/logs/engine_viewport.log",
+        "tracked_telemetry": [
+          "x11_event_poll_latency",
+          "framebuffer_dirty_rects",
+          "aspect_ratio_scaling_mode",
+          "window_resize_events"
+        ],
+        "qol_diagnostics": {
+          "display_server_diag": true,
+          "fallback_to_cli_on_disconnect": true
+        }
+      },
+      {
+        "channel_id": "ENG_FONT",
+        "name": "Font Rasterizer & Text Layout",
+        "description": "TrueType font rasterization latency, Cinzel/MedievalSharp glyph cache hits, and line wrap clipping.",
+        "layer": "Layer 2: Presentation & Viewports",
+        "latency_budget_us": 15,
+        "default_min_severity": "DEBUG",
+        "sink_file": "build/logs/engine_font.log",
+        "tracked_telemetry": [
+          "glyph_cache_hit_rate",
+          "rasterization_us_per_char",
+          "overflow_line_truncations",
+          "font_scale_dpi_adjust"
+        ],
+        "qol_diagnostics": {
+          "warn_on_glyph_miss": true,
+          "track_string_wrap_bounds": true
+        }
+      },
+      {
+        "channel_id": "ENG_TIME",
+        "name": "Engine Timestep & Pacing Policy",
+        "description": "Fixed timestep simulation accumulator (16.666 ms or 33.333 ms), lag spike 100 ms clamp, and sub-frame render alpha.",
+        "layer": "Layer 0: Core Utilities",
+        "latency_budget_us": 5,
+        "default_min_severity": "DEBUG",
+        "sink_file": "build/logs/engine_time.log",
+        "tracked_telemetry": [
+          "raw_frame_delta_ms",
+          "clamped_delta_ms",
+          "spiral_of_death_preventions",
+          "render_interpolation_alpha"
+        ],
+        "qol_diagnostics": {
+          "detect_framerate_drops": true,
+          "alert_on_consecutive_clamps": 3
+        }
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "channel_count": 6,
+      "max_latency_budget_us": 20,
+      "all_channels_zero_heap": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "ALL_CHANNELS_DEFINED",
+        "rule": "count(channels) == 6",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "LATENCY_BOUNDS",
+        "rule": "every(channel.latency_budget_us <= 20)",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "domain_binding": "ENGINE"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "sister_catalog": "game_channels.json"
+    }
+  }
+}

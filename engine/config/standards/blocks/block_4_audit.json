@@ -1,0 +1,62 @@
+{
+  "$schema": "tenlux.engine.standards.block_4.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/standards/blocks/block_4_audit.json",
+    "id": "engine.standards.block_4",
+    "layer": "Layer 0: Core Foundation Strata",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-09",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "C11 Engine Block 4 Audit Specialization",
+    "role": "Specification for Engine Verification Cogs & Pre-Flight Clearance Tripwires",
+    "invariants": [
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Two-sub-assembly Block 4 architecture (4.1 Cogs & 4.2 Pre-Flight Tripwires)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "language": "ISO C11 (-std=c11)",
+      "standards_version": "Rev 5"
+    },
+    "static_declarations": {
+      "required_sub_assemblies": [
+        "Sub-Assembly 4.1",
+        "Sub-Assembly 4.2"
+      ],
+      "sub_assembly_4_1_name": "Contract, Input & Cog Verification Cogs",
+      "sub_assembly_4_2_name": "Machine Self-Audit & Pre-Flight Validation Tripwires"
+    }
+  },
+  "block_3_body": {
+    "audit_cog_pattern": "_audit",
+    "preflight_cog_pattern": "_preflight",
+    "pure_types_statutory_text": "Functional audits, layout tripwires, and pre-flight routines are declared in",
+    "facade_umbrella_statutory_text": "Sub-Assembly 4.1: Contract, Input & Cog Verification Cross-References"
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "sub_assemblies_count": 2,
+      "required_cogs_per_operational_header": 2
+    },
+    "verification_tripwires": [
+      {
+        "name": "AUDIT_AND_PREFLIGHT_PAIR",
+        "rule": "Every operational header declares both _audit and _preflight",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "audit_enabled": true,
+    "require_audit_and_preflight": true
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "home_dir": "engine/config/standards/blocks"
+    },
+    "severity": "error"
+  }
+}

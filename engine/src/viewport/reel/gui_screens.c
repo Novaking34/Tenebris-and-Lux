@@ -1,42 +1,81 @@
-// =============================================================================
-// BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
-// =============================================================================
-// @project       Tenebris and Lux
-// @file          gui_screens.c
-// @id            gui.screens.alternate
-// @layer         Layer 2: Presentation & Viewport
-// @version       1.0.0
-// @interface_rev Rev 1
-// @date          2026-11-03
-// @updated       2026-11-03
-// @author        CreativeWorkzStudio LLC / ProfessorSeanEX
-// @repository    https://github.com/Novaking34/tenebris-lux
-//
-// PURPOSE & ARCHITECTURAL ROLE:
-//   Dedicated full-canvas alternate presentation screens for High Fantasy TRPG:
-//   Protagonist Hero Dossier, 32-Slot Item & Relic Bag, Provincial Realm
-//   Topology Map, and Historical Deeds Chronicle Codex, coordinated via an
-//   ergonomic top tab navigation bar.
-//
-// DEPENDENCY & RESOURCE CONTRACTS:
-//   - Upstream Dependencies: gui/gui_screens.h, gui/gui_widgets.h,
-//                            gui/gui_fonts.h, gui/gui_assets.h,
-//                            sim/core/game.h, sim/core/sim_state.h
-//   - Memory Allocation:     ALLOC_ZERO_HEAP (Zero dynamic heap allocations).
-//   - Concurrency / Safety:  REENTRANT_PURE (Presentation read-only pipeline).
-//   - Latency Budget:        < 3000 microseconds per frame render.
-//
-// AXIOMATIC INVARIANTS:
-//   1. All alternate screens strictly honor viewport bounding rectangle.
-//   2. Screen switching is idempotent with zero state mutation.
-// =============================================================================
+/*
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          gui_screens.c
+@id            viewport.reel.screens.alternate
+@layer         Layer 2: Presentation & Viewport
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        5-Screen Presentation View Modes & Reel Navigators
+@role          Dedicated full-canvas alternate presentation screens for High Fantasy TRPG:
+               Protagonist Hero Dossier, 32-Slot Item & Relic Bag, Provincial Realm
+               Topology Map, and Historical Deeds Chronicle Codex, coordinated via an
+               ergonomic top tab navigation bar.
+@invariants    1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP).
+               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               3. All alternate screens strictly honor viewport bounding rectangle.
+               4. Screen switching is idempotent with zero state mutation.
+               5. Exactly 5 canonical screens registered (F1-F5 hotkeys).
+               6. Non-anonymous structs and enums enforced across all declarations.
+               7. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / STATIC DATA
-// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
-// =============================================================================
+PURPOSE & ARCHITECTURAL ROLE:
+  Maintains the 5 presentation screens and top tab navigation bar:
+  1. Tactical Grid Viewport (GUI_SCREEN_TACTICAL)
+  2. Hero Dossier & Attributes (GUI_SCREEN_STATUS)
+  3. 32-Slot Inventory & Relics (GUI_SCREEN_INVENTORY)
+  4. Provincial Realm Map (GUI_SCREEN_WORLD_MAP)
+  5. Chronicle & Deeds Codex (GUI_SCREEN_CHRONICLE)
 
+  ### For Game Designers & Non-Programmers:
+  Provides the full-page menu screens players switch between using hotkeys F1-F5
+  or clicking the tabs at the top of the window: looking at hero stats, browsing
+  the backpack and relics, viewing the province map of the realm, and reading
+  past story chronicle entries.
+
+  ### For Systems Programmers & Engine Architects:
+  - Idempotent screen state machine: switching screens alters viewport display
+    mode without mutating game turn state or triggering side effects.
+  - Zero dynamic heap allocation: all screen descriptors reside in static memory.
+  - Tab hit-testing and hotkey dispatching execute in < 1 microsecond.
+  - Clean separation: renders via generic renderer callbacks and read-only state.
+================================================================================
+*/
+
+/*
+================================================================================
+BLOCK 2: OPENING BLOCK / STATIC DATA & LOCAL DEFINITIONS
+Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy: 3-Tier Downward Architecture
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (X11)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+/* --- Tier 2: External Dependencies (X11) --- */
+#include <X11/Xlib.h>
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "viewport/reel/gui_screens.h"
 #include "viewport/hud/gui_widgets.h"
 #include "viewport/styling/gui_fonts.h"
@@ -44,9 +83,11 @@
 #include "ending/game.h"
 #include "hero/sim_state.h"
 
-#include <X11/Xlib.h>
-#include <stdio.h>
-#include <string.h>
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Navigation Tab Constants
+--------------------------------------------------------------------------------
+*/
 
 static const char *const TAB_LABELS[GUI_NUM_TABS] = {
     "Tactical [F1]",
@@ -56,11 +97,37 @@ static const char *const TAB_LABELS[GUI_NUM_TABS] = {
     "Chronicle [F5]"
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+================================================================================
+Mission: Screen navigation tab bar, mouse click dispatching, and full-canvas
+alternate screen presentation renderers.
+All execution loops and lifecycle hooks are quarantined in Block 5.
+================================================================================
+*/
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Screen Navigation & Tab Hit-Testing Cogs
+--------------------------------------------------------------------------------
+Top tab bar rendering, boundary calculations, and mouse pick dispatching.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Renders the top screen navigation tab bar inside the header banner.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Draws the 5 clickable menu tabs across the top of the screen (Tactical [F1],
+ * Status [F2], Inventory [F3], World Map [F4], Chronicle [F5]), highlighting
+ * the active screen in glowing gold.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Renders tab boxes, border outlines, active highlight bar, and centered labels
+ * into the X11 drawable backbuffer using theme palette colors. Zero heap.
+ */
 void gui_screens_render_tab_bar(void *display, unsigned long dr, void *gc,
                                 const gui_panel_rect_t *pnl,
                                 const gui_palette_t *pal,
@@ -119,6 +186,17 @@ void gui_screens_render_tab_bar(void *display, unsigned long dr, void *gc,
     }
 }
 
+/**
+ * @brief Checks whether a click in the header banner hit any navigation tab.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Detects if the player clicked one of the 5 screen tabs with the mouse and
+ * identifies which screen they want to view.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Performs linear AABB hit tests across all 5 tab bounds. If hit, writes enum
+ * to `out_screen` and returns true; otherwise returns false in O(1) time.
+ */
 bool gui_screens_handle_tab_click(const gui_panel_rect_t *pnl,
                                   int cx, int cy,
                                   gui_screen_mode_t *out_screen)
@@ -148,6 +226,25 @@ bool gui_screens_handle_tab_click(const gui_panel_rect_t *pnl,
     return false;
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Full-Canvas Alternate Screen Rendering Cogs
+--------------------------------------------------------------------------------
+Full-page presentation renderers for Status Dossier, Inventory, World Map, and Chronicle.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Renders the grand full-canvas Protagonist Hero Dossier & Attributes Matrix.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Displays the complete character sheet: large heraldic crest sprite, heroic lineage,
+ * HP/MP/TP bars, attributes (ATK/DEF/MAT/MDF), relic power, and campaign achievements.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Three-column partition of `area`. Renders hero crest via `gui_assets_draw_sprite`,
+ * vitals via `gui_widget_draw_meter`, and formatted attribute strings.
+ */
 void gui_screen_render_status_dossier(void *display, unsigned long dr, void *gc,
                                       const gui_panel_rect_t *area,
                                       const player_state_t *state,
@@ -412,6 +509,17 @@ void gui_screen_render_status_dossier(void *display, unsigned long dr, void *gc,
     XDrawString(d, draw, g, col3_x, cur3_y, rec4, (int)strlen(rec4));
 }
 
+/**
+ * @brief Renders the 32-Slot Inventory, Consumables & Key Relic Inspection screen.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Displays the player's 32-slot inventory bag arranged in a 4x8 grid on the left,
+ * with a detailed inspect window and lore card for selected relics on the right.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Grid rasterization drawing 32 item cells with indices and names, paired with
+ * an artifact detail card displaying category, origin, and purse gold. Zero heap.
+ */
 void gui_screen_render_inventory(void *display, unsigned long dr, void *gc,
                                  const gui_panel_rect_t *area,
                                  const player_state_t *state,
@@ -523,6 +631,17 @@ void gui_screen_render_inventory(void *display, unsigned long dr, void *gc,
     }
 }
 
+/**
+ * @brief Renders the Provincial Topographical Realm Map of Sacyra and Libira.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Displays the world map showing major kingdom locations connected by cobblestone
+ * trade roads, with glowing beacon rings marking the player's current location.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Draws connected provincial graph nodes and road lines across Sacyra, Libira,
+ * and the Capital. Renders beacon rings for `state->location`. Zero heap.
+ */
 void gui_screen_render_world_map(void *display, unsigned long dr, void *gc,
                                  const gui_panel_rect_t *area,
                                  const player_state_t *state,
@@ -604,6 +723,17 @@ void gui_screen_render_world_map(void *display, unsigned long dr, void *gc,
     }
 }
 
+/**
+ * @brief Renders the full-canvas Historical Deeds Chronicle & Accord Lore Codex.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Displays the entire campaign narrative log across a wide page, allowing the
+ * player to review past storyline events, dialogues, and battle triumphs.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Renders up to `max_visible` chronicle lines from `gui_log_t` with custom line
+ * spacing and radiant highlight on the newest entry. Zero heap.
+ */
 void gui_screen_render_chronicle_codex(void *display, unsigned long dr,
                                        void *gc,
                                        const gui_panel_rect_t *area,
@@ -656,11 +786,34 @@ void gui_screen_render_chronicle_codex(void *display, unsigned long dr,
     }
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+================================================================================
+Mission: Verify incoming parameters, contracts, and schema invariants;
+validate standalone function execution and system stability for Block 5.
+================================================================================
+*/
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Contract, Input & Cog Verification Cogs
+Mission: Verify received parameters, configuration contracts, and data provenance;
+verify that declared subsystem cogs run properly as standalone units.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Audits alternate screen tab geometry and hit-test boundaries.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Tests the screen tab bar to verify that clicks outside the tabs are ignored,
+ * and clicks on Tab 0 reliably switch to the Tactical screen.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Verifies tab click hit-testing bounds and mode resolution invariants.
+ */
 bool gui_screens_audit(void)
 {
     gui_panel_rect_t pnl = { 10, 10, 840, 32, "Header" };
@@ -680,6 +833,23 @@ bool gui_screens_audit(void)
     return true;
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.2: Machine Self-Audit & Pre-Flight Validation Tripwires
+Mission: Validate holistic system invariants, tripwires, and subsystem stability;
+provide pre-flight clearance handshake before advancing to Block 5 execution.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Preflight verification for alternate screens and navigation tab bar.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Validates that all 5 screen navigation tabs (F1 through F5) respond accurately.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Preflight test cycling through all 5 tabs verifying center point hitboxes.
+ */
 bool gui_screens_preflight(void)
 {
     if (!gui_screens_audit()) {
@@ -707,6 +877,64 @@ bool gui_screens_preflight(void)
     return true;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 2 (Presentation & Viewport) | Subsystem: Alternate Screen Renderers
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+Mission: Run operational execution procedures, format terminal-friendly ASCII
+status cards, and construct structured telemetry inspection objects.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Formats an ASCII diagnostic dump card representing Alternate Screens subsystem state.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Generates a clean text card summarizing alternate screens status, navigation tab count,
+ * and pre-flight audit status.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Writes a formatted 60-column diagnostic summary into `buffer` within `capacity` bytes.
+ */
+int gui_screens_execute_dump_card(char *buffer, size_t capacity)
+{
+    if (buffer == NULL || capacity == 0) {
+        return -1;
+    }
+
+    bool preflight_ok = gui_screens_preflight();
+
+    return snprintf(buffer, capacity,
+        "============================================================\n"
+        " VIEWPORT SCREENS SUBSYSTEM DIAGNOSTIC CARD                \n"
+        "============================================================\n"
+        " Subsystem       : Alternate Screen Presentation Engine     \n"
+        " Status          : %-41s\n"
+        " Primary Screens : %-41d\n"
+        " Screens Included: %-41s\n"
+        " Pre-Flight Audit: %-41s\n"
+        "============================================================\n",
+        "OPERATIONAL",
+        GUI_NUM_TABS,
+        "TACTICAL, STATUS, BAG, MAP, CODEX",
+        preflight_ok ? "PASSED" : "FAILED");
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+Mission: Manage subsystem lifecycle, allocate runtime ring buffers,
+open/close file streams, and tear down hardware handles.
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/

@@ -1,0 +1,70 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/presentation/config/settings.json",
+    "id": "data.presentation.config.settings_linker",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Data Linker connecting game presentation to standalone engine viewport settings profile.",
+    "where_the_data_lives": {
+      "topology": "Presentation Configuration Data Linker",
+      "target_file": "engine/config/viewport/settings.json",
+      "domain": "config",
+      "rel_path": "viewport/settings.json"
+    },
+    "what_it_enables": [
+      "Zero data duplication: references standalone engine viewport settings directly",
+      "Game options UI querying active display preset, window mode, and theme",
+      "Layered VFS resolution fallback"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during link traversal (ALLOC_ZERO_HEAP)",
+      "Strict data decoupling: game presentation consumes engine settings profile without mutation"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "target_profile": "engine/config/viewport/settings.json"
+    },
+    "static_declarations": {
+      "linker_type": "symbolic_data_ref",
+      "target_schema": "tenlux.engine.viewport.settings.v1",
+      "domain": "config",
+      "rel_path": "viewport/settings.json"
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve"
+    }
+  },
+  "block_3_body": {
+    "linker": {
+      "target_domain": "config",
+      "target_rel_path": "viewport/settings.json",
+      "target_file": "engine/config/viewport/settings.json",
+      "description": "Symbolic data reference to standalone engine viewport settings."
+    }
+  },
+  "block_4_audit": {
+    "metrics": {
+      "link_type": "symbolic_reference",
+      "is_overriding": false
+    },
+    "verification_tripwires": [
+      {
+        "name": "TARGET_EXISTS",
+        "rule": "Target file engine/config/viewport/settings.json must exist",
+        "status": "VERIFIED_PASS"
+      }
+    ]
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "home_dir": "game/data/presentation/config"
+    }
+  }
+}

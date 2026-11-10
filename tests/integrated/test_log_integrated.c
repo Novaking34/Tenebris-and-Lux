@@ -88,9 +88,9 @@ static void test_log_integrated_always_pass(void)
 
     /* Step 1.1: Resolve manifest via path_finder and load via master_loader */
     char manifest_path[PATH_FINDER_MAX_PATH];
-    bool resolved = path_finder_resolve("system", "diagnostics/telemetry/manifest.json",
+    bool resolved = path_finder_resolve("config", "diagnostics/telemetry/manifest.json",
                                        manifest_path, sizeof(manifest_path));
-    TEST_ASSERT(resolved, "Resolved system diagnostics telemetry manifest path");
+    TEST_ASSERT(resolved, "Resolved config diagnostics telemetry manifest path");
 
     static char buf[16384];
     master_loader_t loader;
@@ -188,7 +188,7 @@ static void test_log_integrated_assertions_and_guarantees(void)
     static char buf[16384];
     for (size_t i = 0; i < 10; i++) {
         master_loader_t loader;
-        bool ok = master_loader_load(&loader, "system", assets[i].rel_path, buf, sizeof(buf));
+        bool ok = master_loader_load(&loader, "config", assets[i].rel_path, buf, sizeof(buf));
         TEST_ASSERT(ok, "Loaded telemetry data asset via path_finder + master_loader");
         TEST_ASSERT(strcmp(loader.header.schema_id, assets[i].expected_schema) == 0,
                     "Schema ID exactly matches canonical contract");

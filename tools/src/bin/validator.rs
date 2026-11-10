@@ -149,6 +149,45 @@ fn resolve_repo_root() -> PathBuf {
 // =============================================================================
 
 fn run_validator(args: &CliArgs) -> Result<bool, String> {
+    if args.domain == "headers" {
+        let registry = tl_tools::validator::load_subsystems_registry(&args.repo_root)?;
+        let rules = tl_tools::validator::load_header_rules_config(&args.repo_root);
+        let validator = tl_tools::validator::HeaderValidator::new(
+            args.repo_root.clone(),
+            registry,
+            rules,
+            args.verbose,
+        );
+        let summary = validator.run_audit()?;
+
+        if args.json_output {
+            let json_report = serde_json::json!({
+                "target_domain": "engine/include",
+                "total_files": summary.total_files,
+                "passed_files": summary.passed_files,
+                "failed_files": summary.failed_files,
+                "errors": summary.error_count(),
+                "warnings": summary.warning_count(),
+                "duration_ms": summary.duration_ms,
+                "verdict": if summary.is_success(args.strict) { "PASS" } else { "FAIL" },
+                "issues": summary.issues.iter().map(|i| {
+                    serde_json::json!({
+                        "file": i.file.to_string_lossy(),
+                        "block": i.block,
+                        "field": i.field,
+                        "severity": format!("{}", i.severity),
+                        "message": i.message
+                    })
+                }).collect::<Vec<_>>()
+            });
+            println!("{}", serde_json::to_string_pretty(&json_report).unwrap_or_default());
+        } else {
+            summary.print_custom_summary("C11 Engine Headers 5-Block Standard Audit", "engine/include/");
+        }
+
+        return Ok(summary.is_success(args.strict));
+    }
+
     let options = ValidationOptions {
         target_domain: args.domain.clone(),
         strict: args.strict,

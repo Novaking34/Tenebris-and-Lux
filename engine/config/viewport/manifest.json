@@ -1,0 +1,131 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/viewport/manifest.json",
+    "id": "engine.config.viewport.root",
+    "layer": "Layer 0: Core Utilities / Viewport Presentation",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Viewport Sub-Domain Manifest orchestrating layout, scalers, themes, typography, and asset slots.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Viewport Configuration Sub-Domain",
+      "path": "engine/config/viewport/manifest.json",
+      "parent_manifest": "engine/config/manifest.json"
+    },
+    "what_it_enables": [
+      "Desktop viewport panel layout geometry and non-overlapping bounds",
+      "High-DPI font scaling coefficients across viewport resolutions",
+      "Master UI color themes across window chrome, backgrounds, and widgets",
+      "Functional typographic roles and font face bindings",
+      "Decoupled asset slot abstraction with generic engine identifiers"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across viewport configuration (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "All viewport profiles must be 5-block compliant and statically verifiable",
+      "Procedural fallback floor: all presentation profiles guarantee non-blank rendering"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/raster/gui.h",
+      "layout_subsystem": "viewport/hud/gui_layout.h",
+      "palette_subsystem": "viewport/styling/gui_palette.h",
+      "fonts_subsystem": "viewport/styling/gui_fonts.h",
+      "assets_subsystem": "viewport/styling/gui_assets.h"
+    },
+    "static_declarations": {
+      "subdomain_id": "viewport",
+      "schema_id": "tenlux.engine.viewport_manifest.v1",
+      "target_stratum": "Layer 0 / Viewport Presentation",
+      "profiles": [ "settings.json", "scalers.json", "layout.json", "themes.json", "typography.json", "assets.json" ]
+    },
+    "generic_helper_contracts": {
+      "settings_loader": "gui_display_load_settings",
+      "layout_loader": "gui_layout_load",
+      "theme_loader": "gui_palette_load_themes",
+      "scaler_loader": "gui_fonts_load_scalers",
+      "typography_loader": "gui_fonts_load_typography",
+      "asset_loader": "gui_assets_load_registry"
+    },
+    "capacities": {
+      "profile_count": 6
+    }
+  },
+  "block_3_body": {
+    "profiles": [
+      {
+        "id": "settings",
+        "title": "Master Viewport & Display Settings Profile",
+        "file": "settings.json",
+        "path": "engine/config/viewport/settings.json",
+        "status": "active",
+        "description": "Active display resolution preset, window mode, framerate, scaling, and theme selection."
+      },
+      {
+        "id": "scalers",
+        "title": "High-DPI Font Scalers & Display Presets",
+        "file": "scalers.json",
+        "path": "engine/config/viewport/scalers.json",
+        "status": "active",
+        "description": "Resolution presets ranging from 640x360 retro canvas to 4K Ultra HD."
+      },
+      {
+        "id": "layout",
+        "title": "Desktop Layout Geometry & Panel Coordinates",
+        "file": "layout.json",
+        "path": "engine/config/viewport/layout.json",
+        "status": "active",
+        "description": "Non-overlapping AABB panel coordinates for header, viewport, status, chronicle, and dock."
+      },
+      {
+        "id": "themes",
+        "title": "Master UI Color Themes & Window Chrome",
+        "file": "themes.json",
+        "path": "engine/config/viewport/themes.json",
+        "status": "active",
+        "description": "Color profiles for window chrome, panel backdrops, button shading, and text."
+      },
+      {
+        "id": "typography",
+        "title": "Typographic Hierarchy & Font Face Bindings",
+        "file": "typography.json",
+        "path": "engine/config/viewport/typography.json",
+        "status": "active",
+        "description": "Font family declarations, base point sizes, line heights, and letter spacing."
+      },
+      {
+        "id": "assets",
+        "title": "Generic Asset Slot Registry & Procedural Fallbacks",
+        "file": "assets.json",
+        "path": "engine/config/viewport/assets.json",
+        "status": "active",
+        "description": "Generic engine slots for protagonists, enemies, tiles, relics, and visual effects."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "profile_count": 6,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "PROFILE_EXISTENCE",
+        "rule": "All 6 viewport configuration profiles must exist on disk",
+        "status": "VERIFIED_PASS"
+      }
+    ]
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 3
+    }
+  }
+}
+

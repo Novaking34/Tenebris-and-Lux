@@ -263,7 +263,7 @@ fn run_interactive_dashboard(env: &LauncherEnv) -> Result<i32, String> {
         println!("  [5] Run System Updater & Recompile Latest Build");
         println!("  [6] Execute Full Automated Verification Suite (CTest)");
         println!("  [7] View Master Guide Documentation");
-        println!("  [8] Run Data Catalog & Schema Validation Audit (game/data/system/)");
+        println!("  [8] Run Engine Config & Schema Validation Audit (engine/config/)");
         println!("  [0] Exit Launcher");
         println!("-------------------------------------------------------");
         print!("  Enter selection [1-8, 0]: ");
@@ -297,14 +297,14 @@ fn run_interactive_dashboard(env: &LauncherEnv) -> Result<i32, String> {
             }
             "8" => {
                 let val_options = tl_tools::validator::ValidationOptions {
-                    target_domain: "system".to_string(),
+                    target_domain: "config".to_string(),
                     strict: false,
                     verbose: true,
                     repo_root: env.repo_root.clone(),
                 };
                 let validator = tl_tools::validator::DataValidator::new(val_options);
                 match validator.run_audit() {
-                    Ok(summary) => summary.print_summary("system"),
+                    Ok(summary) => summary.print_summary("config"),
                     Err(e) => eprintln!("Validation error: {}", e),
                 }
             }
@@ -410,7 +410,7 @@ fn main() -> ExitCode {
         LaunchMode::Audit => launcher_env.spawn_game("--audit"),
         LaunchMode::Validate => {
             let val_options = tl_tools::validator::ValidationOptions {
-                target_domain: "system".to_string(),
+                target_domain: "config".to_string(),
                 strict: false,
                 verbose: true,
                 repo_root: launcher_env.repo_root.clone(),
@@ -418,7 +418,7 @@ fn main() -> ExitCode {
             let validator = tl_tools::validator::DataValidator::new(val_options);
             match validator.run_audit() {
                 Ok(summary) => {
-                    summary.print_summary("system");
+                    summary.print_summary("config");
                     if summary.is_success(false) {
                         Ok(0)
                     } else {

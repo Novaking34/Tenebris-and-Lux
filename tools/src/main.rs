@@ -52,6 +52,15 @@ use std::process::ExitCode;
 use tl_tools::runner::RunnerContext;
 use tl_tools::{create_default_runner, TOOL_STANDARD, TOOL_VERSION};
 
+/// Target domain for validation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ValidationTarget {
+    Headers,
+    Data,
+    Commits,
+    All,
+}
+
 /// Subcommand action requested by the operator or CI pipeline.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ToolAction {
@@ -61,8 +70,10 @@ pub enum ToolAction {
     Guide,
     /// Audit the game design curation specification document.
     Curate,
-    /// Validate JSON manifests and catalogs across game/data/.
-    Validate,
+    /// Validate C11 headers, JSON data, or git commit ledger.
+    Validate(ValidationTarget),
+    /// Audit physical on-disk visual and audio assets against catalogs.
+    Assets,
     /// Run the entire toolchain pipeline sequentially.
     All,
     /// Run diagnostic environment topology audits.
@@ -123,8 +134,46 @@ impl CliConfig {
                 println!("  [SUMMARY] {}", tel.details);
                 Ok(())
             }
-            ToolAction::Validate => {
-                let tel = engine.run_task("data_validator")?;
+            ToolAction::Validate(target) => match target {
+                ValidationTarget::Headers => {
+                    let registry = tl_tools::validator::load_subsystems_registry(&self.repo_root)?;
+                    let rules = tl_tools::validator::load_header_rules_config(&self.repo_root);
+                    let validator = tl_tools::validator::HeaderValidator::new(
+                        self.repo_root.clone(),
+                        registry,
+                        rules,
+                        self.verbose,
+                    );
+                    let summary = validator.run_audit()?;
+                    summary.print_custom_summary("C11 Engine Headers 5-Block Standard Audit", "engine/include/");
+                    if summary.is_success(false) {
+                        Ok(())
+                    } else {
+                        Err(format!("Header validation failed with {} errors.", summary.error_count()))
+                    }
+                }
+                ValidationTarget::Data => {
+                    let tel = engine.run_task("data_validator")?;
+                    println!("  [SUMMARY] {}", tel.details);
+                    Ok(())
+                }
+                ValidationTarget::Commits => {
+                    let tel = engine.run_task("git_validator")?;
+                    println!("  [SUMMARY] {}", tel.details);
+                    Ok(())
+                }
+                ValidationTarget::All => {
+                    let tel_data = engine.run_task("data_validator")?;
+                    println!("  [SUMMARY] {}", tel_data.details);
+                    let tel_hdr = engine.run_task("header_validator")?;
+                    println!("  [SUMMARY] {}", tel_hdr.details);
+                    let tel_git = engine.run_task("git_validator")?;
+                    println!("  [SUMMARY] {}", tel_git.details);
+                    Ok(())
+                }
+            },
+            ToolAction::Assets => {
+                let tel = engine.run_task("asset_pipeline")?;
                 println!("  [SUMMARY] {}", tel.details);
                 Ok(())
             }
@@ -154,7 +203,8 @@ impl CliConfig {
         println!("  extract   Extract raw RPG Maker demo data into docs/baseline");
         println!("  guide     Compile unified MASTER_GUIDE (.adoc, .md, .pdf)");
         println!("  curate    Audit game design curation specification");
-        println!("  validate  Audit 5-block JSON manifests and catalogs across game/data/");
+        println!("  validate [headers|data|commits|all] Audit C11 headers, JSON data, or git ledger");
+        println!("  assets    Audit on-disk presentation assets (.png, .wav, .ogg)");
         println!("  all       Run full sequential pipeline (Audit -> Curate -> Extract -> Guide)");
         println!("  audit     Run self-diagnostic environment & toolchain audit");
         println!("  version   Print version, author, and architectural provenance");
@@ -204,7 +254,17 @@ pub fn parse_cli_args(args: &[String]) -> CliConfig {
         Some("extract") => ToolAction::Extract,
         Some("guide") => ToolAction::Guide,
         Some("curate") => ToolAction::Curate,
-        Some("validate") => ToolAction::Validate,
+        Some("validate") => {
+            let target = match args.get(2).map(|s| s.as_str()) {
+                Some("headers") | Some("header") | Some("h") => ValidationTarget::Headers,
+                Some("data") | Some("json") | Some("d") => ValidationTarget::Data,
+                Some("commits") | Some("commit") | Some("git") | Some("c") => ValidationTarget::Commits,
+                Some("all") | Some("a") => ValidationTarget::All,
+                _ => ValidationTarget::Headers,
+            };
+            ToolAction::Validate(target)
+        }
+        Some("assets") => ToolAction::Assets,
         Some("all") => ToolAction::All,
         Some("audit") | Some("--audit") => ToolAction::Audit,
         Some("version") | Some("--version") | Some("-V") => ToolAction::Version,

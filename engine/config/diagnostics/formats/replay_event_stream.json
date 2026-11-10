@@ -1,0 +1,154 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/formats/replay_event_stream.json",
+    "id": "engine.config.diagnostics.formats.replay_event_stream",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Specification of the Deterministic Replay Event Stream format for recording and verifying simulation golden runs.",
+    "where_the_data_lives": {
+      "path": "engine/config/diagnostics/formats/replay_event_stream.json",
+      "header_binding": "engine/include/debug/debug.h"
+    },
+    "what_it_enables": [
+      "Bitwise reproducible execution capture containing seed, inputs, and state hashes",
+      "Automated regression testing by comparing historical replay hashes against live simulation",
+      "Microsecond-accurate time-travel replay for bug reproduction and turn rewinding"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during replay capture or playback",
+      "Replay streams must be 100% deterministic across all supported platforms",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "debug_subsystem_initialized": true,
+      "fnv_hashing_active": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.format.replay_stream.v1",
+      "format_type": "DETERMINISTIC_REPLAY_STREAM",
+      "supported_commands": [
+        "defend",
+        "strike",
+        "stance",
+        "move",
+        "item",
+        "pass",
+        "wait"
+      ]
+    },
+    "generic_helper_contracts": {
+      "replay_recorder": "debug_record_replay_event",
+      "replay_player": "debug_playback_replay_stream"
+    }
+  },
+  "block_3_body": {
+    "replay_schema": {
+      "header": {
+        "magic": "TLUX_RPL",
+        "engine_version": "0.1.0-dev",
+        "initial_rng_seed": 133742,
+        "initial_hero_state_hash": "0x811c9dc5",
+        "total_turns": 15,
+        "recorded_timestamp": "2026-11-05T18:30:00Z"
+      },
+      "event_record": {
+        "turn": {
+          "type": "integer",
+          "description": "Simulation turn index"
+        },
+        "command_raw": {
+          "type": "string",
+          "description": "Raw text input command"
+        },
+        "command_canonical": {
+          "type": "string",
+          "description": "Resolved canonical command token"
+        },
+        "command_domain": {
+          "type": "integer",
+          "description": "Routing domain enum value"
+        },
+        "expected_state_hash": {
+          "type": "string",
+          "description": "FNV-1a 32-bit state hash after turn execution"
+        },
+        "expected_hero_hp": {
+          "type": "integer",
+          "description": "Expected protagonist HP after turn"
+        },
+        "expected_moral_sway": {
+          "type": "integer",
+          "description": "Expected moral sway [-100, +100] after turn"
+        }
+      },
+      "sample_events": [
+        {
+          "turn": 1,
+          "command_raw": "defend",
+          "command_canonical": "defend",
+          "command_domain": 1,
+          "expected_state_hash": "0x4f128ab9",
+          "expected_hero_hp": 450,
+          "expected_moral_sway": 0
+        },
+        {
+          "turn": 2,
+          "command_raw": "stance strike",
+          "command_canonical": "stance",
+          "command_domain": 1,
+          "expected_state_hash": "0x98bc43d1",
+          "expected_hero_hp": 450,
+          "expected_moral_sway": 0
+        },
+        {
+          "turn": 3,
+          "command_raw": "stance equilibrium",
+          "command_canonical": "stance",
+          "command_domain": 1,
+          "expected_state_hash": "0xa7d235e4",
+          "expected_hero_hp": 450,
+          "expected_moral_sway": 0
+        }
+      ]
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "supported_commands_count": 7,
+      "sample_events_count": 3,
+      "determinism_guarantee": "Bitwise reproducible across ISO C11 platforms"
+    },
+    "verification_tripwires": [
+      {
+        "name": "MAGIC_HEADER",
+        "rule": "header.magic == 'TLUX_RPL'",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "HASH_VERIFICATION",
+        "rule": "every event defines an expected_state_hash",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [
+        "--replay=<path>",
+        "--record-replay=<path>"
+      ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "sister_format": "diagnostic_report.json"
+    }
+  }
+}

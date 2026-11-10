@@ -1,0 +1,67 @@
+{
+  "$schema": "tenlux.engine.standards.manifest.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/standards/manifest.json",
+    "id": "engine.standards.manifest",
+    "layer": "Layer 0: Core Foundation Strata",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-09",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "C11 Engine Architectural Standards Manifest",
+    "role": "Orchestrator for Engine Standards, Subsystem Registries & Block Policies",
+    "invariants": [
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Zero dynamic heap allocations in Layer 0/1/2 (ALLOC_ZERO_HEAP)",
+      "Universal 5-Block Lifecycle Protocol enforced across all headers and sources"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "language": "ISO C11 (-std=c11, -Wall -Wextra -Wpedantic)",
+      "standards_version": "Rev 5"
+    },
+    "static_declarations": {
+      "subsystems_catalog": "engine/config/standards/subsystems.json",
+      "blocks_dir": "engine/config/standards/blocks"
+    }
+  },
+  "block_3_body": {
+    "engine_include_root": "engine/include",
+    "engine_source_root": "engine/src",
+    "total_registered_headers": 41,
+    "enforced_invariants": [
+      "zero_heap_layer_0_1_2",
+      "strict_iso_c_comments_invariant_18",
+      "anti_domain_bleed_covenant_11",
+      "procedural_fallback_floor_covenant_12",
+      "two_sub_assembly_block_4_architecture",
+      "two_sub_assembly_block_5_architecture"
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "registered_headers": 41,
+      "mandatory_blocks": 5
+    },
+    "verification_tripwires": [
+      {
+        "name": "HEADER_COVERAGE",
+        "rule": "100% of headers registered in subsystems.json",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "preflight_audit_required": true,
+    "ci_enforcement_level": "strict"
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "home_dir": "engine/config/standards"
+    },
+    "dump_card_column_width": 60,
+    "verification_target": "tl_tools validate headers"
+  }
+}

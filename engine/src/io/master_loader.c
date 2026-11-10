@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          master_loader.c
+@id            io.loader
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Unified Master Data Loading & 5-Block Lifecycle Deserializer
@@ -118,10 +119,18 @@ const module_metadata_t master_loader_manifest = {
     master_loader_preflight
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Ingestion & Header Parsing Implementation
+--------------------------------------------------------------------------------
+*/
 
 bool master_loader_load_from_memory(master_loader_t *loader,
                                     const char *json_text,
@@ -262,34 +271,11 @@ bool master_loader_load(master_loader_t *loader,
     return parsed;
 }
 
-bool master_loader_validate_schema(const master_loader_t *loader,
-                                   const char *expected_schema_id)
-{
-    if (loader == NULL || expected_schema_id == NULL) {
-        return false;
-    }
-
-    if (loader->header.schema_id[0] == '\0') {
-        return false;
-    }
-
-    return (strcmp(loader->header.schema_id, expected_schema_id) == 0);
-}
-
-bool master_loader_validate_version(const master_loader_t *loader,
-                                    const char *expected_version)
-{
-    if (loader == NULL || expected_version == NULL) {
-        return false;
-    }
-
-    if (loader->header.version[0] == '\0') {
-        return false;
-    }
-
-    return (strncmp(loader->header.version, expected_version,
-                    strlen(expected_version)) == 0);
-}
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Typed Body Property Extraction Implementation
+--------------------------------------------------------------------------------
+*/
 
 bool master_loader_get_string(const master_loader_t *loader,
                               const char *sub_obj,
@@ -427,6 +413,12 @@ bool master_loader_get_bool(const master_loader_t *loader,
     return json_get_bool(scope, key, out_val);
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Array Traversal & Object Slice Implementation
+--------------------------------------------------------------------------------
+*/
+
 bool master_loader_find_array(const master_loader_t *loader,
                               const char *sub_obj,
                               const char *array_key,
@@ -473,10 +465,53 @@ bool master_loader_get_array_object(const char *arr_start,
     return json_array_get_object(arr_start, arr_len, index, out_obj, out_size);
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Contract & Schema Verification Implementation
+--------------------------------------------------------------------------------
+*/
+
+bool master_loader_validate_schema(const master_loader_t *loader,
+                                   const char *expected_schema_id)
+{
+    if (loader == NULL || expected_schema_id == NULL) {
+        return false;
+    }
+
+    if (loader->header.schema_id[0] == '\0') {
+        return false;
+    }
+
+    return (strcmp(loader->header.schema_id, expected_schema_id) == 0);
+}
+
+bool master_loader_validate_version(const master_loader_t *loader,
+                                    const char *expected_version)
+{
+    if (loader == NULL || expected_version == NULL) {
+        return false;
+    }
+
+    if (loader->header.version[0] == '\0') {
+        return false;
+    }
+
+    return (strncmp(loader->header.version, expected_version,
+                    strlen(expected_version)) == 0);
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.2: Machine Self-Audit & Pre-Flight Tripwires
+--------------------------------------------------------------------------------
+*/
 
 diag_result_t master_loader_preflight(void)
 {
@@ -501,11 +536,11 @@ diag_result_t master_loader_preflight(void)
 
     /* Check 2: Load and validate 5-block math formulas */
     static char file_buf[FS_BUFFER_LARGE_BYTES];
-    if (!master_loader_load(&loader, "system", "runtime/math/formulas.json",
+    if (!master_loader_load(&loader, "config", "runtime/math/formulas.json",
                             file_buf, sizeof(file_buf))) {
         res.passed = false;
         res.severity = SEVERITY_CRITICAL;
-        res.details = "master_loader failed to load system/runtime/math/formulas.json.";
+        res.details = "master_loader failed to load config/runtime/math/formulas.json.";
         return res;
     }
 
@@ -523,10 +558,10 @@ diag_result_t master_loader_preflight(void)
         return res;
     }
 
-    if (!master_loader_validate_version(&loader, "0.1.0")) {
+    if (!master_loader_validate_version(&loader, "0.1.1-dev")) {
         res.passed = false;
         res.severity = SEVERITY_WARNING;
-        res.details = "Version validation failed for math formulas (expected 0.1.0).";
+        res.details = "Version validation failed for math formulas (expected 0.1.1-dev).";
         return res;
     }
 
@@ -551,7 +586,7 @@ diag_result_t master_loader_preflight(void)
 
     /* Check 4: Block 5 Executable Procedures */
     loader_header_t hdr;
-    if (!master_loader_execute_inspect("system", "runtime/math/formulas.json", &hdr) ||
+    if (!master_loader_execute_inspect("config", "runtime/math/formulas.json", &hdr) ||
         !hdr.is_5block || strcmp(hdr.schema_id, "tenlux.data.math_formulas.v1") != 0) {
         res.passed = false;
         res.severity = SEVERITY_CRITICAL;
@@ -561,7 +596,7 @@ diag_result_t master_loader_preflight(void)
 
     master_loader_t verified_loader;
     static char verified_buf[FS_BUFFER_LARGE_BYTES];
-    if (!master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+    if (!master_loader_execute_load_verified("config", "runtime/math/formulas.json",
                                             "tenlux.data.math_formulas.v1",
                                             verified_buf, sizeof(verified_buf),
                                             &verified_loader)) {
@@ -580,14 +615,21 @@ bool master_loader_audit(void)
     return res.passed && res.severity != SEVERITY_FATAL;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Master Data Loader
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
+*/
 
 bool master_loader_execute_inspect(const char *domain,
                                    const char *rel_path,
@@ -610,6 +652,40 @@ bool master_loader_execute_inspect(const char *domain,
 
     *out_header = loader.header;
     return true;
+}
+
+size_t master_loader_execute_dump_card(const loader_header_t *header,
+                                       char *out_buf,
+                                       size_t buf_size)
+{
+    if (header == NULL || out_buf == NULL || buf_size == 0) {
+        return 0;
+    }
+    int written = snprintf(
+        out_buf, buf_size,
+        "============================================================\n"
+        "             MASTER DATA LOADER ENVELOPE CARD               \n"
+        "============================================================\n"
+        "Project:       %s\n"
+        "Dataset ID:    %s\n"
+        "Layer:         %s\n"
+        "Version:       %s\n"
+        "Schema ID:     %s\n"
+        "Envelope:      %s\n"
+        "Source File:   %s\n"
+        "============================================================\n",
+        header->project[0] ? header->project : "(Unset)",
+        header->id[0] ? header->id : "(Unset)",
+        header->layer[0] ? header->layer : "(Unset)",
+        header->version[0] ? header->version : "(Unset)",
+        header->schema_id[0] ? header->schema_id : "(Unset)",
+        header->is_5block ? "VALID 5-BLOCK PROTOCOL" : "LEGACY / NON-CONFORMANT",
+        header->file[0] ? header->file : "(Memory Stream)"
+    );
+    if (written < 0 || (size_t)written >= buf_size) {
+        return 0;
+    }
+    return (size_t)written;
 }
 
 bool master_loader_execute_load_verified(const char *domain,
@@ -639,9 +715,11 @@ bool master_loader_execute_load_verified(const char *domain,
     return true;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+*/
 
 void master_loader_init(void)
 {
@@ -657,6 +735,4 @@ void master_loader_shutdown(void)
     fs_utils_shutdown();
 }
 
-// =============================================================================
-// End of master_loader.c
-// =============================================================================
+/* End of master_loader.c */

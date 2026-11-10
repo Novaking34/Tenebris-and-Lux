@@ -124,6 +124,11 @@ path = "src/bin/validator.rs"
 name = "git_validator"
 path = "src/bin/git_validator.rs"
 
+# Presentation asset verification and procedural synthesis utility
+[[bin]]
+name = "asset_generator"
+path = "src/bin/asset_generator.rs"
+
 
 
 

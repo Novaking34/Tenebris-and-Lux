@@ -1,0 +1,62 @@
+{
+  "$schema": "tenlux.engine.standards.block_3.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/standards/blocks/block_3_body.json",
+    "id": "engine.standards.block_3",
+    "layer": "Layer 0: Core Foundation Strata",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-09",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "C11 Engine Block 3 Body Specialization",
+    "role": "Specification for Engine Header Function Documentation & Pure Logic",
+    "invariants": [
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Dual Audience Documentation Covenant (Covenant 17)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "language": "ISO C11 (-std=c11)",
+      "standards_version": "Rev 5"
+    },
+    "static_declarations": {
+      "required_sub_assemblies": [
+        "Sub-Assembly 3.1",
+        "Sub-Assembly 3.2"
+      ],
+      "dual_audience_sections": [
+        "### For Game Designers & Non-Programmers:",
+        "### For Systems Programmers & Engine Architects:"
+      ]
+    }
+  },
+  "block_3_body": {
+    "pure_types_statutory_text": "define purely static structures",
+    "facade_umbrella_statutory_text": "all functional APIs are declared in their respective domain headers"
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "dual_audience_sections_count": 2,
+      "sub_assemblies_count": 2
+    },
+    "verification_tripwires": [
+      {
+        "name": "DUAL_AUDIENCE_SECTIONS",
+        "rule": "Every operational API function must include designer & programmer sections",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "audit_enabled": true,
+    "verify_doxygen_blocks": true
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "home_dir": "engine/config/standards/blocks"
+    },
+    "severity": "error"
+  }
+}

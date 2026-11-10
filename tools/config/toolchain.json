@@ -1,0 +1,41 @@
+{
+  "$schema": "tenlux.tools.toolchain.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "layer": "Developer Tooling Strata",
+    "version": "0.1.0",
+    "interface_rev": "Rev 1",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "Universal OmniCode Toolchain Generic Configuration",
+    "role": "Root Toolchain Orchestration & Policy Configuration"
+  },
+  "block_2_opening": {
+    "default_timeout_ms": 30000,
+    "max_worker_threads": 8,
+    "strict_mode_default": false
+  },
+  "block_3_body": {
+    "blocks_dir": "tools/config/blocks",
+    "project_standards_dir": "engine/config/standards",
+    "enabled_linters": [
+      "metadata_tags",
+      "sub_assemblies",
+      "doxygen_dual_audience",
+      "c_comment_invariant",
+      "dump_card_presence",
+      "stateless_exemption"
+    ]
+  },
+  "block_4_audit": {
+    "fail_on_warning": false,
+    "emit_trace": true,
+    "max_reported_issues_per_file": 50
+  },
+  "block_5_closing": {
+    "report_width": 80,
+    "dump_card_width": 60,
+    "default_action": "validate"
+  }
+}
+

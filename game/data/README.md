@@ -19,54 +19,26 @@ The architecture organizes data into a 5-domain hierarchical tree reflecting
 operational data flow ("baton passing") across the simulation pipeline:
 
 ```text
-game/data/
-├── manifest.json              # Master Catalog linking the 5 Domain Manifests (v0.1.0)
-│
-├── system/                    # 1. System Domain: Platform & Core Invariants
-│   ├── manifest.json          # System Master Menu (v0.1.0)
-│   ├── runtime/               # Engine utilities (math, time, string, attributes)
-│   │   ├── manifest.json      # Runtime Master Manifest
-│   │   ├── math/              # Math, resonance bounds, Tri-Vitals & Hex-Stats
-│   │   ├── time/              # Monotonic timing, frame budgets (60/120 FPS)
-│   │   └── string/            # Lexical safety, paths, command tokens
-│   └── diagnostics/           # Telemetry logs and interactive debugger
-│       ├── manifest.json      # Diagnostics Master Manifest
-│       ├── telemetry/         # Forensic logging profiles and ring buffers
-│       └── debugger/          # Snapshot ring buffer, FNV-1a hashing, rewind
-│
-├── world/                     # 2. World Domain: Geography & Battlefields
-│   ├── manifest.json          # World Master Menu (v0.1.0)
-│   ├── geography/             # Overworld realm topology & spatial nodes (manifest.json)
-│   ├── battlefields/          # Tactical maps & grid descriptors (manifest.json)
-│   └── terrains/              # Surface friction, cover & rift nodes (manifest.json)
-│
-├── entities/                  # 3. Entities Domain: Actors & Growth
-│   ├── manifest.json          # Entities Master Menu (v0.1.0)
-│   ├── roster/                # Protagonists, companions & bestiary (manifest.json)
-│   └── classes/               # Tiered class hierarchy & elemental summons (manifest.json)
-│
-├── mechanics/                 # 4. Mechanics Domain: Simulation Rules & Flow
-│   ├── manifest.json          # Mechanics Master Menu (v0.1.0)
-│   ├── tactics/               # 8-slot squad formations, TP rules & ZOC (manifest.json)
-│   ├── combat/                # Stances, formulas, TP states, skills & modes (manifest.json)
-│   ├── items/                 # Twin Relics, catalysts, consumables (manifest.json)
-│   └── campaign/              # Morality matrix, archetypes & dispatcher (manifest.json)
-│       └── dispatch/          # Command router dictionary and aliases (manifest.json)
-│
-└── presentation/              # 5. Presentation Domain: Sensory Viewports
-    ├── manifest.json          # Presentation Master Menu (v0.1.0)
-    ├── ui/                    # Desktop HUD, panel layouts (manifest.json, gui_manifest.json)
-    │   └── fonts/             # Font typography & scalers (manifest.json)
-    ├── audio/                 # Channels, SFX cues, BGM themes (manifest.json)
-    └── visuals/               # Spritesheets, tilesets, animations (manifest.json)
-        └── palettes/          # Hardware LUT, biome palettes & themes (manifest.json)
+engine/config/                  # Standalone Engine Configuration Profiles (Mechanical Strata)
+├── manifest.json              # Engine Master Manifest orchestrating runtime, diagnostics, viewport, audio
+├── runtime/                   # Bounded math, timing, clocks, string lexicons
+├── diagnostics/               # Telemetry logs, error taxonomy, debugger, stream formats
+├── viewport/                  # High-DPI font scalers, layout dimensions, asset slots
+└── audio/                     # Mixing buses, polyphony limits, sound cue manifests
+
+game/data/                     # Game Domain Content (Layers 1-2 RPG Simulation & Presentation)
+├── manifest.json              # Game Domain Master Manifest
+├── world/                     # Geography, continental provinces, battlefields, terrains
+├── entities/                  # Protagonists, companions, enemy rosters, classes
+├── mechanics/                 # Formations, ZOC, combat stances, relics, items, campaign
+└── presentation/              # Desktop viewports, UI layouts, palettes, soundscapes
 ```
 
 ---
 
 ## 2. The Tri-Vital Model & Hex-Base Attribute Continuum
 
-Defined in [`game/data/system/runtime/math/attributes.json`](file:///home/professorseanex/Tenebris%20and%20Lux/game/data/system/runtime/math/attributes.json) and enforced across Layer 1 simulation:
+Defined in [`engine/config/runtime/math/attributes.json`](file:///home/professorseanex/Tenebris%20and%20Lux/engine/config/runtime/math/attributes.json) and enforced across Layer 1 simulation:
 
 ### 2.1 The Tri-Vitals (`HP`, `MP`, `TP`)
 
@@ -141,15 +113,17 @@ Lifecycle Protocol:
 
 ---
 
-## 4. The 5 Operational Domains
+## 4. The Layered Domains
 
-### Domain 1: System (`game/data/system/`)
+### Engine Configuration (`engine/config/`)
 
 * **`runtime/math/`**: Resonance clamping `[0, 100]`, moral sway `[-100, +100]`.
 * **`runtime/time/`**: 60/120 FPS budgets, monotonic clock, sub-50µs budgets.
 * **`runtime/string/`**: Command tokens, stance lexicon, buffer boundaries.
 * **`diagnostics/telemetry/`**: Categorized telemetry, static ring buffers.
 * **`diagnostics/debugger/`**: Snapshot ring buffer, FNV-1a hashing, rewind.
+* **`viewport/`**: Resolution letterbox presets, typography scalers, generic asset slots.
+* **`audio/`**: Multi-channel mixing buses, polyphony caps, ducking matrix.
 
 ### Domain 2: World (`game/data/world/`)
 

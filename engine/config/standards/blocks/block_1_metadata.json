@@ -1,0 +1,62 @@
+{
+  "$schema": "tenlux.engine.standards.block_1.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/standards/blocks/block_1_metadata.json",
+    "id": "engine.standards.block_1",
+    "layer": "Layer 0: Core Foundation Strata",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-09",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "system": "C11 Engine Block 1 Metadata Specialization",
+    "role": "Specification for Engine Header Provenance & Invariant 18",
+    "invariants": [
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Strict ISO C comments only (Invariant 18; zero // comments)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "language": "ISO C11 (-std=c11)",
+      "standards_version": "Rev 5"
+    },
+    "static_declarations": {
+      "project_name_expected": "Tenebris and Lux",
+      "canonical_author_expected": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+      "canonical_repository_expected": "https://github.com/Novaking34/tenebris-lux",
+      "banned_comment_tokens": [ "//" ],
+      "comment_wrapper_open": "/*",
+      "comment_wrapper_close": "*/"
+    }
+  },
+  "block_3_body": {
+    "url_whitelist_for_double_slash": [
+      "https://github.com/Novaking34/tenebris-lux"
+    ],
+    "require_file_path_comment": true
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "mandatory_tags_count": 11,
+      "mandatory_sections_count": 1
+    },
+    "verification_tripwires": [
+      {
+        "name": "INVARIANT_18_PURITY",
+        "rule": "Zero // comments outside whitelisted URLs",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "audit_enabled": true,
+    "verify_tag_syntax": true
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "home_dir": "engine/config/standards/blocks"
+    },
+    "severity": "error"
+  }
+}

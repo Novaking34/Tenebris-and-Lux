@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          geom_utils_fallback.c
-@id            core.util.geom_fallback
+@id            core.geom.fallback
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        2D/2.5D Spatial Geometry Subsystem (core/geom)
@@ -26,6 +26,16 @@ PURPOSE & ARCHITECTURAL ROLE:
   for the 2D/2.5D spatial geometry engine. Serves as an isolated, compile-time
   fallback baseline quarantined outside main production pathways to guarantee
   that production uses the data-driven pipeline.
+
+  ### For Game Designers & Non-Programmers:
+  If display resolution settings fail to load, this code page acts like an
+  emergency test-pattern card, locking the window into a classic 640x360
+  Game Boy / retro aspect ratio so the game never crashes with a black screen.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Static Compile-Time Constants: Zero dynamic heap allocation.
+  - Generates immutable, bounds-checked fallback viewports on the stack.
+  - Reentrant pure math for point hit-testing and AABB separation.
 ================================================================================
 */
 
@@ -47,6 +57,7 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -195,8 +206,62 @@ bool geom_fallback_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: 2D Spatial Geometry Engine
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
 ================================================================================
 */
 
-/* End of geom_utils_fallback.c */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
+*/
+
+size_t geom_fallback_execute_dump_card(const geom_fallback_viewport_t *vp,
+                                       char *out_buf,
+                                       size_t buf_size)
+{
+    if (out_buf == NULL || buf_size == 0) {
+        return 0;
+    }
+    geom_fallback_viewport_t local_vp;
+    if (vp == NULL) {
+        local_vp = geom_fallback_get_viewport(640, 360);
+        vp = &local_vp;
+    }
+    int written = snprintf(
+        out_buf, buf_size,
+        "============================================================\n"
+        "           GEOMETRY FALLBACK STATUS & CAPACITIES            \n"
+        "============================================================\n"
+        "Profile ID:    %s\n"
+        "Data-Driven:   NO (Emergency Hardcoded)\n"
+        "Screen Res:    %ux%u px\n"
+        "Target Res:    %ux%u px (640x360 Baseline)\n"
+        "Uniform Scale: %.3f\n"
+        "Pillarbox X:   %d px\n"
+        "Letterbox Y:   %d px\n"
+        "============================================================\n",
+        GEOM_FALLBACK_PROFILE_NAME,
+        vp->screen_w, vp->screen_h,
+        vp->target_w, vp->target_h,
+        (double)vp->scale_factor,
+        vp->offset_x,
+        vp->offset_y
+    );
+    if (written < 0 || (size_t)written >= buf_size) {
+        return 0;
+    }
+    return (size_t)written;
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/

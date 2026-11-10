@@ -1,0 +1,123 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/audio/settings.json",
+    "id": "engine.config.audio.settings",
+    "layer": "Layer 0: Core Utilities / Audio Bus",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Audio Settings Profile driving volume mixer levels, mute toggles, device preferences, and ducking parameters.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Audio Configuration Sub-Domain",
+      "path": "engine/config/audio/settings.json",
+      "parent_manifest": "engine/config/audio/manifest.json"
+    },
+    "what_it_enables": [
+      "User audio volume preferences across all 7 mixing buses",
+      "Channel-specific mute toggles and master mute override",
+      "Output driver selection (procedural synthesis, ALSA, PulseAudio, null)",
+      "Dynamic sound effect and background music ducking attenuation controls",
+      "Zero dynamic heap allocations during audio settings queries (ALLOC_ZERO_HEAP)"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across audio settings ingestion (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "All volume percentages strictly bounded within [0, 100]",
+      "Sample rate must be standard audio frequency (44100 or 48000 Hz)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "audio_bus": "audio/audio_bus.h",
+      "channels_profile": "engine/config/audio/channels.json"
+    },
+    "static_declarations": {
+      "subdomain_id": "audio",
+      "schema_id": "tenlux.engine.audio.settings.v1",
+      "target_stratum": "Layer 0 / Audio Bus",
+      "target_struct": "audio_bus_config_t",
+      "header_binding": "include/audio/audio_types.h"
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve",
+      "master_loader": "master_loader_load",
+      "settings_loader": "audio_bus_load_settings"
+    },
+    "capacities": {
+      "channel_count": 7,
+      "supported_drivers": 4
+    }
+  },
+  "block_3_body": {
+    "volumes": {
+      "master": 100,
+      "bgm": 75,
+      "ambience": 60,
+      "sfx_combat": 90,
+      "sfx_tactical": 80,
+      "ui": 85,
+      "stinger": 95
+    },
+    "mutes": {
+      "master_mute": false,
+      "bgm_mute": false,
+      "ambience_mute": false,
+      "sfx_combat_mute": false,
+      "sfx_tactical_mute": false,
+      "ui_mute": false,
+      "stinger_mute": false
+    },
+    "hardware": {
+      "sample_rate_hz": 48000,
+      "buffer_frames": 1024,
+      "limiter_enabled": true,
+      "driver_preference": "procedural"
+    },
+    "ducking": {
+      "enabled": true,
+      "stinger_attenuation_ratio": 0.5,
+      "combat_attenuation_ratio": 0.8
+    },
+    "options_catalog": {
+      "volume_min": 0,
+      "volume_max": 100,
+      "volume_step": 5,
+      "available_drivers": [ "procedural", "alsa", "pulseaudio", "null" ],
+      "channel_reference": "channels.json"
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "channel_count": 7,
+      "volumes_bounded": true,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "VOLUME_PERCENTAGE_BOUNDS",
+        "rule": "volume >= 0 && volume <= 100 across all channels",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "SAMPLE_RATE_VALIDITY",
+        "rule": "sample_rate_hz == 44100 || sample_rate_hz == 48000",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 2
+    }
+  }
+}
+

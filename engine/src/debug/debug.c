@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          debug.c
+@id            debug.engine
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Interactive Engine Debugger, State Rewind & Tripwire Inspector
@@ -21,13 +22,13 @@ BLOCK 1: METADATA BLOCK
                4. Ring buffer capacity strictly bounded by DEBUG_MAX_SNAPSHOTS (64).
                5. Deterministic state hash generation via 32-bit FNV-1a.
                6. Non-crashing diagnostic tripwires with latching error states.
-               7. Universal 5-Block Lifecycle Protocol enforced across all files.
+               7. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
 PURPOSE & ARCHITECTURAL ROLE:
   Provides the implementation for the interactive engine state debugger,
   snapshot recording ring buffer, historical time-travel rewind, breakpoint
   evaluation, and diagnostic inspection cards. Integrates with data assets in
-  system/diagnostics/debugger/ via master_loader, while ensuring zero-heap
+  engine/config/diagnostics/debugger/ via master_loader, while ensuring zero-heap
   safety and isolated fallback operation if data assets are unreachable.
 
   ### For Game Designers & Non-Programmers:
@@ -252,18 +253,18 @@ bool debug_load_config_profile(const char *profile_name, debug_config_t *out_con
         return false;
     }
 
-    /* Step 2: Attempt loading via master_loader in the "system" domain */
+    /* Step 2: Attempt loading via master_loader in the "config" domain */
     char rel_path[PATH_FINDER_MAX_PATH];
     snprintf(rel_path, sizeof(rel_path), "diagnostics/debugger/%s.json", profile_name);
 
     master_loader_t loader;
     char json_buffer[FS_BUFFER_MEDIUM_BYTES];
-    bool loaded = master_loader_load(&loader, "system", rel_path, json_buffer, sizeof(json_buffer));
+    bool loaded = master_loader_load(&loader, "config", rel_path, json_buffer, sizeof(json_buffer));
 
     if (!loaded) {
         /* Fallback attempt with direct file path */
         snprintf(rel_path, sizeof(rel_path), "%s.json", profile_name);
-        loaded = master_loader_load(&loader, "system", rel_path, json_buffer, sizeof(json_buffer));
+        loaded = master_loader_load(&loader, "config", rel_path, json_buffer, sizeof(json_buffer));
     }
 
     /* Step 3: Fallback tripwire if file is absent */
@@ -342,7 +343,7 @@ bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *
     /* Step 2: Ingest manifest file via master_loader */
     master_loader_t loader;
     char json_buffer[FS_BUFFER_MEDIUM_BYTES];
-    if (!master_loader_load(&loader, "system", target, json_buffer, sizeof(json_buffer))) {
+    if (!master_loader_load(&loader, "config", target, json_buffer, sizeof(json_buffer))) {
         s_debug.tripwire_status = DEBUG_TRIPWIRE_MANIFEST_MISSING;
         snprintf(s_debug.tripwire_details, sizeof(s_debug.tripwire_details),
                  "Debug manifest missing: %.64s", target);
@@ -384,65 +385,9 @@ debug_config_t debug_get_default_config(void)
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 3.3: Lifecycle & Execution Management Cogs
+Sub-Assembly 3.3: Debugger State Queries & Telemetry Cogs
 --------------------------------------------------------------------------------
 */
-
-/**
- * @brief Initializes the debugging system with a specific configuration.
- *
- * @param[in] config Optional custom configuration, or NULL for data-driven default.
- *
- * @return true on successful initialization; false on fatal failure.
- */
-bool debug_init(const debug_config_t *config)
-{
-    /* Step 1: Resolve configuration instance */
-    debug_config_t cfg;
-    if (config != NULL) {
-        cfg = *config;
-    } else {
-        cfg = debug_get_default_config();
-    }
-
-    /* Step 2: Invariant validation & bounds enforcement */
-    if (cfg.max_snapshots == 0 || cfg.max_snapshots > DEBUG_MAX_SNAPSHOTS) {
-        cfg.max_snapshots = DEBUG_MAX_SNAPSHOTS;
-    }
-    if (cfg.snapshot_interval_turns <= 0) {
-        cfg.snapshot_interval_turns = 1;
-    }
-
-    /* Step 3: Zero-initialize and populate internal subsystem state */
-    memset(&s_debug, 0, sizeof(s_debug));
-    s_debug.config = cfg;
-    s_debug.snapshot_count = 0;
-    s_debug.snapshot_head = 0;
-    s_debug.next_snapshot_id = 1;
-    s_debug.breakpoint_count = 0;
-    s_debug.next_breakpoint_id = 1;
-    s_debug.step_mode = DEBUG_STEP_RUN;
-    s_debug.tripwire_status = DEBUG_TRIPWIRE_CLEAR;
-    s_debug.traps_triggered = 0;
-
-    s_debug_active = true;
-    s_debug_data_driven = cfg.loaded_from_data;
-
-    LOG_INFO(LOG_CAT_DEBUG, "Debugger", 0.0f,
-             "Debugger initialized (Profile: %s, DataDriven: %s, MaxSnapshots: %zu)",
-             cfg.profile_name, cfg.loaded_from_data ? "YES" : "NO", cfg.max_snapshots);
-
-    return true;
-}
-
-/**
- * @brief Shuts down the debugging system and resets state.
- */
-void debug_shutdown(void)
-{
-    s_debug_active = false;
-    s_debug_data_driven = false;
-}
 
 /**
  * @brief Checks if the debugging system is currently initialized and active.
@@ -1186,6 +1131,12 @@ Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
 ================================================================================
 */
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures & Object Constructors
+--------------------------------------------------------------------------------
+*/
+
 /**
  * @brief Constructs a structured runtime debugger statistics report.
  *
@@ -1337,4 +1288,66 @@ bool debug_execute_dump_card(const char *card_id, const debug_state_fields_t *fi
     }
 
     return (written > 0 && (size_t)written < buf_len);
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Initializes the debugging system with a specific configuration.
+ *
+ * @param[in] config Optional custom configuration, or NULL for data-driven default.
+ *
+ * @return true on successful initialization; false on fatal failure.
+ */
+bool debug_init(const debug_config_t *config)
+{
+    /* Step 1: Resolve configuration instance */
+    debug_config_t cfg;
+    if (config != NULL) {
+        cfg = *config;
+    } else {
+        cfg = debug_get_default_config();
+    }
+
+    /* Step 2: Invariant validation & bounds enforcement */
+    if (cfg.max_snapshots == 0 || cfg.max_snapshots > DEBUG_MAX_SNAPSHOTS) {
+        cfg.max_snapshots = DEBUG_MAX_SNAPSHOTS;
+    }
+    if (cfg.snapshot_interval_turns <= 0) {
+        cfg.snapshot_interval_turns = 1;
+    }
+
+    /* Step 3: Zero-initialize and populate internal subsystem state */
+    memset(&s_debug, 0, sizeof(s_debug));
+    s_debug.config = cfg;
+    s_debug.snapshot_count = 0;
+    s_debug.snapshot_head = 0;
+    s_debug.next_snapshot_id = 1;
+    s_debug.breakpoint_count = 0;
+    s_debug.next_breakpoint_id = 1;
+    s_debug.step_mode = DEBUG_STEP_RUN;
+    s_debug.tripwire_status = DEBUG_TRIPWIRE_CLEAR;
+    s_debug.traps_triggered = 0;
+
+    s_debug_active = true;
+    s_debug_data_driven = cfg.loaded_from_data;
+
+    LOG_INFO(LOG_CAT_DEBUG, "Debugger", 0.0f,
+             "Debugger initialized (Profile: %s, DataDriven: %s, MaxSnapshots: %zu)",
+             cfg.profile_name, cfg.loaded_from_data ? "YES" : "NO", cfg.max_snapshots);
+
+    return true;
+}
+
+/**
+ * @brief Shuts down the debugging system and resets state.
+ */
+void debug_shutdown(void)
+{
+    s_debug_active = false;
+    s_debug_data_driven = false;
 }

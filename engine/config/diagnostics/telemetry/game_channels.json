@@ -1,0 +1,234 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/telemetry/game_channels.json",
+    "id": "engine.config.diagnostics.telemetry.game_channels",
+    "layer": "Layer 1: Simulation Engine",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Specification of high-level Layer 1 Tactical Strategy RPG simulation and narrative telemetry channels.",
+    "where_the_data_lives": {
+      "path": "engine/config/diagnostics/telemetry/game_channels.json",
+      "simulation_source_layers": [
+        "Layer 1 (Combat/Hero/Relics/World/Ending/Dispatch)"
+      ],
+      "log_sink": "build/logs/game.log"
+    },
+    "what_it_enables": [
+      "Dedicated isolation of gameplay balance, stance shifts, and narrative progression",
+      "Per-channel entity tagging, moral grade tracking, and combat resolution tracing",
+      "Instant discrimination between gameplay simulation logic and engine platform errors"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across all game simulation telemetry channels",
+      "Simulation logic must remain completely decoupled from presentation runtimes",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "simulation_state_initialized": true,
+      "relics_bound": true,
+      "static_ring_buffer_ready": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.game_channels.v1",
+      "channel_domain": "GAME",
+      "registered_channel_count": 8,
+      "canon_hero": "Elijah Ro-enheart",
+      "canon_companion": "Lady Katrina Jaren"
+    },
+    "generic_helper_contracts": {
+      "channel_router": "log_route_channel_entry",
+      "sink_flusher": "log_flush_channel_buffer"
+    }
+  },
+  "block_3_body": {
+    "channels": [
+      {
+        "channel_id": "GAME_SIM",
+        "name": "Hero State & Vitals Telemetry",
+        "description": "Protagonist vitals (HP, MP, TP), 8 Exploration stats (STR-REP), 9 Combat stats, and inventory slots.",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 15,
+        "default_min_severity": "INFO",
+        "sink_file": "build/logs/game_sim.log",
+        "tracked_telemetry": [
+          "hero_hp_drain_or_heal",
+          "tactical_points_tp_delta",
+          "magic_points_mp_consumption",
+          "stat_buff_debuff_lifecycles"
+        ],
+        "qol_diagnostics": {
+          "alert_on_hp_zero": true,
+          "track_stat_ceiling_bounds": true
+        }
+      },
+      {
+        "channel_id": "GAME_COMBAT",
+        "name": "Tactical Combat & Zone of Control",
+        "description": "Turn order queue scheduling, Zone of Control (ZOC) traversal, directional facing, flank vigor, and hit/evasion resolution.",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 15,
+        "default_min_severity": "DEBUG",
+        "sink_file": "build/logs/game_combat.log",
+        "tracked_telemetry": [
+          "turn_order_action_gauge",
+          "zoc_intercept_triggers",
+          "directional_flank_criticals",
+          "hit_evasion_rng_rolls"
+        ],
+        "qol_diagnostics": {
+          "log_damage_breakdown": true,
+          "track_flank_multipliers": true
+        }
+      },
+      {
+        "channel_id": "GAME_STANCES",
+        "name": "Stance Finite State Machine",
+        "description": "Deterministic transitions between Neutral, Warding (Lux Barrio), Striking (Cuttatio Tenebris), and Statera.",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 10,
+        "default_min_severity": "DEBUG",
+        "sink_file": "build/logs/game_stances.log",
+        "tracked_telemetry": [
+          "stance_transition_requests",
+          "tp_stamina_cost_evaluations",
+          "stance_bonus_activations",
+          "illegal_transition_rejections"
+        ],
+        "qol_diagnostics": {
+          "log_fsm_source_dest": true,
+          "alert_on_illegal_shift": true
+        }
+      },
+      {
+        "channel_id": "GAME_RELICS",
+        "name": "Twin Relics Resonance",
+        "description": "Shield of Lux kinetic warding charge [0, 100] and Sword of Tenebris edge sharpness [0, 100].",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 10,
+        "default_min_severity": "DEBUG",
+        "sink_file": "build/logs/game_relics.log",
+        "tracked_telemetry": [
+          "lux_warding_absorption",
+          "tenebris_edge_cleave_damage",
+          "relic_saturation_clamping",
+          "relic_poise_break_events"
+        ],
+        "qol_diagnostics": {
+          "latch_on_relic_overflow": true,
+          "track_resonance_differential": true
+        }
+      },
+      {
+        "channel_id": "GAME_STATERA",
+        "name": "Statera Conscience Ledger",
+        "description": "Cumulative Virtue and Malice accumulators, moral sway [-100, +100], and 13 moral tiers toward campaign endings.",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 10,
+        "default_min_severity": "INFO",
+        "sink_file": "build/logs/game_statera.log",
+        "tracked_telemetry": [
+          "moral_sway_adjustments",
+          "virtue_accumulator_ticks",
+          "malice_accumulator_ticks",
+          "moral_tier_transitions"
+        ],
+        "qol_diagnostics": {
+          "log_consequence_breadcrumbs": true,
+          "alert_on_statera_exit": true
+        }
+      },
+      {
+        "channel_id": "GAME_WORLD",
+        "name": "Continental Topology & Calendar",
+        "description": "Provincial tile grid navigation, overworld movement costs, Grandma's Watch 24h diurnal cycle, and festival countdown.",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 15,
+        "default_min_severity": "INFO",
+        "sink_file": "build/logs/game_world.log",
+        "tracked_telemetry": [
+          "player_grid_tile_coordinates",
+          "diurnal_phase_crossings",
+          "terrain_movement_penalties",
+          "map_portal_transitions"
+        ],
+        "qol_diagnostics": {
+          "log_zone_entry_summary": true,
+          "track_festival_remaining_hours": true
+        }
+      },
+      {
+        "channel_id": "GAME_QUEST",
+        "name": "Quest Engine & Faction State",
+        "description": "State machine for main scenario and provincial side quests, objective tracking, and geopolitical faction standings.",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 15,
+        "default_min_severity": "INFO",
+        "sink_file": "build/logs/game_quest.log",
+        "tracked_telemetry": [
+          "quest_stage_advancements",
+          "objective_completion_checks",
+          "faction_reputation_changes",
+          "dream_compass_calibration_steps"
+        ],
+        "qol_diagnostics": {
+          "verify_quest_prereqs": true,
+          "warn_on_unhandled_stage": true
+        }
+      },
+      {
+        "channel_id": "GAME_DIALOGUE",
+        "name": "Narrative Lexicon & Dialogue Engine",
+        "description": "Speaker tag verification, text crawl timings, punctuation pauses, emotion qualifiers, and puzzle verb executions.",
+        "layer": "Layer 1: Simulation Engine",
+        "latency_budget_us": 10,
+        "default_min_severity": "INFO",
+        "sink_file": "build/logs/game_dialogue.log",
+        "tracked_telemetry": [
+          "speaker_tag_lookups",
+          "dialogue_line_advancements",
+          "emotion_tag_renderings",
+          "puzzle_verb_dispatches"
+        ],
+        "qol_diagnostics": {
+          "detect_unknown_speakers": true,
+          "track_missing_line_keys": true
+        }
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "channel_count": 8,
+      "max_latency_budget_us": 15,
+      "all_channels_zero_heap": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "ALL_CHANNELS_DEFINED",
+        "rule": "count(channels) == 8",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "STATERA_MONITORED",
+        "rule": "GAME_STATERA channel active",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "domain_binding": "GAME"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "sister_catalog": "engine_channels.json"
+    }
+  }
+}

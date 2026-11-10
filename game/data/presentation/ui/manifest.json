@@ -12,7 +12,7 @@
     "role": "Desktop HUD, Panel Layouts & Viewport Manifest",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/ui/",
-      "layout_catalog": "layout.json",
+      "layout_linker": "../config/layout.json",
       "screens_catalog": "screens.json",
       "gui_manifest_alias": "gui_manifest.json",
       "fonts_subsystem": "fonts/manifest.json"
@@ -54,7 +54,7 @@
     "catalogs": [
       {
         "id": "layout",
-        "file": "layout.json",
+        "file": "../config/layout.json",
         "description": "HUD panel coordinate geometry, AABB bounds, and view containers"
       },
       {

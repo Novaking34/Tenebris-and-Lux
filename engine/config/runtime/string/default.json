@@ -1,0 +1,116 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/runtime/string/default.json",
+    "id": "engine.config.runtime.string.default",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Default lexical buffer limits, Statera stance tokens, and command verb dictionary.",
+    "where_the_data_lives": {
+      "topology": "System Runtime String Buffers",
+      "path": "engine/config/runtime/string/default.json"
+    },
+    "what_it_enables": [
+      "Strict memory bounds preventing buffer overruns across text formatting, dialogue, and quests",
+      "Canonical stance tokens matching Layer 1 finite state machine (including Statera)",
+      "Command verb dictionaries for CLI parser, dialogue engine, and GUI event routers",
+      "Zero-heap path joining and directory extraction utilities"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during string configuration loading (ALLOC_ZERO_HEAP)",
+      "All buffer capacity constants must be strictly positive integers",
+      "Stance tokens must include canonical Statera fourth posture",
+      "Max line length discipline bounded to 80 characters for terminal presentation"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "string_utils": "core/string_utils.h",
+      "buffer_safety": "str_safe_copy, str_safe_cat"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.string_profile.v1",
+      "target_struct": "string_config_t",
+      "header_binding": "include/core/string_utils.h"
+    },
+    "generic_helper_contracts": {
+      "loader": "string_load_config_from_file",
+      "copy": "str_safe_copy",
+      "cat": "str_safe_cat",
+      "trim": "str_trim"
+    }
+  },
+  "block_3_body": {
+    "profile": {
+      "id": "default",
+      "display_name": "Standard Continental Lexical Profile",
+      "description": "Standard buffer capacities, Statera stance tokens, and canonical action verb dictionaries.",
+      "max_path_length": 512,
+      "max_name_length": 64,
+      "max_command_length": 128,
+      "max_line_length": 80,
+      "max_dialogue_line_length": 512,
+      "max_quest_title_length": 64,
+      "max_speaker_name_length": 32,
+      "ellipsis": "...",
+      "stances": [
+        "NEUTRAL",
+        "WARDING",
+        "STRIKING",
+        "STATERA"
+      ],
+      "action_verbs": [
+        "help",
+        "version",
+        "audit",
+        "cli",
+        "gui",
+        "barrio",
+        "cuttatio",
+        "statera",
+        "duo",
+        "stance",
+        "journey",
+        "inspect",
+        "name",
+        "quit"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_BUFFER_CAPACITY",
+        "condition": "max_path_length >= 256 && max_command_length >= 64",
+        "action": "Fatal halt if lexical buffers are below safe thresholds"
+      },
+      {
+        "id": "TRIPWIRE_STANCE_COUNT",
+        "condition": "stances count == 4",
+        "action": "Fatal halt if stance lexicon deviates from canonical 4 postures"
+      }
+    ],
+    "metrics": {
+      "stance_count": 4,
+      "verb_count": 14,
+      "max_line_discipline": 80,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
+      "menu_index": 1
+    },
+    "execution_hooks": {
+      "on_load": "string_load_config_from_file",
+      "audit_hook": "string_utils_preflight"
+    }
+  }
+}

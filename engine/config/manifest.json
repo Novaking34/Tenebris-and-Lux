@@ -1,0 +1,234 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/manifest.json",
+    "id": "engine.config.root",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Standalone Engine Configuration Master Manifest orchestrating runtime, diagnostics, viewport, and audio.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Configuration Architecture",
+      "runtime_tree": "engine/config/runtime/ (math, time, string)",
+      "diagnostics_tree": "engine/config/diagnostics/ (telemetry, debugger, taxonomy, formats)",
+      "viewport_tree": "engine/config/viewport/ (scalers, assets, display)",
+      "audio_tree": "engine/config/audio/ (channels, mixing, ducking)"
+    },
+    "what_it_enables": [
+      "Zero dynamic heap allocations across Layer 0 data profiles",
+      "Deterministic bounded mathematics, saturation, and safe division",
+      "Monotonic frame pacing for 60 FPS and 120 FPS high-refresh displays",
+      "Categorized static ring buffer telemetry and diagnostic logs",
+      "64-snapshot time-travel simulation rewind and FNV-1a state hashing",
+      "Direct asset path acceleration with graceful procedural fallback"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across Layer 0 execution (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Dynamic data path resolution across workspace candidates",
+      "Direct asset paths are optional: missing paths default to dynamic VFS search or procedural floor"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "runtime": "ISO C11 compliant environment",
+      "timing": "POSIX.1b CLOCK_MONOTONIC timing source",
+      "memory_model": "Static fixed buffers without heap allocation"
+    },
+    "static_declarations": {
+      "domain_id": "config",
+      "schema_id": "tenlux.engine.config_root.v1",
+      "target_stratum": "Layer 0: Core Utilities",
+      "sub_domains": [ "runtime", "diagnostics", "viewport", "audio", "input" ]
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve",
+      "fast_resolver": "path_finder_resolve_with_hint",
+      "math_clamp": "math_clamp_int, math_saturate_add",
+      "time_mono": "time_get_monotonic_ms, time_sleep_ms",
+      "log_write": "log_write_entry",
+      "debug_rewind": "debug_snapshot_rewind"
+    }
+  },
+  "block_3_body": {
+    "asset_paths": {
+      "root": "game/assets/",
+      "fallback_root": "assets/",
+      "fonts": "game/assets/fonts/",
+      "sprites": "game/assets/sprites/",
+      "textures": "game/assets/textures/",
+      "audio": "game/assets/audio/",
+      "audio_sfx": "game/assets/audio/sfx/",
+      "audio_bgm": "game/assets/audio/bgm/",
+      "audio_ambience": "game/assets/audio/ambience/"
+    },
+    "sub_domains": [
+      {
+        "id": "runtime",
+        "title": "System Runtime Primitives & Continuum Engine",
+        "manifest_path": "runtime/manifest.json",
+        "status": "active",
+        "where_it_lives": "engine/config/runtime/",
+        "what_it_enables": "Bounded math, continuum ranges, time pacing, string buffers."
+      },
+      {
+        "id": "diagnostics",
+        "title": "Diagnostic Telemetry & Engine Debugger",
+        "manifest_path": "diagnostics/manifest.json",
+        "status": "active",
+        "where_it_lives": "engine/config/diagnostics/",
+        "what_it_enables": "Ring buffer telemetry, flight recording, state rewind."
+      },
+      {
+        "id": "viewport",
+        "title": "Viewport Presentation & Display Profiles",
+        "manifest_path": "viewport/manifest.json",
+        "status": "active",
+        "where_it_lives": "engine/config/viewport/",
+        "what_it_enables": "High-DPI font scalers, resolution letterboxing, and asset catalogs."
+      },
+      {
+        "id": "audio",
+        "title": "Audio Mixing Bus & Concurrency Matrix",
+        "manifest_path": "audio/manifest.json",
+        "status": "active",
+        "where_it_lives": "engine/config/audio/",
+        "what_it_enables": "Multi-channel mixing, polyphony caps, and ducking matrices."
+      },
+      {
+        "id": "input",
+        "title": "Input Handling & Action Bindings",
+        "manifest_path": "input/manifest.json",
+        "status": "active",
+        "where_it_lives": "engine/config/input/",
+        "what_it_enables": "Action keybindings, directional navigation, stance toggles, gamepad profiles."
+      }
+    ],
+    "subsystems": [
+      {
+        "id": "math",
+        "title": "Bounded Arithmetic & Continuum Invariants",
+        "manifest_path": "runtime/math/manifest.json",
+        "status": "active",
+        "category": "runtime",
+        "where_it_lives": "engine/config/runtime/math/",
+        "what_it_enables": "Resonance limits, moral sway continuum, equilibrium bands."
+      },
+      {
+        "id": "time",
+        "title": "Monotonic Timing & Frame Pacing Engine",
+        "manifest_path": "runtime/time/manifest.json",
+        "status": "active",
+        "category": "runtime",
+        "where_it_lives": "engine/config/runtime/time/",
+        "what_it_enables": "60/120 FPS frame budgets and sub-50us simulation turn budgets."
+      },
+      {
+        "id": "string",
+        "title": "Safe Lexical Buffers & Token Lexicon",
+        "manifest_path": "runtime/string/manifest.json",
+        "status": "active",
+        "category": "runtime",
+        "where_it_lives": "engine/config/runtime/string/",
+        "what_it_enables": "Bounded string operations, stance tokens, and command lexicon."
+      },
+      {
+        "id": "telemetry",
+        "title": "Diagnostic Telemetry & Static Ring Buffer",
+        "manifest_path": "diagnostics/telemetry/manifest.json",
+        "status": "active",
+        "category": "diagnostics",
+        "where_it_lives": "engine/config/diagnostics/telemetry/",
+        "what_it_enables": "Categorized logging, rotation thresholds, and forensic grades."
+      },
+      {
+        "id": "debugger",
+        "title": "Interactive State Rewind & Snapshots",
+        "manifest_path": "diagnostics/debugger/manifest.json",
+        "status": "active",
+        "category": "diagnostics",
+        "where_it_lives": "engine/config/diagnostics/debugger/",
+        "what_it_enables": "64 snapshots, FNV-1a hashing, and interactive state rewind."
+      },
+      {
+        "id": "taxonomy",
+        "title": "Error Taxonomy & Tripwire Matrix",
+        "manifest_path": "diagnostics/taxonomy/manifest.json",
+        "status": "active",
+        "category": "diagnostics",
+        "where_it_lives": "engine/config/diagnostics/taxonomy/",
+        "what_it_enables": "Standardized Engine and Game error classifications, root-cause hints, and latching tripwires."
+      },
+      {
+        "id": "formats",
+        "title": "Log Serialization & Conversion Formats",
+        "manifest_path": "diagnostics/formats/manifest.json",
+        "status": "active",
+        "category": "diagnostics",
+        "where_it_lives": "engine/config/diagnostics/formats/",
+        "what_it_enables": "Fixed-column text, NDJSON streaming, CSV export, replay event streams, and audit reports."
+      },
+      {
+        "id": "viewport",
+        "title": "Viewport Presentation & Display Scalers",
+        "manifest_path": "viewport/manifest.json",
+        "status": "active",
+        "category": "viewport",
+        "where_it_lives": "engine/config/viewport/",
+        "what_it_enables": "High-DPI font scalers, layout AABB coords, color themes, typography, and assets."
+      },
+      {
+        "id": "audio",
+        "title": "Audio Mixing Bus & Concurrency Matrix",
+        "manifest_path": "audio/manifest.json",
+        "status": "active",
+        "category": "audio",
+        "where_it_lives": "engine/config/audio/",
+        "what_it_enables": "7 mixing channels, hardware limiter, volume sliders, and procedural synthesis."
+      },
+      {
+        "id": "input",
+        "title": "Input Bindings & Control Profiles",
+        "manifest_path": "input/manifest.json",
+        "status": "active",
+        "category": "input",
+        "where_it_lives": "engine/config/input/",
+        "what_it_enables": "Keyboard hotkeys, gamepad buttons, repeat rates, and deadzones."
+      }
+    ],
+    "settings_manifest": "settings.json"
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "sub_domain_count": 5,
+      "subsystem_count": 10,
+      "active_subsystems": 10
+    },
+    "verification_tripwires": [
+      {
+        "name": "ALLOC_ZERO_HEAP",
+        "rule": "Zero dynamic allocations in Layer 0",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "RESOLVABILITY",
+        "rule": "All sub-manifests resolvable via path_finder_resolve",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit", "--debug" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "home_dir": "config",
+      "primary_menu": "diagnostics/telemetry/manifest.json"
+    }
+  }
+}

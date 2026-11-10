@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          path_finder.c
+@id            io.vfs
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Dynamic Pathfinding & Virtual Data Mount Engine
@@ -127,22 +128,26 @@ Sub-Assembly 2.2: VFS Domain Search Paths & Fallback Candidate Roots
 static const char *const s_fallback_candidate_roots[] = {
     "game/data",
     "../game/data",
+    "engine/config",
+    "../engine/config",
     "data",
     "../data"
 };
 
 static const char *const s_domain_search_paths[] = {
     "",
-    "system/",
-    "system/runtime/",
-    "system/runtime/math/",
-    "system/runtime/string/",
-    "system/runtime/time/",
-    "system/diagnostics/",
-    "system/diagnostics/telemetry/",
-    "system/diagnostics/debugger/",
-    "system/diagnostics/taxonomy/",
-    "system/diagnostics/formats/",
+    "runtime/",
+    "runtime/math/",
+    "runtime/string/",
+    "runtime/time/",
+    "diagnostics/",
+    "diagnostics/telemetry/",
+    "diagnostics/debugger/",
+    "diagnostics/taxonomy/",
+    "diagnostics/formats/",
+    "audio/",
+    "viewport/",
+    "presentation/config/",
     "mechanics/",
     "mechanics/items/",
     "mechanics/combat/",
@@ -209,6 +214,14 @@ static const char *strip_redundant_prefixes(const char *path)
         p += 13;
     } else if (strncmp(p, "game/data/", 10) == 0) {
         p += 10;
+    } else if (strncmp(p, "../engine/config/", 17) == 0) {
+        p += 17;
+    } else if (strncmp(p, "engine/config/", 14) == 0) {
+        p += 14;
+    } else if (strncmp(p, "../config/", 10) == 0) {
+        p += 10;
+    } else if (strncmp(p, "config/", 7) == 0) {
+        p += 7;
     } else if (strncmp(p, "../data/", 8) == 0) {
         p += 8;
     } else if (strncmp(p, "data/", 5) == 0) {
@@ -339,6 +352,61 @@ bool path_finder_resolve(const char *domain,
     /* Candidate 2: Direct file check on clean_path */
     if (fs_is_regular_file(clean_path)) {
         return assign_resolved_path(out_path, out_size, clean_path);
+    }
+
+    /* Candidate 2b: Asset prefix redirect to game/assets/ */
+    if (strncmp(clean_path, "assets/", 7) == 0) {
+        char probe[PATH_FINDER_MAX_PATH];
+        snprintf(probe, sizeof(probe), "game/%s", clean_path);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+        snprintf(probe, sizeof(probe), "../game/%s", clean_path);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+    }
+
+    /* Candidate 2c: Config domain resolution (game overrides -> engine defaults -> linkers) */
+    bool is_config_domain = (domain && strcmp(domain, "config") == 0) ||
+                            (strncmp(rel_path, "config/", 7) == 0) ||
+                            (strncmp(rel_path, "../config/", 10) == 0) ||
+                            (strncmp(rel_path, "engine/config/", 14) == 0) ||
+                            (strncmp(rel_path, "../engine/config/", 17) == 0) ||
+                            (strncmp(clean_path, "config/", 7) == 0);
+    if (is_config_domain) {
+        const char *sub = (strncmp(clean_path, "config/", 7) == 0) ? (clean_path + 7) : clean_path;
+        char probe[PATH_FINDER_MAX_PATH];
+
+        /* Tier 1: game/config/ overrides */
+        snprintf(probe, sizeof(probe), "game/config/%s", sub);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+        snprintf(probe, sizeof(probe), "../game/config/%s", sub);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+
+        /* Tier 2: engine/config/ defaults */
+        snprintf(probe, sizeof(probe), "engine/config/%s", sub);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+        snprintf(probe, sizeof(probe), "../engine/config/%s", sub);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+
+        /* Tier 3: presentation config linkers */
+        snprintf(probe, sizeof(probe), "game/data/presentation/config/%s", sub);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+        snprintf(probe, sizeof(probe), "../game/data/presentation/config/%s", sub);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
     }
 
     size_t root_count = sizeof(s_fallback_candidate_roots) /
@@ -480,6 +548,25 @@ bool path_finder_find_manifest(const char *subsystem_path,
         return path_finder_resolve(NULL, "manifest.json", out_path, out_size);
     }
 
+    /* Subsystem alias for config -> engine/config/manifest.json */
+    if (strcmp(subsystem_path, "config") == 0) {
+        if (path_finder_resolve(NULL, "engine/config/manifest.json", out_path, out_size)) {
+            return true;
+        }
+        if (path_finder_resolve(NULL, "manifest.json", out_path, out_size)) {
+            return true;
+        }
+    }
+
+    /* If subsystem_path starts with "config/", try resolving in engine/config */
+    if (strncmp(subsystem_path, "config/", 7) == 0) {
+        char rel_sub[PATH_FINDER_MAX_PATH];
+        snprintf(rel_sub, sizeof(rel_sub), "engine/config/%s/manifest.json", subsystem_path + 7);
+        if (path_finder_resolve(NULL, rel_sub, out_path, out_size)) {
+            return true;
+        }
+    }
+
     /* Try as <subsystem_path>/manifest.json */
     char rel_manifest[PATH_FINDER_MAX_PATH];
     snprintf(rel_manifest, sizeof(rel_manifest), "%s/manifest.json", subsystem_path);
@@ -535,6 +622,76 @@ bool path_finder_resolve_asset(const char *asset_category,
     }
 
     out_path[0] = '\0';
+    return false;
+}
+
+/**
+ * @brief Fast-path asset resolution with optional direct path hint and graceful fallback.
+ */
+bool path_finder_resolve_with_hint(const char *direct_path_hint,
+                                   const char *asset_category,
+                                   const char *asset_name,
+                                   char *out_path,
+                                   size_t out_size)
+{
+    if (out_path == NULL || out_size == 0) {
+        return false;
+    }
+    out_path[0] = '\0';
+
+    ensure_data_root_initialized();
+
+    /* Fast Path: Direct probe on hint if provided */
+    if (direct_path_hint != NULL && direct_path_hint[0] != '\0') {
+        if (fs_is_regular_file(direct_path_hint)) {
+            return assign_resolved_path(out_path, out_size, direct_path_hint);
+        }
+
+        /* Check ../<direct_path_hint> */
+        char probe[PATH_FINDER_MAX_PATH];
+        snprintf(probe, sizeof(probe), "../%s", direct_path_hint);
+        if (fs_is_regular_file(probe)) {
+            return assign_resolved_path(out_path, out_size, probe);
+        }
+
+        /* Check cleaned path without redundant prefixes */
+        const char *clean_hint = strip_redundant_prefixes(direct_path_hint);
+        if (clean_hint[0] != '\0' && fs_is_regular_file(clean_hint)) {
+            return assign_resolved_path(out_path, out_size, clean_hint);
+        }
+
+        /* Check assets/ redirect to game/assets/ */
+        if (strncmp(clean_hint, "assets/", 7) == 0) {
+            snprintf(probe, sizeof(probe), "game/%s", clean_hint);
+            if (fs_is_regular_file(probe)) {
+                return assign_resolved_path(out_path, out_size, probe);
+            }
+            snprintf(probe, sizeof(probe), "../game/%s", clean_hint);
+            if (fs_is_regular_file(probe)) {
+                return assign_resolved_path(out_path, out_size, probe);
+            }
+        }
+    }
+
+    /* Fallback 1: Resolve by category and asset_name */
+    if (asset_name != NULL && asset_name[0] != '\0') {
+        if (path_finder_resolve_asset(asset_category, asset_name, out_path, out_size)) {
+            return true;
+        }
+
+        /* Fallback 2: General VFS resolve */
+        if (path_finder_resolve(asset_category, asset_name, out_path, out_size)) {
+            return true;
+        }
+    }
+
+    /* Fallback 3: If direct_path_hint was given but failed direct probe, try VFS resolve */
+    if (direct_path_hint != NULL && direct_path_hint[0] != '\0') {
+        if (path_finder_resolve(NULL, direct_path_hint, out_path, out_size)) {
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -605,16 +762,16 @@ diag_result_t path_finder_preflight(void)
     }
 
     /* Check 4: Resolve domain file */
-    if (!path_finder_resolve("system", "runtime/math/default.json", buf, sizeof(buf))) {
+    if (!path_finder_resolve("config", "runtime/math/default.json", buf, sizeof(buf))) {
         res.passed = false;
         res.severity = SEVERITY_CRITICAL;
-        res.details = "path_finder_resolve failed to locate system/runtime/math/default.json.";
+        res.details = "path_finder_resolve failed to locate config/runtime/math/default.json.";
         return res;
     }
 
     /* Check 5: Block 5 Executable Procedure */
     path_resolved_info_t info;
-    if (!path_finder_execute_resolve("system", "runtime/math/default.json", &info) ||
+    if (!path_finder_execute_resolve("config", "runtime/math/default.json", &info) ||
         !info.exists || !info.is_regular) {
         res.passed = false;
         res.severity = SEVERITY_CRITICAL;
@@ -639,11 +796,14 @@ bool path_finder_audit(void)
 BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
 Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Executable Procedures & Object Constructors
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -675,6 +835,38 @@ bool path_finder_execute_resolve(const char *domain,
     }
 
     return ok;
+}
+
+size_t path_finder_execute_dump_card(const path_resolved_info_t *info,
+                                     char *out_buf,
+                                     size_t buf_size)
+{
+    if (info == NULL || out_buf == NULL || buf_size == 0) {
+        return 0;
+    }
+    int written = snprintf(
+        out_buf, buf_size,
+        "============================================================\n"
+        "             VFS PATH RESOLUTION STATUS CARD                \n"
+        "============================================================\n"
+        "Domain:        %s\n"
+        "Relative Path: %s\n"
+        "Resolved Path: %s\n"
+        "Exists:        %s\n"
+        "Regular File:  %s\n"
+        "Resolution:    %s\n"
+        "============================================================\n",
+        info->domain[0] ? info->domain : "(Default / Universal)",
+        info->rel_path[0] ? info->rel_path : "(Empty)",
+        info->resolved_path[0] ? info->resolved_path : "(Unresolved)",
+        info->exists ? "YES" : "NO",
+        info->is_regular ? "YES" : "NO",
+        info->exists ? "SUCCESS (Accessible Node)" : "FAILED (Unresolved / Missing)"
+    );
+    if (written < 0 || (size_t)written >= buf_size) {
+        return 0;
+    }
+    return (size_t)written;
 }
 
 /*

@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          time_utils_fallback.c
-@id            core.util.time_fallback
+@id            core.time.fallback
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        High-Resolution Timing Subsystem (core/time)
@@ -26,6 +26,15 @@ PURPOSE & ARCHITECTURAL ROLE:
   for the high-resolution timing engine. Serves as an isolated, compile-time
   fallback baseline quarantined outside main production pathways to guarantee
   that production uses the data-driven pipeline.
+
+  ### For Game Designers & Non-Programmers:
+  If the game cannot read its graphics or frame-rate settings, this module ensures
+  the game falls back to a rock-solid 60 frames per second display budget.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Static Compile-Time Constants: Zero dynamic heap allocation.
+  - Generates immutable, bounds-checked time_fallback_config_t structures on stack.
+  - Baseline frame budget strictly set to 16.666667 milliseconds.
 ================================================================================
 */
 
@@ -136,13 +145,17 @@ bool time_fallback_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK / DIAGNOSTIC CARD DUMP & TEARDOWN
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: High-Resolution Timing Engine
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Diagnostic ASCII Status Card Generator
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -170,5 +183,13 @@ bool time_fallback_execute_dump_card(const time_fallback_config_t *cfg,
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of time_utils_fallback.c */

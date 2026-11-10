@@ -12,7 +12,7 @@
     "role": "Audiovisual Sound & Music Synthesis Subsystem Manifest",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/audio/",
-      "channels_catalog": "channels.json",
+      "channels_linker": "../config/channels.json",
       "sfx_catalog": "sfx.json",
       "bgm_catalog": "bgm.json",
       "ambience_catalog": "ambience.json"
@@ -51,7 +51,7 @@
       "stratum": "Layer 2: Presentation & Audiovisual",
       "status": "active",
       "catalog_files": [
-        "channels.json",
+        "../config/channels.json",
         "sfx.json",
         "bgm.json",
         "ambience.json"

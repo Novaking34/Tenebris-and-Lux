@@ -80,17 +80,17 @@ static void test_path_finder_always_pass(void)
     TEST_ASSERT(r_direct && fs_file_exists(out_path), "Direct CMakeLists.txt resolution succeeds");
 
     /* 1.3 Domain-scoped dataset resolution */
-    bool r_sys = path_finder_resolve("system", "runtime/math/formulas.json", out_path, sizeof(out_path));
+    bool r_sys = path_finder_resolve("config", "runtime/math/formulas.json", out_path, sizeof(out_path));
     TEST_ASSERT(r_sys && fs_file_exists(out_path), "Domain-scoped formulas.json resolution succeeds");
 
     /* 1.4 Redundant prefix normalization */
     char norm_path[PATH_FINDER_MAX_PATH];
-    bool r_norm = path_finder_resolve(NULL, "game/data/system/runtime/math/formulas.json", norm_path, sizeof(norm_path));
-    TEST_ASSERT(r_norm && strcmp(out_path, norm_path) == 0, "Redundant game/data prefix normalized cleanly");
+    bool r_norm = path_finder_resolve(NULL, "engine/config/runtime/math/formulas.json", norm_path, sizeof(norm_path));
+    TEST_ASSERT(r_norm && strcmp(out_path, norm_path) == 0, "Redundant engine/config prefix normalized cleanly");
 
     /* 1.5 Manifest discovery */
     char manifest_path[PATH_FINDER_MAX_PATH];
-    bool r_man = path_finder_find_manifest("system/diagnostics/telemetry", manifest_path, sizeof(manifest_path));
+    bool r_man = path_finder_find_manifest("config/diagnostics/telemetry", manifest_path, sizeof(manifest_path));
     TEST_ASSERT(r_man && fs_file_exists(manifest_path), "Subsystem manifest discovery succeeds");
 
     /* 1.6 Asset resolution */
@@ -100,9 +100,9 @@ static void test_path_finder_always_pass(void)
 
     /* 1.7 Block 5 Execution Procedure */
     path_resolved_info_t info;
-    bool r_exec = path_finder_execute_resolve("system", "runtime/math/formulas.json", &info);
+    bool r_exec = path_finder_execute_resolve("config", "runtime/math/formulas.json", &info);
     TEST_ASSERT(r_exec && info.exists && info.is_regular, "path_finder_execute_resolve populates report");
-    TEST_ASSERT(strcmp(info.domain, "system") == 0, "Report preserves domain identifier");
+    TEST_ASSERT(strcmp(info.domain, "config") == 0, "Report preserves domain identifier");
 
     printf("  [PASS-1] Section 1 passed cleanly.\n");
 }
@@ -121,11 +121,11 @@ static void test_path_finder_never_fail(void)
 
     /* 2.1 NULL parameter resilience */
     TEST_ASSERT(!path_finder_resolve(NULL, NULL, out_path, sizeof(out_path)), "path_finder_resolve(NULL rel_path)");
-    TEST_ASSERT(!path_finder_resolve("system", "formulas.json", NULL, sizeof(out_path)), "path_finder_resolve(NULL out_path)");
-    TEST_ASSERT(!path_finder_resolve("system", "formulas.json", out_path, 0), "path_finder_resolve(0 size)");
+    TEST_ASSERT(!path_finder_resolve("config", "formulas.json", NULL, sizeof(out_path)), "path_finder_resolve(NULL out_path)");
+    TEST_ASSERT(!path_finder_resolve("config", "formulas.json", out_path, 0), "path_finder_resolve(0 size)");
     TEST_ASSERT(!path_finder_find_manifest(NULL, out_path, sizeof(out_path)), "path_finder_find_manifest(NULL path)");
-    TEST_ASSERT(!path_finder_find_manifest("system", NULL, sizeof(out_path)), "path_finder_find_manifest(NULL out)");
-    TEST_ASSERT(!path_finder_find_manifest("system", out_path, 0), "path_finder_find_manifest(0 size)");
+    TEST_ASSERT(!path_finder_find_manifest("config", NULL, sizeof(out_path)), "path_finder_find_manifest(NULL out)");
+    TEST_ASSERT(!path_finder_find_manifest("config", out_path, 0), "path_finder_find_manifest(0 size)");
     TEST_ASSERT(!path_finder_resolve_asset(NULL, "Cinzel-Bold.ttf", out_path, sizeof(out_path)), "resolve_asset(NULL cat)");
     TEST_ASSERT(!path_finder_resolve_asset("fonts", NULL, out_path, sizeof(out_path)), "resolve_asset(NULL name)");
     TEST_ASSERT(!path_finder_resolve_asset("fonts", "Cinzel-Bold.ttf", NULL, sizeof(out_path)), "resolve_asset(NULL out)");
@@ -136,7 +136,7 @@ static void test_path_finder_never_fail(void)
     TEST_ASSERT(strlen(path_finder_get_data_root()) > 0, "Data root reset back to default");
 
     /* 2.3 Non-existent files */
-    TEST_ASSERT(!path_finder_resolve("system", "non_existent_file_xyz_999.json", out_path, sizeof(out_path)),
+    TEST_ASSERT(!path_finder_resolve("config", "non_existent_file_xyz_999.json", out_path, sizeof(out_path)),
                 "Non-existent file returns false");
     TEST_ASSERT(!path_finder_find_manifest("non_existent_subsystem_dir_xyz", out_path, sizeof(out_path)),
                 "Non-existent manifest returns false");
@@ -145,7 +145,7 @@ static void test_path_finder_never_fail(void)
 
     /* 2.4 Procedure NULL resilience */
     path_resolved_info_t info;
-    TEST_ASSERT(!path_finder_execute_resolve("system", "formulas.json", NULL), "execute_resolve(NULL info)");
+    TEST_ASSERT(!path_finder_execute_resolve("config", "formulas.json", NULL), "execute_resolve(NULL info)");
     TEST_ASSERT(!path_finder_execute_resolve(NULL, NULL, &info), "execute_resolve(NULL rel_path)");
 
     printf("  [FAIL-2] Section 2 passed: All fault-tolerant hardening tripwires verified.\n");
@@ -163,7 +163,7 @@ static void test_path_finder_assertions_and_guarantees(void)
 
     /* 3.1 Bounded buffer null-termination guarantee */
     char tiny_buf[8];
-    bool r_tiny = path_finder_resolve("system", "runtime/math/formulas.json", tiny_buf, sizeof(tiny_buf));
+    bool r_tiny = path_finder_resolve("config", "runtime/math/formulas.json", tiny_buf, sizeof(tiny_buf));
     TEST_ASSERT(!r_tiny, "Truncated buffer capacity returns false");
     TEST_ASSERT(tiny_buf[sizeof(tiny_buf) - 1] == '\0', "Tiny destination buffer is null-terminated");
 
@@ -172,7 +172,7 @@ static void test_path_finder_assertions_and_guarantees(void)
     memset(long_path, 'a', sizeof(long_path) - 1);
     long_path[sizeof(long_path) - 1] = '\0';
     char out_buf[PATH_FINDER_MAX_PATH];
-    bool r_long = path_finder_resolve("system", long_path, out_buf, sizeof(out_buf));
+    bool r_long = path_finder_resolve("config", long_path, out_buf, sizeof(out_buf));
     TEST_ASSERT(!r_long, "Oversized relative path strictly rejected");
 
     /* 3.3 Zero dynamic heap allocation contract */
@@ -203,12 +203,12 @@ static void test_path_finder_emergence(void)
 
     /* Step 3: Resolve dataset under custom mount */
     char resolved[PATH_FINDER_MAX_PATH];
-    bool r_ok = path_finder_resolve(NULL, "system/runtime/math/formulas.json", resolved, sizeof(resolved));
+    bool r_ok = path_finder_resolve(NULL, "engine/config/runtime/math/formulas.json", resolved, sizeof(resolved));
     TEST_ASSERT(r_ok && fs_file_exists(resolved), "Resolution succeeds under custom data root mount");
 
     /* Step 4: Procedure report construction */
     path_resolved_info_t report;
-    bool exec_ok = path_finder_execute_resolve("system", "runtime/math/formulas.json", &report);
+    bool exec_ok = path_finder_execute_resolve("config", "runtime/math/formulas.json", &report);
     TEST_ASSERT(exec_ok && report.exists && report.is_regular, "Execution procedure converges with disk state");
 
     /* Step 5: Reset root & Teardown */

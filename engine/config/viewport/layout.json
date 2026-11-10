@@ -1,0 +1,137 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/viewport/layout.json",
+    "id": "engine.config.viewport.layout",
+    "layer": "Layer 0: Core Utilities / Viewport Presentation",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Desktop viewport layout geometry specifications and non-overlapping panel coordinates.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Viewport Configuration Architecture",
+      "path": "engine/config/viewport/layout.json",
+      "parent_manifest": "engine/config/manifest.json"
+    },
+    "what_it_enables": [
+      "Desktop HUD panel layout with non-overlapping AABB geometry",
+      "Tactical 2D/2.5D viewport container (570x374) with aspect ratio letterboxing",
+      "Status inspection panel for hero vitals, stances, and relic meters",
+      "Narrative chronicle scrolling feed and 3x3 tactical command dock"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in UI initialization (ALLOC_ZERO_HEAP)",
+      "Panel and widget geometry strictly audited via non-overlapping AABB checks",
+      "Window dimensions strictly bounded to 860x620 desktop canvas baseline",
+      "Presentation follows simulation: UI never mutates simulation state directly"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "viewport_subsystem": "viewport/raster/gui.h",
+      "layout_types": "viewport/raster/gui_types.h"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.engine.viewport.layout.v1",
+      "target_struct": "gui_layout_t",
+      "header_binding": "include/viewport/hud/gui_layout.h"
+    },
+    "generic_helper_contracts": {
+      "loader": "gui_layout_load",
+      "aabb_check": "geom_aabb_intersects"
+    },
+    "capacities": {
+      "max_panels": 8,
+      "max_dock_buttons": 9
+    }
+  },
+  "block_3_body": {
+    "window": {
+      "width": 860,
+      "height": 620,
+      "target_fps": 60,
+      "frame_budget_us": 16666
+    },
+    "panels": {
+      "header": {
+        "x": 10,
+        "y": 10,
+        "width": 840,
+        "height": 48,
+        "title": "Header Banner"
+      },
+      "viewport_2d": {
+        "x": 10,
+        "y": 66,
+        "width": 570,
+        "height": 374,
+        "title": "2D / 2.5D Tactical Viewport"
+      },
+      "status": {
+        "x": 590,
+        "y": 66,
+        "width": 260,
+        "height": 374,
+        "title": "Vitals & Relics Inspection"
+      },
+      "chronicle": {
+        "x": 10,
+        "y": 448,
+        "width": 570,
+        "height": 162,
+        "title": "Narrative Chronicle Log"
+      },
+      "command_dock": {
+        "x": 590,
+        "y": 448,
+        "width": 260,
+        "height": 162,
+        "title": "Tactical Action Dock"
+      }
+    },
+    "command_dock_grid": {
+      "columns": 3,
+      "rows": 3,
+      "btn_width": 78,
+      "btn_height": 36,
+      "gap_x": 8,
+      "gap_y": 6,
+      "padding_x": 10,
+      "padding_y": 10
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_WINDOW_BOUNDS",
+        "condition": "window.width == 860 && window.height == 620",
+        "action": "Clamp desktop canvas to canonical 860x620 resolution"
+      },
+      {
+        "id": "TRIPWIRE_NON_OVERLAPPING_PANELS",
+        "condition": "all panel bounding boxes are disjoint inside window",
+        "action": "Reject layout configuration on panel overlap detection"
+      }
+    ],
+    "metrics": {
+      "registered_panels": 5,
+      "dock_buttons": 9,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 4
+    },
+    "execution_hooks": {
+      "on_load": "gui_layout_load",
+      "audit_hook": "gui_layout_preflight"
+    }
+  }
+}
+

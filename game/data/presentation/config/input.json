@@ -1,0 +1,70 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/presentation/config/input.json",
+    "id": "data.presentation.config.input_linker",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Data Linker connecting game presentation to standalone engine input action bindings profile.",
+    "where_the_data_lives": {
+      "topology": "Presentation Configuration Data Linker",
+      "target_file": "engine/config/input/default.json",
+      "domain": "config",
+      "rel_path": "input/default.json"
+    },
+    "what_it_enables": [
+      "Zero data duplication: references standalone engine input bindings directly",
+      "Game options UI displaying and rebinding tactical action hotkeys",
+      "Layered VFS resolution fallback"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during link traversal (ALLOC_ZERO_HEAP)",
+      "Strict data decoupling: game presentation consumes engine input profile without mutation"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "target_profile": "engine/config/input/default.json"
+    },
+    "static_declarations": {
+      "linker_type": "symbolic_data_ref",
+      "target_schema": "tenlux.engine.input.bindings.v1",
+      "domain": "config",
+      "rel_path": "input/default.json"
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve"
+    }
+  },
+  "block_3_body": {
+    "linker": {
+      "target_domain": "config",
+      "target_rel_path": "input/default.json",
+      "target_file": "engine/config/input/default.json",
+      "description": "Symbolic data reference to standalone engine input action bindings."
+    }
+  },
+  "block_4_audit": {
+    "metrics": {
+      "link_type": "symbolic_reference",
+      "is_overriding": false
+    },
+    "verification_tripwires": [
+      {
+        "name": "TARGET_EXISTS",
+        "rule": "Target file engine/config/input/default.json must exist",
+        "status": "VERIFIED_PASS"
+      }
+    ]
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "home_dir": "game/data/presentation/config"
+    }
+  }
+}

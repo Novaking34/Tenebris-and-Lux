@@ -1,0 +1,92 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/audio/manifest.json",
+    "id": "engine.config.audio.root",
+    "layer": "Layer 0: Core Utilities / Audio Bus",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Audio Sub-Domain Manifest orchestrating channels, mixing buses, and concurrency limits.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Audio Configuration Sub-Domain",
+      "path": "engine/config/audio/manifest.json",
+      "parent_manifest": "engine/config/manifest.json"
+    },
+    "what_it_enables": [
+      "Multi-channel audio mixing buses (Master, BGM, BGS, SFX Combat, SFX Tactical, UI, Stinger)",
+      "Hardware limiter protection and sample rate normalization",
+      "Zero dynamic heap allocation audio cue routing",
+      "Direct asset path routing with graceful procedural synthesis fallback"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across audio configuration (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Audio bus polyphony must be strictly positive",
+      "Volume percentages bounded between 0 and 100"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "audio_bus": "audio/audio_bus.h",
+      "sample_rate": 48000
+    },
+    "static_declarations": {
+      "subdomain_id": "audio",
+      "schema_id": "tenlux.engine.audio_manifest.v1",
+      "target_stratum": "Layer 0 / Audio Bus",
+      "profiles": [ "settings.json", "channels.json" ]
+    },
+    "generic_helper_contracts": {
+      "settings_loader": "audio_bus_load_settings",
+      "channel_loader": "audio_bus_load_channels",
+      "dispatch": "audio_bus_dispatch_event"
+    },
+    "capacities": {
+      "profile_count": 2
+    }
+  },
+  "block_3_body": {
+    "profiles": [
+      {
+        "id": "settings",
+        "title": "Master Audio Settings & Volume Profiles",
+        "file": "settings.json",
+        "path": "engine/config/audio/settings.json",
+        "status": "active",
+        "description": "User volume preferences, mute toggles, device preferences, and ducking parameters."
+      },
+      {
+        "id": "channels",
+        "title": "Audio Bus Mixing Channels & Concurrency Matrix",
+        "file": "channels.json",
+        "path": "engine/config/audio/channels.json",
+        "status": "active",
+        "description": "Bus definitions for Master, BGM, Ambience, Combat SFX, Tactical SFX, UI, and Stingers."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "profile_count": 2,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "PROFILE_EXISTENCE",
+        "rule": "channels.json and settings.json must exist and satisfy volume bounds",
+        "status": "VERIFIED_PASS"
+      }
+    ]
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 4
+    }
+  }
+}
+

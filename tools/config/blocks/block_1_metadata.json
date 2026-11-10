@@ -1,0 +1,42 @@
+{
+  "$schema": "tenlux.tools.block_1_metadata.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "layer": "Developer Tooling Strata",
+    "version": "0.1.0",
+    "system": "OmniCode Protocol Block 1 Generic Standards",
+    "role": "Specification for Block 1 Metadata & Provenance"
+  },
+  "block_2_opening": {
+    "block_marker": "BLOCK 1: METADATA",
+    "mandatory_tags": [
+      "@project",
+      "@file",
+      "@layer",
+      "@version",
+      "@interface_rev",
+      "@date",
+      "@author",
+      "@repository",
+      "@system",
+      "@role",
+      "@invariants"
+    ],
+    "mandatory_sections": [
+      "PURPOSE & ARCHITECTURAL ROLE:"
+    ]
+  },
+  "block_3_body": {
+    "tag_delimiters": ["@", ":"],
+    "check_file_path_match": true,
+    "require_purpose_description": true
+  },
+  "block_4_audit": {
+    "audit_enabled": true,
+    "allow_missing_interface_rev_in_data": false
+  },
+  "block_5_closing": {
+    "rejection_action": "fail_file"
+  }
+}
+

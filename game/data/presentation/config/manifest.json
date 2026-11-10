@@ -1,0 +1,150 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/presentation/config/manifest.json",
+    "id": "data.presentation.config.manifest",
+    "layer": "Layer 2: Presentation & Viewports",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Presentation Configuration Data Linkers Manifest bridging game presentation to standalone engine configurations",
+    "where_the_data_lives": {
+      "assembly_directory": "game/data/presentation/config/",
+      "settings_linker": "settings.json",
+      "audio_settings_linker": "audio_settings.json",
+      "input_linker": "input.json",
+      "layout_linker": "layout.json",
+      "themes_linker": "themes.json",
+      "scalers_linker": "scalers.json",
+      "typography_linker": "typography.json",
+      "channels_linker": "channels.json",
+      "target_engine_config_root": "engine/config/"
+    },
+    "what_it_enables": [
+      "Zero data duplication between standalone engine viewport/audio profiles and game presentation catalogs",
+      "Explicit 5-block symbolic linkers bridging game presentation to engine/config/",
+      "Layered VFS resolution supporting game-specific overrides without altering engine defaults"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in configuration linking (ALLOC_ZERO_HEAP)",
+      "Strict data decoupling: engine configuration remains standalone and game-agnostic",
+      "All linkers target validated 5-block configuration profiles in engine/config/"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "engine_config_root": "engine/config/",
+      "fs_buffer_limit": "FS_BUFFER_LARGE_BYTES (32768)"
+    },
+    "static_declarations": {
+      "subsystem": "presentation.config",
+      "schema_id": "tenlux.data.presentation_config_manifest.v1",
+      "total_linkers": 8
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve"
+    }
+  },
+  "block_3_body": {
+    "domain": "presentation.config",
+    "title": "Presentation Configuration Data Linkers",
+    "linkers": [
+      {
+        "id": "settings",
+        "title": "Master Viewport & Display Settings Linker",
+        "file": "settings.json",
+        "target_engine_config": "engine/config/viewport/settings.json",
+        "domain": "config",
+        "rel_path": "viewport/settings.json"
+      },
+      {
+        "id": "audio_settings",
+        "title": "Master Audio Mixer Settings Linker",
+        "file": "audio_settings.json",
+        "target_engine_config": "engine/config/audio/settings.json",
+        "domain": "config",
+        "rel_path": "audio/settings.json"
+      },
+      {
+        "id": "input",
+        "title": "Default Action Keybindings Linker",
+        "file": "input.json",
+        "target_engine_config": "engine/config/input/default.json",
+        "domain": "config",
+        "rel_path": "input/default.json"
+      },
+      {
+        "id": "layout",
+        "title": "Desktop Viewport Layout Linker",
+        "file": "layout.json",
+        "target_engine_config": "engine/config/viewport/layout.json",
+        "domain": "config",
+        "rel_path": "viewport/layout.json"
+      },
+      {
+        "id": "themes",
+        "title": "Master Viewport UI Themes Linker",
+        "file": "themes.json",
+        "target_engine_config": "engine/config/viewport/themes.json",
+        "domain": "config",
+        "rel_path": "viewport/themes.json"
+      },
+      {
+        "id": "scalers",
+        "title": "High-DPI Responsive Font Scalers Linker",
+        "file": "scalers.json",
+        "target_engine_config": "engine/config/viewport/scalers.json",
+        "domain": "config",
+        "rel_path": "viewport/scalers.json"
+      },
+      {
+        "id": "typography",
+        "title": "High-Fantasy Typography Catalog Linker",
+        "file": "typography.json",
+        "target_engine_config": "engine/config/viewport/typography.json",
+        "domain": "config",
+        "rel_path": "viewport/typography.json"
+      },
+      {
+        "id": "channels",
+        "title": "Audio Mixing Bus Channels Linker",
+        "file": "channels.json",
+        "target_engine_config": "engine/config/audio/channels.json",
+        "domain": "config",
+        "rel_path": "audio/channels.json"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_LINKERS_RESOLVABLE",
+        "condition": "all linker targets exist in engine/config/",
+        "action": "Audit fails if any target engine configuration profile is missing"
+      }
+    ],
+    "metrics": {
+      "total_registered_linkers": 5,
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "root_manifest": "../../manifest.json",
+      "linkers": [
+        "layout.json",
+        "themes.json",
+        "scalers.json",
+        "typography.json",
+        "channels.json"
+      ]
+    },
+    "execution_hooks": {
+      "on_load": "path_finder_resolve"
+    }
+  }
+}
+

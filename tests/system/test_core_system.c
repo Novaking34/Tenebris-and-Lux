@@ -91,14 +91,14 @@ static void test_core_system_always_pass(void)
 
     /* 1.1 Ingest pacing and formula data */
     char pacer_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
+    path_finder_resolve("config", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
     clock_pacer_config_t p_cfg;
     clock_pacer_load_config_from_file(pacer_path, &p_cfg);
     clock_pacer_t pacer;
     clock_pacer_init(&pacer, &p_cfg);
 
     char formula_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
+    path_finder_resolve("config", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
     formula_eval_config_t f_cfg;
     formula_eval_load_config_from_file(formula_path, &f_cfg);
     formula_eval_t fctx;
@@ -136,14 +136,14 @@ static void test_core_system_expected_input(void)
 
     /* 2.1 Multi-thousand continuous simulation loop (SYSTEM_TEST_TICKS) */
     char pacer_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
+    path_finder_resolve("config", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
     clock_pacer_config_t p_cfg;
     clock_pacer_load_config_from_file(pacer_path, &p_cfg);
     clock_pacer_t pacer;
     clock_pacer_init(&pacer, &p_cfg);
 
     char formula_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
+    path_finder_resolve("config", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
     formula_eval_config_t f_cfg;
     formula_eval_load_config_from_file(formula_path, &f_cfg);
     formula_eval_t fctx;

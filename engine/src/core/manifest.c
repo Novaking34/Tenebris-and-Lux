@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          manifest.c
-@id            core.util.manifest
+@id            core.manifest
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Central Manifest Registry & Pre-Flight DAG Policy Engine
@@ -19,12 +19,25 @@ BLOCK 1: METADATA BLOCK
                3. Severity escalation: FATAL > CRITICAL > WARNING > PASS.
                4. Loose bolts principle: System halts immediately on any FATAL check.
                5. Missing upstream dependencies trigger SEVERITY_FATAL and halt.
+               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
 PURPOSE & ARCHITECTURAL ROLE:
   Central manifest registry and pre-flight verification implementation.
   Evaluates registered subsystem metadata, validates upstream Directed Acyclic
   Graph (DAG) dependencies, and executes loose-bolts pre-flight diagnostic checks
   before runtime simulation commences.
+
+  ### For Game Designers & Non-Programmers:
+  Before the game opens its main window, it runs a pre-flight inspection like
+  an airliner before takeoff. It checks that all engine modules and subsystems
+  are present, securely connected, and ready. If a critical component is
+  missing, it alerts developers immediately instead of crashing during play.
+
+  ### For Systems Programmers & Engine Architects:
+  - Directed Acyclic Graph (DAG) dependency validation across Layer 0, 1, and 2.
+  - Zero heap allocation: all registry tables and audit results reside in static .bss.
+  - Categorized diagnostic severity taxonomy (diag_severity_t) with threshold masks.
+  - Compile-time module identity tagging (module_manifest_t) for DWARF debugging.
 ================================================================================
 */
 
@@ -131,9 +144,20 @@ const module_metadata_t manifest_utils_manifest = {
 
 /*
 ================================================================================
-BLOCK 3: BODY / CORE REGISTRY IMPLEMENTATION BLOCK
+BLOCK 3: BODY BLOCK / CORE REGISTRY IMPLEMENTATION BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
 ================================================================================
+Mission: Module registration, pre-flight DAG dependency tracking, telemetry
+report formatting, and ontological metadata string conversion cogs.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Manifest Registry Lifecycle & Node Registration Cogs
+--------------------------------------------------------------------------------
+Initializes registry storage and records immutable module metadata nodes.
+--------------------------------------------------------------------------------
 */
 
 /**
@@ -177,6 +201,167 @@ bool manifest_register(manifest_registry_t *registry,
     registry->count++;
     return true;
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Diagnostic Telemetry & Formatted Report Cogs
+--------------------------------------------------------------------------------
+Renders human-readable tabular ASCII reports of registered engine modules.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Prints a formatted diagnostic summary table to stdout.
+ */
+void manifest_print_report(const manifest_registry_t *registry)
+{
+    if (registry == NULL) {
+        return;
+    }
+
+    puts("========================================================"
+         "========================");
+    puts("           Tenebris and Lux - Pre-Flight Subsystem "
+         "Integrity Manifest           ");
+    printf(" Build Telemetry: %s %s | Standard: ISO 8601 (2026-11-07)\n",
+           __DATE__, __TIME__);
+    puts("========================================================"
+         "========================");
+    printf("%-20s %-15s %-4s %-11s %-7s %s\n",
+           "MODULE ID", "FILE", "REV", "ALLOCATION", "STATUS",
+           "DIAGNOSTIC DETAILS");
+    puts("--------------------------------------------------------"
+         "------------------------");
+
+    for (size_t i = 0; i < registry->count; i++) {
+        const module_metadata_t *mod = registry->modules[i];
+        const diag_result_t *res = &registry->results[i];
+
+        const char *sev_str;
+        switch (res->severity) {
+        case SEVERITY_PASS:     sev_str = "[PASS]"; break;
+        case SEVERITY_INFO:     sev_str = "[INFO]"; break;
+        case SEVERITY_WARNING:  sev_str = "[WARN]"; break;
+        case SEVERITY_CRITICAL: sev_str = "[CRIT]"; break;
+        case SEVERITY_FATAL:    sev_str = "[FAIL]"; break;
+        default:                sev_str = "[????]"; break;
+        }
+
+        printf("%-20s %-15s r%-3u %-11s %-7s %s\n",
+            mod->module_id ? mod->module_id : "unknown",
+            mod->file_name ? mod->file_name : "unknown",
+            mod->interface_rev,
+            manifest_alloc_policy_to_str(mod->alloc_policy),
+            sev_str,
+            res->details ? res->details : "Verified.");
+    }
+
+    puts("--------------------------------------------------------"
+         "------------------------");
+    printf("Telemetry: %zu modules registered | %zu Pass | %zu Warn | "
+           "%zu Critical | %zu Fatal\n",
+           registry->count, registry->pass_count, registry->warn_count,
+           registry->critical_count, registry->fatal_count);
+
+    switch (registry->status) {
+    case PREFLIGHT_STATUS_OK:
+        printf("Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED "
+               "(System Ready)\n");
+        break;
+    case PREFLIGHT_STATUS_WARNINGS:
+        printf("Policy Verdict: SYSTEM LAUNCH PERMITTED WITH NOTICES "
+               "(Warnings)\n");
+        break;
+    case PREFLIGHT_STATUS_DOWNGRADED:
+        printf("Policy Verdict: CRITICAL SUBSYSTEM FAULT - "
+               "DOWNGRADING TO SAFE MODE\n");
+        break;
+    case PREFLIGHT_STATUS_HALT_FATAL:
+        printf("Policy Verdict: LOOSE BOLTS DETECTED - "
+               "ENGINE BOOT HALTED IMMEDIATELY\n");
+        break;
+    }
+    puts("========================================================"
+         "========================");
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Ontological Enum Serialization Cogs
+--------------------------------------------------------------------------------
+Converts diagnostic codes, status levels, layers, and policies to static strings.
+--------------------------------------------------------------------------------
+*/
+
+const char *manifest_severity_to_str(diag_severity_t severity)
+{
+    switch (severity) {
+    case SEVERITY_PASS:     return "PASS";
+    case SEVERITY_INFO:     return "INFO";
+    case SEVERITY_WARNING:  return "WARNING";
+    case SEVERITY_CRITICAL: return "CRITICAL";
+    case SEVERITY_FATAL:    return "FATAL";
+    default:                return "UNKNOWN";
+    }
+}
+
+const char *manifest_status_to_str(preflight_status_t status)
+{
+    switch (status) {
+    case PREFLIGHT_STATUS_OK:         return "READY";
+    case PREFLIGHT_STATUS_WARNINGS:   return "WARNINGS";
+    case PREFLIGHT_STATUS_DOWNGRADED: return "DOWNGRADED";
+    case PREFLIGHT_STATUS_HALT_FATAL: return "HALTED";
+    default:                          return "UNKNOWN";
+    }
+}
+
+const char *manifest_layer_to_str(module_layer_t layer)
+{
+    if ((size_t)layer < (size_t)LAYER_COUNT) {
+        return layer_names[layer];
+    }
+    return "Unknown Layer";
+}
+
+const char *manifest_alloc_policy_to_str(alloc_policy_t policy)
+{
+    switch (policy) {
+    case ALLOC_ZERO_HEAP:  return "Zero-Heap";
+    case ALLOC_FIXED_POOL: return "Fixed-Pool";
+    case ALLOC_ARENA:      return "Arena";
+    case ALLOC_DYNAMIC:    return "Dynamic";
+    default:               return "Unknown";
+    }
+}
+
+const char *manifest_concurrency_to_str(concurrency_policy_t policy)
+{
+    switch (policy) {
+    case CONCURRENCY_REENTRANT:    return "Reentrant";
+    case CONCURRENCY_THREAD_LOCAL: return "Thread-Local";
+    case CONCURRENCY_MAIN_THREAD:  return "Main-Thread";
+    default:                       return "Unknown";
+    }
+}
+
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
+================================================================================
+Mission: Pre-flight DAG verification, dependency audits, loose-bolts checking,
+and invariant self-test routines.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Pre-Flight DAG Evaluation & Subsystem Audits
+--------------------------------------------------------------------------------
+Executes upstream dependency verification and diagnostic self-audits.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * @brief Executes comprehensive pre-flight diagnostics across all registered modules.
@@ -276,140 +461,6 @@ preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
 
     return registry->status;
 }
-
-/**
- * @brief Prints a formatted diagnostic summary table to stdout.
- */
-void manifest_print_report(const manifest_registry_t *registry)
-{
-    if (registry == NULL) {
-        return;
-    }
-
-    puts("========================================================"
-         "========================");
-    puts("           Tenebris and Lux - Pre-Flight Subsystem "
-         "Integrity Manifest           ");
-    printf(" Build Telemetry: %s %s | Standard: ISO 8601 (2026-11-07)\n",
-           __DATE__, __TIME__);
-    puts("========================================================"
-         "========================");
-    printf("%-20s %-15s %-4s %-11s %-7s %s\n",
-           "MODULE ID", "FILE", "REV", "ALLOCATION", "STATUS",
-           "DIAGNOSTIC DETAILS");
-    puts("--------------------------------------------------------"
-         "------------------------");
-
-    for (size_t i = 0; i < registry->count; i++) {
-        const module_metadata_t *mod = registry->modules[i];
-        const diag_result_t *res = &registry->results[i];
-
-        const char *sev_str;
-        switch (res->severity) {
-        case SEVERITY_PASS:     sev_str = "[PASS]"; break;
-        case SEVERITY_INFO:     sev_str = "[INFO]"; break;
-        case SEVERITY_WARNING:  sev_str = "[WARN]"; break;
-        case SEVERITY_CRITICAL: sev_str = "[CRIT]"; break;
-        case SEVERITY_FATAL:    sev_str = "[FAIL]"; break;
-        default:                sev_str = "[????]"; break;
-        }
-
-        printf("%-20s %-15s r%-3u %-11s %-7s %s\n",
-            mod->module_id ? mod->module_id : "unknown",
-            mod->file_name ? mod->file_name : "unknown",
-            mod->interface_rev,
-            manifest_alloc_policy_to_str(mod->alloc_policy),
-            sev_str,
-            res->details ? res->details : "Verified.");
-    }
-
-    puts("--------------------------------------------------------"
-         "------------------------");
-    printf("Telemetry: %zu modules registered | %zu Pass | %zu Warn | "
-           "%zu Critical | %zu Fatal\n",
-           registry->count, registry->pass_count, registry->warn_count,
-           registry->critical_count, registry->fatal_count);
-
-    switch (registry->status) {
-    case PREFLIGHT_STATUS_OK:
-        printf("Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED "
-               "(System Ready)\n");
-        break;
-    case PREFLIGHT_STATUS_WARNINGS:
-        printf("Policy Verdict: SYSTEM LAUNCH PERMITTED WITH NOTICES "
-               "(Warnings)\n");
-        break;
-    case PREFLIGHT_STATUS_DOWNGRADED:
-        printf("Policy Verdict: CRITICAL SUBSYSTEM FAULT - "
-               "DOWNGRADING TO SAFE MODE\n");
-        break;
-    case PREFLIGHT_STATUS_HALT_FATAL:
-        printf("Policy Verdict: LOOSE BOLTS DETECTED - "
-               "ENGINE BOOT HALTED IMMEDIATELY\n");
-        break;
-    }
-    puts("========================================================"
-         "========================");
-}
-
-const char *manifest_severity_to_str(diag_severity_t severity)
-{
-    switch (severity) {
-    case SEVERITY_PASS:     return "PASS";
-    case SEVERITY_INFO:     return "INFO";
-    case SEVERITY_WARNING:  return "WARNING";
-    case SEVERITY_CRITICAL: return "CRITICAL";
-    case SEVERITY_FATAL:    return "FATAL";
-    default:                return "UNKNOWN";
-    }
-}
-
-const char *manifest_status_to_str(preflight_status_t status)
-{
-    switch (status) {
-    case PREFLIGHT_STATUS_OK:         return "READY";
-    case PREFLIGHT_STATUS_WARNINGS:   return "WARNINGS";
-    case PREFLIGHT_STATUS_DOWNGRADED: return "DOWNGRADED";
-    case PREFLIGHT_STATUS_HALT_FATAL: return "HALTED";
-    default:                          return "UNKNOWN";
-    }
-}
-
-const char *manifest_layer_to_str(module_layer_t layer)
-{
-    if ((size_t)layer < (size_t)LAYER_COUNT) {
-        return layer_names[layer];
-    }
-    return "Unknown Layer";
-}
-
-const char *manifest_alloc_policy_to_str(alloc_policy_t policy)
-{
-    switch (policy) {
-    case ALLOC_ZERO_HEAP:  return "Zero-Heap";
-    case ALLOC_FIXED_POOL: return "Fixed-Pool";
-    case ALLOC_ARENA:      return "Arena";
-    case ALLOC_DYNAMIC:    return "Dynamic";
-    default:               return "Unknown";
-    }
-}
-
-const char *manifest_concurrency_to_str(concurrency_policy_t policy)
-{
-    switch (policy) {
-    case CONCURRENCY_REENTRANT:    return "Reentrant";
-    case CONCURRENCY_THREAD_LOCAL: return "Thread-Local";
-    case CONCURRENCY_MAIN_THREAD:  return "Main-Thread";
-    default:                       return "Unknown";
-    }
-}
-
-/*
-================================================================================
-BLOCK 4: AUDIT PROCEDURES BLOCK
-Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
-================================================================================
-*/
 
 /**
  * @brief Pre-flight diagnostic check evaluating manifest registry invariants.
@@ -519,8 +570,18 @@ bool manifest_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Central Manifest Registry
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
 */
 
 bool manifest_execute_dump_card(const manifest_registry_t *registry,
@@ -550,5 +611,13 @@ bool manifest_execute_dump_card(const manifest_registry_t *registry,
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of manifest.c */

@@ -1,0 +1,91 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/runtime/time/low_spec_30fps.json",
+    "id": "engine.config.runtime.time.low_spec_30fps",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Low-spec 30 FPS timing profile for older hardware, integrated GPUs, and battery-saver mode.",
+    "where_the_data_lives": {
+      "topology": "System Runtime Timing",
+      "path": "engine/config/runtime/time/low_spec_30fps.json"
+    },
+    "what_it_enables": [
+      "Stable 30 Hz frame pacing with 33.33ms frame budget for low-power architectures",
+      "Doubled simulation turn latency budget (100 us) to absorb CPU contention on older cores",
+      "Reduced tick rate and relaxed render loop pressure preventing thermal throttling"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during time profile loading (ALLOC_ZERO_HEAP)",
+      "Target FPS must be strictly 30 (target_fps == 30)",
+      "Frame budget in ms must equal 1000.0 / target_fps (33.333333 ms)",
+      "Monotonic timing source strictly anchored to POSIX.1b CLOCK_MONOTONIC"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "time_utils": "core/time_utils.h",
+      "clock_source": "CLOCK_MONOTONIC"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.time_profile.v1",
+      "target_struct": "time_config_t",
+      "header_binding": "include/core/time_utils.h"
+    },
+    "generic_helper_contracts": {
+      "loader": "time_load_config_from_file",
+      "now": "time_monotonic_now_ns",
+      "sleep_ms": "time_sleep_ms"
+    }
+  },
+  "block_3_body": {
+    "profile": {
+      "id": "low_spec_30fps",
+      "display_name": "Low-Spec 30 FPS Battery Saver Profile",
+      "description": "Relaxed 30 Hz frame pacing with 33.33 ms frame budget and 100 us turn latency budget for low-end hardware.",
+      "target_fps": 30,
+      "frame_budget_ms": 33.333333,
+      "turn_latency_budget_us": 100.0,
+      "preflight_latency_budget_us": 2000.0,
+      "disk_query_budget_us": 1000.0,
+      "token_extraction_budget_us": 100.0,
+      "tick_rate_hz": 30
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_FPS_BOUNDS",
+        "condition": "target_fps == 30",
+        "action": "Fatal halt if low spec target FPS deviates from 30 Hz"
+      },
+      {
+        "id": "TRIPWIRE_FRAME_BUDGET",
+        "condition": "frame_budget_ms > 33.0 && frame_budget_ms < 34.0",
+        "action": "Fatal halt if frame budget is mathematically inconsistent"
+      }
+    ],
+    "metrics": {
+      "expected_ms_per_frame": 33.333333,
+      "max_simulation_turn_cost_pct": 0.3,
+      "monotonic_clock_source": "CLOCK_MONOTONIC",
+      "zero_heap_compliant": true
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "subdomain_manifest": "../manifest.json",
+      "root_manifest": "../../../manifest.json",
+      "menu_index": 3
+    },
+    "execution_hooks": {
+      "on_load": "time_load_config_from_file",
+      "audit_hook": "time_utils_preflight"
+    }
+  }
+}

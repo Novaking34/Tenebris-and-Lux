@@ -1,0 +1,143 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/formats/fixed_column.json",
+    "id": "engine.config.diagnostics.formats.fixed_column",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Specification of the default fixed-width columnar plaintext log format for human reading and regex parsing.",
+    "where_the_data_lives": {
+      "path": "engine/config/diagnostics/formats/fixed_column.json",
+      "header_binding": "engine/include/log/log.h"
+    },
+    "what_it_enables": [
+      "Deterministic fixed-width column offsets for fast grep, awk, and regex extraction",
+      "Human-readable terminal and log file formatting with ANSI color tokens",
+      "Integrated grade indicator [-100, +100] tracking moral sway or test score"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations during string formatting",
+      "Total entry formatted line length must not exceed LOG_MAX_LINE_BUFFER (512 bytes)",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "log_subsystem_initialized": true,
+      "format_schema_registered": true
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.format.fixed_column.v1",
+      "format_type": "PLAINTEXT_FIXED_COLUMN",
+      "max_line_length_bytes": 512,
+      "column_count": 8
+    },
+    "generic_helper_contracts": {
+      "formatter": "log_format_entry",
+      "parser": "log_parse_fixed_column_line"
+    }
+  },
+  "block_3_body": {
+    "format_spec": {
+      "format_pattern": "[{timestamp}] [ID#{sequence_id:08d}] [{severity:7s}] [{domain}:{channel:10s}] [{entity:12s}] [GRADE:{grade:+04d}] {message}",
+      "regex_pattern": "^\\[([^\\]]+)\\] \\[ID#(\\d+)\\] \\[([A-Z]+)\\s*\\] \\[([A-Z]+):([A-Z0-9_]+)\\s*\\] \\[([^\\]]+)\\] \\[GRADE:([+-]\\d+)\\] (.*)$",
+      "columns": [
+        {
+          "name": "timestamp",
+          "start_col": 1,
+          "width": 27,
+          "data_type": "ISO8601_UTC",
+          "example": "2026-11-05T18:30:00.123456Z"
+        },
+        {
+          "name": "sequence_id",
+          "start_col": 31,
+          "width": 12,
+          "data_type": "UINT64_HEX_OR_DEC",
+          "example": "ID#00000042"
+        },
+        {
+          "name": "severity",
+          "start_col": 46,
+          "width": 9,
+          "data_type": "ENUM_SEVERITY",
+          "example": "INFO     "
+        },
+        {
+          "name": "domain_channel",
+          "start_col": 58,
+          "width": 18,
+          "data_type": "STRING_TAG",
+          "example": "ENG:CORE      "
+        },
+        {
+          "name": "entity",
+          "start_col": 79,
+          "width": 14,
+          "data_type": "STRING_TAG",
+          "example": "Elijah      "
+        },
+        {
+          "name": "grade",
+          "start_col": 96,
+          "width": 12,
+          "data_type": "INT_PERCENT",
+          "example": "GRADE:+000"
+        },
+        {
+          "name": "message",
+          "start_col": 110,
+          "width": 256,
+          "data_type": "STRING_PAYLOAD",
+          "example": "Simulation state initialized cleanly"
+        }
+      ],
+      "ansi_escape_support": {
+        "enabled_in_console": true,
+        "stripped_in_file": true,
+        "color_map": {
+          "FATAL": "\u001b[1;31m",
+          "CRITICAL": "\u001b[1;35m",
+          "ERROR": "\u001b[0;31m",
+          "WARNING": "\u001b[0;33m",
+          "INFO": "\u001b[0;32m",
+          "DEBUG": "\u001b[0;36m",
+          "TRACE": "\u001b[0;37m"
+        }
+      }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "column_count": 8,
+      "max_bytes": 512,
+      "regex_valid": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "BUFFER_CEILING",
+        "rule": "max_line_length_bytes <= 512",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "REGEX_COMPILES",
+        "rule": "regex_pattern is valid POSIX/PCRE",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "default_sink": "build/logs/tenebris_lux.log"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "sister_format": "structured_ndjson.json"
+    }
+  }
+}

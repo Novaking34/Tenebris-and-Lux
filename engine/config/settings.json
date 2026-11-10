@@ -1,0 +1,145 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/settings.json",
+    "id": "engine.config.settings.master",
+    "layer": "Layer 0: Core Utilities / Engine Configuration",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Master Engine Settings Registry orchestrating active settings profiles across display, audio, input, performance, and diagnostics.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Configuration Settings Root",
+      "path": "engine/config/settings.json",
+      "parent_manifest": "engine/config/manifest.json"
+    },
+    "what_it_enables": [
+      "Unified single-point dispatch for in-game Options UI and user configuration",
+      "Decoupled resolution, framerate, and theme selection via viewport settings",
+      "Hardware-independent volume levels, mute flags, and audio device preferences",
+      "Configurable keyboard action bindings and gamepad deadzone profiles",
+      "Performance pacing policy selection between 30, 60, and 120 FPS targets",
+      "Zero dynamic heap allocations during settings ingestion (ALLOC_ZERO_HEAP)"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across settings ingestion (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "All linked settings profiles must exist and satisfy 5-block envelope",
+      "Procedural fallback floor guaranteed regardless of user settings"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "config_root": "engine/config/manifest.json",
+      "loader": "master_loader_load",
+      "memory_model": "Static fixed buffers without heap allocation"
+    },
+    "static_declarations": {
+      "domain_id": "config",
+      "schema_id": "tenlux.engine.settings_master.v1",
+      "target_stratum": "Layer 0: Core Utilities",
+      "sub_domains": [ "viewport", "audio", "input", "runtime", "diagnostics" ]
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve",
+      "master_loader": "master_loader_load"
+    },
+    "capacities": {
+      "settings_domain_count": 5
+    }
+  },
+  "block_3_body": {
+    "active_profiles": {
+      "viewport": {
+        "title": "Display & Viewport Presentation",
+        "file": "viewport/settings.json",
+        "schema_id": "tenlux.engine.viewport.settings.v1",
+        "description": "Active display resolution preset, window mode, V-Sync, theme, and UI scaling."
+      },
+      "audio": {
+        "title": "Audio Mixer & Volume Channels",
+        "file": "audio/settings.json",
+        "schema_id": "tenlux.engine.audio.settings.v1",
+        "description": "Master, BGM, SFX, Ambience, and UI volume percentages, mute toggles, and ducking."
+      },
+      "input": {
+        "title": "Input Bindings & Control Profiles",
+        "file": "input/default.json",
+        "schema_id": "tenlux.engine.input.bindings.v1",
+        "description": "Primary and secondary action keybindings, repeat rates, and controller mappings."
+      },
+      "performance": {
+        "title": "Frame Pacing & Simulation Budget",
+        "file": "runtime/time/default.json",
+        "schema_id": "tenlux.data.time_profile.v1",
+        "description": "Target frame rate (60 FPS standard), frame time budget, and accumulator parameters."
+      },
+      "diagnostics": {
+        "title": "Telemetry & Log Severity Filter",
+        "file": "diagnostics/telemetry/default.json",
+        "schema_id": "tenlux.data.log_setting.v1",
+        "description": "Active diagnostic telemetry profile, severity bitmask, and ring buffer threshold."
+      }
+    },
+    "settings_catalog": {
+      "viewport_options": {
+        "display_presets": "viewport/scalers.json",
+        "themes": "viewport/themes.json",
+        "layout": "viewport/layout.json"
+      },
+      "audio_options": {
+        "channels": "audio/channels.json"
+      },
+      "input_options": {
+        "default_bindings": "input/default.json",
+        "gamepad_profile": "input/gamepad.json"
+      },
+      "pacing_options": {
+        "standard_60fps": "runtime/time/default.json",
+        "high_refresh_120fps": "runtime/time/high_refresh.json",
+        "low_spec_30fps": "runtime/time/low_spec_30fps.json",
+        "policy": "runtime/time/pacing_policy.json"
+      },
+      "diagnostics_options": {
+        "default": "diagnostics/telemetry/default.json",
+        "development": "diagnostics/telemetry/development.json",
+        "production": "diagnostics/telemetry/production.json",
+        "quiet": "diagnostics/telemetry/quiet.json",
+        "combat_focus": "diagnostics/telemetry/combat_focus.json",
+        "forensic": "diagnostics/telemetry/forensic_telemetry.json"
+      }
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "domain_count": 5,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "PROFILE_EXISTENCE",
+        "rule": "All referenced active profiles must exist on disk",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "ALLOC_ZERO_HEAP",
+        "rule": "Settings parsing must perform zero heap allocations",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit", "--debug" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "home_dir": "config",
+      "primary_menu": "viewport/settings.json"
+    }
+  }
+}
+

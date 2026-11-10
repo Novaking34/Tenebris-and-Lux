@@ -91,7 +91,7 @@ static void test_core_integrated_always_pass(void)
 
     /* 1.1 Ingest pacing_policy.json via clock_pacer_load_config_from_file */
     char pacer_path[PATH_FINDER_MAX_PATH];
-    bool found_pacer = path_finder_resolve("system", "runtime/time/pacing_policy.json",
+    bool found_pacer = path_finder_resolve("config", "runtime/time/pacing_policy.json",
                                            pacer_path, sizeof(pacer_path));
     TEST_ASSERT(found_pacer, "Resolved pacing_policy.json path");
 
@@ -106,7 +106,7 @@ static void test_core_integrated_always_pass(void)
 
     /* 1.2 Ingest formulas.json via formula_eval_load_config_from_file */
     char formula_path[PATH_FINDER_MAX_PATH];
-    bool found_form = path_finder_resolve("system", "runtime/math/formulas.json",
+    bool found_form = path_finder_resolve("config", "runtime/math/formulas.json",
                                           formula_path, sizeof(formula_path));
     TEST_ASSERT(found_form, "Resolved formulas.json path");
 
@@ -151,14 +151,14 @@ static void test_core_integrated_expected_input(void)
 
     /* 2.1 Multi-frame simulation cadence with variable deltas */
     char pacer_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
+    path_finder_resolve("config", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
     clock_pacer_config_t p_cfg;
     clock_pacer_load_config_from_file(pacer_path, &p_cfg);
     clock_pacer_t pacer;
     clock_pacer_init(&pacer, &p_cfg);
 
     char formula_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
+    path_finder_resolve("config", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
     formula_eval_config_t f_cfg;
     formula_eval_load_config_from_file(formula_path, &f_cfg);
     formula_eval_t fctx;
@@ -203,7 +203,7 @@ static void test_core_integrated_boundary_edge(void)
 
     /* 3.1 Extreme lag spike recovery */
     char pacer_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
+    path_finder_resolve("config", "runtime/time/pacing_policy.json", pacer_path, sizeof(pacer_path));
     clock_pacer_config_t p_cfg;
     clock_pacer_load_config_from_file(pacer_path, &p_cfg);
     clock_pacer_t pacer;
@@ -222,7 +222,7 @@ static void test_core_integrated_boundary_edge(void)
 
     /* 3.2 Maximum defensive saturation in combat */
     char formula_path[PATH_FINDER_MAX_PATH];
-    path_finder_resolve("system", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
+    path_finder_resolve("config", "runtime/math/formulas.json", formula_path, sizeof(formula_path));
     formula_eval_config_t f_cfg;
     formula_eval_load_config_from_file(formula_path, &f_cfg);
     formula_eval_t fctx;

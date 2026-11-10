@@ -1,0 +1,30 @@
+{
+  "$schema": "tenlux.tools.block_3_body.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "layer": "Developer Tooling Strata",
+    "version": "0.1.0",
+    "system": "OmniCode Protocol Block 3 Generic Standards",
+    "role": "Specification for Block 3 Body, Logic & Business Functions"
+  },
+  "block_2_opening": {
+    "block_marker": "BLOCK 3: BODY BLOCK",
+    "required_sub_assemblies": [
+      "Sub-Assembly 3.1",
+      "Sub-Assembly 3.2"
+    ]
+  },
+  "block_3_body": {
+    "require_pure_functions": true,
+    "disallow_lifecycle_init_shutdown": true,
+    "exempt_archetypes": ["pure_types", "facade_umbrella"]
+  },
+  "block_4_audit": {
+    "audit_enabled": true,
+    "check_dual_audience_docstrings": true
+  },
+  "block_5_closing": {
+    "rejection_action": "fail_file"
+  }
+}
+

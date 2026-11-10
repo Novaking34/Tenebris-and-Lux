@@ -1,0 +1,96 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/input/gamepad.json",
+    "id": "engine.config.input.gamepad",
+    "layer": "Layer 0: Core Utilities / Input Architecture",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Standard Gamepad / Controller Profile & Deadzones.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Input Configuration Sub-Domain",
+      "path": "engine/config/input/gamepad.json",
+      "parent_manifest": "engine/config/input/manifest.json"
+    },
+    "what_it_enables": [
+      "Standard dual-analog gamepad mappings and D-pad tactical movement",
+      "Action buttons (South/East/West/North) mapped to confirmation and stances",
+      "Shoulder bumpers mapped to stance switching (LB Lux, RB Tenebris)",
+      "Analog stick deadzone filtering (radial and axial)",
+      "Zero dynamic heap allocations during controller polling (ALLOC_ZERO_HEAP)"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across gamepad mapping (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Deadzone percentage strictly bounded between 0.05 and 0.50",
+      "Essential navigation must be mapped to both D-pad and Left Stick"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "gamepad_subsystem": "engine/include/viewport/raster/gui.h"
+    },
+    "static_declarations": {
+      "subdomain_id": "input",
+      "schema_id": "tenlux.engine.input.gamepad.v1",
+      "target_stratum": "Layer 0 / Input Architecture",
+      "controller_standard": "Standard Dual-Analog Gamepad"
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve",
+      "master_loader": "master_loader_load"
+    },
+    "capacities": {
+      "button_count": 14,
+      "axis_count": 4
+    }
+  },
+  "block_3_body": {
+    "calibration": {
+      "left_stick_deadzone": 0.15,
+      "right_stick_deadzone": 0.15,
+      "trigger_threshold": 0.10,
+      "vibration_enabled": true
+    },
+    "mappings": [
+      { "action": "action_nav_up", "gamepad_input": "DPAD_UP", "stick_fallback": "LEFT_STICK_UP" },
+      { "action": "action_nav_down", "gamepad_input": "DPAD_DOWN", "stick_fallback": "LEFT_STICK_DOWN" },
+      { "action": "action_nav_left", "gamepad_input": "DPAD_LEFT", "stick_fallback": "LEFT_STICK_LEFT" },
+      { "action": "action_nav_right", "gamepad_input": "DPAD_RIGHT", "stick_fallback": "LEFT_STICK_RIGHT" },
+      { "action": "action_confirm", "gamepad_input": "BTN_SOUTH", "description": "A / Cross" },
+      { "action": "action_cancel", "gamepad_input": "BTN_EAST", "description": "B / Circle" },
+      { "action": "action_menu", "gamepad_input": "BTN_START", "description": "Start / Options" },
+      { "action": "action_stance_lux", "gamepad_input": "BTN_LB", "description": "Left Bumper (Shield of Lux)" },
+      { "action": "action_stance_tenebris", "gamepad_input": "BTN_RB", "description": "Right Bumper (Sword of Tenebris)" },
+      { "action": "action_turn_end", "gamepad_input": "BTN_NORTH", "description": "Y / Triangle" }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "deadzone_calibrated": true,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "DEADZONE_BOUNDS",
+        "rule": "left_stick_deadzone >= 0.05 && left_stick_deadzone <= 0.50",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 2
+    }
+  }
+}
+

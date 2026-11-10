@@ -1,0 +1,239 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/diagnostics/telemetry/manifest.json",
+    "id": "engine.config.diagnostics.telemetry.root",
+    "layer": "Layer 0: Core Utilities",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Telemetry Subsystem Manifest indexing selectable log settings profiles, channel specifications, and severity weights.",
+    "where_the_data_lives": {
+      "topology": "System Diagnostics Telemetry",
+      "profiles_directory": "engine/config/diagnostics/telemetry/",
+      "header_binding": "engine/include/log/log.h"
+    },
+    "what_it_enables": [
+      "Static ring buffer log capture in .bss without dynamic allocation",
+      "Multi-domain channel routing separating Engine and Game problems",
+      "Log file size rotation and automated archive timestamping",
+      "Dynamic hot-swapping between developer trace mode and quiet CI",
+      "Weighted log severities with bitmask filtering and latency budgets"
+    ],
+    "invariants": [
+      "Every menu item resolves to a valid profile within telemetry/",
+      "Strict zero-heap memory allocation (ALLOC_ZERO_HEAP)",
+      "Universal 5-Block Lifecycle Protocol enforced across all definitions"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "log_subsystem": "engine/include/log/log.h",
+      "ring_buffer_init": "Ring buffer allocated in .bss during log_init"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.log_menu.v1",
+      "target_entity": "log_config_t",
+      "severity_levels": [
+        "FATAL",
+        "CRITICAL",
+        "ERROR",
+        "WARNING",
+        "INFO",
+        "DEBUG",
+        "TRACE"
+      ],
+      "supported_domains": [
+        "ENGINE",
+        "GAME"
+      ],
+      "categories": [
+        "SYSTEM",
+        "LOG",
+        "EVENT",
+        "MESSAGE",
+        "CHARACTER"
+      ]
+    },
+    "generic_helper_contracts": {
+      "logger": "log_write_entry",
+      "profile_loader": "log_load_config_profile"
+    }
+  },
+  "block_3_body": {
+    "menu": {
+      "menu_id": "menu_log_configurations",
+      "title": "Log Configuration & Telemetry Menu",
+      "subtitle": "Select active engine logging profile and diagnostic settings",
+      "default_setting": "development",
+      "active_setting": "development",
+      "settings": [
+        {
+          "index": 1,
+          "id": "default",
+          "label": "Default Baseline Profile",
+          "file": "default.json",
+          "description": "Standard baseline matching Layer 0 log_get_default_config().",
+          "hotkey": "1",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "TRACE",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 1,
+            "max_rotated_files": 25
+          }
+        },
+        {
+          "index": 2,
+          "id": "development",
+          "label": "Development & Interactive Debugging",
+          "file": "development.json",
+          "description": "High-verbosity developer profile with ANSI color console echoing.",
+          "hotkey": "2",
+          "is_default": true,
+          "attributes": {
+            "min_severity": "TRACE",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 2,
+            "max_rotated_files": 25
+          }
+        },
+        {
+          "index": 3,
+          "id": "production",
+          "label": "Production & Shipping Release",
+          "file": "production.json",
+          "description": "Silent high-performance profile capturing INFO+ events without console echo.",
+          "hotkey": "3",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "INFO",
+            "echo_to_console": false,
+            "use_colors": false,
+            "save_by_category": true,
+            "max_file_size_mb": 5,
+            "max_rotated_files": 10
+          }
+        },
+        {
+          "index": 4,
+          "id": "forensic_telemetry",
+          "label": "Forensic Flight Recorder",
+          "file": "forensic_telemetry.json",
+          "description": "Exhaustive forensic audit logging microsecond timestamps.",
+          "hotkey": "4",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "TRACE",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 10,
+            "max_rotated_files": 25
+          }
+        },
+        {
+          "index": 5,
+          "id": "quiet",
+          "label": "Quiet Automated CI Benchmarking",
+          "file": "quiet.json",
+          "description": "Minimal overhead profile for headless CTest suites.",
+          "hotkey": "5",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "WARNING",
+            "echo_to_console": false,
+            "use_colors": false,
+            "save_by_category": false,
+            "max_file_size_mb": 1,
+            "max_rotated_files": 10
+          }
+        },
+        {
+          "index": 6,
+          "id": "combat_focus",
+          "label": "Combat & Stance Tuning Focus",
+          "file": "combat_focus.json",
+          "description": "Specialized trace filter isolating stance transitions and formulas.",
+          "hotkey": "6",
+          "is_default": false,
+          "attributes": {
+            "min_severity": "DEBUG",
+            "echo_to_console": true,
+            "use_colors": true,
+            "save_by_category": true,
+            "max_file_size_mb": 2,
+            "max_rotated_files": 20
+          }
+        }
+      ]
+    },
+    "catalogs": [
+      {
+        "id": "engine_channels",
+        "title": "Layer 0 & Layer 2 Engine Telemetry Channels",
+        "file": "engine_channels.json",
+        "domain": "ENGINE",
+        "description": "Channel definitions for Core, Memory, IO, Viewport, Font, and Time."
+      },
+      {
+        "id": "game_channels",
+        "title": "Layer 1 Game Simulation Telemetry Channels",
+        "file": "game_channels.json",
+        "domain": "GAME",
+        "description": "Channel definitions for Sim, Combat, Stances, Relics, Statera, World, Quest, and Dialogue."
+      },
+      {
+        "id": "severity_weights",
+        "title": "Weighted Telemetry Severity Hierarchy",
+        "file": "severity_weights.json",
+        "description": "Numeric priority weighting, bitmask definitions, and filter thresholds."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "setting_count": 6,
+      "catalog_count": 3,
+      "max_rotated_files_limit": 25,
+      "ring_buffer_entries": 64
+    },
+    "verification_tripwires": [
+      {
+        "name": "PROFILE_EXISTENCE",
+        "rule": "All 6 profile files exist on disk",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "CATALOG_EXISTENCE",
+        "rule": "All 3 channel and weight catalogs exist on disk",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "ZERO_HEAP_CHECK",
+        "rule": "Zero dynamic allocations during logging",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [
+        "--audit",
+        "--cli",
+        "--gui"
+      ]
+    },
+    "navigation": {
+      "parent_menu": "../manifest.json",
+      "current_directory": "config/diagnostics/telemetry"
+    }
+  }
+}

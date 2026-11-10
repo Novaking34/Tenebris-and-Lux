@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          log.c
+@id            log.engine
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Forensic Telemetry & Flight Recorder Engine
@@ -30,7 +31,7 @@ PURPOSE & ARCHITECTURAL ROLE:
   Forensic flight recorder and diagnostic audit pipeline for the Tenebris and Lux
   tactical RPG simulation engine.
   Integrates directly with data-driven configuration assets residing in
-  system/diagnostics/telemetry/ (manifest.json, default.json, development.json,
+  engine/config/diagnostics/telemetry/ (manifest.json, default.json, development.json,
   production.json, quiet.json, combat_focus.json, forensic_telemetry.json)
   with quarantined emergency fallback protection (log_fallback.h).
 
@@ -540,7 +541,8 @@ log_config_t log_get_default_config(void)
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 3.2: Subsystem Lifecycle & File Engine Cogs
+Sub-Assembly 3.2: File Engine & Telemetry State Cogs
+Mission: Manage directory synthesis, state queries, and perform rotation.
 --------------------------------------------------------------------------------
 */
 
@@ -670,135 +672,6 @@ static void rotate_category_file(log_category_t cat)
 
     s_cat_files[cat] = fopen(base_path, "a");
     s_cat_bytes[cat] = 0;
-}
-
-bool log_init(const log_config_t *config)
-{
-    if (s_initialized) {
-        log_shutdown();
-    }
-
-    if (config != NULL) {
-        s_config = *config;
-    } else {
-        s_config = log_get_default_config();
-    }
-
-    if (!s_config.loaded_from_data && !str_case_eq(s_config.profile_name, LOG_FALLBACK_PROFILE_NAME)) {
-        if (s_tripwire_status == LOG_TRIPWIRE_CLEAR) {
-            set_tripwire(
-                LOG_TRIPWIRE_MANIFEST_MISSING,
-                "Refusing boot: configuration not loaded from data-driven pipeline."
-            );
-        }
-        return false;
-    }
-
-    if (s_config.log_dir[0] == '\0' || s_config.base_filename[0] == '\0') {
-        set_tripwire(
-            LOG_TRIPWIRE_BOUNDS_VIOLATION,
-            "Refusing boot: log_dir or base_filename is empty."
-        );
-        return false;
-    }
-
-    if (s_config.max_rotated_files > 25 || s_config.max_file_size_bytes == 0) {
-        set_tripwire(
-            LOG_TRIPWIRE_BOUNDS_VIOLATION,
-            "Refusing boot: max_rotated_files > 25 or max_file_size_bytes == 0."
-        );
-        return false;
-    }
-
-    /* Ephemeral sandboxing resolution: route into build/logs if build/ exists */
-    if (strcmp(s_config.log_dir, "logs") == 0) {
-        struct stat st_build;
-        if (stat("build", &st_build) == 0 && S_ISDIR(st_build.st_mode)) {
-            str_safe_copy(s_config.log_dir, "build/logs", sizeof(s_config.log_dir));
-        }
-    } else if (strncmp(s_config.log_dir, "build/logs", 10) == 0) {
-        struct stat st_build;
-        if (stat("build", &st_build) != 0 || !S_ISDIR(st_build.st_mode)) {
-            if (fs_file_exists("CTestTestfile.cmake") || fs_file_exists("CMakeCache.txt")) {
-                str_safe_copy(s_config.log_dir, "logs", sizeof(s_config.log_dir));
-            }
-        }
-    }
-
-    ensure_directory(s_config.log_dir);
-
-    char full_path[512];
-    get_log_filepath(full_path, sizeof(full_path), s_config.log_dir, s_config.base_filename);
-
-    s_file = fopen(full_path, "a");
-    if (s_file == NULL) {
-        return false;
-    }
-
-    struct stat st;
-    if (stat(full_path, &st) == 0) {
-        s_current_bytes = (size_t)st.st_size;
-    } else {
-        s_current_bytes = 0;
-    }
-
-    for (size_t i = 0; i < (size_t)LOG_CAT_COUNT; i++) {
-        s_cat_files[i] = NULL;
-        s_cat_bytes[i] = 0;
-    }
-
-    s_ring_head = 0;
-    s_ring_count = 0;
-    s_initialized = true;
-
-    char iso_ts[32];
-    generate_iso_timestamp(iso_ts, sizeof(iso_ts));
-    fprintf(
-        s_file,
-        "================================================================================\n"
-        "[%s] [SYSTEM INIT] Tenebris and Lux Forensic Telemetry Subsystem Initialized\n"
-        "Standard: ISO 8601 | Profile: %s | Source: %s\n"
-        "================================================================================\n",
-        iso_ts,
-        s_config.profile_name[0] != '\0' ? s_config.profile_name : "custom",
-        s_config.loaded_from_data ? "DATA-DRIVEN (system/diagnostics/telemetry)" : "HARDCODED (fallback)"
-    );
-    fflush(s_file);
-
-    return true;
-}
-
-void log_shutdown(void)
-{
-    if (!s_initialized) {
-        return;
-    }
-
-    if (s_file != NULL) {
-        char iso_ts[32];
-        generate_iso_timestamp(iso_ts, sizeof(iso_ts));
-        fprintf(
-            s_file,
-            "================================================================================\n"
-            "[%s] [SYSTEM SHUTDOWN] Telemetry Subsystem Shutdown. Total events: %lu\n"
-            "================================================================================\n",
-            iso_ts,
-            (unsigned long)s_sequence_counter
-        );
-        fflush(s_file);
-        fclose(s_file);
-        s_file = NULL;
-    }
-
-    for (size_t i = 0; i < (size_t)LOG_CAT_COUNT; i++) {
-        if (s_cat_files[i] != NULL) {
-            fflush(s_cat_files[i]);
-            fclose(s_cat_files[i]);
-            s_cat_files[i] = NULL;
-        }
-    }
-
-    s_initialized = false;
 }
 
 bool log_is_active(void)
@@ -1248,11 +1121,16 @@ diag_result_t log_audit(bool verbose)
 BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
 Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Executable Procedures & Object Constructors
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+Mission: Run operational execution procedures, format terminal-friendly ASCII
+status cards, and construct structured telemetry inspection objects.
 --------------------------------------------------------------------------------
 */
 
@@ -1275,4 +1153,177 @@ bool log_execute_inspect(log_stats_t *out_stats)
         sizeof(out_stats->active_profile)
     );
     return true;
+}
+
+bool log_execute_dump_card(const log_stats_t *stats, char *out_buf, size_t buf_size)
+{
+    if (out_buf == NULL || buf_size < 320) {
+        return false;
+    }
+    log_stats_t local_stats;
+    if (stats == NULL) {
+        if (!log_execute_inspect(&local_stats)) {
+            return false;
+        }
+        stats = &local_stats;
+    }
+    int written = snprintf(
+        out_buf, buf_size,
+        "+------------------------------------------------------------+\n"
+        "| FORENSIC TELEMETRY ENGINE STATUS CARD                      |\n"
+        "+------------------------------------------------------------+\n"
+        "| Active Profile : %-41s |\n"
+        "| Initialized    : %-41s |\n"
+        "| Data Driven    : %-41s |\n"
+        "| Total Entries  : %-41llu |\n"
+        "| Ring Count     : %-41zu |\n"
+        "| Rotation Count : %-41zu |\n"
+        "| File Bytes     : %-41zu |\n"
+        "+------------------------------------------------------------+",
+        stats->active_profile,
+        stats->is_active ? "TRUE (Online)" : "FALSE (Offline)",
+        stats->loaded_from_data ? "TRUE (Data-Driven)" : "FALSE (Procedural/Fallback)",
+        (unsigned long long)stats->total_entries,
+        stats->ring_buffer_count,
+        stats->rotation_count,
+        stats->active_file_bytes
+    );
+    return written > 0 && (size_t)written < buf_size;
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+Mission: Manage subsystem lifecycle, allocate runtime ring buffers,
+open/close file streams, and tear down hardware handles.
+--------------------------------------------------------------------------------
+*/
+
+bool log_init(const log_config_t *config)
+{
+    if (s_initialized) {
+        log_shutdown();
+    }
+
+    if (config != NULL) {
+        s_config = *config;
+    } else {
+        s_config = log_get_default_config();
+    }
+
+    if (!s_config.loaded_from_data && !str_case_eq(s_config.profile_name, LOG_FALLBACK_PROFILE_NAME)) {
+        if (s_tripwire_status == LOG_TRIPWIRE_CLEAR) {
+            set_tripwire(
+                LOG_TRIPWIRE_MANIFEST_MISSING,
+                "Refusing boot: configuration not loaded from data-driven pipeline."
+            );
+        }
+        return false;
+    }
+
+    if (s_config.log_dir[0] == '\0' || s_config.base_filename[0] == '\0') {
+        set_tripwire(
+            LOG_TRIPWIRE_BOUNDS_VIOLATION,
+            "Refusing boot: log_dir or base_filename is empty."
+        );
+        return false;
+    }
+
+    if (s_config.max_rotated_files > 25 || s_config.max_file_size_bytes == 0) {
+        set_tripwire(
+            LOG_TRIPWIRE_BOUNDS_VIOLATION,
+            "Refusing boot: max_rotated_files > 25 or max_file_size_bytes == 0."
+        );
+        return false;
+    }
+
+    /* Ephemeral sandboxing resolution: route into build/logs if build/ exists */
+    if (strcmp(s_config.log_dir, "logs") == 0) {
+        struct stat st_build;
+        if (stat("build", &st_build) == 0 && S_ISDIR(st_build.st_mode)) {
+            str_safe_copy(s_config.log_dir, "build/logs", sizeof(s_config.log_dir));
+        }
+    } else if (strncmp(s_config.log_dir, "build/logs", 10) == 0) {
+        struct stat st_build;
+        if (stat("build", &st_build) != 0 || !S_ISDIR(st_build.st_mode)) {
+            if (fs_file_exists("CTestTestfile.cmake") || fs_file_exists("CMakeCache.txt")) {
+                str_safe_copy(s_config.log_dir, "logs", sizeof(s_config.log_dir));
+            }
+        }
+    }
+
+    ensure_directory(s_config.log_dir);
+
+    char full_path[512];
+    get_log_filepath(full_path, sizeof(full_path), s_config.log_dir, s_config.base_filename);
+
+    s_file = fopen(full_path, "a");
+    if (s_file == NULL) {
+        return false;
+    }
+
+    struct stat st;
+    if (stat(full_path, &st) == 0) {
+        s_current_bytes = (size_t)st.st_size;
+    } else {
+        s_current_bytes = 0;
+    }
+
+    for (size_t i = 0; i < (size_t)LOG_CAT_COUNT; i++) {
+        s_cat_files[i] = NULL;
+        s_cat_bytes[i] = 0;
+    }
+
+    s_ring_head = 0;
+    s_ring_count = 0;
+    s_initialized = true;
+
+    char iso_ts[32];
+    generate_iso_timestamp(iso_ts, sizeof(iso_ts));
+    fprintf(
+        s_file,
+        "================================================================================\n"
+        "[%s] [SYSTEM INIT] Tenebris and Lux Forensic Telemetry Subsystem Initialized\n"
+        "Standard: ISO 8601 | Profile: %s | Source: %s\n"
+        "================================================================================\n",
+        iso_ts,
+        s_config.profile_name[0] != '\0' ? s_config.profile_name : "custom",
+        s_config.loaded_from_data ? "DATA-DRIVEN (system/diagnostics/telemetry)" : "HARDCODED (fallback)"
+    );
+    fflush(s_file);
+
+    return true;
+}
+
+void log_shutdown(void)
+{
+    if (!s_initialized) {
+        return;
+    }
+
+    if (s_file != NULL) {
+        char iso_ts[32];
+        generate_iso_timestamp(iso_ts, sizeof(iso_ts));
+        fprintf(
+            s_file,
+            "================================================================================\n"
+            "[%s] [SYSTEM SHUTDOWN] Telemetry Subsystem Shutdown. Total events: %lu\n"
+            "================================================================================\n",
+            iso_ts,
+            (unsigned long)s_sequence_counter
+        );
+        fflush(s_file);
+        fclose(s_file);
+        s_file = NULL;
+    }
+
+    for (size_t i = 0; i < (size_t)LOG_CAT_COUNT; i++) {
+        if (s_cat_files[i] != NULL) {
+            fflush(s_cat_files[i]);
+            fclose(s_cat_files[i]);
+            s_cat_files[i] = NULL;
+        }
+    }
+
+    s_initialized = false;
 }

@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          string_utils_fallback.c
-@id            core.util.string_fallback
+@id            core.string.fallback
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Safe String Manipulation Subsystem (core/string)
@@ -26,6 +26,16 @@ PURPOSE & ARCHITECTURAL ROLE:
   for the safe string manipulation engine. Serves as an isolated, compile-time
   fallback baseline quarantined outside main production pathways to guarantee
   that production uses the data-driven pipeline.
+
+  ### For Game Designers & Non-Programmers:
+  If the text and dialogue limits fail to load from data files, this code page
+  enforces standard text length rules (80-character line discipline, 64-character
+  character names) so text boxes never wrap awkwardly or clip.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Static Compile-Time Constants: Zero dynamic heap allocation.
+  - Safe null-termination guaranteed: dst[dst_size - 1] = '\0'.
+  - Stack-allocated immutable string_fallback_config_t structure.
 ================================================================================
 */
 
@@ -203,13 +213,17 @@ bool string_fallback_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK / DIAGNOSTIC CARD DUMP & TEARDOWN
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Safe String Engine
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Diagnostic ASCII Status Card Generator
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -237,5 +251,13 @@ bool string_fallback_execute_dump_card(const string_fallback_config_t *cfg,
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of string_utils_fallback.c */

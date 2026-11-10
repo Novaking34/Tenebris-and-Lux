@@ -1,0 +1,71 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "game/data/presentation/config/channels.json",
+    "id": "data.presentation.config.channels",
+    "layer": "Layer 2: Presentation & Audiovisual",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Presentation Data Linker bridging game audio channels to engine audio configuration",
+    "where_the_data_lives": {
+      "topology": "Dual Data Taxonomy & Data Linker Architecture",
+      "path": "game/data/presentation/config/channels.json",
+      "target_engine_config": "engine/config/audio/channels.json",
+      "parent_manifest": "game/data/presentation/config/manifest.json"
+    },
+    "what_it_enables": [
+      "Zero duplication between standalone engine audio mixing buses and game presentation data",
+      "Explicit symbolic linking to engine/config/audio/channels.json",
+      "Multi-channel mixing bus routing (Master, BGM, SFX, Ambience) and ducking"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations in audio channel linking (ALLOC_ZERO_HEAP)",
+      "Strict data decoupling: game presentation references engine configuration via explicit linker"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "target_file_exists": "engine/config/audio/channels.json"
+    },
+    "static_declarations": {
+      "schema_id": "tenlux.data.presentation.config_linker.v1",
+      "target_subsystem": "audio.channels",
+      "target_file": "engine/config/audio/channels.json"
+    },
+    "generic_helper_contracts": {
+      "resolver": "path_finder_resolve"
+    }
+  },
+  "block_3_body": {
+    "linker": {
+      "type": "engine_config_bridge",
+      "target_file": "engine/config/audio/channels.json",
+      "domain": "config",
+      "rel_path": "audio/channels.json"
+    }
+  },
+  "block_4_audit": {
+    "tripwires": [
+      {
+        "id": "TRIPWIRE_LINKER_RESOLVABLE",
+        "condition": "fs_file_exists(target_file)",
+        "action": "Ensure target engine configuration profile exists on disk"
+      }
+    ],
+    "metrics": {
+      "link_type": "symbolic_reference",
+      "is_overriding": false
+    }
+  },
+  "block_5_closing": {
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../../manifest.json",
+      "target_config": "../../../engine/config/audio/channels.json"
+    }
+  }
+}
+

@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          math_utils.c
-@id            core.util.math
+@id            core.math
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Mathematics & Geometry Subsystem (core/math)
@@ -19,11 +19,25 @@ BLOCK 1: METADATA BLOCK
                3. Zero divisor immunity: Safe yield of fallback on non-positive maximums.
                4. Pure determinism: Stateless, reentrant, zero dynamic heap (ALLOC_ZERO_HEAP).
                5. Easing bounds: Inputs and outputs strictly clamped in [0.0f, 1.0f].
+               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
 PURPOSE & ARCHITECTURAL ROLE:
   Pure implementation of bounded integer arithmetic, saturating mathematical
   primitives, transition easing curves, and Xorshift32 PRNG. Ingests canonical
-  limits from game/data/system/runtime/math/default.json via master_loader.
+  limits from engine/config/runtime/math/default.json via master_loader.
+
+  ### For Game Designers & Non-Programmers:
+  Provides the physical rules and guardrails for numbers in the game. It makes
+  sure health points cannot drop below zero, energy meters cannot overflow beyond
+  100%, and screen transitions slide smoothly with natural acceleration and
+  deceleration curves.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Stateless and Reentrant: Zero global state mutations (ALLOC_ZERO_HEAP).
+  - Safe saturating integer math preventing undefined integer overflow.
+  - Standardized parametric easing curves (EASE_LINEAR, EASE_QUAD_IN,
+    EASE_QUAD_OUT, EASE_CUBIC_IN, EASE_CUBIC_OUT) bounded in [0.0f, 1.0f].
+  - Zero-divisor immunity: Returns safe fallbacks when maximums are non-positive.
 ================================================================================
 */
 
@@ -86,10 +100,16 @@ const module_metadata_t math_utils_manifest = {
 };
 
 /*
-================================================================================
+===============================================================================
 BLOCK 3: BODY / CORE MATHEMATICAL LOGIC BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
-================================================================================
+===============================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Integer Clamping & Saturation Cogs
+--------------------------------------------------------------------------------
 */
 
 int math_clamp_int(int val, int min_val, int max_val)
@@ -134,6 +154,12 @@ int math_saturating_add(int val, int add_val, int max_val)
     if (max_val - val <= add_val) return max_val;
     return val + add_val;
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Equilibrium, Ratio Scaling & Safe Division Cogs
+--------------------------------------------------------------------------------
+*/
 
 int math_nudge_toward(int val, int target, int step)
 {
@@ -180,6 +206,12 @@ float math_safe_div_float(float numerator, float denominator, float fallback_val
     return numerator / denominator;
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Normalization, Percentage & Easing Curve Cogs
+--------------------------------------------------------------------------------
+*/
+
 int math_normalized_to_percent(float norm)
 {
     float clamped = math_clamp_float(norm, 0.0f, 1.0f);
@@ -220,6 +252,12 @@ float math_ease_cubic_inout(float t)
     }
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.4: Deterministic PRNG Cogs
+--------------------------------------------------------------------------------
+*/
+
 uint32_t math_prng_next(uint32_t *state)
 {
     if (state == NULL) return 0;
@@ -246,6 +284,12 @@ int math_prng_range(uint32_t *state, int min_val, int max_val)
 
     return min_val + (int)(math_prng_next(state) % span);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.5: Data-Driven Configuration Profile Cogs
+--------------------------------------------------------------------------------
+*/
 
 math_config_t math_get_default_config(void)
 {
@@ -284,14 +328,9 @@ bool math_load_config_from_file(const char *profile_path, math_config_t *out_con
         target_rel = "runtime/math/default.json";
     }
 
-    /* Strip potential 'system/' prefix if caller passed full subpath */
-    if (strncmp(target_rel, "system/", 7) == 0) {
-        target_rel += 7;
-    }
-
     master_loader_t loader;
     char file_buf[8192];
-    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+    if (!master_loader_load(&loader, "config", target_rel, file_buf, sizeof(file_buf))) {
         LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "Math", -0.2f,
                    "Failed to load profile '%s', falling back to defaults (GRADE:-020)", target_rel);
         return false;
@@ -392,8 +431,18 @@ bool math_utils_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Bounded Arithmetic Engine
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
 */
 
 bool math_execute_dump_card(const math_config_t *config, char *out_buf, size_t buf_size)
@@ -422,5 +471,13 @@ bool math_execute_dump_card(const math_config_t *config, char *out_buf, size_t b
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of math_utils.c */

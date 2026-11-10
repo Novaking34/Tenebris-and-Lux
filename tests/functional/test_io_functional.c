@@ -152,15 +152,15 @@ static void test_io_functional_always_pass(void)
 
     /* Cog 8: path_finder_resolve */
     char res_path[PATH_FINDER_MAX_PATH];
-    bool p_res = path_finder_resolve("system", "runtime/math/default.json", res_path, sizeof(res_path));
-    DEBUG_LOG_FN("path_finder_resolve", "'system', 'runtime/math/default.json'", res_path);
+    bool p_res = path_finder_resolve("config", "runtime/math/default.json", res_path, sizeof(res_path));
+    DEBUG_LOG_FN("path_finder_resolve", "'config', 'runtime/math/default.json'", res_path);
     TEST_ASSERT(p_res && fs_is_regular_file(res_path), "path_finder_resolve locates domain file");
 
     /* Cog 9: path_finder_find_manifest */
     char man_path[PATH_FINDER_MAX_PATH];
-    bool pm_ok = path_finder_find_manifest("system", man_path, sizeof(man_path));
-    DEBUG_LOG_FN("path_finder_find_manifest", "'system'", man_path);
-    TEST_ASSERT(pm_ok && fs_is_regular_file(man_path), "path_finder_find_manifest locates system manifest");
+    bool pm_ok = path_finder_find_manifest("config", man_path, sizeof(man_path));
+    DEBUG_LOG_FN("path_finder_find_manifest", "'config'", man_path);
+    TEST_ASSERT(pm_ok && fs_is_regular_file(man_path), "path_finder_find_manifest locates config manifest");
 
     /* Cog 10: path_finder_resolve_asset */
     char asset_path[PATH_FINDER_MAX_PATH];
@@ -170,8 +170,8 @@ static void test_io_functional_always_pass(void)
 
     /* Cog 11: path_finder_execute_resolve */
     path_resolved_info_t pr_info;
-    bool pe_ok = path_finder_execute_resolve("system", "runtime/math/default.json", &pr_info);
-    DEBUG_LOG_FN("path_finder_execute_resolve", "'system', 'runtime/math/default.json'", pr_info.resolved_path);
+    bool pe_ok = path_finder_execute_resolve("config", "runtime/math/default.json", &pr_info);
+    DEBUG_LOG_FN("path_finder_execute_resolve", "'config', 'runtime/math/default.json'", pr_info.resolved_path);
     TEST_ASSERT(pe_ok && pr_info.exists && pr_info.is_regular, "path_finder_execute_resolve succeeds");
 
     /* Cog 12: json_find_key & typed scalar getters */
@@ -228,11 +228,11 @@ static void test_io_functional_always_pass(void)
     /* Cog 16: master_loader_load & master_loader_execute_inspect */
     master_loader_t ml;
     static char ml_buf[FS_BUFFER_LARGE_BYTES];
-    bool ml_ok = master_loader_load(&ml, "system", "runtime/math/formulas.json", ml_buf, sizeof(ml_buf));
-    DEBUG_LOG_FN("master_loader_load", "'system', 'runtime/math/formulas.json'", ml_ok ? "true" : "false");
+    bool ml_ok = master_loader_load(&ml, "config", "runtime/math/formulas.json", ml_buf, sizeof(ml_buf));
+    DEBUG_LOG_FN("master_loader_load", "'config', 'runtime/math/formulas.json'", ml_ok ? "true" : "false");
     TEST_ASSERT(ml_ok && ml.header.is_5block, "master_loader_load loads 5-block file");
     TEST_ASSERT(master_loader_validate_schema(&ml, "tenlux.data.math_formulas.v1"), "master_loader_validate_schema");
-    TEST_ASSERT(master_loader_validate_version(&ml, "0.1.0"), "master_loader_validate_version");
+    TEST_ASSERT(master_loader_validate_version(&ml, "0.1.1-dev"), "master_loader_validate_version");
 
     char f_str[128];
     TEST_ASSERT(master_loader_get_string(&ml, "physical_damage", "formula", f_str, sizeof(f_str)), "master_loader_get_string");
@@ -240,11 +240,11 @@ static void test_io_functional_always_pass(void)
     TEST_ASSERT(master_loader_get_int(&ml, "physical_mitigation", "mitigation_cap_pct", &m_cap) && m_cap == 90, "master_loader_get_int");
 
     loader_header_t l_hdr;
-    TEST_ASSERT(master_loader_execute_inspect("system", "runtime/math/formulas.json", &l_hdr) && l_hdr.is_5block, "master_loader_execute_inspect");
+    TEST_ASSERT(master_loader_execute_inspect("config", "runtime/math/formulas.json", &l_hdr) && l_hdr.is_5block, "master_loader_execute_inspect");
 
     master_loader_t mv;
     static char mv_buf[FS_BUFFER_LARGE_BYTES];
-    TEST_ASSERT(master_loader_execute_load_verified("system", "runtime/math/formulas.json",
+    TEST_ASSERT(master_loader_execute_load_verified("config", "runtime/math/formulas.json",
                                                     "tenlux.data.math_formulas.v1",
                                                     mv_buf, sizeof(mv_buf), &mv), "master_loader_execute_load_verified");
 
@@ -292,8 +292,8 @@ static void test_io_functional_never_fail(void)
     /* 2.4 Master loader negative validation */
     master_loader_t ml;
     static char buf[FS_BUFFER_LARGE_BYTES];
-    TEST_ASSERT(!master_loader_load(NULL, "system", "runtime/math/formulas.json", buf, sizeof(buf)), "master_loader NULL loader");
-    TEST_ASSERT(!master_loader_load(&ml, "system", "nonexistent/file/path.json", buf, sizeof(buf)), "master_loader missing file");
+    TEST_ASSERT(!master_loader_load(NULL, "config", "runtime/math/formulas.json", buf, sizeof(buf)), "master_loader NULL loader");
+    TEST_ASSERT(!master_loader_load(&ml, "config", "nonexistent/file/path.json", buf, sizeof(buf)), "master_loader missing file");
     TEST_ASSERT(ml.status == LOADER_STATUS_ERR_NOT_FOUND, "Status matches LOADER_STATUS_ERR_NOT_FOUND");
 
     printf("  [FAIL-2] Section 2 passed: All fault-tolerant tripwires rejected cleanly.\n");
@@ -344,7 +344,7 @@ static void test_io_functional_emergence(void)
     printf("  [EMERGE-4] Running Section 4: Emergence (Pipelined Dataflow Composition)...\n");
 
     /* Pipeline test: Path Finder -> FS -> JSON -> Master Loader */
-    const char *domain = "system";
+    const char *domain = "config";
     const char *rel_file = "runtime/math/formulas.json";
 
     /* Step 1: VFS Route */

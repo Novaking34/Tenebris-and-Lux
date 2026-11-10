@@ -12,6 +12,7 @@
     "role": "Presentation Domain Master Manifest orchestrating UI, audio & visuals",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/",
+      "config_subsystem": "config/manifest.json",
       "ui_subsystem": "ui/manifest.json",
       "audio_subsystem": "audio/manifest.json",
       "visuals_subsystem": "visuals/manifest.json"
@@ -37,7 +38,7 @@
     "static_declarations": {
       "subsystem": "sim.presentation",
       "schema_id": "tenlux.data.presentation.v1",
-      "total_subsystems": 3,
+      "total_subsystems": 4,
       "target_width": 640,
       "target_height": 360,
       "aspect_ratio": "16:9"
@@ -50,6 +51,12 @@
     "domain": "presentation",
     "title": "Desktop Viewport, Sensory Audio & Visual Themes",
     "subsystems": [
+      {
+        "id": "config",
+        "title": "Presentation Configuration Linkers (Engine Bridge)",
+        "manifest_path": "config/manifest.json",
+        "category": "configuration"
+      },
       {
         "id": "ui",
         "title": "Desktop HUD, Panel Layouts & TrueType Fonts",
@@ -84,7 +91,7 @@
       }
     ],
     "metrics": {
-      "total_registered_subsystems": 3,
+      "total_registered_subsystems": 4,
       "zero_heap_compliant": true
     }
   },
@@ -93,6 +100,7 @@
       "parent_menu": "../manifest.json",
       "root_manifest": "../manifest.json",
       "subsystem_menus": [
+        "config/manifest.json",
         "ui/manifest.json",
         "audio/manifest.json",
         "visuals/manifest.json"

@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          fs_utils.c
+@id            io.fs
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Zero-Heap POSIX Filesystem & Buffered I/O Engine
@@ -553,11 +554,14 @@ bool fs_utils_audit(void)
 BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
 Stratum: Layer 0 (Core Utilities) | Subsystem: Filesystem & I/O Engine
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Executable Procedures & Object Constructors
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -595,6 +599,32 @@ bool fs_inspect_file(const char *path, fs_file_info_t *out_info)
     out_info->is_directory = S_ISDIR(st.st_mode);
     out_info->size_bytes = S_ISREG(st.st_mode) ? (long)st.st_size : 0;
     return true;
+}
+
+size_t fs_execute_dump_card(const fs_file_info_t *info, char *out_buf, size_t buf_size)
+{
+    if (info == NULL || out_buf == NULL || buf_size == 0) {
+        return 0;
+    }
+    int written = snprintf(
+        out_buf, buf_size,
+        "============================================================\n"
+        "             FILESYSTEM NODE INSPECTION CARD                \n"
+        "============================================================\n"
+        "Exists:        %s\n"
+        "Node Type:     %s\n"
+        "Size (Bytes):  %ld\n"
+        "Access Status: %s\n"
+        "============================================================\n",
+        info->exists ? "YES" : "NO",
+        info->is_directory ? "DIRECTORY" : (info->is_regular ? "REGULAR FILE" : (info->exists ? "SPECIAL NODE" : "NON-EXISTENT")),
+        info->size_bytes,
+        info->exists ? "ACCESSIBLE" : "INACCESSIBLE / NOT FOUND"
+    );
+    if (written < 0 || (size_t)written >= buf_size) {
+        return 0;
+    }
+    return (size_t)written;
 }
 
 /**

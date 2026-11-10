@@ -1,0 +1,31 @@
+{
+  "$schema": "tenlux.tools.block_4_audit.v1",
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "layer": "Developer Tooling Strata",
+    "version": "0.1.0",
+    "system": "OmniCode Protocol Block 4 Generic Standards",
+    "role": "Specification for Block 4 Verification & Validation Audits"
+  },
+  "block_2_opening": {
+    "block_marker": "BLOCK 4: AUDIT PROCEDURES",
+    "required_sub_assemblies": [
+      "Sub-Assembly 4.1",
+      "Sub-Assembly 4.2"
+    ]
+  },
+  "block_3_body": {
+    "sub_assembly_4_1_pattern": "_audit",
+    "sub_assembly_4_2_pattern": "_preflight",
+    "require_both_audit_and_preflight": true,
+    "exempt_archetypes": ["pure_types", "facade_umbrella"]
+  },
+  "block_4_audit": {
+    "audit_enabled": true,
+    "enforce_side_effect_free_audit": true
+  },
+  "block_5_closing": {
+    "rejection_action": "fail_file"
+  }
+}
+

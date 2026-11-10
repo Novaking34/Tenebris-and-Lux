@@ -52,11 +52,13 @@
 // Stratum: Developer Tooling | Machine: tools.lib.rust
 // =============================================================================
 
+pub mod assets;
 pub mod extractor;
 pub mod guide;
 pub mod runner;
 pub mod validator;
 
+pub use assets::{AssetAuditTask, AssetAuditor};
 pub use extractor::{DemoExtractor, ExtractorTask};
 pub use guide::{MasterGuideBuilder, MasterGuideTask};
 pub use runner::{
@@ -64,7 +66,8 @@ pub use runner::{
     RunnerEngine, TaskRunner, TaskStatus, TaskTelemetry,
 };
 pub use validator::{
-    DataValidationTask, DataValidator, ValidationOptions, ValidationSummary,
+    DataValidationTask, DataValidator, FullValidationTask, GitValidationTask,
+    HeaderValidationTask, HeaderValidator, ValidationOptions, ValidationSummary,
 };
 
 /// Toolchain version identity string.
@@ -83,14 +86,18 @@ pub const TOOL_STANDARD: &str = "Rust 2024 Edition | OmniCode 5-Block Architectu
 ///   1. `env_audit` (Environment topology & prerequisites)
 ///   2. `curation_audit` (Game design curation doc verification)
 ///   3. `data_validator` (OmniCode 5-Block JSON manifest & data catalog audit)
-///   4. `demo_extractor` (Historical 2017-2018 demo extraction)
-///   5. `master_guide` (Unified AsciiDoc, Markdown & PDF publication)
+///   4. `asset_pipeline` (Physical on-disk presentation asset audit)
+///   5. `demo_extractor` (Historical 2017-2018 demo extraction)
+///   6. `master_guide` (Unified AsciiDoc, Markdown & PDF publication)
 pub fn create_default_runner(context: RunnerContext) -> RunnerEngine {
     let mut engine = RunnerEngine::new(context);
     engine
         .register(EnvironmentAuditTask)
         .register(CurationAuditTask)
         .register(DataValidationTask)
+        .register(HeaderValidationTask)
+        .register(GitValidationTask)
+        .register(AssetAuditTask)
         .register(ExtractorTask)
         .register(MasterGuideTask);
     engine
@@ -140,6 +147,8 @@ mod tests {
     #[test]
     fn test_data_driven_log_manifest_integrity() {
         let candidate_paths = [
+            Path::new("engine/config/diagnostics/telemetry/manifest.json"),
+            Path::new("../engine/config/diagnostics/telemetry/manifest.json"),
             Path::new("game/data/system/diagnostics/telemetry/manifest.json"),
             Path::new("../game/data/system/diagnostics/telemetry/manifest.json"),
             Path::new("data/log/manifest.json"),
@@ -205,12 +214,18 @@ mod tests {
         let candidate_roots = [Path::new("."), Path::new("..")];
         let root = candidate_roots
             .iter()
-            .find(|p| p.join("game/data/system").exists())
+            .find(|p| p.join("engine/config").exists() || p.join("game/data/system").exists())
             .map(|p| p.canonicalize().unwrap_or_else(|_| p.to_path_buf()))
             .unwrap_or_else(|| PathBuf::from("."));
 
+        let target_domain = if root.join("engine/config").exists() {
+            "config".to_string()
+        } else {
+            "system".to_string()
+        };
+
         let options = ValidationOptions {
-            target_domain: "system".to_string(),
+            target_domain,
             strict: false,
             verbose: false,
             repo_root: root,
@@ -220,7 +235,7 @@ mod tests {
         let summary = validator.run_audit().expect("Audit execution failed");
         assert!(
             summary.is_success(false),
-            "System data validation failed with {} errors",
+            "System/config data validation failed with {} errors",
             summary.error_count()
         );
     }

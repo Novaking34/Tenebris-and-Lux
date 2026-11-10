@@ -113,7 +113,7 @@ static void test_debug_integrated_always_pass(void)
 
     /* 1.1 Ingest debugger manifest via path_finder & master_loader */
     char manifest_path[PATH_FINDER_MAX_PATH];
-    bool resolved = path_finder_resolve("system", "diagnostics/debugger/manifest.json",
+    bool resolved = path_finder_resolve("config", "diagnostics/debugger/manifest.json",
                                        manifest_path, sizeof(manifest_path));
     TEST_ASSERT(resolved, "Resolved debugger manifest path");
 
@@ -143,7 +143,7 @@ static void test_debug_integrated_always_pass(void)
     /* 1.3 Validate Catalogs: snapshot_policy.json & inspection_cards.json */
     master_loader_t policy_loader;
     static char policy_buf[16384];
-    bool policy_ok = master_loader_load(&policy_loader, "system",
+    bool policy_ok = master_loader_load(&policy_loader, "config",
                                         "diagnostics/debugger/snapshot_policy.json",
                                         policy_buf, sizeof(policy_buf));
     TEST_ASSERT(policy_ok, "Loaded snapshot_policy.json");
@@ -156,7 +156,7 @@ static void test_debug_integrated_always_pass(void)
 
     master_loader_t card_loader;
     static char card_json_buf[16384];
-    bool card_load_ok = master_loader_load(&card_loader, "system",
+    bool card_load_ok = master_loader_load(&card_loader, "config",
                                           "diagnostics/debugger/inspection_cards.json",
                                           card_json_buf, sizeof(card_json_buf));
     TEST_ASSERT(card_load_ok, "Loaded inspection_cards.json");

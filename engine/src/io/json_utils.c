@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          json_utils.c
+@id            io.json
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Zero-Heap JSON Tokenizer & Structured Field Deserializer
@@ -116,15 +117,19 @@ const module_metadata_t json_utils_manifest = {
     json_utils_preflight
 };
 
-// =============================================================================
-// BLOCK 3: BODY BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
+Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.1: JSON TOKEN LOCATOR COGS ]
-// Mission: Scan JSON payloads for matching keys while respecting quotes/whitespace.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: JSON Token Locator Cogs
+Mission: Scan JSON payloads for matching keys while respecting quotes/whitespace.
+--------------------------------------------------------------------------------
+*/
 
 /**
  * Scans a bounded JSON slice for a specific key token.
@@ -141,14 +146,14 @@ static const char *json_find_key_scoped(const char *json, size_t max_len, const 
     const char *end = (max_len > 0) ? (json + max_len) : NULL;
 
     while (*p != '\0' && (end == NULL || p < end)) {
-        // Look for opening quote of a key
+        /* Look for opening quote of a key */
         if (*p == '"') {
             p++;
-            // Check if key matches
+            /* Check if key matches */
             if ((end == NULL || p + key_len <= end) &&
                 strncmp(p, key, key_len) == 0 && p[key_len] == '"') {
                 const char *after_quote = p + key_len + 1;
-                // Skip whitespace up to colon
+                /* Skip whitespace up to colon */
                 while ((end == NULL || after_quote < end) &&
                        (*after_quote == ' ' || *after_quote == '\t' ||
                         *after_quote == '\r' || *after_quote == '\n')) {
@@ -156,7 +161,7 @@ static const char *json_find_key_scoped(const char *json, size_t max_len, const 
                 }
                 if ((end == NULL || after_quote < end) && *after_quote == ':') {
                     after_quote++;
-                    // Skip whitespace after colon
+                    /* Skip whitespace after colon */
                     while ((end == NULL || after_quote < end) &&
                            (*after_quote == ' ' || *after_quote == '\t' ||
                             *after_quote == '\r' || *after_quote == '\n')) {
@@ -178,10 +183,12 @@ const char *json_find_key(const char *json, const char *key)
     return json_find_key_scoped(json, 0, key);
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.2: VALUE EXTRACTION COGS ]
-// Mission: Extract typed values (string, integer, size_t, bool, float).
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Value Extraction Cogs
+Mission: Extract typed values (string, integer, size_t, bool, float).
+--------------------------------------------------------------------------------
+*/
 
 bool json_get_string(const char *json, const char *key, char *out_val,
                      size_t out_size)
@@ -531,10 +538,12 @@ bool json_get_object_bool(const char *json, const char *parent_obj_key,
     return false;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 3.3: ARRAY INSPECTION & EXTRACTION COGS ]
-// Mission: Scan JSON array boundaries and extract elements without heap usage.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Array Inspection & Extraction Cogs
+Mission: Scan JSON array boundaries and extract elements without heap usage.
+--------------------------------------------------------------------------------
+*/
 
 bool json_find_array(const char *json, const char *array_key,
                      const char **out_arr_start, size_t *out_arr_len)
@@ -742,15 +751,19 @@ bool json_array_get_object(const char *arr_start, size_t arr_len,
     return false;
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 4: AUDIT PROCEDURES BLOCK
+Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 4.1: MACHINE SELF-AUDIT & PRE-FLIGHT TRIPWIRES ]
-// Mission: Verify JSON parsing invariants, string boundary checks, and types.
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Machine Self-Audit & Pre-Flight Tripwires
+Mission: Verify JSON parsing invariants, string boundary checks, and types.
+--------------------------------------------------------------------------------
+*/
 
 diag_result_t json_utils_preflight(void)
 {
@@ -761,7 +774,7 @@ diag_result_t json_utils_preflight(void)
     res.severity = SEVERITY_PASS;
     res.details = "JSON utilities: token scan, string, int, bool, float, object, array & procedures verified.";
 
-    // Check 1: NULL resilience
+    /* Check 1: NULL resilience */
     char str_buf[32];
     size_t sz_val = 0;
     int int_val = 0;
@@ -785,7 +798,7 @@ diag_result_t json_utils_preflight(void)
         return res;
     }
 
-    // Check 2: Parse synthetic JSON payload with nested object and array
+    /* Check 2: Parse synthetic JSON payload with nested object and array */
     const char *test_json =
         "{\n"
         "  \"name\": \"Shield of Lux\",\n"
@@ -838,7 +851,7 @@ diag_result_t json_utils_preflight(void)
         return res;
     }
 
-    // Check 3: Rev 2 Nested Object Extraction
+    /* Check 3: Rev 2 Nested Object Extraction */
     if (!json_get_object_string(test_json, "_metadata", "version", str_buf, sizeof(str_buf)) ||
         strcmp(str_buf, "1.1.0") != 0) {
         res.passed = false;
@@ -869,7 +882,7 @@ diag_result_t json_utils_preflight(void)
         return res;
     }
 
-    // Check 4: Rev 2 Array Inspection and Extraction
+    /* Check 4: Rev 2 Array Inspection and Extraction */
     const char *arr_start = NULL;
     size_t arr_len = 0;
     if (!json_find_array(test_json, "tags", &arr_start, &arr_len) ||
@@ -919,7 +932,7 @@ diag_result_t json_utils_preflight(void)
         return res;
     }
 
-    // Check 4b: Array Object Slicing
+    /* Check 4b: Array Object Slicing */
     const char *obj_arr_test = "[{\"id\": 10, \"code\": \"RELIC_A\"}, {\"id\": 20, \"code\": \"RELIC_B\"}]";
     char obj_slice[128];
     if (!json_array_get_object(obj_arr_test, strlen(obj_arr_test), 1, obj_slice, sizeof(obj_slice))) {
@@ -936,7 +949,7 @@ diag_result_t json_utils_preflight(void)
         return res;
     }
 
-    // Check 5: Block 5 Inspection Procedures
+    /* Check 5: Block 5 Inspection Procedures */
     json_token_view_t tok_view;
     if (!json_inspect_token(test_json, "moral_sway", &tok_view) ||
         !tok_view.exists || tok_view.type != JSON_TYPE_NUMBER) {
@@ -973,7 +986,7 @@ diag_result_t json_utils_preflight(void)
         return res;
     }
 
-    // Check 6: Missing key gracefully returns false
+    /* Check 6: Missing key gracefully returns false */
     if (json_get_string(test_json, "nonexistent", str_buf, sizeof(str_buf))) {
         res.passed = false;
         res.severity = SEVERITY_WARNING;
@@ -990,14 +1003,21 @@ bool json_utils_audit(void)
     return res.passed && res.severity != SEVERITY_FATAL;
 }
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK
-// Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
-// =============================================================================
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap JSON Engine
+================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.1: EXECUTABLE PROCEDURES & OBJECT CONSTRUCTORS ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
+*/
 
 bool json_inspect_token(const char *json, const char *key, json_token_view_t *out_view)
 {
@@ -1126,6 +1146,42 @@ bool json_inspect_array(const char *json, const char *array_key, json_array_view
     return true;
 }
 
+size_t json_execute_dump_card(const json_token_view_t *view, char *out_buf, size_t buf_size)
+{
+    if (view == NULL || out_buf == NULL || buf_size == 0) {
+        return 0;
+    }
+    const char *type_name = "UNKNOWN";
+    switch (view->type) {
+        case JSON_TYPE_OBJECT:  type_name = "OBJECT"; break;
+        case JSON_TYPE_ARRAY:   type_name = "ARRAY"; break;
+        case JSON_TYPE_STRING:  type_name = "STRING"; break;
+        case JSON_TYPE_NUMBER:  type_name = "NUMBER"; break;
+        case JSON_TYPE_BOOLEAN: type_name = "BOOLEAN"; break;
+        case JSON_TYPE_NULL:    type_name = "NULL"; break;
+        default:                type_name = "UNKNOWN"; break;
+    }
+    int written = snprintf(
+        out_buf, buf_size,
+        "============================================================\n"
+        "                JSON TOKEN INSPECTION CARD                  \n"
+        "============================================================\n"
+        "Exists:        %s\n"
+        "Token Type:    %s\n"
+        "Payload Bytes: %zu\n"
+        "Payload Slice: %s\n"
+        "============================================================\n",
+        view->exists ? "YES" : "NO",
+        type_name,
+        view->raw_len,
+        (view->exists && view->raw_start != NULL) ? "VALID RAW POINTER" : "NULL / UNLOCATED"
+    );
+    if (written < 0 || (size_t)written >= buf_size) {
+        return 0;
+    }
+    return (size_t)written;
+}
+
 bool json_execute_extract_string(const char *json, const char *key,
                                  char *buf, size_t buf_size,
                                  json_extract_result_t *out_result)
@@ -1155,9 +1211,11 @@ bool json_execute_extract_string(const char *json, const char *key,
     return ok;
 }
 
-// -----------------------------------------------------------------------------
-// [ SUB-ASSEMBLY 5.2: SUBSYSTEM LIFECYCLE INITIALIZATION & TEARDOWN ]
-// -----------------------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+*/
 
 void json_utils_init(void)
 {
@@ -1169,6 +1227,8 @@ void json_utils_shutdown(void)
     /* Subsystem teardown hook for zero-heap JSON engine */
 }
 
-// =============================================================================
-// End of json_utils.c
-// =============================================================================
+/*
+================================================================================
+End of json_utils.c
+================================================================================
+*/

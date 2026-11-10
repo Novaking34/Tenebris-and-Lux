@@ -12,8 +12,8 @@
     "role": "Typography and TrueType Font Rendering Subsystem Manifest",
     "where_the_data_lives": {
       "assembly_directory": "game/data/presentation/ui/fonts/",
-      "typography_catalog": "typography.json",
-      "scalers_catalog": "scalers.json",
+      "typography_linker": "../../config/typography.json",
+      "scalers_linker": "../../config/scalers.json",
       "font_binaries": "game/assets/fonts/ (Cinzel, MedievalSharp)"
     },
     "what_it_enables": [
@@ -50,8 +50,8 @@
       "stratum": "Layer 2: Presentation & Viewport",
       "status": "active",
       "catalog_files": [
-        "typography.json",
-        "scalers.json"
+        "../../config/typography.json",
+        "../../config/scalers.json"
       ],
       "sub_assemblies": [
         "font_xft_rasterizer",

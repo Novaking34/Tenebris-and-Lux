@@ -5,11 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          time_utils.c
-@id            core.util.time
+@id            core.time
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        High-Resolution Timing Subsystem (core/time)
@@ -18,11 +18,23 @@ BLOCK 1: METADATA BLOCK
                2. Non-negative sleep clamp: Negative sleep requests safely clamped to zero.
                3. ISO 8601 UTC timestamp format: YYYY-MM-DDTHH:MM:SSZ (21 bytes null-terminated).
                4. Zero dynamic heap allocations (ALLOC_ZERO_HEAP: stack/static only).
+               5. Universal 5-Block Lifecycle Protocol enforced across header and source.
 
 PURPOSE & ARCHITECTURAL ROLE:
   High-resolution monotonic timer queries, microsecond delta profiling, frame sleep
   pacing, and ISO 8601 calendar timestamp formatting. Ingests canonical frame budgets
-  and latency limits from game/data/system/runtime/time/ via master_loader.
+  and latency limits from engine/config/runtime/time/ via master_loader.
+
+  ### For Game Designers & Non-Programmers:
+  Acts as the engine's master clock and stopwatch. It measures exactly how long
+  each frame takes to compute and display, keeping animations moving at a natural
+  cadence and recording exact real-world timestamps into diagnostic flight logs.
+
+  ### For Systems Programmers & Engine Architects:
+  - POSIX CLOCK_MONOTONIC hardware clock reading with nanosecond resolution.
+  - Safe sleep pacer using nanosleep() with positive delta clamping.
+  - Formats strict ISO 8601 UTC timestamp strings directly into caller buffers.
+  - Zero heap allocation: all timing structures are passed by value or reference.
 ================================================================================
 */
 
@@ -84,10 +96,16 @@ const module_metadata_t time_utils_manifest = {
 };
 
 /*
-================================================================================
+===============================================================================
 BLOCK 3: BODY / CORE TIMING LOGIC BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
-================================================================================
+===============================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: Monotonic Clocks, Delta Queries & Frame Pacing Cogs
+--------------------------------------------------------------------------------
 */
 
 double time_get_monotonic_ms(void)
@@ -158,6 +176,12 @@ bool time_is_elapsed_ms(double start_ms, double interval_ms)
     return (now >= start_ms) && ((now - start_ms) >= interval_ms);
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Calendar & ISO Timestamp Cogs
+--------------------------------------------------------------------------------
+*/
+
 bool time_get_iso_timestamp(char *buf, size_t buf_size)
 {
     if (buf == NULL || buf_size < 21) {
@@ -180,6 +204,12 @@ bool time_get_iso_timestamp(char *buf, size_t buf_size)
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Data-Driven Timing Configuration Cogs
+--------------------------------------------------------------------------------
+*/
 
 time_config_t time_get_default_config(void)
 {
@@ -214,13 +244,9 @@ bool time_load_config_from_file(const char *profile_path, time_config_t *out_con
         target_rel = "runtime/time/default.json";
     }
 
-    if (strncmp(target_rel, "system/", 7) == 0) {
-        target_rel += 7;
-    }
-
     master_loader_t loader;
     char file_buf[8192];
-    if (!master_loader_load(&loader, "system", target_rel, file_buf, sizeof(file_buf))) {
+    if (!master_loader_load(&loader, "config", target_rel, file_buf, sizeof(file_buf))) {
         LOG_RECORD(LOG_SEV_WARNING, LOG_CAT_LOG, "Time", -0.2f,
                    "Failed to load time profile '%s', falling back to defaults (GRADE:-020)", target_rel);
         return false;
@@ -325,8 +351,18 @@ bool time_utils_audit(void)
 
 /*
 ================================================================================
-BLOCK 5: CLOSING & DIAGNOSTIC CARD DUMP BLOCK
+BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
+Stratum: Layer 0 (Core Utilities) | Subsystem: High-Resolution Timing Engine
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
+--------------------------------------------------------------------------------
 */
 
 bool time_execute_dump_card(const time_config_t *config, char *out_buf, size_t buf_size)
@@ -353,5 +389,13 @@ bool time_execute_dump_card(const time_config_t *config, char *out_buf, size_t b
 
     return (written > 0 && (size_t)written < buf_size);
 }
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/
 
 /* End of time_utils.c */

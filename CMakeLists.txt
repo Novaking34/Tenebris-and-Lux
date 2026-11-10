@@ -170,10 +170,12 @@ set(ENGINE_UTIL_HEADERS
     engine/include/core/clock_pacer_fallback.h
     engine/include/core/formula_eval.h
     engine/include/core/formula_eval_fallback.h
+    engine/include/core/core.h
     engine/include/io/fs_utils.h
     engine/include/io/json_utils.h
     engine/include/io/path_finder.h
     engine/include/io/master_loader.h
+    engine/include/io/io.h
     engine/include/log/log.h
     engine/include/log/log_fallback.h
     engine/include/debug/debug.h
@@ -281,12 +283,14 @@ set(GAME_SIM_HEADERS
 
 set(ENGINE_VIEWPORT_SOURCES
     engine/src/viewport/raster/gui.c
+    engine/src/viewport/raster/gui_fallback.c
     engine/src/viewport/raster/gui_view2d.c
     engine/src/viewport/hud/gui_hud.c
     engine/src/viewport/hud/gui_layout.c
     engine/src/viewport/hud/gui_widgets.c
     engine/src/viewport/reel/gui_screens.c
     engine/src/viewport/reel/reel.c
+    engine/src/viewport/reel/reel_fallback.c
     engine/src/viewport/styling/gui_palette.c
     engine/src/viewport/styling/gui_fonts.c
     engine/src/viewport/styling/gui_assets.c
@@ -296,12 +300,14 @@ set(ENGINE_VIEWPORT_HEADERS
     engine/include/viewport/viewport.h
     engine/include/viewport/raster/gui_types.h
     engine/include/viewport/raster/gui.h
+    engine/include/viewport/raster/gui_fallback.h
     engine/include/viewport/raster/gui_view2d.h
     engine/include/viewport/hud/gui_hud.h
     engine/include/viewport/hud/gui_layout.h
     engine/include/viewport/hud/gui_widgets.h
     engine/include/viewport/reel/gui_screens.h
     engine/include/viewport/reel/reel.h
+    engine/include/viewport/reel/reel_fallback.h
     engine/include/viewport/styling/gui_palette.h
     engine/include/viewport/styling/gui_fonts.h
     engine/include/viewport/styling/gui_assets.h
@@ -579,6 +585,15 @@ if(BUILD_TESTING)
     target_link_libraries(test_gui_raster_unit PRIVATE ${X11_LIBRARIES} m)
     target_compile_options(test_gui_raster_unit PRIVATE ${GAME_WARNING_FLAGS})
 
+    # Presentation GUI Fallback Monolith Unit Test
+    add_executable(test_gui_fallback_unit
+        tests/unit/viewport/test_gui_fallback_unit.c
+        engine/src/viewport/raster/gui_fallback.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_gui_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_gui_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
+
     # Filesystem Utilities Subsystem Unit Test
     add_executable(test_fs_utils_unit
         tests/unit/io/test_fs_utils_unit.c
@@ -757,6 +772,15 @@ if(BUILD_TESTING)
     )
     target_link_libraries(test_reel_unit PRIVATE ${X11_LIBRARIES} m)
     target_compile_options(test_reel_unit PRIVATE ${GAME_WARNING_FLAGS})
+
+    # Presentation Movie Reel Fallback Monolith Unit Test
+    add_executable(test_reel_fallback_unit
+        tests/unit/viewport/test_reel_fallback_unit.c
+        engine/src/viewport/reel/reel_fallback.c
+        ${ENGINE_UTIL_SOURCES}
+    )
+    target_include_directories(test_reel_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_compile_options(test_reel_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Audio Event Bus & Mixer Subsystem Unit Test
     add_executable(test_audio_bus_unit
@@ -994,6 +1018,7 @@ if(BUILD_TESTING)
 
     # Unit Tests: Viewport Subsystems (1:1 Parity for each code file)
     add_test(NAME unit_reel_test COMMAND test_reel_unit)
+    add_test(NAME unit_reel_fallback_test COMMAND test_reel_fallback_unit)
     add_test(NAME unit_gui_palette_test COMMAND test_gui_palette_unit)
     add_test(NAME unit_gui_layout_test COMMAND test_gui_layout_unit)
     add_test(NAME unit_gui_screens_test COMMAND test_gui_screens_unit)
@@ -1003,6 +1028,7 @@ if(BUILD_TESTING)
     add_test(NAME unit_gui_view2d_test COMMAND test_gui_view2d_unit)
     add_test(NAME unit_gui_hud_test COMMAND test_gui_hud_unit)
     add_test(NAME unit_gui_raster_test COMMAND test_gui_raster_unit)
+    add_test(NAME unit_gui_fallback_test COMMAND test_gui_fallback_unit)
 
     # Unit Tests: Game Simulation Subsystems
     add_test(NAME unit_combat_test COMMAND test_combat)
@@ -1064,6 +1090,7 @@ if(BUILD_TESTING)
         unit_audio_bus_test
         unit_audio_fallback_test
         unit_reel_test
+        unit_reel_fallback_test
         unit_gui_palette_test
         unit_gui_layout_test
         unit_gui_screens_test
@@ -1073,6 +1100,7 @@ if(BUILD_TESTING)
         unit_gui_view2d_test
         unit_gui_hud_test
         unit_gui_raster_test
+        unit_gui_fallback_test
         unit_combat_test
         unit_items_test
         unit_world_test

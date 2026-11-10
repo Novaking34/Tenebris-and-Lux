@@ -5,10 +5,11 @@ BLOCK 1: METADATA BLOCK
 ================================================================================
 @project       Tenebris and Lux
 @file          debug_fallback.c
+@id            debug.fallback
 @layer         Layer 0: Core Utilities
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Debugger Subsystem Emergency Monolithic Fallback Code Page
@@ -28,6 +29,16 @@ PURPOSE & ARCHITECTURAL ROLE:
   baseline quarantined outside of normal data pathways to guarantee that
   production boots data-driven assets, while safely degrading to this
   code page in catastrophic disaster recovery conditions without heap allocations.
+
+  ### For Game Designers & Non-Programmers:
+  If someone deletes the debugger configuration files or modifies them improperly,
+  this module acts as the factory emergency reset. It allows the game to still
+  record turns and display state without crashing.
+
+  ### For Systems Programmers & Engine Architects:
+  - 100% Static Compile-Time Constants: Zero dynamic allocation.
+  - Safe stack-based configuration extraction without heap dependencies.
+  - Pre-flight diagnostic audits returning categorized diag_result_t.
 ================================================================================
 */
 
@@ -49,6 +60,7 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
 #include <string.h>
 
 /* --- Tier 2: External Dependencies (None) --- */
@@ -186,11 +198,14 @@ bool debug_fallback_audit(void)
 BLOCK 5: CLOSING BLOCK / EXECUTABLE PROCEDURES & LIFECYCLE
 Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
 ================================================================================
+Mission: Execute operational pipelines, format ASCII diagnostic cards,
+construct programmatic inspection objects, and manage subsystem lifecycles.
+================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 5.1: Executable Procedures & Object Constructors
+Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards
 --------------------------------------------------------------------------------
 */
 
@@ -202,3 +217,46 @@ bool debug_fallback_execute_inspect(void *out_config, size_t config_size)
     debug_get_monolith_fallback_config_raw(out_config, config_size);
     return true;
 }
+
+size_t debug_fallback_execute_dump_card(char *out_buf, size_t buf_size)
+{
+    if (out_buf == NULL || buf_size == 0) {
+        return 0;
+    }
+    int written = snprintf(out_buf, buf_size,
+        "============================================================\n"
+        "           DEBUGGER FALLBACK STATUS & CAPACITIES            \n"
+        "============================================================\n"
+        "Module ID:     %s\n"
+        "Profile Name:  %s\n"
+        "Data-Driven:   NO (Emergency Hardcoded)\n"
+        "Max Snapshots: %u\n"
+        "Turn Interval: %d\n"
+        "REPL Active:   %s\n"
+        "ANSI Color:    %s\n"
+        "Auto Dump:     %s\n"
+        "Break Resonance: %s | Break HP Zero: %s\n"
+        "============================================================\n",
+        DEBUG_FALLBACK_MODULE_ID,
+        DEBUG_FALLBACK_PROFILE_NAME,
+        (unsigned int)DEBUG_FALLBACK_MAX_SNAPSHOTS,
+        DEBUG_FALLBACK_INTERVAL_TURNS,
+        DEBUG_FALLBACK_INTERACTIVE_REPL ? "YES" : "NO",
+        DEBUG_FALLBACK_ANSI_COLOR ? "YES" : "NO",
+        DEBUG_FALLBACK_AUTO_DUMP ? "YES" : "NO",
+        DEBUG_FALLBACK_BREAK_ON_RESONANCE ? "YES" : "NO",
+        DEBUG_FALLBACK_BREAK_ON_HP_ZERO ? "YES" : "NO");
+
+    if (written < 0 || (size_t)written >= buf_size) {
+        return 0;
+    }
+    return (size_t)written;
+}
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution).
+--------------------------------------------------------------------------------
+*/

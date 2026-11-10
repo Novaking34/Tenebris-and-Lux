@@ -1,0 +1,188 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/input/default.json",
+    "id": "engine.config.input.default",
+    "layer": "Layer 0: Core Utilities / Input Architecture",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-08",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Default Keyboard & Mouse Action Bindings and repeat policies.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine Input Configuration Sub-Domain",
+      "path": "engine/config/input/default.json",
+      "parent_manifest": "engine/config/input/manifest.json"
+    },
+    "what_it_enables": [
+      "Directional grid navigation via Arrow Keys and WASD",
+      "Action confirmation via Enter and Spacebar",
+      "Cancellation and back navigation via Escape and Backspace",
+      "Tactical stance switching between Lux (1/Q) and Tenebris (2/E)",
+      "System hotkeys for Fullscreen toggle (F11/F) and Mute toggle (M)",
+      "Zero dynamic heap allocations during action lookup (ALLOC_ZERO_HEAP)"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across input binding queries (ALLOC_ZERO_HEAP)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Every action must have a valid non-empty primary key binding",
+      "Key repeat delay must be greater than repeat rate"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "input_system": "gui.c / XLookupKeysym",
+      "widgets_system": "gui_widgets.c"
+    },
+    "static_declarations": {
+      "subdomain_id": "input",
+      "schema_id": "tenlux.engine.input.bindings.v1",
+      "target_stratum": "Layer 0 / Input Architecture",
+      "total_actions": 12
+    },
+    "generic_helper_contracts": {
+      "path_resolver": "path_finder_resolve",
+      "master_loader": "master_loader_load"
+    },
+    "capacities": {
+      "action_count": 12,
+      "max_bindings_per_action": 3
+    }
+  },
+  "block_3_body": {
+    "behavior": {
+      "repeat_delay_ms": 250,
+      "repeat_rate_ms": 50,
+      "mouse_drag_threshold_px": 4
+    },
+    "actions": [
+      {
+        "id": "action_nav_up",
+        "name": "Navigate Up / North",
+        "category": "navigation",
+        "primary_key": "Up",
+        "secondary_key": "w",
+        "tertiary_key": "k"
+      },
+      {
+        "id": "action_nav_down",
+        "name": "Navigate Down / South",
+        "category": "navigation",
+        "primary_key": "Down",
+        "secondary_key": "s",
+        "tertiary_key": "j"
+      },
+      {
+        "id": "action_nav_left",
+        "name": "Navigate Left / West",
+        "category": "navigation",
+        "primary_key": "Left",
+        "secondary_key": "a",
+        "tertiary_key": "h"
+      },
+      {
+        "id": "action_nav_right",
+        "name": "Navigate Right / East",
+        "category": "navigation",
+        "primary_key": "Right",
+        "secondary_key": "d",
+        "tertiary_key": "l"
+      },
+      {
+        "id": "action_confirm",
+        "name": "Confirm / Select / Interact",
+        "category": "interaction",
+        "primary_key": "Return",
+        "secondary_key": "space",
+        "tertiary_key": "z"
+      },
+      {
+        "id": "action_cancel",
+        "name": "Cancel / Back / Close",
+        "category": "interaction",
+        "primary_key": "Escape",
+        "secondary_key": "x",
+        "tertiary_key": "BackSpace"
+      },
+      {
+        "id": "action_menu",
+        "name": "Toggle In-Game Menu / Options",
+        "category": "system",
+        "primary_key": "Tab",
+        "secondary_key": "Escape",
+        "tertiary_key": null
+      },
+      {
+        "id": "action_stance_lux",
+        "name": "Attune Shield of Lux (Radiance)",
+        "category": "tactical",
+        "primary_key": "1",
+        "secondary_key": "q",
+        "tertiary_key": null
+      },
+      {
+        "id": "action_stance_tenebris",
+        "name": "Attune Sword of Tenebris (Umbra)",
+        "category": "tactical",
+        "primary_key": "2",
+        "secondary_key": "e",
+        "tertiary_key": null
+      },
+      {
+        "id": "action_turn_end",
+        "name": "End Simulation / Combat Turn",
+        "category": "tactical",
+        "primary_key": "space",
+        "secondary_key": "t",
+        "tertiary_key": null
+      },
+      {
+        "id": "action_toggle_fullscreen",
+        "name": "Toggle Fullscreen / Windowed",
+        "category": "system",
+        "primary_key": "F11",
+        "secondary_key": "f",
+        "tertiary_key": null
+      },
+      {
+        "id": "action_toggle_mute",
+        "name": "Toggle Master Audio Mute",
+        "category": "system",
+        "primary_key": "m",
+        "secondary_key": null,
+        "tertiary_key": null
+      }
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "action_count": 12,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "PRIMARY_BINDINGS_PRESENT",
+        "rule": "Every action has non-empty primary_key",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "REPEAT_TIMING_INVARIANT",
+        "rule": "repeat_delay_ms > repeat_rate_ms",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "cli_flags": [ "--audit" ]
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json",
+      "menu_index": 1
+    }
+  }
+}
+

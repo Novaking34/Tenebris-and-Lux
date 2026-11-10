@@ -176,9 +176,9 @@ pub fn run_updater_pipeline(repo_root: &Path) -> Result<(), String> {
     }
     println!("  [PASS] 16/16 module manifests & 7/7 tripwires passed.");
 
-    println!("Running Data Catalog & Schema Validation Audit (game/data/system/)...");
+    println!("Running Engine Config & Schema Validation Audit (engine/config/)...");
     let val_options = tl_tools::validator::ValidationOptions {
-        target_domain: "system".to_string(),
+        target_domain: "config".to_string(),
         strict: false,
         verbose: false,
         repo_root: repo_root.to_path_buf(),
@@ -190,12 +190,12 @@ pub fn run_updater_pipeline(repo_root: &Path) -> Result<(), String> {
 
     if !summary.is_success(false) {
         return Err(format!(
-            "Data catalog validation failed with {} errors! Aborting update.",
+            "Engine config validation failed with {} errors! Aborting update.",
             summary.error_count()
         ));
     }
     println!(
-        "  [PASS] All {} data files in game/data/system/ verified 5-block compliant.",
+        "  [PASS] All {} config files in engine/config/ verified 5-block compliant.",
         summary.total_files
     );
 
