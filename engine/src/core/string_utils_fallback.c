@@ -43,6 +43,7 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
 Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
+Mission: Quarantined fallback configuration and compile-time string manipulation safeguards.
 ================================================================================
 */
 
@@ -69,6 +70,55 @@ Tier 3: Internal Engine Foundation Headers
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
 #include "core/string_utils_fallback.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "core.util.string.fallback"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "STRING_FALLBACK"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Monolith code page strictly quarantined from production pipeline
+4. Profile identifier explicitly stamped as STRING_FALLBACK_PROFILE_NAME
+5. loaded_from_data is unconditionally false
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Fallback types declared in core/string_utils_fallback.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless module / zero mutable static variables) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for non-zero buffer capacity.
+ */
+static inline bool string_fallback_is_valid_size(size_t size)
+{
+    return size > 0U;
+}
 
 /*
 ================================================================================

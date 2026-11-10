@@ -44,6 +44,7 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
 Stratum: Layer 0 (Core Utilities) | Machine: 2D Spatial Geometry Engine
+Mission: 2D bounding boxes, elevated viewport scaling, camera projections, and 2.5D isometric geometry.
 ================================================================================
 */
 
@@ -77,9 +78,13 @@ Tier 3: Internal Engine Foundation Headers
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Axiomatic Invariants & Central Manifest Anchor
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
 --------------------------------------------------------------------------------
 */
+
+#define MODULE_ID           "core.util.geom"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "GEOM"
 
 static const char *const geom_invariants[] = {
     "Form precedes fullness: w >= 0 and h >= 0 clamped",
@@ -91,13 +96,29 @@ static const char *const geom_invariants[] = {
     "Zero dynamic heap allocations"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Geometric structures point_2d_t, rect_2d_t, camera_2d_t declared in core/geom_utils.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless spatial geometry engine / all operations pure and reentrant) */
+
 const module_metadata_t geom_utils_manifest = {
-    "core.util.geom",
+    MODULE_ID,
     "geom_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    4,                          /* interface_rev */
-    "2026-11-07",               /* last_updated */
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
     "2D bounding boxes, elevated viewport scaling, camera projections and 2.5D isometric math",
     0,                          /* dependency_count: foundational leaf cog */
     { NULL },                   /* dependencies */
@@ -116,6 +137,20 @@ const module_metadata_t geom_utils_manifest = {
     },
     geom_utils_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for positive spatial dimension.
+ */
+static inline bool geom_is_positive_dimension(int dim)
+{
+    return dim > 0;
+}
 
 /*
 ================================================================================

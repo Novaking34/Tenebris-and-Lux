@@ -44,6 +44,7 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
 Stratum: Layer 0 (Core Utilities) | Machine: Clock & Pacing Orchestrator
+Mission: Fixed-timestep simulation pacing, spiral-of-death mitigation, and render interpolation.
 ================================================================================
 */
 
@@ -79,9 +80,13 @@ Tier 3: Internal Engine Foundation Headers
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Axiomatic Invariants & Central Manifest Anchor
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
 --------------------------------------------------------------------------------
 */
+
+#define MODULE_ID           "core.util.pacer"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "PACER"
 
 static const char *const clock_pacer_invariants[] = {
     "Zero dynamic heap allocations during timing evaluation (ALLOC_ZERO_HEAP)",
@@ -91,13 +96,29 @@ static const char *const clock_pacer_invariants[] = {
     "Simulation determinism strictly conserved across refresh rates"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Clock pacer structures clock_pacer_t and clock_pacer_config_t declared in core/clock_pacer.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless orchestrator / clock state is allocated and maintained by caller) */
+
 const module_metadata_t clock_pacer_manifest = {
-    "core.util.pacer",
+    MODULE_ID,
     "clock_pacer.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    4,                          /* interface_rev */
-    "2026-11-07",               /* last_updated */
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
     "Fixed-timestep simulation pacing, spiral-of-death clamp and render interpolation",
     0,                          /* dependency_count: foundational leaf cog */
     { NULL },                   /* dependencies */
@@ -114,6 +135,20 @@ const module_metadata_t clock_pacer_manifest = {
     },
     clock_pacer_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for non-negative delta time.
+ */
+static inline bool clock_pacer_is_valid_dt(double dt_ms)
+{
+    return dt_ms >= 0.0;
+}
 
 /*
 ================================================================================

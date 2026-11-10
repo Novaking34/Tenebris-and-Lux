@@ -45,19 +45,73 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA
+BLOCK 2: OPENING BLOCK / STATIC DATA & INCLUDES
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: Typography engine, font candidate cascades, semantic font roles,
+         and X11 font handle lifecycle management.
 ================================================================================
 */
 
-#include "viewport/styling/gui_fonts.h"
-#include "log/log.h"
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy: 3-Tier Downward Architecture
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (X11)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+/* --- Tier 2: External Dependencies (X11) --- */
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "viewport/styling/gui_fonts.h"
+#include "core/manifest.h"
+#include "log/log.h"
+#include "debug/debug.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.styling.fonts"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI_FONTS"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Every semantic font role unconditionally resolves to a valid font
+4. Safe fallback guarantee: always terminates at standard X11 "fixed"
+5. Loaded XFontStruct handles are cached statically and freed on teardown
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Font catalog structures gui_font_catalog_t declared in viewport/styling/gui_fonts.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
 
 static const char *const TITLE_CANDIDATES[] = {
     "-misc-cinzel decorative-bold-r-normal--32-0-0-0-p-0-iso10646-1",
@@ -105,6 +159,20 @@ static const char *const UI_CANDIDATES[] = {
     "fixed",
     NULL
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for non-null font catalog pointer.
+ */
+static inline bool gui_fonts_is_valid_catalog(const gui_font_catalog_t *cat)
+{
+    return cat != NULL;
+}
 
 /*
 ================================================================================

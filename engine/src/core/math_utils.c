@@ -45,10 +45,22 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING / STATIC DATA BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
+Mission: Pure implementation of bounded integer arithmetic, transition easing,
+         and data-driven runtime mathematical calibration.
 ================================================================================
 */
 
-/* --- Tier 1: Standard Library Headers --- */
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -56,7 +68,9 @@ Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
 #include <stdint.h>
 #include <math.h>
 
-/* --- Tier 2: Core Engine Specifications & Subsystems --- */
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/math_utils.h"
 #include "core/math_utils_fallback.h"
 #include "core/manifest.h"
@@ -67,6 +81,16 @@ Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
 #include "log/log.h"
 #include "debug/debug.h"
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "core.util.math"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "MATH"
+
 static const char *const math_invariants[] = {
     "Form precedes fullness: min <= math_clamp_int <= max",
     "Saturating arithmetic never overflows bounds",
@@ -75,13 +99,29 @@ static const char *const math_invariants[] = {
     "Easing curves strictly clamped to [0.0, 1.0]"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless module / all core mathematical types declared in core/math_utils.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless module / pure arithmetic functions with zero mutable static storage) */
+
 const module_metadata_t math_utils_manifest = {
-    "core.util.math",
+    MODULE_ID,
     "math_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    4,                          /* interface_rev */
-    "2026-11-07",               /* last_updated */
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
     "Mathematical invariant clamping, bounded arithmetic, easing curves, and data-driven profiles",
     0,                          /* dependency_count: foundational leaf cog */
     { NULL },                   /* dependencies */
@@ -98,6 +138,20 @@ const module_metadata_t math_utils_manifest = {
     },
     math_utils_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for finite IEEE-754 floating point values.
+ */
+static inline bool math_is_finite_float(float val)
+{
+    return !isnan(val) && !isinf(val);
+}
 
 /*
 ===============================================================================

@@ -48,17 +48,20 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
-Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap JSON Engine
+BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
+Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap JSON Engine
+================================================================================
+Mission: Zero-heap token scanning, 3-tier downward include hierarchy,
+stateless structural ontology, fast whitespace predicates, and module manifest.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
+Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
+Tier 2: External Library Dependencies (None)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
@@ -72,19 +75,24 @@ Tier 3: Internal Engine Foundation Headers
 #include <stdlib.h>
 #include <string.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
-#include "io/json_utils.h"
+#include "core/manifest.h"
 #include "debug/debug.h"
+#include "io/json_utils.h"
+#include "log/log.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Static Axiomatic Invariants & Module Manifest
+Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Compile-Time Constants
 --------------------------------------------------------------------------------
 */
+#define MODULE_ID          "core.util.json"
+#define LOCAL_LOG_CAT      LOG_CAT_IO
+#define LOCAL_MODULE_TAG   "JSON_Utils"
 
-static const char *const json_invariants[4] = {
+static const char *const s_json_invariants[4] = {
     "Zero heap allocations: Strict zero-heap guarantee across all routines",
     "Buffer safety: Extracted strings unconditionally enforce null termination",
     "Resilience: Gracefully handles malformed JSON, missing keys, and NULL pointers",
@@ -98,9 +106,9 @@ const module_metadata_t json_utils_manifest = {
     "core.util.json",
     "json_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    3,
-    "2026-11-06",
+    { 0, 1, 1 },
+    5,
+    "2026-11-10",
     "Zero-heap JSON token locator, typed value extractor, and inspection procedures",
     0,
     { NULL },
@@ -109,13 +117,40 @@ const module_metadata_t json_utils_manifest = {
     50,
     4,
     {
-        json_invariants[0],
-        json_invariants[1],
-        json_invariants[2],
-        json_invariants[3]
+        s_json_invariants[0],
+        s_json_invariants[1],
+        s_json_invariants[2],
+        s_json_invariants[3]
     },
     json_utils_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+None. (Stateless parser; token locations operate directly on caller buffers).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations)
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution under ALLOC_ZERO_HEAP).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+static inline bool json_is_whitespace_char(char c)
+{
+    return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+}
 
 /*
 ================================================================================

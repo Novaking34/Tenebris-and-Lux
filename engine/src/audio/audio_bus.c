@@ -48,22 +48,71 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING / TYPES & DOMAIN ONTOLOGY BLOCK
+BLOCK 2: OPENING / STATIC DATA BLOCK
+Stratum: Layer 0 / Layer 2 (Audio Presentation) | Machine: Audio Event Bus Orchestrator
+Mission: Zero-heap audio event queuing, multi-channel volume mixing,
+         and data-driven audio configuration hydration.
 ================================================================================
 */
 
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "audio/audio_bus.h"
+#include "audio/audio_fallback.h"
 #include "core/time_utils.h"
 #include "core/string_utils.h"
+#include "core/manifest.h"
 #include "io/master_loader.h"
 #include "io/json_utils.h"
 #include "io/path_finder.h"
+#include "log/log.h"
+#include "debug/debug.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "audio.bus"
+#define LOCAL_LOG_CAT       LOG_CAT_AUDIO
+#define LOCAL_MODULE_TAG    "AudioBus"
+
+static const char *const audio_invariants[] = {
+    "Zero dynamic heap allocations in Layer 0/Layer 2 (ALLOC_ZERO_HEAP)",
+    "Fixed circular FIFO ring buffer with power-of-two mask (capacity 128)",
+    "Strictly bounded volume levels [0.0f, 1.0f] with mute channel masking",
+    "Reentrant and deterministic event polling and dispatch",
+    "Data-driven configuration loaded from engine/config/audio/"
+};
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
 
 /**
- * Internal static state of the audio bus subsystem.
+ * @struct audio_bus_state
+ * @brief Internal static state of the audio bus subsystem.
  */
 typedef struct audio_bus_state {
     bool initialized;
@@ -75,8 +124,47 @@ typedef struct audio_bus_state {
     audio_bus_stats_t stats;
 } audio_bus_state_t;
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
 static audio_bus_state_t s_audio_bus = {0};
 
+const module_metadata_t audio_bus_manifest = {
+    MODULE_ID,
+    "audio_bus.h",
+    LAYER_2_PRESENTATION,
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
+    "Universal audio event bus, lock-free ring queue, multi-channel mixer, and settings hydration",
+    2,                          /* dependency_count */
+    { "core.util.time", "core.util.string" },
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_REENTRANT,      /* concurrency */
+    1000,                       /* max_budget_us */
+    5,
+    {
+        audio_invariants[0],
+        audio_invariants[1],
+        audio_invariants[2],
+        audio_invariants[3],
+        audio_invariants[4]
+    },
+    audio_bus_preflight
+};
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline float clamping helper for volume scalars.
+ */
 static inline float audio_clampf(float val, float min_v, float max_v)
 {
     if (val < min_v) return min_v;

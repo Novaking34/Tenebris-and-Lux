@@ -43,10 +43,22 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING / STATIC DATA BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
+Mission: Memory-safe string copying, concatenation, trimming, case-folding,
+         FNV-1a deterministic hashing, and bounded path manipulation.
 ================================================================================
 */
 
-/* --- Tier 1: Standard Library Headers --- */
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -54,13 +66,25 @@ Stratum: Layer 0 (Core Utilities) | Machine: Safe String Engine
 #include <stddef.h>
 #include <stdint.h>
 
-/* --- Tier 2: Core Engine Specifications & Subsystems --- */
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/string_utils.h"
 #include "core/string_utils_fallback.h"
 #include "core/manifest.h"
 #include "io/master_loader.h"
 #include "log/log.h"
 #include "debug/debug.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "core.util.string"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "STRING"
 
 static const char *const string_invariants[] = {
     "Form precedes fullness: Safe null-termination guaranteed",
@@ -70,13 +94,29 @@ static const char *const string_invariants[] = {
     "Safe parent directory extraction and bounded path joining"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless string engine / all operations manipulate caller-provided buffers) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless string engine / zero mutable static variables) */
+
 const module_metadata_t string_utils_manifest = {
-    "core.util.string",
+    MODULE_ID,
     "string_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    4,                          /* interface_rev */
-    "2026-11-07",               /* last_updated */
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
     "Safe string copying, concatenation, trimming, case-folding, FNV-1a hashing, and path manipulation",
     0,                          /* dependency_count: leaf foundational cog */
     { NULL },                   /* dependencies */
@@ -93,6 +133,20 @@ const module_metadata_t string_utils_manifest = {
     },
     string_utils_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for ASCII whitespace character.
+ */
+static inline bool str_is_ascii_whitespace(char c)
+{
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
 
 /*
 ===============================================================================

@@ -47,6 +47,8 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC REGISTRY & LOCAL TYPES
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: Procedural fallback rasterization floor, asset catalog registration,
+         and external bitmap discovery.
 ================================================================================
 */
 
@@ -61,11 +63,11 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 #include <sys/stat.h>
 
 /* --- Tier 2: External Dependencies (X11) --- */
@@ -75,11 +77,27 @@ Tier 3: Internal Engine Foundation Headers
 #include "viewport/styling/gui_assets.h"
 #include "viewport/styling/gui_palette.h"
 #include "io/path_finder.h"
+#include "core/manifest.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Pre-Conditions & Asset Limits
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Asset Limits
 --------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.styling.assets"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI_ASSETS"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Procedural Fallback Floor: 100% playable even if 0 external bitmap assets exist
+4. Bounded capacity: s_catalog_count <= CATALOG_CAPACITY
+5. Reentrant rasterization directly into X11 pixmap surfaces
 */
 
 /** Maximum capacity of static asset registry array. */
@@ -87,7 +105,15 @@ Sub-Assembly 2.1: Pre-Conditions & Asset Limits
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.2: Static Module State
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Asset structures gui_asset_t, gui_asset_kind_t declared in viewport/styling/gui_assets.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
 --------------------------------------------------------------------------------
 */
 
@@ -97,10 +123,13 @@ static bool s_initialized = false;
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.4: Internal Registration Helper
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
 --------------------------------------------------------------------------------
 */
 
+/**
+ * @brief Fast static registration helper for catalog entry insertion.
+ */
 static void register_asset(gui_asset_id_t id, const char *name,
                            int w, int h, const char *path)
 {

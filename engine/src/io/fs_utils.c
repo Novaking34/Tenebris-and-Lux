@@ -48,17 +48,20 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
-Stratum: Layer 0 (Core Utilities) | Subsystem: Filesystem & I/O Engine
+BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
+Stratum: Layer 0 (Core Utilities) | Machine: Filesystem & I/O Engine
+================================================================================
+Mission: POSIX file I/O abstraction, 3-tier downward include hierarchy,
+bounded buffer validation inlines, and module manifest registration.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
+Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
+Tier 2: External Library Dependencies (None)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
@@ -74,20 +77,24 @@ Tier 3: Internal Engine Foundation Headers
 #include <sys/types.h>
 #include <unistd.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "core/manifest.h"
+#include "core/string_utils.h"
+#include "debug/debug.h"
 #include "io/fs_utils.h"
 #include "io/path_finder.h"
-#include "debug/debug.h"
-#include "core/string_utils.h"
-#include "core/manifest.h"
+#include "log/log.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Static Axiomatic Invariants & Module Manifest
+Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Compile-Time Constants
 --------------------------------------------------------------------------------
 */
+#define MODULE_ID          "core.util.fs"
+#define LOCAL_LOG_CAT      LOG_CAT_IO
+#define LOCAL_MODULE_TAG   "FS_Utils"
 
 static const char *const s_fs_invariants[4] = {
     "Memory safety: Caller output buffers are strictly bounded",
@@ -100,12 +107,12 @@ const module_metadata_t fs_utils_manifest = {
     "core.util.fs",
     "fs_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    3,
-    "2026-11-06",
+    { 0, 1, 1 },
+    5,
+    "2026-11-10",
     "Zero-heap POSIX filesystem abstraction, bounded reader, and safe writer",
     2,
-    { "core.util.string", "core.io.path_finder", NULL, NULL },
+    { "core.util.string", "core.io.path_finder" },
     ALLOC_ZERO_HEAP,
     CONCURRENCY_REENTRANT,
     500,
@@ -118,6 +125,33 @@ const module_metadata_t fs_utils_manifest = {
     },
     fs_utils_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+None. (Stateless filesystem utility; operations execute on caller stack frames).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations)
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution under ALLOC_ZERO_HEAP).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+static inline bool fs_is_valid_buffer(const void *buf, size_t cap)
+{
+    return (buf != NULL && cap > 0);
+}
 
 /*
 ================================================================================

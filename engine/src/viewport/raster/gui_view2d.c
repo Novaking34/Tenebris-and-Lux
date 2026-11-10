@@ -48,6 +48,8 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: Projection transformation math, battlefield tile rasterization, elevation
+         prisms, depth-sorted entity blitting, and tactical overlays.
 ================================================================================
 */
 
@@ -62,35 +64,100 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-/* --- Tier 2: External Dependencies --- */
+/* --- Tier 2: External Dependencies (X11) --- */
 #include <X11/Xlib.h>
 
-/* --- Tier 3: Internal Engine Foundation Headers --- */
+/* --- Tier 3: Internal Engine Foundation & Simulation State Bridge Headers --- */
 #include "viewport/raster/gui_view2d.h"
 #include "viewport/styling/gui_assets.h"
 #include "viewport/styling/gui_palette.h"
 #include "viewport/styling/gui_fonts.h"
-#include "ending/game.h"
+#include "core/manifest.h"
 #include "core/math_utils.h"
+#include "core/geom_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Pre-Conditions & Projection Limits
+ARCHITECTURAL PLUG COVENANT & 3-LAYER BOUNDARY SPECIFICATION:
+This module sits at the simulation bridge where the Big Machine (engine/)
+displays the active state of the Master Turn Gear (game/).
+The formal 3-layer architecture comprises:
+  1. The Engine (engine/): Generic hardware, viewport, and display apparatus.
+  2. The Game The Engine Runs (The Plug: hero/sim_state.[ch] & ending/game.[ch]):
+     The adapter harness translating domain state into generic display slots.
+  3. The Game Itself (game/): Tactical rules, world lore, and narrative canon.
+The simulation bridge headers below (hero/sim_state.h and ending/game.h) are
+explicitly quarantined here as the known 'plug' seam. When modernization reaches
+the game/ wave, these two file families will receive dedicated adapter elevation
+to complete the formal 3-layer decoupling.
 --------------------------------------------------------------------------------
 */
+#include "hero/sim_state.h"
+#include "ending/game.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Projection Limits
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.raster.view2d"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "VIEW2D"
 
 /** Number of discrete grid columns in the tactical test map. */
 #define GRID_COLS 8
 
 /** Number of discrete grid rows in the tactical test map. */
 #define GRID_ROWS 8
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Dimetric 2:1 projection matrix matching geom_iso_project()
+4. Zero heap depth-sorting queue with fixed static capacity
+5. Strict clipping to layout rectangle bounds preventing HUD bleed
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Projection view types declared in viewport/raster/gui_view2d.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless spatial rasterizer / draws into caller-provided X11 drawable) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for grid coordinates within map bounds.
+ */
+static inline bool gui_view2d_is_in_bounds(int gx, int gy)
+{
+    return gx >= 0 && gx < GRID_COLS && gy >= 0 && gy < GRID_ROWS;
+}
 
 /*
 ================================================================================

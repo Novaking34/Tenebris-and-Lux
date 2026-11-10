@@ -49,17 +49,20 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
-Stratum: Layer 0 (Core Utilities) | Subsystem: Master Data Loader
+BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
+Stratum: Layer 0 (Core Utilities) | Machine: Master Data Loader
+================================================================================
+Mission: Multi-tier dataset loading, 3-tier downward include hierarchy,
+schema validation, stateless loader ontology, and module manifest.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
+Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
+Tier 2: External Library Dependencies (None)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
@@ -71,23 +74,26 @@ Tier 3: Internal Engine Foundation Headers
 #include <stdio.h>
 #include <string.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "core/manifest.h"
+#include "core/string_utils.h"
+#include "debug/debug.h"
+#include "io/fs_utils.h"
+#include "io/json_utils.h"
 #include "io/master_loader.h"
 #include "io/path_finder.h"
-#include "io/json_utils.h"
-#include "io/fs_utils.h"
 #include "log/log.h"
-#include "debug/debug.h"
-#include "core/string_utils.h"
-#include "core/manifest.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Static Axiomatic Invariants & Module Manifest
+Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Compile-Time Constants
 --------------------------------------------------------------------------------
 */
+#define MODULE_ID          "core.io.master_loader"
+#define LOCAL_LOG_CAT      LOG_CAT_IO
+#define LOCAL_MODULE_TAG   "MasterLoader"
 
 static const char *const s_master_loader_invariants[4] = {
     "Zero dynamic heap allocation during dataset loading",
@@ -100,12 +106,12 @@ const module_metadata_t master_loader_manifest = {
     "core.io.master_loader",
     "master_loader.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    3,
-    "2026-11-06",
+    { 0, 1, 1 },
+    5,
+    "2026-11-10",
     "Zero-heap universal master data loader and 5-block parser",
     3,
-    { "core.io.path_finder", "core.util.json", "core.util.fs", NULL },
+    { "core.io.path_finder", "core.util.json", "core.util.fs" },
     ALLOC_ZERO_HEAP,
     CONCURRENCY_REENTRANT,
     500,
@@ -118,6 +124,33 @@ const module_metadata_t master_loader_manifest = {
     },
     master_loader_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+None. (Stateless data loader; loaded asset records populate caller buffers).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations)
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated execution under ALLOC_ZERO_HEAP).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+static inline bool loader_is_valid_buffer(const void *buf, size_t cap)
+{
+    return (buf != NULL && cap > 0);
+}
 
 /*
 ================================================================================

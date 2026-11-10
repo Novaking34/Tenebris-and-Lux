@@ -45,17 +45,20 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
-Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
+BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
+Stratum: Layer 0 (Core Utilities) | Machine: Engine Debugger & State Rewind
+================================================================================
+Mission: Interactive snapshot ring buffer topology, 3-tier downward include
+ladder, internal debugger state encapsulation, soft tripwires, and module manifest.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
+Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
+Tier 2: External Library Dependencies (None)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
@@ -68,7 +71,7 @@ Tier 3: Internal Engine Foundation Headers
 #include <stdlib.h>
 #include <string.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
@@ -84,35 +87,12 @@ Tier 3: Internal Engine Foundation Headers
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Internal Subsystem State Definition
+Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Compile-Time Constants
 --------------------------------------------------------------------------------
 */
-
-/**
- * @struct debug_subsystem_state
- * @brief Internal runtime state container for the Layer 0 debugger subsystem.
- */
-typedef struct debug_subsystem_state {
-    debug_snapshot_t snapshots[DEBUG_MAX_SNAPSHOTS];
-    size_t snapshot_count;
-    size_t snapshot_head;
-    uint64_t next_snapshot_id;
-
-    debug_breakpoint_t breakpoints[DEBUG_MAX_BREAKPOINTS];
-    size_t breakpoint_count;
-    int next_breakpoint_id;
-
-    debug_step_mode_t step_mode;
-    debug_tripwire_t tripwire_status;
-    char tripwire_details[128];
-    uint32_t traps_triggered;
-
-    debug_config_t config;
-} debug_subsystem_state_t;
-
-static debug_subsystem_state_t s_debug;
-static bool s_debug_active = false;
-static bool s_debug_data_driven = false;
+#define MODULE_ID          "core.util.debug"
+#define LOCAL_LOG_CAT      LOG_CAT_DEBUG
+#define LOCAL_MODULE_TAG   "Debugger"
 
 static const char *const s_debug_invariants[4] = {
     "Zero dynamic heap allocations across all debugger execution routines",
@@ -121,17 +101,56 @@ static const char *const s_debug_invariants[4] = {
     "Non-crashing tripwire traps and historical rewind state restoration"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @struct debug_subsystem_state
+ * @brief Internal runtime state container for the Layer 0 debugger subsystem.
+ */
+typedef struct debug_subsystem_state {
+    debug_snapshot_t   snapshots[DEBUG_MAX_SNAPSHOTS];
+    size_t             snapshot_count;
+    size_t             snapshot_head;
+    uint64_t           next_snapshot_id;
+    uint32_t           high_watermark_snapshots;
+    uint32_t           total_snapshots_captured;
+    uint32_t           total_rewinds_performed;
+
+    debug_breakpoint_t breakpoints[DEBUG_MAX_BREAKPOINTS];
+    size_t             breakpoint_count;
+    int                next_breakpoint_id;
+
+    debug_step_mode_t  step_mode;
+    debug_tripwire_t   tripwire_status;
+    char               tripwire_details[128];
+    uint32_t           traps_triggered;
+
+    debug_config_t     config;
+} debug_subsystem_state_t;
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations)
+--------------------------------------------------------------------------------
+*/
+static debug_subsystem_state_t s_debug;
+static bool s_debug_active = false;
+static bool s_debug_data_driven = false;
+
 const module_metadata_t debug_manifest = {
     "core.util.debug",
-    "debug.h",
+    "debug/debug.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    3,                          /* interface_rev Rev 3 */
-    "2026-11-06",               /* last_updated */
+    { 0, 1, 1 },
+    5,                          /* interface_rev Rev 5 */
+    "2026-11-10",               /* last_updated */
     "Zero-heap engine debugger, snapshot ring buffer & time-travel rewind",
-    4,                          /* dependency_count */
+    3,                          /* dependency_count */
     {
-        "core.util.manifest",
         "core.util.log",
         "core.io.master_loader",
         "core.util.fs"
@@ -148,6 +167,29 @@ const module_metadata_t debug_manifest = {
     },
     debug_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+static inline bool debug_is_valid_snapshot_index(size_t idx)
+{
+    return idx < (size_t)DEBUG_MAX_SNAPSHOTS;
+}
+
+static inline bool debug_is_valid_breakpoint_index(size_t idx)
+{
+    return idx < (size_t)DEBUG_MAX_BREAKPOINTS;
+}
+
+static inline void debug_update_snapshot_watermark(size_t current_count)
+{
+    if (current_count > s_debug.high_watermark_snapshots) {
+        s_debug.high_watermark_snapshots = (uint32_t)current_count;
+    }
+}
 
 /*
 ================================================================================
@@ -464,6 +506,8 @@ uint64_t debug_record_snapshot(const debug_state_fields_t *fields,
     if (s_debug.snapshot_count < s_debug.config.max_snapshots) {
         s_debug.snapshot_count++;
     }
+    debug_update_snapshot_watermark(s_debug.snapshot_count);
+    s_debug.total_snapshots_captured++;
 
     return snap->snapshot_id;
 }

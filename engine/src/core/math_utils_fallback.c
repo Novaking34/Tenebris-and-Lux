@@ -43,6 +43,7 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
 Stratum: Layer 0 (Core Utilities) | Machine: Core Mathematics Engine
+Mission: Quarantined fallback configuration and compile-time arithmetic safeguards.
 ================================================================================
 */
 
@@ -68,6 +69,55 @@ Tier 3: Internal Engine Foundation Headers
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
 #include "core/math_utils_fallback.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "core.math.fallback"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "MATH_FALLBACK"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Monolith code page strictly quarantined from production pipeline
+4. Profile identifier explicitly stamped as MATH_FALLBACK_PROFILE_NAME
+5. loaded_from_data is unconditionally false
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Fallback types declared in core/math_utils_fallback.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless module / zero mutable static variables) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for safe non-zero divisor.
+ */
+static inline bool math_fallback_is_safe_divisor(int divisor)
+{
+    return divisor != 0;
+}
 
 /*
 ================================================================================

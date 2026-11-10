@@ -47,6 +47,8 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: Double-buffered X11 viewport presentation, event dispatching,
+         subsystem layout coordination, and GUI state management.
 ================================================================================
 */
 
@@ -67,26 +69,69 @@ Tier 3: Internal Engine Foundation Headers
 #include <stdint.h>
 #include <stddef.h>
 
-/* --- Tier 2: External Dependencies --- */
+/* --- Tier 2: External Dependencies (X11) --- */
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 
-/* --- Tier 3: Internal Engine Foundation Headers --- */
+/* --- Tier 3: Internal Engine Foundation & Simulation State Bridge Headers --- */
 #include "viewport/raster/gui.h"
 #include "viewport/styling/gui_fonts.h"
 #include "viewport/reel/gui_screens.h"
 #include "viewport/reel/reel.h"
-#include "hero/sim_state.h"
-#include "ending/game.h"
-#include "log/log.h"
+#include "core/manifest.h"
 #include "core/time_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Static Presentation State Registers
+ARCHITECTURAL PLUG COVENANT & 3-LAYER BOUNDARY SPECIFICATION:
+This module sits at the simulation bridge where the Big Machine (engine/)
+displays the active state of the Master Turn Gear (game/).
+The formal 3-layer architecture comprises:
+  1. The Engine (engine/): Generic hardware, viewport, and display apparatus.
+  2. The Game The Engine Runs (The Plug: hero/sim_state.[ch] & ending/game.[ch]):
+     The adapter harness translating domain state into generic display slots.
+  3. The Game Itself (game/): Tactical rules, world lore, and narrative canon.
+The simulation bridge headers below (hero/sim_state.h and ending/game.h) are
+explicitly quarantined here as the known 'plug' seam. When modernization reaches
+the game/ wave, these two file families will receive dedicated adapter elevation
+to complete the formal 3-layer decoupling.
 --------------------------------------------------------------------------------
-Pre-allocated static singletons for display layout, widgets, and fonts.
+*/
+#include "hero/sim_state.h"
+#include "ending/game.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "gui.viewport.x11"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI"
+
+static const char *const gui_invariants[] = {
+    "Double-buffered native X11 rendering with zero-tear guarantees",
+    "Universal action dispatch without direct simulation mutation",
+    "Non-overlapping panel and button geometry bounded within viewport",
+    "Dynamic layout recalibration adapts smoothly to full-screen/resizing",
+    "Headless fallback cleanly downgrades to CLI in DISPLAY absence"
+};
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (GUI interface types declared in viewport/raster/gui.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
 --------------------------------------------------------------------------------
 */
 
@@ -98,6 +143,44 @@ static gui_log_t          s_log;
 static gui_view_mode_t    s_view_mode = GUI_VIEW_25D_ISOMETRIC;
 static gui_screen_mode_t  s_screen_mode = GUI_SCREEN_TACTICAL;
 static reel_t             s_reel;
+
+const module_metadata_t gui_manifest = {
+    MODULE_ID,
+    "gui.h",
+    LAYER_2_PRESENTATION,
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
+    "Desktop presentation viewport, HUD, and 2.5D tactical isometric engine",
+    4,                          /* dependency_count */
+    { "sim.engine.core", "core.util.geom", "core.util.time", "core.util.log" },
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_MAIN_THREAD,    /* concurrency */
+    16666,                      /* max_budget_us */
+    5,
+    {
+        gui_invariants[0],
+        gui_invariants[1],
+        gui_invariants[2],
+        gui_invariants[3],
+        gui_invariants[4]
+    },
+    gui_preflight
+};
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for valid screen mode.
+ */
+static inline bool gui_is_valid_screen_mode(gui_screen_mode_t mode)
+{
+    return mode >= GUI_SCREEN_TACTICAL && mode <= GUI_SCREEN_CHRONICLE;
+}
 
 /*
 ================================================================================
@@ -282,38 +365,6 @@ Mission: Validate holistic system invariants, tripwires, and subsystem stability
 provide pre-flight clearance handshake before advancing to Block 5 execution.
 --------------------------------------------------------------------------------
 */
-
-static const char *const gui_invariants[] = {
-    "Double-buffered native X11 rendering with zero-tear guarantees",
-    "Universal action dispatch without direct simulation mutation",
-    "Non-overlapping panel and button geometry bounded within viewport",
-    "Dynamic layout recalibration adapts smoothly to full-screen/resizing",
-    "Headless fallback cleanly downgrades to CLI in DISPLAY absence"
-};
-
-const module_metadata_t gui_manifest = {
-    "gui.viewport.x11",
-    "gui.h",
-    LAYER_2_PRESENTATION,
-    { 1, 2, 0 },
-    2,                          /* interface_rev */
-    "2026-11-03",               /* last_updated */
-    "Desktop presentation viewport, HUD, and 2.5D tactical isometric engine",
-    4,                          /* dependency_count */
-    { "sim.engine.core", "core.util.geom", "core.util.time", "core.util.log" },
-    ALLOC_ZERO_HEAP,            /* alloc_policy */
-    CONCURRENCY_MAIN_THREAD,    /* concurrency */
-    16666,                      /* max_budget_us */
-    5,
-    {
-        gui_invariants[0],
-        gui_invariants[1],
-        gui_invariants[2],
-        gui_invariants[3],
-        gui_invariants[4]
-    },
-    gui_preflight
-};
 
 /**
  * @brief Pre-flight diagnostic callback probing display accessibility and layout.

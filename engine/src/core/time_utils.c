@@ -42,12 +42,24 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING / STATIC DATA BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
+Mission: High-resolution monotonic timing, delta profiling, frame pacing sleep,
+         and ISO 8601 UTC timestamp formatting.
 ================================================================================
 */
 
 #define _POSIX_C_SOURCE 199309L
 
-/* --- Tier 1: Standard Library Headers --- */
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -56,7 +68,9 @@ Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
 #include <time.h>
 #include <unistd.h>
 
-/* --- Tier 2: Core Engine Specifications & Subsystems --- */
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/time_utils.h"
 #include "core/time_utils_fallback.h"
 #include "core/manifest.h"
@@ -65,6 +79,16 @@ Stratum: Layer 0 (Core Utilities) | Machine: High-Resolution Timing Engine
 #include "log/log.h"
 #include "debug/debug.h"
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "core.util.time"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "TIME"
+
 static const char *const time_invariants[] = {
     "Monotonicity: t2 >= t1 strictly enforced across queries",
     "POSIX CLOCK_MONOTONIC high-resolution timing source",
@@ -72,13 +96,29 @@ static const char *const time_invariants[] = {
     "ISO 8601 UTC calendar timestamp formatting bounds"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Timing structures time_point_t and time_fallback_config_t declared in headers) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless timing engine / queries POSIX clock directly with zero mutable state) */
+
 const module_metadata_t time_utils_manifest = {
-    "core.util.time",
+    MODULE_ID,
     "time_utils.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    4,                          /* interface_rev */
-    "2026-11-07",               /* last_updated */
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
     "High-resolution monotonic timer, delta profiling, frame sleep, and ISO timestamps",
     0,                          /* dependency_count: leaf foundational cog */
     { NULL },                   /* dependencies */
@@ -94,6 +134,20 @@ const module_metadata_t time_utils_manifest = {
     },
     time_utils_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for non-negative duration in milliseconds.
+ */
+static inline bool time_is_non_negative_ms(double ms)
+{
+    return ms >= 0.0;
+}
 
 /*
 ===============================================================================

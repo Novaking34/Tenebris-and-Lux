@@ -43,32 +43,72 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
-Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
+Stratum: Layer 0 (Core Utilities) | Machine: Forensic Telemetry Fallback Engine
+================================================================================
+Mission: 3-tier downward include hierarchy, emergency fallback constants,
+stateless structural ontology, and pre-conditional invariant affirmations.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
+Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
+Tier 2: External Library Dependencies (None)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
 #include "core/string_utils.h"
 #include "log/log.h"
 #include "log/log_fallback.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Constants
+--------------------------------------------------------------------------------
+*/
+#define MODULE_ID          LOG_FALLBACK_MODULE_ID
+#define LOCAL_LOG_CAT      LOG_CAT_LOG
+#define LOCAL_MODULE_TAG   "LogFallback"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+None. (Stateless fallback generator; uses public log_config_t and
+log_fallback_profile_t declared in log/log_fallback.h).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations)
+--------------------------------------------------------------------------------
+None. (Stateless module / pure stack-allocated configuration generator).
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+None. (Stateless fallback module; preflight asserts parameters in Block 4).
+--------------------------------------------------------------------------------
+*/
 
 /*
 ================================================================================

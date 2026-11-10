@@ -49,27 +49,64 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC CONSTANTS & INCLUDES
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: High Fantasy Hope color palette, X11 colormap allocation,
+         RGB channel scaling, and presentation theme hydration.
 ================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy: 3-Tier Downward Architecture
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (X11)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-/* --- Tier 2: External Dependencies --- */
+/* --- Tier 2: External Dependencies (X11) --- */
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "viewport/styling/gui_palette.h"
+#include "core/manifest.h"
 #include "core/math_utils.h"
 #include "core/string_utils.h"
 #include "io/fs_utils.h"
 #include "io/json_utils.h"
 #include "io/path_finder.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
-/* Canonical Canonical High Fantasy Hope Palette Constants */
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Color Constants
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.styling.palette"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI_PALETTE"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Hardware X11 colormap cell allocation paired with direct 32-bit TrueColor math
+4. Saturating arithmetic for RGB channel scaling prevents overflow wraps
+5. Headless-safe fallback: functions correctly even when running without DISPLAY
+*/
+
+/* Canonical High Fantasy Hope Palette Constants */
 #define HEX_BG_OBSIDIAN    0x0F131E
 #define HEX_PANEL_GRANITE  0x181E2E
 #define HEX_BORDER_STONE   0x3A4460
@@ -95,6 +132,52 @@ Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
 #define HEX_TACTICAL_MOVE  0x3898EC
 #define HEX_TACTICAL_ATK   0xF35B7A
 #define HEX_SHADOW         0x07090F
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Palette structures gui_palette_t and color_t declared in viewport/styling/gui_palette.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless palette engine / resolves colors into caller-provided structures) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline helper to extract 8-bit red component from 24-bit RGB hex.
+ */
+static inline uint8_t gui_palette_extract_r(uint32_t hex)
+{
+    return (uint8_t)((hex >> 16) & 0xFF);
+}
+
+/**
+ * @brief Fast static inline helper to extract 8-bit green component from 24-bit RGB hex.
+ */
+static inline uint8_t gui_palette_extract_g(uint32_t hex)
+{
+    return (uint8_t)((hex >> 8) & 0xFF);
+}
+
+/**
+ * @brief Fast static inline helper to extract 8-bit blue component from 24-bit RGB hex.
+ */
+static inline uint8_t gui_palette_extract_b(uint32_t hex)
+{
+    return (uint8_t)(hex & 0xFF);
+}
 
 /*
 ================================================================================

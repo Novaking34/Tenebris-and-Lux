@@ -48,6 +48,8 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC DATA & LOCAL DEFINITIONS
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: Chronicle presentation, HUD dossiers, combat stance indicators,
+         and twin relics resonance gauge rendering.
 ================================================================================
 */
 
@@ -62,21 +64,90 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 /* --- Tier 2: External Dependencies (X11) --- */
 #include <X11/Xlib.h>
 
-/* --- Tier 3: Internal Engine Foundation Headers --- */
+/* --- Tier 3: Internal Engine Foundation & Simulation State Bridge Headers --- */
 #include "viewport/hud/gui_hud.h"
 #include "viewport/hud/gui_widgets.h"
 #include "viewport/styling/gui_fonts.h"
-#include "ending/game.h"
+#include "core/manifest.h"
+#include "log/log.h"
+#include "debug/debug.h"
+
+/*
+--------------------------------------------------------------------------------
+ARCHITECTURAL PLUG COVENANT & 3-LAYER BOUNDARY SPECIFICATION:
+This module sits at the simulation bridge where the Big Machine (engine/)
+displays the active state of the Master Turn Gear (game/).
+The formal 3-layer architecture comprises:
+  1. The Engine (engine/): Generic hardware, viewport, and display apparatus.
+  2. The Game The Engine Runs (The Plug: hero/sim_state.[ch] & ending/game.[ch]):
+     The adapter harness translating domain state into generic display slots.
+  3. The Game Itself (game/): Tactical rules, world lore, and narrative canon.
+The simulation bridge headers below (hero/sim_state.h and ending/game.h) are
+explicitly quarantined here as the known 'plug' seam. When modernization reaches
+the game/ wave, these two file families will receive dedicated adapter elevation
+to complete the formal 3-layer decoupling.
+--------------------------------------------------------------------------------
+*/
 #include "hero/sim_state.h"
+#include "ending/game.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.hud.display.pipeline"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI_HUD"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Presentation follows simulation: HUD is strictly read-only
+4. Chronicle ring buffer renders oldest elements upward in FIFO order
+5. Meter graphics saturate cleanly at 0% and 100% boundaries
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (HUD interface structures declared in viewport/hud/gui_hud.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless presentation rendering pipeline / draws into caller display/drawable) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for valid non-null X11 display handle.
+ */
+static inline bool gui_hud_is_valid_display(const Display *dpy)
+{
+    return dpy != NULL;
+}
 
 /*
 ================================================================================

@@ -45,6 +45,8 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC REGISTRY & LOCAL TYPES
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: Interactive button arrays, health/resonance progress bars,
+         and point-in-rect widget hit testing.
 ================================================================================
 */
 
@@ -59,11 +61,11 @@ Tier 3: Internal Engine Foundation Headers
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 /* --- Tier 2: External Dependencies (X11) --- */
 #include <X11/Xlib.h>
@@ -71,20 +73,52 @@ Tier 3: Internal Engine Foundation Headers
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "viewport/hud/gui_widgets.h"
 #include "viewport/hud/gui_layout.h"
+#include "core/manifest.h"
 #include "core/math_utils.h"
 #include "core/geom_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.3: Local Button Template Structure
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
 --------------------------------------------------------------------------------
 */
 
+#define MODULE_ID           "viewport.hud.widgets"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI_WIDGETS"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Non-anonymous struct definitions for full DWARF debugging
+4. Progress bar fill ratios clamped strictly within [0.0f, 1.0f]
+5. Button click tests execute pure integer point-in-rect checks
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @struct btn_template
+ * @brief Static button configuration template descriptor.
+ */
 typedef struct btn_template {
     const char *label;
     const char *command;
     char        hotkey;
 } btn_template_t;
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
 
 static const btn_template_t TEMPLATES[GUI_NUM_BUTTONS] = {
     { "Ward (W)",      "ward",               'w' },
@@ -97,6 +131,20 @@ static const btn_template_t TEMPLATES[GUI_NUM_BUTTONS] = {
     { "South (R)",     "move south",         'r' },
     { "Quit (Q)",      "quit",               'q' }
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for button index range validity.
+ */
+static inline bool gui_widgets_is_valid_button_idx(int idx)
+{
+    return idx >= 0 && idx < GUI_NUM_BUTTONS;
+}
 
 /*
 ================================================================================

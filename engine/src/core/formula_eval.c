@@ -44,6 +44,7 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
 Stratum: Layer 0 (Core Utilities) | Machine: Combat Mathematics Orchestrator
+Mission: Combat mathematical formula evaluation, mitigation caps, and ability check calibration.
 ================================================================================
 */
 
@@ -79,9 +80,13 @@ Tier 3: Internal Engine Foundation Headers
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Axiomatic Invariants & Central Manifest Anchor
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
 --------------------------------------------------------------------------------
 */
+
+#define MODULE_ID           "core.util.formula"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "FORMULA"
 
 static const char *const formula_eval_invariants[] = {
     "Zero dynamic heap allocations during formula evaluation (ALLOC_ZERO_HEAP)",
@@ -91,13 +96,29 @@ static const char *const formula_eval_invariants[] = {
     "Zero-divisor protection active across all divisions"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Formula eval structures formula_eval_t and formula_eval_config_t declared in core/formula_eval.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless combat formula orchestrator / state is caller-managed) */
+
 const module_metadata_t formula_eval_manifest = {
-    "core.util.formula",
+    MODULE_ID,
     "formula_eval.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    4,                          /* interface_rev */
-    "2026-11-07",               /* last_updated */
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
     "Combat mathematical formula evaluation, mitigation caps and ability checks",
     0,                          /* dependency_count: foundational leaf cog */
     { NULL },                   /* dependencies */
@@ -114,6 +135,20 @@ const module_metadata_t formula_eval_manifest = {
     },
     formula_eval_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for bounded percentage in [0, 100].
+ */
+static inline bool formula_eval_is_valid_pct(int pct)
+{
+    return pct >= 0 && pct <= 100;
+}
 
 /*
 ================================================================================

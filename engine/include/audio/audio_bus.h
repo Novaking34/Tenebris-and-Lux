@@ -101,6 +101,11 @@ Pre-flight verification anchor for the Audio Event Bus engine.
 /** Unique module identifier string for the Audio Event Bus & Mixer subsystem. */
 #define AUDIO_BUS_MODULE_ID            "audio.bus"
 
+/**
+ * Manifest record for the Audio Event Bus & Mixer engine.
+ */
+extern const module_metadata_t audio_bus_manifest;
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.3: Structural Entity & Object Definitions

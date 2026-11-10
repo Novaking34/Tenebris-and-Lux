@@ -58,6 +58,7 @@
 #include "core/formula_eval.h"
 #include "log/log.h"
 #include "debug/debug.h"
+#include "audio/audio_bus.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -118,7 +119,8 @@ static void init_engine_manifest(manifest_registry_t *registry)
     manifest_register(registry, &dispatcher_manifest);
     manifest_register(registry, &game_manifest);
 
-    /* Step 4: Register Layer 2 Presentation Viewport */
+    /* Step 4: Register Layer 2 Presentation & Audio Viewport */
+    manifest_register(registry, &audio_bus_manifest);
     manifest_register(registry, &gui_manifest);
 }
 

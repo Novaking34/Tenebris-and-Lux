@@ -47,17 +47,20 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
-Stratum: Layer 0 (Core Utilities) | Subsystem: VFS Pathfinding Engine
+BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
+Stratum: Layer 0 (Core Utilities) | Machine: VFS Pathfinding Engine
+================================================================================
+Mission: Virtual filesystem domain routing, 3-tier downward include hierarchy,
+VFS root state encapsulation, search candidate cascades, and module manifest.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
+Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
+Tier 2: External Library Dependencies (None)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
@@ -70,24 +73,24 @@ Tier 3: Internal Engine Foundation Headers
 #include <stdlib.h>
 #include <string.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
-#include "io/path_finder.h"
-#include "io/fs_utils.h"
-#include "log/log.h"
-#include "debug/debug.h"
-#include "core/string_utils.h"
 #include "core/manifest.h"
+#include "core/string_utils.h"
+#include "debug/debug.h"
+#include "io/fs_utils.h"
+#include "io/path_finder.h"
+#include "log/log.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Static Axiomatic Invariants & Module Manifest
+Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Constants
 --------------------------------------------------------------------------------
 */
-
-static char s_data_root[PATH_FINDER_MAX_ROOT] = "game/data";
-static bool s_data_root_initialized = false;
+#define MODULE_ID          "core.io.path_finder"
+#define LOCAL_LOG_CAT      LOG_CAT_IO
+#define LOCAL_MODULE_TAG   "PathFinder"
 
 static const char *const s_path_finder_invariants[4] = {
     "Zero dynamic heap allocations during path resolution",
@@ -96,16 +99,25 @@ static const char *const s_path_finder_invariants[4] = {
     "Universal 5-Block Lifecycle Protocol enforced across header and source"
 };
 
+static const char *const s_fallback_candidate_roots[] = {
+    "game/data",
+    "../game/data",
+    "engine/config",
+    "../engine/config",
+    "data",
+    "../data"
+};
+
 const module_metadata_t path_finder_manifest = {
     "core.io.path_finder",
     "path_finder.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    3,
-    "2026-11-06",
+    { 0, 1, 1 },
+    5,
+    "2026-11-10",
     "Zero-heap dynamic VFS pathfinder and data mount engine",
     2,
-    { "core.util.fs", "core.util.string", NULL, NULL },
+    { "core.util.fs", "core.util.string" },
     ALLOC_ZERO_HEAP,
     CONCURRENCY_REENTRANT,
     50,
@@ -121,18 +133,39 @@ const module_metadata_t path_finder_manifest = {
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.2: VFS Domain Search Paths & Fallback Candidate Roots
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
 --------------------------------------------------------------------------------
 */
 
-static const char *const s_fallback_candidate_roots[] = {
-    "game/data",
-    "../game/data",
-    "engine/config",
-    "../engine/config",
-    "data",
-    "../data"
-};
+/**
+ * @struct path_finder_vfs_state
+ * @brief Internal runtime state container for the VFS path resolution engine.
+ */
+typedef struct path_finder_vfs_state {
+    char     data_root[PATH_FINDER_MAX_ROOT];
+    bool     data_root_initialized;
+    uint32_t total_lookups;
+    uint32_t fallback_hits;
+} path_finder_vfs_state_t;
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations)
+--------------------------------------------------------------------------------
+*/
+static char s_data_root[PATH_FINDER_MAX_ROOT] = "game/data";
+static bool s_data_root_initialized = false;
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+static inline bool path_is_separator(char c)
+{
+    return (c == '/' || c == '\\');
+}
 
 static const char *const s_domain_search_paths[] = {
     "",

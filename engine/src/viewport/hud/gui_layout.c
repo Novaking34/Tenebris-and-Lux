@@ -47,23 +47,90 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / STATIC DATA & INCLUDES
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop X11 Viewport
+Mission: Presentation panel geometry calculations, responsive partitioning,
+         and viewport layout manifest hydration.
 ================================================================================
+*/
+
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy: 3-Tier Downward Architecture
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+/* --- Tier 2: External Dependencies (None) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "viewport/hud/gui_layout.h"
+#include "core/manifest.h"
 #include "core/math_utils.h"
 #include "core/geom_utils.h"
 #include "io/fs_utils.h"
 #include "io/json_utils.h"
 #include "io/master_loader.h"
 #include "io/path_finder.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
-#define NUM_PANELS 5
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.hud.layout"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI_LAYOUT"
+#define NUM_PANELS          5
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Responsive coordinate recalculation maintaining aspect ratio
+4. Layout panels remain pairwise disjoint with zero mutual overlap
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Layout structures gui_layout_t, gui_panel_t declared in viewport/hud/gui_layout.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless layout calculator / populates caller-allocated gui_layout_t) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for positive canvas dimensions.
+ */
+static inline bool gui_layout_is_valid_canvas(int width, int height)
+{
+    return width > 0 && height > 0;
+}
 
 /*
 ================================================================================

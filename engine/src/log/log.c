@@ -52,14 +52,17 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & DEPENDENCIES
-Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
+Stratum: Layer 0 (Core Utilities) | Machine: Forensic Telemetry Engine
+================================================================================
+Mission: Telemetry ring buffer sizing, 3-tier downward include hierarchy,
+internal logging state encapsulation, category lookup tables, and module manifest.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
+Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
 Tier 2: External Dependencies (None)
@@ -96,26 +99,13 @@ Tier 3: Internal Engine Foundation Headers
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Static Engine State Variables (Quarantined in .bss)
+Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Compile-Time Constants
 --------------------------------------------------------------------------------
 */
-
-static log_config_t s_config;
-static bool s_initialized = false;
-static FILE *s_file = NULL;
-static size_t s_current_bytes = 0;
-static uint64_t s_sequence_counter = 0;
-static size_t s_rotation_count = 0;
-
-static log_tripwire_t s_tripwire_status = LOG_TRIPWIRE_CLEAR;
-static char s_tripwire_details[256] = "All data pipeline tripwires clear.";
-
-static FILE *s_cat_files[LOG_CAT_COUNT] = { NULL };
-static size_t s_cat_bytes[LOG_CAT_COUNT] = { 0 };
-
-static log_entry_t s_ring_buffer[LOG_RING_BUFFER_CAPACITY];
-static size_t s_ring_head = 0;
-static size_t s_ring_count = 0;
+#define MODULE_ID          "core.util.log"
+#define LOCAL_LOG_CAT      LOG_CAT_LOG
+#define LOCAL_MODULE_TAG   "LogEngine"
+#define ANSI_RESET         "\033[0m"
 
 static const char *s_severity_labels[LOG_SEV_COUNT] = {
     "FATAL   ",
@@ -153,8 +143,6 @@ static const char *s_severity_colors[LOG_SEV_COUNT] = {
     "\033[0;90m"  /* TRACE: Dark Gray */
 };
 
-#define ANSI_RESET "\033[0m"
-
 static const char *const s_log_invariants[5] = {
     "Monotonic sequence counter: ID strictly increments per entry",
     "Gradient grade range: [-1.0f, +1.0f] maps to [-100, +100]",
@@ -163,13 +151,67 @@ static const char *const s_log_invariants[5] = {
     "Static memory boundary: In-flight ring buffer never dynamic allocates"
 };
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @struct log_subsystem_state
+ * @brief Encapsulated internal singleton state for the forensic logging engine.
+ *
+ * Captures active configuration, open file descriptors, monotonic sequence
+ * telemetry, rotation metrics, and the in-flight circular ring buffer.
+ */
+typedef struct log_subsystem_state {
+    log_config_t   config;
+    bool           initialized;
+    bool           safe_mode;
+    FILE          *file;
+    size_t         current_bytes;
+    uint64_t       sequence_counter;
+    size_t         rotation_count;
+    uint32_t       high_watermark_entries;
+    log_tripwire_t tripwire_status;
+    char           tripwire_details[256];
+    FILE          *cat_files[LOG_CAT_COUNT];
+    size_t         cat_bytes[LOG_CAT_COUNT];
+    log_entry_t    ring_buffer[LOG_RING_BUFFER_CAPACITY];
+    size_t         ring_head;
+    size_t         ring_count;
+} log_subsystem_state_t;
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations)
+--------------------------------------------------------------------------------
+*/
+static log_config_t s_config;
+static bool s_initialized = false;
+static FILE *s_file = NULL;
+static size_t s_current_bytes = 0;
+static uint64_t s_sequence_counter = 0;
+static size_t s_rotation_count = 0;
+static uint32_t s_high_watermark_entries = 0;
+
+static log_tripwire_t s_tripwire_status = LOG_TRIPWIRE_CLEAR;
+static char s_tripwire_details[256] = "All data pipeline tripwires clear.";
+
+static FILE *s_cat_files[LOG_CAT_COUNT] = { NULL };
+static size_t s_cat_bytes[LOG_CAT_COUNT] = { 0 };
+
+static log_entry_t s_ring_buffer[LOG_RING_BUFFER_CAPACITY];
+static size_t s_ring_head = 0;
+static size_t s_ring_count = 0;
+
 const module_metadata_t log_manifest = {
     "core.util.log",
     "log/log.h",
     LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    3,
-    "2026-11-06",
+    { 0, 1, 1 },
+    5,
+    "2026-11-10",
     "Forensic telemetry, gradient moral grading, and rotated flight recorder",
     4,
     { "core.util.fs", "core.util.json", "core.util.string", "core.util.time" },
@@ -186,6 +228,29 @@ const module_metadata_t log_manifest = {
     },
     log_preflight
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+static inline bool log_is_severity_valid(log_severity_t sev)
+{
+    return (size_t)sev < (size_t)LOG_SEV_COUNT;
+}
+
+static inline bool log_is_category_valid(log_category_t cat)
+{
+    return (size_t)cat < (size_t)LOG_CAT_COUNT;
+}
+
+static inline void log_update_watermark(size_t current_count)
+{
+    if (current_count > s_high_watermark_entries) {
+        s_high_watermark_entries = (uint32_t)current_count;
+    }
+}
 
 /*
 ================================================================================
@@ -781,6 +846,7 @@ uint64_t log_write_entry(
     if (s_ring_count < LOG_RING_BUFFER_CAPACITY) {
         s_ring_count++;
     }
+    log_update_watermark(s_ring_count);
 
     /* Format machine-greppable fixed-width string */
     char line_buffer[LOG_MAX_LINE_BUFFER];

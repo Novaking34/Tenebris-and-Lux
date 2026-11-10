@@ -45,20 +45,44 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING / STATIC DATA BLOCK
 Stratum: Layer 0 (Core Utilities) | Machine: Central Manifest Registry
+Mission: Central metadata registration, DAG dependency graph resolution,
+         and pre-flight system integrity verification.
 ================================================================================
 */
 
-/* --- Tier 1: Standard Library Headers --- */
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-/* --- Tier 2: Core Engine Specifications & Subsystems --- */
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
 #include "log/log.h"
 #include "debug/debug.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "core.util.manifest"
+#define LOCAL_LOG_CAT       LOG_CAT_SYSTEM
+#define LOCAL_MODULE_TAG    "MANIFEST"
 
 static const char *layer_names[LAYER_COUNT] = {
     "Layer 0: Core Utilities",
@@ -74,6 +98,51 @@ static const char *const manifest_invariants[] = {
     "Policy escalation: FATAL > CRITICAL > WARNING > PASS",
     "Loose bolts principle: Missing upstream dependency yields SEVERITY_FATAL"
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Manifest structures manifest_registry_t and module_metadata_t declared in core/manifest.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless registry engine / storage instance is provided by caller) */
+
+const module_metadata_t manifest_utils_manifest = {
+    MODULE_ID,
+    "manifest.h",
+    LAYER_0_CORE_UTIL,
+    { 0, 1, 1 },
+    5,                          /* interface_rev */
+    "2026-11-09",               /* last_updated */
+    "Central manifest registry and pre-flight policy engine",
+    0,                          /* dependency_count */
+    { NULL },                   /* dependencies */
+    ALLOC_ZERO_HEAP,            /* alloc_policy */
+    CONCURRENCY_REENTRANT,      /* concurrency */
+    10,                         /* max_budget_us */
+    4,
+    {
+        manifest_invariants[0],
+        manifest_invariants[1],
+        manifest_invariants[2],
+        manifest_invariants[3]
+    },
+    manifest_utils_preflight
+};
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
 
 static diag_result_t dummy_pass_check(void)
 {
@@ -118,29 +187,6 @@ static diag_result_t dummy_fatal_check(void)
     res.details = "Fatal invariant breach: loose bolts halt.";
     return res;
 }
-
-const module_metadata_t manifest_utils_manifest = {
-    "core.util.manifest",
-    "manifest.h",
-    LAYER_0_CORE_UTIL,
-    { 0, 1, 0 },
-    4,                          /* interface_rev */
-    "2026-11-07",               /* last_updated */
-    "Central manifest registry and pre-flight policy engine",
-    0,                          /* dependency_count */
-    { NULL },                   /* dependencies */
-    ALLOC_ZERO_HEAP,            /* alloc_policy */
-    CONCURRENCY_REENTRANT,      /* concurrency */
-    10,                         /* max_budget_us */
-    4,
-    {
-        manifest_invariants[0],
-        manifest_invariants[1],
-        manifest_invariants[2],
-        manifest_invariants[3]
-    },
-    manifest_utils_preflight
-};
 
 /*
 ================================================================================

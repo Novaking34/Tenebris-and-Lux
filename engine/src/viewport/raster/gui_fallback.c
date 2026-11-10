@@ -47,6 +47,8 @@ PURPOSE & ARCHITECTURAL ROLE:
 ================================================================================
 BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
 Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop Viewport Rasterizer
+Mission: Quarantined emergency GUI fallback records, headless palette synthesis,
+         and compile-time layout calculations.
 ================================================================================
 */
 
@@ -54,25 +56,74 @@ Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop Viewport Rasterize
 --------------------------------------------------------------------------------
 Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
-Tier 1: ISO C11 Standard Library Headers
+Tier 1: Standard ISO C11 Library Headers
 Tier 2: External Library Dependencies (None)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
 
-/* Tier 1: ISO C11 Standard Library Headers */
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stddef.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 
-/* Tier 2: External Library Dependencies (None) */
+/* --- Tier 2: External Library Dependencies (None) --- */
 
-/* Tier 3: Internal Engine Foundation Headers */
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
 #include "viewport/raster/gui_fallback.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.raster.fallback"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "GUI_FALLBACK"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Monolith code page strictly quarantined from production pipeline
+4. Profile identifier explicitly stamped as GUI_FALLBACK_PROFILE_NAME
+5. loaded_from_data is unconditionally false
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Fallback types declared in viewport/raster/gui_fallback.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless module / zero mutable static variables) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for non-null configuration destination.
+ */
+static inline bool gui_fallback_is_valid_ptr(const void *ptr)
+{
+    return ptr != NULL;
+}
 
 /*
 ================================================================================

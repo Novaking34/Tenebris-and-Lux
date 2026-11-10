@@ -52,23 +52,78 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING / TYPES & DOMAIN ONTOLOGY BLOCK
+BLOCK 2: OPENING / STATIC DATA BLOCK
+Stratum: Layer 2 (Presentation & Viewport) | Machine: Desktop Presentation Reel
+Mission: Horizontal scene film-strip sliding, depth popping/sinking,
+         and kinematic easing transitions.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Architectural Imports & Invariant Forward Declarations
+Include Hierarchy: 3-Tier Downward Architecture
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
 
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "viewport/reel/reel.h"
+#include "viewport/reel/reel_fallback.h"
+#include "core/manifest.h"
+#include "core/math_utils.h"
+#include "log/log.h"
+#include "debug/debug.h"
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.4: Pre-Conditional Helper Cogs & Non-Business Inlines
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "viewport.reel.kinematics"
+#define LOCAL_LOG_CAT       LOG_CAT_VIEWPORT
+#define LOCAL_MODULE_TAG    "REEL"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Kinematic interpolation bounded in monotonic delta time
+4. Horizontal scroll offsets and vertical depth planes bounded
+5. Reentrant state queries with zero dynamic side effects
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Reel structures and enums declared in viewport/reel/reel.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Stateless kinematics engine / operations run on caller-provided reel_t instance) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
 --------------------------------------------------------------------------------
 */
 

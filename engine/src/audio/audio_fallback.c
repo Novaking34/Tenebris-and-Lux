@@ -45,15 +45,68 @@ PURPOSE & ARCHITECTURAL ROLE:
 
 /*
 ================================================================================
-BLOCK 2: OPENING / TYPES & DOMAIN ONTOLOGY BLOCK
+BLOCK 2: OPENING / STATIC DATA BLOCK
+Stratum: Layer 0 / Layer 2 (Audio Presentation) | Machine: Audio Fallback Generator
+Mission: Quarantined emergency audio fallback profile and compile-time mixer safeguards.
 ================================================================================
 */
 
+/*
+--------------------------------------------------------------------------------
+Include Hierarchy (Downward Dependency Ladder)
+--------------------------------------------------------------------------------
+Tier 1: Standard ISO C11 Library Headers
+Tier 2: External Dependencies (None)
+Tier 3: Internal Engine Foundation Headers
+--------------------------------------------------------------------------------
+*/
+
+/* --- Tier 1: Standard ISO C11 Library Headers --- */
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
+/* --- Tier 2: External Dependencies (None) --- */
+
+/* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "audio/audio_fallback.h"
 #include "audio/audio_bus.h"
+#include "core/manifest.h"
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Local Module Manifest Anchor, Category Tags & Invariant Vectors
+--------------------------------------------------------------------------------
+*/
+
+#define MODULE_ID           "audio.fallback"
+#define LOCAL_LOG_CAT       LOG_CAT_AUDIO
+#define LOCAL_MODULE_TAG    "AudioFallback"
+
+/*
+Invariants:
+1. Zero dynamic heap allocations in Layer 0/Layer 2 (ALLOC_ZERO_HEAP)
+2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)
+3. Monolith code page strictly quarantined from production pipeline
+4. Profile identifier explicitly stamped as AUDIO_FALLBACK_PROFILE_NAME
+5. loaded_from_data is unconditionally false
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
+--------------------------------------------------------------------------------
+*/
+
+/* None. (Fallback profile structures declared in audio/audio_fallback.h) */
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anchor
+--------------------------------------------------------------------------------
+*/
 
 static const audio_bus_config_t s_fallback_config = {
     .master_volume = 1.0f,
@@ -66,6 +119,20 @@ static const audio_bus_config_t s_fallback_config = {
     .sample_rate_hz = 48000,
     .limiter_enabled = true
 };
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Fast static inline check for non-zero audio sample rate.
+ */
+static inline bool audio_fallback_is_valid_sample_rate(uint32_t sample_rate_hz)
+{
+    return sample_rate_hz > 0U;
+}
 
 /*
 ================================================================================
