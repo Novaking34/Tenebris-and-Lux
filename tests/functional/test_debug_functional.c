@@ -367,6 +367,25 @@ static void test_debug_functional_assertions_and_guarantees(void)
 --------------------------------------------------------------------------------
 */
 
+static bool s_func_probe_healthy = false;
+
+static diag_result_t func_custom_probe_validator(void)
+{
+    diag_result_t res;
+    res.subsystem = "test.functional.debug";
+    res.check_name = "func_custom_probe_validator";
+    if (s_func_probe_healthy) {
+        res.passed = true;
+        res.severity = SEVERITY_PASS;
+        res.details = "Functional custom probe invariant satisfied.";
+    } else {
+        res.passed = false;
+        res.severity = SEVERITY_CRITICAL;
+        res.details = "Functional custom probe intentionally flagged fault.";
+    }
+    return res;
+}
+
 static void test_debug_functional_emergence(void)
 {
     printf("  [EMERGE-4] Running Section 4: Emergence (Composite State & Stress)...\n");
@@ -403,6 +422,62 @@ static void test_debug_functional_emergence(void)
     TEST_ASSERT(restored.hp == 400, "Restored HP matches expected calculation");
     DEBUG_LOG_FN("debug_rewind_to_snapshot", "logical index 13", "Turn 50 restored with byte-for-byte fidelity");
 
+    /* 4.5 Non-destructive debug_audit() preserves live 64-turn snapshot ring */
+    diag_result_t live_audit = debug_audit(false);
+    TEST_ASSERT(live_audit.passed, "Live debug_audit(false) succeeds");
+    TEST_ASSERT(debug_get_snapshot_count() == DEBUG_MAX_SNAPSHOTS &&
+                debug_get_latest_snapshot() != NULL &&
+                debug_get_latest_snapshot()->state.turn == 100,
+                "debug_audit() must not wipe live ring snapshots");
+    DEBUG_LOG_FN("debug_audit", "live ring active", "Preserved all 64 snapshots through Turn 100");
+
+    /* 4.6 Custom validation probe registration, fail-test -> AWAIT, and probe-recheck resolution */
+    debug_validation_probe_t probe;
+    memset(&probe, 0, sizeof(probe));
+    str_safe_copy(probe.probe_id, "func.custom_cog", sizeof(probe.probe_id));
+    str_safe_copy(probe.subsystem, "test.functional", sizeof(probe.subsystem));
+    str_safe_copy(probe.source_section, "test_debug_functional.c:Sec4", sizeof(probe.source_section));
+    str_safe_copy(probe.test_suite_ref, "test_debug_functional:Sec4", sizeof(probe.test_suite_ref));
+    probe.tier = DEBUG_TEST_TIER_FUNCTIONAL;
+    probe.tripwire_code = DEBUG_TRIPWIRE_TEST_FAILED;
+    probe.reaction = DEBUG_REACTION_PANIC_HALT;
+    probe.validate_fn = func_custom_probe_validator;
+    probe.auto_await = true;
+
+    s_func_probe_healthy = false;
+    int slot1 = debug_register_validation_probe(&probe);
+    int slot2 = debug_register_validation_probe(&probe);
+    TEST_ASSERT(slot1 >= 0 && slot1 == slot2,
+                "Validation probe registration is idempotent on duplicate probe_id");
+
+    TEST_ASSERT(debug_check_tripwires(NULL) >= 1U, "Failing registered probe triggers tripwire check");
+    TEST_ASSERT(debug_is_awaiting() && debug_get_step_mode() == DEBUG_STEP_AWAIT,
+                "Failing probe puts debugger into DEBUG_STEP_AWAIT");
+
+    debug_tripwire_report_t report;
+    TEST_ASSERT(debug_get_tripwire_report(&report) &&
+                report.fallback_completed &&
+                report.await_active &&
+                report.snapshot_locked &&
+                strcmp(report.probe_id, "func.custom_cog") == 0,
+                "Tripwire report records probe ID, Safe-Mode completion, snapshot lock, and AWAIT");
+
+    char rep_text[1024];
+    TEST_ASSERT(debug_dump_tripwire_report(rep_text, sizeof(rep_text)) &&
+                strstr(rep_text, "func.custom_cog") != NULL,
+                "debug_dump_tripwire_report formats active probe report");
+
+    TEST_ASSERT(!debug_resolve_await(&restored, DEBUG_STEP_RUN, "Attempt before fixing probe") &&
+                debug_is_awaiting(),
+                "debug_resolve_await blocks exit while failing probe remains unhealthy");
+
+    s_func_probe_healthy = true;
+    TEST_ASSERT(debug_resolve_await(&restored, DEBUG_STEP_RUN, "Probe repaired and state restored") &&
+                !debug_is_awaiting() &&
+                debug_get_step_mode() == DEBUG_STEP_RUN,
+                "debug_resolve_await resumes cleanly once probe passes again");
+
+    debug_clear_validation_probes();
     debug_shutdown();
     printf("  [EMERGE-4] Section 4 passed: All emergent composite behaviors verified.\n");
 }

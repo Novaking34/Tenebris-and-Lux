@@ -353,6 +353,20 @@ Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
 --------------------------------------------------------------------------------
 Sub-Assembly 3.1: Profile & Manifest Resolution Cogs
 Mission: Ingest, resolve, and configure logging profiles via VFS and master loader.
+@triggers
+  - Tripwires      : LOG_TRIPWIRE_MANIFEST_MISSING / INVALID -> probe "log.manifest_pipeline"
+                     LOG_TRIPWIRE_SETTING_MISSING / INVALID  -> probe "log.setting_profile"
+  - Block 4 Audits : log_validate_manifest_contract(), log_validate_setting_contract(),
+                     log_preflight(), log_audit()
+  - Layer 4 Tests  :
+      * tests/unit/log/test_log_unit.c
+        [Section 1: NOMINAL GOLDEN BASELINE / test_log_unit_always_pass]
+        [Section 2: FAULT-TOLERANT TRIPWIRES & DEGRADATION / test_log_unit_never_fail]
+      * tests/functional/test_log_functional.c
+        [Section 2: NEVER FAIL / GRACEFUL DEGRADATION / test_log_functional_never_fail]
+      * tests/integrated/test_log_integrated.c
+        [Section 2: FAILURE DEGRADATION & PIPELINE RECOVERY / test_log_integrated_never_fail]
+        [Section 3: TELEMETRY ASSET AUDIT / test_log_integrated_assertions_and_guarantees]
 --------------------------------------------------------------------------------
 */
 
@@ -433,6 +447,16 @@ const char *log_get_active_profile_name(void);
 --------------------------------------------------------------------------------
 Sub-Assembly 3.2: File Engine & Telemetry State Cogs
 Mission: Manage directory synthesis, state queries, and perform rotation.
+@triggers
+  - Tripwires      : LOG_TRIPWIRE_BOUNDS_VIOLATION -> probe "log.rotation_io_bounds"
+  - Block 4 Audits : log_validate_rotation_bounds(), log_audit()
+  - Layer 4 Tests  :
+      * tests/unit/log/test_log_unit.c
+        [Section 2: FAULT-TOLERANT TRIPWIRES & DEGRADATION / test_log_unit_never_fail]
+        [Section 4: RING BUFFER FIFO OVERWRITE & FILE ROTATION / test_log_unit_emergence]
+      * tests/system/test_log_system.c
+        [Section 2: CASCADE ROTATION & RETENTION CEILING / test_log_system_never_fail]
+        [Section 4: 10,000-ENTRY CHAOS STRESS & RING BUFFER DYNAMICS / test_log_system_emergence]
 --------------------------------------------------------------------------------
 */
 
@@ -468,6 +492,20 @@ bool log_rotate_if_needed(void);
 --------------------------------------------------------------------------------
 Sub-Assembly 3.3: Formatted Entry Dispatch Cogs
 Mission: Format, serialize, and emit structured flight recorder entries.
+@triggers
+  - Tripwires      : LOG_TRIPWIRE_SETTING_INVALID / BOUNDS_VIOLATION -> probe "log.write_telemetry"
+  - Block 4 Audits : log_validate_telemetry_integrity(), log_preflight()
+  - Layer 4 Tests  :
+      * tests/unit/log/test_log_unit.c
+        [Section 3: INVARIANTS & CONSTRAINTS / test_log_unit_assertions_and_guarantees]
+        [Section 4: RING BUFFER FIFO OVERWRITE & FILE ROTATION / test_log_unit_emergence]
+      * tests/functional/test_log_functional.c
+        [Section 3: INVARIANTS & SATURATION / test_log_functional_assertions_and_guarantees]
+      * tests/integrated/test_log_integrated.c
+        [Section 4: CATEGORICAL DISK ROUTING & HUD RING BUFFER / test_log_integrated_emergence]
+      * tests/system/test_log_system.c
+        [Section 1: NOMINAL HIGH-THROUGHPUT BURST / test_log_system_always_pass]
+        [Section 3: FIXED-WIDTH REGEX DETERMINISM / test_log_system_assertions_and_guarantees]
 --------------------------------------------------------------------------------
 */
 
@@ -528,6 +566,15 @@ float log_percent_to_grade(int percent);
 --------------------------------------------------------------------------------
 Sub-Assembly 3.4: Static Ring Buffer & Telemetry Inspection Cogs
 Mission: Retrieve ordered entries from in-memory ring buffer for HUD readout.
+@triggers
+  - Block 4 Audits : log_validate_telemetry_integrity()
+  - Layer 4 Tests  :
+      * tests/unit/log/test_log_unit.c
+        [Section 4: RING BUFFER FIFO OVERWRITE & FILE ROTATION / test_log_unit_emergence]
+      * tests/integrated/test_log_integrated.c
+        [Section 4: CATEGORICAL DISK ROUTING & HUD RING BUFFER / test_log_integrated_emergence]
+      * tests/system/test_log_system.c
+        [Section 4: 10,000-ENTRY CHAOS STRESS & RING BUFFER DYNAMICS / test_log_system_emergence]
 --------------------------------------------------------------------------------
 */
 
@@ -576,6 +623,15 @@ size_t log_get_top_entries(log_entry_t *dest, size_t max_entries);
 --------------------------------------------------------------------------------
 Sub-Assembly 3.5: String & Enum Parsing Cogs
 Mission: Convert between string tokens and strongly-typed enum representations.
+@triggers
+  - Block 4 Audits : log_preflight(), log_validate_manifest_contract()
+  - Layer 4 Tests  :
+      * tests/unit/log/test_log_unit.c
+        [Section 3: INVARIANTS & CONSTRAINTS / test_log_unit_assertions_and_guarantees]
+      * tests/functional/test_log_functional.c
+        [Section 1: NOMINAL GOLDEN BASELINE FUNCTION EVALUATION / test_log_functional_always_pass]
+      * tests/system/test_log_system.c
+        [Section 3: FIXED-WIDTH REGEX DETERMINISM / test_log_system_assertions_and_guarantees]
 --------------------------------------------------------------------------------
 */
 
@@ -732,6 +788,20 @@ verify that declared subsystem cogs run properly as standalone units.
 bool log_is_data_driven(void);
 
 /**
+ * @brief Queries whether the logging engine is currently operating in Safe Mode.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Returns true if the engine booted using compiled-in ROM backups or hardcoded
+ * emergency presets instead of external configuration folders on disk.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Returns true when initialized and s_log.safe_mode is active (or !loaded_from_data).
+ *
+ * @return true if active in Safe Mode / fallback mode; false in normal disk mode.
+ */
+bool log_is_safe_mode(void);
+
+/**
  * @brief Returns the current state of the logging data pipeline tripwire.
  *
  * ### For Game Designers & Non-Programmers:
@@ -775,6 +845,77 @@ Mission: Validate holistic system invariants, tripwires, and subsystem stability
 provide pre-flight clearance handshake before advancing to Block 5 execution.
 --------------------------------------------------------------------------------
 */
+
+/**
+ * @brief Registers logging Block 4 validation probes with the engine debugger.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Connects five automated logging safety tests directly to the debugger so any
+ * missing telemetry file, corrupted preset, or disk rotation error automatically
+ * finishes safely via Safe Mode and pauses in AWAIT.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Idempotently registers five `debug_validation_probe_t` entries (`log.manifest_pipeline`,
+ * `log.setting_profile`, `log.rotation_io_bounds`, `log.write_telemetry`, and
+ * `log.fallback_bios`) via `debug_register_validation_probe()`.
+ */
+void log_register_debug_probes(void);
+
+/**
+ * @brief Block 4 validation cog asserting telemetry manifest pipeline & ROM table health.
+ *
+ * @triggers
+ * - Probe ID     : `"log.manifest_pipeline"` (`LOG_TRIPWIRE_MANIFEST_MISSING`/`INVALID`)
+ * - Source       : Sub-Assembly 3.1 (`log_load_config_from_manifest`, `log_get_default_config`)
+ * - Layer 4 Test : `tests/unit/log/test_log_unit.c` (Sec 2), `tests/integrated/test_log_integrated.c` (Sec 2 & 3)
+ *
+ * @return diag_result_t reporting `SEVERITY_PASS` or `SEVERITY_CRITICAL` on manifest fault.
+ */
+diag_result_t log_validate_manifest_contract(void);
+
+/**
+ * @brief Block 4 validation cog asserting telemetry setting profile & config invariants.
+ *
+ * @triggers
+ * - Probe ID     : `"log.setting_profile"` (`LOG_TRIPWIRE_SETTING_MISSING`/`INVALID`)
+ * - Source       : Sub-Assembly 3.1 (`log_parse_config_payload`, `log_load_config_from_file`,
+ *                  `log_load_config_profile`)
+ * - Layer 4 Test : `tests/unit/log/test_log_unit.c` (Sec 2),
+ *                  `tests/functional/test_log_functional.c` (Sec 2),
+ *                  `tests/integrated/test_log_integrated.c` (Sec 3)
+ *
+ * @return diag_result_t reporting `SEVERITY_PASS` or `SEVERITY_CRITICAL` on setting fault.
+ */
+diag_result_t log_validate_setting_contract(void);
+
+/**
+ * @brief Block 4 validation cog asserting log rotation ceiling and storage stream bounds.
+ *
+ * @triggers
+ * - Probe ID     : `"log.rotation_io_bounds"` (`LOG_TRIPWIRE_BOUNDS_VIOLATION`)
+ * - Source       : Sub-Assembly 3.2 & 5.2 (`rotate_archive_stream`, `log_rotate_if_needed`,
+ *                  `log_init` validation gate)
+ * - Layer 4 Test : `tests/unit/log/test_log_unit.c` (Sec 2 & 4),
+ *                  `tests/system/test_log_system.c` (Sec 2 & 4)
+ *
+ * @return diag_result_t reporting `SEVERITY_PASS` or `SEVERITY_CRITICAL` on rotation/bounds breach.
+ */
+diag_result_t log_validate_rotation_bounds(void);
+
+/**
+ * @brief Block 4 validation cog asserting ring buffer FIFO watermarks & dispatch stream state.
+ *
+ * @triggers
+ * - Probe ID     : `"log.write_telemetry"`
+ * - Source       : Sub-Assembly 3.3 & 3.4 (`log_write_entry`, `log_dispatch_category_file`,
+ *                  `log_ring_push`)
+ * - Layer 4 Test : `tests/unit/log/test_log_unit.c` (Sec 3 & 4),
+ *                  `tests/integrated/test_log_integrated.c` (Sec 4),
+ *                  `tests/system/test_log_system.c` (Sec 1, 3, 4)
+ *
+ * @return diag_result_t reporting `SEVERITY_PASS` or `SEVERITY_CRITICAL` on ring/dispatch breach.
+ */
+diag_result_t log_validate_telemetry_integrity(void);
 
 /**
  * @brief Executes machine pre-flight diagnostic checks on log subsystem invariants.

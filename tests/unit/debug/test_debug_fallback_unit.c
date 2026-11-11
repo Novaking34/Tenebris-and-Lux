@@ -181,6 +181,47 @@ static void test_debug_fallback_unit_assertions_and_guarantees(void)
     TEST_ASSERT(c1.loaded_from_data == false,
                 "Monolith fallback provenance invariant: loaded_from_data must always be false");
 
+    /* Axiom 5: 9-asset compiled-in .rodata ROM vault, compact floppy preset & tripwire rules */
+    TEST_ASSERT(debug_fallback_rom_count() == 9U, "Diagnostics ROM vault embeds exactly 9 JSON assets");
+    debug_fallback_rom_info_t rom_info;
+    TEST_ASSERT(debug_fallback_get_rom_info(&rom_info) &&
+                rom_info.asset_count == 9U &&
+                rom_info.total_rom_bytes > 0U,
+                "ROM metadata reports 9 valid embedded JSON payloads");
+    size_t asset_len = 0U;
+    TEST_ASSERT(debug_fallback_find_rom_asset("debugger/default", &asset_len) != NULL && asset_len > 0U,
+                "Find ROM asset debugger/default cleanly");
+    TEST_ASSERT(debug_fallback_find_rom_asset("taxonomy/tripwire_matrix", &asset_len) != NULL && asset_len > 0U,
+                "Find ROM asset taxonomy/tripwire_matrix cleanly");
+
+    debug_config_t rom_strict;
+    TEST_ASSERT(debug_fallback_load_rom_profile("strict", &rom_strict, sizeof(rom_strict)),
+                "Hydrate 'strict' profile directly from .rodata ROM");
+    TEST_ASSERT(!rom_strict.loaded_from_data &&
+                strcmp(rom_strict.profile_name, "strict") == 0 &&
+                rom_strict.break_on_error &&
+                rom_strict.locked_slot_quota == DEBUG_FALLBACK_LOCKED_SLOT_QUOTA,
+                "ROM strict profile keeps loaded_from_data=false and snapshot_policy quota");
+
+    debug_config_t rom_trace;
+    TEST_ASSERT(debug_fallback_load_rom_profile("trace", &rom_trace, sizeof(rom_trace)),
+                "Hydrate 'trace' profile directly from .rodata ROM");
+    TEST_ASSERT(!rom_trace.loaded_from_data && strcmp(rom_trace.profile_name, "trace") == 0,
+                "ROM trace profile preserves offline provenance");
+
+    debug_config_t floppy_cfg;
+    debug_get_floppy_safe_config_raw(&floppy_cfg, sizeof(floppy_cfg));
+    TEST_ASSERT(!floppy_cfg.loaded_from_data &&
+                strcmp(floppy_cfg.profile_name, DEBUG_FALLBACK_COMPACT_PROFILE_NAME) == 0 &&
+                floppy_cfg.max_snapshots == DEBUG_FALLBACK_FLOPPY_SNAPSHOTS,
+                "Floppy Safe-Mode preset preserves compact 16-slot bounds");
+
+    debug_fallback_tripwire_rule_t rom_rules[DEBUG_FALLBACK_MAX_TRIPWIRE_RULES];
+    size_t rom_rule_count = 0U;
+    TEST_ASSERT(debug_fallback_load_rom_tripwire_matrix(rom_rules, DEBUG_FALLBACK_MAX_TRIPWIRE_RULES, &rom_rule_count) &&
+                rom_rule_count > 0U,
+                "Taxonomy tripwire matrix parses cleanly from .rodata ROM");
+
     printf("  [AXIOM-3] Section 3 passed: All axiomatic guarantees verified.\n");
 }
 
@@ -208,6 +249,34 @@ static void test_debug_fallback_unit_emergence(void)
         TEST_ASSERT(ok, "Execute inspect succeeds under stress");
         TEST_ASSERT(inspect_cfg.break_on_tripwire == true, "Tripwire break invariant holds");
     }
+
+    /* 4.3 Tier-0 Safe-Mode BIOS boot, fault capture, fallback finish, AWAIT & recovery */
+    TEST_ASSERT(debug_fallback_boot(NULL, 0U) && debug_fallback_is_booted(),
+                "Tier-0 BIOS Safe-Mode boot succeeds cleanly");
+    TEST_ASSERT(!debug_fallback_is_awaiting(), "Initial BIOS state is not awaiting");
+    TEST_ASSERT(debug_fallback_record_fault("test.unit", "Synthetic unit breach", __FILE__, __LINE__, "Section4"),
+                "Record Tier-0 BIOS fault cleanly");
+    TEST_ASSERT(debug_fallback_finish_with_fallback("test.unit", "Completed state safely in fallback"),
+                "Complete interrupted step cleanly in Safe Mode");
+    TEST_ASSERT(debug_fallback_is_awaiting(), "Safe-Mode completion latches BIOS idle AWAIT");
+
+    debug_fallback_stats_t fb_stats;
+    TEST_ASSERT(debug_fallback_get_stats(&fb_stats) &&
+                fb_stats.fault_count >= 1U &&
+                fb_stats.fallback_completed &&
+                fb_stats.await_active,
+                "BIOS Safe-Mode telemetry reflects captured fault and active AWAIT");
+
+    char fb_card[1024];
+    TEST_ASSERT(debug_fallback_execute_dump_card(fb_card, sizeof(fb_card)) > 0U &&
+                strstr(fb_card, "AWAIT") != NULL,
+                "Expanded fallback ASCII card displays AWAIT and ROM status");
+
+    TEST_ASSERT(debug_fallback_clear_await("Unit test repaired Safe-Mode state"),
+                "Clear Tier-0 BIOS AWAIT latch cleanly");
+    TEST_ASSERT(!debug_fallback_is_awaiting(), "BIOS AWAIT cleared after resolution");
+    debug_fallback_shutdown();
+    TEST_ASSERT(!debug_fallback_is_booted(), "BIOS shutdown clears booted flag");
 
     printf("  [EMERGE-4] Section 4 passed: All emergent stress patterns verified.\n");
 }

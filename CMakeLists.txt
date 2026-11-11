@@ -187,6 +187,100 @@ set(ENGINE_UTIL_HEADERS
 )
 
 # ------------------------------------------------------------------------------
+# [ SUB-ASSEMBLY 3.1A: TELEMETRY & DIAGNOSTICS ROM EMBEDDING + LAYER 0 LIB ]
+# Mission: Generate compiled-in .rodata telemetry & diagnostics ROM headers via
+# unified GenerateConfigRom.cmake and compile Layer 0 utilities cleanly once.
+# ------------------------------------------------------------------------------
+
+set(CONFIG_ROM_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/engine/config")
+
+set(TELEMETRY_ROM_DIR "${CONFIG_ROM_ROOT}/diagnostics/telemetry")
+file(GLOB TELEMETRY_ROM_JSONS CONFIGURE_DEPENDS "${TELEMETRY_ROM_DIR}/*.json")
+list(SORT TELEMETRY_ROM_JSONS)
+
+set(TELEMETRY_ROM_HEADER
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/log_telemetry_rom.h"
+)
+
+add_custom_command(
+    OUTPUT "${TELEMETRY_ROM_HEADER}"
+    COMMAND "${CMAKE_COMMAND}"
+        "-DCONFIG_ROOT=${CONFIG_ROM_ROOT}"
+        "-DSUBDIRS=diagnostics/telemetry"
+        "-DOUTPUT_FILE=${TELEMETRY_ROM_HEADER}"
+        "-DHEADER_GUARD=TENEBRIS_LOG_TELEMETRY_ROM_H"
+        "-DSYMBOL_PREFIX=LOG_TELEMETRY_ROM"
+        "-DSTRUCT_TAG=log_rom_asset"
+        "-DTYPE_NAME=log_rom_asset_t"
+        "-DTABLE_NAME=s_log_telemetry_rom_table"
+        "-DVAR_PREFIX=s_rom_telemetry_"
+        "-DBANNER_TITLE=AUTO-GENERATED ENGINE TELEMETRY ROM IMAGE (DO NOT EDIT MANUALLY)"
+        "-DID_MODE=STEM"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
+    DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
+        ${TELEMETRY_ROM_JSONS}
+    COMMENT "Generating compiled-in .rodata telemetry ROM header"
+    VERBATIM
+)
+
+add_custom_target(generate_telemetry_rom DEPENDS "${TELEMETRY_ROM_HEADER}")
+
+set(DEBUG_DIAG_ROM_DIR "${CONFIG_ROM_ROOT}/diagnostics/debugger")
+set(DEBUG_TAXONOMY_ROM_DIR "${CONFIG_ROM_ROOT}/diagnostics/taxonomy")
+file(GLOB DEBUG_DIAG_ROM_JSONS CONFIGURE_DEPENDS
+    "${DEBUG_DIAG_ROM_DIR}/*.json"
+    "${DEBUG_TAXONOMY_ROM_DIR}/*.json"
+)
+list(SORT DEBUG_DIAG_ROM_JSONS)
+
+set(DEBUG_DIAG_ROM_HEADER
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/debug_diagnostics_rom.h"
+)
+
+add_custom_command(
+    OUTPUT "${DEBUG_DIAG_ROM_HEADER}"
+    COMMAND "${CMAKE_COMMAND}"
+        "-DCONFIG_ROOT=${CONFIG_ROM_ROOT}"
+        "-DSUBDIRS=diagnostics/debugger;diagnostics/taxonomy"
+        "-DOUTPUT_FILE=${DEBUG_DIAG_ROM_HEADER}"
+        "-DHEADER_GUARD=TENEBRIS_DEBUG_DIAGNOSTICS_ROM_H"
+        "-DSYMBOL_PREFIX=DEBUG_DIAGNOSTICS_ROM"
+        "-DSTRUCT_TAG=debug_rom_asset"
+        "-DTYPE_NAME=debug_rom_asset_t"
+        "-DTABLE_NAME=s_debug_diagnostics_rom_table"
+        "-DVAR_PREFIX=s_rom_diag_"
+        "-DBANNER_TITLE=AUTO-GENERATED ENGINE DEBUG & TAXONOMY ROM IMAGE (DO NOT EDIT MANUALLY)"
+        "-DID_MODE=SUBDIR_STEM"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
+    DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
+        ${DEBUG_DIAG_ROM_JSONS}
+    COMMENT "Generating compiled-in .rodata debug & taxonomy ROM header"
+    VERBATIM
+)
+
+add_custom_target(generate_diagnostics_rom DEPENDS "${DEBUG_DIAG_ROM_HEADER}")
+
+add_library(tenebris_engine_util OBJECT
+    ${ENGINE_UTIL_SOURCES}
+    ${ENGINE_UTIL_HEADERS}
+)
+add_dependencies(tenebris_engine_util
+    generate_telemetry_rom
+    generate_diagnostics_rom
+)
+target_include_directories(tenebris_engine_util
+    PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
+    PUBLIC
+        engine/include
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+target_compile_options(tenebris_engine_util PRIVATE ${GAME_WARNING_FLAGS})
+target_link_libraries(tenebris_engine_util PUBLIC m)
+
+# ------------------------------------------------------------------------------
 # [ SUB-ASSEMBLY 3.2: LAYER 1 GAME SIMULATION SOURCES & HEADERS ]
 # Mission: Pure simulation state, relics, stances, topology & dispatchers.
 # ------------------------------------------------------------------------------
@@ -322,10 +416,8 @@ add_executable(tenebris-lux
     game/src/main.c
     ${ENGINE_VIEWPORT_SOURCES}
     ${GAME_SIM_SOURCES}
-    ${ENGINE_UTIL_SOURCES}
     ${ENGINE_VIEWPORT_HEADERS}
     ${GAME_SIM_HEADERS}
-    ${ENGINE_UTIL_HEADERS}
 )
 
 # Private include paths: internal headers and X11 system display headers
@@ -334,8 +426,9 @@ target_include_directories(tenebris-lux PRIVATE
     ${X11_INCLUDE_DIR}
 )
 
-# Link against native X11 client library for desktop GUI presentation
+# Link Layer 0 engine utilities and native X11 client library
 target_link_libraries(tenebris-lux PRIVATE
+    tenebris_engine_util
     ${X11_LIBRARIES}
 )
 
@@ -360,54 +453,52 @@ if(BUILD_TESTING)
         tests/functional/test_functional.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_functional PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_functional PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_functional PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # IO Subsystem Functional Assertion & Diagnostic Trace Harness
     add_executable(test_io_functional
         tests/functional/test_io_functional.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_io_functional PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_io_functional PRIVATE tenebris_engine_util)
     target_compile_options(test_io_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # Logging Subsystem Functional Assertion & Diagnostic Trace Harness
     add_executable(test_log_functional
         tests/functional/test_log_functional.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_log_functional PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_log_functional PRIVATE tenebris_engine_util)
     target_compile_options(test_log_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # Debugger Subsystem Functional Assertion & Diagnostic Trace Harness
     add_executable(test_debug_functional
         tests/functional/test_debug_functional.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_debug_functional PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_debug_functional PRIVATE tenebris_engine_util)
     target_compile_options(test_debug_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Utilities Subsystem Functional Assertion & Diagnostic Trace Harness
     add_executable(test_core_functional
         tests/functional/test_core_functional.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_core_functional PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_core_functional PRIVATE m)
+    target_link_libraries(test_core_functional PRIVATE tenebris_engine_util m)
     target_compile_options(test_core_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # Audio Subsystem Functional Assertion Harness
     add_executable(test_audio_functional
         tests/functional/test_audio_functional.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_audio_functional PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_audio_functional PRIVATE tenebris_engine_util)
     target_compile_options(test_audio_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # Viewport & Movie Reel Functional Assertion Harness
@@ -415,13 +506,12 @@ if(BUILD_TESTING)
         tests/functional/test_viewport_functional.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_viewport_functional PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_viewport_functional PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_viewport_functional PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_viewport_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
@@ -433,22 +523,21 @@ if(BUILD_TESTING)
     add_executable(test_gui_palette_unit
         tests/unit/viewport/test_gui_palette_unit.c
         engine/src/viewport/styling/gui_palette.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_palette_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_palette_unit PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(test_gui_palette_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES})
     target_compile_options(test_gui_palette_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI Layout Unit Test
     add_executable(test_gui_layout_unit
         tests/unit/viewport/test_gui_layout_unit.c
         engine/src/viewport/hud/gui_layout.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_layout_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_gui_layout_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_gui_layout_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI Screens Unit Test
@@ -456,13 +545,12 @@ if(BUILD_TESTING)
         tests/unit/viewport/test_gui_screens_unit.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_screens_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_screens_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_gui_screens_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_gui_screens_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI Widgets Unit Test
@@ -471,26 +559,24 @@ if(BUILD_TESTING)
         engine/src/viewport/hud/gui_widgets.c
         engine/src/viewport/hud/gui_layout.c
         engine/src/viewport/styling/gui_palette.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_widgets_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_widgets_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_gui_widgets_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_gui_widgets_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI Fonts Unit Test
     add_executable(test_gui_fonts_unit
         tests/unit/viewport/test_gui_fonts_unit.c
         engine/src/viewport/styling/gui_fonts.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_fonts_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_fonts_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_gui_fonts_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_gui_fonts_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI Assets Unit Test
@@ -498,49 +584,48 @@ if(BUILD_TESTING)
         tests/unit/viewport/test_gui_assets_unit.c
         engine/src/viewport/styling/gui_assets.c
         engine/src/viewport/styling/gui_palette.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_assets_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_assets_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_gui_assets_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_gui_assets_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Combat Subsystem Unit Test
     add_executable(test_combat
         tests/unit/test_combat_unit.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_combat PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_combat PRIVATE tenebris_engine_util)
     target_compile_options(test_combat PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Items Subsystem Unit Test
     add_executable(test_items
         tests/unit/test_items_unit.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_items PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_items PRIVATE tenebris_engine_util)
     target_compile_options(test_items PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation World Subsystem Unit Test
     add_executable(test_world
         tests/unit/test_world_unit.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_world PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_world PRIVATE tenebris_engine_util)
     target_compile_options(test_world PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Dispatch Subsystem Unit Test
     add_executable(test_dispatch
         tests/unit/test_dispatch_unit.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_dispatch PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_dispatch PRIVATE tenebris_engine_util)
     target_compile_options(test_dispatch PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI View2D Unit Test
@@ -548,13 +633,12 @@ if(BUILD_TESTING)
         tests/unit/viewport/test_gui_view2d_unit.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_view2d_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_view2d_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_gui_view2d_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_gui_view2d_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI HUD Unit Test
@@ -562,13 +646,12 @@ if(BUILD_TESTING)
         tests/unit/viewport/test_gui_hud_unit.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_hud_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_hud_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_gui_hud_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_gui_hud_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI Raster Unit Test
@@ -576,226 +659,218 @@ if(BUILD_TESTING)
         tests/unit/viewport/test_gui_raster_unit.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_raster_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_gui_raster_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_gui_raster_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_gui_raster_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation GUI Fallback Monolith Unit Test
     add_executable(test_gui_fallback_unit
         tests/unit/viewport/test_gui_fallback_unit.c
         engine/src/viewport/raster/gui_fallback.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_gui_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_gui_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_gui_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Filesystem Utilities Subsystem Unit Test
     add_executable(test_fs_utils_unit
         tests/unit/io/test_fs_utils_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_fs_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_fs_utils_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_fs_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # VFS Pathfinding Subsystem Unit Test
     add_executable(test_path_finder_unit
         tests/unit/io/test_path_finder_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_path_finder_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_path_finder_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_path_finder_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Zero-Heap JSON Engine Subsystem Unit Test
     add_executable(test_json_utils_unit
         tests/unit/io/test_json_utils_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_json_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_json_utils_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_json_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Master Data Loader Subsystem Unit Test
     add_executable(test_master_loader_unit
         tests/unit/io/test_master_loader_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_master_loader_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_master_loader_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_master_loader_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Forensic Telemetry Engine Subsystem Unit Test
     add_executable(test_log_unit
         tests/unit/log/test_log_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_log_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_log_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_log_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Emergency Logging Fallback Monolith Unit Test
     add_executable(test_log_fallback_unit
         tests/unit/log/test_log_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_log_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_log_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_log_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Debugger Engine Subsystem Unit Test
     add_executable(test_debug_unit
         tests/unit/debug/test_debug_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_debug_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_debug_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_debug_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Emergency Debugging Fallback Monolith Unit Test
     add_executable(test_debug_fallback_unit
         tests/unit/debug/test_debug_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_debug_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_debug_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_debug_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Mathematics Engine Unit Test
     add_executable(test_math_utils_unit
         tests/unit/core/test_math_utils_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_math_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_math_utils_unit PRIVATE m)
+    target_link_libraries(test_math_utils_unit PRIVATE tenebris_engine_util m)
     target_compile_options(test_math_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Mathematics Fallback Monolith Unit Test
     add_executable(test_math_utils_fallback_unit
         tests/unit/core/test_math_utils_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_math_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_math_utils_fallback_unit PRIVATE m)
+    target_link_libraries(test_math_utils_fallback_unit PRIVATE tenebris_engine_util m)
     target_compile_options(test_math_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Time Engine Unit Test
     add_executable(test_time_utils_unit
         tests/unit/core/test_time_utils_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_time_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_time_utils_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_time_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Time Fallback Monolith Unit Test
     add_executable(test_time_utils_fallback_unit
         tests/unit/core/test_time_utils_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_time_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_time_utils_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_time_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Safe String Engine Unit Test
     add_executable(test_string_utils_unit
         tests/unit/core/test_string_utils_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_string_utils_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_string_utils_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_string_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Safe String Fallback Monolith Unit Test
     add_executable(test_string_utils_fallback_unit
         tests/unit/core/test_string_utils_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_string_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_string_utils_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_string_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Geometry & Viewport Engine Unit Test
     add_executable(test_geom_utils_unit
         tests/unit/core/test_geom_utils_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_geom_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_geom_utils_unit PRIVATE m)
+    target_link_libraries(test_geom_utils_unit PRIVATE tenebris_engine_util m)
     target_compile_options(test_geom_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Geometry Fallback Monolith Unit Test
     add_executable(test_geom_utils_fallback_unit
         tests/unit/core/test_geom_utils_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_geom_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_geom_utils_fallback_unit PRIVATE m)
+    target_link_libraries(test_geom_utils_fallback_unit PRIVATE tenebris_engine_util m)
     target_compile_options(test_geom_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Frame Pacing Orchestrator Unit Test
     add_executable(test_clock_pacer_unit
         tests/unit/core/test_clock_pacer_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_clock_pacer_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_clock_pacer_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_clock_pacer_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Frame Pacing Fallback Monolith Unit Test
     add_executable(test_clock_pacer_fallback_unit
         tests/unit/core/test_clock_pacer_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_clock_pacer_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_clock_pacer_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_clock_pacer_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Battle Formula Orchestrator Unit Test
     add_executable(test_formula_eval_unit
         tests/unit/core/test_formula_eval_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_formula_eval_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_formula_eval_unit PRIVATE m)
+    target_link_libraries(test_formula_eval_unit PRIVATE tenebris_engine_util m)
     target_compile_options(test_formula_eval_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Battle Formula Fallback Monolith Unit Test
     add_executable(test_formula_eval_fallback_unit
         tests/unit/core/test_formula_eval_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_formula_eval_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_formula_eval_fallback_unit PRIVATE m)
+    target_link_libraries(test_formula_eval_fallback_unit PRIVATE tenebris_engine_util m)
     target_compile_options(test_formula_eval_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation Movie Reel & Scene Depth Unit Test
     add_executable(test_reel_unit
         tests/unit/viewport/test_reel_unit.c
         engine/src/viewport/reel/reel.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_reel_unit PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_reel_unit PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_reel_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_reel_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Presentation Movie Reel Fallback Monolith Unit Test
     add_executable(test_reel_fallback_unit
         tests/unit/viewport/test_reel_fallback_unit.c
         engine/src/viewport/reel/reel_fallback.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_reel_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_reel_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_reel_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Audio Event Bus & Mixer Subsystem Unit Test
     add_executable(test_audio_bus_unit
         tests/unit/audio/test_audio_bus_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_audio_bus_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_audio_bus_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_audio_bus_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # Emergency Audio Fallback Profile Unit Test
     add_executable(test_audio_fallback_unit
         tests/unit/audio/test_audio_fallback_unit.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_audio_fallback_unit PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_audio_fallback_unit PRIVATE tenebris_engine_util)
     target_compile_options(test_audio_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
@@ -808,64 +883,62 @@ if(BUILD_TESTING)
         tests/integrated/test_utils.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_utils PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_utils PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_utils PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_utils PRIVATE ${GAME_WARNING_FLAGS})
 
     # Simulation Cross-Subsystem Integration Harness
     add_executable(test_sim_integrated
         tests/integrated/test_sim_integrated.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_sim_integrated PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_sim_integrated PRIVATE tenebris_engine_util)
     target_compile_options(test_sim_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # IO Layer Cross-Subsystem Integration Harness
     add_executable(test_io_integrated
         tests/integrated/test_io_integrated.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_io_integrated PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_io_integrated PRIVATE tenebris_engine_util)
     target_compile_options(test_io_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # Logging Subsystem Cross-Pipeline Integration Harness
     add_executable(test_log_integrated
         tests/integrated/test_log_integrated.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_log_integrated PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_log_integrated PRIVATE tenebris_engine_util)
     target_compile_options(test_log_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # Debugger Subsystem Cross-Pipeline Integration Harness
     add_executable(test_debug_integrated
         tests/integrated/test_debug_integrated.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_debug_integrated PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_debug_integrated PRIVATE tenebris_engine_util)
     target_compile_options(test_debug_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Utilities Cross-Pipeline Integration Harness
     add_executable(test_core_integrated
         tests/integrated/test_core_integrated.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_core_integrated PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_core_integrated PRIVATE m)
+    target_link_libraries(test_core_integrated PRIVATE tenebris_engine_util m)
     target_compile_options(test_core_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # Audio Subsystem Cross-Pipeline Integration Harness
     add_executable(test_audio_integrated
         tests/integrated/test_audio_integrated.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_audio_integrated PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_audio_integrated PRIVATE tenebris_engine_util)
     target_compile_options(test_audio_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # Viewport Subsystem Cross-Pipeline Integration Harness
@@ -873,13 +946,12 @@ if(BUILD_TESTING)
         tests/integrated/test_viewport_integrated.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_viewport_integrated PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_viewport_integrated PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_viewport_integrated PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_viewport_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
@@ -891,64 +963,63 @@ if(BUILD_TESTING)
     add_executable(test_game_invariants
         tests/system/test_game_invariants.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
         ${GAME_SIM_HEADERS}
     )
     target_include_directories(test_game_invariants PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_game_invariants PRIVATE tenebris_engine_util)
     target_compile_options(test_game_invariants PRIVATE ${GAME_WARNING_FLAGS})
 
     # System Gameplay Scenarios & Replay Determinism Harness
     add_executable(test_gameplay_scenarios
         tests/system/test_gameplay_scenarios.c
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
         ${GAME_SIM_HEADERS}
     )
     target_include_directories(test_gameplay_scenarios PRIVATE
         ${COMMON_INCLUDES}
     )
+    target_link_libraries(test_gameplay_scenarios PRIVATE tenebris_engine_util)
     target_compile_options(test_gameplay_scenarios
         PRIVATE ${GAME_WARNING_FLAGS})
 
     # IO Layer System Stress, Determinism & Fuzz Harness
     add_executable(test_io_system
         tests/system/test_io_system.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_io_system PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_io_system PRIVATE tenebris_engine_util)
     target_compile_options(test_io_system PRIVATE ${GAME_WARNING_FLAGS})
 
     # Logging Layer System Stress & Rotation Cascade Harness
     add_executable(test_log_system
         tests/system/test_log_system.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_log_system PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_log_system PRIVATE tenebris_engine_util)
     target_compile_options(test_log_system PRIVATE ${GAME_WARNING_FLAGS})
 
     # Debugger Layer System Stress & High-Turn Rewind Harness
     add_executable(test_debug_system
         tests/system/test_debug_system.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_debug_system PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_debug_system PRIVATE tenebris_engine_util)
     target_compile_options(test_debug_system PRIVATE ${GAME_WARNING_FLAGS})
 
     # Core Utilities Layer System Stress & Pacing Cadence Harness
     add_executable(test_core_system
         tests/system/test_core_system.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_core_system PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_core_system PRIVATE m)
+    target_link_libraries(test_core_system PRIVATE tenebris_engine_util m)
     target_compile_options(test_core_system PRIVATE ${GAME_WARNING_FLAGS})
 
     # Audio Layer System Stress & Golden Replay Harness
     add_executable(test_audio_system
         tests/system/test_audio_system.c
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_audio_system PRIVATE ${COMMON_INCLUDES})
+    target_link_libraries(test_audio_system PRIVATE tenebris_engine_util)
     target_compile_options(test_audio_system PRIVATE ${GAME_WARNING_FLAGS})
 
     # Viewport Layer System Stress, Resizing & Movie Reel Enduro Harness
@@ -956,13 +1027,12 @@ if(BUILD_TESTING)
         tests/system/test_viewport_system.c
         ${ENGINE_VIEWPORT_SOURCES}
         ${GAME_SIM_SOURCES}
-        ${ENGINE_UTIL_SOURCES}
     )
     target_include_directories(test_viewport_system PRIVATE
         ${COMMON_INCLUDES}
         ${X11_INCLUDE_DIR}
     )
-    target_link_libraries(test_viewport_system PRIVATE ${X11_LIBRARIES} m)
+    target_link_libraries(test_viewport_system PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
     target_compile_options(test_viewport_system PRIVATE ${GAME_WARNING_FLAGS})
 
 # ==============================================================================

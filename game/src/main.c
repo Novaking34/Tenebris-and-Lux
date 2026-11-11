@@ -369,6 +369,10 @@ static int run_full_subsystem_audit(void)
  */
 int main(int argc, char *argv[])
 {
+    /* Step 0: Arm Tier-0 BIOS Safe-Mode telemetry immediately (RAM Ring + stderr alerts) */
+    log_fallback_boot(NULL);
+    LOG_INFO(LOG_CAT_LOG, "BootBIOS", 0.0f, "Tier-0 BIOS Safe-Mode telemetry armed");
+
     /* Step 1: Initialize presentation mode flags */
     bool force_cli = false;
     bool force_gui = false;
@@ -399,20 +403,40 @@ int main(int argc, char *argv[])
             if (i + 1 < argc) {
                 path_finder_set_data_root(argv[++i]);
             } else {
-                fprintf(stderr, "Error: --data-root requires a directory path.\n");
+                log_fallback_record(
+                    LOG_SEV_ERROR,
+                    LOG_CAT_LOG,
+                    "BootCLI",
+                    -0.5f,
+                    __FILE__,
+                    __LINE__,
+                    __func__,
+                    "CLI argument --data-root missing directory parameter"
+                );
                 return 1;
             }
         } else if (strncmp(argv[i], "--data-root=", 12) == 0) {
             path_finder_set_data_root(argv[i] + 12);
         } else {
-            fprintf(stderr, "Unknown option: %s\nUse --help for usage.\n",
-                    argv[i]);
+            log_fallback_record(
+                LOG_SEV_ERROR,
+                LOG_CAT_LOG,
+                "BootCLI",
+                -0.25f,
+                __FILE__,
+                __LINE__,
+                __func__,
+                "Unknown CLI option '%s'; use --help for usage",
+                argv[i]
+            );
             return 1;
         }
     }
 
-    /* Step 3: Initialize forensic logging & debugging */
-    log_init(NULL);
+    /* Step 3: Initialize forensic logging & debugging (auto-escalate to Safe Mode if needed) */
+    if (!log_init(NULL)) {
+        log_init_emergency_monolith();
+    }
     debug_init(NULL);
     LOG_INFO(LOG_CAT_LOG, "Engine", 0.0f, "Tenebris and Lux boot initialized (mode: %s%s)",
              force_cli ? "CLI" : (force_gui ? "GUI" : "Auto"),

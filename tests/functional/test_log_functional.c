@@ -284,6 +284,41 @@ static void test_log_functional_assertions_and_guarantees(void)
     diag_result_t log_diag = log_preflight();
     TEST_ASSERT(log_diag.passed && log_diag.severity == SEVERITY_PASS, "Log preflight passes");
 
+    /* Invariant 5: Shared severity string parser & Safe-Mode invariants */
+    log_severity_t parsed_sev = LOG_SEV_INFO;
+    TEST_ASSERT(log_fallback_severity_from_string("TRACE", &parsed_sev) && parsed_sev == LOG_SEV_TRACE,
+                "Severity parser maps TRACE -> LOG_SEV_TRACE");
+    TEST_ASSERT(log_fallback_severity_from_string("warn", &parsed_sev) && parsed_sev == LOG_SEV_WARNING,
+                "Severity parser maps lowercase alias warn -> LOG_SEV_WARNING");
+    TEST_ASSERT(log_fallback_severity_from_string("WARNING", &parsed_sev) && parsed_sev == LOG_SEV_WARNING,
+                "Severity parser maps WARNING -> LOG_SEV_WARNING");
+    TEST_ASSERT(log_fallback_severity_from_string("FATAL", &parsed_sev) && parsed_sev == LOG_SEV_FATAL,
+                "Severity parser maps FATAL -> LOG_SEV_FATAL");
+    TEST_ASSERT(!log_fallback_severity_from_string(NULL, &parsed_sev) &&
+                    !log_fallback_severity_from_string("", &parsed_sev) &&
+                    !log_fallback_severity_from_string("INVALID_SEV", &parsed_sev),
+                "Severity parser rejects NULL, empty, and unknown labels");
+
+    TEST_ASSERT(!log_is_safe_mode(), "Safe-Mode reports false when logger is inactive");
+    str_safe_copy(fb.log_dir, "build/logs/functional_log", sizeof(fb.log_dir));
+    fb.echo_to_console = false;
+    TEST_ASSERT(log_init(&fb), "Initialized monolith fallback for Safe-Mode functional check");
+    TEST_ASSERT(log_is_safe_mode() && !log_is_data_driven(),
+                "Safe-Mode reports true under monolith fallback");
+    log_shutdown();
+    TEST_ASSERT(!log_is_safe_mode(), "Safe-Mode clears cleanly on log_shutdown()");
+
+    log_config_t rom_def;
+    TEST_ASSERT(log_fallback_load_rom_profile("default", &rom_def),
+                "Loaded default profile from ROM for Safe-Mode check");
+    str_safe_copy(rom_def.log_dir, "build/logs/functional_log", sizeof(rom_def.log_dir));
+    rom_def.echo_to_console = false;
+    TEST_ASSERT(log_init(&rom_def), "Initialized logger from compiled-in ROM default profile");
+    TEST_ASSERT(log_is_safe_mode() && !log_is_data_driven(),
+                "Safe-Mode reports true under compiled-in ROM hydration");
+    log_shutdown();
+    log_fallback_shutdown();
+
     printf("  [PASS-3] Section 3 passed: All mathematical & contract invariants hold.\n");
 }
 

@@ -193,12 +193,128 @@ static void test_fallback_unit_emergence(void)
     TEST_ASSERT(!stats.loaded_from_data, "Stats confirm not loaded from data");
     TEST_ASSERT(str_case_eq(stats.active_profile, LOG_FALLBACK_PROFILE_NAME), "Stats confirm fallback profile");
     TEST_ASSERT(stats.total_entries == s3, "Total entries matches last sequence");
+    TEST_ASSERT(log_is_safe_mode(), "Safe-Mode is reported active under monolith boot");
 
     /* Step 4.4: Emergency shutdown */
     log_shutdown();
     TEST_ASSERT(!log_is_active(), "Emergency logging deactivated after shutdown");
 
-    printf("  [PASS-4] Section 4 passed: Emergency disaster recovery boot & teardown verified.\n");
+    /* Step 4.5: Compact 1.44 MB floppy preset verification */
+    log_config_t floppy_cfg = log_fallback_get_floppy_config();
+    TEST_ASSERT(str_case_eq(floppy_cfg.profile_name, LOG_FALLBACK_FLOPPY_PROFILE_NAME),
+                "Floppy preset profile is floppy_compact");
+    TEST_ASSERT(floppy_cfg.max_file_size_bytes == LOG_FALLBACK_FLOPPY_MAX_BYTES,
+                "Floppy preset max file size is 64 KB");
+    TEST_ASSERT(floppy_cfg.max_rotated_files == LOG_FALLBACK_FLOPPY_MAX_FILES,
+                "Floppy preset max rotated files is 2");
+    TEST_ASSERT(!floppy_cfg.save_by_category, "Floppy preset disables per-category splits");
+    TEST_ASSERT(!floppy_cfg.loaded_from_data, "Floppy preset flags loaded_from_data=false");
+    TEST_ASSERT(log_fallback_is_recognized_profile(&floppy_cfg),
+                "Floppy preset is recognized by fallback registry");
+
+    /* Step 4.6: Compiled-in .rodata telemetry ROM vault verification */
+    log_fallback_rom_info_t rom_info;
+    TEST_ASSERT(log_fallback_get_rom_info(&rom_info), "Retrieved compiled-in ROM metadata");
+    TEST_ASSERT(rom_info.asset_count == 10U, "ROM vault embeds all 10 telemetry assets");
+    TEST_ASSERT(rom_info.total_rom_bytes == 53649U, "ROM vault total payload size matches 53,649 bytes");
+
+    const char *rom_json = NULL;
+    size_t rom_len = 0U;
+    TEST_ASSERT(log_fallback_get_rom_asset("manifest", &rom_json, &rom_len) && rom_json != NULL && rom_len > 0U,
+                "ROM lookup resolves manifest asset");
+    TEST_ASSERT(log_fallback_get_rom_asset("default", &rom_json, &rom_len) && rom_json != NULL && rom_len > 0U,
+                "ROM lookup resolves default profile asset");
+    TEST_ASSERT(log_fallback_get_rom_asset("diagnostics/telemetry/combat_focus.json", &rom_json, &rom_len) &&
+                    rom_json != NULL && rom_len > 0U,
+                "ROM lookup resolves relative path to combat_focus.json");
+    TEST_ASSERT(!log_fallback_get_rom_asset(NULL, &rom_json, &rom_len),
+                "ROM lookup rejects NULL key");
+    TEST_ASSERT(!log_fallback_get_rom_asset("nonexistent_rom_profile", &rom_json, &rom_len),
+                "ROM lookup rejects unknown profile key");
+
+    log_config_t rom_def;
+    log_config_t rom_cf;
+    TEST_ASSERT(log_fallback_load_rom_profile(NULL, &rom_def),
+                "Loaded default profile from compiled-in ROM vault");
+    TEST_ASSERT(log_fallback_load_rom_profile("combat_focus", &rom_cf),
+                "Loaded combat_focus profile from compiled-in ROM vault");
+    TEST_ASSERT(!rom_def.loaded_from_data && !rom_cf.loaded_from_data,
+                "ROM-hydrated profiles stay marked loaded_from_data=false");
+    TEST_ASSERT(rom_def.max_file_size_bytes > 0U && rom_def.max_rotated_files > 0U,
+                "ROM default profile has valid positive rotation bounds");
+    TEST_ASSERT(rom_cf.max_file_size_bytes > 0U && rom_cf.max_rotated_files > 0U,
+                "ROM combat_focus profile has valid positive rotation bounds");
+    TEST_ASSERT(log_fallback_is_recognized_profile(&rom_def) && log_fallback_is_recognized_profile(&rom_cf),
+                "ROM-hydrated profiles are recognized by fallback registry");
+
+    /* Step 4.7: BIOS Safe-Mode capture ring wraparound, peek, and drain */
+    TEST_ASSERT(log_fallback_boot(NULL), "BIOS fallback boots cleanly in RAM+stderr mode");
+    TEST_ASSERT(log_fallback_is_booted(), "BIOS fallback reports booted state");
+
+    uint64_t prev_seq = 0U;
+    for (unsigned int i = 0U; i < LOG_FALLBACK_RING_CAPACITY + 8U; ++i) {
+        uint64_t seq = log_fallback_record(LOG_SEV_INFO, LOG_CAT_LOG, "BiosRingTest", 0.25f,
+                                           __FILE__, __LINE__, __func__,
+                                           "BIOS capture frame %u", i);
+        TEST_ASSERT(seq > prev_seq, "BIOS fallback capture maintains strictly increasing sequences");
+        prev_seq = seq;
+    }
+
+    log_fallback_stats_t fb_stats;
+    TEST_ASSERT(log_fallback_get_stats(&fb_stats), "Queried BIOS fallback stats");
+    TEST_ASSERT(fb_stats.booted, "BIOS stats confirm booted");
+    TEST_ASSERT(fb_stats.rom_hydrated, "BIOS stats confirm ROM hydration flag");
+    TEST_ASSERT(!fb_stats.disk_fault, "RAM-only BIOS boot has no disk fault");
+    TEST_ASSERT(fb_stats.active_sink == LOG_FALLBACK_SINK_RING_AND_STDERR,
+                "NULL BIOS boot arms LOG_FALLBACK_SINK_RING_AND_STDERR");
+    TEST_ASSERT(fb_stats.ring_capacity == LOG_FALLBACK_RING_CAPACITY, "BIOS ring capacity matches header");
+    TEST_ASSERT(fb_stats.ring_count == LOG_FALLBACK_RING_CAPACITY, "BIOS ring wraps cleanly at capacity 32");
+
+    log_entry_t peek_buf[LOG_FALLBACK_RING_CAPACITY];
+    size_t peek_count = log_fallback_peek_entries(peek_buf, LOG_FALLBACK_RING_CAPACITY);
+    TEST_ASSERT(peek_count == LOG_FALLBACK_RING_CAPACITY, "Peek retrieves all 32 buffered BIOS entries");
+    TEST_ASSERT(log_fallback_get_stats(&fb_stats) && fb_stats.ring_count == LOG_FALLBACK_RING_CAPACITY,
+                "Peek preserves BIOS ring entries non-destructively");
+
+    log_entry_t drain_buf[LOG_FALLBACK_RING_CAPACITY];
+    size_t drain_count = log_fallback_drain_entries(drain_buf, LOG_FALLBACK_RING_CAPACITY);
+    TEST_ASSERT(drain_count == LOG_FALLBACK_RING_CAPACITY, "Drain extracts all 32 buffered BIOS entries");
+    TEST_ASSERT(peek_buf[0].sequence_id == drain_buf[0].sequence_id &&
+                    peek_buf[peek_count - 1U].sequence_id == drain_buf[drain_count - 1U].sequence_id,
+                "Peek and drain preserve identical ring ordering");
+    TEST_ASSERT(log_fallback_get_stats(&fb_stats) && fb_stats.ring_count == 0U,
+                "Drain empties the BIOS capture ring cleanly");
+    log_fallback_shutdown();
+    TEST_ASSERT(!log_fallback_is_booted(), "BIOS fallback clears booted state after shutdown");
+
+    /* Step 4.8: Write-protected / read-only disk degradation test */
+    log_config_t ro_cfg = log_fallback_get_floppy_config();
+    str_safe_copy(ro_cfg.log_dir, "/proc/tenlux_ro_test", sizeof(ro_cfg.log_dir));
+    ro_cfg.echo_to_console = false;
+    TEST_ASSERT(log_fallback_boot(&ro_cfg), "BIOS fallback survives read-only target directory");
+    TEST_ASSERT(log_fallback_get_stats(&fb_stats), "Queried stats under read-only fault");
+    TEST_ASSERT(fb_stats.booted && fb_stats.disk_fault, "Read-only target cleanly latches disk_fault=true");
+    TEST_ASSERT(fb_stats.active_sink == LOG_FALLBACK_SINK_RING_ONLY,
+                "Read-only fault without console degrades to LOG_FALLBACK_SINK_RING_ONLY");
+
+    uint64_t ro_seq = log_fallback_record(LOG_SEV_ERROR, LOG_CAT_LOG, "ReadOnlyMedia", -0.5f,
+                                          __FILE__, __LINE__, __func__,
+                                          "Storage offline, preserved in BIOS ring");
+    TEST_ASSERT(ro_seq > 0U, "Entry still captured in BIOS ring during disk fault");
+    TEST_ASSERT(log_fallback_get_stats(&fb_stats) && fb_stats.ring_count == 1U,
+                "BIOS ring holds degraded disk-fault entry");
+    TEST_ASSERT(log_fallback_drain_entries(drain_buf, 4U) == 1U, "Drained degraded entry cleanly");
+    log_fallback_shutdown();
+
+    /* Step 4.9: Dump card buffer validation (>= 768 bytes required) */
+    char small_card[512];
+    char full_card[768];
+    TEST_ASSERT(!log_fallback_execute_dump_card(&rom_cf, small_card, sizeof(small_card)),
+                "Dump card rejects undersized 512-byte buffer safely");
+    TEST_ASSERT(log_fallback_execute_dump_card(&rom_cf, full_card, sizeof(full_card)) && full_card[0] != '\0',
+                "Dump card formats cleanly into 768-byte buffer");
+
+    printf("  [PASS-4] Section 4 passed: Emergency disaster recovery, ROM vault & Safe-Mode BIOS verified.\n");
 }
 
 /*

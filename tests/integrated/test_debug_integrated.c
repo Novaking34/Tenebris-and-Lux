@@ -303,6 +303,32 @@ static void test_debug_integrated_emergence(void)
     TEST_ASSERT(dlen > 0, "Diff generated");
     TEST_ASSERT(strstr(diff, "400 -> 300") != NULL, "HP diff 400 -> 300 present");
 
+    /* Verify layered debugger policy & taxonomy hydration from disk VFS / ROM */
+    debug_config_t strict_pol;
+    TEST_ASSERT(debug_load_config_profile("strict", &strict_pol) &&
+                strict_pol.engine_traps_active &&
+                strict_pol.game_traps_active,
+                "Integrated strict profile hydrates domain_traps cleanly");
+    (void)debug_load_snapshot_policy(&strict_pol);
+    TEST_ASSERT(strict_pol.locked_slot_quota == 4U,
+                "snapshot_policy.json hydrates canonical locked_slot_quota=4");
+
+    debug_fallback_tripwire_rule_t rules[DEBUG_FALLBACK_MAX_TRIPWIRE_RULES];
+    size_t rule_count = 0U;
+    (void)debug_load_tripwire_matrix(rules, DEBUG_FALLBACK_MAX_TRIPWIRE_RULES, &rule_count);
+    TEST_ASSERT(rule_count > 0U, "tripwire_matrix.json rules hydrated in integrated run");
+
+    /* Corrupt live state -> auto tripwire -> fallback finish -> DEBUG_STEP_AWAIT -> rewind fix */
+    debug_state_fields_t corrupt_turn = make_state(51, "Katrina", 9999, 50, 50, 0, -250);
+    TEST_ASSERT(debug_check_tripwires(&corrupt_turn) >= 1U,
+                "Corrupt simulation state trips domain invariant check");
+    TEST_ASSERT(debug_is_awaiting() &&
+                debug_fallback_is_awaiting() &&
+                debug_get_step_mode() == DEBUG_STEP_AWAIT,
+                "State invariant breach engages Safe Mode and DEBUG_STEP_AWAIT");
+    TEST_ASSERT(debug_resolve_await(&restored, DEBUG_STEP_RUN, "Rewound to healthy Turn 25"),
+                "Rewound valid Turn 25 state clears AWAIT cleanly");
+
     debug_shutdown();
     printf("  [EMERGE-4] Section 4 passed: End-to-end campaign replay and rewind verified.\n");
 }

@@ -240,7 +240,47 @@ static void test_log_system_emergence(void)
     TEST_ASSERT(final_stats.rotation_count > 0, "Multiple rotations executed under stress");
 
     log_shutdown();
-    printf("  [PASS-4] Section 4 passed: 10,000-entry chaos stress & concurrent ring queries verified.\n");
+
+    /* Step 4.3: Compact 1.44 MB floppy BIOS disk burst & tight 2-archive rotation cap */
+    remove("build/logs/system_floppy/floppy_stress.log");
+    remove("build/logs/system_floppy/floppy_stress.log.1");
+    remove("build/logs/system_floppy/floppy_stress.log.2");
+    remove("build/logs/system_floppy/floppy_stress.log.3");
+
+    log_config_t floppy_cfg = log_fallback_get_floppy_config();
+    snprintf(floppy_cfg.log_dir, sizeof(floppy_cfg.log_dir), "build/logs/system_floppy");
+    snprintf(floppy_cfg.base_filename, sizeof(floppy_cfg.base_filename), "floppy_stress.log");
+    floppy_cfg.max_file_size_bytes = 2048U;
+    floppy_cfg.max_rotated_files = 2U;
+    floppy_cfg.echo_to_console = false;
+
+    TEST_ASSERT(log_fallback_boot(&floppy_cfg), "Armed compact floppy BIOS disk sink for rotation stress");
+    for (unsigned int i = 0U; i < 80U; ++i) {
+        uint64_t seq = log_fallback_record(
+            LOG_SEV_WARNING, LOG_CAT_LOG, "FloppyStress", 0.5f, __FILE__, __LINE__, __func__,
+            "Compact floppy rotation burst frame #%03u carrying fixed payload padding [0123456789ABCDEF0123456789ABCDEF]",
+            i);
+        TEST_ASSERT(seq > 0U, "Floppy BIOS stress entry recorded");
+    }
+
+    log_fallback_stats_t fb_stats;
+    TEST_ASSERT(log_fallback_get_stats(&fb_stats), "Inspected floppy BIOS stats after 80-entry burst");
+    TEST_ASSERT(!fb_stats.disk_fault && fb_stats.active_sink == LOG_FALLBACK_SINK_DISK_AND_RING,
+                "Floppy BIOS sink sustained disk writes without fault");
+    TEST_ASSERT(fb_stats.disk_bytes_written > 0U, "Floppy BIOS recorded non-zero disk writes");
+    log_fallback_shutdown();
+
+    FILE *f_rot1 = fopen("build/logs/system_floppy/floppy_stress.log.1", "r");
+    FILE *f_rot2 = fopen("build/logs/system_floppy/floppy_stress.log.2", "r");
+    FILE *f_rot3 = fopen("build/logs/system_floppy/floppy_stress.log.3", "r");
+    TEST_ASSERT(f_rot1 != NULL, "Floppy BIOS rotation archive .1 exists");
+    TEST_ASSERT(f_rot2 != NULL, "Floppy BIOS rotation archive .2 exists");
+    TEST_ASSERT(f_rot3 == NULL, "Floppy BIOS rotation archive .3 suppressed by 2-file cap");
+    if (f_rot1 != NULL) fclose(f_rot1);
+    if (f_rot2 != NULL) fclose(f_rot2);
+    if (f_rot3 != NULL) fclose(f_rot3);
+
+    printf("  [PASS-4] Section 4 passed: 10,000-entry chaos, concurrent ring & floppy BIOS stress verified.\n");
 }
 
 /*

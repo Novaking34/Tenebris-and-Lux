@@ -366,6 +366,78 @@ static void test_debug_unit_emergence(void)
     TEST_ASSERT(restored.hp == expected_hp, "Restored HP matches exact formula");
 
     debug_shutdown();
+
+    /* 4.2 Locked Critical Snapshot Quota (4) + DEBUG_STEP_AWAIT recovery guard */
+    debug_init(NULL);
+    TEST_ASSERT(debug_can_step() && !debug_is_awaiting(), "Debugger can step cleanly after init");
+
+    uint64_t lock_ids[5] = { 0 };
+    for (int t = 1; t <= 6; t++) {
+        debug_state_fields_t s = make_state(t, "Elijah", 450 + t, 60, 40, t % 4, t);
+        uint64_t sid = debug_record_snapshot(&s, "lock_setup", "critical");
+        if (t <= 5) {
+            lock_ids[t - 1] = sid;
+        }
+    }
+
+    for (size_t i = 0U; i < DEBUG_FALLBACK_LOCKED_SLOT_QUOTA; i++) {
+        TEST_ASSERT(debug_lock_snapshot(lock_ids[i], "UNIT_CRITICAL_LOCK"),
+                    "Lock snapshot within quota succeeds");
+    }
+    /* Locking 5th snapshot rotates out oldest lock (Turn 1) to stay at quota=4 */
+    TEST_ASSERT(debug_lock_snapshot(lock_ids[4], "QUOTA_ROTATE"),
+                "Locking 5th snapshot rotates oldest locked slot cleanly");
+    debug_stats_t lock_stats;
+    TEST_ASSERT(debug_execute_inspect(&lock_stats) &&
+                lock_stats.locked_snapshot_count == DEBUG_FALLBACK_LOCKED_SLOT_QUOTA,
+                "Active locked_snapshot_count remains clamped at quota=4");
+
+    /* Push 120 more turns; turns 2..5 MUST survive ring wrap in slots 0..3 */
+    for (int t = 7; t <= 126; t++) {
+        debug_state_fields_t s = make_state(t, "Elijah", 400 + (t % 90), 50, 50, t % 4, 0);
+        (void)debug_record_snapshot(&s, "advance", "fifo");
+    }
+    TEST_ASSERT(debug_get_snapshot_count() == DEBUG_MAX_SNAPSHOTS,
+                "Ring count remains clamped at 64 with locked slots");
+
+    for (size_t idx = 0U; idx < DEBUG_FALLBACK_LOCKED_SLOT_QUOTA; idx++) {
+        debug_snapshot_t locked_snap;
+        TEST_ASSERT(debug_get_snapshot(idx, &locked_snap) &&
+                    locked_snap.locked &&
+                    locked_snap.state.turn == (int)(idx + 2U),
+                    "Locked critical snapshot survives ring eviction in chronological slot");
+    }
+    debug_snapshot_t sliding_head;
+    TEST_ASSERT(debug_get_snapshot(DEBUG_FALLBACK_LOCKED_SLOT_QUOTA, &sliding_head) &&
+                sliding_head.state.turn == 67,
+                "First evictable slot after 4 locks reflects turn 67 at turn 126");
+
+    /* Trigger validation probe -> Safe-Mode completion -> DEBUG_STEP_AWAIT */
+    TEST_ASSERT(debug_trigger_probe("unit.state_guard", "unit.sim", "Synthetic fail-test trap",
+                                    __FILE__, __LINE__, __func__),
+                "Trigger unit validation probe cleanly");
+    TEST_ASSERT(debug_is_awaiting() &&
+                debug_get_step_mode() == DEBUG_STEP_AWAIT &&
+                !debug_can_step(),
+                "Debugger latches DEBUG_STEP_AWAIT and blocks further stepping");
+
+    debug_set_step_mode(DEBUG_STEP_RUN);
+    TEST_ASSERT(debug_get_step_mode() == DEBUG_STEP_AWAIT,
+                "debug_set_step_mode cannot bypass active DEBUG_STEP_AWAIT");
+
+    debug_state_fields_t corrupt = make_state(126, "Elijah", -25, 50, 50, 0, 250);
+    TEST_ASSERT(!debug_resolve_await(&corrupt, DEBUG_STEP_RUN, "Corrupt reject check") &&
+                debug_is_awaiting(),
+                "debug_resolve_await rejects out-of-bounds HP/sway and holds AWAIT");
+
+    debug_state_fields_t repaired = make_state(126, "Elijah", 450, 50, 50, 0, 10);
+    TEST_ASSERT(debug_resolve_await(&repaired, DEBUG_STEP_RUN, "Unit state repaired cleanly") &&
+                !debug_is_awaiting() &&
+                debug_can_step() &&
+                debug_get_step_mode() == DEBUG_STEP_RUN,
+                "debug_resolve_await restores execution once valid state verified");
+
+    debug_shutdown();
     printf("  [EMERGE-4] Section 4 passed: All emergent stress patterns verified.\n");
 }
 

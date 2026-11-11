@@ -111,7 +111,16 @@ For Programmers: Guarantees 100% zero-heap allocation (ALLOC_ZERO_HEAP) in .bss.
 #define DEBUG_DEFAULT_PROFILE     "default"
 
 /** Canonical virtual filesystem path to the debugger master manifest. */
-#define DEBUG_MANIFEST_PATH       "diagnostics/debugger/manifest.json"
+#define DEBUG_MANIFEST_PATH         "diagnostics/debugger/manifest.json"
+
+/** Canonical virtual filesystem path to snapshot retention policy JSON. */
+#define DEBUG_SNAPSHOT_POLICY_PATH  "diagnostics/debugger/snapshot_policy.json"
+
+/** Canonical virtual filesystem path to taxonomic tripwire reaction matrix JSON. */
+#define DEBUG_TRIPWIRE_MATRIX_PATH  "diagnostics/taxonomy/tripwire_matrix.json"
+
+/** Maximum registered subsystem validation probes evaluated by the debugger. */
+#define DEBUG_MAX_VALIDATION_PROBES 32U
 
 /*
 --------------------------------------------------------------------------------
@@ -147,6 +156,9 @@ All structs and enums MUST have explicit non-anonymous tags for DWARF symbols.
  *   - OVER_TURN: Pauses at the end of each combat turn so you can inspect values.
  *   - INTO_COG: Micro-steps through individual calculations (damage, poise).
  *   - PAUSED: Frozen in place for interactive inspection.
+ *   - AWAIT: Emergency idle halt entered after a tripwire completes safely in
+ *     fallback mode; blocks RUN until the fault is repaired and a healthy state
+ *     is restored.
  *
  * For Programmers: Execution cadence controller for simulation drivers.
  */
@@ -154,7 +166,8 @@ typedef enum debug_step_mode {
     DEBUG_STEP_RUN = 0,        /**< Continuous execution until breakpoint/tripwire */
     DEBUG_STEP_OVER_TURN = 1,  /**< Pause at turn boundaries */
     DEBUG_STEP_INTO_COG = 2,   /**< Micro-step individual cog sub-assemblies */
-    DEBUG_STEP_PAUSED = 3      /**< Engine is currently paused */
+    DEBUG_STEP_PAUSED = 3,     /**< Engine is currently paused */
+    DEBUG_STEP_AWAIT = 4       /**< Halted idle awaiting repair & state restore */
 } debug_step_mode_t;
 
 /**
@@ -182,22 +195,8 @@ typedef enum debug_breakpoint_type {
     DEBUG_BREAK_TRIPWIRE           /**< Break upon any tripwire trap */
 } debug_breakpoint_type_t;
 
-/**
- * @enum debug_tripwire
- * @brief Latched diagnostic tripwire states for the debugger data pipeline.
- *
- * For Designers: Alarm switches that indicate if configuration data was missing
- * or damaged, or if simulation numbers became mathematically corrupt.
- *
- * For Programmers: Latching error codes verified during pre-flight diagnostics.
- */
-typedef enum debug_tripwire {
-    DEBUG_TRIPWIRE_CLEAR = 0,
-    DEBUG_TRIPWIRE_MANIFEST_MISSING,
-    DEBUG_TRIPWIRE_SETTING_MISSING,
-    DEBUG_TRIPWIRE_STATE_CORRUPT,
-    DEBUG_TRIPWIRE_HASH_MISMATCH
-} debug_tripwire_t;
+/* Note: debug_tripwire_t, debug_tripwire_reaction_t, and debug_test_tier_t
+ * are defined canonically in debug/debug_fallback.h (Tier 3 include above). */
 
 /**
  * @struct debug_state_fields
@@ -244,6 +243,8 @@ typedef struct debug_snapshot {
     char last_arg[64];
     uint32_t state_hash;
     uint64_t log_sequence_id;
+    bool locked;               /**< Eviction guard enforced up to locked_slot_quota */
+    char lock_reason[48];      /**< Reason snapshot was pinned (e.g., TRIPWIRE_LATCH) */
 } debug_snapshot_t;
 
 /**
@@ -287,26 +288,89 @@ typedef struct debug_config {
     char trace_channels[DEBUG_MAX_CHANNELS_LEN];
     char profile_name[32];
     bool loaded_from_data;
+    bool engine_traps_active;      /**< Domain gate: Layer 0 infrastructure traps */
+    bool game_traps_active;        /**< Domain gate: Layer 1 simulation traps */
+    size_t locked_slot_quota;      /**< Locked critical slots in ring (default 4) */
+    bool verify_on_step;           /**< Evaluate registered probes each step check */
+    bool auto_await_on_tripwire;   /**< Enter DEBUG_STEP_AWAIT after fallback step */
 } debug_config_t;
+
+/**
+ * @brief Validation probe callback signature returning Block 4 diag_result_t.
+ */
+typedef diag_result_t (*debug_validation_probe_fn)(void);
+
+/**
+ * @struct debug_validation_probe
+ * @brief Registered Block 4 / Layer 4 fail-test trigger linked into tripwire monitoring.
+ *
+ * For Designers: Connects an automated safety check or test directly to the
+ * debugger so any broken rule instantly stops playback in AWAIT rather than
+ * continuing with corrupted numbers.
+ *
+ * For Programmers: Binds exact source function/block locations, Block 4
+ * validate_fn callbacks, and Layer 4 test suite references into O(N) checks.
+ */
+typedef struct debug_validation_probe {
+    char                      probe_id[48];       /**< Unique probe ID (e.g., "log.setting_missing") */
+    char                      subsystem[32];      /**< Owning subsystem ID (e.g., "log.engine") */
+    char                      source_section[64]; /**< Precise file/block/function trigger anchor */
+    char                      test_suite_ref[64]; /**< Mapped Layer 4 test suite & section */
+    debug_test_tier_t         tier;               /**< Verification stratum (AUDIT..SYSTEM) */
+    debug_tripwire_t          tripwire_code;      /**< Categorized tripwire code latched on failure */
+    debug_tripwire_reaction_t reaction;           /**< Configured reaction strategy */
+    debug_validation_probe_fn validate_fn;        /**< Optional Block 4 validation probe callback */
+    bool                      auto_await;         /**< True to pause in DEBUG_STEP_AWAIT after fallback */
+    bool                      is_active;          /**< True if probe registration slot is live */
+    uint32_t                  trigger_count;      /**< Lifetime number of times probe fired */
+} debug_validation_probe_t;
+
+/**
+ * @struct debug_tripwire_report
+ * @brief Forensic report capturing active tripwire, fallback completion, and AWAIT state.
+ */
+typedef struct debug_tripwire_report {
+    debug_tripwire_t          tripwire_status;
+    debug_tripwire_reaction_t reaction;
+    debug_test_tier_t         tier;
+    bool                      fallback_completed;
+    bool                      await_active;
+    bool                      snapshot_locked;
+    uint64_t                  locked_snapshot_id;
+    char                      probe_id[48];
+    char                      subsystem[32];
+    char                      condition[128];
+    char                      source_location[96];
+    char                      source_section[64];
+    char                      test_suite_ref[64];
+    char                      fallback_action[96];
+} debug_tripwire_report_t;
 
 /**
  * @struct debug_stats
  * @brief Aggregate runtime telemetry report constructed by Block 5 execution procedures.
  *
  * For Designers: A status scorecard showing total snapshots, active watchpoints,
- * and whether any tripwire alarms have triggered.
+ * Safe-Mode fallback status, and whether any tripwire alarms have paused in AWAIT.
  *
  * For Programmers: Telemetry structure constructed by debug_execute_inspect().
  */
 typedef struct debug_stats {
-    size_t snapshot_count;        /**< Number of active snapshots in ring buffer. */
-    size_t max_snapshots;         /**< Configured snapshot capacity limit. */
-    size_t breakpoint_count;      /**< Number of active breakpoints registered. */
-    uint32_t traps_triggered;     /**< Number of tripwire traps triggered. */
-    debug_step_mode_t step_mode;  /**< Active stepping execution mode. */
-    bool is_active;               /**< true if debugger is initialized and active. */
-    bool loaded_from_data;        /**< true if loaded from JSON profile. */
-    char active_profile[32];      /**< Name of loaded profile. */
+    size_t snapshot_count;         /**< Number of active snapshots in ring buffer. */
+    size_t max_snapshots;          /**< Configured snapshot capacity limit. */
+    size_t breakpoint_count;       /**< Number of active breakpoints registered. */
+    uint32_t traps_triggered;      /**< Number of tripwire traps triggered. */
+    debug_step_mode_t step_mode;   /**< Active stepping execution mode. */
+    bool is_active;                /**< true if debugger is initialized and active. */
+    bool loaded_from_data;         /**< true if loaded from JSON profile. */
+    char active_profile[32];       /**< Name of loaded profile. */
+    size_t locked_snapshot_count;  /**< Number of locked critical snapshots in ring. */
+    size_t registered_probe_count; /**< Active registered validation probes. */
+    uint32_t probe_failures;       /**< Count of validation probe fail triggers. */
+    bool safe_mode;                /**< true if operating via Safe-Mode fallback/ROM. */
+    bool await_active;             /**< true if halted in DEBUG_STEP_AWAIT. */
+    bool fallback_completed;       /**< true if fallback completed interrupted step. */
+    debug_tripwire_t tripwire_status; /**< Active tripwire code. */
 } debug_stats_t;
 
 /*
@@ -325,7 +389,7 @@ Guarantees zero heap, pure reentrancy, and fast pre-flight assertion checks.
  * @return true if mode is within canonical bounds; false otherwise.
  */
 static inline bool debug_step_mode_is_valid(debug_step_mode_t mode) {
-    return mode >= DEBUG_STEP_RUN && mode <= DEBUG_STEP_PAUSED;
+    return mode >= DEBUG_STEP_RUN && mode <= DEBUG_STEP_AWAIT;
 }
 
 /**
@@ -360,6 +424,7 @@ static inline const char *debug_step_mode_name(debug_step_mode_t mode) {
         case DEBUG_STEP_OVER_TURN: return "OVER_TURN";
         case DEBUG_STEP_INTO_COG:  return "INTO_COG";
         case DEBUG_STEP_PAUSED:    return "PAUSED";
+        case DEBUG_STEP_AWAIT:     return "AWAIT";
         default:                   return "UNKNOWN";
     }
 }
@@ -463,6 +528,32 @@ bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *
  */
 bool debug_load_config_profile(const char *profile_name, debug_config_t *out_config);
 
+/**
+ * @brief Overlays snapshot retention policy rules onto a debugger configuration.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Resolves `DEBUG_SNAPSHOT_POLICY_PATH` via Layer 0 VFS (`path_finder`) and
+ * falls back cleanly to embedded `.rodata` ROM if disk assets are absent.
+ *
+ * @param[in,out] cfg Configuration struct to enrich with ring & lock quotas.
+ * @return true if loaded from disk VFS; false if satisfied via ROM/defaults.
+ */
+bool debug_load_snapshot_policy(debug_config_t *cfg);
+
+/**
+ * @brief Loads taxonomic tripwire reaction rules from disk VFS or ROM fallback.
+ *
+ * @param[out] out_rules Destination rule array.
+ * @param[in]  max_rules Maximum rule capacity.
+ * @param[out] out_count Number of parsed reaction rules.
+ * @return true if loaded from disk VFS; false if satisfied via ROM fallback.
+ */
+bool debug_load_tripwire_matrix(
+    debug_fallback_tripwire_rule_t *out_rules,
+    size_t                          max_rules,
+    size_t                         *out_count
+);
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 3.2: Snapshots & Time-Travel Rewind Cogs
@@ -486,6 +577,15 @@ Sub-Assembly 3.2: Snapshots & Time-Travel Rewind Cogs
  */
 uint64_t debug_record_snapshot(const debug_state_fields_t *fields,
                                const char *cmd, const char *arg);
+
+/**
+ * @brief Marks a recorded snapshot slot as locked against circular FIFO eviction.
+ *
+ * @param[in] snapshot_id Monotonic snapshot ID to pin (0 locks most recent).
+ * @param[in] lock_reason Reason tag (e.g. `"TRIGGER_TRIPWIRE_LATCH"`).
+ * @return true if snapshot was found and locked (respecting locked_slot_quota).
+ */
+bool debug_lock_snapshot(uint64_t snapshot_id, const char *lock_reason);
 
 /**
  * @brief Returns the total number of valid snapshots currently recorded.
@@ -637,6 +737,71 @@ bool debug_check_breakpoints(const debug_state_fields_t *fields,
 void debug_trap_tripwire(const char *subsystem, const char *condition,
                          const char *file, int line);
 
+/**
+ * @brief Registers a subsystem Block 4 / Layer 4 validation probe with the debugger.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Connects an automated self-check test to the debugger so that if an anomaly
+ * or failing rule occurs, the matching test fires immediately, Safe Mode
+ * finishes the interrupted action safely, and playback halts in AWAIT.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Stores probe metadata (exact source function/block section, Block 4 validate_fn,
+ * and Layer 4 test suite reference) in the static s_debug.probes[] table.
+ * Idempotent on identical `probe_id` (updates slot cleanly without leaking).
+ *
+ * @param[in] probe Populated validation probe descriptor.
+ * @return Zero-based probe slot index on success, or -1 if capacity reached/invalid.
+ */
+int debug_register_validation_probe(const debug_validation_probe_t *probe);
+
+/**
+ * @brief Unregisters all active validation probes (used cleanly in isolated tests).
+ */
+void debug_clear_validation_probes(void);
+
+/**
+ * @brief Fires a registered validation probe (or fallback anomaly tripwire) immediately.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Workflow executed on invocation:
+ *   1. Locates matching registered probe (`probe_id`), or synthesizes ad-hoc probe.
+ *   2. Invokes `probe->validate_fn()` (guarded against recursion) when registered.
+ *   3. Traps diagnostic details and pins an emergency locked snapshot when active.
+ *   4. Downgrades to Safe-Mode fallback to finish the interrupted execution cleanly.
+ *   5. Latches `DEBUG_STEP_AWAIT` (when active, `auto_await`, and `!in_probe`).
+ *
+ * @param[in] probe_id  Registered probe identifier (e.g., `"log.setting_missing"`).
+ * @param[in] subsystem Subsystem raising the event.
+ * @param[in] condition Detailed anomaly or failure reason.
+ * @param[in] file      Source file anchor (`__FILE__`).
+ * @param[in] line      Source line anchor (`__LINE__`).
+ * @param[in] func      Source function anchor (`__func__`).
+ * @return true if probe executed and completed fallback/await handling.
+ */
+bool debug_trigger_probe(
+    const char *probe_id,
+    const char *subsystem,
+    const char *condition,
+    const char *file,
+    int         line,
+    const char *func
+);
+
+/**
+ * @brief Evaluates all registered validation probes against live state invariants.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Executes every registered `validate_fn` hook in order. If any probe fails
+ * (`!res.passed` or `SEVERITY_FATAL`/`SEVERITY_FAIL`), automatically fires
+ * `debug_trigger_probe()` to downgrade via fallback, lock a forensic snapshot,
+ * and pause in `DEBUG_STEP_AWAIT`.
+ *
+ * @param[in] fields Optional live state snapshot fields checked for NaN/bounds (may be NULL).
+ * @return Number of probes that failed and triggered fallback -> AWAIT.
+ */
+size_t debug_check_tripwires(const debug_state_fields_t *fields);
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 3.4: Stepping & Execution Control Cogs
@@ -647,10 +812,12 @@ Sub-Assembly 3.4: Stepping & Execution Control Cogs
  * @brief Sets the execution stepping mode.
  *
  * ### For Game Designers & Non-Programmers:
- * Controls playback speed (continuous run, pause, or step forward one turn at a time).
+ * Controls playback speed (continuous run, pause, step forward, or AWAIT halt).
+ * Note: While locked in AWAIT after an unresolved tripwire, continuous RUN and
+ * stepping remain blocked until `debug_resolve_await()` confirms recovery.
  *
  * ### For Systems Programmers & Engine Architects:
- * Updates the active debug_step_mode_t state machine.
+ * Updates the active debug_step_mode_t state machine cleanly.
  */
 void debug_set_step_mode(debug_step_mode_t mode);
 
@@ -658,12 +825,50 @@ void debug_set_step_mode(debug_step_mode_t mode);
  * @brief Retrieves the active execution stepping mode.
  *
  * ### For Game Designers & Non-Programmers:
- * Checks whether the game is paused or running normally.
+ * Checks whether the game is paused, awaiting recovery, or running normally.
  *
  * ### For Systems Programmers & Engine Architects:
  * Returns current debug_step_mode_t enum value.
  */
 debug_step_mode_t debug_get_step_mode(void);
+
+/**
+ * @brief Queries whether the debugger is currently halted idle in DEBUG_STEP_AWAIT.
+ *
+ * @return true if AWAIT latch is engaged.
+ */
+bool debug_is_awaiting(void);
+
+/**
+ * @brief Returns true if execution may advance (debugger inactive or not blocked in AWAIT).
+ *
+ * @return true if simulation stepping is permitted; false if blocked in PAUSED/AWAIT.
+ */
+bool debug_can_step(void);
+
+/**
+ * @brief Addresses an active AWAIT halt by validating repaired state and clearing latch.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Exits emergency pause once you have rewound to a healthy turn or repaired
+ * invalid numbers, verifying the repaired state passes validation before resuming.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Optionally validates `restored_fields` against state invariants (hp bounds,
+ * sway range [-100, +100], shield/sword range [0, 100]), re-runs any failed
+ * probe callback if clearable, resets AWAIT + tripwire latches, and restores
+ * `resume_mode` cleanly (default `DEBUG_STEP_RUN` if valid).
+ *
+ * @param[in] restored_fields Optional repaired/rewound state to validate (may be NULL).
+ * @param[in] resume_mode     Desired mode after clearing AWAIT.
+ * @param[in] resolution_note Explanation logged to telemetry & Safe-Mode history.
+ * @return true if validation succeeded and AWAIT cleared; false if state still corrupt.
+ */
+bool debug_resolve_await(
+    const debug_state_fields_t *restored_fields,
+    debug_step_mode_t           resume_mode,
+    const char                 *resolution_note
+);
 
 /*
 --------------------------------------------------------------------------------
@@ -692,6 +897,23 @@ void debug_dump_state(const debug_state_fields_t *fields);
  * Dumps chronological ASCII table of all ring buffer snapshots.
  */
 void debug_dump_snapshot_history(void);
+
+/**
+ * @brief Retrieves the latest forensic tripwire, fallback, and AWAIT status report.
+ *
+ * @param[out] out_report Destination tripwire report struct.
+ * @return true on success; false on NULL pointer.
+ */
+bool debug_get_tripwire_report(debug_tripwire_report_t *out_report);
+
+/**
+ * @brief Formats a human-readable forensic tripwire / AWAIT summary into out_buf.
+ *
+ * @param[out] out_buf Destination buffer.
+ * @param[in]  buf_len Byte capacity of out_buf.
+ * @return true if formatted without truncation; false otherwise.
+ */
+bool debug_dump_tripwire_report(char *out_buf, size_t buf_len);
 
 /*
 ================================================================================
@@ -723,6 +945,13 @@ verify that declared subsystem cogs run properly as standalone units.
  * @return true if loaded from JSON profile; false if running on emergency fallback defaults.
  */
 bool debug_is_data_driven(void);
+
+/**
+ * @brief Queries whether the debugger is currently running in Safe Mode / fallback.
+ *
+ * @return true if active without disk-loaded config (monolith or ROM Safe Mode).
+ */
+bool debug_is_safe_mode(void);
 
 /**
  * @brief Returns the latched tripwire status.

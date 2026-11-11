@@ -59,6 +59,8 @@ Tier 3: Internal Engine Foundation Headers
 #include "io/master_loader.h"
 #include "log/log.h"
 #include "log/log_fallback.h"
+#include "debug/debug.h"
+#include "debug/debug_fallback.h"
 
 #define TEST_ASSERT(cond, msg) \
     do { \
@@ -152,10 +154,32 @@ static void test_log_integrated_never_fail(void)
 
     uint64_t emergency_seq = LOG_FATAL(LOG_CAT_LOG, "DegradedRescue", -1.0f, "Running under fallback mode");
     TEST_ASSERT(emergency_seq > 0, "Emergency entry dispatched successfully");
+    TEST_ASSERT(log_is_safe_mode(), "Monolith degraded recovery reports Safe-Mode active");
 
     log_shutdown();
+
+    /* Hydrate an embedded .rodata ROM profile while simulating missing disk manifests */
+    log_config_t rom_cfg;
+    TEST_ASSERT(log_fallback_load_rom_profile("forensic_telemetry", &rom_cfg),
+                "Loaded forensic_telemetry profile from embedded ROM vault");
+    TEST_ASSERT(!rom_cfg.loaded_from_data, "ROM-hydrated profile remains non-data Safe-Mode");
+    str_safe_copy(rom_cfg.log_dir, "build/logs/integrated_log", sizeof(rom_cfg.log_dir));
+    str_safe_copy(rom_cfg.base_filename, "rom_forensic.log", sizeof(rom_cfg.base_filename));
+    rom_cfg.save_by_category = false;
+    rom_cfg.echo_to_console = false;
+
+    TEST_ASSERT(log_init(&rom_cfg), "Engine boots cleanly from compiled-in .rodata ROM profile");
+    TEST_ASSERT(log_is_active() && log_is_safe_mode() && !log_is_data_driven(),
+                "ROM recovery preserves Safe-Mode identity");
+    uint64_t rom_seq = LOG_INFO(LOG_CAT_LOG, "RomRecovery", 0.5f, "Running on embedded telemetry ROM");
+    TEST_ASSERT(rom_seq > 0U, "ROM-hydrated logger emits telemetry cleanly");
+    TEST_ASSERT(fs_file_exists("build/logs/integrated_log/rom_forensic.log"),
+                "ROM recovery target log file created on disk");
+
+    log_shutdown();
+    log_fallback_shutdown();
     log_reset_tripwire();
-    printf("  [PASS-2] Section 2 passed: Failure inversion and emergency recovery verified.\n");
+    printf("  [PASS-2] Section 2 passed: Failure inversion, monolith & ROM recovery verified.\n");
 }
 
 /*
@@ -193,9 +217,21 @@ static void test_log_integrated_assertions_and_guarantees(void)
         TEST_ASSERT(strcmp(loader.header.schema_id, assets[i].expected_schema) == 0,
                     "Schema ID exactly matches canonical contract");
         TEST_ASSERT(loader.header.is_5block, "Envelope conforms to 5-block structure");
+
+        /* Verify compiled-in .rodata ROM parity against disk manifest */
+        const char *rom_json = NULL;
+        size_t rom_len = 0U;
+        master_loader_t rom_loader;
+        TEST_ASSERT(log_fallback_get_rom_asset(assets[i].rel_path, &rom_json, &rom_len),
+                    "Located matching asset in compiled-in .rodata ROM vault");
+        TEST_ASSERT(master_loader_load_from_memory(&rom_loader, rom_json, rom_len),
+                    "Parsed compiled-in .rodata ROM asset via master_loader_load_from_memory");
+        TEST_ASSERT(strcmp(rom_loader.header.schema_id, assets[i].expected_schema) == 0,
+                    "ROM asset schema ID matches disk asset contract");
+        TEST_ASSERT(rom_loader.header.is_5block, "ROM asset conforms to 5-block structure");
     }
 
-    printf("  [PASS-3] Section 3 passed: All 10 telemetry data assets schema-audited.\n");
+    printf("  [PASS-3] Section 3 passed: All 10 telemetry disk & ROM assets schema-audited.\n");
 }
 
 /*
@@ -242,6 +278,65 @@ static void test_log_integrated_emergence(void)
     printf("  [PASS-4] Section 4 passed: Categorical disk routing verified across all 5 directories.\n");
 }
 
+static void test_log_integrated_debug_probe_await(void)
+{
+    printf("  [INTEGRATED-5] Running Section 5: Log Tripwire -> Validation Probe -> Fallback -> AWAIT Bridge...\n");
+
+    TEST_ASSERT(log_init(NULL), "Booted telemetry cleanly before debugger bridge");
+    TEST_ASSERT(debug_init(NULL), "Booted debugger cleanly for log probe integration");
+
+    debug_stats_t dstats;
+    TEST_ASSERT(debug_execute_inspect(&dstats) && dstats.registered_probe_count >= 5U,
+                "log_init registered all 5 log.* validation probes with debugger");
+
+    debug_state_fields_t baseline;
+    memset(&baseline, 0, sizeof(baseline));
+    baseline.turn = 1;
+    str_safe_copy(baseline.hero_name, "Elijah", sizeof(baseline.hero_name));
+    baseline.hp = 500;
+    baseline.max_hp = 500;
+    baseline.mp = 100;
+    baseline.tp = 50;
+    baseline.shield_power = 40;
+    baseline.sword_edge = 40;
+    TEST_ASSERT(debug_record_snapshot(&baseline, "log_bridge", "healthy") == 1ULL,
+                "Recorded baseline snapshot prior to telemetry tripwire");
+
+    log_config_t missing_cfg;
+    bool loaded_missing = log_load_config_profile("nonexistent_probe_trigger", &missing_cfg);
+    TEST_ASSERT(!loaded_missing, "Missing profile returns false and triggers Safe-Mode pipeline");
+    TEST_ASSERT(log_get_tripwire_status() == LOG_TRIPWIRE_SETTING_MISSING,
+                "Logger latched LOG_TRIPWIRE_SETTING_MISSING");
+    TEST_ASSERT(debug_is_awaiting() && debug_get_step_mode() == DEBUG_STEP_AWAIT,
+                "Debugger halted automatically in DEBUG_STEP_AWAIT via log tripwire probe");
+
+    debug_tripwire_report_t report;
+    TEST_ASSERT(debug_get_tripwire_report(&report) &&
+                strcmp(report.probe_id, "log.setting_profile") == 0 &&
+                report.fallback_completed &&
+                report.await_active &&
+                report.snapshot_locked,
+                "Tripwire report captured log.setting_profile, Safe-Mode completion, and locked snapshot");
+
+    log_fallback_stats_t fb_stats;
+    TEST_ASSERT(log_fallback_get_stats(&fb_stats) && fb_stats.total_recorded > 0U,
+                "Tier-0 log_fallback captured the tripwire warning entry during active debug session");
+
+    TEST_ASSERT(!debug_resolve_await(&baseline, DEBUG_STEP_RUN, "Attempt before clearing log tripwire") &&
+                debug_is_awaiting(),
+                "Debugger refuses AWAIT exit while log_validate_setting_contract() still sees SETTING_MISSING");
+
+    log_reset_tripwire();
+    TEST_ASSERT(debug_resolve_await(&baseline, DEBUG_STEP_RUN, "Cleared log tripwire and restored config") &&
+                !debug_is_awaiting() &&
+                debug_get_step_mode() == DEBUG_STEP_RUN,
+                "Debugger resumes DEBUG_STEP_RUN once log_reset_tripwire() addresses fault");
+
+    debug_shutdown();
+    log_shutdown();
+    printf("  [INTEGRATED-5] Section 5 passed: Log -> Probe -> Fallback -> AWAIT roundtrip verified.\n");
+}
+
 /*
 ================================================================================
 BLOCK 4: AUDIT PROCEDURES BLOCK
@@ -283,9 +378,10 @@ int main(void)
     test_log_integrated_never_fail();
     test_log_integrated_assertions_and_guarantees();
     test_log_integrated_emergence();
+    test_log_integrated_debug_probe_await();
 
     printf("============================================================\n");
-    printf("ALL LOG INTEGRATED TESTS PASSED (4/4 Sections Verified)\n");
+    printf("ALL LOG INTEGRATED TESTS PASSED (5/5 Sections Verified)\n");
     printf("============================================================\n");
     return 0;
 }

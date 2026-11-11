@@ -310,9 +310,64 @@ static void test_log_unit_emergence(void)
 
     TEST_ASSERT(log_init(&quiet_profile), "Hot-swapped to quiet profile");
     TEST_ASSERT(str_case_eq(log_get_active_profile_name(), "quiet"), "Active profile name is 'quiet'");
+    TEST_ASSERT(!log_is_safe_mode(), "Data-loaded quiet profile does not report Safe Mode");
 
     log_shutdown();
-    printf("  [PASS-4] Section 4 passed: FIFO overwrite, file rotation & hot-swap verified.\n");
+
+    /* Step 4.4: Pre-init BIOS capture, auto-replay on log_init(), and Safe-Mode ROM boot */
+    TEST_ASSERT(log_fallback_boot(NULL), "BIOS fallback armed cleanly prior to log_init");
+    uint64_t boot_seq_1 = LOG_WARN(LOG_CAT_LOG, "EarlyBoot", 0.5f, "Captured prior to full disk log_init");
+    uint64_t boot_seq_2 = LOG_ERROR(LOG_CAT_LOG, "EarlyBoot", -0.5f, "Second pre-init diagnostic frame");
+    TEST_ASSERT(boot_seq_1 > 0U && boot_seq_2 > boot_seq_1, "Pre-init entries captured in BIOS ring");
+
+    log_fallback_stats_t fb_pre;
+    TEST_ASSERT(log_fallback_get_stats(&fb_pre) && fb_pre.ring_count >= 2U,
+                "BIOS ring holds pre-init entries before log_init");
+
+    log_config_t replay_cfg = log_fallback_get_floppy_config();
+    str_safe_copy(replay_cfg.log_dir, "build/logs/unit_log_emergence", sizeof(replay_cfg.log_dir));
+    str_safe_copy(replay_cfg.base_filename, "replay_check.log", sizeof(replay_cfg.base_filename));
+    replay_cfg.echo_to_console = false;
+
+    TEST_ASSERT(log_init(&replay_cfg), "Initialized logger with floppy_compact Safe-Mode preset");
+    TEST_ASSERT(log_is_safe_mode() && !log_is_data_driven(),
+                "Safe-Mode flag true and loaded_from_data false under floppy preset");
+
+    log_fallback_stats_t fb_post;
+    TEST_ASSERT(log_fallback_get_stats(&fb_post), "Queried BIOS fallback stats post log_init");
+    TEST_ASSERT(fb_post.ring_count == 0U, "log_init drained BIOS capture ring on handoff");
+    TEST_ASSERT(fb_post.total_replayed >= 2U, "Early-boot entries were replayed to active disk log");
+
+    log_stats_t replay_stats;
+    TEST_ASSERT(log_execute_inspect(&replay_stats), "Inspected ring stats right after replay");
+    TEST_ASSERT(replay_stats.ring_buffer_count == 0U,
+                "Early-boot replay did not pollute primary live telemetry ring buffer");
+
+    uint64_t live_seq = LOG_INFO(LOG_CAT_LOG, "LivePostBoot", 0.0f, "First live ring entry after handoff");
+    TEST_ASSERT(live_seq == replay_stats.total_entries + 1U,
+                "Primary telemetry sequence advances cleanly by +1 after replay");
+    log_stats_t after_live_stats;
+    TEST_ASSERT(log_execute_inspect(&after_live_stats) && after_live_stats.ring_buffer_count == 1U,
+                "Primary ring count reflects only the 1 post-boot live entry");
+    TEST_ASSERT(fs_file_exists("build/logs/unit_log_emergence/replay_check.log"),
+                "Safe-Mode replay target log file materialized on disk");
+    log_shutdown();
+
+    /* Step 4.5: Compiled-in .rodata ROM Safe-Mode boot via log_init */
+    log_config_t rom_quiet;
+    TEST_ASSERT(log_fallback_load_rom_profile("quiet", &rom_quiet),
+                "Loaded quiet profile from compiled-in .rodata ROM vault");
+    str_safe_copy(rom_quiet.log_dir, "build/logs/unit_log_emergence", sizeof(rom_quiet.log_dir));
+    str_safe_copy(rom_quiet.base_filename, "rom_quiet.log", sizeof(rom_quiet.base_filename));
+    rom_quiet.echo_to_console = false;
+    TEST_ASSERT(log_init(&rom_quiet), "Booted full logger using .rodata ROM quiet profile");
+    TEST_ASSERT(log_is_safe_mode() && !log_is_data_driven(),
+                "ROM-hydrated logger cleanly reports Safe Mode without external data");
+    TEST_ASSERT(str_case_eq(log_get_active_profile_name(), "quiet"), "ROM boot stamped profile 'quiet'");
+    log_shutdown();
+    log_fallback_shutdown();
+
+    printf("  [PASS-4] Section 4 passed: FIFO overwrite, rotation, hot-swap & BIOS Safe-Mode replay verified.\n");
 }
 
 /*

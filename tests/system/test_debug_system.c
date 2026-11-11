@@ -252,6 +252,44 @@ static void test_debug_system_emergence(void)
     }
 
     debug_shutdown();
+
+    /* 4.3 Locked Critical Slot Soak (220 turns) + Repeated Tripwire/AWAIT Recovery Cycles */
+    debug_init(NULL);
+    for (int t = 1; t <= 220; t++) {
+        debug_state_fields_t s = make_state(t, "Casatti", 400 + (t % 80), 60, 40, t % 4, (t % 100) - 50);
+        uint64_t sid = debug_record_snapshot(&s, "soak_step", "milestone");
+        if (t == 10 || t == 20 || t == 30 || t == 40) {
+            TEST_ASSERT(debug_lock_snapshot(sid, "SYSTEM_MILESTONE"),
+                        "Pin milestone snapshot inside 220-turn system stress");
+        }
+    }
+
+    TEST_ASSERT(debug_get_snapshot_count() == 64U, "Ring remains capped at 64 during locked stress");
+    int expected_pinned[4] = { 10, 20, 30, 40 };
+    for (size_t p = 0U; p < 4U; p++) {
+        debug_snapshot_t pin_snap;
+        TEST_ASSERT(debug_get_snapshot(p, &pin_snap) &&
+                    pin_snap.locked &&
+                    pin_snap.state.turn == expected_pinned[p] &&
+                    pin_snap.state_hash == debug_compute_state_hash(&pin_snap.state),
+                    "Pinned milestone snapshot preserved intact with valid FNV-1a hash");
+    }
+
+    for (int cycle = 0; cycle < 10; cycle++) {
+        debug_state_fields_t ok_state = make_state(220 + cycle, "Casatti", 420, 50, 50, 0, 0);
+        TEST_ASSERT(debug_trigger_probe("system.cycle_probe", "system.stress",
+                                        "Repeated tripwire soak cycle",
+                                        __FILE__, __LINE__, __func__),
+                    "Trigger stress tripwire probe");
+        TEST_ASSERT(debug_is_awaiting() && !debug_can_step(),
+                    "Cycle entered DEBUG_STEP_AWAIT cleanly");
+        TEST_ASSERT(debug_resolve_await(&ok_state, DEBUG_STEP_RUN, "Cycle recovered"),
+                    "Cycle cleared AWAIT cleanly");
+        TEST_ASSERT(!debug_is_awaiting() && debug_can_step(),
+                    "Cycle resumed RUN cleanly");
+    }
+
+    debug_shutdown();
     printf("  [EMERGE-4] Section 4 passed: High-load card generation and multi-checkpoint rewind verified.\n");
 }
 
