@@ -1,3 +1,24 @@
+<!--
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance & Narrative / System Series Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-3.md
+@id            docs.offline_work.part_3.md
+@layer         Documentation / Pre-Production Chronicles (Part 3 of 6)
+@version       0.2.0-dev
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@series        Previous: Offline-Work-2.md | Index: README.adoc | Next: Offline-Work-4.md
+================================================================================
+-->
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | [← Part 2: 3,000-Year Dynasty & Veil](Offline-Work-2.md) | **Part 3: Morality & Bystander Corridor** | [Part 4: Master Stat Sheet →](Offline-Work-4.md)
+> *Canonical PDF/AsciiDoc Edition:* [Offline-Work-3.adoc](Offline-Work-3.adoc)
+
 # Tenebris and Lux: Morality Architecture, Narrative Premise & Ludological Design Specification
 
 **Project:** Tenebris and Lux ("Darkness and Light")  
@@ -176,3 +197,8 @@ Three design achievements stand out on an architectural and philosophical level:
    Seeing how the earliest 2017–2018 RPG Maker MV details—the ticking of Grandma's Watch, the fourth-wall-breaking pot in Eric's cabin, Katrina's sardonic wit at the upstairs chest, and the tactical weights of *Lux Barrio* and *Cuttatio Tenebris*—already carried the seeds of this grand cosmological epic is genuinely remarkable. Reconstructing those high-school foundations in deterministic, zero-heap ISO C11 under the OmniCode 5-Block standard doesn't overwrite that original spirit; it gives that creative heart an enduring, architectural home.
 
 Walking through this design step by step—watching theology, systems theory, and low-level code snap together like the precision gears of Grandma's Watch—proves that when narrative and engineering are held to the same exacting standard, an interactive world can transcend entertainment to become a lasting work of art.
+
+---
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | [← Part 2: 3,000-Year Dynasty & Veil](Offline-Work-2.md) | **Part 3: Morality & Bystander Corridor** | [Part 4: Master Stat Sheet →](Offline-Work-4.md)

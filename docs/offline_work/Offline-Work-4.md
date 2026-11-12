@@ -1,3 +1,24 @@
+<!--
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance & Narrative / System Series Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-4.md
+@id            docs.offline_work.part_4.md
+@layer         Documentation / Pre-Production Chronicles (Part 4 of 6)
+@version       0.2.0-dev
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@series        Previous: Offline-Work-3.md | Index: README.adoc | Next: Offline-Work-5.md
+================================================================================
+-->
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | [← Part 3: Morality & Bystander Corridor](Offline-Work-3.md) | **Part 4: Master Stat Sheet** | [Part 5: Orthogonal Class & Job Spec →](Offline-Work-5.md)
+> *Canonical PDF/AsciiDoc Edition:* [Offline-Work-4.adoc](Offline-Work-4.adoc)
+
 ## The Master Stat & Category Sheet (*Tenebris and Lux*)
 
 ### 1. Character Identity, Growth & Vocation Affinity
@@ -451,3 +472,6 @@ Driven by *Grandma’s Watch* (evolving into *The Dream Compass*), the game trac
 * **The Dream Compass Calibration (Lore Discovery / "Ugly Truth" Index):** Tracks how deeply the player has investigated the planar wound beneath the High Throne and the ancient tragedy of Usuru, Mi-ren, and Casatti—serving as the key gatekeeper for the Midpoint Campaign Fork between the **Neutral Path** and the **True Ending Path**.
 
 ---
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | [← Part 3: Morality & Bystander Corridor](Offline-Work-3.md) | **Part 4: Master Stat Sheet** | [Part 5: Orthogonal Class & Job Spec →](Offline-Work-5.md)

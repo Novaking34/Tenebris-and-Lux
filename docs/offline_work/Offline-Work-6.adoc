@@ -1,0 +1,702 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Narrative Scope & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-6.adoc
+@id            docs.offline_work.part_6
+@layer         Documentation / Pre-Production Chronicles (Part 6 of 6)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Canon Reconciliation, Generational Timeline & 4D Dream Clock
+@role          Unified Canon, 10-20 Year War Chronicle & Temporal Registration
+@audience      Designers, Lore Writers, Systems Programmers
+@snapshots     n/a (pre-production ludonarrative synthesis chronicle)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Enforces 4D temporal receipts (DREAM_CLOCK_ON) for True Ending.
+               3. Zero-Heap C23/C11 sacyra_calendar_t and story_point_receipt_t.
+================================================================================
+////
+
+= Offline Work 6: Generational War, Canon Reconciliation & 4D Dream Clock
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Series Navigation, Pre-Production Context & Reconciliation Summary )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Series Navigation & Document Synopsis ---
+[NOTE]
+====
+*Part 6 of 6 (Series Finale)* in the *Tenebris and Lux* Pre-Production Archive & System Chronicles. +
+*Series Navigation:* link:README.adoc[Series Index] | link:Offline-Work-5.adoc[← Part 5: Class & Job Architecture] | *Part 6: Generational War & Dream Clock* +
+*Markdown Archival Mirror:* link:Offline-Work-6.md[Offline-Work-6.md]
+
+This synthesis bridges the 2017–2018 RPG Maker MV demos with the 2026 C23/C11 engine rebuild: resolving legacy class/title ambiguities, mapping the 10-to-20-year generational war across the **Poisoned Mandate** and **Two-Pass Grand Tour**, and specifying the 4D **Dream Clock** state machine (`sacyra_calendar_t`, `story_point_receipt_t`).
+====
+
+toc::[]
+
+// --- Sub-Assembly 2.2: Master Guide Reconciliation Matrix ---
+== 1. Master Guide Reconciliation & Clarified Canon Matrix
+
+As the 2017–2018 RPG Maker MV datasets (**Folder 1**: `Old Game Data`, Version `40730002`, 36 maps; **Folder 2**: `Old_Game_Data_2/data`, Version `2078310`, 43 maps) were cross-referenced with the 2026 C11 architectural rebuild, several historical database quirks and early documentation assumptions were formally resolved.
+
+[cols="1,2,3",options="header"]
+|===
+| Domain / System | Prior Master Guide / Demo Assumption | Clarified Canonical Reality (2026 Specification)
+
+| *The "7 Combat Classes" Table* +
+(`classes_and_growth.adoc`)
+| Treated **Warrior/Knight, Mage, Priest, Summoner, Hero, Thief, and Guard** as a flat peer array of 7 starter-to-endgame classes scaling from Lv 1–99.
+a| The 2018 table compressed three distinct systemic layers into one flat array:
+
+* *Basic Base Classes (3):* Warrior, Mage, Rogue (Thief).
+* *Advanced Base Classes (2):* Priest, Summoner.
+* *Tier 5 Moral Apex Class:* **Hero** (`+50 ... +100` Active Virtue), paired with **The Dark One** (`-100 ... -50` Active Malice).
+* *World Vocation (Job):* **Guard** (the *Town Sentry / Royal Man-at-Arms* occupation, not a class domain).
+
+| *Protagonist Story Classes vs. Titles*
+| Referred to Elijah as *"The Vanguard of Lux"* (`Primary Class: Hero`), Katrina as *"The Outrider of Tenebris"* (`Primary Class: Hero`), and `<chosen_name>` as *"The Secret Chronicler"*.
+| Those titles describe tactical postures and narrative focalization, not mechanical starter classes. Story-wise, Elijah and Katrina are **Trainees** (training Warrior + Mage + Rogue simultaneously), and `<chosen_name>` is a **Mystic** (training Priest + Summoner under Chrono in the Dreamscape).
+
+| *Sir Roté’s Dual Designation*
+| Narrative walkthroughs called him **Senior Outrider Sir Roté**, while character dossiers listed him as **High Priest Roté (Royal Advisor)**.
+| Reconciled by the orthogonal **Class × Job** architecture: Roté’s **Class (Domain)** is in the **Priest** lineage, while his **Job (World Vocation)** for the Crown is **Border Outrider / Court Herald**.
+
+| *Relics vs. Moral Apex Classes*
+| Risked conflating the **Shield of Lux** with the Hero class and the **Sword of Tenebris** with darkness or evil.
+| **Equipment, Element, and Conscience are strictly decoupled**. The Shield and Sword are mundane founding symbols of Peace and War infused with morally neutral cosmic forces (**Lux** and **Tenebris**). **The Hero** and **The Dark One** are purely moral classes governed by the `[-100, +100]` **Compass of Morality**.
+
+| *Overarching Antagonist Name & Class*
+| Early Volume I chapters used the synthetic placeholder *"Dark Lord Malakor"* before DevLog 008 restored **"The Dark Lord"**.
+| **Usuru** is the historical person; **"The Dark Lord"** is his overarching title; and **"The Dark One"** is his literal **Tier 5 Apex Class**—the exact class the player unlocks if they descend into Active Malice (`-100 ... -50`).
+
+| *The Bystander Corridor* +
+(`[-50, +50]`)
+| Treated primarily as a narrative filter at the end of the campaign that routes uncommitted players to the Neutral Ending.
+| Enforced mechanically on the character sheet: remaining within the **Bystander Corridor (`[-50, +50]`)** caps the player at **Tier 4 (The Mortal Summit)**. Without extreme moral conviction or perspective synthesis, they cannot ascend to Tier 5.
+
+| *The Room of Sages* +
+(Map 006)
+| Viewed as a one-time prologue character-creation room before awakening in Dio Village.
+| Operates as a **multi-cycle meta-progression archive** across the Dreamscape. Run 1 offers single-domain "training wheels"; the 50% midpoint unlocks Advanced classes; beating the game (100%) unlocks the official Hard-Mode story classes (**Trainee** & **Mystic**) and NG+ Encore Skills.
+|===
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Orthogonal Engine Synthesis, Generational Cast, 2nd Great War & Grand Tour )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Orthogonal Character Engine Summary ---
+== 2. The Orthogonal Character Engine: 35 Classes & 28 Jobs
+
+Inspired by *Dokapon Kingdom* and grounded in the socio-political reality of the **Kingdom of Sacyra**, character progression is split into two orthogonal axes that work hand-in-hand: **Class (The Combat Domain)** and **Job (The World Vocation)** (full breakdowns in link:Offline-Work-5.adoc[Offline Work 5]).
+
+[source,text]
+------
++--------------------------------------------------------------------------------+
+|                        THE ORTHOGONAL CHARACTER ENGINE                         |
++---------------------------------------+----------------------------------------+
+|          CLASS (The Domain)           |           JOB (The Vocation)           |
+|          THE COMBAT ENGINE            |        THE EXPLORATION ENGINE          |
++---------------------------------------+----------------------------------------+
+| * Defines WHAT power source &         | * Defines HOW society employs you &    |
+|   discipline you channel in battle.   |   what tools you carry on the road.    |
+| * Governs the Core 9 Combat Stats     | * Governs the 8 Exploration Stats      |
+|   (HP, MP, TP, ATK, DEF, MATK,        |   (STR, DEX, VIT, INT, WIS,            |
+|    MDEF, AGI, LUK) & Lv 1-99 growth.  |    PER, CHA, REP) & world interaction. |
+| * Unlocks permanent combat grimoire   | * Grants temporary Rank 1-4 station    |
+|   skills & passive soul attunements.  |   tools + 1 permanent Rank 5 Perk.     |
+| * Slow, deliberate 5-Tier climb from  | * Fast, agile 5-Rank mastery loop      |
+|   Base Domains to Hero / Dark One.    |   (5-8 encounters); interchangeable.   |
+| * Awakened in The Dreamscape          | * Acquired ONLY upon leaving Dio       |
+|   (Map 006: Room of Sages).           |   Village ("Crossing the Threshold").  |
++---------------------------------------+----------------------------------------+
+------
+
+=== 2.1. Bidirectional Stat Coupling (Combat ↔ Exploration)
+
+Your **Class** powers the **Core 9 Combat Stats** on the 2D LeTBS tactical grid and in side-scroll action duels, while your **Job** powers the **8 Exploration Stats** used to traverse provinces, solve dungeon puzzles, and navigate faction politics:
+
+* **`ATK` ↔ `STR` (Strength):** Physical weapon damage and armor sundering ↔ shoving boulders, forcing jammed iron portcullises, chopping timber, and inventory carry weight.
+* **`AGI` ↔ `DEX` (Dexterity):** Turn timeline velocity, evasion, and grid movement points ↔ lockpicking, disarming mechanical traps, stealth tread, and clearing chasms.
+* **`HP / DEF` ↔ `VIT` (Vitality):** Life capacity, physical mitigation, and poise resistance ↔ overland travel stamina and immunity to briers, miasma, and spoiled rations.
+* **`MATK / MP` ↔ `INT` (Intelligence):** Arcane spell potency and mana pool ("Science") ↔ translating dead scripts, runic logic puzzles, and alchemical distillation.
+* **`MDEF` ↔ `WIS` (Wisdom):** Spiritual warding and ailment resistance ("Magic") ↔ detecting NPC deception, sensing Dreamscape tears, and non-magical wound triage.
+* **`ACC / CRIT` ↔ `PER` (Perception):** Flanking critical hit rates and line-of-sight scopes ↔ spotting concealed chests, darkvision radius, and tracking wilderness quarry.
+* **`TP` ↔ `CHA` (Charisma):** Combat momentum generation and summon duration ↔ merchant bartering, companion morale, and pacifying wild fauna.
+* **`Relic Resonance` ↔ `REP` (Reputation):** *Lux Barrio* and *Cuttatio Tenebris* synergy ↔ faction standing across Sacyra, bypassing military checkpoints, and court audiences.
+
+=== 2.2. Diegetic Framing: "Unofficial" Story Identity vs. "Official" Hard Mode
+
+The narrative of *Tenebris and Lux* operates across two planes: the historical waking campaign in Sacyra and the instructional framing archive inside **The Dreamscape** (Map 006: Room of Sages), where **Chrono the Sage** teaches a newly initiated **Mystic**.
+
+. **Elijah Ro-enheart & Lady Katrina Jaren (Unofficial "Trainees"):** Inside the story, Elijah and Katrina are 15-to-18-year-old youths—Elijah is an unseasoned cadet grieving his vanished father (Commander Gareth), and Katrina is a runaway noblewoman trying to qualify for the Adventurers' Guild. Story-wise, neither is a master Warrior or Archmage yet; they are **Trainees** forced to learn steel, magic, and stealth simultaneously on the road.
+. **The Custom Bearer `<chosen_name>` (Unofficial "Mystic"):** Story-wise, the Custom Player is a **new Mystic** being told the tale of *Tenebris and Lux* by Chrono, experiencing Elijah and Katrina's memories through the Ancient Book to complete their own ascension toward becoming a **Sage of Ancients**.
+. **Why the Game Changes When It Becomes "Official":** On a first playthrough, touching a single Base Class stone (Warrior, Mage, or Rogue) gives the player "training wheels" with a standard single-domain EXP curve. Once the player beats the game (100% milestone) and unlocks the Special Classes, they can **officially** select **Trainee** or **Mystic** in New Game+—removing the training wheels, aligning their mechanical sheet with their true story identity, and enduring a slower multi-domain "Hard Mode" progression that leads directly to **The Hero / The Dark One** or **Sage of Ancients**.
+
+=== 2.3. Campaign Milestone Gating & New Game+ (NG+) Meta-Progression
+
+[cols="1,2,2,3",options="header"]
+|===
+| Campaign Milestone | Narrative Trigger | Unlocked Class Tiers | Diegetic & Mechanical Rationale
+
+| *0% — Fresh Start* +
+_(Run 1, Act I)_
+| Awakening in **The Dreamscape** (Map 006) under Chrono's observation.
+| **Tier 1 Basic Base Classes** (*Warrior, Mage, Rogue*).
+| The initiate begins with the three tangible, worldly disciplines required to survive Dio Village and the Whispering Woods.
+
+| *50% — Midpoint Climax* +
+_(Half the Game)_
+| **Sacyra Castle Siege:** Confronting **King Jihad** during the *Festival of Heroes* as the planar seal beneath the High Throne ruptures.
+| **Tier 1 Advanced Base** (*Priest, Summoner*) + **Tier 2–4 Combinatorial Classes**.
+| As the Veil thins and the political conspiracy exposes a 3,000-year cosmic wound, spiritual miracles, astral pacts, and hybrid syntheses awaken.
+
+| *100% — Full Clear* +
+_(Beating the Game)_
+| **The Sovereign Eclipse Finale:** Resolving the conflict with **The Dark Lord** and recording a completed cycle in Chrono's Ledger.
+| **Special Initiate Classes** (*Trainee, Mystic*) + **Tier 5 Apex Classes** (*Hero, Dark One, Sage of Ancients*).
+| Having witnessed a full cycle of history, Chrono unlocks the official Hard-Mode story classes and NG+ carryover for subsequent runs.
+|===
+
+==== New Game+ Carryover Rules
+
+* **Unlocked Base Persistence:** Any Base Class unlocked in a previous campaign (*Warrior, Mage, Rogue, Priest, Summoner*, plus *Trainee* and *Mystic*) is available from minute one in the Room of Sages on NG+.
+* **15–25% Mastery Head Start ("Attunement Resonance"):** Re-selecting a class that was mastered in a prior campaign grants a **15% head start** on its mastery gauge (expanding to **25%** if mastered across both Elijah and Katrina's routes).
+* **NG+ "Encore Mastery" Exclusive Skills:** Re-selecting a previously mastered Base Class in NG+ grants a pinnacle technique evolved from the 2017–2018 grimoire:
+** **Warrior → Sovereign Phantom Slash:** Teleports behind a target ignoring ZOC, inflicts armor-piercing damage, and triggers a 1-tile *Intimidating Aura*.
+** **Mage → Cataclysmic Convergence:** Detonates active *Ice Walls* or *Volcano Ground* tiles for double elemental burst while refunding `50%` MP.
+** **Rogue → Shadow Transposition:** Steals an enemy's active buff/item while swapping grid coordinates with them and planting an *Explosive Mark* on the vacated cell.
+** **Priest → Chrono's Emergency Decree:** Grants an ally an immediate out-of-turn *Emergency Turn* while cleansing all debuffs and applying *Basic Ward*.
+** **Summoner → Astral Triad Covenant:** Summons two auxiliary spirits simultaneously (e.g., *Sentinel Totem* + *Pixie*) that inherit `25%` of the Summoner's DEF and MDEF.
+
+=== 2.4. The 5-Tier Combinatorial Class Compendium (All 35 Classes)
+
+Governed by Pascal's Triangle (`C(5,1) -> C(5,2) -> C(5,3) -> C(5,4) -> Apex`), every mortal class from Tier 1 to Tier 4 is uniquely defined by its 5-bit domain mask (`W, M, R, P, S`), guaranteeing **zero redundant combinations**.
+
+[source,text]
+------
+========================================================================================
+                TIER 5: APEX SPECIAL CLASSES (The Cosmic Crucible - 3 Classes)
+========================================================================================
+   [ THE HERO ] (+50 to +100)        [ THE DARK ONE ] (-100 to -50)     [ SAGE OF ANCIENTS ]
+(Active Virtue / Sovereignty)          (The Dark Lord's Class)        (Master of the Veil)
+         ^                                    ^                                ^
+         +---------------------+--------------+--------------------------------+
+                               | (Gated by Moral Sway & Perspective Synthesis)
+========================================================================================
+              TIER 4: QUAD-DOMAIN PARAGONS (The Mortal Summit - 5 Classes)
+========================================================================================
+  * Formed by mastering 4 of the 5 domains (each class omits exactly one domain: 5C4 = 5)
+  * THE BYSTANDER CEILING: Players in the Bystander Corridor ([-50, +50]) STOP HERE!
+  [High Justiciar]   [Beast Warlord]   [Sacred Magus]   [Shadow Saint]   [Ascendant Mystic]
+         ^
+         | (Master 2 Overlapping Tier 3 Classes)
+========================================================================================
+             TIER 3: TRI-DOMAIN MASTER CLASSES (The Synthesis - 10 Classes)
+========================================================================================
+  * Formed by combining 3 foundational domains (5C3 = 10 unique non-redundant classes)
+  * Where the Trainee path naturally reaches full three-pillar maturity (Battle Adept)
+  [Battle Adept]  [Crusader]  [Rune Warden]  [Zealot Justiciar]  [Pack Marshal]
+  [Divine Guardian]  [Shadowweaver]  [Phantasmancer]  [High Theurge]  [Chrono Stalker]
+         ^
+         | (Master 2 Overlapping Tier 2 Classes)
+========================================================================================
+            TIER 2: DUAL-DOMAIN ADVANCED HYBRIDS (The Expansion - 10 Classes)
+========================================================================================
+  * Formed by combining any 2 Base Classes (5C2 = 10 unique classes)
+  * Unlocks at the 50% Campaign Midpoint (King Jihad Climax)
+  [Spellblade]  [Duelist]  [Paladin]  [Totemic Warden]  [Trickster]
+  [Sage]        [Elementalist]        [Inquisitor]      [Puppeteer]      [Oracle]
+         ^
+         | (Master 2 Base Classes)
+========================================================================================
+                  TIER 1: FOUNDATIONAL BASE CLASSES (5 + 2 Initiates = 7)
+========================================================================================
+  * 3 Basic Base (Worldly Triad):    [Warrior (W)]   [Mage (M)]      [Rogue (R)]
+  * 2 Advanced Base (Ethereal Dyad): [Priest (P)]    [Summoner (S)]
+  * 2 Special Hard-Mode Initiates:   [Trainee (W+M+R)]               [Mystic (P+S)]
+========================================================================================
+------
+
+* **Tier 1 (7 Classes):** `Warrior (W)` (*Unshakable Poise*), `Mage (M)` (*Leyline Conduit*), `Rogue (R)` (*Shadow Reflex*), `Priest (P)` (*Covenant Grace*), `Summoner (S)` (*Pact Tether*), plus the two Hard-Mode story initiates `Trainee (W+M+R, 2.2× EXP)` and `Mystic (P+S, 1.8× EXP)`.
+* **Tier 2 (`C(5,2) = 10` Hybrids):** `Spellblade (W+M)`, `Duelist (W+R)`, `Paladin (W+P)`, `Totemic Warden (W+S)`, `Trickster (M+R)`, `Sage (M+P)`, `Elementalist (M+S)`, `Inquisitor (R+P)`, `Puppeteer (R+S)`, `Oracle (P+S)`.
+* **Tier 3 (`C(5,3) = 10` Masters):** `Battle Adept (W+M+R)`, `Crusader (W+M+P)`, `Rune Warden (W+M+S)`, `Zealot Justiciar (W+R+P)`, `Pack Marshal (W+R+S)`, `Divine Guardian (W+P+S)`, `Shadowweaver (M+R+P)`, `Phantasmancer (M+R+S)`, `High Theurge (M+P+S)`, `Chrono Stalker (R+P+S)`.
+* **Tier 4 (`C(5,4) = 5` Paragons — Bystander Corridor `[-50, +50]` Ceiling):** `High Justiciar` (omits `S`), `Beast Warlord` (omits `P`), `Sacred Magus` (omits `R`), `Shadow Saint` (omits `M`), `Ascendant Mystic` (omits `W`).
+* **Tier 5 (3 Apex Special Classes):** `The Hero` (`+50 ... +100` Active Virtue; eliminates *Lux Barrio* panic dissipation + *Duo-Loca Bashin n Slash*), `The Dark One` (`-100 ... -50` Active Malice; Usuru's literal class with **Abyssal Rupture** & **Sovereign Terror**), and `Sage of Ancients` (**Mystic** + nocturnal Dreamscape synthesis; **Planar Convergence**, **Temporal Rewind**, **Harmonic Equilibrium**).
+
+[cols="1,2,2",options="header"]
+|===
+| Moral Apex Class / Medium | Expressing Through Lux (Radiance / Cohesion) | Expressing Through Tenebris (Darkness / Severance)
+
+| *THE HERO* +
+_(Active Good: `+50 ... +100`)_
+a| *The Selfless Aegis (Mi-ren's Ideal Perfected):* +
+Projects golden *Lux Barrio* domes (`25%–50%` mitigation) to shelter the weak and preserve truth without tyrannical control.
+a| *The Surgical Liberator (Casatti's Ideal):* +
+Wields *Cuttatio Tenebris* (`20%` splash cleave) to sever slave chains, cut through tyrant armor, and execute **Absolute Justice**.
+
+| *THE DARK ONE* +
+_(Active Evil: `-100 ... -50`)_
+a| *The Calcified Despot:* +
+Uses blinding totalitarian light to petrify dissenters into living stone, freezing the realm into comatose obedience.
+a| *The Sovereign of Ruin (The Dark Lord / Usuru):* +
+Unleashes entropic void cleaves that devour life force, spread creeping rot, and consume Sacyra in nihilistic vengeance.
+|===
+
+=== 2.5. The 5-Rank World Vocation Compendium (All 28 Jobs — Summary Ledger)
+
+Players awaken in the Dreamscape with a **Class**, carry `JOB_NONE_DIO_VILLAGE` inside Dio Village, acquire their first Job when **Crossing the First Threshold**, swap temporary Rank 1–4 station tools when changing Jobs, and bank Rank 5 **Permanent Mastery Perks** forever. (Complete per-rank skills appear in link:Offline-Work-5.adoc[Offline Work 5]).
+
+[cols="1,2,1,4,3",options="header"]
+|===
+| # | Pillar & Job Title | Stat Focus | Rank 1–4 Active Station Tools *(While Holding Job)* | Rank 5 Permanent Mastery Perk *(Retained Forever)*
+
+| *1* | **Pillar I (Frontier)** +
+Lumberjack / Feller *(Eric)* | `STR` / `VIT`
+| *R1:* Hew Timber \| *R2:* Splitting Chop (`130%` hit) \| *R3:* Rooted Poise (`+30%` poise) \| *R4:* Timber Toss
+| **Felling Cleave:** Instantly clears wooden barricades and fallen trees for `0` stamina/tools.
+
+| *2* | **Pillar I (Frontier)** +
+Quarry Miner / Delver | `STR` / `VIT` / `PER`
+| *R1:* Prospecting Strike \| *R2:* Spalling Strike (`-5` DEF) \| *R3:* Delver's Flare (`2×` cave sight) \| *R4:* Cave-In Collapse
+| **Shatter Strike:** Breaks cracked dungeon walls and boulders without consuming pickaxes or bombs.
+
+| *3* | **Pillar I (Frontier)** +
+Frontier Trapper | `PER` / `DEX`
+| *R1:* Field Snare \| *R2:* Caltrop Scatter (`-2` Move) \| *R3:* Big Game Bane (`+25%` vs Beasts) \| *R4:* Spring-Jaw Trap
+| **Ambush Snare:** One random non-boss enemy begins every wilderness battle rooted on Turn 1.
+
+| *4* | **Pillar I (Frontier)** +
+Field Forager / Herbalist | `INT` / `WIS`
+| *R1:* Flora Sense \| *R2:* Poultice Pack \| *R3:* Venom Filter (`+50%` Poison resist) \| *R4:* Field Distillation
+| **Bountiful Harvest:** Flora nodes yield `2×` materials and `+25%` chance for rare catalysts.
+
+| *5* | **Pillar I (Frontier)** +
+Camp Cook / Provisioner | `VIT` / `CHA`
+| *R1:* Trail Stew (`+10%` HP) \| *R2:* Hearty Morsel (`+25` TP) \| *R3:* Spiced Jerky (`-50%` drain) \| *R4:* Feast of Accord (`+15%` elem)
+| **Iron Stomach:** Food consumables are `+50%` more effective; immune to spoilage/disease.
+
+| *6* | **Pillar I (Frontier)** +
+Road Caravaner | `VIT` / `STR`
+| *R1:* Draft Rigging (`+10` slots) \| *R2:* Whip Crack \| *R3:* Reinforced Axle \| *R4:* Wagon Phalanx (`+15%` DEF)
+| **Highway Endurance:** `+20%` overland speed along paved roads, trails, and bridges.
+
+| *7* | **Pillar II (Civic/Law)** +
+Town Sentry / Watchman | `VIT` / `REP`
+| *R1:* Shield Brace (`+20%` front) \| *R2:* Watchful Eye \| *R3:* Halt! (`-2` Move bash) \| *R4:* Phalanx Intercept
+| **Vigilant Posture:** Party permanently immune to surprise ambushes and camp raids.
+
+| *8* | **Pillar II (Civic/Law)** +
+Royal Man-at-Arms | `STR` / `VIT`
+| *R1:* Sundering Strike (`-15%` DEF) \| *R2:* Threat Appraisal \| *R3:* Adrenaline Surge (`+20` TP) \| *R4:* Sweeping Cleave
+| **Brutal Leverage:** Forces open jammed grates, portcullises, and iron doors via raw `STR`.
+
+| *9* | **Pillar II (Civic/Law)** +
+Border Outrider *(Sir Roté)* | `PER` / `DEX`
+| *R1:* Courier Canter (`+25%` dash) \| *R2:* Mark Weakness (`+15%` ACC / `+10%` Crit) \| *R3:* Skirmish Sprint (`+2` Move) \| *R4:* Disengaging Strike
+| **Unimpeded Stride:** Ignores terrain movement penalties (mud, sand, snow, briers) everywhere.
+
+| *10* | **Pillar II (Civic/Law)** +
+Citadel Jailer / Bailiff | `WIS` / `STR`
+| *R1:* Warrant Pass \| *R2:* Manacle Bind \| *R3:* Suppressive Glare (`-15%` ATK) \| *R4:* Sentence Delivered (`+50%` crit vs bound)
+| **Iron Custody:** Capturing humanoid foes yields `2×` bounty gold and extracts dungeon keycards.
+
+| *11* | **Pillar II (Civic/Law)** +
+Court Herald / Emissary | `CHA` / `REP`
+| *R1:* Royal Writ \| *R2:* Rallying Cry (`+15` TP in 3 tiles) \| *R3:* Truce Envoy \| *R4:* Sovereign Decree (`REP` buff)
+| **Diplomatic Immunity:** Bypasses hostile tollgates and military checkpoints without bribes.
+
+| *12* | **Pillar II (Civic/Law)** +
+Siege Engineer | `INT` / `STR`
+| *R1:* Fortify Choke \| *R2:* Structural Flaw (`3×` vs props/ice) \| *R3:* Trench Works \| *R4:* Demolition Charge
+| **Breach Expertise:** Party deals `+30%` bonus damage vs. constructs, golems, and grid props.
+
+| *13* | **Pillar III (Craft/Trade)** +
+Academy Archivist | `INT` / `PER`
+| *R1:* Rune Inscription \| *R2:* Mana Siphon (`15` MP) \| *R3:* Arcane Efficiency (`-20%` spell MP) \| *R4:* Leyline Overcharge (`+40%` pierce)
+| **Ancient Literacy:** Reads all dead languages and planar tablets without needing a lexicon.
+
+| *14* | **Pillar III (Craft/Trade)** +
+Field Warmage *(Monica)* | `INT` / `VIT`
+| *R1:* Ignite / Freeze \| *R2:* Focused Blast (`2×` hit) \| *R3:* Kinetic Mine \| *R4:* Siege Stance (`+2` range)
+| **Elemental Transmutation:** Elemental spell kills drop `1` raw matching crystal catalyst.
+
+| *15* | **Pillar III (Craft/Trade)** +
+Guild Locksmith | `DEX` / `PER`
+| *R1:* Pick Apparatus \| *R2:* Disarm Mechanism \| *R3:* Jam Tumbler \| *R4:* Vault Breaker
+| **Skeleton Finger:** Wooden, iron, and silver chests cost `0` picks and disarm needle traps.
+
+| *16* | **Pillar III (Craft/Trade)** +
+Underground Smuggler *(John)* | `DEX` / `CHA`
+| *R1:* Fence Contraband \| *R2:* Pocket Sand (`-50%` ACC) \| *R3:* Hidden Compartment \| *R4:* Shadow Mug
+| **Underworld Connections:** Unlocks black-market vendors in major hubs and `100%` fence value.
+
+| *17* | **Pillar III (Craft/Trade)** +
+Highway Peddler | `CHA` / `REP`
+| *R1:* Haggle (`10%`) \| *R2:* Coin Toss \| *R3:* Supply Ledger \| *R4:* Mercenary Payoff
+| **Keen Appraisal:** Auto-identifies market value, hidden stats, and lore of all relics.
+
+| *18* | **Pillar III (Craft/Trade)** +
+Field Chirurgeon | `WIS` / `DEX`
+| *R1:* Bandage Wrap (`0` MP) \| *R2:* Bone Splint \| *R3:* Smelling Salts (`15%` HP revive) \| *R4:* Field Surgery (`40%` HP heal)
+| **Triage Efficiency:** Mundane healing items restore `+50%` more HP, conserving combat MP.
+
+| *19* | **Pillar IV (Faith)** +
+Chapel Acolyte / Hospitaler | `WIS` / `CHA`
+| *R1:* Sanctify Spring \| *R2:* Graceful Word \| *R3:* Benediction Aura (`5%` HP/turn) \| *R4:* Aegis of Faith
+| **Sanctified Respite:** Resting at campfires or inns purges poison, curse, and disease free.
+
+| *20* | **Pillar IV (Faith)** +
+Church Inquisitor | `WIS` / `PER`
+| *R1:* Detect Malice \| *R2:* Nullifying Smite \| *R3:* Shackle of Truth \| *R4:* Consecrated Ground (`3×3`)
+| **Piercing Insight:** Dialogue flags lying NPCs, disguised factions, and concealed motives.
+
+| *21* | **Pillar IV (Faith)** +
+Church Liturgist | `WIS` / `CHA`
+| *R1:* Hymn of Comfort (`+20%` MDEF) \| *R2:* Calm Panic \| *R3:* Sanctuary Bell \| *R4:* Lyri's Chorus (`+15%` radiant)
+| **Unshakable Faith:** Immune to Fear, Panic, and Silence; protects *Lux Barrio* vs. terror.
+
+| *22* | **Pillar IV (Faith)** +
+Relic Scribe | `INT` / `WIS`
+| *R1:* Inscribe Ward \| *R2:* Parchment Seal \| *R3:* Illuminated Vellum (`+1` turn buff) \| *R4:* Scripture of Banishment
+| **Scroll Conservation:** Magic scrolls and written consumables have a `50%` non-consumption rate.
+
+| *23* | **Pillar IV (Faith)** +
+Shrine Hermit | `WIS` / `VIT`
+| *R1:* Fasting Discipline (`-50%` food) \| *R2:* Solitary Ward (`+30%` DEF/MDEF) \| *R3:* Miasma Cloak \| *R4:* Ascetic Clarity
+| **Hermit's Meditation:** Doubles natural MP recovery overland and every third combat turn.
+
+| *24* | **Pillar V (Ecology/Veil)** +
+Beast Wrangler | `CHA` / `WIS`
+| *R1:* Calm Beast \| *R2:* Hunting Call (`+2` summon Move) \| *R3:* Pack Coordination \| *R4:* Savage Command
+| **Wild Kinship:** Common predators never attack on exploration maps unless provoked first.
+
+| *25* | **Pillar V (Ecology/Veil)** +
+Veil Medium / Shaman | `WIS` / `CHA`
+| *R1:* Ethereal Attunement \| *R2:* Spiritual Tether (`30%` vamp) \| *R3:* Channeling Veil (`+25%` EVA) \| *R4:* Ancestral Convergence
+| **Veil Vision:** Permanently reveals Dreamscape tears, invisible bridges, and astral caches.
+
+| *26* | **Pillar V (Ecology/Veil)** +
+Totem Carver *(Monica)* | `STR` / `WIS`
+| *R1:* Perimeter Ward \| *R2:* Stone Sentinel \| *R3:* Resonance Pole \| *R4:* Bastion Monolith (`+20%` DEF)
+| **Enduring Pillars:** Summoned totems, *Ice Walls*, and barricades gain `+50%` HP and `+2` turns.
+
+| *27* | **Pillar V (Ecology/Veil)** +
+Leyline Surveyor *(Casatti)* | `INT` / `PER`
+| *R1:* Detect Conduits \| *R2:* Node Siphon (`2×` MP regen) \| *R3:* Terrain Shift \| *R4:* Conduit Burst
+| **Leyline Absorption:** Hazardous elemental ground/lava/spikes deal `0` damage and restore `5` MP.
+
+| *28* | **Pillar V (Ecology/Veil)** +
+Planar Stalker | `PER` / `DEX`
+| *R1:* Dimensional Blink (3-tile) \| *R2:* Phase Step \| *R3:* Rift Ambush (`+30%` pierce) \| *R4:* Planar Pocket
+| **Ethereal Stride:** Phases directly through locked iron portcullises, cell bars, and grates.
+|===
+
+// --- Sub-Assembly 3.2: Adolescent Crucible & Cast Revelations ---
+== 3. The Adolescent Crucible & Character Lore Revelations
+
+Canonically establishing that **Elijah, Katrina, and the Custom Bearer start at 15–18 years old** reveals the central human tragedy of Sacyra: **the 3,000-year catastrophe was ignited by terrified, unready adolescents**.
+
+=== 3.1. The Genesis Triad: Youth as the Historical Catalyst
+
+[cols="1,1,2,4",options="header"]
+|===
+| Genesis Figure | Age at 11th Festival | Class & Vocation Evolution | Psychological & Historical Reality
+
+| *Usuru* +
+_(The Dark Lord)_
+| *11 Years Old*
+| **Uncommissioned Frontier Youth → Tier 5 The Dark One** +
+_(Zero Worldly Jobs)_
+| **Childhood Binary Absolutism & Vocational Void:** Living by Libira's nomadic *"Three-Day Rule,"* Usuru never stayed anywhere long enough to learn a trade or hold a civic Job. His sole anchor was worshipping the First King. Stumbling behind the curtain at age 11 and seeing the King's corpse wired to alchemical tubes shattered his child's mind in binary horror (*Truth vs. Lie*), birthing raw **Tenebris** and dropping him straight into **The Dark One**.
+
+| *Prince Mi-ren* +
+_(First High Regent)_
+| *~15–18 Years Old*
+| **Warrior (`W`) + Town Sentry / Court Herald → Paladin (`W+P`) → Prototype of The Hero**
+| **The Boy in Oversized Armor:** Barely a child when the First King fell comatose at Festival 1 and died at Festival 5, Mi-ren feared the Six Powers would burn Sacyra if they knew a boy sat on the High Throne. Cross-training into **Priest** prayers to sustain his father's projection across the Veil, he became the first **Paladin** and discovered **Lux** in the Shield of Peace—fighting the 7-Year Great War not to conquer Libira, but to shield his people and beg Usuru's forgiveness.
+
+| *Prince Casatti* +
+_(Academy Founder)_
+| *~14–17 Years Old*
+| **Rogue (`R`) / Mage (`M`) + Academy Archivist / Leyline Surveyor / Border Outrider → Spellblade (`W+M`)**
+| **The First Adolescent Rebel:** Seeing through court vanity at age 14, Casatti renounced his birthright to found **The Academy** and map the Dreamscape as a frontier ranger. When the 11th Festival ruptured, he analyzed severance energy mathematically, isolated **Tenebris**, and infused the mundane Sword of War to execute surgical **Absolute Justice** and end the war quickly.
+|===
+
+=== 3.2. What the Class & Job System Reveals About the Known Modern Cast
+
+* **Grandma Magolia (`Non-Combatant` | Jobs: Master *Camp Cook* & *Village Hospitaler* | Sway: `+65`):** Mother of vanished Commander Gareth and guardian of **Grandma's Watch** and the **Compass of Morality**. She is the retired domestic steward of a premier military house whose Active Virtue prevented Elijah from succumbing to Usuru's childhood bitterness.
+* **Monica the Mystic (`Tier 3 Sage / High Theurge` `M+P+S` | Jobs: Retired *Field Warmage* → *Shrine Hermit* & *Totem Carver* | Sway: `+65`):** Formerly one of the *"original mages for the King"*. After losing her beloved in Sacyra's border wars (memorialized on her wooden *Totem of Fallen Soldiers* with *"Miss you"*), she renounced the Capital, crossed from Academy **Mage** ("Science") into **Priest** (serving Goddess Lyri) and **Summoner** (carving totems), and healed the Science-vs.-Magic schism within herself—serving as the living precedent for the Custom Bearer's **Mystic** path.
+* **Eric the Lumberjack (`Base Warrior` `W` | Job: Master *Lumberjack* | Sway: `+10`):** Possesses master forestry tools (`STR`/`VIT`), yet is destitute because royal neglect left the timber roads overrun by monsters. His 10-Gold pot (*Test of Honesty*) and gift of the *Ring of Fire* show a working-class artisan holding onto his integrity when the Crown failed him.
+* **The St. Baron vs. John the Thief:** **The St. Baron** (Jobs: *Citadel Bailiff* & *Highway Peddler*, Sway: `-45`) weaponizes feudal law and debt bondage for personal greed, while **John the Thief** (`Base Rogue` `R` | Jobs: *Underground Smuggler* & *Guild Locksmith*, Sway: `[-30, +30]`) operates as Lower Dio's outlaw immune response, using contraband networks to keep starving villagers alive.
+* **Commander Gareth Ro-enheart (`Tier 3/4 Paladin / Grand Templar` | Job: *Royal Man-at-Arms* | Sway: `+75`):** Elijah's father had to be dispatched under sealed orders on Elijah's 10th birthday because his unshakeable Active Virtue made him the one military commander who would have exposed King Jihad's treason and rallied the Royal Guard against the throne.
+* **King Jihad (`Corrupted Spellblade / Duelist` | Sway: `-85`):** Attempts to claim the Tier 5 mantle of **The Dark One** through political theft rather than earned discipline (*"Soon I will rule over this land, and not even the Dark Lord will have power over me!"*). Lacking the soul to temper the void, cracking the basalt seal beneath the High Throne causes him to be hollowed out and possessed by the Dark Lord's remnant at the 50% midpoint.
+* **Senior Outrider / High Priest Sir Roté (`Base Priest` `P` | Jobs: *Border Outrider* & *Court Herald* | Sway: `+55`):** Reconciles his dual demo titles. He has the Outrider's speed to spot the rising island before anyone else, but his childlike reverence for the Crown (*"The king will know how to stop this, he must know..."*) makes him deliver the warning straight to the traitor orchestrating the cover-up.
+* **The Extended LeTBS Squad (Sebastien, Angela, Lucius):** While Elijah and Katrina are generalist **Trainees** (`W+M+R`), the three Folder 2 companions represent the pure institutional pillars of Sacyra: **Sebastien** (pure **Rogue** / *Underground Smuggler*), **Angela** (pure **Mage** / *Academy Archivist*), and **Lucius** (pure **Priest** / *Church Liturgist*).
+
+// --- Sub-Assembly 3.3: 3-Act War, Poisoned Mandate & 20-Year Timeline ---
+== 4. The 3-Act Hero's Journey, Geopolitical Intrigue & The 20-Year War
+
+=== 4.1. Pre-Selection Opening Sequence: The Collapse of the Line of Kings
+
+Before the player ever selects a character or touches a class stone in Map 006, the opening sequence (Maps 002–004) stages the complete moral collapse of Sacyra's 3,000-year monarchy:
+
+. **Inverting the Founding Legacy:** Where the First King and Prince Mi-ren concealed death to preserve peace and shield their people from panic, King Jihad conceals an existential warning (the unnatural storm and rising island before the **Festival of Heroes**) out of despotic ambition.
+. **Establishing Dramatic Irony:** The player witnesses Jihad's treasonous soliloquy *before* waking up in Dio Village. When Elijah expresses reverence for the Royal Army or villagers assume they are merely forgotten, the player already knows the High Throne is compromised from the top down.
+. **Why the Camera Retreats to the Dreamscape:** Because the sitting king is corrupt, salvation cannot come from royal bloodlines or palace decrees. The camera retreats across the Veil into **The Dreamscape** (Map 006), where Chrono searches the collective unconscious for an uncorrupted initiate.
+
+=== 4.2. The Festival of Heroes & The "Poisoned Mandate"
+
+When conflict erupts around the **Festival of Heroes** (the modern descendant of the ancient *Festival of Peoples*, when the Veil thins to gossamer), King Jihad publicly commissions the protagonists at the festival to "investigate" the recent border disturbances. This operates as a **Weaponized Smokescreen (The Poisoned Mandate / Unwitting Cat's Paw)**:
+
+* **Public Pretext vs. Covert Reconnaissance:** To the gathered nobility and populace, commissioning festival champions projects benevolent royal vigilance. In reality, Jihad cannot deploy the official Royal Guard without alerting the Church, House Jaren, and the Six Powers. He uses the party as expendable scouts to map the abyssal anomalies and clear guardian monsters for him, with pre-built deniability if they die or discover too much.
+* **Detonating the "Kingdom Divided" Questline:** Carrying royal writs across provincial borders violates the spirit of the 3,000-year **"Joint Realm, Separate Kingdoms"** federation. Regional lords in **Old Sacyra**, **The Great Mau Kingdom**, **The Kingdom of Libira**, and **The Yun-yin Provinces** view the party as Capital spies, awakening centuries of *"Quiet Complaints"* while the party uncovers silenced outposts and the truth of Commander Gareth's disappearance.
+
+=== 4.3. The Midpoint Throne Room Fork & Fueling the 2nd Great War
+
+At the 50% campaign climax, the party marches back to Sacyra Castle and confronts King Jihad atop the High Throne dais—directly above the ancient basalt seal covering the planar wound ripped open 3,000 years ago. **Regardless of the outcome, the violent clash of relics and psychic shear atop the thinned Festival veil provides the exact metaphysical fuel The Dark Lord needs to blow the ancient seal wide open:**
+
+[source,text]
+------
+                     ACT I CLIMAX: THE THRONE ROOM CLASH
+                 (Fought atop the Planar Wound during the Festival)
+                                      |
+         +----------------------------+----------------------------+
+         v                                                         v
+   OUTCOME A: DEFEAT / SLAY JIHAD                            OUTCOME B: UNCORRUPTING JIHAD
+   (The Neutral Path - Power Vacuum)                         (The True Ending - Accountability)
+   * Jihad is killed or deposed.                             * Possession purged via Dream Compass.
+   * Total institutional decapitation.                       * Jihad survives, hollowed & disgraced.
+   * House Jaren, Church, & Army fracture in panic.          * Crown must confess its 3,000-yr lie.
+   * Six Powers secede out of opportunism & fear.            * Six Powers secede in righteous anger.
+   * Result: Chaotic, unprincipled civil war.                * Result: Reckoning ("The Ugly Truth").
+------
+
+* **Why King Jihad Must Live for the True Ending:** If the party kills Jihad, he becomes a convenient scapegoat—allowing the court and nobility to claim the Crown was merely "bewitched by a demon" while preserving their 3,000-year myth of royal perfection. **Uncorrupting Jihad forces him to survive as a living indictment.** Breathing, disgraced, and stripped of power upon the dais, his survival forces the Sacyran institution to publicly confess its rot and face the continent without its curated lies.
+
+=== 4.4. Usuru's Asymmetric Goal & "The Ugly Truth"
+
+* **"Do Not Follow the Crown" (Severance Over Conquest):** Just as in the First Great War, Usuru does not need the Six Powers to worship him or march under dark banners; he only needs them **not to follow the Crown**. **Tenebris is severance**. By exposing the High Citadel's lies, he shatters the federated accord and lets human factionalism ignite the **2nd Great War**.
+* **Erasing the First King's Work:** Usuru's win condition is ontological spite: destroying the civilization, treaties, and peace engineered by the First King and Prince Mi-ren. As long as the continent burns itself to ash and nothing remains standing except his risen abyssal island, **Usuru wins**.
+* **Rejecting the "Redeemable Villain" Trope in "The Ugly Truth":** In the 10th True Ending (*"The Ugly Truth"*), Usuru does not suddenly turn "good" or receive a sentimental absolution after 3,000 years of malice. Instead, using the **Stance of Equilibrium (`0`)**, the party strips away his core delusion before defeating him: forcing him to come to full terms with the fact that the First King's coma was an accident, Mi-ren's stasis was born of terrified adolescent love, and Usuru's own 3,000-year campaign of ruin made him far worse than the court that hurt him.
+* **"Things as They Should Be":** The True Ending is called **"The Ugly Truth"** because reality is not sunshine and rainbows: the First King's marooned soul is finally released from the Dreamscape to die and rest in the earth; King Jihad lives in public disgrace; the centralized imperial myth is dismantled; frontier provinces like Dio Village and Libira receive overdue autonomy; and Usuru is defeated with his eyes open. Both artificial stasis (**Lux**) and nihilistic vengeance (**Tenebris**) are swept away so mortals can govern themselves in honest reality.
+
+=== 4.5. The 10-to-20-Year Generational Maturation Timeline
+
+Rather than compressing a continental war into a few weeks, the campaign spans **10 to 20 in-game years**, aging the protagonists from unseasoned teenagers into weathered veterans:
+
+[cols="1,1,2,4",options="header"]
+|===
+| Campaign Era & Act | Span & Ages | Class & Vocation Progression | Key Narrative & Character Arcs
+
+| *Era I (Act I):* +
+The Provincial Divide & Poisoned Mandate
+| *Years 0–3* +
+_(Ages 15–18)_
+| **Tier 1 Base / Trainee** → First World Jobs upon leaving Dio Village; **Tier 2 Hybrids** unlock at the 50% Castle Climax.
+| Awakening in the Dreamscape and Dio Village; taking first Guild/Frontier commissions; accepting King Jihad's poisoned festival investigation; uncovering silenced outposts; confronting Jihad as the planar seal ruptures.
+
+| *Era II (Act II):* +
+The Continental Grind (2nd Great War)
+| *Years 4–12* +
+_(Ages 19–27)_
+| **Tier 2 Hybrids → Tier 3 Tri-Domain Masters**; rotating seasonal Jobs (Ranks 1–5) across war fronts and winter quarters.
+| Navigating a fractured continent across annual **Festivals of Heroes**; **Elijah** reaches and surpasses the age Commander Gareth was when he vanished, demystifying his father as a fellow flawed commander; **Katrina** shifts from rebellious runaway to reluctant matriarch as House Jaren collapses into war refugees; **Dio Village** visibly ages (Grandma Magolia passes on; Eric's mill expands or decays).
+
+| *Era III (Act III):* +
+The Sovereign Eclipse & Reckoning
+| *Years 13–20* +
+_(Ages 28–35+)_
+| **Tier 4 Paragons** *(Bystander Ceiling)* → **Tier 5 Cosmic Apex** (*Hero, Dark One, Sage of Ancients*).
+| Descending into the **Abyssal Vaults** and **Dreamscape Core**; weathered 30-year-old adults who have endured a decade of real compromise and loss confront **Usuru**—an immortal cosmic warlord who remains psychologically frozen as a traumatized, binary 11-year-old child.
+|===
+
+// --- Sub-Assembly 3.4: 4D Dream Clock & Two-Pass Grand Tour ---
+== 5. The Open-World Temporal Engine & The "Dream Clock" Philosophy
+
+Inspired by ***Persona*** (daily/nocturnal scheduling and looming calendar milestones) and ***Chrono Trigger*** (multi-year historical cause-and-effect), *Tenebris and Lux* treats time as an active physical dimension powered by Layer 0 `time_utils` and diegetically anchored by **Grandma's Watch → The Dream Compass**.
+
+=== 5.1. Narrative Sequence vs. 4D Active Temporal Registration
+
+Because a video game is an active medium, **turning the Dream Clock OFF does not freeze narrative time**—time *must* move forward for events to happen, seasons to change, and characters to grow up across the 10-to-20-year story. Instead, toggling the Dream Clock changes **how the simulation engine registers what transpired at each story point**:
+
+[source,text]
+------
++-----------------------------------------------------------------------------+
+|                    HOW THE ENGINE REGISTERS A STORY POINT                   |
++--------------------------------------+--------------------------------------+
+|         DREAM CLOCK: OFF             |          DREAM CLOCK: ON             |
+|   (Stopwatch / Event-Driven Time)    |  (Countdown / Registered Telemetry)  |
++--------------------------------------+--------------------------------------+
+| * Narrative time still advances      | * Time advances continuously via     |
+|   from scene to scene and year-to-yr.|   tunable Layer 0 ticks & travel.    |
+| * Event Registration: 3D Vector      | * Event Registration: 4D Vector      |
+|   [Location, Action, Moral Sway]     |   [Location, Action, Sway, Timestamp]|
+| * The engine knows WHAT you did,     | * The engine knows WHAT you did AND  |
+|   but lacks the temporal receipt of  |   WHEN you intercepted the moving    |
+|   WHEN you arrived in the cycle.     |   historical timeline.               |
+| * Resolves the default version of    | * Dynamically alters what actually   |
+|   each scene; unlocks all 9 standard |   happened at that story point;      |
+|   endings (3x3 Matrix).              |   REQUIRED to register True Ending!  |
++--------------------------------------+--------------------------------------+
+------
+
+. **Why a "Perfect Run" Cannot Register the True Ending with the Dream Clock Off:** A player can play with the Dream Clock off, follow a walkthrough step-by-step, make every virtuous/equilibrium choice, and perform every required action for the True Ending. They will experience a complete, 20-year story and unlock any of the **9 standard endings**. However, because the **Dream Clock** telemetry channel is off, the engine cannot record the 4th coordinate (`Timestamp` / nocturnal window `20:00..04:00` / Festival alignment) on the story event receipt—meaning the state machine mathematically cannot register the **10th True Ending ("The Ugly Truth")**.
+. **Changing What Actually Happened at Story Points:** With the Dream Clock **ON**, world events (such as the seven-day courier ride across the *"Week of Silence"* to Libira, troop movements in the Marches, and the annual **Festival of Heroes** veil-thinning countdown) move on their own schedule. Arriving early, arriving during the nocturnal Dreamscape window (`20:00–04:00`), or arriving late **changes what actually happened at that story point** (e.g., intercepting a courier before an outpost burns vs. arriving to find ashes; or triggering a "Premature Breach" Game Over if an entire Festival cycle expires with critical rifts unsealed).
+. **Scalable Time Tuning ("The Sweet Spot"):** Because Layer 1 story logic evaluates *in-game calendar timestamps* (`Seconds, Minutes, Hours 0–23, Days 1–7, Weeks, Months, Years`) rather than raw real-world wall-clock time, the tick scalar is fully tunable via `engine/config/runtime/time/` & `game/data/` overrides—allowing gentle micro-pacing inside towns like Dio Village while assigning deliberate day/hour costs to overland province travel, Job shifts, and LeTBS grid battles.
+. **Internal Focalization (Elijah/Katrina) vs. Becoming Part of the Story (`<chosen_name>`):** Playing as Elijah or Katrina is inherently harder because they are locked inside the story's factional prejudices and inherited traumas, yielding irreplaceable intimate character lore. Playing as the Custom Bearer (`<chosen_name>`) with the Dream Clock ON allows the player—as Chrono's initiate Mystic—to step out of the audience, become an active participant in Sacyran history, and synthesize both timelines before the final Festival bell tolls.
+
+== 6. Grand Tour Architecture & Two-Pass Spiral World Design
+
+In game and narrative architecture, sending the player across the entire world map during Act I without letting them stay in any single region long enough to fully understand it is known as a **Grand Tour Architecture** (or **Two-Pass Spiral World Design**).
+
+Within the specific lore and mechanics of *Tenebris and Lux*, this structure serves a deliberate dual purpose: mechanically, it establishes the pre-war baseline of the continent before the 50% midpoint shatters the realm; narratively, it forces the player to unconsciously re-enact Usuru’s childhood "Three-Day Rule".
+
+=== 6.1. Formal Classification of the Structure
+
+. **The "Grand Tour" / Reconnaissance Circuit (Breadth-Before-Depth Topology):**
+** **Pass 1 (Act I) is Horizontal and Shallow:** You touch every major hub, cross the borders of the Six Powers (Central Sacyra, Libira, Great Mau, Old Sacyra, The Academy, and the Yun-yin Provinces), and catch brief glimpses of their cultures and tensions while the itinerary keeps you moving.
+** **Pass 2 (Act II) is Vertical and Deep:** After the midpoint catastrophe, you return to those exact same regions—now transformed by war and time—to live in them, excavate their secrets, and resolve their root conflicts.
+. **"Establish and Rupture" (The *World of Balance → World of Ruin* Pattern):** Seen in *Dragon Quest XI* (collecting orbs across Erdrea before the Fall of Yggdrasil), *Final Fantasy VI* (World of Balance vs. World of Ruin), *Tales of Symphonia*, and *Trails in the Sky FC*, the first act establishes the living world before shattering it.
+. **Spiral World Design (Open-World Metroidvania Teasing):** Sweeping across high-level regions as unseasoned Tier 1 Trainees displays locked Academy tablets, cracked mines, and guarded checkpoints that tempt later return once Rank 5 Job Perks unlock.
+. **The Picaresque / Itinerant Chronicle & Reconnaissance Loop:** Constant transit under an urgent Festival schedule turns the youths into transients and surface observers rather than settled masters.
+
+=== 6.2. Why *Tenebris and Lux* Sends You Around the World Once in Act I
+
+* **A. Re-Enacting Usuru’s "Three-Day Wanderer" Pilgrimage:** Growing up under Libira's *Three-Day Law*, young Usuru helped villagers for three days before leaving at dawn—long enough to hear a farmer's *"quiet complaint"* or spot a corrupt bailiff, never long enough to grasp a community's full truth. Pass 1 puts Elijah, Katrina, and `<chosen_name>` in those exact same transient boots.
+* **B. Youthful Naivety & Surface Facades:** Teenaged Trainees mistake proud March banners for genuine strength and see noble vanity without understanding the 3,000-year **Bystander Corridor** pressures trapping each province—setting up Act II revelations (`"We walked right past this in Year 1"`).
+* **C. Setting the Dominoes of the Six Powers:** Physically crossing Great Mau, Libira's courier gap, The Academy, and Old Sacyra makes the **2nd Great War** visceral rather than an abstract map war when the Throne Room clash detonates.
+* **D. Recruiting the 5-Member LeTBS Squad:** Cross-continent travel naturally recruits **Sebastien** (back-alley Rogue), **Angela** (Academy Mage), and **Lucius** (parish Priest) to complete the 5-unit tactical party.
+
+=== 6.3. The Two-Pass Contrast: Pass 1 (Act I Tour) vs. Pass 2 (Act II War)
+
+[source,text]
+------
++--------------------------------------------------------------------------------+
+|                 TWO-PASS SPIRAL WORLD ARCHITECTURE (ACT I vs. ACT II)          |
++---------------------------------------+----------------------------------------+
+|     PASS 1: ACT I (The Grand Tour)    |    PASS 2: ACT II (The 2nd Great War)  |
+|      "The Three-Day Wanderer"         |       "The Generational Trench"        |
++---------------------------------------+----------------------------------------+
+| * Pacing: Brisk, transient, forward-  | * Pacing: Deep, entrenched, multi-year |
+|   moving toward the Festival.         |   campaigns across a fractured map.    |
+| * Perspective: 15-18 yr old Trainees  | * Perspective: 20-35 yr old Veterans   |
+|   seeing only the surface facade.     |   uncovering the buried root causes.   |
+| * World State: "Joint Realm" status   | * World State: Borders closed, treaties|
+|   quo; simmering "Quiet Complaints".  |   shattered, planar rifts leaking.     |
+| * Class / Job Depth: Tier 1 Base      | * Class / Job Depth: Tier 2-4 Combos   |
+|   Classes & Rank 1-2 Novice Jobs.     |   & Rank 5 Master Perks unlock secrets.|
+| * Narrative Goal: Gather impressions, | * Narrative Goal: Reconcile or conquer |
+|   reach Sacyra Castle, confront Jihad.|   the Six Powers; face The Ugly Truth. |
++---------------------------------------+----------------------------------------+
+------
+
+* **Cat's Paw Logistics, Spatial Mapping & Structural Breadcrumbs:** Driven by King Jihad's Poisoned Mandate, Pass 1 teaches the player the physical scale and seven-day courier lag across Libira while planting structural breadcrumbs (locked fortresses, archaic inscriptions, guarded shrines) that unlock organically during Pass 2's non-linear war campaigns.
+
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Layer 0 / Layer 1 4D Dream Clock C Contracts & Reconciliation Guarantees )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Layer 0/1 Temporal Registration C Contracts ---
+== 7. Layer 0 & Layer 1 ISO C Architectural Specification (`ALLOC_ZERO_HEAP`)
+
+To bind the 35-Class pyramid, 28-Job compendium, 20-year generational calendar, and 4D Dream Clock event registration into the native C11/C23 engine without dynamic memory allocation (`ALLOC_ZERO_HEAP`) and within strict column discipline:
+
+[source,c]
+------
+/*============================================================================*
+ * [ SUB-ASSEMBLY 2.2: 4D TEMPORAL REGISTRATION & VOCATION STATE CONTRACTS ]  *
+ *============================================================================*/
+
+#include <stdint.h>
+#include <stdbool.h>
+
+/**
+ * @brief Dream Clock operational mode selected in Map 006 (Room of Sages).
+ */
+typedef enum {
+    DREAM_CLOCK_OFF_SEQUENTIAL = 0, /* Advances scene-by-scene; 9 Endings max */
+    DREAM_CLOCK_ON_REGISTERED  = 1  /* Active 4D timestamps; 10th True Ending */
+} dream_clock_mode_t;
+
+/**
+ * @brief Monotonic In-Game Calendar Timestamp (Grandma's Watch -> Dream Compass).
+ * Grounded in Layer 0 time_utils; spans the 10-to-20-year campaign horizon.
+ */
+typedef struct {
+    uint8_t  second;        /* 0..59                                          */
+    uint8_t  minute;        /* 0..59                                          */
+    uint8_t  hour;          /* 0..23 (Nocturnal Veil Window: 20..23, 0..4)    */
+    uint8_t  day_of_week;   /* 1..7  (7-Day "Week of Silence" Libira lag)     */
+    uint8_t  week_of_month; /* 1..4  (Week 4 of Autumn = Festival of Heroes)  */
+    uint8_t  month;         /* 1..12                                          */
+    uint16_t campaign_year; /* 1..20 (Protagonists age from 15..18 to 35+)    */
+} sacyra_calendar_t;
+
+/**
+ * @brief 4D Story Point Registration Receipt.
+ * When dream_clock_mode == DREAM_CLOCK_OFF_SEQUENTIAL, has_temporal_receipt
+ * is false, preventing True Ending ("The Ugly Truth") state promotion.
+ */
+typedef struct {
+    uint16_t          story_point_id;       /* Canonical Plot / Map Event ID  */
+    uint16_t          location_id;          /* Spatial Province / Map ID      */
+    int8_t            moral_sway_at_event;  /* Clamped within [-100, +100]    */
+    uint8_t           outcome_variant_id;   /* What actually happened (0..N)  */
+    bool              has_temporal_receipt; /* True ONLY if Dream Clock is ON */
+    bool              in_nocturnal_window;  /* True if registered 20:00-04:00 */
+    sacyra_calendar_t registered_at;        /* Exact 4th-dimension timestamp  */
+} story_point_receipt_t;
+
+/**
+ * @brief Complete Campaign Temporal & Milestone Progression State.
+ */
+typedef struct {
+    dream_clock_mode_t clock_mode;          /* Selected at Character Select   */
+    sacyra_calendar_t  current_time;        /* Current Watch / Compass reading*/
+    uint32_t           overworld_tick_scale;/* Tunable sweet-spot scalar      */
+    uint8_t            festivals_elapsed;   /* Count of Festival deadlines met*/
+    bool               midpoint_cleared;    /* 50%: Unlocks Adv Classes/Dyad  */
+    bool               jihad_uncorrupted;   /* True Ending Prerequisite       */
+    bool               campaign_cleared;    /* 100%: Unlocks Trainee & Mystic */
+} campaign_chronicle_state_t;
+------
+
+// --- Sub-Assembly 4.2: Ending-Matrix & Temporal Audit Tripwires ---
+=== Verified Canon & Temporal State Tripwires
+
+. **True Ending Receipt Gate:** Promoting the finale state machine to the 10th ending (*"The Ugly Truth"*) requires `clock_mode == DREAM_CLOCK_ON_REGISTERED`, valid `has_temporal_receipt` stamps on nocturnal Dreamscape/Festival events, and `jihad_uncorrupted == true`.
+. **Bystander Corridor Ceiling:** Any final build whose net Moral Sway remains strictly inside `[-50, +50]` is capped at Tier 4 Paragons (`High Justiciar`..`Ascendant Mystic`).
+. **Two-Pass Continuity:** Pass 1 waypoints must seed spatial breadcrumbs (`story_point_id`) checked by Pass 2 war-front scripts over the 10–20-year span.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Series Navigation & End of Pre-Production Archive )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Series Navigation ---
+*Previous:* link:Offline-Work-5.adoc[← Offline Work 5: Definitive Class & Job System Specification] +
+*Index:* link:README.adoc[Return to Offline Work Series Index] +
+*Related Canon:* link:Offline-Work-1.adoc[Part 1: Storyboard] | link:Offline-Work-2.adoc[Part 2: History & Veil] | link:Offline-Work-3.adoc[Part 3: Morality] | link:Offline-Work-4.adoc[Part 4: Stats & Economy]
+

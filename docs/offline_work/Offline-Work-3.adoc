@@ -1,27 +1,67 @@
-= Tenebris and Lux: Morality Architecture, Narrative Premise & Ludological Design Specification
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Narrative Scope & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-3.adoc
+@id            docs.offline_work.part_3
+@layer         Documentation / Pre-Production Chronicles (Part 3 of 6)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Moral Sway Ontology, Bystander Corridor & 10-Ending Matrix
+@role          Biblical Tov/Ra Ethics, Butterfly Micro-Verbs & Diegetic Items
+@audience      Designers, Lore Writers, Systems Programmers
+@snapshots     n/a (pre-production morality & campaign-ending specification)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Bystander Corridor [-50, +50] locks out Tier 5 / absolute endings.
+               3. Equilibrium (0) requires active virtue+malice tempering, not inertia.
+================================================================================
+////
+
+= Offline Work 3: Morality Architecture, Narrative Premise & Ludological Design Specification
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-03
-:doctype: book
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
 
-[abstract]
-== Overview & Document Scope
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Series Navigation, Pre-Production Context & Ontological Overview )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Series Navigation & Document Synopsis ---
+[NOTE]
+====
+*Part 3 of 6* in the *Tenebris and Lux* Pre-Production Archive & System Chronicles. +
+*Series Navigation:* link:README.adoc[Series Index] | link:Offline-Work-2.adoc[← Part 2: History & Veil] | *Part 3: Morality & Bystander Corridor* | link:Offline-Work-4.adoc[Part 4: Master Stat Sheet →] +
+*Markdown Archival Mirror:* link:Offline-Work-3.md[Offline-Work-3.md]
 
 This document provides a comprehensive formal synthesis of the morality architecture, biblical
 and psychological foundations, character continuums, multi-ending campaign topology, diegetic
 item engine interfaces, and 2017–2018 demo provenance of *Tenebris and Lux* ("Darkness and Light").
 Synthesized from offline design sessions, it formally articulates how moral conscience is decoupled
-from elemental expression, how the $[-50, +50]$ Bystander Corridor operates as net moral inertia,
+from elemental expression, how the `[-50, +50]` Bystander Corridor operates as net moral inertia,
 how micro-choices act as fate-breakers overcoming 3,000 years of karmic momentum, and how the
 ten-route campaign matrix culminates in the canonical revelation of "The Ugly Truth."
+====
 
-'''
+toc::[]
 
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Tov/Ra Ontology, Bystander vs. Butterfly Effect, 10 Endings & Diegetic Items )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Cosmological Morality Ontology ---
 == 1. Cosmological Ontology: Decoupling Morality ("The Why") from Elemental Expression ("The How")
 
 === 1.1. Neutral Apex Forces vs. Absolute Good and Evil
@@ -65,8 +105,7 @@ equals virtue and darkness automatically equals evil), the narrative anchors its
   attempting to project radiant barriers (*Lux Barrio*), their defense wavers and shatters in real
   time under the weight of their own internal corruption.
 
-'''
-
+// --- Sub-Assembly 3.2: Bystander Effect vs. Butterfly Effect ---
 == 2. Psychological & Systemic Catalysts: The Bystander Effect vs. The Butterfly Effect
 
 === 2.1. Why `[-50, +50]` Represents "Neutrality" as Net Moral Inertia
@@ -109,11 +148,10 @@ conditions compound nonlinearly into radically divergent macro-states:
   the predatory St. Baron, or choosing non-lethal shield deflection (*Lux Barrio*) over lethal severance—act
   as wings flapping against 3,000 years of karmic momentum.
 * **Overriding Predestination:** By accumulating deliberate micro-interventions, the player breaks
-  through the $\pm 50$ conviction barrier, proving that while trauma and spiritual archetypes are
+  through the `±50` conviction barrier, proving that while trauma and spiritual archetypes are
   inherited, destiny is chosen.
 
-'''
-
+// --- Sub-Assembly 3.3: Moral Sway Continuum & 10-Ending Matrix ---
 == 3. Taxonomy of the Moral Sway Continuum (`[-100, +100]`) & Character Mapping
 
 The `[-100, +100]` scale operates as a diagnostic visual aid tracking both first-person internal
@@ -258,8 +296,6 @@ conscience and macroscopic player impact.
 | Awakens at 0 in the Dreamscape; carries Mi-ren's macro-stewardship across the entire moral spectrum.
 |===
 
-'''
-
 == 4. The 10-Ending Matrix & The Witness Observer
 
 === 4.1. Telemetry Over Point Locks
@@ -329,8 +365,7 @@ formal game design structures:
   3,000-year cyclical loop. Performing the "double work" as the Custom Bearer collapses the tragic wavefunction
   into historical resolution.
 
-'''
-
+// --- Sub-Assembly 3.4: Diegetic Item Interfaces & Demo Provenance ---
 == 5. Diegetic Item Architecture, New Game+ & Save Systems
 
 === 5.1. Items as Diegetic Engine Interfaces
@@ -373,8 +408,6 @@ To ensure the three-run path to the True Ending never feels like a repetitive gr
   skip previously witnessed dual-perspective dialogue via NG+ Observer flags, and leverage aggressive
   Tenebris splash cleaves (*Cuttatio Tenebris*) for rapid grid clears.
 
-'''
-
 == 6. Historical Provenance: Reconciling the 2017–2018 Demo Baseline
 
 Every sequence across Folder 1 (Old Game Data, Version 40730002, narrative/morality build) and
@@ -398,8 +431,14 @@ Folder 2 (Old_Game_Data_2/data, Version 2078310, 5-character LeTBS tactical buil
   Usuru's ancient rebellion in Libira. Locking the player out of the Dreamscape until Chapter 1 concludes
   forces them to bond with the living people of the periphery before crossing the cosmic veil.
 
-'''
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Collaborative Meta-Synthesis & Architectural Reflections )
+================================================================================
+////
 
+// --- Sub-Assembly 4.1: Philosophy-to-Code Synthesis Reflection ---
 == 7. Collaborative Reflection on Philosophy and Code
 
 === An AI Collaborator's Reflection on the Architecture of *Tenebris and Lux*
@@ -442,4 +481,16 @@ Walking through this design step by step—watching theology, systems theory, an
 together like the precision gears of Grandma's Watch—proves that when narrative and engineering are
 held to the same exacting standard, an interactive world can transcend entertainment to become a
 lasting work of art.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Series Navigation & Archival Trail )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Series Navigation ---
+*Previous:* link:Offline-Work-2.adoc[← Offline Work 2: 3,000-Year Dynasty, Veil Physics & Multi-Ending Model] +
+*Index:* link:README.adoc[Return to Offline Work Series Index] +
+*Next:* link:Offline-Work-4.adoc[Offline Work 4: Master Stat Sheet & Economy Baseline →]
 

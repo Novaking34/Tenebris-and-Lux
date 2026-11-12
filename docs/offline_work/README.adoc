@@ -1,68 +1,124 @@
-= Offline Work Archive: Genesis Notes, World-Building & Macro Architecture
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Series Topology & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/README.adoc
+@id            docs.offline_work.index
+@layer         Documentation / Pre-Production Chronicles Index
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Offline Work Pre-Production Chronicle Series (Parts 1-6)
+@role          Master Navigation Hub Connecting Narrative, Stats, Classes & Time
+@audience      Designers, Lore Writers, Systems Programmers, Reviewers
+@snapshots     n/a (chronicle index)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Bidirectional links across all 6 Parts (.adoc + .md mirrors).
+               3. Authentic project canon (Sole Antagonist: The Dark Lord Usuru).
+================================================================================
+////
+
+= Offline Work Archives & Pre-Production Chronicles
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-02
-:doctype: article
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
+:source-highlighter: rouge
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Archival Purpose, Methodology & Navigation Links )
+================================================================================
+////
 
-This directory preserves the raw narrative, ludological, and metaphysical working papers
-transcribed during offline design sessions. These documents served as the primary source
-material for formalizing the 63-chapter Master Guide compendium, establishing the 20-Scene
-Master Storyboard sequence, the 3,000-year dynastic wave, the Past/Present/Future thematic triad,
-and the multi-ending campaign architecture.
+// --- Sub-Assembly 2.1: Archival Synopsis ---
+[NOTE]
+====
+This archive houses the unedited, ground-truth pre-production design chronicles for *Tenebris and Lux*, linking directly from early genesis notebooks through the 35-Class / 28-Job orthogonal character engine and 4D Dream Clock temporal registration model. Every manuscript is maintained as both a **5-Block AsciiDoc specification** (compiled cleanly to PDF) and a **bidirectional Markdown mirror**. +
+*Parent Hub:* link:../README.adoc[Documentation Master Index] | *Start Reading:* link:Offline-Work-1.adoc[Part 1: Genesis & Storyboard →]
+====
 
-== Archived Working Documents
+toc::[]
 
-[cols="1,1,3", options="header"]
+// --- Sub-Assembly 2.2: Series Reading Spine ---
+[source,text]
+------
+[Part 1: Genesis & Storyboard] <--> [Part 2: 3,000-Yr Dynasty] <--> [Part 3: Tov/Ra Morality]
+               |                                                              |
+               v                                                              v
+[Part 4: Master Stat Sheet]   <--> [Part 5: 35 Classes/28 Jobs]<--> [Part 6: War & 4D Clock]
+------
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Six-Part Chronicle Directory & Cross-Cutting Domain Map )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Six-Part Pre-Production Index ---
+== The Six-Part Pre-Production Series
+
+[cols="1,2,2,4", options="header"]
 |===
-| Document | Format | Scope & Core Deliverables
+| Part | Canonical AsciiDoc | Markdown Mirror | Core Subject Matter & System Scope
 
-| **xref:Offline-Work-1.adoc[Offline-Work-1.adoc]** +
-  (and `Offline-Work-1.md`)
-| AsciiDoc / Markdown
-| • Macro-Historical Epochs (Eras I–VI) & 6-Power Conflict +
-  • 20-Scene Master Storyboard Sequence +
-  • Tragedy of Sovereign Usuru & 11th Festival Rupture +
-  • The 7-Year Great War & Accord of Kings +
-  • Early Relic Embellishment & 5-Route Ending Matrix
+| *Part 1*
+| link:Offline-Work-1.adoc[Offline-Work-1.adoc]
+| link:Offline-Work-1.md[Offline-Work-1.md]
+| **Narrative Architecture & Genesis Storyboard:** Metaphysics of Lux & Tenebris, the Tempering Law, the Magic vs. Science schism, the First King's coma and death across Festivals 1–10, Usuru's 11th-year rupture, the 7-Year Great War, the 20-scene master storyboard, and the founding 5-ending model.
 
-| **xref:Offline-Work-2.adoc[Offline-Work-2.adoc]** +
-  (and `Offline-Work-2.md`)
-| AsciiDoc / Markdown
-| • 3,000-Year Dynastic Wave (30–50 Kings, Stasis Crests & Tether Troughs) +
-  • Past / Present / Future Thematic Triad (*"Trauma is Inherited, Destiny is Chosen"*) +
-  • Dreamscape Temporal Mechanics & Nocturnal Phasing +
-  • The King's Curse Planar Wound & Midpoint Campaign Fork +
-  • LLM Architecture Biases vs. Creator Mental Model Grounding
+| *Part 2*
+| link:Offline-Work-2.adoc[Offline-Work-2.adoc]
+| link:Offline-Work-2.md[Offline-Work-2.md]
+| **3,000-Year Dynastic Wave & Veil Mechanics:** The mathematical wave of succession, the Past/Present/Future thematic triad (Elijah→Usuru, Katrina→Casatti, Custom Bearer→Mi-ren), the Dreamscape gameplay system, Grandma's Watch → Dream Compass transition, King Jihad's rupture, and dry-run LLM compiler methodology.
 
-| **xref:Offline-Work-3.adoc[Offline-Work-3.adoc]** +
-  (and `Offline-Work-3.md`)
-| AsciiDoc / Markdown
-| • Decoupling Morality ("The Why") from Elemental Expression ("The How") +
-  • Biblical Ontology of Good (*Tov*) and Evil (*Ra*) & Tempering vs. Dissipation +
-  • The Bystander Corridor (`[-50, +50]`) as Net Moral Inertia & Cyclic Stagnation +
-  • The Butterfly Effect & Micro-Choices as Fate-Breakers (Trauma is Inherited, Destiny is Chosen) +
-  • 13-Tier Canonical Nomenclature & Character Categorization Across `[-100, +100]` +
-  • 10-Ending Architecture: 3x3 Matrix + 10th Synthesis Route ("The Ugly Truth") +
-  • The Witness Protagonist, Keystone Route & Quantum Observer Effect +
-  • Diegetic Item Architecture (Grandma's Watch -> Dream Compass, Compass of Morality) +
-  • Save Systems, NG+ Timeline Tree (Chrono's Chronicle Ledger) & Speedrunner Routing +
-  • Historical Reconciliations across Folders 1 & 2 (Maps 002–004, 006, 008, 020–031) +
-  • Architectural Reflection on Philosophy and Low-Level Code Unity
+| *Part 3*
+| link:Offline-Work-3.adoc[Offline-Work-3.adoc]
+| link:Offline-Work-3.md[Offline-Work-3.md]
+| **Morality Architecture & 10-Ending Matrix:** Decoupling conscience ("The Why": biblical *Tov* vs. *Ra*) from elemental expression ("The How"), the `[-50, +50]` Bystander Corridor as Net Moral Inertia, Butterfly Effect micro-verbs, the 13-tier Moral Sway continuum, the 3×3 + 10th True Ending matrix (*"The Ugly Truth"*), and diegetic item interfaces.
 
-| **xref:Offline-Work-4.adoc[Offline-Work-4.adoc]** +
-  (and `Offline-Work-4.md`)
-| AsciiDoc / Markdown
-| • Master Stat & Category Sheet: Character Identity, Growth & Vocation Affinity +
-  • Core 9 Combat Stats & Bidirectional 8 Exploration Stats (Level 1 / Level 5 baselines) +
-  • Sub-Surface Combat Parameters: Accuracy, Evasion, Move Points, Facing, ZOC & Poise +
-  • Elemental & Physical Damage Matrix: 6 Apex Elements, Secondaries & Status Multipliers +
-  • Relic Resonance (Shield Power / Sword Edge), Stances (0–3) & Moral Sway Continuum +
-  • Interpersonal Bonds (Elijah-Katrina Dynamic), Party Affinity & 4 Kingdom Pillars +
-  • Economy (Gold, Contraband), Diegetic Archives & Monotonic Calendar World-State
+| *Part 4*
+| link:Offline-Work-4.adoc[Offline-Work-4.adoc]
+| link:Offline-Work-4.md[Offline-Work-4.md]
+| **Master Stat, Sub-Surface & Economy Sheet:** Comprehensive taxonomy of Core 9 Combat Stats ↔ 8 Exploration Stats (`Lv 1` / `Lv 5` baselines), tactical grid mechanics (POISE, ZOC, Facing), Elemental/Status affinities, Relic gauges, Interpersonal Bonds, Six-Power Factions, Economy, and Monotonic Clock bounds.
+
+| *Part 5*
+| link:Offline-Work-5.adoc[Offline-Work-5.adoc]
+| link:Offline-Work-5.md[Offline-Work-5.md]
+| **Definitive Class & Job System Specification:** The orthogonal **35-Class 5-Tier Pyramid** (`C(5,1)..C(5,4) + Apex`), New Game+ Hard-Mode *Trainee* & *Mystic* unlocks, Encore Mastery skills, the **28-Job 5-Pillar Vocation Compendium** ("No Starter Job in Dio Village"), and zero-heap Layer 1 C bitmask contracts (`class_id_t`, `job_id_t`).
+
+| *Part 6*
+| link:Offline-Work-6.adoc[Offline-Work-6.adoc]
+| link:Offline-Work-6.md[Offline-Work-6.md]
+| **Canon Reconciliation, Generational War & 4D Dream Clock:** Resolves 2017–2018 Master Guide assumptions (Sir Roté, 7 classes vs. 35/28, Usuru class), maps the Adolescent Crucible (ages 11 / 15–18 → 35+), King Jihad's Poisoned Mandate & Midpoint Fork, **Two-Pass Grand Tour** topology, and the `sacyra_calendar_t` / `story_point_receipt_t` temporal engine.
 |===
+
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Architectural Invariants Preserved Across All 6 Parts )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Cross-Chronicle Continuity Guarantees ---
+== Cross-Chronicle Architectural Guarantees
+
+* **Authentic Canon Purity:** All six manuscripts uphold **The Dark Lord Usuru** as sole overarching antagonist, preserve the strict separation of **Equipment (Relics)**, **Element (Lux/Tenebris)**, and **Conscience (`[-100, +100]` Moral Sway)**, and enforce the Bystander Corridor Tier 4 cap.
+* **Layout & Toolchain Hygiene:** All `.adoc` files comply with the Universal 5-Block AsciiDoc Protocol (`//// BLOCK 1..5 ////`) and PDF layout budgets validated by `master_guide -- --validate-layout`.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Quick Jump & Upstream Documentation Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+*Start Series:* link:Offline-Work-1.adoc[Part 1: Narrative Architecture & Genesis Storyboard →] +
+*Upstream Architecture:* link:../architecture/README.adoc[Architecture Index] | link:../dev_logs/README.adoc[Development Logs Index]

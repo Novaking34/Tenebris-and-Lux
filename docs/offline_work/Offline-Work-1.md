@@ -1,3 +1,24 @@
+<!--
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance & Narrative / System Series Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-1.md
+@id            docs.offline_work.part_1.md
+@layer         Documentation / Pre-Production Chronicles (Part 1 of 6)
+@version       0.2.0-dev
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@series        Index: README.adoc | Part 1 (First) | Next: Offline-Work-2.md
+================================================================================
+-->
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | **Part 1: Genesis & Storyboard** | [Part 2: 3,000-Year Dynasty & Veil →](Offline-Work-2.md)
+> *Canonical PDF/AsciiDoc Edition:* [Offline-Work-1.adoc](Offline-Work-1.adoc)
+
 # Tenebris and Lux: Definitive Narrative Architecture, Historical Canon, Metaphysics & Ludological Design Compendium
 
 ## 1. World-Building & Game Development Philosophy
@@ -404,3 +425,8 @@ By design, the main story is linear from start to finish so that any player can 
 4. **Mid-to-Late Campaign Progression & Phase 2–3 Engine Specs:** Detailed act outlines beyond Dio Village (`LOC_WHISPERING_WOODS`, `LOC_SACYRA_MARCHES`, and the Capital siege) alongside the mathematical specifications for the Phase 2 2D tactical grid and Phase 3 side-scroll action duel transitions.
 
 5. **Documentation Harmonization:** Sweeping early Master Guide chapters (Chapters 1, 15, 20) to replace lingering references to the deprecated placeholder name `"Malakor"` with the strictly canonical title **"The Dark Lord"** established in DevLog 008.
+
+---
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | **Part 1: Genesis & Storyboard** | [Part 2: 3,000-Year Dynasty & Veil →](Offline-Work-2.md)

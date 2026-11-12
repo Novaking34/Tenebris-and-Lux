@@ -1,17 +1,47 @@
-= Tenebris and Lux: The Master Stat, Sub-Surface & Ludological Category Specification
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Narrative Scope & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-4.adoc
+@id            docs.offline_work.part_4
+@layer         Documentation / Pre-Production Chronicles (Part 4 of 6)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Master Stat Sheet, Sub-Surface Grid & Economy Telemetry
+@role          Core 9 Combat Stats, 8 Exploration Stats & World-State Bounds
+@audience      Designers, Lore Writers, Systems Programmers
+@snapshots     n/a (pre-production statistical & ludological baseline)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Strictly couples Core 9 Combat Stats <-> 8 Exploration Stats.
+               3. Bounded invariants mirror Layer 1 hero/sim_state.h & Dream Clock.
+================================================================================
+////
+
+= Offline Work 4: The Master Stat, Sub-Surface & Ludological Category Specification
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-05
-:doctype: book
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
-:stem: latexmath
 
-[abstract]
-== Overview & Document Scope
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Series Navigation, Pre-Production Context & Architectural Scope )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Series Navigation & Document Synopsis ---
+[NOTE]
+====
+*Part 4 of 6* in the *Tenebris and Lux* Pre-Production Archive & System Chronicles. +
+*Series Navigation:* link:README.adoc[Series Index] | link:Offline-Work-3.adoc[← Part 3: Morality & Bystander Corridor] | *Part 4: Master Stat Sheet* | link:Offline-Work-5.adoc[Part 5: Class & Job Architecture →] +
+*Markdown Archival Mirror:* link:Offline-Work-4.md[Offline-Work-4.md]
 
 This document provides the canonical formal specification for the statistical taxonomy,
 bidirectional exploration-combat stat mirrors, sub-surface grid mechanics, elemental and
@@ -19,9 +49,11 @@ status affinities, relic resonance matrices, interpersonal trust bonds, geopolit
 and temporal world-state tracking for *Tenebris and Lux*. Transcribed directly from offline
 architectural working sessions, it serves as the ground-truth ludological blueprint for
 Layer 1 simulation state (`hero/sim_state.h`, `combat/`) and Layer 2 presentation displays.
+====
 
-'''
+toc::[]
 
+// --- Sub-Assembly 2.2: Identity & Monolith Affinities ---
 == 1. Character Identity, Growth & Vocation Affinity
 
 Tracks character identity, macro-progression curves, and innate mechanical bonuses granted
@@ -59,18 +91,24 @@ by discipline or Dreamscape Monolith attunement.
 | **Vanguard (Aegis):** +15% DEF, Heavy ZOC, Shield Intercept
 | **Outrider (Shadow):** +1 Move, Ignores ZOC, +25% Obscured EVA
 | **Aegis / Shadow / Aether / Equilibrium**
-| Companion classes: **Thief** (Sebastien), **Mage** (Angela), **Priest** (Lucius), **Summoner**.
+| Companion classes: **Thief** (Sebastien), **Mage** (Angela), **Priest** (Lucius), **Summoner** *(further specialized into 35 Classes & 28 Jobs in link:Offline-Work-5.adoc[Offline Work 5])*.
 |===
 
-'''
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Core 9 / 8 Stats, Tactical Sub-Surface Grid, Affinities, Relics & Factions )
+================================================================================
+////
 
+// --- Sub-Assembly 3.1: Core 9 Combat & 8 Exploration Stats ---
 == 2. The Core 9 Combat Stats & Bidirectional 8 Exploration Stats
 
 Combat growth and overworld capability mirror each other bidirectionally at Level 1 and Level 5 baselines:
 
 [cols="2,2,2,2,2,1,3", options="header"]
 |===
-| Core 9 Combat Stat | Lv 1 (Hero/War) | Lv 5 (Hero/War) | Paired Exploration Stat | Raw Baseline (1–20) | Base MOD | Combat $\leftrightarrow$ Exploration Function
+| Core 9 Combat Stat | Lv 1 (Hero/War) | Lv 5 (Hero/War) | Paired Exploration Stat | Raw Baseline (1–20) | Base MOD | Combat ↔ Exploration Function
 
 | **Health Points (HP)**
 | `450` / `100`
@@ -169,8 +207,7 @@ Combat growth and overworld capability mirror each other bidirectionally at Leve
   **World:** Public fame/infamy & faction reception.
 |===
 
-'''
-
+// --- Sub-Assembly 3.2: Sub-Surface Grid & Affinity Matrices ---
 == 3. Combat Resolution, Tactical Grid & Sub-Surface Parameters
 
 Secondary and sub-surface parameters governing hit resolution on the 2D/2.5D tactical grid and side-view action encounters:
@@ -240,8 +277,6 @@ Secondary and sub-surface parameters governing hit resolution on the 2D/2.5D tac
 | Frame-perfect *Timed Ward* in action duel grants `100%` deflection block.
 |===
 
-'''
-
 == 4. Elemental, Physical & Status Affinity Matrix
 
 Tracks damage and resistance multipliers across **Weakness (150%–200%)**, **Neutral (100%)**, **Resistance (50%)**, **Immunity (0%)**, or **Absorption (<0%)**:
@@ -273,8 +308,7 @@ Tracks damage and resistance multipliers across **Weakness (150%–200%)**, **Ne
 | Derived from **Wisdom (WIS)** and **Vitality (VIT)** modifiers (`Base 0%–20%` resist).
 |===
 
-'''
-
+// --- Sub-Assembly 3.3: Relic Resonance & Interpersonal / Faction Bonds ---
 == 5. Relic Resonance, Stances & Moral Telemetry
 
 The core bounded invariants tracked by the C11 simulation engine and the *Compass of Morality*:
@@ -284,19 +318,19 @@ The core bounded invariants tracked by the C11 simulation engine and the *Compas
 | Tracker / Gauge | Variable / Range | Starting Value | Mechanical & Narrative Function
 
 | **Shield of Lux Power**
-| `shield_power` $[0, 100]$
+| `shield_power` `[0, 100]`
 | `50`
 | Builds on Guard/Ward (`+10` to `+20`); powers *Lux Barrio* (`25%` mitigation for `2–5` turns). Dissipates on malice/panic.
 
 | **Sword of Tenebris Edge**
-| `sword_edge` $[0, 100]$
+| `sword_edge` `[0, 100]`
 | `50`
 | Consumed on severance strikes; powers *Cuttatio Tenebris* (`20%` splash cleave). Erodes user if untempered by Lux.
 
 | **Active Combat Stance**
 | `combat_stance_t` (`0–3`)
 | `STANCE_NEUTRAL` (`0`)
-| `0`: Neutral | `1`: Warding (`+DEF`) | `2`: Striking (`+ATK/Pen`) | `3`: Equilibrium (`+15% ATK & DEF`, unlocks *Duo-Loca Bashin n Slash*).
+| `0`: Neutral \| `1`: Warding (`+DEF`) \| `2`: Striking (`+ATK/Pen`) \| `3`: Equilibrium (`+15% ATK & DEF`, unlocks *Duo-Loca Bashin n Slash*).
 
 | **Relic Embellishment Slots**
 | `3 Slots per Relic`
@@ -304,20 +338,18 @@ The core bounded invariants tracked by the C11 simulation engine and the *Compas
 | Holds elemental/ideological weaves (*Ring of Fire*, *Medusa's Sword*, *Lyri's Offering*).
 
 | **Moral Sway Continuum**
-| `moral_sway` $[-100, +100]$
+| `moral_sway` `[-100, +100]`
 | Elijah: `+35` +
   Katrina: `-20` +
   Custom: `0`
-| Net trajectory across the 13 tiers (`-100` *Sovereign of Ruin* $\leftrightarrow$ `[-50, +50]` *Bystander Corridor* $\leftrightarrow$ `+100` *Saint of Mercy*).
+| Net trajectory across the 13 tiers (`-100` *Sovereign of Ruin* ↔ `[-50, +50]` *Bystander Corridor* ↔ `+100` *Saint of Mercy*).
 
 | **Cumulative Virtue & Malice**
-| `virtue_acc` $[0, \infty)$ +
-  `malice_acc` $[0, \infty)$
+| `virtue_acc` `[0, ∞)` +
+  `malice_acc` `[0, ∞)`
 | `0` / `0`
 | Tracks total selfless vs. ruthless acts separately so the engine distinguishes active *Equilibrium* from passive *Bystander* inertia.
 |===
-
-'''
 
 == 6. Interpersonal Bonds & Geopolitical Factions
 
@@ -328,8 +360,8 @@ Tracks companion trust and socio-political standing across the Kingdom of Sacyra
 | Category | Specific Tracked Entity | Scale / Range | Starting Baseline | Gameplay Impact
 
 | **Protagonist Dualism**
-| **Elijah $\leftrightarrow$ Katrina Bond**
-| $[0, 100]$
+| **Elijah ↔ Katrina Bond**
+| `[0, 100]`
 | `25` (Cautious)
 | Unlocks tandem grid maneuvers, follow-up strikes, and *Stance of Equilibrium* sync.
 
@@ -337,13 +369,13 @@ Tracks companion trust and socio-political standing across the Kingdom of Sacyra
 | • **Sebastien** (Thief) +
   • **Angela** (Mage) +
   • **Lucius** (Priest)
-| $[-50, +100]$
+| `[-50, +100]`
 | `0` (Upon Recruitment)
 | Governs squad morale, combo assist rates, camp conversations, and loyalty during moral shifts.
 
 | **Mentor & Key NPC Trust**
 | **Grandma Magolia**, **High Priest Roté**, **Monica the Mystic**, **John the Thief**, **Chrono**
-| $[0, 100]$
+| `[0, 100]`
 | Magolia: `80` (Elijah) / `40` (Katrina) +
   Others: `10–25`
 | Unlocks confidential lore, safe-house access, underground fencing, and Dreamscape guidance.
@@ -353,7 +385,7 @@ Tracks companion trust and socio-political standing across the Kingdom of Sacyra
   2. **House Jaren & High Nobles** +
   3. **The High Priesthood** +
   4. **The Adventurers' Guild**
-| $[-100, +100]$
+| `[-100, +100]`
 | Guard: `+40` (E) / `-10` (K) +
   Nobles: `+10` (E) / `-25` (K) +
   Guild: `0` (E) / `+30` (K)
@@ -361,14 +393,20 @@ Tracks companion trust and socio-political standing across the Kingdom of Sacyra
 
 | **Regional & Six-Power Standing**
 | **Dio Village (Upper/Lower)**, **Central Sacyra**, **Libira**, **Great Mau**, **Old Sacyra**, **The Academy**, **Yun-yin**
-| $[-100, +100]$
+| `[-100, +100]`
 | Dio: `+25` +
   Other Regions: `0`
 | Governs border passage, regional trade inventory, and side-quest chains.
 |===
 
-'''
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Economy Logistics, Monotonic Clock Telemetry & Cosmological Bounds )
+================================================================================
+////
 
+// --- Sub-Assembly 4.1: Economy & Temporal Telemetry Bounds ---
 == 7. Economy, Diegetic Archives & Temporal World-State
 
 Tracks logistics, compendium completion, and the monotonic clock/veil state:
@@ -393,14 +431,26 @@ Tracks logistics, compendium completion, and the monotonic clock/veil state:
 | Reveals enemy HP, DEF/MDEF splits, and Poise on the tactical grid; unlocks timeline bookmark jumps in NG+.
 
 | **Monotonic Clock (*Grandma's Watch*)**
-| `sec` $[0,59]$, `min` $[0,59]$, `hour` $[0,23]$, `day` $[1,7]$, `week` $[1,4]$, `month` $[1,12]$, `year`
+| `sec` `[0,59]`, `min` `[0,59]`, `hour` `[0,23]`, `day` `[1,7]`, `week` `[1,4]`, `month` `[1,12]`, `year`
 | `08:00 AM, Day 1` (Festival Countdown)
 | Drives day/night NPC schedules, shop hours, and the nocturnal Dreamscape window (`20:00` to `04:00`).
 
 | **Cosmological Veil (*The Dream Compass*)**
-| • **Veil Stability** $[0, 100]$ +
-  • **Truth Discovery Index** $[0, 100]$
+| • **Veil Stability** `[0, 100]` +
+  • **Truth Discovery Index** `[0, 100]`
 | Stability: `100` (Thins near Festival) +
   Truth: `0`
 | Gates nocturnal slumber trials and determines eligibility for the Midpoint Fork (**Neutral Path** vs. **True Ending "The Ugly Truth"**).
 |===
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Series Navigation & Archival Trail )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Series Navigation ---
+*Previous:* link:Offline-Work-3.adoc[← Offline Work 3: Morality Architecture & Bystander Corridor] +
+*Index:* link:README.adoc[Return to Offline Work Series Index] +
+*Next:* link:Offline-Work-5.adoc[Offline Work 5: Definitive Class & Job System Specification →]

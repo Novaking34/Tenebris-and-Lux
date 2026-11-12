@@ -1,3 +1,24 @@
+<!--
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance & Narrative / System Series Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-2.md
+@id            docs.offline_work.part_2.md
+@layer         Documentation / Pre-Production Chronicles (Part 2 of 6)
+@version       0.2.0-dev
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@series        Previous: Offline-Work-1.md | Index: README.adoc | Next: Offline-Work-3.md
+================================================================================
+-->
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | [← Part 1: Genesis & Storyboard](Offline-Work-1.md) | **Part 2: 3,000-Year Dynasty & Veil** | [Part 3: Morality & Bystander Corridor →](Offline-Work-3.md)
+> *Canonical PDF/AsciiDoc Edition:* [Offline-Work-2.adoc](Offline-Work-2.adoc)
+
 # Tenebris and Lux: Comprehensive Narrative Architecture, Ludological Systems & Macro-Historical Compendium
 
 ---
@@ -395,3 +416,8 @@ Using an LLM to document a game universe when the creator already holds the comp
 
 2. **Functioning as a "Dry-Run Compiler":** Because the model only knows what has been explicitly provided in context, any instance where the model extrapolates or asks an overly prescriptive question immediately flags where an unwritten assumption resides in the creator's head, allowing that rule to be formally codified.
 3. **Bridging Literary Philosophy to Mathematical Invariants:** Formalization translates thematic axioms—such as *"Lux tempers Tenebris, but dissipates under violent emotional shifts"*—directly into deterministic engine rules: $[-100, +100]$ Moral Sway clamping, *Lux Barrio* duration rolls ($2\dots5\text{ turns}$), *Cuttatio Tenebris* splash cleaves ($20\%$), and monotonic clock thresholds.
+
+---
+
+> **Series Navigation (Markdown Mirror):**
+> [Series Index (AsciiDoc)](README.adoc) | [← Part 1: Genesis & Storyboard](Offline-Work-1.md) | **Part 2: 3,000-Year Dynasty & Veil** | [Part 3: Morality & Bystander Corridor →](Offline-Work-3.md)

@@ -1,22 +1,58 @@
-= Tenebris and Lux: Definitive Narrative Architecture, Historical Canon, Metaphysics & Ludological Design Compendium
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Narrative Scope & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-1.adoc
+@id            docs.offline_work.part_1
+@layer         Documentation / Pre-Production Chronicles (Part 1 of 6)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Genesis Lore Bible, Veil Metaphysics & 20-Scene Storyboard
+@role          Canonical Genesis Canon, Tempering Law & Demo Historical Baseline
+@audience      Designers, Lore Writers, Systems Programmers
+@snapshots     n/a (pre-production narrative & metaphysics chronicle)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Authentic project canon (Sole Antagonist: The Dark Lord Usuru).
+               3. Lux tempers Tenebris but dissipates under violent moral/emotional shifts.
+================================================================================
+////
+
+= Offline Work 1: Narrative Architecture, Historical Canon, Metaphysics & Ludological Design
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-02
-:doctype: book
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
 
-[abstract]
-== Overview & Architectural Scope
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Series Navigation, Pre-Production Synopsis & Design Philosophy )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Series Navigation & Document Synopsis ---
+[NOTE]
+====
+*Part 1 of 6* in the *Tenebris and Lux* Pre-Production Archive & System Chronicles. +
+*Series Navigation:* link:README.adoc[Series Index] | *Part 1: Genesis & Storyboard* | link:Offline-Work-2.adoc[Part 2: History & Veil →] +
+*Markdown Archival Mirror:* link:Offline-Work-1.md[Offline-Work-1.md]
 
 This compendium establishes the definitive narrative architecture, macro-historical canon,
-cosmic metaphysics, master storyboard chronicle, and ludological design principles for
+cosmic metaphysics, master 20-scene storyboard chronicle, and ludological design principles for
 *Tenebris and Lux*. Synthesizing the 2017–2018 RPG Maker MV archives (Folder 1 and Folder 2)
-with the native ISO C11 engine architecture, it formalizes the genesis of the Kingdom of Sacyra,
-the tragedy of Usuru, the awakening of the twin relics, and the multi-ending campaign structure.
+with the native ISO C11/C23 engine architecture, it formalizes the genesis of the Kingdom of Sacyra,
+the tragedy of Usuru, the awakening of the twin relics, and the founding multi-ending campaign structure.
+====
+
+toc::[]
+
+// --- Sub-Assembly 2.2: Pre-Production Philosophy & World Mold ---
 
 == 1. World-Building & Game Development Philosophy
 
@@ -43,11 +79,17 @@ Establishing the macro-shape of the overarching world is just as vital as detail
 
 * **Systemic Causality Over Narrative Contrivance:** When macro-rules are defined first—such as a seven-day courier delay to a frontier kingdom or an ethereal veil that thins for one week a year—character motivations emerge as inevitable consequences of their environment rather than artificial plot devices.
 * **Negative Space Defines the Inhabitants:** Charting the geopolitical fault lines between the six powers of The Great War creates predefined societal currents. Every future village, merchant, or scholar automatically inherits historical weight based on where they sit along those fault lines.
-* **Ludonarrative Cohesion Between Canon and Code:** The overarching metaphysical rules translate directly into deterministic C11 mathematical invariants. The lore rule that *Lux tempers Tenebris, but dissipates under violent emotional shifts* directly governs the simulation engine's `[-100, +100]` Moral Sway clamping, *Lux Barrio* duration rolls ($2 \dots 5$ turns), and *Cuttatio Tenebris* splash cleaves ($20\%$).
+* **Ludonarrative Cohesion Between Canon and Code:** The overarching metaphysical rules translate directly into deterministic C11 mathematical invariants. The lore rule that *Lux tempers Tenebris, but dissipates under violent emotional shifts* directly governs the simulation engine's `[-100, +100]` Moral Sway clamping, *Lux Barrio* duration rolls (`2 ... 5` turns), and *Cuttatio Tenebris* splash cleaves (`20%`).
 * **Fractal Storytelling (The Micro Mirrors the Macro):** Small, local interactions in the opening village naturally echo ancient continental history. When Elijah hesitates before Grandma Magolia's chest out of respect for family rules, or Katrina opens it immediately looking for a will, their domestic choices mirror the ancient ideological split between Prince Mi-ren and Prince Casatti.
 
-'''
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Cosmic Metaphysics, Genesis Timeline, 20-Scene Storyboard & Demo Continuity )
+================================================================================
+////
 
+// --- Sub-Assembly 3.1: Veil Metaphysics & Tempering Loop ---
 == 2. Core Metaphysics, Power Systems & The Ethereal Veil
 
 === 2.1. The Primordial Motif: Morality in the Heart, Not the Element
@@ -74,7 +116,7 @@ Good and evil exist as real moral absolutes within the world, yet neither Light 
 The interaction between Lux and Tenebris is governed by a strict law of equilibrium:
 
 [source,text]
-----
+------
                      TEMPERING LOOP
         ┌──────────────────────────────────────┐
         ▼                                      │
@@ -90,7 +132,7 @@ The interaction between Lux and Tenebris is governed by a strict law of equilibr
                   LUX DISSIPATES
      Tenebris runs unchecked into devouring void;
      Lux collapses just as it did during the 11th Festival.
-----
+------
 
 1. **Lux as the Singular Tempering Agent:** Raw Tenebris is entropic and severing; left unchecked, it erodes everything it touches. Lux is the only force capable of containing and tempering Tenebris, providing structural cohesion so that the void's cutting edge can be wielded safely.
 2. **The Fragility of Radiance (Dissipation):** While Lux can temper Tenebris, it requires emotional and ethical stability to hold its form. Any sudden, violent shift in the heart—such as terror, betrayal, panic, or malice—causes Lux to **dissipate immediately**, collapsing protective barriers and leaving Tenebris unbridled.
@@ -112,12 +154,11 @@ Alongside the waking physical world exists **The Dreamscape**, an ethereal plane
 ** *The Severed Tether:* Channeling the thinned veil in short bursts is stable, but sustaining a bridge across an entire week carries extreme peril. If a ritual is violently interrupted while a spirit bridges the veil, the tether snaps—permanently sealing the consciousness inside the Dreamscape.
 ** *The Infiltration of the Dream Eaters:* Widening or tearing the veil attracts **Dream Eaters**—parasitic entities native to the deep ether that feast upon mortal memories, hopes, and unresolved grief.
 
-'''
-
+// --- Sub-Assembly 3.2: Complete Chronological Realm History ---
 == 3. Complete Chronological History of the Realm
 
 [source,text]
-----
+------
                   ERA I: THE FOUNDING OF SACYRA
      The First King's Golden Peace & Self-Running Systems
      Mundane Shield (Peace) & Mundane Sword (War) Forged
@@ -175,7 +216,7 @@ Forever                Warps Distance Between  becomes young ruler of
                          • Lux tempers Tenebris (dissipates on violent shifts).
                          • Establishes "Joint Realm, Separate Kingdoms" politics.
                          • Births the "Prophecy of Kings" around the twin relics.
-----
+------
 
 === Era I: The Founding of Sacyra, Self-Running Systems & The Two Princes
 
@@ -225,8 +266,7 @@ Forever                Warps Distance Between  becomes young ruler of
 
 Because the Shield and the Sword were the original symbols of Peace and War chosen by the First King—whose sons' ideologies manifested into the cosmic artifacts of the **Shield of Lux** and **Sword of Tenebris**—their pairing became known throughout history as the **Prophecy of Kings**. Over the centuries following his defeat, Usuru's unhealed bitterness festered in the abyss until he became known to history simply as **The Dark Lord**.
 
-'''
-
+// --- Sub-Assembly 3.3: 20-Scene Storyboard & Demo Continuity ---
 == 4. Master Storyboard Sequence: The Genesis Chronicle (Scenes 01–20)
 
 [cols="1,2,2,3,4", options="header"]
@@ -354,8 +394,7 @@ Because the Shield and the Sword were the original symbols of Peace and War chos
 | The First King's symbols of Peace and War are enshrined in the **Prophecy of Kings**, while Usuru retreats into the dark to become **The Dark Lord**.
 |===
 
-'''
-
+// --- Sub-Assembly 3.4: Demo Parallels & Multi-Route Agency ---
 == 5. Continuity Bridge: Historical Parallels & Inversions in the 2017–2018 Demo
 
 === 5.1. Usuru's Strategic Calculus: The Festival as a Metaphysical Siege Window
@@ -413,8 +452,8 @@ Elijah and Katrina acquire the ancient relics—the **Shield of Lux** and the **
 Just as Mi-ren and Casatti infused the original mundane weapons with their convictions, players choose how to **embellish** their relics through side quests, elemental weaves, and moral choices:
 
 * **Canonical Core Combat Verbs (DevLog 008 Baseline):**
-** **Defend (`Lux Barrio`):** Rolls a deterministic $2 \dots 5$ turn duration, granting $25\%$ incoming damage mitigation and shifting moral alignment toward virtue.
-** **Attack (`Cuttatio Tenebris`):** Strikes primary target and deals $20\%$ area splash cleave to adjacent enemies.
+** **Defend (`Lux Barrio`):** Rolls a deterministic `2 ... 5` turn duration, granting `25%` incoming damage mitigation and shifting moral alignment toward virtue.
+** **Attack (`Cuttatio Tenebris`):** Strikes primary target and deals `20%` area splash cleave to adjacent enemies.
 ** **Special (`Basic Magic`, `Basic Ward`, `Basic Charm`, and `Duo-Loca Bashin n Slash`):** *Duo-Loca Bashin n Slash* harmonizes both relics in **Stance of Equilibrium**, dynamically targeting the enemy's lower defensive stat (`DEF` vs. `MDF`).
 * **Provincial Side Quests as Relic Embellishments:**
 ** **Eric's Test of Honesty (`Map 028`):** Filling Eric's pot to cover two months of rent rather than stealing from it shifts Moral Sway positively and rewards the **Ring of Fire** (_"I used to be a lumberjack until that weird portal appeared. I found this ring and held on to it every since"_), embellishing the relics with fire-weave properties (connecting to Folder 2's *Burning Tile Spread* LeTBS state).
@@ -424,7 +463,7 @@ Just as Mi-ren and Casatti infused the original mundane weapons with their convi
 
 === 6.3. Complete Ending Matrix & Player Agency Over Lore
 
-By design, the main story is linear from start to finish so that any player can complete a coherent tactical campaign, while **Dreamscape side quests** remain optional, time-sensitive (tied to the monotonic clock), and missable. You cannot achieve $100\%$ completion without the Dreamscape quests, giving the player full agency to decide *whether they want to know the deeper story*:
+By design, the main story is linear from start to finish so that any player can complete a coherent tactical campaign, while **Dreamscape side quests** remain optional, time-sensitive (tied to the monotonic clock), and missable. You cannot achieve `100%` completion without the Dreamscape quests, giving the player full agency to decide *whether they want to know the deeper story*:
 
 [cols="1,2,2,3", options="header"]
 |===
@@ -442,7 +481,7 @@ By design, the main story is linear from start to finish so that any player can 
 
 | **3. Secret True Ending** _(The Chronicler's Path)_
 | Play as the non-default custom protagonist (`<chosen_name>`) and perform the "double work" across all moral and nocturnal branches.
-| Complete mastery of all relic embellishments, Magic vs. Science synthesis, and $100\%$ Dreamscape completion.
+| Complete mastery of all relic embellishments, Magic vs. Science synthesis, and `100%` Dreamscape completion.
 | The custom bearer weaves through the canonical path, witnessing fragments of both Elijah's and Katrina's stories. With Chrono in the Room of Sages, they heal the planar rift and reform the realm's outpost and governance systems.
 
 | **4. Benevolent Stasis Ending** _(The Mi-ren Fallacy)_
@@ -451,25 +490,42 @@ By design, the main story is linear from start to finish so that any player can 
 | Repeat of the ancient mistake on a continental scale: to prevent destruction, the wielder seals Sacyra inside a timeless, comatose golden barrier where nothing can harm—or grow in—the realm.
 
 | **5. Abyssal Usurper Ending** _(The Cycle of Usuru)_
-| Extreme Tenebris focus with negative Moral Sway ($-100$, theft, ruthless slaughter).
+| Extreme Tenebris focus with negative Moral Sway (`-100`, theft, ruthless slaughter).
 | Pure Tenebris severance embellishments; Lux completely dissipated by malice.
 | The wielder strikes down King Jihad and absorbs the Dark Lord's void power, taking the throne as a new Dark Sovereign and repeating Usuru's war of vengeance against the Capital.
 |===
 
-'''
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Verified Baseline Checkpoints & Forward Roadmaps )
+================================================================================
+////
 
+// --- Sub-Assembly 4.1: Verified Baseline & Forward Outlines ---
 == 7. Current Project Status & Remaining Outlines to Define
 
 === 7.1. Fully Outlined & Verified in Repository
 
-* **Layer 0, 1, 2 & 4 C11 Architecture:** 12/12 pre-flight modules registered, `ALLOC_ZERO_HEAP` static memory guarantees, ISO 8601 (`2026-10-26`) temporal stamping, active DAG dependency enforcement, 80-column LSP hover docstrings, and CTest verification suites passing in $\sim 0.02\text{--}0.05\,\text{s}$.
+* **Layer 0, 1, 2 & 4 C11 Architecture:** 12/12 pre-flight modules registered (at Part 1 checkpoint), `ALLOC_ZERO_HEAP` static memory guarantees, ISO 8601 (`2026-10-26`) temporal stamping, active DAG dependency enforcement, 80-column LSP hover docstrings, and CTest verification suites passing in `~0.02–0.05 s`.
 * **Genesis & Great War Lore Bible:** Founding of Sacyra, the First King's coma and death across Festivals 1–10, Usuru's 11th-year interruption, the birth of Tenebris and Lux, the 7-Year Great War across the six powers, the "Joint Realm, Separate Kingdoms" settlement, and the Prophecy of Kings.
 * **2017–2018 Demo Baseline (Acts I–IV):** Complete extraction of the 43 maps, dialogue transcripts for Elijah and Katrina, Dio Village moral tests, and canonical combat skills.
 
 === 7.2. Next Areas Ready to Be Outlined
 
-1. **The Post-War Era & The Immediate Past:** What happened to Prince Mi-ren, Prince Casatti, and Usuru immediately after the 7-Year Great War, and the exact truth behind **Commander Gareth Ro-enheart's** disappearance on Elijah's 10th birthday.
-2. **Cultural & Regional Profiles of the Six Powers:** Detailed cultural, architectural, and societal profiles for **The Capital**, **The Kingdom of Libira**, **The Great Mau Kingdom**, **Old Sacyra**, **The Academy**, and **The Yun-yin Provinces**.
-3. **Extended Tactical Party Integration (Folder 2 Synthesis):** Full narrative backstories, recruitment scenes, and 5-unit LeTBS grid synergies for **Sebastien the Thief**, **Angela the Mage**, and **Lucius the Priest**.
-4. **Mid-to-Late Campaign Progression & Phase 2–3 Engine Specs:** Detailed act outlines beyond Dio Village (`LOC_WHISPERING_WOODS`, `LOC_SACYRA_MARCHES`, and the Capital siege) alongside the mathematical specifications for the Phase 2 2D tactical grid and Phase 3 side-scroll action duel transitions.
-5. **Documentation Harmonization:** Sweeping early Master Guide chapters (Chapters 1, 15, 20) to replace lingering references to the deprecated placeholder name `"Malakor"` with the strictly canonical title **"The Dark Lord"** established in DevLog 008.
+. **The Post-War Era & The Immediate Past:** What happened to Prince Mi-ren, Prince Casatti, and Usuru immediately after the 7-Year Great War, and the exact truth behind **Commander Gareth Ro-enheart's** disappearance on Elijah's 10th birthday.
+. **Cultural & Regional Profiles of the Six Powers:** Detailed cultural, architectural, and societal profiles for **The Capital**, **The Kingdom of Libira**, **The Great Mau Kingdom**, **Old Sacyra**, **The Academy**, and **The Yun-yin Provinces**.
+. **Extended Tactical Party Integration (Folder 2 Synthesis):** Full narrative backstories, recruitment scenes, and 5-unit LeTBS grid synergies for **Sebastien the Thief**, **Angela the Mage**, and **Lucius the Priest** *(later mapped to pure Base Classes & Jobs in Parts 5–6)*.
+. **Mid-to-Late Campaign Progression & Phase 2–3 Engine Specs:** Detailed act outlines beyond Dio Village (`LOC_WHISPERING_WOODS`, `LOC_SACYRA_MARCHES`, and the Capital siege) alongside the mathematical specifications for the Phase 2 2D tactical grid and Phase 3 side-scroll action duel transitions *(expanded across the Two-Pass Grand Tour & 20-year timeline in Part 6)*.
+. **Documentation Harmonization:** Sweeping early Master Guide chapters (Chapters 1, 15, 20) to replace lingering references to the deprecated placeholder name `"Malakor"` with the strictly canonical title **"The Dark Lord"** established in DevLog 008.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Series Navigation & Archival Trail )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Series Navigation ---
+*Index:* link:README.adoc[Return to Offline Work Series Index] +
+*Next:* link:Offline-Work-2.adoc[Offline Work 2: 3,000-Year Dynasty, Veil Physics & Multi-Ending Model →]

@@ -1,25 +1,65 @@
-= Tenebris and Lux: Comprehensive Narrative Architecture, Ludological Systems & Macro-Historical Compendium
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Narrative Scope & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/offline_work/Offline-Work-2.adoc
+@id            docs.offline_work.part_2
+@layer         Documentation / Pre-Production Chronicles (Part 2 of 6)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        3,000-Year Dynastic Wave, Thematic Triad & Veil Mechanics
+@role          Macro-History Continuum, Dream Compass & 5-Route Ending Fork
+@audience      Designers, Lore Writers, Systems Programmers
+@snapshots     n/a (pre-production historical & metaphysical synthesis)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Authentic project canon (Sole Antagonist: The Dark Lord Usuru).
+               3. Thematic Triad preserves Elijah->Usuru, Katrina->Casatti, Custom->Mi-ren.
+================================================================================
+////
+
+= Offline Work 2: Narrative Architecture, Ludological Systems & Macro-Historical Compendium
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-02
-:doctype: book
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
 
-[abstract]
-== Overview & Scope
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Series Navigation, Pre-Production Context & Architectural Scope )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Series Navigation & Document Synopsis ---
+[NOTE]
+====
+*Part 2 of 6* in the *Tenebris and Lux* Pre-Production Archive & System Chronicles. +
+*Series Navigation:* link:README.adoc[Series Index] | link:Offline-Work-1.adoc[← Part 1: Genesis & Storyboard] | *Part 2: History & Veil* | link:Offline-Work-3.adoc[Part 3: Morality →] +
+*Markdown Archival Mirror:* link:Offline-Work-2.md[Offline-Work-2.md]
 
 This compendium articulates the macro-historical architecture, dynastic progression,
 ludological system designs, and thematic structures of *Tenebris and Lux*. Spanning
 the 3,000-year dynastic wave from the First King to King Jihad, it details the thematic
 triad connecting past, present, and future, the mechanical realization of the Dreamscape
 and monotonic clock, the truth behind "The King's Curse," and the multi-ending campaign model.
+====
 
-'''
+toc::[]
 
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( 3,000-Year Chasm, Thematic Triad, Dreamscape Mechanics & Midpoint Fork )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: 3,000-Year Dynastic Wave ---
 == 1. Macro-Historical Timeline & The 3,000-Year Chasm
 
 === 1.1. The Founding Era & The Two Paths
@@ -60,33 +100,32 @@ and monotonic clock, the truth behind "The King's Curse," and the multi-ending c
 Three thousand years separate the conclusion of the Great War from the opening of the modern campaign, establishing a profound transformation between **Old Sacyra** and **Current Sacyra**:
 
 [source,text]
-----
+------
  REIGN DURATION
  (Years)
-   100 ────   ╭───────╮               ╭───────╮
-    80 ────  ╭╯       ╰╮             ╭╯       ╰╮          ╭───────╮
-    60 ──── ╭╯         ╰╮           ╭╯         ╰╮        ╭╯       ╰╮
-    40 ──── │           ╰╮         ╭╯           ╰╮      ╭╯         ╰╮
-    20 ──── │            ╰╮       ╭╯             ╰╮    ╭╯           ╰╮
+   100 ----   ╭───────╮               ╭───────╮
+    80 ----  ╭╯       ╰╮             ╭╯       ╰╮          ╭───────╮
+    60 ---- ╭╯         ╰╮           ╭╯         ╰╮        ╭╯       ╰╮
+    40 ---- │           ╰╮         ╭╯           ╰╮      ╭╯         ╰╮
+    20 ---- │            ╰╮       ╭╯             ╰╮    ╭╯           ╰╮
      0 ─────┴─────────────┴─╮───╭─┴───────────────┴─╮───┴─────────────┴──
             EPOCH I:        CRISIS:  EPOCH II:       CRISIS:  EPOCH III:
             Reconstruction  Tether   Bureaucratic    Madness  Modern Decay
             & High Stasis   Spike    Continuity      Cluster  (King Jihad)
-----
+------
 
-* **The Mathematical Wave of Succession:** Spanning $3,000\text{ years}$ across $30\text{ to }50\text{ monarchs}$ yields an average reign of $60\text{ to }100\text{ years}$ per king. Rather than a flat distribution, the dynasty follows a natural wave:
+* **The Mathematical Wave of Succession:** Spanning `3,000` years across `30` to `50` monarchs yields an average reign of `60` to `100` years per king. Rather than a flat distribution, the dynasty follows a natural wave:
 ** **Long Stasis Crests (60–90+ Years):** Driven by the First King’s self-running infrastructure, Academy medical arts, and the life-preserving aura of the Shield of Lux, monarchs in peaceful eras reigned for nearly a century.
 ** **Tether-Sickness Troughs (5–20 Years):** Rapid succession clusters triggered when the open planar wound beneath the High Throne flared up, causing premature wasting, paranoia, and abdications.
 ** **Bureaucratic Consolidations (35–50 Years):** Standard generational transitions overseen by the Royal Court and Noble Houses.
 * **Why the Dynasty Requires Established Order:**
-1. **Embodying the Cosmological Shadow of Lux:** Unbroken dynastic continuity proves Sacyra succumbed to the negative extreme of Lux—calcifying stasis—turning a vibrant peace into an inflexible, bureaucratic museum.
-2. **Exposing Frontier Neglect as Systemic:** Because the Capital enjoyed millennia of stability, the abandonment of border towns like **Dio Village** is exposed not as an accident of war, but as cold institutional apathy mirroring ancient Libira.
-3. **Isolating "The King’s Curse":** In a stable, legally sacrosanct monarchy free of constant usurpations, the periodic madness afflicting reigning sovereigns stands out as a haunting metaphysical anomaly.
-4. **Validating the Ro-enheart Lineage:** Five unbroken generations of Ro-enheart service at the head of the Royal Guard carries immense weight only if the institution they served felt ancient, permanent, and honorable.
-5. **Magnifying King Jihad’s Rupture:** An established 3,000-year order transforms **King Jihad** (`D. Jihad`) from a routine bad ruler into an existential traitor gambling away three millennia of sacred continuity for void supremacy.
+. **Embodying the Cosmological Shadow of Lux:** Unbroken dynastic continuity proves Sacyra succumbed to the negative extreme of Lux—calcifying stasis—turning a vibrant peace into an inflexible, bureaucratic museum.
+. **Exposing Frontier Neglect as Systemic:** Because the Capital enjoyed millennia of stability, the abandonment of border towns like **Dio Village** is exposed not as an accident of war, but as cold institutional apathy mirroring ancient Libira.
+. **Isolating "The King’s Curse":** In a stable, legally sacrosanct monarchy free of constant usurpations, the periodic madness afflicting reigning sovereigns stands out as a haunting metaphysical anomaly.
+. **Validating the Ro-enheart Lineage:** Five unbroken generations of Ro-enheart service at the head of the Royal Guard carries immense weight only if the institution they served felt ancient, permanent, and honorable.
+. **Magnifying King Jihad’s Rupture:** An established 3,000-year order transforms **King Jihad** (`D. Jihad`) from a routine bad ruler into an existential traitor gambling away three millennia of sacred continuity for void supremacy.
 
-'''
-
+// --- Sub-Assembly 3.2: Past-Present-Future Thematic Triad ---
 == 2. The Past, Present, and Future Thematic Triad
 
 === 2.1. Core Thesis: Trauma is Inherited, Destiny is Chosen
@@ -156,8 +195,7 @@ Although Elijah carries the Shield of Lux like Mi-ren, his personal arc directly
 • Repeats the comfortable lie, or confronts the Ugly Truth.
 |===
 
-'''
-
+// --- Sub-Assembly 3.3: Dreamscape Engine Mechanics & Demo Projections ---
 == 3. The Dreamscape Mechanic, Temporal Architecture & Demo Gating
 
 === 3.1. Engine Verification: The Dreamscape as an Active Gameplay System
@@ -166,8 +204,8 @@ The Dreamscape is engineered as a persistent mechanical space within the ISO C11
 
 * **Explicit Province Enumeration:** Registered in `sim_types.h` as `LOC_THE_DREAMSCAPE` alongside physical regions.
 * **Tactical LeTBS Battlefields:** Comprises dedicated tactical maps (Maps 006, 008, 011, 041, and 042) featuring floating platforms, crystal mechanism puzzles, and astral leyline tiles that replenish MP.
-* **Parameterized Combatants:** Populated by **Dream Eaters** ($70\text{ Threat HP}$, $11\text{ DEF}$, $8\text{ MDF}$, $70\text{ Flank Vigor}$), serving as the Dark Lord's advance scouts sent to devour ancestral memories while the veil thins before the Festival of Heroes.
-* **Bidirectional Topology:** Connects northward via `Awaken` $\to$ `Dio Village`, while retaining a persistent return route from Dio Village (`South / Slumber Meditation` $\to$ `The Dreamscape`).
+* **Parameterized Combatants:** Populated by **Dream Eaters** (`70` Threat HP, `11` DEF, `8` MDF, `70` Flank Vigor), serving as the Dark Lord's advance scouts sent to devour ancestral memories while the veil thins before the Festival of Heroes.
+* **Bidirectional Topology:** Connects northward via `Awaken → Dio Village`, while retaining a persistent return route from Dio Village (`South / Slumber Meditation → The Dreamscape`).
 
 === 3.2. Why the Game Opens with Character and Class Selection in the Dreamscape
 
@@ -178,11 +216,9 @@ The Dreamscape is engineered as a persistent mechanical space within the ISO C11
 === 3.3. Chapter 1 Demo Gating & The Evolution of the Dream Compass
 
 * **The Demo as a Terrestrial Anchor:** Throughout Chapter 1 (the entire demo period), the player is locked out of returning to the Dreamscape. This forces the player to invest entirely in the human stakes of Dio Village—Grandma Magolia’s failing health, Eric’s poverty, John’s rebellion, and the St. Baron’s extortion—before re-engaging with planar metaphysics.
-* **From Old Watch to Dream Compass:** In the demo, recovering **Grandma’s Watch** from the upstairs chest (Map 020) initializes the Layer 0 monotonic clock (tracking seconds, minutes, hours $0\dots23$, weekdays $1\dots7$, weeks, months, and years). Upon concluding the demo introduction, the Old Watch is upgraded into its first evolved form: **The Dream Compass**.
+* **From Old Watch to Dream Compass:** In the demo, recovering **Grandma’s Watch** from the upstairs chest (Map 020) initializes the Layer 0 monotonic clock (tracking seconds, minutes, hours `0 ... 23`, weekdays `1 ... 7`, weeks, months, and years). Upon concluding the demo introduction, the Old Watch is upgraded into its first evolved form: **The Dream Compass**.
 * **Nighttime Synchronization & Scarcity:** The Dream Compass acts as a planar key allowing the player to enter and exit the Dreamscape **exclusively at nighttime**.
 * **Event-Driven Temporal Phasing:** Active side quests and main story sequences in the Dreamscape occur only during specific calendar windows and astral alignments. This scarcity prevents the Dreamscape from becoming a mundane grinding hub, preserving its sacred weight and tying quest availability directly to the monotonic clock countdown toward the Festival of Heroes.
-
-'''
 
 == 4. Re-Evaluating the 2017–2018 Demo Through the Macro Lens
 
@@ -195,8 +231,7 @@ With the 3,000-year history and character parallels established, specific intera
 * **Monica’s Totem of Fallen Soldiers (Map 023):** Outside Monica the Mystic's grove, a wooden totem lists the names of fallen soldiers with a heart reading _"Miss you"_ beside one name, prompting Elijah to wonder if Monica had a husband and Katrina to remark, _"Someone married that crazy bat!"_. This grounds the former Royal Battlemage’s anxieties in personal loss from Sacyra’s border conflicts.
 * **Sir Roté as Pre-Fall Usuru (Maps 002–004):** Rushing through the Walk of Fear to report the rising island and storm before the Festival of Heroes, Senior Outrider **Sir Roté** thinks: _"The king will know how to stop this, he must know..."_. Roté embodies the exact innocent faith in the monarch that Usuru held prior to entering the sanctum, serving as a tragic foil to King Jihad’s immediate gag order.
 
-'''
-
+// --- Sub-Assembly 3.4: Campaign Structure & Five Ending Routes ---
 == 5. Campaign Structure, The King's Curse & Multi-Ending Architecture
 
 === 5.1. Lore Expansion vs. Main Game Highlights
@@ -236,7 +271,7 @@ The main campaign is structured across two overarching halves: **Act I focuses o
 Defeating King Jihad at the midpoint climax reveals his possession by the Dark Lord's remnant, triggering the primary structural fork of the campaign:
 
 [source,text]
-----
+------
                          ACT I CLIMAX: DEFEAT OF KING JIHAD
                    Possession Revealed via "The King's Curse"
                                        │
@@ -251,7 +286,7 @@ Defeating King Jihad at the midpoint climax reveals his possession by the Dark L
      ▼             ▼                                       ▼             ▼
 "Good" Ending  "Bad" Ending                        Canonical Harmony  Secret Chronicler
 (Heroic Myth)  (Tyrant/Usurper)                    (Elijah + Katrina) (Custom Bearer)
-----
+------
 
 * **Why Basic Completion Is the Neutral Ending:** By design, a game’s core story must be completable from start to finish on a linear track. A player who skips the missable nighttime **Dream Compass** quests can still defeat King Jihad and march on to defeat The Dark Lord. However, this is the **Neutral Ending** because it resolves only the surface symptom while leaving the First King marooned in the Dreamscape, the planar wound unhealed, and the 3,000-year cycle of frontier neglect intact.
 * **Player Consent to Know the Story:** This structure never locks a casual player out of completing the game, while rewarding players who actively choose to investigate the story with the full mythological truth.
@@ -268,8 +303,14 @@ Throughout the campaign, players actively **embellish** the dormant Shield of Lu
 4. **Route D — The Abyssal Usurper (Neutral-Bad / The Cycle of Usuru):** Pure Tenebris embellishment paired with ruthless malice (`-100`). Agreeing that the Capital is irredeemably fraudulent, the wielder consumes the Dark Lord’s essence, razes the High Citadel, and ascends as the new Dark Sovereign.
 5. **Route E — The Secret Chronicler Ending (Custom Bearer 100% Route):** Unlocked by playing as `<chosen_name>` and performing the "double work" to synthesize both Elijah’s military investigation and Katrina’s underground rebellion alongside every nocturnal Dream Compass trial. The custom bearer bridges the Magic vs. Science schism, dismantles royal censorship, builds an egalitarian relay network for frontier towns like Dio Village and Libira, and permanently mends the Dreamscape veil.
 
-'''
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Meta-Design Methodology & Dry-Run Compiler Discipline )
+================================================================================
+////
 
+// --- Sub-Assembly 4.1: Meta-Design Methodology & LLM Calibration ---
 == 6. Meta-Design Methodology: Mental Models vs. Formalized Documentation
 
 === 6.1. Overcoming Natural LLM Biases in Game Architecture
@@ -284,6 +325,18 @@ During the formalization of *Tenebris and Lux*, calibration testing highlighted 
 
 Using an LLM to document a game universe when the creator already holds the complete story in their head serves three distinct engineering purposes:
 
-1. **Eliminating Transcription Drag:** Translating a holistic, non-linear mental model into structured lore compendiums, storyboard matrices, and ISO C11 architectural specifications removes hundreds of hours of clerical friction, preserving creative bandwidth for high-level direction.
-2. **Functioning as a "Dry-Run Compiler":** Because the model only knows what has been explicitly provided in context, any instance where the model extrapolates or asks an overly prescriptive question immediately flags where an unwritten assumption resides in the creator's head, allowing that rule to be formally codified.
-3. **Bridging Literary Philosophy to Mathematical Invariants:** Formalization translates thematic axioms—such as _"Lux tempers Tenebris, but dissipates under violent emotional shifts"_—directly into deterministic engine rules: `[-100, +100]` Moral Sway clamping, *Lux Barrio* duration rolls ($2\dots5\text{ turns}$), *Cuttatio Tenebris* splash cleaves ($20\%$), and monotonic clock thresholds.
+. **Eliminating Transcription Drag:** Translating a holistic, non-linear mental model into structured lore compendiums, storyboard matrices, and ISO C11 architectural specifications removes hundreds of hours of clerical friction, preserving creative bandwidth for high-level direction.
+. **Functioning as a "Dry-Run Compiler":** Because the model only knows what has been explicitly provided in context, any instance where the model extrapolates or asks an overly prescriptive question immediately flags where an unwritten assumption resides in the creator's head, allowing that rule to be formally codified.
+. **Bridging Literary Philosophy to Mathematical Invariants:** Formalization translates thematic axioms—such as _"Lux tempers Tenebris, but dissipates under violent emotional shifts"_—directly into deterministic engine rules: `[-100, +100]` Moral Sway clamping, *Lux Barrio* duration rolls (`2 ... 5` turns), *Cuttatio Tenebris* splash cleaves (`20%`), and monotonic clock thresholds.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Series Navigation & Archival Trail )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Series Navigation ---
+*Previous:* link:Offline-Work-1.adoc[← Offline Work 1: Narrative Architecture & 20-Scene Storyboard] +
+*Index:* link:README.adoc[Return to Offline Work Series Index] +
+*Next:* link:Offline-Work-3.adoc[Offline Work 3: Morality Architecture & Bystander Corridor →]
