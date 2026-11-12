@@ -1,89 +1,94 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          fs_utils.h
+@file          engine/include/io/fs_utils.h
+@id            cog.fs_utils
 @layer         Layer 0: Core Utilities
+@archetype     operational | stateful
 @version       0.1.1-dev
 @interface_rev Rev 5
-@date          2026-11-08
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Zero-Heap POSIX Filesystem & Buffered I/O Engine
-@role          Bounded file reading, safe atomic writing, POSIX file inspection,
-               recursive directory synthesis, and Virtual Filesystem (VFS) path
-               resolution for engine runtimes and data-driven systems.
-@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
-               3. Guaranteed null-termination on all output string and data buffers.
-               4. Hard buffer boundary enforcement (FS_PATH_MAX, canonical buffer limits).
-               5. Fault resilience: gracefully handles non-existent paths, NULL pointers, 0 bytes.
-               6. Universal 5-Block Lifecycle Protocol enforced across header and source.
+@role          Public Contract & Seam: Bounded POSIX/"rom://" reads, flushed
+               writes, stat queries, recursive mkdir, and buffer-policy loading.
+@maturity      Rev 5 Baseline | Policy-driven I/O limits, ROM virtual reads & probe integration active.
+@chassis       zero-heap | Public POD fs_utils_policy_t & fs_stat_t; FS_PATH_MAX (512) & configurable ceiling.
+@scale         O(file_len) bounded copy up to policy max_config_bytes (64 KiB); O(path_len) recursive mkdir.
+@seams         in: engine/config/io/fs_buffers.json | uses: cog.io.fallback, cog.log, cog.debug | probes: io.fs.* -> DEBUG_STEP_AWAIT | dag: core.util.fs
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Every string/read output guarantees NUL termination within caller buffer bounds.
+               3. Read-only Safe-Mode floppy latch blocks disk writes and directory synthesis cleanly.
+               4. Policy limits enforce canonical size brackets via fs_buffers.json or Safe-Mode ROM.
 
 PURPOSE & ARCHITECTURAL ROLE:
-  Foundational zero-heap filesystem abstraction layer for the C11 engine.
-  Provides bounded, non-allocating file reading into caller-allocated buffers,
-  atomic/safe text writing with automatic parent directory synthesis,
-  POSIX file metadata inspection, and dynamic data mounting integration.
+  Defines the Layer 0 zero-heap filesystem contract uniting bounded POSIX disk
+  operations and virtual "rom://" stream inspection under policy-configured
+  size ceilings and Tier-0 BIOS Safe-Mode write protection.
 
   ### For Game Designers & Non-Programmers:
-  In traditional software, loading files often allocates memory whenever
-  a file is opened. If a file is too large or corrupted, the program crashes
-  or causes lag spikes. In a tactical RPG designed for long campaigns and
-  older hardware, we treat file reading like a bank vault: every buffer has
-  a fixed, predetermined limit. If a file is missing or damaged, the engine
-  never crashes—it safely reports the issue and falls back to baseline defaults.
+  Protects the game from corrupted or oversized data files by clamping reads
+  inside strict locked vault brackets (1 KB, 8 KB, 32 KB, up to 64 KB) while
+  blocking accidental writes on locked or floppy drives.
 
   ### For Systems Programmers & Engine Architects:
-  Layer 0 leaf module. Strictly adheres to ALLOC_ZERO_HEAP: malloc(), calloc(),
-  and free() are prohibited. All operations write directly into caller-allocated
-  stack or static buffers. Thread-safe on distinct destination buffers (REENTRANT_PURE).
+  - Ownership & Reentrancy: Callers supply all destination byte buffers and own
+    lifetime; read/stat helpers are reentrant aside from telemetry counters.
+  - Extension Seam: Tune buffer tier limits or enable stricter audit thresholds
+    in engine/config/io/<profile>.json without modifying C callers.
+  - Explicit Non-Goal: Does not resolve multi-tier VFS domains (handled by
+    cog.path_finder) or parse structured envelopes (cog.json_utils / cog.master_loader).
 ================================================================================
 */
 
-#ifndef TENEBRIS_LUX_IO_FS_UTILS_H
-#define TENEBRIS_LUX_IO_FS_UTILS_H
+#ifndef CORNERSTONE_IO_FS_UTILS_H
+#define CORNERSTONE_IO_FS_UTILS_H
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
-Stratum: Layer 0 (Core Utilities) | Subsystem: Zero-Heap Filesystem Engine
+BLOCK 2: OPENING BLOCK
+( Public Contract Limits, Fallback Link, Ontology & O(1) Pre-Conditions )
 ================================================================================
-Mission: Pre-conditions, downward include ladder, bounded buffer capacities,
-manifest anchors, filesystem metadata types, and static inline path validators.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.fs_utils
+Mission:       Declare FS buffer ceilings, BIOS fallback link, metadata types, and O(1) path guards.
 ================================================================================
-*/
-
-/*
---------------------------------------------------------------------------------
-Include Hierarchy: 3-Tier Downward Architecture
---------------------------------------------------------------------------------
-Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Library Dependencies (None)
-Tier 3: Internal Engine Foundation Headers
---------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-/* --- Tier 2: External Library Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None in Layer 0/1) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
+#include "io/io_fallback.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Pre-Conditions & Canonical Buffer Limits
+Sub-Assembly 2.1: Pre-Conditions, Buffer Limits & Compile-Time Proofs
 --------------------------------------------------------------------------------
 Compile-time sizing limits for bounded, zero-heap filesystem reading and writing.
-For Designers: File sizes are strictly bounded so that corrupted or oversized
-data files cannot cause memory bloat or crash low-spec devices.
-For Programmers: Guarantees zero heap allocation (ALLOC_ZERO_HEAP) in caller buffers.
+
+### For Game Designers & Non-Programmers:
+File sizes stay bounded inside strict preset tiers (1 KiB to 64 KiB) so corrupt
+or oversized files cannot bloat memory on constrained hardware.
+
+### For Systems Programmers & Engine Architects:
+Guarantees zero heap allocation (`ALLOC_ZERO_HEAP`) and proves exact parity
+against Tier-0 BIOS limits in `io_fallback.h`.
 --------------------------------------------------------------------------------
 */
 
@@ -122,6 +127,12 @@ For Programmers: Guarantees zero heap allocation (ALLOC_ZERO_HEAP) in caller buf
  */
 #define FS_PATH_MAX             512
 
+static_assert(
+    FS_BUFFER_MAX_CONFIG == IO_FB_MAX_CONFIG_BYTES &&
+    FS_PATH_MAX == IO_FB_PATH_MAX,
+    "FS public limits must match Tier-0 BIOS io_fallback bounds identically"
+);
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.2: Manifest & Pre-Flight Hooks
@@ -131,7 +142,7 @@ Pre-flight verification anchor for the engine's Loose-Bolts initialization DAG.
 */
 
 /** Unique module identifier string for the Zero-Heap Filesystem Engine. */
-#define FS_UTILS_MODULE_ID             "io.fs_utils"
+#define FS_UTILS_MODULE_ID             "core.util.fs"
 
 /**
  * Manifest record for the Zero-Heap Filesystem Engine.
@@ -194,6 +205,29 @@ typedef struct fs_write_result {
     char path[FS_PATH_MAX];         /**< Target destination path that was written to. */
 } fs_write_result_t;
 
+/**
+ * @struct fs_utils_stats
+ * @brief Runtime telemetry and active policy provenance snapshot for `fs_utils`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Shows how many files were safely read/written, whether any oversized reads or
+ * read-only floppy blocks happened, and whether settings came from disk or ROM.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Reentrant stack copy of Sub-Assembly 2.3 runtime `.bss` counters (`s_fs_state`).
+ */
+typedef struct fs_utils_stats {
+    bool                 initialized;           /**< True if `fs_utils_init()` completed. */
+    bool                 policy_from_data;      /**< True only if hydrated from disk JSON. */
+    bool                 read_only_safe_mode;   /**< True when writes/mkdir are locked off. */
+    uint64_t             read_ops;              /**< Successful bounded file/ROM reads. */
+    uint64_t             write_ops;             /**< Successful flushed disk writes. */
+    uint64_t             truncation_rejections; /**< Bounded reads rejected due to cap. */
+    uint64_t             read_only_blocks;      /**< Write/mkdir ops stopped by RO latch. */
+    uint64_t             rom_fallback_reads;    /**< Reads served from `.rodata` ROM URIs. */
+    io_fallback_config_t active_policy;         /**< Active policy limits & flags copy. */
+} fs_utils_stats_t;
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.4: Pre-Conditional Helper Cogs & Non-Business Inlines
@@ -245,8 +279,14 @@ static inline bool fs_path_len_is_valid(size_t len) {
 
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS APIS
-Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap Filesystem Engine
+BLOCK 3: BODY BLOCK
+( Public Operational Cogs, State Accessors & Domain APIs )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.fs_utils
+Mission:       Declare bounded POSIX/"rom://" probing, buffered I/O, directory
+               creation, VFS mounting delegation, and policy hydration APIs.
 ================================================================================
 */
 
@@ -254,23 +294,33 @@ Stratum: Layer 0 (Core Utilities) | Machine: Zero-Heap Filesystem Engine
 --------------------------------------------------------------------------------
 Sub-Assembly 3.1: Filesystem Inspection & Probing Cogs
 Mission: Non-destructive path probing, accessibility, and size queries.
+
+  ### For Game Designers & Non-Programmers:
+  Checks safely whether data files or built-in ROM backups exist and measures
+  their byte size before reading them into fixed engine buffers.
+
+  ### For Systems Programmers & Engine Architects:
+  Reentrant POSIX `stat()` and `.rodata` ROM metadata queries operating strictly
+  without heap allocations or file descriptor consumption.
 --------------------------------------------------------------------------------
 */
 
 /**
- * @brief Tests whether a given file or directory path exists on disk.
+ * @brief Tests whether a given file or directory path exists on disk or ROM.
  *
- * Checks POSIX accessibility using stat(). Does not open the file or allocate memory.
+ * Checks POSIX accessibility using `stat()` or `"rom://..."` lookup. Does not
+ * open the file or allocate memory.
  *
  * ### For Game Designers & Non-Programmers:
- * Checks whether an asset or configuration file actually exists on the computer
- * before trying to open it, preventing file errors.
+ * Checks whether an asset or configuration file actually exists on storage or ROM
+ * before trying to open it, preventing missing-file errors.
  *
  * ### For Systems Programmers & Engine Architects:
- * Reentrant POSIX stat() inspection returning boolean accessibility without side effects.
+ * Reentrant POSIX `stat()` and ROM descriptor inspection returning boolean existence.
  *
- * @param[in] path Null-terminated file or directory path to test.
+ * @param[in] path Null-terminated file, directory path, or `"rom://..."` URI to test.
  * @return true if path exists and is accessible; false otherwise (or if NULL/empty).
+ * @triggers Validates input pointers without modifying telemetry counters.
  */
 bool fs_file_exists(const char *path);
 
@@ -278,36 +328,46 @@ bool fs_file_exists(const char *path);
  * @brief Checks if a given path is an accessible regular file (not directory or device).
  *
  * ### For Game Designers & Non-Programmers:
- * Ensures the path points to an actual data file rather than a folder.
+ * Ensures the path points to an actual readable data file rather than a folder.
  *
  * ### For Systems Programmers & Engine Architects:
- * Evaluates POSIX S_ISREG(stat.st_mode).
+ * Evaluates `"rom://..."` existence or POSIX `S_ISREG(stat.st_mode)`.
  *
- * @param[in] path Null-terminated filesystem path to inspect.
- * @return true if path exists and is S_ISREG; false if missing, directory, device, or NULL.
+ * @param[in] path Null-terminated filesystem path or `"rom://..."` URI to inspect.
+ * @return true if path exists and is a regular file/ROM entry; false otherwise.
+ * @triggers Guarantees side-effect-free path predicate checks.
  */
 bool fs_is_regular_file(const char *path);
 
 /**
- * @brief Retrieves the total byte size of a regular file on disk.
+ * @brief Retrieves the total byte size of a regular file on disk or ROM.
  *
- * Queries POSIX stat.st_size without reading file contents into memory.
+ * Queries POSIX `stat.st_size` or `.rodata` ROM descriptor size without reading contents.
  *
  * ### For Game Designers & Non-Programmers:
- * Measures the exact size of a file in bytes to ensure it will fit inside our memory limits.
+ * Measures the exact size of a file in bytes to ensure it fits inside engine limits.
  *
  * ### For Systems Programmers & Engine Architects:
- * Direct inspection of stat.st_size without opening file descriptors or allocating heap.
+ * Direct inspection of `stat.st_size` or `.rodata` table entry size (`ALLOC_ZERO_HEAP`).
  *
- * @param[in] path Null-terminated file path to inspect.
- * @return Positive byte size if regular file; -1 on missing, directory, or error.
+ * @param[in] path Null-terminated file path or `"rom://..."` URI to inspect.
+ * @return Non-negative byte size if regular file/ROM; -1 on missing, directory, or error.
+ * @triggers Rejects missing or non-regular targets cleanly with `-1L`.
  */
 long fs_get_file_size(const char *path);
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 3.2: Buffered I/O & Directory Management Cogs
+Sub-Assembly 3.2: Bounded Buffered I/O & Directory Management Cogs
 Mission: Bounded text reading, safe file writing, and parent directory synthesis.
+
+  ### For Game Designers & Non-Programmers:
+  Loads configuration and story files safely within memory caps and saves outputs
+  atomically while blocking mutations during Read-Only Safe Mode.
+
+  ### For Systems Programmers & Engine Architects:
+  Enforces active policy ceilings (`max_config_bytes`, `path_max_bytes`), NUL
+  termination, Safe-Mode RO protection, and shared Tier-0 BIOS atomic write/mkdir.
 --------------------------------------------------------------------------------
 */
 
@@ -315,39 +375,41 @@ Mission: Bounded text reading, safe file writing, and parent directory synthesis
  * @brief Reads entire text file contents into a bounded, caller-supplied buffer.
  *
  * Guarantees unconditional null termination and prevents buffer overruns.
- * If the file exceeds `buf_size - 1` bytes, the read is safely rejected
- * (returns false) to prevent partial truncated states.
+ * If the file exceeds `buf_size - 1` or `max_config_bytes`, the read is safely rejected.
  *
  * ### For Game Designers & Non-Programmers:
- * Loads an entire text file safely into memory, guaranteeing it never overflows or crashes the game.
+ * Loads an entire text file safely into memory, guaranteeing it never overflows or crashes the engine.
  *
  * ### For Systems Programmers & Engine Architects:
- * Reads via POSIX open()/read() into caller-provided buffer, enforcing null termination at dst[buf_size - 1].
+ * Convenience wrapper delegating cleanly into `fs_read_file_bounded()` without length output.
  *
- * @param[in]  filepath Null-terminated path to target file.
+ * @param[in]  filepath Null-terminated path or `"rom://..."` URI to target file.
  * @param[out] buf      Caller-supplied memory destination buffer.
  * @param[in]  buf_size Byte capacity of destination buffer (including null terminator).
  * @return true if file opened and completely read within buffer bounds; false otherwise.
+ * @triggers Inherits truncation fault and warning log behavior from `fs_read_file_bounded()`.
  */
 bool fs_read_file_contents(const char *filepath, char *buf, size_t buf_size);
 
 /**
- * @brief Reads file text and reports exact count of bytes read into buffer.
+ * @brief Reads file or `"rom://..."` text and reports exact count of bytes read.
  *
- * Similar to fs_read_file_contents(), but additionally writes the exact
- * number of bytes read (excluding null terminator) to `out_bytes_read`.
+ * Similar to `fs_read_file_contents()`, and writes the exact number of bytes read
+ * (excluding NUL terminator) into optional `out_bytes_read`.
  *
  * ### For Game Designers & Non-Programmers:
- * Reads a text file and tells you exactly how many letters and symbols were loaded.
+ * Reads a text file and tells callers the exact character byte length loaded.
  *
  * ### For Systems Programmers & Engine Architects:
- * Bounded read returning transferred byte count in out_bytes_read.
+ * Enforces `min(buf_size, max_config_bytes)` cap, increments `read_ops`/`truncation_rejections`,
+ * and records BIOS faults (`IO_ERR_FILE_NOT_FOUND`/`IO_ERR_TRUNCATED_READ`).
  *
- * @param[in]  filepath       Null-terminated path to target file.
+ * @param[in]  filepath       Null-terminated path or `"rom://..."` URI to target file.
  * @param[out] buf            Caller-supplied destination buffer.
  * @param[in]  buf_size       Capacity of destination buffer in bytes.
  * @param[out] out_bytes_read Optional pointer receiving bytes read (excluding null).
  * @return true if read completed without truncation; false otherwise.
+ * @triggers Emits `LOG_WARN` and records BIOS fault on open error or policy truncation.
  */
 bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size,
                           size_t *out_bytes_read);
@@ -355,62 +417,73 @@ bool fs_read_file_bounded(const char *filepath, char *buf, size_t buf_size,
 /**
  * @brief Safely writes or overwrites bounded data to a file on disk.
  *
- * Automatically creates parent directories recursively if they do not exist
- * using fs_ensure_directory(). Flushes data cleanly to disk.
+ * Automatically creates parent directories recursively using configured permissions
+ * and flushes/renames atomically when enabled in active policy.
  *
  * ### For Game Designers & Non-Programmers:
- * Saves game files to disk safely, automatically creating missing folders as needed.
+ * Saves files safely with automatic folder creation and read-only lock protection.
  *
  * ### For Systems Programmers & Engine Architects:
- * Synthesizes parent path, calls mkdir -p, and writes bytes with fsync/flush guarantees.
+ * Validates path cap and Floppy RO lock (`io.fs.readonly_guard`), then delegates POSIX
+ * write/flush/atomic rename to `io_fallback_fs_write_with_flags()`.
  *
  * @param[in] filepath Null-terminated target filepath.
  * @param[in] data     Buffer of data bytes to write.
  * @param[in] data_len Number of bytes to write.
- * @return true if all bytes were written successfully; false on error/NULL.
+ * @return true if all bytes were written successfully; false on guard block or error.
+ * @triggers Triggers `io.fs.readonly_guard` when write attempted under read-only Safe Mode.
  */
 bool fs_write_file_contents(const char *filepath, const char *data,
                             size_t data_len);
 
 /**
- * @brief Ensures that a directory path exists, recursively creating parents.
+ * @brief Ensures that a directory path exists, recursively creating missing parents.
  *
- * Mimics POSIX `mkdir -p` behavior using bounded stack buffer traversal.
- * Does not dynamically allocate heap memory.
+ * Mimics POSIX `mkdir -p` behavior using bounded stack buffers with zero heap allocations.
  *
  * ### For Game Designers & Non-Programmers:
- * Automatically creates any folders needed to store save games, screenshots, or logs.
+ * Automatically creates folders needed for logs or outputs unless write-locked.
  *
  * ### For Systems Programmers & Engine Architects:
- * Reentrant directory creation walking path segments with stack buffers and POSIX mkdir(0755).
+ * Validates `FS_PATH_MAX` cap and RO latch (`io.fs.readonly_guard`), then delegates to
+ * `io_fallback_fs_ensure_dir_mode()`.
  *
  * @param[in] dir_path Null-terminated directory path to create.
- * @return true if directory exists or was created; false on error/NULL.
+ * @return true if directory exists or was created; false on RO lock, overflow, or error.
+ * @triggers Triggers `io.fs.readonly_guard` when directory creation is blocked under RO latch.
  */
 bool fs_ensure_directory(const char *dir_path);
 
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 3.3: Dynamic VFS Mounting & Path Resolution Cogs
-Mission: Configurable game data mounting and multi-tier path discovery.
+Mission: Configurable data root mounting and multi-tier path discovery delegation.
+
+  ### For Game Designers & Non-Programmers:
+  Lets builds or mods switch the primary data root folder and automatically find
+  files across layered config and content directories.
+
+  ### For Systems Programmers & Engine Architects:
+  Clean thin delegation into `cog.path_finder` so VFS mount state lives in one place.
 --------------------------------------------------------------------------------
 */
 
 /**
  * @brief Sets the active mounted data root for all filesystem resolutions.
  *
- * Configures the base directory for data queries (e.g. "game/data",
- * "/opt/tenebris-lux/data", or custom mod folders).
+ * Configures the base directory for data queries (e.g. `"game/data"`,
+ * `"/opt/cornerstone/data"`, or custom workspace folders).
  *
  * ### For Game Designers & Non-Programmers:
- * Sets the folder where the game looks for content, making modding and custom campaigns easy.
+ * Sets the folder where the engine searches for content, supporting mods cleanly.
  *
  * ### For Systems Programmers & Engine Architects:
- * Configures VFS mount point delegating to path_finder.
+ * Delegates VFS root updates to `path_finder_set_data_root()`.
  *
  * @param[in] root_path Null-terminated path to the mounted data directory.
  *                      If NULL or empty, resets to auto-discovery.
  * @return true if accepted and within buffer bounds; false otherwise.
+ * @triggers Validates mount path ceiling via `path_finder`.
  */
 bool fs_set_data_root(const char *root_path);
 
@@ -418,12 +491,13 @@ bool fs_set_data_root(const char *root_path);
  * @brief Gets the active mounted data root directory path.
  *
  * ### For Game Designers & Non-Programmers:
- * Returns the currently active data folder path.
+ * Returns the currently active data folder path used for content discovery.
  *
  * ### For Systems Programmers & Engine Architects:
- * Read-only accessor for active VFS data root mount.
+ * Delegates read-only access directly to `path_finder_get_data_root()`.
  *
  * @return Null-terminated string representing the active mounted data root.
+ * @triggers Queries VFS state with zero side effects.
  */
 const char *fs_get_data_root(void);
 
@@ -431,22 +505,87 @@ const char *fs_get_data_root(void);
  * @brief Dynamically resolves a dataset or configuration file path.
  *
  * Probes across mounted data roots, domain folders, and workspace sandboxes.
- * Bridges legacy asset paths to modern domain structures.
  *
  * ### For Game Designers & Non-Programmers:
- * Finds a data file across standard game directories automatically.
+ * Finds a data file across standard engine/workspace folders automatically.
  *
  * ### For Systems Programmers & Engine Architects:
- * Multi-tier path probing across game/config, engine/config, and mounted VFS roots.
+ * Delegates multi-tier VFS probing to `path_finder_resolve(NULL, ...)`.
  *
  * @param[in]  rel_path Relative path or filename to resolve.
  * @param[out] out_path Destination buffer for resolved accessible path.
  * @param[in]  out_size Capacity of destination buffer in bytes.
- * @return true if an accessible file was dynamically resolved; false otherwise.
+ * @return true if an accessible file or ROM asset resolved; false otherwise.
+ * @triggers Honors `path_finder` traversal guards and candidate search tiers cleanly.
  */
 bool fs_resolve_data_path(const char *rel_path,
                           char *out_path,
                           size_t out_size);
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.4: Data-Driven Policy Hydration & Safe-Mode Accessors
+Mission: Load `engine/config/io/fs_buffers.json` with automatic ROM downgrade.
+
+  ### For Game Designers & Non-Programmers:
+  Loads active file buffer brackets and safety switches from disk configs, or cleanly
+  restores built-in Safe-Mode ROM settings if config files are missing or damaged.
+
+  ### For Systems Programmers & Engine Architects:
+  Uses transient 8 KB stack buffer + shared `io_fallback_parse_policy_span()` and
+  validates overrides via `fs_utils_validate_policy_contract()` before committing `.bss`.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Hydrates active filesystem buffer & safety policy from disk or ROM.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Reads buffer limits and write-lock switches from `engine/config/io/fs_buffers.json`.
+ * If the config file is deleted or broken, it cleanly drops to built-in ROM defaults.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Shares `io_fallback_parse_policy_span()` so zero parser duplication exists.
+ * Marks `loaded_from_data = true` exclusively on valid disk parse; downgrades to
+ * `io_fallback_load_rom_config("fs_buffers")` (`loaded_from_data = false`) on fault.
+ * Uses 8 KB transient stack buffer; O(N) time; zero heap allocations.
+ *
+ * @param[in] rel_path Config relative path (NULL defaults to `"io/fs_buffers.json"`).
+ * @return true if loaded from disk JSON; false if downgraded safely to ROM defaults.
+ * @triggers  `io.fs.buffer_bounds`, `io.fs.rom_parity`.
+ */
+bool fs_utils_load_policy(const char *rel_path);
+
+/**
+ * @brief Applies an explicit filesystem policy after verifying structural bounds.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Safely updates active file-size limits, rejecting invalid settings before damage occurs.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Validates via `fs_utils_validate_policy_contract()`; if invalid, triggers
+ * `io.fs.buffer_bounds` Safe-Mode downgrade + `DEBUG_STEP_AWAIT` (when active).
+ *
+ * @param[in] policy Candidate configuration record.
+ * @return true if valid and committed; false if rejected and Safe-Mode engaged.
+ * @triggers `io.fs.buffer_bounds`.
+ */
+bool fs_utils_set_policy(const io_fallback_config_t *policy);
+
+/**
+ * @brief Copies the currently active filesystem policy into caller storage.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Lets diagnostics or tools inspect the active file size limits and Safe-Mode switches.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) lazy-armed struct copy out of Sub-Assembly 2.3 `.bss` `s_fs_state.policy`.
+ *
+ * @param[out] out_policy Destination configuration struct.
+ * @return true on success; false on NULL pointer.
+ * @triggers Lazy-arms policy defaults on demand and rejects NULL destination cleanly.
+ */
+bool fs_utils_get_policy(io_fallback_config_t *out_policy);
 
 /*
 ================================================================================
@@ -461,13 +600,54 @@ validate standalone function execution and system stability for Block 5.
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 4.1: Contract, Input & Cog Verification Cogs
-Mission: Verify received parameters, configuration contracts, and data provenance;
-verify that declared subsystem cogs run properly as standalone units.
---------------------------------------------------------------------------------
-(Filesystem path safety, buffer capacity contracts, and discrete existence
-invariants are verified via pre-flight assertions and standalone audit suites.)
+Mission: Verify received parameters, policy contracts, and data provenance;
+register `io.fs.*` validation probes with the central debugger.
 --------------------------------------------------------------------------------
 */
+
+/**
+ * @brief Validates numeric buffer ladder ordering and path/read-only invariants.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Double-checks that small < medium < large <= max file buffer limits stay healthy.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Pure O(1) contract predicate wrapping `io_fb_policy_bounds_valid()`.
+ * @triggers `io.fs.buffer_bounds`.
+ *
+ * @param[in] policy Policy record to validate (NULL checks active live state).
+ * @return true if all contracts hold; false on breach.
+ */
+bool fs_utils_validate_policy_contract(const io_fallback_config_t *policy);
+
+/**
+ * @brief Registers filesystem validation probes (`io.fs.*`) with the debugger.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Hooks filesystem safety checks directly into the debugger so corrupted file
+ * limits automatically freeze playback safely instead of causing silent corruption.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Idempotently registers `s_fs_validation_probes[3]` (`io.fs.buffer_bounds`,
+ * `io.fs.rom_parity`, `io.fs.readonly_guard`) via `debug_register_validation_probe()`.
+ */
+void fs_utils_register_debug_probes(void);
+
+/**
+ * @brief Evaluates active FS policy probes and triggers Safe-Mode -> AWAIT if breached.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Checks whether active file limits are valid and freezes the debugger safely if damaged.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Registers `io.fs.*` probes, validates `s_fs_state.policy`, restores Safe-Mode ROM
+ * bounds on breach, and invokes `debug_trigger_probe("io.fs.buffer_bounds", ...)`.
+ *
+ * @triggers `io.fs.buffer_bounds` -> `io_fallback_downgrade_safe_mode()` -> `DEBUG_STEP_AWAIT`.
+ * @param[in] context_label Caller diagnostic label recorded into debugger tripwire report.
+ * @return true if tripwire/probe fired; false if active policy is clean.
+ */
+bool fs_utils_trigger_policy_probe(const char *context_label);
 
 /*
 --------------------------------------------------------------------------------
@@ -603,6 +783,20 @@ bool fs_execute_read(const char *path, char *buf, size_t buf_size,
 bool fs_execute_write(const char *path, const char *data, size_t len,
                       fs_write_result_t *out_result);
 
+/**
+ * @brief Copies live runtime telemetry counters and policy provenance into `out_stats`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Reads counters showing files loaded, saved, or blocked by Safe Mode.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) zero-heap snapshot copy from Sub-Assembly 2.3 `.bss` `s_fs_state`.
+ *
+ * @param[out] out_stats Destination statistics object.
+ * @return true on success; false on NULL argument.
+ */
+bool fs_utils_get_stats(fs_utils_stats_t *out_stats);
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
@@ -637,4 +831,8 @@ void fs_utils_init(void);
  */
 void fs_utils_shutdown(void);
 
-#endif /* TENEBRIS_LUX_UTIL_DATA_FS_UTILS_H */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CORNERSTONE_IO_FS_UTILS_H */

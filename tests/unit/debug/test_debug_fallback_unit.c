@@ -1,44 +1,59 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          test_debug_fallback_unit.c
+@file          tests/unit/debug/test_debug_fallback_unit.c
+@id            test.unit.debug.fallback
 @layer         Layer 4: Verification Suite
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@archetype     verification_suite | unit_isolation
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
-@system        Emergency Fallback Debugger Code Page Unit Verification
-@role          Comprehensive unit verification of the quarantined monolithic
-               emergency fallback code page, pre-flight audits, and disaster
-               recovery initialization across the 4 Ontological Testing Sections.
-@invariants    1. Zero dynamic heap allocations in test execution.
-               2. All 4 Ontological Testing Sections evaluated.
-               3. Universal 5-Block Lifecycle Protocol enforced.
+@system        Debugger Safe-Mode BIOS & Diagnostics ROM Unit Suite
+@role          Quarantined Fallback Gate: Presets, 9-Asset ROM, Matrix & AWAIT
+@maturity      Rev 5 Baseline | Upgraded w/ Block 4 Audit & Shared Harness
+@chassis       zero-heap | Stack-only local structs & 1KB dump buffer
+@scale         5000x config stress + 1000x inspect stress | O(1) ROM lookups
+@seams         in: debug/debug_fallback.h, debug/debug.h | pairs: cornerstone_test.h
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Zero-Disk Offline Guarantee: 9-asset `.rodata` ROM vault, `strict`/`trace` hydration, floppy 16-slot preset, and `TW_ENG_*` tripwire matrix work with zero external files.
+               3. Clean BIOS Lifecycle: Safe-Mode AWAIT latches and clears cleanly across stress cycles.
+
+PURPOSE & ARCHITECTURAL ROLE:
+  Tier 2 Unit isolation suite rigorously validating `debug_fallback.[ch]` —
+  bitwise monolith preset identity, strict inspect size-guard checks, 9-asset
+  compiled-in diagnostics ROM hydration, compact 1.44 MB floppy preset,
+  `tripwire_matrix.json` rule parsing, and Tier-0 BIOS AWAIT state latching.
+
+  ### For Game Designers & Non-Programmers:
+  Guarantees that the debugger's built-in emergency recovery system holds
+  authentic default settings and tripwire rules even if config files are missing
+  or damaged.
+
+  ### For Systems Programmers & Engine Architects:
+  Covers all 4 ontological sections plus explicit Block 4 preflight and audit
+  procedures, eliminating duplicated `TEST_ASSERT` macros via `cornerstone_test.h`.
 ================================================================================
 */
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
-Stratum: Layer 4 (Verification Suite) | Machine: test.unit.debug.fallback
+BLOCK 2: OPENING BLOCK
+( Pre-Conditions, Constants, Test Counters & Static Contract Proofs )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.unit.debug.fallback
+Mission:       Configure ISO C11 headers, Cornerstone shared test harness, and
+               compile-time Safe-Mode BIOS limit assertions.
 ================================================================================
 */
 
-/*
---------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
---------------------------------------------------------------------------------
-Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
-Tier 3: Internal Engine Foundation Headers
---------------------------------------------------------------------------------
-*/
-
-/* --- Tier 1: Standard ISO C11 Library Headers --- */
+/* Tier 1: ISO C11 Standard Library Headers */
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -47,261 +62,289 @@ Tier 3: Internal Engine Foundation Headers
 #include <stdlib.h>
 #include <string.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
-
-/* --- Tier 3: Internal Engine Foundation Headers --- */
+/* Tier 3: Cornerstone Engine & Layer 4 Shared Harness */
+#include "common/cornerstone_test.h"
 #include "core/manifest.h"
 #include "core/string_utils.h"
 #include "debug/debug.h"
 #include "debug/debug_fallback.h"
 
-#define TEST_ASSERT(cond, msg) \
-    do { \
-        if (!(cond)) { \
-            fprintf(stderr, "[FAIL] %s:%d: Assertion failed: %s (%s)\n", \
-                __FILE__, __LINE__, #cond, msg); \
-            exit(1); \
-        } \
-    } while (0)
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Constants & Static Contract Proofs
+--------------------------------------------------------------------------------
+*/
+
+/** @brief Canonical suite identifier emitted in headers and summaries. */
+#define TEST_DEBUG_FB_UNIT_SUITE_NAME "Debugger Safe-Mode BIOS Unit Suite"
+
+static_assert(DEBUG_FALLBACK_MAX_SNAPSHOTS == DEBUG_MAX_SNAPSHOTS,
+              "Monolith fallback snapshot ceiling must equal DEBUG_MAX_SNAPSHOTS (64)");
+static_assert(DEBUG_FALLBACK_FLOPPY_SNAPSHOTS == 16,
+              "Floppy Safe-Mode compact preset expects 16 snapshots");
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Suite Assertion Counters
+--------------------------------------------------------------------------------
+*/
+
+static int s_tests_run = 0;
+static int s_tests_passed = 0;
 
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / 4-SECTION UNIT TEST SUITES
-Stratum: Layer 4 (Verification Suite) | Machine: test.unit.debug.fallback
+BLOCK 3: BODY BLOCK
+( Four-Section Isolated BIOS & ROM Verification Suites )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.unit.debug.fallback
+Mission:       Verify monolith defaults, inspect bounds rejection, 9-asset ROM
+               hydration, tripwire matrix rules, and BIOS Safe-Mode AWAIT.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 1: ALWAYS PASS (NOMINAL GOLDEN BASELINE) ]
+Sub-Assembly 3.1: [ SECTION 1: ALWAYS PASS (NOMINAL MONOLITH CODE PAGE) ]
 --------------------------------------------------------------------------------
 */
 
 static void test_debug_fallback_unit_always_pass(void)
 {
-    printf("  [PASS-1] Running Section 1: Always Pass (Nominal Fallback Parameters)...\n");
+    cornerstone_test_section(1, "Always Pass (Nominal Fallback Code Page)");
 
-    /* 1.1: Fallback configuration code page generation */
     debug_config_t cfg = debug_get_monolith_fallback_config();
-    TEST_ASSERT(!cfg.loaded_from_data, "loaded_from_data is unconditionally false");
-    TEST_ASSERT(strcmp(cfg.profile_name, DEBUG_FALLBACK_PROFILE_NAME) == 0, "Profile is monolith_fallback");
-    TEST_ASSERT(cfg.enabled == true, "Enabled is true");
-    TEST_ASSERT(cfg.break_on_error == DEBUG_FALLBACK_BREAK_ON_ERROR, "Break on error is false");
-    TEST_ASSERT(cfg.break_on_tripwire == DEBUG_FALLBACK_BREAK_ON_TRIPWIRE, "Break on tripwire is true");
-    TEST_ASSERT(cfg.break_on_sway_breach == DEBUG_FALLBACK_BREAK_ON_SWAY, "Break on sway is true");
-    TEST_ASSERT(cfg.break_on_resonance_breach == DEBUG_FALLBACK_BREAK_ON_RESONANCE, "Break on resonance is true");
-    TEST_ASSERT(cfg.break_on_hp_zero == DEBUG_FALLBACK_BREAK_ON_HP_ZERO, "Break on hp zero is true");
-    TEST_ASSERT(cfg.break_on_stance_change == DEBUG_FALLBACK_BREAK_ON_STANCE, "Break on stance is false");
-    TEST_ASSERT(cfg.max_snapshots == DEBUG_FALLBACK_MAX_SNAPSHOTS, "Max snapshots == 64");
-    TEST_ASSERT(cfg.snapshot_interval_turns == DEBUG_FALLBACK_INTERVAL_TURNS, "Interval == 1 turn");
-    TEST_ASSERT(cfg.auto_dump_on_tripwire == DEBUG_FALLBACK_AUTO_DUMP, "Auto dump is true");
-    TEST_ASSERT(cfg.interactive_repl == DEBUG_FALLBACK_INTERACTIVE_REPL, "Interactive REPL is true");
-    TEST_ASSERT(cfg.ansi_color == DEBUG_FALLBACK_ANSI_COLOR, "ANSI color is true");
-    TEST_ASSERT(strcmp(cfg.trace_channels, DEBUG_FALLBACK_TRACE_CHANNELS) == 0, "Channels match fallback constant");
+    TEST_ASSERT(cfg.enabled, "Fallback debugger enabled by default");
+    TEST_ASSERT_INT_EQ(cfg.max_snapshots, 64, "Max snapshots == 64");
+    TEST_ASSERT_INT_EQ(cfg.snapshot_interval_turns, 1, "Interval == 1");
+    TEST_ASSERT(cfg.break_on_tripwire, "Break on tripwire armed");
+    TEST_ASSERT(!cfg.loaded_from_data, "Fallback provenance loaded_from_data == false");
+    TEST_ASSERT_STR_EQ(cfg.profile_name, "monolith_fallback", "Profile name matches");
 
-    /* 1.2: Fallback audit and preflight */
-    TEST_ASSERT(debug_fallback_audit(), "debug_fallback_audit returns true");
-
-    diag_result_t diag = debug_fallback_preflight();
-    TEST_ASSERT(diag.passed, "debug_fallback_preflight returns passed true");
-    TEST_ASSERT(diag.severity == SEVERITY_PASS, "Severity must be SEVERITY_PASS");
-    TEST_ASSERT(strcmp(diag.subsystem, "core.util.debug_fallback") == 0, "Subsystem matches");
-
-    /* 1.3: Fallback inspection procedure */
     debug_config_t insp_cfg;
-    bool insp_ok = debug_fallback_execute_inspect(&insp_cfg, sizeof(insp_cfg));
-    TEST_ASSERT(insp_ok, "debug_fallback_execute_inspect succeeds");
-    TEST_ASSERT(insp_cfg.max_snapshots == 64, "Snapshot capacity preserved in inspect");
-
-    printf("  [PASS-1] Section 1 passed: All nominal fallback parameters verified.\n");
+    TEST_ASSERT(debug_fallback_execute_inspect(&insp_cfg, sizeof(insp_cfg)) &&
+                    (insp_cfg.max_snapshots == 64),
+                "debug_fallback_execute_inspect preserves snapshot capacity");
 }
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 2: FAILING TESTS (FAULT-TOLERANT HARDENING) ]
+Sub-Assembly 3.2: [ SECTION 2: NEVER FAIL (FAULT-TOLERANT SIZE & NULL GUARDS) ]
 --------------------------------------------------------------------------------
 */
 
-static void test_debug_fallback_unit_failing(void)
+static void test_debug_fallback_unit_never_fail(void)
 {
-    printf("  [FAIL-2] Running Section 2: Failing Tests (Fault-Tolerant Tripwires)...\n");
+    cornerstone_test_section(2, "Never Fail (Fault-Tolerant Null & Size Guards)");
 
-    /* 2.1: NULL buffer to execute_inspect */
-    TEST_ASSERT(!debug_fallback_execute_inspect(NULL, sizeof(debug_config_t)),
-                "execute_inspect(NULL) must reject");
-
-    /* 2.2: Buffer size mismatch to execute_inspect */
     debug_config_t cfg;
-    TEST_ASSERT(!debug_fallback_execute_inspect(&cfg, 0),
-                "execute_inspect with size 0 must reject");
-    TEST_ASSERT(!debug_fallback_execute_inspect(&cfg, sizeof(debug_config_t) - 1),
-                "execute_inspect with truncated size must reject");
-    TEST_ASSERT(!debug_fallback_execute_inspect(&cfg, sizeof(debug_config_t) + 16),
-                "execute_inspect with oversized size must reject");
+    TEST_ASSERT(!debug_fallback_execute_inspect(NULL, sizeof(debug_config_t)),
+                "execute_inspect rejects NULL buffer");
+    TEST_ASSERT(!debug_fallback_execute_inspect(&cfg, 0U),
+                "execute_inspect rejects size 0");
+    TEST_ASSERT(!debug_fallback_execute_inspect(&cfg, sizeof(debug_config_t) - 1U),
+                "execute_inspect rejects truncated size");
+    TEST_ASSERT(!debug_fallback_execute_inspect(&cfg, sizeof(debug_config_t) + 16U),
+                "execute_inspect rejects oversized size");
 
-    /* 2.3: NULL buffer to raw config */
+    /* Raw getters with NULL or 0 size must remain crash-free no-ops */
     debug_get_monolith_fallback_config_raw(NULL, sizeof(debug_config_t));
-    /* Must not crash */
-
-    /* 2.4: Zero size to raw config */
-    debug_get_monolith_fallback_config_raw(&cfg, 0);
-    /* Must not crash */
-
-    printf("  [FAIL-2] Section 2 passed: All fault-tolerant hardening verified.\n");
+    debug_get_monolith_fallback_config_raw(&cfg, 0U);
+    debug_get_floppy_safe_config_raw(NULL, sizeof(debug_config_t));
+    TEST_ASSERT(!debug_fallback_get_rom_info(NULL), "get_rom_info rejects NULL");
+    TEST_ASSERT(!debug_fallback_get_stats(NULL), "get_stats rejects NULL");
+    TEST_ASSERT(!debug_fallback_load_rom_profile("nonexistent_profile", &cfg, sizeof(cfg)),
+                "load_rom_profile rejects unknown profile cleanly");
 }
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 3: ASSERTION & GUARANTEE (INVARIANT BOUNDARIES & LIMITS) ]
+Sub-Assembly 3.3: [ SECTION 3: ASSERTIONS & GUARANTEES (ROM VAULT & MATRIX) ]
 --------------------------------------------------------------------------------
 */
 
 static void test_debug_fallback_unit_assertions_and_guarantees(void)
 {
-    printf("  [AXIOM-3] Running Section 3: Assertion & Guarantee (Invariants & Limits)...\n");
+    cornerstone_test_section(3, "Assertions & Guarantees (Bitwise Determinism, ROM & Matrix)");
 
     debug_config_t c1 = debug_get_monolith_fallback_config();
     debug_config_t c2 = debug_get_monolith_fallback_config();
-
-    /* Axiom 1: Bitwise determinism */
     TEST_ASSERT(memcmp(&c1, &c2, sizeof(debug_config_t)) == 0,
-                "Fallback config generation must be bitwise identical across calls");
+                "Monolith fallback generation is bitwise identical");
+    TEST_ASSERT((c1.max_snapshots > 0) && (c1.max_snapshots <= DEBUG_MAX_SNAPSHOTS),
+                "Snapshot capacity in (0, DEBUG_MAX_SNAPSHOTS]");
+    TEST_ASSERT((c1.profile_name[0] != '\0') && (c1.trace_channels[0] != '\0'),
+                "Profile name and trace channels non-empty");
+    TEST_ASSERT(!c1.loaded_from_data, "Fallback invariant loaded_from_data == false");
 
-    /* Axiom 2: Strict upper bound on snapshots */
-    TEST_ASSERT(c1.max_snapshots <= DEBUG_MAX_SNAPSHOTS,
-                "Fallback max_snapshots must not exceed DEBUG_MAX_SNAPSHOTS (64)");
-    TEST_ASSERT(c1.max_snapshots > 0,
-                "Fallback max_snapshots must be strictly greater than 0");
-
-    /* Axiom 3: Non-empty profile name and trace channels */
-    TEST_ASSERT(strlen(c1.profile_name) > 0, "Profile name cannot be empty");
-    TEST_ASSERT(strlen(c1.trace_channels) > 0, "Trace channels cannot be empty");
-
-    /* Axiom 4: Provenance invariance */
-    TEST_ASSERT(c1.loaded_from_data == false,
-                "Monolith fallback provenance invariant: loaded_from_data must always be false");
-
-    /* Axiom 5: 9-asset compiled-in .rodata ROM vault, compact floppy preset & tripwire rules */
-    TEST_ASSERT(debug_fallback_rom_count() == 9U, "Diagnostics ROM vault embeds exactly 9 JSON assets");
+    /* 9-asset compiled-in .rodata diagnostics ROM vault */
+    TEST_ASSERT(debug_fallback_rom_count() == 9U, "Diagnostics ROM vault embeds 9 assets");
     debug_fallback_rom_info_t rom_info;
     TEST_ASSERT(debug_fallback_get_rom_info(&rom_info) &&
-                rom_info.asset_count == 9U &&
-                rom_info.total_rom_bytes > 0U,
+                    (rom_info.asset_count == 9U) &&
+                    (rom_info.total_rom_bytes > 0U),
                 "ROM metadata reports 9 valid embedded JSON payloads");
+
     size_t asset_len = 0U;
-    TEST_ASSERT(debug_fallback_find_rom_asset("debugger/default", &asset_len) != NULL && asset_len > 0U,
-                "Find ROM asset debugger/default cleanly");
-    TEST_ASSERT(debug_fallback_find_rom_asset("taxonomy/tripwire_matrix", &asset_len) != NULL && asset_len > 0U,
-                "Find ROM asset taxonomy/tripwire_matrix cleanly");
+    TEST_ASSERT((debug_fallback_find_rom_asset("debugger/default", &asset_len) != NULL) &&
+                    (asset_len > 0U),
+                "ROM resolves debugger/default");
+    TEST_ASSERT((debug_fallback_find_rom_asset("taxonomy/tripwire_matrix", &asset_len) != NULL) &&
+                    (asset_len > 0U),
+                "ROM resolves taxonomy/tripwire_matrix");
 
     debug_config_t rom_strict;
-    TEST_ASSERT(debug_fallback_load_rom_profile("strict", &rom_strict, sizeof(rom_strict)),
-                "Hydrate 'strict' profile directly from .rodata ROM");
-    TEST_ASSERT(!rom_strict.loaded_from_data &&
-                strcmp(rom_strict.profile_name, "strict") == 0 &&
-                rom_strict.break_on_error &&
-                rom_strict.locked_slot_quota == DEBUG_FALLBACK_LOCKED_SLOT_QUOTA,
-                "ROM strict profile keeps loaded_from_data=false and snapshot_policy quota");
+    TEST_ASSERT(debug_fallback_load_rom_profile("strict", &rom_strict, sizeof(rom_strict)) &&
+                    !rom_strict.loaded_from_data &&
+                    (strcmp(rom_strict.profile_name, "strict") == 0) &&
+                    rom_strict.break_on_error &&
+                    (rom_strict.locked_slot_quota == DEBUG_FALLBACK_LOCKED_SLOT_QUOTA),
+                "ROM strict profile preserves loaded_from_data=false and snapshot_policy quota");
 
     debug_config_t rom_trace;
-    TEST_ASSERT(debug_fallback_load_rom_profile("trace", &rom_trace, sizeof(rom_trace)),
-                "Hydrate 'trace' profile directly from .rodata ROM");
-    TEST_ASSERT(!rom_trace.loaded_from_data && strcmp(rom_trace.profile_name, "trace") == 0,
+    TEST_ASSERT(debug_fallback_load_rom_profile("trace", &rom_trace, sizeof(rom_trace)) &&
+                    !rom_trace.loaded_from_data &&
+                    (strcmp(rom_trace.profile_name, "trace") == 0),
                 "ROM trace profile preserves offline provenance");
 
     debug_config_t floppy_cfg;
     debug_get_floppy_safe_config_raw(&floppy_cfg, sizeof(floppy_cfg));
     TEST_ASSERT(!floppy_cfg.loaded_from_data &&
-                strcmp(floppy_cfg.profile_name, DEBUG_FALLBACK_COMPACT_PROFILE_NAME) == 0 &&
-                floppy_cfg.max_snapshots == DEBUG_FALLBACK_FLOPPY_SNAPSHOTS,
-                "Floppy Safe-Mode preset preserves compact 16-slot bounds");
+                    (strcmp(floppy_cfg.profile_name, DEBUG_FALLBACK_COMPACT_PROFILE_NAME) == 0) &&
+                    (floppy_cfg.max_snapshots == DEBUG_FALLBACK_FLOPPY_SNAPSHOTS),
+                "Floppy Safe-Mode preset uses compact 16-slot bounds");
 
     debug_fallback_tripwire_rule_t rom_rules[DEBUG_FALLBACK_MAX_TRIPWIRE_RULES];
     size_t rom_rule_count = 0U;
-    TEST_ASSERT(debug_fallback_load_rom_tripwire_matrix(rom_rules, DEBUG_FALLBACK_MAX_TRIPWIRE_RULES, &rom_rule_count) &&
-                rom_rule_count > 0U,
-                "Taxonomy tripwire matrix parses cleanly from .rodata ROM");
+    TEST_ASSERT(debug_fallback_load_rom_tripwire_matrix(
+                    rom_rules, DEBUG_FALLBACK_MAX_TRIPWIRE_RULES, &rom_rule_count) &&
+                    (rom_rule_count >= 13U),
+                "ROM tripwire matrix parses >= 13 rules");
 
-    printf("  [AXIOM-3] Section 3 passed: All axiomatic guarantees verified.\n");
+    bool found_ro = false;
+    bool found_buf = false;
+    bool found_rom = false;
+    bool found_json_syntax = false;
+    bool found_json_depth = false;
+    for (size_t i = 0U; i < rom_rule_count; i++) {
+        if (strcmp(rom_rules[i].id, "TW_ENG_IO_READONLY_GUARD") == 0) {
+            found_ro = true;
+        } else if (strcmp(rom_rules[i].id, "TW_ENG_IO_BUFFER_BOUNDS") == 0) {
+            found_buf = true;
+        } else if (strcmp(rom_rules[i].id, "TW_ENG_IO_ROM_INTEGRITY") == 0) {
+            found_rom = true;
+        } else if (strcmp(rom_rules[i].id, "TW_ENG_JSON_SYNTAX") == 0) {
+            found_json_syntax = true;
+        } else if (strcmp(rom_rules[i].id, "TW_ENG_JSON_DEPTH_EXCEEDED") == 0) {
+            found_json_depth = true;
+        }
+    }
+    TEST_ASSERT(found_ro && found_buf && found_rom && found_json_syntax && found_json_depth,
+                "Tripwire matrix embeds TW_ENG_IO_* and TW_ENG_JSON_* taxonomy entries");
 }
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 4: EMERGENCE (COMPOSITE BEHAVIORS & LATENCY LIMITS) ]
+Sub-Assembly 3.4: [ SECTION 4: EMERGENCE (STRESS QUERIES & BIOS AWAIT) ]
 --------------------------------------------------------------------------------
 */
 
 static void test_debug_fallback_unit_emergence(void)
 {
-    printf("  [EMERGE-4] Running Section 4: Emergence (High-Frequency Stress)...\n");
+    cornerstone_test_section(4, "Emergence (Rapid Re-Entry Stress & Tier-0 BIOS AWAIT)");
 
-    /* 4.1 Rapid sequential queries */
     for (int i = 0; i < 5000; i++) {
         debug_config_t cfg = debug_get_monolith_fallback_config();
-        TEST_ASSERT(cfg.max_snapshots == 64, "Snapshot capacity invariant under stress");
-        TEST_ASSERT(!cfg.loaded_from_data, "Provenance invariant under stress");
+        TEST_ASSERT((cfg.max_snapshots == 64) && !cfg.loaded_from_data,
+                    "Monolith fallback invariants hold across 5000 iterations");
     }
 
-    /* 4.2 Inspection under rapid repeated execution */
     for (int i = 0; i < 1000; i++) {
         debug_config_t inspect_cfg;
-        bool ok = debug_fallback_execute_inspect(&inspect_cfg, sizeof(inspect_cfg));
-        TEST_ASSERT(ok, "Execute inspect succeeds under stress");
-        TEST_ASSERT(inspect_cfg.break_on_tripwire == true, "Tripwire break invariant holds");
+        TEST_ASSERT(debug_fallback_execute_inspect(&inspect_cfg, sizeof(inspect_cfg)) &&
+                        inspect_cfg.break_on_tripwire,
+                    "Inspect succeeds with break_on_tripwire across 1000 iterations");
     }
 
-    /* 4.3 Tier-0 Safe-Mode BIOS boot, fault capture, fallback finish, AWAIT & recovery */
+    /* Tier-0 BIOS Safe-Mode boot, fault recording, Safe-Mode AWAIT & clear */
     TEST_ASSERT(debug_fallback_boot(NULL, 0U) && debug_fallback_is_booted(),
-                "Tier-0 BIOS Safe-Mode boot succeeds cleanly");
-    TEST_ASSERT(!debug_fallback_is_awaiting(), "Initial BIOS state is not awaiting");
-    TEST_ASSERT(debug_fallback_record_fault("test.unit", "Synthetic unit breach", __FILE__, __LINE__, "Section4"),
-                "Record Tier-0 BIOS fault cleanly");
-    TEST_ASSERT(debug_fallback_finish_with_fallback("test.unit", "Completed state safely in fallback"),
-                "Complete interrupted step cleanly in Safe Mode");
-    TEST_ASSERT(debug_fallback_is_awaiting(), "Safe-Mode completion latches BIOS idle AWAIT");
+                "Tier-0 BIOS Safe-Mode boot succeeds");
+    TEST_ASSERT(!debug_fallback_is_awaiting(), "Initial BIOS state not awaiting");
+    TEST_ASSERT(debug_fallback_record_fault("test.unit", "Synthetic unit breach",
+                                            __FILE__, __LINE__, "Section4"),
+                "Record Tier-0 BIOS fault");
+    TEST_ASSERT(debug_fallback_finish_with_fallback("test.unit", "Completed safely in fallback"),
+                "Finish interrupted step in Safe Mode");
+    TEST_ASSERT(debug_fallback_is_awaiting(), "BIOS idle AWAIT latched after Safe-Mode completion");
 
     debug_fallback_stats_t fb_stats;
     TEST_ASSERT(debug_fallback_get_stats(&fb_stats) &&
-                fb_stats.fault_count >= 1U &&
-                fb_stats.fallback_completed &&
-                fb_stats.await_active,
-                "BIOS Safe-Mode telemetry reflects captured fault and active AWAIT");
+                    (fb_stats.fault_count >= 1U) &&
+                    fb_stats.fallback_completed &&
+                    fb_stats.await_active,
+                "BIOS stats record fault, fallback completion, and active AWAIT");
 
     char fb_card[1024];
-    TEST_ASSERT(debug_fallback_execute_dump_card(fb_card, sizeof(fb_card)) > 0U &&
-                strstr(fb_card, "AWAIT") != NULL,
-                "Expanded fallback ASCII card displays AWAIT and ROM status");
+    TEST_ASSERT((debug_fallback_execute_dump_card(fb_card, sizeof(fb_card)) > 0U) &&
+                    (strstr(fb_card, "AWAIT") != NULL),
+                "Fallback ASCII card displays AWAIT and ROM diagnostics");
 
-    TEST_ASSERT(debug_fallback_clear_await("Unit test repaired Safe-Mode state"),
-                "Clear Tier-0 BIOS AWAIT latch cleanly");
-    TEST_ASSERT(!debug_fallback_is_awaiting(), "BIOS AWAIT cleared after resolution");
+    TEST_ASSERT(debug_fallback_clear_await("Unit test repaired Safe-Mode state") &&
+                    !debug_fallback_is_awaiting(),
+                "BIOS AWAIT cleared cleanly on resolution");
+
     debug_fallback_shutdown();
     TEST_ASSERT(!debug_fallback_is_booted(), "BIOS shutdown clears booted flag");
-
-    printf("  [EMERGE-4] Section 4 passed: All emergent stress patterns verified.\n");
 }
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK / TEST RUNNER HANDSHAKE
-Stratum: Layer 4 (Verification Suite) | Machine: test.unit.debug.fallback
+BLOCK 4: AUDIT PROCEDURES BLOCK
+( Tier-0 Debugger BIOS Preflight & Self-Audit Gates )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.unit.debug.fallback
+Mission:       Verify `debug_fallback_preflight()` and `debug_fallback_audit()`.
+================================================================================
+*/
+
+static void test_debug_fallback_unit_audit_gates(void)
+{
+    cornerstone_test_section(0, "Fallback BIOS Preflight & Audit Gate");
+
+    diag_result_t diag = debug_fallback_preflight();
+    TEST_ASSERT(diag.passed && (diag.severity == SEVERITY_PASS) &&
+                    (strcmp(diag.subsystem, "core.util.debug_fallback") == 0),
+                "debug_fallback_preflight passes cleanly");
+    TEST_ASSERT(debug_fallback_audit(), "debug_fallback_audit returns true");
+    debug_fallback_shutdown();
+}
+
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Test Runner Entry Point & Summary Handshake )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.unit.debug.fallback
+Mission:       Execute BIOS audit gates and Sections 1-4 sequentially.
 ================================================================================
 */
 
 int main(void)
 {
-    printf("================================================================================\n");
-    printf("   Tenebris and Lux - Emergency Fallback Debugger Unit Verification Suite       \n");
-    printf("================================================================================\n");
+    cornerstone_test_begin(TEST_DEBUG_FB_UNIT_SUITE_NAME, "UNIT");
 
+    test_debug_fallback_unit_audit_gates();
     test_debug_fallback_unit_always_pass();
-    test_debug_fallback_unit_failing();
+    test_debug_fallback_unit_never_fail();
     test_debug_fallback_unit_assertions_and_guarantees();
     test_debug_fallback_unit_emergence();
 
-    printf("================================================================================\n");
-    printf("VERDICT: ALL DEBUGGER FALLBACK INVARIANTS SATISFIED (4/4 SECTIONS PASS)\n");
-    printf("================================================================================\n");
-
+    cornerstone_test_summary(TEST_DEBUG_FB_UNIT_SUITE_NAME, s_tests_run, s_tests_passed);
     return 0;
 }

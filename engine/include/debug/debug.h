@@ -1,111 +1,97 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          debug.h
+@file          engine/include/debug/debug.h
+@id            cog.debug
 @layer         Layer 0: Core Utilities
+@archetype     operational | stateful
 @version       0.1.1-dev
 @interface_rev Rev 5
-@date          2026-11-08
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Interactive Engine Debugger, State Rewind & Tripwire Inspector
-@role          High-performance, zero-heap interactive state debugger, historical
-               state snapshot ring buffer, time-travel rewind, dynamic breakpoints,
-               non-crashing tripwire traps, and ANSI visual state inspection.
-@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
-               3. Pure Layer 0 independence: Decoupled from Layer 1 simulation structs.
-               4. Ring buffer capacity bounded by DEBUG_MAX_SNAPSHOTS (64).
-               5. State hashes are deterministic and bitwise reproducible (FNV-1a 32-bit).
-               6. Non-crashing diagnostic tripwires with latching error states.
-               7. Universal 5-Block Lifecycle Protocol enforced across header and source.
+@role          Public Contract & Seam: Snapshot ring queries, FNV-1a determinism,
+               breakpoints, probe registry, and DEBUG_STEP_AWAIT tripwire loop.
+@maturity      Rev 5 Baseline | Validation probe registry & Safe-Mode AWAIT recovery contract active.
+@chassis       zero-heap | Public POD types; 64-slot ring cap (DEBUG_MAX_SNAPSHOTS), 32 breakpoints/probes.
+@scale         O(1) snapshot capture & FNV-1a step hash; O(n) probe/breakpoint scan capped by 32 slots.
+@seams         in: diagnostics/{debugger,taxonomy}/<file>.json | uses: cog.debug.types, cog.debug.fallback, cog.log | probes: debug_register_probe -> DEBUG_STEP_AWAIT | dag: core.util.debug
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Pure Layer 0 independence: zero includes or struct dependencies on Layer 1 game/.
+               3. Bitwise-deterministic 32-bit FNV-1a hashing catches desync across headless & X11 runs.
+               4. Non-crashing probe failures downgrade cleanly and latch DEBUG_STEP_AWAIT until resolved.
 
 PURPOSE & ARCHITECTURAL ROLE:
-  Interactive engine state debugger and diagnostic inspection pipeline for the
-  Tenebris and Lux simulation runtime. Provides:
-    1. State Snapshots: Bounded circular ring buffer in .bss capturing discrete turn records.
-    2. Time-Travel Rewind: Deterministic historical state restoration and diffing.
-    3. Breakpoints & Watchpoints: Dynamic halt conditions on turns, stances, or sway.
-    4. Tripwire Traps: Latches anomalies without invoking crude OS abort() or crashing.
-    5. Visual State Inspector: Formatted state visualizers, snapshot dumps, and ASCII cards.
-  Integrates directly with data-driven configuration assets residing in
-  engine/config/diagnostics/debugger/ (manifest.json, default.json, strict.json, trace.json,
-  snapshot_policy.json, inspection_cards.json) with quarantined fallback protection.
+  Declares the public Layer 0 debugging, state-rewind, breakpoint, and validation
+  probe interface shared by headless CLI checks, tests, and interactive X11
+  developer overlays without leaking Layer 1 simulation types into engine/.
 
   ### For Game Designers & Non-Programmers:
-  Acts like a time-machine control panel for the game simulation. If a combat
-  calculation or narrative event produces unexpected results, you can rewind
-  the game state turn-by-turn to inspect exactly what changed.
+  Acts as the simulation time-machine and safety-gate interface. Designers can
+  step turn-by-turn, inspect locked emergency snapshots, check ASCII debug cards,
+  and rely on clear AWAIT freezes instead of opaque crashes when tests fail.
 
   ### For Systems Programmers & Engine Architects:
-  - 100% Zero-Heap Memory Model (ALLOC_ZERO_HEAP): All snapshots reside in static .bss.
-  - Bitwise deterministic 32-bit FNV-1a state hashing to detect simulation drift.
-  - Complete decoupling from Layer 1 structs: uses generic primitive state fields.
+  - Ownership & Reentrancy: Owns the singleton snapshot/probe tables internally;
+    callers submit POD state descriptors and receive const views or diffs.
+  - Extension Seam: Subsystems register validation probes via debug_register_probe()
+    to participate uniformly in `--audit` and runtime tripwire latching.
+  - Explicit Non-Goal: Does not interpret gameplay rules or store heap-allocated
+    arbitrary entity graphs (uses decoupled fixed telemetry fields).
 ================================================================================
 */
 
-#ifndef TENEBRIS_LUX_DEBUG_H
-#define TENEBRIS_LUX_DEBUG_H
+#ifndef CORNERSTONE_DEBUG_DEBUG_H
+#define CORNERSTONE_DEBUG_DEBUG_H
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
-Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
+BLOCK 2: OPENING BLOCK
+( Public Contract Limits, Fallback Link, Ontology & O(1) Pre-Conditions )
 ================================================================================
-Mission: Pre-condition limits, downward include ladder, manifest anchors,
-decoupled state representations, breakpoints, and tripwire helpers.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.debug
+Mission:       Declare limits, downward + fallback links, public types, and O(1) guards.
 ================================================================================
-*/
-
-/*
---------------------------------------------------------------------------------
-Include Hierarchy: 3-Tier Downward Architecture
---------------------------------------------------------------------------------
-Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Library Dependencies (None)
-Tier 3: Internal Engine Foundation Headers
---------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-/* --- Tier 2: External Library Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None in Layer 0/1) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
+#include "debug/debug_types.h"
 #include "debug/debug_fallback.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Pre-Conditions & Telemetry Buffer Limits
+Sub-Assembly 2.1: Pre-Conditions, VFS Paths & Compile-Time Proofs
 --------------------------------------------------------------------------------
-Compile-time sizing bounds for historical snapshots and dynamic breakpoints.
-For Designers: Bounds ensure the rewind system remembers up to 64 combat turns
-and allows setting up to 16 simultaneous condition triggers.
-For Programmers: Guarantees 100% zero-heap allocation (ALLOC_ZERO_HEAP) in .bss.
+Operational VFS configuration routes and compile-time capacity proofs linking
+shared ontology bounds (`debug_types.h`) to Tier-0 BIOS presets (`debug_fallback.h`).
+
+### For Game Designers & Non-Programmers:
+Identifies canonical JSON paths (`manifest.json`, `snapshot_policy.json`,
+`tripwire_matrix.json`) and default profile (`"default"`) loaded at startup.
+
+### For Systems Programmers & Engine Architects:
+Guarantees 100% zero-heap `.bss` footprint bounds via `static_assert`.
 --------------------------------------------------------------------------------
 */
-
-/** Maximum historical turns retained in the in-memory circular ring buffer. */
-#define DEBUG_MAX_SNAPSHOTS       64
-
-/** Maximum simultaneous user and system breakpoints registered. */
-#define DEBUG_MAX_BREAKPOINTS     16
-
-/** Maximum length for entity, character, and card label names. */
-#define DEBUG_MAX_NAME_LEN        32
-
-/** Maximum payload length for debug status previews and formatted messages. */
-#define DEBUG_MAX_MSG_LEN         256
-
-/** Maximum buffer length for comma-delimited channel filter strings. */
-#define DEBUG_MAX_CHANNELS_LEN    64
 
 /** Default configuration profile name for standard test execution. */
 #define DEBUG_DEFAULT_PROFILE     "default"
@@ -119,19 +105,25 @@ For Programmers: Guarantees 100% zero-heap allocation (ALLOC_ZERO_HEAP) in .bss.
 /** Canonical virtual filesystem path to taxonomic tripwire reaction matrix JSON. */
 #define DEBUG_TRIPWIRE_MATRIX_PATH  "diagnostics/taxonomy/tripwire_matrix.json"
 
-/** Maximum registered subsystem validation probes evaluated by the debugger. */
-#define DEBUG_MAX_VALIDATION_PROBES 32U
+static_assert(
+    DEBUG_MAX_SNAPSHOTS >= DEBUG_FALLBACK_MAX_SNAPSHOTS,
+    "Operational rewind ring capacity must meet or exceed BIOS fallback limit"
+);
+static_assert(
+    DEBUG_MAX_VALIDATION_PROBES >= 16U,
+    "Validation probe table must reserve at least 16 registration slots"
+);
 
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.2: Manifest & Pre-Flight Hooks
 --------------------------------------------------------------------------------
-Pre-flight verification anchor for the engine's Loose-Bolts initialization DAG.
+Pre-flight verification anchor for the engine's initialization DAG.
 --------------------------------------------------------------------------------
 */
 
 /** Unique module identifier string for the Zero-Heap Debugger Engine. */
-#define DEBUG_MODULE_ID                "debug.engine"
+#define DEBUG_MODULE_ID                "core.util.debug"
 
 /**
  * Manifest record for the Zero-Heap Debugger Engine.
@@ -140,413 +132,180 @@ extern const module_metadata_t debug_manifest;
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.3: Structural Entity & Object Definitions
+Sub-Assembly 2.3: Structural Entity & Object Definitions (Cross-Reference)
 --------------------------------------------------------------------------------
-Ontological types for state snapshots, step modes, breakpoints, and tripwires.
-All structs and enums MUST have explicit non-anonymous tags for DWARF symbols.
+Shared debugger ontology (`debug_tripwire_t`, `debug_tripwire_reaction_t`,
+`debug_test_tier_t`, `debug_step_mode_t`, `debug_breakpoint_type_t`,
+`debug_state_fields_t`, `debug_snapshot_t`, `debug_breakpoint_t`,
+`debug_config_t`, `debug_validation_probe_fn`, `debug_validation_probe_t`,
+`debug_tripwire_report_t`, `debug_stats_t`) lives in `debug/debug_types.h`
+(`cog.debug.types`); BIOS templates and tripwire reaction rows live cleanly in
+`debug/debug_fallback.h` (`cog.debug.fallback`).
 --------------------------------------------------------------------------------
 */
-
-/**
- * @enum debug_step_mode
- * @brief Execution stepping mode of the engine debugger.
- *
- * For Designers: Controls how the simulation advances:
- *   - RUN: Normal continuous play until something goes wrong.
- *   - OVER_TURN: Pauses at the end of each combat turn so you can inspect values.
- *   - INTO_COG: Micro-steps through individual calculations (damage, poise).
- *   - PAUSED: Frozen in place for interactive inspection.
- *   - AWAIT: Emergency idle halt entered after a tripwire completes safely in
- *     fallback mode; blocks RUN until the fault is repaired and a healthy state
- *     is restored.
- *
- * For Programmers: Execution cadence controller for simulation drivers.
- */
-typedef enum debug_step_mode {
-    DEBUG_STEP_RUN = 0,        /**< Continuous execution until breakpoint/tripwire */
-    DEBUG_STEP_OVER_TURN = 1,  /**< Pause at turn boundaries */
-    DEBUG_STEP_INTO_COG = 2,   /**< Micro-step individual cog sub-assemblies */
-    DEBUG_STEP_PAUSED = 3,     /**< Engine is currently paused */
-    DEBUG_STEP_AWAIT = 4       /**< Halted idle awaiting repair & state restore */
-} debug_step_mode_t;
-
-/**
- * @enum debug_breakpoint_type
- * @brief Breakpoint condition types.
- *
- * For Designers: Defines what triggers an automatic game pause:
- *   - TURN: Pauses when a specific turn number is reached.
- *   - STANCE: Pauses when a character shifts into a specific stance.
- *   - SWAY_RANGE: Pauses if moral balance swings past a chosen limit.
- *   - RESONANCE_BREACH: Pauses if weapon energy exceeds safety thresholds.
- *   - HP_THRESHOLD: Pauses if a unit's health drops too low.
- *   - TRIPWIRE: Pauses instantly if any diagnostic anomaly occurs.
- *
- * For Programmers: Evaluated in O(1) time at each simulation step boundary.
- */
-typedef enum debug_breakpoint_type {
-    DEBUG_BREAK_NONE = 0,
-    DEBUG_BREAK_TURN,              /**< Break when turn equals target value */
-    DEBUG_BREAK_STANCE,            /**< Break when stance equals target stance ID */
-    DEBUG_BREAK_SWAY_RANGE,        /**< Break when |moral_sway| exceeds target */
-    DEBUG_BREAK_RESONANCE_BREACH,  /**< Break when Lux or Tenebris exceeds target */
-    DEBUG_BREAK_HP_THRESHOLD,      /**< Break when HP drops below target */
-    DEBUG_BREAK_LOCATION,          /**< Break upon entering target location ID */
-    DEBUG_BREAK_TRIPWIRE           /**< Break upon any tripwire trap */
-} debug_breakpoint_type_t;
-
-/* Note: debug_tripwire_t, debug_tripwire_reaction_t, and debug_test_tier_t
- * are defined canonically in debug/debug_fallback.h (Tier 3 include above). */
-
-/**
- * @struct debug_state_fields
- * @brief Decoupled, generic state representation for Layer 0 snapshots.
- *
- * For Designers: A comprehensive snapshot of the hero's vitals, position,
- * weapon charge, stance, and world moral sway at a specific turn.
- *
- * For Programmers: Uses fundamental primitive types so Layer 0 never includes
- * Layer 1 game simulation headers, maintaining strict layer decoupling.
- */
-typedef struct debug_state_fields {
-    int turn;
-    char hero_name[DEBUG_MAX_NAME_LEN];
-    int hp;
-    int max_hp;
-    int mp;
-    int tp;
-    int shield_power;
-    int sword_edge;
-    int stance;
-    int moral_sway;
-    int location;
-    int lux_barrio_turns;
-    int charm_turns;
-    int threat_hp;
-    int foes_vanquished;
-} debug_state_fields_t;
-
-/**
- * @struct debug_snapshot
- * @brief Frozen state snapshot stored in the debugger circular ring buffer.
- *
- * For Designers: A single frame in the time-machine filmstrip holding all
- * numbers, the command that was executed, and the exact timestamp.
- *
- * For Programmers: Fixed-size record with 32-bit FNV-1a checksum to detect drift.
- */
-typedef struct debug_snapshot {
-    uint64_t snapshot_id;
-    uint64_t timestamp_ms;
-    debug_state_fields_t state;
-    char last_command[64];
-    char last_arg[64];
-    uint32_t state_hash;
-    uint64_t log_sequence_id;
-    bool locked;               /**< Eviction guard enforced up to locked_slot_quota */
-    char lock_reason[48];      /**< Reason snapshot was pinned (e.g., TRIPWIRE_LATCH) */
-} debug_snapshot_t;
-
-/**
- * @struct debug_breakpoint
- * @brief Dynamic breakpoint registration descriptor.
- *
- * For Designers: An active watchpoint trap configured to halt gameplay.
- *
- * For Programmers: Up to 16 active breakpoint slots stored in static .bss.
- */
-typedef struct debug_breakpoint {
-    int id;
-    debug_breakpoint_type_t type;
-    int target_value;
-    bool is_active;
-    char label[64];
-} debug_breakpoint_t;
-
-/**
- * @struct debug_config
- * @brief Debugger configuration parameters loaded from data or fallback.
- *
- * For Designers: Settings controlling whether the debugger is active, whether
- * errors pop up an interactive command prompt, and which events trigger halts.
- *
- * For Programmers: Ingests configuration from engine/config/diagnostics/debugger/.
- */
-typedef struct debug_config {
-    bool enabled;
-    bool break_on_error;
-    bool break_on_tripwire;
-    bool break_on_sway_breach;
-    bool break_on_resonance_breach;
-    bool break_on_hp_zero;
-    bool break_on_stance_change;
-    size_t max_snapshots;
-    int snapshot_interval_turns;
-    bool auto_dump_on_tripwire;
-    bool interactive_repl;
-    bool ansi_color;
-    char trace_channels[DEBUG_MAX_CHANNELS_LEN];
-    char profile_name[32];
-    bool loaded_from_data;
-    bool engine_traps_active;      /**< Domain gate: Layer 0 infrastructure traps */
-    bool game_traps_active;        /**< Domain gate: Layer 1 simulation traps */
-    size_t locked_slot_quota;      /**< Locked critical slots in ring (default 4) */
-    bool verify_on_step;           /**< Evaluate registered probes each step check */
-    bool auto_await_on_tripwire;   /**< Enter DEBUG_STEP_AWAIT after fallback step */
-} debug_config_t;
-
-/**
- * @brief Validation probe callback signature returning Block 4 diag_result_t.
- */
-typedef diag_result_t (*debug_validation_probe_fn)(void);
-
-/**
- * @struct debug_validation_probe
- * @brief Registered Block 4 / Layer 4 fail-test trigger linked into tripwire monitoring.
- *
- * For Designers: Connects an automated safety check or test directly to the
- * debugger so any broken rule instantly stops playback in AWAIT rather than
- * continuing with corrupted numbers.
- *
- * For Programmers: Binds exact source function/block locations, Block 4
- * validate_fn callbacks, and Layer 4 test suite references into O(N) checks.
- */
-typedef struct debug_validation_probe {
-    char                      probe_id[48];       /**< Unique probe ID (e.g., "log.setting_missing") */
-    char                      subsystem[32];      /**< Owning subsystem ID (e.g., "log.engine") */
-    char                      source_section[64]; /**< Precise file/block/function trigger anchor */
-    char                      test_suite_ref[64]; /**< Mapped Layer 4 test suite & section */
-    debug_test_tier_t         tier;               /**< Verification stratum (AUDIT..SYSTEM) */
-    debug_tripwire_t          tripwire_code;      /**< Categorized tripwire code latched on failure */
-    debug_tripwire_reaction_t reaction;           /**< Configured reaction strategy */
-    debug_validation_probe_fn validate_fn;        /**< Optional Block 4 validation probe callback */
-    bool                      auto_await;         /**< True to pause in DEBUG_STEP_AWAIT after fallback */
-    bool                      is_active;          /**< True if probe registration slot is live */
-    uint32_t                  trigger_count;      /**< Lifetime number of times probe fired */
-} debug_validation_probe_t;
-
-/**
- * @struct debug_tripwire_report
- * @brief Forensic report capturing active tripwire, fallback completion, and AWAIT state.
- */
-typedef struct debug_tripwire_report {
-    debug_tripwire_t          tripwire_status;
-    debug_tripwire_reaction_t reaction;
-    debug_test_tier_t         tier;
-    bool                      fallback_completed;
-    bool                      await_active;
-    bool                      snapshot_locked;
-    uint64_t                  locked_snapshot_id;
-    char                      probe_id[48];
-    char                      subsystem[32];
-    char                      condition[128];
-    char                      source_location[96];
-    char                      source_section[64];
-    char                      test_suite_ref[64];
-    char                      fallback_action[96];
-} debug_tripwire_report_t;
-
-/**
- * @struct debug_stats
- * @brief Aggregate runtime telemetry report constructed by Block 5 execution procedures.
- *
- * For Designers: A status scorecard showing total snapshots, active watchpoints,
- * Safe-Mode fallback status, and whether any tripwire alarms have paused in AWAIT.
- *
- * For Programmers: Telemetry structure constructed by debug_execute_inspect().
- */
-typedef struct debug_stats {
-    size_t snapshot_count;         /**< Number of active snapshots in ring buffer. */
-    size_t max_snapshots;          /**< Configured snapshot capacity limit. */
-    size_t breakpoint_count;       /**< Number of active breakpoints registered. */
-    uint32_t traps_triggered;      /**< Number of tripwire traps triggered. */
-    debug_step_mode_t step_mode;   /**< Active stepping execution mode. */
-    bool is_active;                /**< true if debugger is initialized and active. */
-    bool loaded_from_data;         /**< true if loaded from JSON profile. */
-    char active_profile[32];       /**< Name of loaded profile. */
-    size_t locked_snapshot_count;  /**< Number of locked critical snapshots in ring. */
-    size_t registered_probe_count; /**< Active registered validation probes. */
-    uint32_t probe_failures;       /**< Count of validation probe fail triggers. */
-    bool safe_mode;                /**< true if operating via Safe-Mode fallback/ROM. */
-    bool await_active;             /**< true if halted in DEBUG_STEP_AWAIT. */
-    bool fallback_completed;       /**< true if fallback completed interrupted step. */
-    debug_tripwire_t tripwire_status; /**< Active tripwire code. */
-} debug_stats_t;
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.4: Pre-Conditional Helper Cogs & Non-Business Inlines
+Sub-Assembly 2.4: Pre-Conditional Helper Cogs & Operational Inlines
 --------------------------------------------------------------------------------
-Pure static inline validation predicates and non-business query helpers.
-Guarantees zero heap, pure reentrancy, and fast pre-flight assertion checks.
+Pure O(1) static inline operational pre-conditions complementing the shared
+enum stringifiers and range predicates in `debug/debug_types.h`.
 --------------------------------------------------------------------------------
 */
 
 /**
- * @brief Predicate verifying if an execution stepping mode is valid.
+ * @brief Predicate verifying whether a rewind snapshot is currently locked.
  *
- * @param[in] mode Stepping mode to check.
- * @return true if mode is within canonical bounds; false otherwise.
+ * ### For Game Designers & Non-Programmers:
+ * Checks whether an important turn snapshot is pinned so newer turns cannot overwrite it.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Null-safe O(1) inspection of `snap->locked`.
+ *
+ * @param[in] snap Snapshot descriptor pointer to inspect.
+ * @return true if non-NULL and pinned against ring eviction.
  */
-static inline bool debug_step_mode_is_valid(debug_step_mode_t mode) {
-    return mode >= DEBUG_STEP_RUN && mode <= DEBUG_STEP_AWAIT;
+static inline bool debug_snapshot_is_locked(const debug_snapshot_t *snap)
+{
+    return (snap != NULL) && snap->locked;
 }
 
 /**
- * @brief Predicate verifying if a breakpoint type is valid.
+ * @brief Predicate verifying whether any diagnostic traps are active in a config.
  *
- * @param[in] type Breakpoint type to check.
- * @return true if type is within canonical bounds; false otherwise.
+ * ### For Game Designers & Non-Programmers:
+ * Reports whether the debugger is actively watching engine or gameplay safety traps.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) gate predicate checking `cfg->enabled` alongside trap domain switches.
+ *
+ * @param[in] cfg Configuration pointer to inspect.
+ * @return true if enabled and at least one trap domain gate is armed.
  */
-static inline bool debug_breakpoint_type_is_valid(debug_breakpoint_type_t type) {
-    return type >= DEBUG_BREAK_NONE && type <= DEBUG_BREAK_TRIPWIRE;
+static inline bool debug_config_traps_enabled(const debug_config_t *cfg)
+{
+    return (cfg != NULL) && cfg->enabled &&
+           (cfg->engine_traps_active || cfg->game_traps_active || cfg->break_on_tripwire);
 }
 
 /**
- * @brief Predicate verifying if the debugger tripwire is in a clear state.
+ * @brief Predicate verifying whether a registered probe descriptor holds usable metadata.
  *
- * @param[in] wire Tripwire state to check.
- * @return true if wire is DEBUG_TRIPWIRE_CLEAR; false otherwise.
+ * ### For Game Designers & Non-Programmers:
+ * Confirms an automated test trigger has an assigned name and owning system before registration.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) structural pre-condition checked before copying into `s_debug.probes[]`.
+ *
+ * @param[in] probe Probe descriptor pointer to validate.
+ * @return true if non-NULL, active, and carries non-empty `probe_id` and `subsystem`.
  */
-static inline bool debug_tripwire_is_clear(debug_tripwire_t wire) {
-    return wire == DEBUG_TRIPWIRE_CLEAR;
+static inline bool debug_probe_slot_is_valid(const debug_validation_probe_t *probe)
+{
+    return (probe != NULL) &&
+           probe->is_active &&
+           (probe->probe_id[0] != '\0') &&
+           (probe->subsystem[0] != '\0');
 }
 
 /**
- * @brief Fast inline conversion from stepping mode to human-readable string.
+ * @brief Convenience call-site macro capturing `__FILE__`, `__LINE__`, and `__func__`.
  *
- * @param[in] mode Stepping mode enum.
- * @return Static string constant naming the step mode.
- */
-static inline const char *debug_step_mode_name(debug_step_mode_t mode) {
-    switch (mode) {
-        case DEBUG_STEP_RUN:       return "RUN";
-        case DEBUG_STEP_OVER_TURN: return "OVER_TURN";
-        case DEBUG_STEP_INTO_COG:  return "INTO_COG";
-        case DEBUG_STEP_PAUSED:    return "PAUSED";
-        case DEBUG_STEP_AWAIT:     return "AWAIT";
-        default:                   return "UNKNOWN";
-    }
-}
-
-/**
- * @brief Fast inline conversion from breakpoint type to human-readable string.
+ * ### For Game Designers & Non-Programmers:
+ * Shortcut letting subsystems report a failed safety check while automatically attaching
+ * the exact source file and line where the problem surfaced.
  *
- * @param[in] type Breakpoint type enum.
- * @return Static string constant naming the breakpoint condition.
+ * ### For Systems Programmers & Engine Architects:
+ * Placed in Sub-Assembly 2.4 per Cornerstone 5-Block macro placement rules; forwards
+ * directly to Block 3 `debug_trigger_probe()` at every downstream translation-unit call site
+ * without heap allocation or variadic overhead.
+ *
+ * @param[in] probe_id  Registered probe identifier string.
+ * @param[in] subsystem Originating module tag.
+ * @param[in] condition Human-readable anomaly description.
+ * @return true if probe executed; false if suppressed by active reentrancy guard.
  */
-static inline const char *debug_breakpoint_type_name(debug_breakpoint_type_t type) {
-    switch (type) {
-        case DEBUG_BREAK_NONE:             return "NONE";
-        case DEBUG_BREAK_TURN:             return "TURN";
-        case DEBUG_BREAK_STANCE:           return "STANCE";
-        case DEBUG_BREAK_SWAY_RANGE:       return "SWAY_RANGE";
-        case DEBUG_BREAK_RESONANCE_BREACH: return "RESONANCE_BREACH";
-        case DEBUG_BREAK_HP_THRESHOLD:     return "HP_THRESHOLD";
-        case DEBUG_BREAK_LOCATION:         return "LOCATION";
-        case DEBUG_BREAK_TRIPWIRE:         return "TRIPWIRE";
-        default:                           return "UNKNOWN";
-    }
-}
+#define DEBUG_TRIGGER_PROBE(probe_id, subsystem, condition) \
+    debug_trigger_probe((probe_id), (subsystem), (condition), __FILE__, __LINE__, __func__)
 
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / CORE DEBUGGER API & BUSINESS FUNCTIONS
-Stratum: Layer 0 (Core Utilities) | Subsystem: Engine Debugger & State Rewind
+BLOCK 3: BODY BLOCK
+( Public Operational Cogs, State Accessors & Domain APIs )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.debug
+Mission:       Declare composable snapshot ring, FNV-1a determinism, breakpoint,
+               probe registry, AWAIT recovery, and tripwire reporting APIs.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 3.1: Configuration & Profile Resolution Cogs
+Sub-Assembly 3.1: Deterministic Hashing & Configuration Provenance Cogs
 --------------------------------------------------------------------------------
 */
 
 /**
- * @brief Checks if the debugging system is currently initialized and active.
+ * @brief Computes a deterministic 32-bit FNV-1a digest of simulation state fields.
  *
  * ### For Game Designers & Non-Programmers:
- * Checks if debug mode and state rewind recording are currently turned on.
+ * Creates a unique digital fingerprint for each turn so the engine can detect
+ * silent memory corruption or divergence between headless and graphical runs.
  *
  * ### For Systems Programmers & Engine Architects:
- * Returns internal boolean status flag s_initialized.
+ * Pure deterministic 32-bit FNV-1a hash mixing every member of `debug_state_fields_t`
+ * in canonical order with zero heap or global state writes.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`,
+ *                   `tests/functional/test_debug_functional.c`
+ *
+ * @param[in] fields Actor/simulation state snapshot fields to digest.
+ * @return 32-bit FNV-1a hash digest, or 0U if `fields == NULL`.
  */
-bool debug_is_active(void);
-
-/**
- * @brief Returns the name of the active debugging profile.
- *
- * ### For Game Designers & Non-Programmers:
- * Retrieves the name of the current debug profile (such as "default", "strict", or "trace").
- *
- * ### For Systems Programmers & Engine Architects:
- * Returns pointer to static null-terminated profile name string.
- */
-const char *debug_get_active_profile_name(void);
-
-/**
- * @brief Returns the default configuration (data-driven or fallback).
- *
- * ### For Game Designers & Non-Programmers:
- * Retrieves the standard starting settings for the debugger.
- *
- * ### For Systems Programmers & Engine Architects:
- * Resolves manifest and returns default debug_config_t with fallback protection.
- */
-debug_config_t debug_get_default_config(void);
-
-/**
- * @brief Returns the quarantined emergency fallback configuration.
- *
- * ### For Game Designers & Non-Programmers:
- * Factory default settings used if debugger configuration files are missing.
- *
- * ### For Systems Programmers & Engine Architects:
- * Constructs static debug_config_t from .rodata with loaded_from_data == false.
- */
-debug_config_t debug_get_monolith_fallback_config(void);
-
-/**
- * @brief Loads a debug configuration from a manifest file.
- *
- * ### For Game Designers & Non-Programmers:
- * Loads debugger rules from a specific manifest file.
- *
- * ### For Systems Programmers & Engine Architects:
- * Parses manifest JSON, reads active preset, and hydrates out_config.
- */
-bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *out_config);
-
-/**
- * @brief Loads a specific named debug profile (e.g. "default", "strict", "trace").
- *
- * ### For Game Designers & Non-Programmers:
- * Selects a pre-tuned debugger behavior profile by name.
- *
- * ### For Systems Programmers & Engine Architects:
- * Resolves <profile_name>.json across system search directories.
- */
-bool debug_load_config_profile(const char *profile_name, debug_config_t *out_config);
+uint32_t debug_compute_state_hash(const debug_state_fields_t *fields);
 
 /**
  * @brief Overlays snapshot retention policy rules onto a debugger configuration.
  *
+ * ### For Game Designers & Non-Programmers:
+ * Loads rules from `snapshot_policy.json` controlling how many key snapshots stay
+ * pinned against overwriting and whether safety checks run on every single turn.
+ *
  * ### For Systems Programmers & Engine Architects:
- * Resolves `DEBUG_SNAPSHOT_POLICY_PATH` via Layer 0 VFS (`path_finder`) and
- * falls back cleanly to embedded `.rodata` ROM if disk assets are absent.
+ * Resolves `DEBUG_SNAPSHOT_POLICY_PATH` via Layer 0 VFS (`path_finder` `"config"`
+ * domain -> `debug_fallback_parse_snapshot_policy_json()`), falling back cleanly
+ * to `debug_fallback_load_rom_snapshot_policy()` in `.rodata` if disk JSON is absent.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
  *
  * @param[in,out] cfg Configuration struct to enrich with ring & lock quotas.
- * @return true if loaded from disk VFS; false if satisfied via ROM/defaults.
+ * @return true if loaded from disk VFS; false if satisfied via ROM/defaults or bad args.
  */
 bool debug_load_snapshot_policy(debug_config_t *cfg);
 
 /**
  * @brief Loads taxonomic tripwire reaction rules from disk VFS or ROM fallback.
  *
+ * ### For Game Designers & Non-Programmers:
+ * Reads `tripwire_matrix.json` to map specific alarms (bad scalar bounds, corrupt saves,
+ * or failed safety tests) to automatic responses like clamping or Safe-Mode pause.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Resolves `diagnostics/taxonomy/tripwire_matrix.json` via `path_finder` and parses
+ * up to `max_rules` (`<= DEBUG_FALLBACK_MAX_TRIPWIRE_RULES`, 16) via the shared
+ * zero-heap parser, degrading automatically to compiled `.rodata` ROM on disk miss.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
  * @param[out] out_rules Destination rule array.
  * @param[in]  max_rules Maximum rule capacity.
  * @param[out] out_count Number of parsed reaction rules.
- * @return true if loaded from disk VFS; false if satisfied via ROM fallback.
+ * @return true if loaded from disk VFS; false if satisfied via ROM fallback or error.
  */
 bool debug_load_tripwire_matrix(
     debug_fallback_tripwire_rule_t *out_rules,
@@ -554,270 +313,126 @@ bool debug_load_tripwire_matrix(
     size_t                         *out_count
 );
 
+/**
+ * @brief Loads a specific named debug profile (e.g. `"default"`, `"strict"`, `"trace"`).
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Selects a pre-tuned debugger behavior profile from external config files so modders
+ * and QA testers can toggle trace verbosity and safety break conditions by preset name.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Resolves `<profile_name>.json` via `master_loader`, delegates parsing to shared
+ * `debug_fallback_parse_config_json()`, overlays `snapshot_policy.json`, and falls back
+ * to Safe-Mode monolith/ROM while latching tripwires on missing or malformed profiles.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/integrated/test_debug_integrated.c:Section2`
+ *
+ * @param[in]  profile_name Profile stem (e.g. `"default"`, `"strict"`, `"trace"`).
+ * @param[out] out_config   Caller destination configuration structure.
+ * @return true if profile resolved cleanly (including graceful missing-profile fallback);
+ *         false on invalid arguments, schema errors, or bounds corruption.
+ */
+bool debug_load_config_profile(const char *profile_name, debug_config_t *out_config);
+
+/**
+ * @brief Loads a debug configuration through the layered debugger menu manifest.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Reads the debugger manifest to determine which preset (`"active_profile"`) is currently
+ * selected, degrading cleanly to factory Safe-Mode rules if disk manifests are missing.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Resolves manifest path via `master_loader` `"config"` VFS, verifies schema
+ * `"tenlux.data.debug_menu.v1"`, reads `"active_profile"`, and delegates to
+ * `debug_load_config_profile()`.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/integrated/test_debug_integrated.c:Section2`
+ *
+ * @param[in]  manifest_path Relative VFS manifest path (NULL uses `DEBUG_MANIFEST_PATH`).
+ * @param[out] out_config    Populated configuration structure (fallback-filled on miss).
+ * @return true if manifest and referenced profile loaded from VFS; false otherwise.
+ */
+bool debug_load_config_from_manifest(const char *manifest_path, debug_config_t *out_config);
+
+/**
+ * @brief Returns the quarantined static emergency fallback configuration by value.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Supplies factory default Safe-Mode settings whenever external configuration files
+ * cannot be loaded from disk.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Invokes `debug_get_monolith_fallback_config_raw()` into a stack struct returning
+ * `.rodata` defaults with `loaded_from_data == false`.
+ *
+ * @return Static fallback `debug_config_t` copy with Safe-Mode provenance marked.
+ */
+debug_config_t debug_get_monolith_fallback_config(void);
+
+/**
+ * @brief Returns the active default configuration resolved via manifest, ROM, or monolith.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Retrieves the standard startup settings for the debugger cleanly whether running from
+ * full disk assets, read-only ROM backups, or bare Safe Mode.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Cascades deterministically: disk manifest VFS -> `debug_fallback_load_rom_profile()` ->
+ * `debug_get_monolith_fallback_config()`, avoiding heap allocation at every fallback step.
+ *
+ * @return Resolved `debug_config_t` preset ready for `debug_init()`.
+ */
+debug_config_t debug_get_default_config(void);
+
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 3.2: Snapshots & Time-Travel Rewind Cogs
+Sub-Assembly 3.2: Debugger State Queries, Step Control & AWAIT Recovery Cogs
 --------------------------------------------------------------------------------
 */
 
 /**
- * @brief Captures and records a state snapshot into the static ring buffer.
+ * @brief Checks if the primary debugging subsystem is currently initialized and active.
  *
  * ### For Game Designers & Non-Programmers:
- * Saves a freeze-frame picture of the hero's vitals, position, and moral balance
- * at a specific game turn so you can rewind back to it.
+ * Tells menus and diagnostic overlays whether state rewind recording is currently armed.
  *
  * ### For Systems Programmers & Engine Architects:
- * Copies fields into static circular ring buffer, computes FNV-1a hash, and advances head pointer.
+ * O(1) lock-free accessor reading module active gate `s_debug_active`.
  *
- * @param[in] fields State fields to capture.
- * @param[in] cmd Command string that caused this state transition.
- * @param[in] arg Argument string associated with the command.
- * @return Unique monotonic snapshot ID.
+ * @return true if `debug_init()` completed and `debug_shutdown()` has not run.
  */
-uint64_t debug_record_snapshot(const debug_state_fields_t *fields,
-                               const char *cmd, const char *arg);
+bool debug_is_active(void);
 
 /**
- * @brief Marks a recorded snapshot slot as locked against circular FIFO eviction.
- *
- * @param[in] snapshot_id Monotonic snapshot ID to pin (0 locks most recent).
- * @param[in] lock_reason Reason tag (e.g. `"TRIGGER_TRIPWIRE_LATCH"`).
- * @return true if snapshot was found and locked (respecting locked_slot_quota).
- */
-bool debug_lock_snapshot(uint64_t snapshot_id, const char *lock_reason);
-
-/**
- * @brief Returns the total number of valid snapshots currently recorded.
+ * @brief Returns the name string of the active debugging profile.
  *
  * ### For Game Designers & Non-Programmers:
- * Counts how many rewind points are currently available in memory.
+ * Displays which preset (`"default"`, `"strict"`, `"trace"`, `"monolith_fallback"`)
+ * is currently governing debugger checks, or `"inactive"` if shut down.
  *
  * ### For Systems Programmers & Engine Architects:
- * Returns the count of valid elements in the ring buffer up to max_snapshots.
+ * Returns immutable `"inactive"` literal when uninitialized or pointer into static
+ * `.bss` `s_debug.config.profile_name`.
+ *
+ * @return Null-terminated profile identifier string (never NULL).
  */
-size_t debug_get_snapshot_count(void);
+const char *debug_get_active_profile_name(void);
 
 /**
- * @brief Retrieves a historical snapshot by index (0 = oldest valid in buffer).
+ * @brief Sets the interactive execution stepping mode cleanly.
  *
  * ### For Game Designers & Non-Programmers:
- * Looks up a previous moment in time from the saved snapshot list.
+ * Switches playback speed between continuous run, paused hold, single-step advance, or
+ * emergency AWAIT halt. While an alarm keeps playback locked in AWAIT, manual switching
+ * remains blocked until repaired state clears the alarm.
  *
  * ### For Systems Programmers & Engine Architects:
- * Reads entry from circular ring buffer at chronological offset index into out_snap.
- */
-bool debug_get_snapshot(size_t index, debug_snapshot_t *out_snap);
-
-/**
- * @brief Retrieves the most recent snapshot in the buffer.
+ * Validates enum domain (`debug_step_mode_is_valid`) and enforces AWAIT interlock
+ * whenever `s_debug.await_active && tripwire_status != DEBUG_TRIPWIRE_CLEAR`.
  *
- * ### For Game Designers & Non-Programmers:
- * Checks the very latest recorded game state.
- *
- * ### For Systems Programmers & Engine Architects:
- * Returns const pointer to entry at (s_head - 1) % capacity.
- */
-const debug_snapshot_t *debug_get_latest_snapshot(void);
-
-/**
- * @brief Restores state fields from a historical snapshot.
- *
- * ### For Game Designers & Non-Programmers:
- * Rewinds the game state back to an earlier turn or position.
- *
- * ### For Systems Programmers & Engine Architects:
- * Restores state fields structure from historical snapshot at index.
- *
- * @param[in] index Historical snapshot index to rewind to.
- * @param[out] out_fields Populated state fields upon successful rewind.
- * @return true if rewind succeeded, false if index invalid.
- */
-bool debug_rewind_to_snapshot(size_t index, debug_state_fields_t *out_fields);
-
-/**
- * @brief Computes a formatted textual difference between two snapshots.
- *
- * ### For Game Designers & Non-Programmers:
- * Compares two moments in time and prints out what changed (like HP lost or stance switched).
- *
- * ### For Systems Programmers & Engine Architects:
- * Formats a multi-line ASCII diff between snapshot fields into out_buf.
- *
- * @param[in] s1 First snapshot (earlier in time).
- * @param[in] s2 Second snapshot (later in time).
- * @param[out] out_buf Destination text buffer.
- * @param[in] buf_len Size of destination buffer.
- * @return Number of bytes written to out_buf.
- */
-size_t debug_diff_snapshots(const debug_snapshot_t *s1, const debug_snapshot_t *s2,
-                            char *out_buf, size_t buf_len);
-
-/**
- * @brief Computes a deterministic 32-bit FNV-1a hash of a state record.
- *
- * ### For Game Designers & Non-Programmers:
- * Creates a unique digital fingerprint of the game state to ensure simulation replay determinism.
- *
- * ### For Systems Programmers & Engine Architects:
- * Hashes all fields of debug_state_fields_t using FNV-1a for rapid state divergence detection.
- */
-uint32_t debug_compute_state_hash(const debug_state_fields_t *fields);
-
-/*
---------------------------------------------------------------------------------
-Sub-Assembly 3.3: Breakpoints, Watchpoints & Tripwire Traps Cogs
---------------------------------------------------------------------------------
-*/
-
-/**
- * @brief Registers a dynamic breakpoint.
- *
- * ### For Game Designers & Non-Programmers:
- * Sets an automatic pause condition (like pausing whenever the hero's health drops below 20%).
- *
- * ### For Systems Programmers & Engine Architects:
- * Appends breakpoint record to static table with type, target value, and label.
- *
- * @param[in] type Breakpoint type.
- * @param[in] target_value Target value to trigger on.
- * @param[in] label Descriptive label.
- * @return Breakpoint ID (positive integer) or -1 if capacity exceeded.
- */
-int debug_add_breakpoint(debug_breakpoint_type_t type, int target_value, const char *label);
-
-/**
- * @brief Removes an active breakpoint by ID.
- *
- * ### For Game Designers & Non-Programmers:
- * Removes a previously set pause trigger.
- *
- * ### For Systems Programmers & Engine Architects:
- * Deactivates breakpoint entry matching bp_id in static registry.
- */
-bool debug_remove_breakpoint(int bp_id);
-
-/**
- * @brief Clears all registered breakpoints.
- *
- * ### For Game Designers & Non-Programmers:
- * Clears all pause triggers at once.
- *
- * ### For Systems Programmers & Engine Architects:
- * Resets breakpoint counter and zeros all breakpoint slots.
- */
-void debug_clear_breakpoints(void);
-
-/**
- * @brief Evaluates active breakpoints against the current state.
- *
- * ### For Game Designers & Non-Programmers:
- * Checks whether any pause triggers were hit on this turn.
- *
- * ### For Systems Programmers & Engine Architects:
- * Evaluates active breakpoint predicates against fields, formatting trigger reason into out_reason.
- *
- * @param[in] fields Current state fields.
- * @param[out] out_reason Buffer populated with breakpoint trigger reason.
- * @param[in] max_len Size of out_reason buffer.
- * @return true if a breakpoint triggered, false otherwise.
- */
-bool debug_check_breakpoints(const debug_state_fields_t *fields,
-                             char *out_reason, size_t max_len);
-
-/**
- * @brief Traps a tripwire event in the debugger without crashing.
- *
- * ### For Game Designers & Non-Programmers:
- * Catches an engine warning or rule breach so the game can inspect it safely without crashing.
- *
- * ### For Systems Programmers & Engine Architects:
- * Latches tripwire details into internal debugger diagnostic registers.
- */
-void debug_trap_tripwire(const char *subsystem, const char *condition,
-                         const char *file, int line);
-
-/**
- * @brief Registers a subsystem Block 4 / Layer 4 validation probe with the debugger.
- *
- * ### For Game Designers & Non-Programmers:
- * Connects an automated self-check test to the debugger so that if an anomaly
- * or failing rule occurs, the matching test fires immediately, Safe Mode
- * finishes the interrupted action safely, and playback halts in AWAIT.
- *
- * ### For Systems Programmers & Engine Architects:
- * Stores probe metadata (exact source function/block section, Block 4 validate_fn,
- * and Layer 4 test suite reference) in the static s_debug.probes[] table.
- * Idempotent on identical `probe_id` (updates slot cleanly without leaking).
- *
- * @param[in] probe Populated validation probe descriptor.
- * @return Zero-based probe slot index on success, or -1 if capacity reached/invalid.
- */
-int debug_register_validation_probe(const debug_validation_probe_t *probe);
-
-/**
- * @brief Unregisters all active validation probes (used cleanly in isolated tests).
- */
-void debug_clear_validation_probes(void);
-
-/**
- * @brief Fires a registered validation probe (or fallback anomaly tripwire) immediately.
- *
- * ### For Systems Programmers & Engine Architects:
- * Workflow executed on invocation:
- *   1. Locates matching registered probe (`probe_id`), or synthesizes ad-hoc probe.
- *   2. Invokes `probe->validate_fn()` (guarded against recursion) when registered.
- *   3. Traps diagnostic details and pins an emergency locked snapshot when active.
- *   4. Downgrades to Safe-Mode fallback to finish the interrupted execution cleanly.
- *   5. Latches `DEBUG_STEP_AWAIT` (when active, `auto_await`, and `!in_probe`).
- *
- * @param[in] probe_id  Registered probe identifier (e.g., `"log.setting_missing"`).
- * @param[in] subsystem Subsystem raising the event.
- * @param[in] condition Detailed anomaly or failure reason.
- * @param[in] file      Source file anchor (`__FILE__`).
- * @param[in] line      Source line anchor (`__LINE__`).
- * @param[in] func      Source function anchor (`__func__`).
- * @return true if probe executed and completed fallback/await handling.
- */
-bool debug_trigger_probe(
-    const char *probe_id,
-    const char *subsystem,
-    const char *condition,
-    const char *file,
-    int         line,
-    const char *func
-);
-
-/**
- * @brief Evaluates all registered validation probes against live state invariants.
- *
- * ### For Systems Programmers & Engine Architects:
- * Executes every registered `validate_fn` hook in order. If any probe fails
- * (`!res.passed` or `SEVERITY_FATAL`/`SEVERITY_FAIL`), automatically fires
- * `debug_trigger_probe()` to downgrade via fallback, lock a forensic snapshot,
- * and pause in `DEBUG_STEP_AWAIT`.
- *
- * @param[in] fields Optional live state snapshot fields checked for NaN/bounds (may be NULL).
- * @return Number of probes that failed and triggered fallback -> AWAIT.
- */
-size_t debug_check_tripwires(const debug_state_fields_t *fields);
-
-/*
---------------------------------------------------------------------------------
-Sub-Assembly 3.4: Stepping & Execution Control Cogs
---------------------------------------------------------------------------------
-*/
-
-/**
- * @brief Sets the execution stepping mode.
- *
- * ### For Game Designers & Non-Programmers:
- * Controls playback speed (continuous run, pause, step forward, or AWAIT halt).
- * Note: While locked in AWAIT after an unresolved tripwire, continuous RUN and
- * stepping remain blocked until `debug_resolve_await()` confirms recovery.
- *
- * ### For Systems Programmers & Engine Architects:
- * Updates the active debug_step_mode_t state machine cleanly.
+ * @param[in] mode Target stepping mode (`debug_step_mode_t`).
  */
 void debug_set_step_mode(debug_step_mode_t mode);
 
@@ -825,15 +440,25 @@ void debug_set_step_mode(debug_step_mode_t mode);
  * @brief Retrieves the active execution stepping mode.
  *
  * ### For Game Designers & Non-Programmers:
- * Checks whether the game is paused, awaiting recovery, or running normally.
+ * Reports whether simulation playback is currently running freely, paused, stepping, or halted in AWAIT.
  *
  * ### For Systems Programmers & Engine Architects:
- * Returns current debug_step_mode_t enum value.
+ * O(1) accessor reading `s_debug.step_mode`.
+ *
+ * @return Current `debug_step_mode_t` state.
  */
 debug_step_mode_t debug_get_step_mode(void);
 
 /**
- * @brief Queries whether the debugger is currently halted idle in DEBUG_STEP_AWAIT.
+ * @brief Queries whether the debugger is currently halted idle in `DEBUG_STEP_AWAIT`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Tells the game loop or UI whether an anomaly halted playback in Safe-Mode AWAIT
+ * waiting for you to rewind or fix the broken value.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) predicate returning true when initialized and either `s_debug.await_active`
+ * is latched or `s_debug.step_mode == DEBUG_STEP_AWAIT`.
  *
  * @return true if AWAIT latch is engaged.
  */
@@ -841,6 +466,14 @@ bool debug_is_awaiting(void);
 
 /**
  * @brief Returns true if execution may advance (debugger inactive or not blocked in AWAIT).
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Gatekeeper checked before advancing a simulation turn: prevents turns from rolling
+ * forward while paused or halted on an unresolved error.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) scheduler predicate permitting advance only when `!s_debug_active` or
+ * `(!s_debug.await_active && step_mode != DEBUG_STEP_PAUSED && step_mode != DEBUG_STEP_AWAIT)`.
  *
  * @return true if simulation stepping is permitted; false if blocked in PAUSED/AWAIT.
  */
@@ -854,15 +487,17 @@ bool debug_can_step(void);
  * invalid numbers, verifying the repaired state passes validation before resuming.
  *
  * ### For Systems Programmers & Engine Architects:
- * Optionally validates `restored_fields` against state invariants (hp bounds,
- * sway range [-100, +100], shield/sword range [0, 100]), re-runs any failed
- * probe callback if clearable, resets AWAIT + tripwire latches, and restores
- * `resume_mode` cleanly (default `DEBUG_STEP_RUN` if valid).
+ * Optionally validates `restored_fields` against scalar bounds (HP, alignment sway `[-100, +100]`,
+ * primary/secondary channels `[0, 100]`), re-runs any failed probe callback, resets
+ * AWAIT + tripwire latches cleanly, and synchronizes `debug_fallback_clear_await()`.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section3`
  *
  * @param[in] restored_fields Optional repaired/rewound state to validate (may be NULL).
- * @param[in] resume_mode     Desired mode after clearing AWAIT.
+ * @param[in] resume_mode     Desired mode after clearing AWAIT (`DEBUG_STEP_RUN` default).
  * @param[in] resolution_note Explanation logged to telemetry & Safe-Mode history.
- * @return true if validation succeeded and AWAIT cleared; false if state still corrupt.
+ * @return true if validation succeeded and AWAIT cleared; false if state or probe still failing.
  */
 bool debug_resolve_await(
     const debug_state_fields_t *restored_fields,
@@ -872,34 +507,417 @@ bool debug_resolve_await(
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 3.5: Inspection & State Dumps Cogs
+Sub-Assembly 3.3: Snapshots, Locked Retention, Time-Travel Rewind & Diff Cogs
 --------------------------------------------------------------------------------
 */
 
 /**
- * @brief Prints an ANSI-colored or formatted diagnostic dump of the current state.
+ * @brief Captures and records a state snapshot into the static ring buffer.
  *
  * ### For Game Designers & Non-Programmers:
- * Prints a colorful overview of the hero's status, stats, and moral alignment to the console.
+ * Saves a freeze-frame picture of actor vitals, position, and channel values
+ * at a specific simulation turn so you can rewind back to it.
  *
  * ### For Systems Programmers & Engine Architects:
- * Formats fields into formatted columns with ANSI terminal color highlights.
+ * Copies fields into static circular ring buffer respecting locked-slot eviction rules,
+ * computes 32-bit FNV-1a checksum, links `log_get_total_entries()`, and advances head index.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
+ * @param[in] fields State fields to capture.
+ * @param[in] cmd    Command string that caused this state transition (may be NULL).
+ * @param[in] arg    Argument string associated with the command (may be NULL).
+ * @return Unique monotonic snapshot ID, or 0ULL if inactive or `fields == NULL`.
  */
-void debug_dump_state(const debug_state_fields_t *fields);
+uint64_t debug_record_snapshot(const debug_state_fields_t *fields,
+                               const char *cmd, const char *arg);
 
 /**
- * @brief Prints a tabular timeline of recorded snapshots.
+ * @brief Marks a recorded snapshot slot as locked against circular FIFO eviction.
  *
  * ### For Game Designers & Non-Programmers:
- * Prints a turn-by-turn history table showing past decisions and moral balance changes.
+ * Pins an important turn snapshot (like a phase transition or anomaly catch)
+ * so newer turns cannot overwrite it before you inspect or rewind back to it.
  *
  * ### For Systems Programmers & Engine Architects:
- * Dumps chronological ASCII table of all ring buffer snapshots.
+ * Scans the static 64-slot ring (`O(N <= 64)`) to pin `snapshot_id` (or newest slot
+ * when `snapshot_id == 0ULL`). Enforces `locked_slot_quota` (`<= max_snapshots`) by
+ * evicting the oldest non-critical locked slot cleanly with zero heap allocation.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
+ * @param[in] snapshot_id Monotonic snapshot ID to pin (0 locks most recent).
+ * @param[in] lock_reason Reason tag (e.g. `"TRIGGER_TRIPWIRE_LATCH"`).
+ * @return true if snapshot was found and locked (respecting `locked_slot_quota`).
  */
-void debug_dump_snapshot_history(void);
+bool debug_lock_snapshot(uint64_t snapshot_id, const char *lock_reason);
+
+/**
+ * @brief Returns the total number of valid snapshots currently recorded in the ring.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Counts how many saved turn frames are currently available for inspection or rewind.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) accessor returning `s_debug.snapshot_count` when active (capped at `max_snapshots`).
+ *
+ * @return Count of recorded snapshots in static ring, or 0U if uninitialized.
+ */
+size_t debug_get_snapshot_count(void);
+
+/**
+ * @brief Retrieves a historical snapshot by chronological index (0 = oldest valid).
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Looks up a saved turn snapshot from history so menus or diffs can inspect it safely.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Maps logical index `0..snapshot_count-1` to physical ring offset cleanly and copies
+ * `debug_snapshot_t` by value into caller storage with zero heap allocation.
+ *
+ * @param[in]  index    Zero-based chronological snapshot offset.
+ * @param[out] out_snap Caller destination snapshot structure.
+ * @return true if snapshot existed and copied cleanly; false if inactive or out of range.
+ */
+bool debug_get_snapshot(size_t index, debug_snapshot_t *out_snap);
+
+/**
+ * @brief Retrieves a read-only pointer to the newest snapshot recorded in the ring.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Inspects the latest saved frame directly without stepping backward in time.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) lookup returning `const debug_snapshot_t *` inside `.bss` `s_debug.snapshots[]`
+ * (valid until subsequent wrap overwrites that slot).
+ *
+ * @return Pointer to latest `debug_snapshot_t`, or NULL if inactive or empty.
+ */
+const debug_snapshot_t *debug_get_latest_snapshot(void);
+
+/**
+ * @brief Restores state fields from a historical snapshot after verifying its checksum.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Rewinds simulation state back to an earlier saved turn after ensuring the stored
+ * data was not tampered with or corrupted in memory.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Recomputes 32-bit FNV-1a checksum against stored `snap.state_hash`; mismatches latch
+ * `DEBUG_TRIPWIRE_HASH_MISMATCH`, engage Safe-Mode AWAIT, and reject corrupt restores.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
+ * @param[in]  index      Historical snapshot index to rewind to.
+ * @param[out] out_fields Populated state fields upon checksum-verified rewind.
+ * @return true if rewind succeeded, false on invalid index or checksum mismatch.
+ */
+bool debug_rewind_to_snapshot(size_t index, debug_state_fields_t *out_fields);
+
+/**
+ * @brief Computes a formatted domain-neutral textual diff between two snapshots.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Compares two recorded turns and highlights exactly which stats, channels, stances,
+ * or coordinates shifted between them.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Formats changed scalar/channel diffs and hash transitions into caller `out_buf` via
+ * bounded cursor formatting using temporary 1 KiB stack scratch.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`,
+ *                   `tests/functional/test_debug_functional.c`
+ *
+ * @param[in]  s1      First snapshot (earlier baseline).
+ * @param[in]  s2      Second snapshot (later target).
+ * @param[out] out_buf Destination text buffer.
+ * @param[in]  buf_len Size of destination buffer in bytes.
+ * @return Number of formatted characters written to `out_buf`, or 0U on error.
+ */
+size_t debug_diff_snapshots(const debug_snapshot_t *s1, const debug_snapshot_t *s2,
+                            char *out_buf, size_t buf_len);
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.4: Conditional Breakpoints & Domain Guardrail Watchpoints Cogs
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Registers a dynamic conditional breakpoint in the static table.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Sets an automatic pause rule (e.g. pausing when HP drops below a threshold, on turn N,
+ * or when stance switches) during test runs.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Appends `debug_breakpoint_t` entry into `.bss` `s_debug.breakpoints[DEBUG_MAX_BREAKPOINTS]`
+ * with monotonic positive handle assignment; fails cleanly with warning when table is full.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
+ * @param[in] type         Breakpoint trigger category (`debug_breakpoint_type_t`).
+ * @param[in] target_value Target scalar comparison value.
+ * @param[in] label        Optional descriptive label (defaults to `"Breakpoint"`).
+ * @return Positive breakpoint ID handle, or -1 if inactive, invalid type, or table full.
+ */
+int debug_add_breakpoint(debug_breakpoint_type_t type, int target_value, const char *label);
+
+/**
+ * @brief Removes an active conditional breakpoint by assigned handle ID.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Deletes a previously created pause rule once you no longer need the debugger to stop there.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Linearly searches `s_debug.breakpoints[]` (max 16 slots) and compacts subsequent
+ * elements cleanly via shift loop with zero heap operations.
+ *
+ * @param[in] bp_id Positive handle returned by `debug_add_breakpoint()`.
+ * @return true if matching breakpoint was removed; false if inactive or not found.
+ */
+bool debug_remove_breakpoint(int bp_id);
+
+/**
+ * @brief Clears all registered conditional breakpoints immediately.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Removes every active turn/stat pause rule in one step.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) counter reset setting `s_debug.breakpoint_count = 0U`.
+ */
+void debug_clear_breakpoints(void);
+
+/**
+ * @brief Evaluates validation probes and conditional breakpoints against live fields.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Sweeps active safety rules and pause conditions after a step to stop gameplay cleanly
+ * whenever an invariant breaks or a breakpoint target matches.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Checks `verify_on_step` registered probes, scalar range guardrails (alignment `[-100, 100]`,
+ * channels `[0, 100]`, zero HP), and `s_debug.breakpoints[]`, formatting exact trigger reason
+ * into `out_reason`.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
+ * @param[in]  fields     Current simulation state fields.
+ * @param[out] out_reason Optional buffer populated with trigger description.
+ * @param[in]  max_len    Byte capacity of `out_reason`.
+ * @return true if a probe or breakpoint halted execution; false otherwise.
+ */
+bool debug_check_breakpoints(const debug_state_fields_t *fields,
+                             char *out_reason, size_t max_len);
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.5: Validation Probes, Tripwires & Forensic Reporting Cogs
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Registers a subsystem Block 4 / Layer 4 validation probe with the debugger.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Connects an automated self-check test to the debugger so that if an anomaly
+ * or failing rule occurs, the matching test fires immediately, Safe Mode
+ * finishes the interrupted action safely, and playback halts in AWAIT.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Stores probe metadata (exact source function/block section, Block 4 `validate_fn`,
+ * and Layer 4 test suite reference) in the static `s_debug.probes[]` table.
+ * Idempotent on identical `probe_id` (updates slot cleanly without leaking).
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section2`
+ *
+ * @param[in] probe Populated validation probe descriptor.
+ * @return Zero-based probe slot index on success, or -1 if capacity reached/invalid.
+ */
+int debug_register_validation_probe(const debug_validation_probe_t *probe);
+
+/**
+ * @brief Unregisters all active validation probes (used cleanly in isolated tests).
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Resets the list of automatic self-check probes between isolated test runs so tests
+ * do not interfere with each other.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) static memory zeroing (`memset` over `s_debug.probes[DEBUG_MAX_VALIDATION_PROBES]`)
+ * resetting `s_debug.probe_count = 0`. Never touches BIOS fault history in `s_fb`.
+ */
+void debug_clear_validation_probes(void);
+
+/**
+ * @brief Queries how many validation probe descriptors are currently registered.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Reports how many automatic subsystem safety checks (`log.*`, `io.*`, or
+ * custom test probes) are currently plugged into the engine debugger.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) lock-free accessor returning active slot count `s_debug.probe_count`
+ * (`<= DEBUG_MAX_VALIDATION_PROBES`). Safe to query before `debug_init()`.
+ *
+ * @return Active validation probe count in `[0, DEBUG_MAX_VALIDATION_PROBES]`.
+ */
+size_t debug_get_probe_count(void);
+
+/**
+ * @brief Copies a registered validation probe descriptor by zero-based index.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Lets status panels, bug reports, or test harnesses inspect each active safety
+ * probe along with how many times it has fired and which test suite owns it.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) bounded snapshot copy from `s_debug.probes[index]` into caller storage.
+ *
+ * @param[in]  index     Zero-based probe slot (`< debug_get_probe_count()`).
+ * @param[out] out_probe Caller destination probe descriptor copy.
+ * @return true if slot valid and copied; false on NULL pointer or out-of-range index.
+ */
+bool debug_get_probe_at(size_t index, debug_validation_probe_t *out_probe);
+
+/**
+ * @brief Searches registered validation probes by identifier and copies metadata.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Checks whether a specific safety test trigger (such as `"log.setting_profile"`
+ * or `"io.vfs.route_bounds"`) is currently wired into the debugger.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(P) scan over `s_debug.probe_count` (`<= 32`) active slots matching exact
+ * `probe_id`. Passing `out_probe == NULL` performs a fast existence check.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
+ * @param[in]  probe_id  Unique registered probe identifier string.
+ * @param[out] out_probe Optional destination descriptor copy (may be NULL).
+ * @return true if an active matching probe exists; false otherwise.
+ */
+bool debug_find_probe(const char *probe_id, debug_validation_probe_t *out_probe);
+
+/**
+ * @brief Non-destructively executes one registered probe's Block 4 callback.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Lets UI tools or repair scripts re-run a single subsystem self-test without
+ * pausing gameplay in `AWAIT`, confirming whether an error is truly fixed first.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Locates `probe_id` under `in_probe` reentrancy protection and calls `validate_fn()`
+ * without mutating tripwire latches, Safe-Mode flags, or step modes. Probes
+ * without a callback yield `SEVERITY_PASS` when active.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section3`
+ *
+ * @param[in]  probe_id   Registered probe identifier string.
+ * @param[out] out_result Optional diagnostic result payload (may be NULL).
+ * @return true if probe exists and passed (`severity < SEVERITY_CRITICAL`); false otherwise.
+ */
+bool debug_evaluate_probe(const char *probe_id, diag_result_t *out_result);
+
+/**
+ * @brief Fires a registered validation probe (or fallback anomaly tripwire) immediately.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Immediately runs the matching self-check test when an anomaly occurs, records exact
+ * file/line clues, finishes any interrupted action in Safe Mode, pins the current
+ * snapshot against erasure, and pauses execution in `AWAIT` until inspected and fixed.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Guarded by `s_debug.in_probe` against reentrant recursion. Matches `probe_id`,
+ * evaluates optional `validate_fn()`, latches tripwire + `debug_fallback_record_fault()`,
+ * completes Safe Mode via `debug_fallback_finish_with_fallback()`, locks latest snapshot,
+ * and enters `DEBUG_STEP_AWAIT` when armed.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c` (Sec 2),
+ *                   `tests/unit/log/test_log_unit.c` (Sec 2 & 3)
+ *
+ * @param[in] probe_id  Registered probe identifier (e.g., `"log.setting_profile"`).
+ * @param[in] subsystem Subsystem raising the event.
+ * @param[in] condition Detailed anomaly or failure reason.
+ * @param[in] file      Source file anchor (`__FILE__`).
+ * @param[in] line      Source line anchor (`__LINE__`).
+ * @param[in] func      Source function anchor (`__func__`).
+ * @return true if probe executed and completed fallback/await handling; false if reentrant.
+ */
+bool debug_trigger_probe(
+    const char *probe_id,
+    const char *subsystem,
+    const char *condition,
+    const char *file,
+    int         line,
+    const char *func
+);
+
+/**
+ * @brief Evaluates all registered validation probes against live state invariants.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Sweeps every registered health probe (vitals/channel bounds, telemetry rules, audio/VFS
+ * invariants) at step checkpoints; if anything fails, automatically triggers Safe-Mode
+ * fallback protection and pauses cleanly in `AWAIT`.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Executes bounds validation on optional `fields` (`dbg_state_fields_are_sane`) plus
+ * every registered `validate_fn` in `s_debug.probes[]` (`<= 32` slots). Any failing
+ * result (`!res.passed` or `SEVERITY_CRITICAL+`) invokes `debug_trigger_probe()`.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c` (Sec 2),
+ *                   `tests/integrated/test_debug_integrated.c` (Sec 2 & 4)
+ *
+ * @param[in] fields Optional live state snapshot fields checked for bounds (may be NULL).
+ * @return Number of probes that failed and triggered fallback -> AWAIT.
+ */
+size_t debug_check_tripwires(const debug_state_fields_t *fields);
+
+/**
+ * @brief Traps a legacy tripwire event in the debugger without crashing.
+ *
+ * @deprecated Legacy un-probed tripwire shim retained until unmodernized
+ *             `core/` modules migrate; new code must register probes via
+ *             `debug_register_validation_probe()` and call `debug_trigger_probe()`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Catches an engine warning or rule breach so the game can inspect it safely without crashing.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Latches `DEBUG_TRIPWIRE_STATE_CORRUPT`, increments `traps_triggered`, forwards into
+ * `debug_fallback_record_fault()`, pins newest snapshot, arms AWAIT if configured, and
+ * emits a reentrancy-guarded `LOG_WARN`.
+ *
+ * @param[in] subsystem Triggering subsystem tag.
+ * @param[in] condition Description of tripped invariant condition.
+ * @param[in] file      Originating source file (`__FILE__`).
+ * @param[in] line      Originating source line (`__LINE__`).
+ */
+void debug_trap_tripwire(const char *subsystem, const char *condition,
+                         const char *file, int line);
 
 /**
  * @brief Retrieves the latest forensic tripwire, fallback, and AWAIT status report.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Copies a complete crash-free incident report (which test failed, source file/line,
+ * emergency Safe-Mode action taken, and whether a rewind snapshot was pinned).
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) zero-heap struct copy from `s_debug.last_report` (`debug_tripwire_report_t`).
  *
  * @param[out] out_report Destination tripwire report struct.
  * @return true on success; false on NULL pointer.
@@ -907,10 +925,18 @@ void debug_dump_snapshot_history(void);
 bool debug_get_tripwire_report(debug_tripwire_report_t *out_report);
 
 /**
- * @brief Formats a human-readable forensic tripwire / AWAIT summary into out_buf.
+ * @brief Formats a human-readable forensic tripwire / AWAIT summary into `out_buf`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Formats the latest error report into clean readable lines for terminal logs, crash
+ * overlays, or bug reports without modifying any game state.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Bounded `snprintf` formatter serializing `s_debug.last_report` into caller buffer
+ * `out_buf` (`buf_len >= 128`); returns false if truncated or given invalid args.
  *
  * @param[out] out_buf Destination buffer.
- * @param[in]  buf_len Byte capacity of out_buf.
+ * @param[in]  buf_len Byte capacity of `out_buf`.
  * @return true if formatted without truncation; false otherwise.
  */
 bool debug_dump_tripwire_report(char *out_buf, size_t buf_len);
@@ -948,6 +974,13 @@ bool debug_is_data_driven(void);
 
 /**
  * @brief Queries whether the debugger is currently running in Safe Mode / fallback.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Indicates whether the debugger is operating from built-in ROM/factory defaults or
+ * stepped down into emergency Safe Mode after catching an error.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) query returning `s_debug_active && (s_debug.safe_mode || !s_debug_data_driven)`.
  *
  * @return true if active without disk-loaded config (monolith or ROM Safe Mode).
  */
@@ -995,6 +1028,12 @@ void debug_reset_tripwire(void);
 Sub-Assembly 4.2: Machine Self-Audit & Pre-Flight Validation Tripwires
 Mission: Validate holistic system invariants, tripwires, and subsystem stability;
 provide pre-flight clearance handshake before advancing to Block 5 execution.
+@triggers
+  - Primary Cogs  : `debug_preflight()`, `debug_audit()` (wired into `debug_manifest`)
+  - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c` (Sec 1..4),
+                    `tests/functional/test_debug_functional.c` (Sec 1..4),
+                    `tests/integrated/test_debug_integrated.c` (Sec 1..4),
+                    `tests/system/test_debug_system.c` (Sec 1..4)
 --------------------------------------------------------------------------------
 */
 
@@ -1005,8 +1044,13 @@ provide pre-flight clearance handshake before advancing to Block 5 execution.
  * Runs an instant health check on the state rewind and snapshot system before gameplay starts.
  *
  * ### For Systems Programmers & Engine Architects:
- * Asserts fallback integrity, FNV-1a hash determinism and collision sensitivity,
- * snapshot capacity bounds, and inspection procedure stability.
+ * Stack-pure diagnostic verifying `debug_fallback_preflight()`, FNV-1a bitwise
+ * determinism & collision sensitivity, and `debug_fallback_execute_inspect()`
+ * without mutating `s_debug`.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c` (Sec 1),
+ *                   `tests/functional/test_debug_functional.c` (Sec 1)
  *
  * @return diag_result_t reporting categorized diagnostic outcome and severity.
  */
@@ -1016,12 +1060,19 @@ diag_result_t debug_preflight(void);
  * @brief High-level diagnostic self-audit wrapper for standalone test harnesses.
  *
  * ### For Game Designers & Non-Programmers:
- * Comprehensive automated inspection verifying that turns can be recorded, rewound,
- * and checked against pause conditions without data loss.
+ * Comprehensive automated inspection verifying that turns can be recorded, pinned,
+ * rewound, paused on breakpoints, and recovered from Safe-Mode AWAIT without losing
+ * live gameplay progress.
  *
  * ### For Systems Programmers & Engine Architects:
- * Executes preflight checks, tests snapshot recording and rewind restoration,
- * validates breakpoint registration and triggering, and verifies card formatting.
+ * Non-destructive audit preserving/restoring `s_debug` in static `.bss` (`s_audit_backup`):
+ * runs preflight + ROM audit, tests snapshot lock & rewind, breakpoints, AWAIT reject/resolve,
+ * and 60-column inspection cards (`CARD_HERO_VITALS`, `CARD_TRIPWIRE_DIAGNOSTIC`).
+ *
+ * @triggers
+ * - CLI Entry     : `./build/tenebris-lux --audit`
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c` (Sec 1..4),
+ *                   `tests/system/test_debug_system.c` (Sec 1..4)
  *
  * @param[in] verbose Enable verbose trace output during audit.
  * @return diag_result_t diagnostic outcome indicating overall subsystem health.
@@ -1066,23 +1117,52 @@ bool debug_execute_inspect(debug_stats_t *out_stats);
  * @brief Formats an ASCII inspection card readout for the current simulation state.
  *
  * ### For Game Designers & Non-Programmers:
- * Displays a clean 60-column terminal status card showing hero stats, relic charge,
+ * Displays a clean 60-column terminal status card showing actor vitals, channel charge,
  * stance posture, or tripwire status during interactive debugging sessions.
  *
  * ### For Systems Programmers & Engine Architects:
  * Renders a deterministic ASCII inspection card into `out_buf` formatted to 60-column
- * terminal boundaries. Supports template identifiers such as "CARD_HERO_VITALS",
- * "CARD_STATERA_LEDGER", "CARD_COMBAT_ENGAGEMENT", "CARD_ENGINE_HEARTBEAT", and
- * "CARD_TRIPWIRE_DIAGNOSTIC".
+ * terminal boundaries. Supports template identifiers `"CARD_HERO_VITALS"`,
+ * `"CARD_STATERA_LEDGER"`, `"CARD_COMBAT_ENGAGEMENT"`, `"CARD_ENGINE_HEARTBEAT"`, and
+ * `"CARD_TRIPWIRE_DIAGNOSTIC"`.
  *
- * @param[in]  card_id Target template identifier (e.g. "CARD_HERO_VITALS").
- * @param[in]  fields  State fields to populate card with.
+ * @param[in]  card_id Target template identifier (e.g. `"CARD_HERO_VITALS"`).
+ * @param[in]  fields  State fields to populate card with (nullable for engine-only
+ *                     `"CARD_ENGINE_HEARTBEAT"` and `"CARD_TRIPWIRE_DIAGNOSTIC"`).
  * @param[out] out_buf Destination text buffer.
- * @param[in]  buf_len Size of destination buffer.
+ * @param[in]  buf_len Size of destination buffer in bytes (`>= 128`).
  * @return true if formatted successfully; false on invalid arguments or truncation.
  */
 bool debug_execute_dump_card(const char *card_id, const debug_state_fields_t *fields,
                              char *out_buf, size_t buf_len);
+
+/**
+ * @brief Prints a formatted console readout summarizing live simulation state fields.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Prints a clean multi-column console overview of the active actor's vitals,
+ * alignment sway, channel gauges, and latched tripwire counters.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Executes stdout terminal procedure hashing `fields` via `debug_compute_state_hash()`
+ * and formatting columns with domain-neutral labels.
+ *
+ * @param[in] fields Simulation state fields to display (no-op if NULL).
+ */
+void debug_dump_state(const debug_state_fields_t *fields);
+
+/**
+ * @brief Prints a tabular chronological timeline of all recorded ring snapshots.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Prints a turn-by-turn history table showing past commands, scalar changes, and lock
+ * flags stored inside the debugger's rewind memory.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Iterates logical indices `0..snapshot_count-1` via `debug_get_snapshot()` and
+ * emits an aligned ASCII diagnostic table to `stdout`.
+ */
+void debug_dump_snapshot_history(void);
 
 /*
 --------------------------------------------------------------------------------
@@ -1120,4 +1200,8 @@ bool debug_init(const debug_config_t *config);
  */
 void debug_shutdown(void);
 
-#endif /* TENEBRIS_LUX_DEBUG_H */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CORNERSTONE_DEBUG_DEBUG_H */

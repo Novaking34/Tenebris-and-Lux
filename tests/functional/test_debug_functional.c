@@ -1,51 +1,60 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          test_debug_functional.c
+@file          tests/functional/test_debug_functional.c
+@id            test.functional.debug
 @layer         Layer 4: Verification Suite
-@version       0.1.0-dev
-@interface_rev Rev 3
-@date          2026-11-06
+@archetype     verification_suite | functional_surface
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
-@system        Interactive State Debugger Functional Assertion & Diagnostic Trace Harness
-@role          Exhaustively exercises every single public cog across the
-               Layer 0 debugging subsystems (debug.h, debug_fallback.h) with granular
-               diagnostic telemetry traces.
-@invariants    1. Zero dynamic heap allocations across all test evaluations.
-               2. 100% function coverage across public debugger engine headers.
-               3. Four Ontological Testing Sections strictly executed.
-               4. Universal 5-Block Lifecycle Protocol enforced.
+@system        Cornerstone Debugger Coarse Surface Verification Suite
+@role          Functional Surface Trace, Tripwire Probe & Engine Card Gate
+@maturity      Rev 5 Baseline | Upgraded w/ Block 4 Audit & Rev 5 Probe Queries
+@chassis       zero-heap | Stack-only local state & card buffers; zero static scratch bloat
+@scale         O(N) bounded at DEBUG_MAX_SNAPSHOTS (64) | 100-turn ring wrap check
+@seams         in: debug/debug.h, debug_fallback.h | pairs: cornerstone_test.h
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Crude-to-Fine Tier 1: Exercises every public debugger cog including Rev 5 `DEBUG_TRIGGER_PROBE`, probe queries, ROM matrix loading, and NULL-field engine cards.
+               3. Clean Teardown: Clears test validation probes and shuts down debugger/logger cleanly.
 
 PURPOSE & ARCHITECTURAL ROLE:
-  Dedicated functional test harness isolating and asserting the exact mathematical,
-  boundary, and procedural contracts of every single public debugger function.
-  Logs diagnostic traces with [DEBUG-TRACE] tags showing function input and
-  output mappings across the 4 Ontological Testing Sections.
+  Tier 1 Functional verification harness exercising every primary public
+  surface API of `cog.debug` (`debug.h`) and its Safe-Mode BIOS (`debug_fallback.h`),
+  ensuring snapshots, rewind, breakpoints, FNV-1a determinism, probe queries,
+  Safe-Mode AWAIT, and Block 4 self-audits function cohesively.
+
+  ### For Game Designers & Non-Programmers:
+  Confirms the interactive time-machine debugger can record turns, spot
+  impossible state values, freeze safely in `AWAIT`, print clean health cards
+  (even for engine-only checks without a hero active), and resume cleanly.
+
+  ### For Systems Programmers & Engine Architects:
+  Covers public surface cogs across 4 sections plus Block 4 preflight/audit,
+  including `DEBUG_TRIGGER_PROBE`, `debug_get_probe_count/at`, `debug_find_probe`,
+  `debug_evaluate_probe`, ROM tripwire matrix hydration, and NULL-field cards.
 ================================================================================
 */
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / STATIC DATA & PRE-CONDITIONS
-Stratum: Layer 4 (Verification Suite) | Machine: test.functional.debug
+BLOCK 2: OPENING BLOCK
+( Pre-Conditions, Constants, Test Counters & Static Assertions )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.functional.debug
+Mission:       Configure standard headers, shared Cornerstone harness, and
+               functional debugger invariants.
 ================================================================================
 */
 
-/*
---------------------------------------------------------------------------------
-Include Hierarchy (Downward Dependency Ladder)
---------------------------------------------------------------------------------
-Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
-Tier 3: Internal Engine Foundation Headers
---------------------------------------------------------------------------------
-*/
-
-/* --- Tier 1: Standard ISO C11 Library Headers --- */
+/* Tier 1: ISO C11 Standard Library Headers */
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -54,325 +63,283 @@ Tier 3: Internal Engine Foundation Headers
 #include <stdlib.h>
 #include <string.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
-
-/* --- Tier 3: Internal Engine Foundation Headers --- */
+/* Tier 3: Cornerstone Engine & Layer 4 Shared Harness */
+#include "common/cornerstone_test.h"
 #include "core/manifest.h"
 #include "core/string_utils.h"
-#include "log/log.h"
 #include "debug/debug.h"
 #include "debug/debug_fallback.h"
+#include "log/log.h"
 
-#define TEST_ASSERT(cond, msg) \
-    do { \
-        if (!(cond)) { \
-            fprintf(stderr, "[FAIL] %s:%d: Assertion failed: %s (%s)\n", \
-                __FILE__, __LINE__, #cond, msg); \
-                exit(1); \
-        } \
-    } while (0)
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Constants & Static Contract Proofs
+--------------------------------------------------------------------------------
+*/
 
-#define DEBUG_LOG_FN(fn_name, input_str, output_str) \
-    printf("    [DEBUG-TRACE] %s(%s) -> %s\n", fn_name, input_str, output_str)
+/** @brief Canonical suite identifier emitted in headers and summaries. */
+#define TEST_DEBUG_FUNC_SUITE_NAME "Debugger Engine Functional Surface"
 
-static debug_state_fields_t make_state(int turn, const char *hero, int hp, int lux, int ten, int stance, int sway)
-{
-    debug_state_fields_t s;
-    memset(&s, 0, sizeof(s));
-    s.turn = turn;
-    str_safe_copy(s.hero_name, (hero != NULL) ? hero : "Bearer", sizeof(s.hero_name));
-    s.hp = hp;
-    s.max_hp = 500;
-    s.mp = 100;
-    s.tp = 50;
-    s.shield_power = lux;
-    s.sword_edge = ten;
-    s.stance = stance;
-    s.moral_sway = sway;
-    s.location = 1;
-    s.lux_barrio_turns = (lux > 50) ? 2 : 0;
-    s.charm_turns = (ten > 50) ? 2 : 0;
-    s.threat_hp = 100;
-    s.foes_vanquished = 0;
-    return s;
-}
+static_assert(DEBUG_MAX_SNAPSHOTS == 64,
+              "Functional suite expects canonical 64-snapshot ring window");
+static_assert(DEBUG_MAX_VALIDATION_PROBES == 32U,
+              "Functional suite expects canonical 32-slot probe registry");
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.2: Suite Assertion Counters & Functional Probe Switch
+--------------------------------------------------------------------------------
+*/
+
+static int s_tests_run = 0;
+static int s_tests_passed = 0;
+static bool s_func_probe_healthy = false;
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: File-Private Probe Validator Prototype
+--------------------------------------------------------------------------------
+*/
+
+static diag_result_t func_custom_probe_validator(void);
 
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / 4-SECTION FUNCTIONAL TEST SUITES
-Stratum: Layer 4 (Verification Suite) | Machine: test.functional.debug
+BLOCK 3: BODY BLOCK
+( Four-Section Coarse Debugger Functional Test Suites )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.functional.debug
+Mission:       Exercise nominal cogs, fault inversion, invariant guardrails,
+               ring wrap-around, and probe-driven AWAIT lifecycle.
 ================================================================================
 */
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 1: ALWAYS PASS (NOMINAL GOLDEN BASELINE FUNCTION EVALUATION) ]
+Sub-Assembly 3.1: [ SECTION 1: ALWAYS PASS (NOMINAL GOLDEN SURFACE COGS) ]
 --------------------------------------------------------------------------------
 */
 
 static void test_debug_functional_always_pass(void)
 {
-    printf("  [PASS-1] Running Section 1: Always Pass (Nominal Functional Cogs)...\n");
+    cornerstone_test_section(1, "Always Pass (Nominal Functional Cogs)");
 
     /* Cog 1: debug_compute_state_hash */
-    debug_state_fields_t s1 = make_state(1, "Elijah", 450, 80, 80, 0, 0);
+    debug_state_fields_t s1 = cornerstone_test_make_state(1, "Elijah", 450, 80, 80, 0, 0);
     uint32_t h1 = debug_compute_state_hash(&s1);
-    TEST_ASSERT(h1 != 0, "h1 must be non-zero");
+    TEST_ASSERT(h1 != 0U, "h1 must be non-zero");
     char h1_str[32];
     snprintf(h1_str, sizeof(h1_str), "0x%08X", h1);
-    DEBUG_LOG_FN("debug_compute_state_hash", "Turn 1, Elijah", h1_str);
+    TEST_TRACE("debug_compute_state_hash", "Turn 1, Elijah", h1_str);
 
-    /* Cog 2: debug_fallback_preflight & debug_fallback_audit */
-    diag_result_t fb_res = debug_fallback_preflight();
-    TEST_ASSERT(fb_res.passed && fb_res.severity == SEVERITY_PASS, "Fallback preflight must pass");
-    DEBUG_LOG_FN("debug_fallback_preflight", "none", "SEVERITY_PASS");
+    /* Cog 2: Fallback ROM discovery & matrix/profile loading */
+    TEST_ASSERT(debug_fallback_rom_count() >= 1U, "Fallback ROM contains debugger configs");
+    debug_config_t rom_cfg;
+    TEST_ASSERT(debug_fallback_load_rom_profile("default", &rom_cfg, sizeof(rom_cfg)),
+                "Loaded default debug profile from ROM");
+    TEST_ASSERT(rom_cfg.max_snapshots == DEBUG_MAX_SNAPSHOTS, "ROM default max_snapshots == 64");
 
-    bool fb_audit_ok = debug_fallback_audit();
-    TEST_ASSERT(fb_audit_ok, "Fallback audit must pass");
-    DEBUG_LOG_FN("debug_fallback_audit", "none", "true");
+    debug_fallback_tripwire_rule_t rules[DEBUG_FALLBACK_MAX_TRIPWIRE_RULES];
+    size_t rule_count = 0U;
+    (void)debug_load_tripwire_matrix(rules, DEBUG_FALLBACK_MAX_TRIPWIRE_RULES, &rule_count);
+    TEST_ASSERT(rule_count >= 1U, "Tripwire reaction matrix populates at least 1 rule (disk or ROM)");
+    TEST_TRACE("debug_load_tripwire_matrix", "rules[16]", "populated");
 
-    /* Cog 3: debug_get_monolith_fallback_config & debug_get_monolith_fallback_config_raw */
+    /* Cog 3: Monolith fallback config inspection */
     debug_config_t fb_cfg = debug_get_monolith_fallback_config();
-    TEST_ASSERT(fb_cfg.enabled == true, "Fallback config must be enabled");
-    TEST_ASSERT(strcmp(fb_cfg.profile_name, "monolith_fallback") == 0, "Profile name matches");
-    DEBUG_LOG_FN("debug_get_monolith_fallback_config", "none", fb_cfg.profile_name);
+    TEST_ASSERT(fb_cfg.enabled, "Fallback config enabled");
+    TEST_ASSERT_STR_EQ(fb_cfg.profile_name, "monolith_fallback", "Profile name matches");
 
     debug_config_t raw_cfg;
     debug_get_monolith_fallback_config_raw(&raw_cfg, sizeof(raw_cfg));
-    TEST_ASSERT(raw_cfg.max_snapshots == DEBUG_MAX_SNAPSHOTS, "Max snapshots == 64");
-    DEBUG_LOG_FN("debug_get_monolith_fallback_config_raw", "sizeof(cfg)", "64 snapshots");
+    TEST_ASSERT_INT_EQ(raw_cfg.max_snapshots, DEBUG_MAX_SNAPSHOTS, "Raw max snapshots == 64");
 
-    /* Cog 4: debug_fallback_execute_inspect */
     debug_config_t inspect_cfg;
-    bool fb_insp = debug_fallback_execute_inspect(&inspect_cfg, sizeof(inspect_cfg));
-    TEST_ASSERT(fb_insp, "debug_fallback_execute_inspect must succeed");
-    DEBUG_LOG_FN("debug_fallback_execute_inspect", "&inspect_cfg", "true");
+    TEST_ASSERT(debug_fallback_execute_inspect(&inspect_cfg, sizeof(inspect_cfg)),
+                "debug_fallback_execute_inspect succeeds");
 
-    /* Cog 5: debug_init, debug_is_active, debug_is_data_driven, debug_get_active_profile_name */
+    /* Cog 4: Lifecycle boot & snapshot record/inspect/diff/rewind */
     log_init(NULL);
-    bool init_ok = debug_init(NULL);
-    TEST_ASSERT(init_ok, "debug_init(NULL) must succeed");
-    TEST_ASSERT(debug_is_active(), "debug_is_active() must return true");
+    TEST_ASSERT(debug_init(NULL), "debug_init(NULL) succeeds");
+    TEST_ASSERT(debug_is_active(), "debug_is_active returns true");
     const char *pname = debug_get_active_profile_name();
-    TEST_ASSERT(pname != NULL && strlen(pname) > 0, "Profile name populated");
-    DEBUG_LOG_FN("debug_init", "NULL", pname);
+    TEST_ASSERT((pname != NULL) && (pname[0] != '\0'), "Active profile name populated");
+    TEST_TRACE("debug_init", "NULL", pname);
 
-    /* Cog 6: debug_record_snapshot & debug_get_snapshot_count */
     uint64_t snap1_id = debug_record_snapshot(&s1, "stance", "warding");
-    TEST_ASSERT(snap1_id == 1, "First snapshot ID must be 1");
-    TEST_ASSERT(debug_get_snapshot_count() == 1, "Snapshot count must be 1");
-    DEBUG_LOG_FN("debug_record_snapshot", "s1, stance, warding", "ID: 1");
+    TEST_ASSERT_U64_EQ(snap1_id, 1U, "First snapshot ID is 1");
+    TEST_ASSERT_U64_EQ(debug_get_snapshot_count(), 1U, "Snapshot count is 1");
 
-    /* Cog 7: debug_get_snapshot & debug_get_latest_snapshot */
     debug_snapshot_t snap_out;
-    TEST_ASSERT(debug_get_snapshot(0, &snap_out), "Retrieve snapshot 0");
-    TEST_ASSERT(snap_out.snapshot_id == 1, "Snapshot ID matches");
+    TEST_ASSERT(debug_get_snapshot(0U, &snap_out) && (snap_out.snapshot_id == 1U),
+                "Retrieved snapshot 0 cleanly");
     const debug_snapshot_t *latest = debug_get_latest_snapshot();
-    TEST_ASSERT(latest != NULL && latest->snapshot_id == 1, "Latest snapshot matches");
-    DEBUG_LOG_FN("debug_get_latest_snapshot", "none", "Snapshot #1 verified");
+    TEST_ASSERT((latest != NULL) && (latest->snapshot_id == 1U), "Latest snapshot matches");
 
-    /* Cog 8: debug_diff_snapshots */
-    debug_state_fields_t s2 = make_state(2, "Elijah", 420, 90, 70, 1, 10);
+    debug_state_fields_t s2 = cornerstone_test_make_state(2, "Elijah", 420, 90, 70, 1, 10);
     debug_record_snapshot(&s2, "attack", "cuttatio");
     debug_snapshot_t snap_out2;
-    TEST_ASSERT(debug_get_snapshot(1, &snap_out2), "Retrieve snapshot 1");
+    TEST_ASSERT(debug_get_snapshot(1U, &snap_out2), "Retrieved snapshot 1");
 
     char diff_buf[512];
     size_t diff_len = debug_diff_snapshots(&snap_out, &snap_out2, diff_buf, sizeof(diff_buf));
-    TEST_ASSERT(diff_len > 0, "Diff output populated");
-    DEBUG_LOG_FN("debug_diff_snapshots", "snap1, snap2", "Diff generated successfully");
+    TEST_ASSERT(diff_len > 0U, "Diff output populated");
 
-    /* Cog 9: debug_rewind_to_snapshot */
     debug_state_fields_t restored;
-    bool rewind_ok = debug_rewind_to_snapshot(0, &restored);
-    TEST_ASSERT(rewind_ok, "debug_rewind_to_snapshot must succeed");
-    TEST_ASSERT(restored.hp == 450, "Restored HP matches original");
-    DEBUG_LOG_FN("debug_rewind_to_snapshot", "idx 0", "HP: 450 restored");
+    TEST_ASSERT(debug_rewind_to_snapshot(0U, &restored) && (restored.hp == 450),
+                "Rewind restores original HP 450");
 
-    /* Cog 10: debug_add_breakpoint, debug_check_breakpoints, debug_remove_breakpoint, debug_clear_breakpoints */
+    /* Cog 5: Breakpoints & legacy trap/reset */
     int bp_turn = debug_add_breakpoint(DEBUG_BREAK_TURN, 2, "Turn 2 Marker");
     TEST_ASSERT(bp_turn > 0, "Breakpoint ID positive");
-    DEBUG_LOG_FN("debug_add_breakpoint", "DEBUG_BREAK_TURN, 2", "ID registered");
-
     char reason[128];
-    bool hit = debug_check_breakpoints(&s2, reason, sizeof(reason));
-    TEST_ASSERT(hit, "Breakpoint on Turn 2 must trigger");
-    DEBUG_LOG_FN("debug_check_breakpoints", "Turn 2", reason);
-
-    bool rm_ok = debug_remove_breakpoint(bp_turn);
-    TEST_ASSERT(rm_ok, "Breakpoint removed");
-    DEBUG_LOG_FN("debug_remove_breakpoint", "bp_turn", "true");
-
+    TEST_ASSERT(debug_check_breakpoints(&s2, reason, sizeof(reason)), "Turn 2 breakpoint hits");
+    TEST_ASSERT(debug_remove_breakpoint(bp_turn), "Removed turn breakpoint");
     debug_clear_breakpoints();
-    DEBUG_LOG_FN("debug_clear_breakpoints", "none", "registry cleared");
 
-    /* Cog 11: debug_trap_tripwire, debug_get_tripwire_status, debug_get_tripwire_details, debug_reset_tripwire */
     debug_reset_tripwire();
     TEST_ASSERT(debug_get_tripwire_status() == DEBUG_TRIPWIRE_CLEAR, "Tripwire clear initially");
     debug_trap_tripwire("TestHarness", "Simulated Invariant Fault", __FILE__, __LINE__);
     TEST_ASSERT(debug_get_tripwire_status() == DEBUG_TRIPWIRE_STATE_CORRUPT, "Tripwire latched");
-    const char *details = debug_get_tripwire_details();
-    TEST_ASSERT(strstr(details, "Simulated Invariant Fault") != NULL, "Details captured");
-    DEBUG_LOG_FN("debug_trap_tripwire", "Simulated Invariant Fault", details);
+    TEST_ASSERT(strstr(debug_get_tripwire_details(), "Simulated Invariant Fault") != NULL,
+                "Tripwire details captured");
     debug_reset_tripwire();
     TEST_ASSERT(debug_get_tripwire_status() == DEBUG_TRIPWIRE_CLEAR, "Tripwire reset");
-    DEBUG_LOG_FN("debug_reset_tripwire", "none", "DEBUG_TRIPWIRE_CLEAR");
 
-    /* Cog 12: debug_set_step_mode & debug_get_step_mode */
+    /* Cog 6: Step mode, inspect & all 5 diagnostic cards (including NULL-fields engine cards) */
     debug_set_step_mode(DEBUG_STEP_OVER_TURN);
-    TEST_ASSERT(debug_get_step_mode() == DEBUG_STEP_OVER_TURN, "Step mode matches");
+    TEST_ASSERT(debug_get_step_mode() == DEBUG_STEP_OVER_TURN, "Step mode OVER_TURN");
     debug_set_step_mode(DEBUG_STEP_RUN);
     TEST_ASSERT(debug_get_step_mode() == DEBUG_STEP_RUN, "Step mode RUN");
-    DEBUG_LOG_FN("debug_set_step_mode", "DEBUG_STEP_RUN", "verified");
 
-    /* Cog 13: debug_execute_inspect */
     debug_stats_t stats;
-    bool insp_ok = debug_execute_inspect(&stats);
-    TEST_ASSERT(insp_ok, "debug_execute_inspect must succeed");
-    TEST_ASSERT(stats.snapshot_count == 2, "Snapshot count == 2");
-    DEBUG_LOG_FN("debug_execute_inspect", "&stats", "Telemetry populated");
+    TEST_ASSERT(debug_execute_inspect(&stats) && (stats.snapshot_count == 2U),
+                "debug_execute_inspect populates snapshot count == 2");
 
-    /* Cog 14: debug_execute_dump_card */
     char card_buf[1024];
-    bool card_ok = debug_execute_dump_card("CARD_HERO_VITALS", &s1, card_buf, sizeof(card_buf));
-    TEST_ASSERT(card_ok, "Dump HERO_VITALS card must succeed");
-    DEBUG_LOG_FN("debug_execute_dump_card", "CARD_HERO_VITALS", "Card rendered");
+    TEST_ASSERT(debug_execute_dump_card("CARD_HERO_VITALS", &s1, card_buf, sizeof(card_buf)),
+                "CARD_HERO_VITALS renders cleanly");
+    TEST_ASSERT(debug_execute_dump_card("CARD_STATERA_LEDGER", &s1, card_buf, sizeof(card_buf)),
+                "CARD_STATERA_LEDGER renders cleanly");
+    TEST_ASSERT(debug_execute_dump_card("CARD_ENGINE_HEARTBEAT", NULL, card_buf, sizeof(card_buf)),
+                "CARD_ENGINE_HEARTBEAT renders cleanly with NULL fields");
+    TEST_ASSERT(debug_execute_dump_card("CARD_TRIPWIRE_DIAGNOSTIC", NULL, card_buf, sizeof(card_buf)),
+                "CARD_TRIPWIRE_DIAGNOSTIC renders cleanly with NULL fields");
+    TEST_TRACE("debug_execute_dump_card", "ENGINE_HEARTBEAT / TRIPWIRE (NULL)", "rendered");
 
-    card_ok = debug_execute_dump_card("CARD_STATERA_LEDGER", &s1, card_buf, sizeof(card_buf));
-    TEST_ASSERT(card_ok, "Dump STATERA_LEDGER card must succeed");
-    DEBUG_LOG_FN("debug_execute_dump_card", "CARD_STATERA_LEDGER", "Card rendered");
-
-    /* Cog 15: debug_shutdown */
     debug_shutdown();
-    TEST_ASSERT(!debug_is_active(), "Debugger is now inactive");
-    DEBUG_LOG_FN("debug_shutdown", "none", "s_debug_active == false");
-
-    printf("  [PASS-1] Section 1 passed: All nominal functional cogs verified.\n");
+    log_shutdown();
+    TEST_ASSERT(!debug_is_active(), "Debugger inactive after shutdown");
 }
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 2: FAILING TESTS (FAULT-TOLERANT HARDENING COGS) ]
+Sub-Assembly 3.2: [ SECTION 2: NEVER FAIL (FAULT-TOLERANT HARDENING COGS) ]
 --------------------------------------------------------------------------------
 */
 
 static void test_debug_functional_failing(void)
 {
-    printf("  [FAIL-2] Running Section 2: Failing Tests (Fault-Tolerant Tripwires)...\n");
+    cornerstone_test_section(2, "Never Fail (Fault-Tolerant Tripwire & NULL Hardening)");
 
-    /* 2.1 NULL pointers to hash calculation */
-    uint32_t zero_hash = debug_compute_state_hash(NULL);
-    TEST_ASSERT(zero_hash == 0, "Hash of NULL fields must be 0");
-    DEBUG_LOG_FN("debug_compute_state_hash", "NULL", "0 (Graceful)");
+    /* 2.1 NULL / invalid probe & hash calls */
+    TEST_ASSERT_U64_EQ(debug_compute_state_hash(NULL), 0U, "Hash of NULL fields returns 0");
+    debug_validation_probe_t probe_out;
+    diag_result_t eval_out;
+    TEST_ASSERT(!debug_find_probe(NULL, &probe_out), "debug_find_probe rejects NULL id");
+    TEST_ASSERT(!debug_evaluate_probe("nonexistent.probe", &eval_out),
+                "debug_evaluate_probe rejects unregistered probe");
+    TEST_ASSERT(!debug_get_probe_at(999U, &probe_out), "debug_get_probe_at rejects OOB index");
+    TEST_TRACE("debug_find_probe / debug_get_probe_at", "NULL / index 999", "false");
 
     /* 2.2 Queries on inactive debugger */
     debug_shutdown();
     TEST_ASSERT(!debug_is_active(), "Must be inactive");
-    TEST_ASSERT(debug_record_snapshot(NULL, NULL, NULL) == 0, "Record snapshot inactive returns 0");
-    TEST_ASSERT(debug_get_snapshot_count() == 0, "Count inactive returns 0");
+    TEST_ASSERT_U64_EQ(debug_record_snapshot(NULL, NULL, NULL), 0U, "Record inactive returns 0");
+    TEST_ASSERT_U64_EQ(debug_get_snapshot_count(), 0U, "Count inactive returns 0");
+
     debug_snapshot_t s_dummy;
-    TEST_ASSERT(!debug_get_snapshot(0, &s_dummy), "Get snapshot inactive returns false");
-    TEST_ASSERT(debug_get_latest_snapshot() == NULL, "Latest snapshot inactive returns NULL");
     debug_state_fields_t f_dummy;
-    TEST_ASSERT(!debug_rewind_to_snapshot(0, &f_dummy), "Rewind inactive returns false");
-    TEST_ASSERT(debug_add_breakpoint(DEBUG_BREAK_TURN, 5, "Test") == -1, "Add bp inactive returns -1");
-    TEST_ASSERT(!debug_remove_breakpoint(1), "Remove bp inactive returns false");
-    DEBUG_LOG_FN("debug_is_active", "false", "All operations reject safely when inactive");
+    TEST_ASSERT(!debug_get_snapshot(0U, &s_dummy), "Get snapshot inactive returns false");
+    TEST_ASSERT(debug_get_latest_snapshot() == NULL, "Latest snapshot inactive returns NULL");
+    TEST_ASSERT(!debug_rewind_to_snapshot(0U, &f_dummy), "Rewind inactive returns false");
+    TEST_ASSERT_INT_EQ(debug_add_breakpoint(DEBUG_BREAK_TURN, 5, "Test"), -1,
+                       "Add breakpoint inactive returns -1");
+    TEST_ASSERT(!debug_remove_breakpoint(1), "Remove breakpoint inactive returns false");
 
-    /* 2.3 Invalid diff buffers */
+    /* 2.3 Invalid diff and card buffers */
     char small_diff[4];
-    TEST_ASSERT(debug_diff_snapshots(NULL, NULL, small_diff, sizeof(small_diff)) == 0, "Diff NULL returns 0");
-    DEBUG_LOG_FN("debug_diff_snapshots", "NULL, NULL", "0 (Graceful)");
+    TEST_ASSERT_U64_EQ(debug_diff_snapshots(NULL, NULL, small_diff, sizeof(small_diff)), 0U,
+                       "Diff NULL returns 0");
 
-    /* 2.4 Invalid card dump buffers */
-    debug_state_fields_t sample = make_state(1, "Katrina", 400, 50, 50, 0, 0);
+    debug_state_fields_t sample = cornerstone_test_make_state(1, "Katrina", 400, 50, 50, 0, 0);
     char tiny_buf[16];
-    TEST_ASSERT(!debug_execute_dump_card("CARD_HERO_VITALS", &sample, tiny_buf, sizeof(tiny_buf)), "Dump to tiny buffer returns false");
-    TEST_ASSERT(!debug_execute_dump_card("CARD_HERO_VITALS", NULL, tiny_buf, sizeof(tiny_buf)), "Dump NULL fields returns false");
-    DEBUG_LOG_FN("debug_execute_dump_card", "tiny_buf (16 bytes)", "false (Capacity guard)");
+    TEST_ASSERT(!debug_execute_dump_card("CARD_HERO_VITALS", &sample, tiny_buf, sizeof(tiny_buf)),
+                "Undersized card buffer rejected");
+    TEST_ASSERT(!debug_execute_dump_card("CARD_HERO_VITALS", NULL, tiny_buf, sizeof(tiny_buf)),
+                "Hero-specific card still rejects NULL fields");
+    TEST_TRACE("debug_execute_dump_card", "HERO_VITALS + NULL", "false");
 
-    /* 2.5 Out of bounds snapshot index */
-    debug_init(NULL);
-    TEST_ASSERT(!debug_get_snapshot(999, &s_dummy), "Out of bounds snapshot index returns false");
-    TEST_ASSERT(!debug_rewind_to_snapshot(999, &f_dummy), "Rewind out of bounds index returns false");
-    DEBUG_LOG_FN("debug_get_snapshot", "index 999", "false (Bounds enforced)");
-
+    /* 2.4 Out-of-bounds snapshot indices when active */
+    TEST_ASSERT(debug_init(NULL), "debug_init succeeds for OOB test");
+    TEST_ASSERT(!debug_get_snapshot(999U, &s_dummy), "OOB snapshot index rejected");
+    TEST_ASSERT(!debug_rewind_to_snapshot(999U, &f_dummy), "OOB rewind index rejected");
     debug_shutdown();
-    printf("  [FAIL-2] Section 2 passed: All fault-tolerant hardening tripwires verified.\n");
 }
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 3: ASSERTION & GUARANTEE (INVARIANT BOUNDARIES & LIMITS) ]
+Sub-Assembly 3.3: [ SECTION 3: ASSERTION & GUARANTEE (INVARIANTS & GUARDRAILS) ]
 --------------------------------------------------------------------------------
 */
 
 static void test_debug_functional_assertions_and_guarantees(void)
 {
-    printf("  [AXIOM-3] Running Section 3: Assertion & Guarantee (Invariants & Limits)...\n");
+    cornerstone_test_section(3, "Assertion & Guarantee (Hashes & Domain Breakpoints)");
 
-    /* Axiom 1: Preflight diagnostic verification */
-    diag_result_t res = debug_preflight();
-    TEST_ASSERT(res.passed, "debug_preflight must pass");
-    TEST_ASSERT(res.severity == SEVERITY_PASS, "debug_preflight severity must be PASS");
-    DEBUG_LOG_FN("debug_preflight", "none", res.details);
-
-    /* Axiom 2: Diagnostic self-audit */
-    diag_result_t audit_res = debug_audit(false);
-    TEST_ASSERT(audit_res.passed, "debug_audit must pass");
-    TEST_ASSERT(audit_res.severity == SEVERITY_PASS, "debug_audit severity must be PASS");
-    DEBUG_LOG_FN("debug_audit", "verbose: false", audit_res.details);
-
-    /* Axiom 3: FNV-1a Hash Bitwise Determinism & Avalanche */
-    debug_state_fields_t f1 = make_state(5, "Casatti", 350, 60, 60, 2, 0);
+    /* Axiom 1: FNV-1a Hash Bitwise Determinism & Avalanche */
+    debug_state_fields_t f1 = cornerstone_test_make_state(5, "Casatti", 350, 60, 60, 2, 0);
     debug_state_fields_t f2 = f1;
     uint32_t h1 = debug_compute_state_hash(&f1);
     uint32_t h2 = debug_compute_state_hash(&f2);
-    TEST_ASSERT(h1 == h2, "State hash must be bitwise deterministic for identical fields");
+    TEST_ASSERT_U64_EQ(h1, h2, "State hash is bitwise identical for identical fields");
 
     f2.moral_sway = 1;
-    uint32_t h3 = debug_compute_state_hash(&f2);
-    TEST_ASSERT(h1 != h3, "Single point mutation must alter state hash");
-    DEBUG_LOG_FN("debug_compute_state_hash", "f1 vs f2 (sway mutation)", "Hash mutated (Avalanche verified)");
+    TEST_ASSERT(h1 != debug_compute_state_hash(&f2), "Single field mutation alters FNV-1a digest");
+    TEST_TRACE("debug_compute_state_hash", "sway 0 -> 1", "avalanche verified");
 
-    /* Axiom 4: Invariant tripwires for moral sway and relic resonance */
-    debug_init(NULL);
+    /* Axiom 2: Structural domain invariant breakpoints */
+    TEST_ASSERT(debug_init(NULL), "Boot debugger for domain guardrail checks");
     char reason[128];
 
-    /* Moral sway bounds breach [-100, +100] */
-    debug_state_fields_t sway_breach = make_state(1, "Elijah", 400, 50, 50, 0, 105);
-    bool sway_hit = debug_check_breakpoints(&sway_breach, reason, sizeof(reason));
-    TEST_ASSERT(sway_hit, "Sway breach (+105) must trigger invariant guardrail");
-    DEBUG_LOG_FN("debug_check_breakpoints", "Moral sway +105", reason);
+    debug_state_fields_t sway_breach = cornerstone_test_make_state(1, "Elijah", 400, 50, 50, 0, 105);
+    TEST_ASSERT(debug_check_breakpoints(&sway_breach, reason, sizeof(reason)),
+                "Moral sway breach (+105) triggers breakpoint");
 
-    /* Relic resonance breach [0, 100] */
-    debug_state_fields_t relic_breach = make_state(1, "Elijah", 400, 120, 50, 0, 0);
-    bool relic_hit = debug_check_breakpoints(&relic_breach, reason, sizeof(reason));
-    TEST_ASSERT(relic_hit, "Relic breach (Lux 120) must trigger invariant guardrail");
-    DEBUG_LOG_FN("debug_check_breakpoints", "Lux resonance 120", reason);
+    debug_state_fields_t relic_breach = cornerstone_test_make_state(1, "Elijah", 400, 120, 50, 0, 0);
+    TEST_ASSERT(debug_check_breakpoints(&relic_breach, reason, sizeof(reason)),
+                "Lux resonance breach (120) triggers breakpoint");
 
-    /* Zero HP watchpoint */
-    debug_state_fields_t hp_zero = make_state(1, "Elijah", 0, 50, 50, 0, 0);
-    bool hp_hit = debug_check_breakpoints(&hp_zero, reason, sizeof(reason));
-    TEST_ASSERT(hp_hit, "HP zero must trigger watchpoint guardrail");
-    DEBUG_LOG_FN("debug_check_breakpoints", "HP zero", reason);
+    debug_state_fields_t hp_zero = cornerstone_test_make_state(1, "Elijah", 0, 50, 50, 0, 0);
+    TEST_ASSERT(debug_check_breakpoints(&hp_zero, reason, sizeof(reason)),
+                "HP zero watchpoint triggers breakpoint");
+    TEST_TRACE("debug_check_breakpoints", "sway+105 / lux120 / hp0", "all tripped");
 
     debug_shutdown();
-    printf("  [AXIOM-3] Section 3 passed: All axiomatic guarantees verified.\n");
 }
 
 /*
 --------------------------------------------------------------------------------
-[ SECTION 4: EMERGENCE (COMPOSITE BEHAVIORS & LATENCY LIMITS) ]
+Sub-Assembly 3.4: [ SECTION 4: EMERGENCE (RING WRAP, PROBE REGISTRY & AWAIT) ]
 --------------------------------------------------------------------------------
 */
-
-static bool s_func_probe_healthy = false;
 
 static diag_result_t func_custom_probe_validator(void)
 {
     diag_result_t res;
-    res.subsystem = "test.functional.debug";
+    res.subsystem = "test.functional";
     res.check_name = "func_custom_probe_validator";
     if (s_func_probe_healthy) {
         res.passed = true;
@@ -388,50 +355,42 @@ static diag_result_t func_custom_probe_validator(void)
 
 static void test_debug_functional_emergence(void)
 {
-    printf("  [EMERGE-4] Running Section 4: Emergence (Composite State & Stress)...\n");
+    cornerstone_test_section(4, "Emergence (Ring Wrap-Around, Probe Inspection & AWAIT Recovery)");
 
-    debug_init(NULL);
+    TEST_ASSERT(debug_init(NULL), "debug_init succeeds for emergence section");
 
-    /* 4.1 Ring buffer wrap-around beyond capacity (64) */
+    /* 4.1 Ring buffer wrap-around beyond 64-slot capacity */
     for (int t = 1; t <= 100; ++t) {
-        debug_state_fields_t s = make_state(t, "Mi-ren", 400 - (t % 50), 50 + (t % 30), 50 - (t % 30), t % 4, (t % 40) - 20);
+        debug_state_fields_t s = cornerstone_test_make_state(
+            t, "Mi-ren", 400 - (t % 50), 50 + (t % 30), 50 - (t % 30), t % 4, (t % 40) - 20);
         uint64_t id = debug_record_snapshot(&s, "step", "turn");
-        TEST_ASSERT(id == (uint64_t)t, "Monotonic snapshot ID sequence");
+        TEST_ASSERT_U64_EQ(id, (uint64_t)t, "Monotonic snapshot ID sequence");
     }
 
-    size_t count = debug_get_snapshot_count();
-    TEST_ASSERT(count == DEBUG_MAX_SNAPSHOTS, "Snapshot ring buffer capped at DEBUG_MAX_SNAPSHOTS (64)");
-    DEBUG_LOG_FN("debug_record_snapshot", "100 iterations", "Ring buffer successfully clamped at 64");
+    TEST_ASSERT_U64_EQ(debug_get_snapshot_count(), (uint64_t)DEBUG_MAX_SNAPSHOTS,
+                       "Snapshot ring clamped at DEBUG_MAX_SNAPSHOTS (64)");
 
-    /* 4.2 Verify oldest snapshot in buffer corresponds to turn 37 */
     debug_snapshot_t oldest;
-    TEST_ASSERT(debug_get_snapshot(0, &oldest), "Retrieve oldest valid snapshot");
-    TEST_ASSERT(oldest.state.turn == 37, "Oldest snapshot turn must be 37 after 100 turns in 64-capacity ring buffer");
-    DEBUG_LOG_FN("debug_get_snapshot", "logical index 0", "Oldest snapshot: Turn 37");
-
-    /* 4.3 Verify latest snapshot corresponds to turn 100 */
+    TEST_ASSERT(debug_get_snapshot(0U, &oldest) && (oldest.state.turn == 37),
+                "Oldest surviving turn after 100 turns is turn 37");
     const debug_snapshot_t *latest = debug_get_latest_snapshot();
-    TEST_ASSERT(latest != NULL && latest->state.turn == 100, "Latest snapshot turn must be 100");
-    DEBUG_LOG_FN("debug_get_latest_snapshot", "none", "Latest snapshot: Turn 100");
+    TEST_ASSERT((latest != NULL) && (latest->state.turn == 100), "Latest snapshot turn is 100");
 
-    /* 4.4 Rewind state to turn 50 and verify exact field preservation */
-    /* Logical index for turn 50: turn 37 is index 0, so turn 50 is index (50 - 37) = 13 */
+    /* 4.2 Rewind turn 50 and verify non-destructive audit preserves ring */
     debug_state_fields_t restored;
-    TEST_ASSERT(debug_rewind_to_snapshot(13, &restored), "Rewind to logical index 13");
-    TEST_ASSERT(restored.turn == 50, "Restored turn must be 50");
-    TEST_ASSERT(restored.hp == 400, "Restored HP matches expected calculation");
-    DEBUG_LOG_FN("debug_rewind_to_snapshot", "logical index 13", "Turn 50 restored with byte-for-byte fidelity");
+    TEST_ASSERT(debug_rewind_to_snapshot(13U, &restored) && (restored.turn == 50) && (restored.hp == 400),
+                "Rewind logical index 13 restores turn 50 cleanly");
 
-    /* 4.5 Non-destructive debug_audit() preserves live 64-turn snapshot ring */
     diag_result_t live_audit = debug_audit(false);
-    TEST_ASSERT(live_audit.passed, "Live debug_audit(false) succeeds");
-    TEST_ASSERT(debug_get_snapshot_count() == DEBUG_MAX_SNAPSHOTS &&
-                debug_get_latest_snapshot() != NULL &&
-                debug_get_latest_snapshot()->state.turn == 100,
-                "debug_audit() must not wipe live ring snapshots");
-    DEBUG_LOG_FN("debug_audit", "live ring active", "Preserved all 64 snapshots through Turn 100");
+    TEST_ASSERT(live_audit.passed &&
+                (debug_get_snapshot_count() == (size_t)DEBUG_MAX_SNAPSHOTS) &&
+                (debug_get_latest_snapshot() != NULL) &&
+                (debug_get_latest_snapshot()->state.turn == 100),
+                "Non-destructive debug_audit preserves all 64 live snapshots");
 
-    /* 4.6 Custom validation probe registration, fail-test -> AWAIT, and probe-recheck resolution */
+    /* 4.3 Custom validation probe registration, inspection APIs, DEBUG_TRIGGER_PROBE & AWAIT */
+    debug_clear_validation_probes();
+
     debug_validation_probe_t probe;
     memset(&probe, 0, sizeof(probe));
     str_safe_copy(probe.probe_id, "func.custom_cog", sizeof(probe.probe_id));
@@ -447,62 +406,115 @@ static void test_debug_functional_emergence(void)
     s_func_probe_healthy = false;
     int slot1 = debug_register_validation_probe(&probe);
     int slot2 = debug_register_validation_probe(&probe);
-    TEST_ASSERT(slot1 >= 0 && slot1 == slot2,
-                "Validation probe registration is idempotent on duplicate probe_id");
+    TEST_ASSERT((slot1 >= 0) && (slot1 == slot2),
+                "Probe registration is idempotent on duplicate probe_id");
+    TEST_ASSERT(debug_get_probe_count() == 1U, "Registered probe count is 1");
 
-    TEST_ASSERT(debug_check_tripwires(NULL) >= 1U, "Failing registered probe triggers tripwire check");
-    TEST_ASSERT(debug_is_awaiting() && debug_get_step_mode() == DEBUG_STEP_AWAIT,
-                "Failing probe puts debugger into DEBUG_STEP_AWAIT");
+    debug_validation_probe_t queried;
+    TEST_ASSERT(debug_get_probe_at(0U, &queried) &&
+                (strcmp(queried.probe_id, "func.custom_cog") == 0),
+                "debug_get_probe_at(0) retrieves func.custom_cog");
+    TEST_ASSERT(debug_find_probe("func.custom_cog", &queried) &&
+                (strcmp(queried.subsystem, "test.functional") == 0),
+                "debug_find_probe locates func.custom_cog cleanly");
+
+    diag_result_t pre_eval;
+    TEST_ASSERT(!debug_evaluate_probe("func.custom_cog", &pre_eval) &&
+                !pre_eval.passed &&
+                (pre_eval.severity == SEVERITY_CRITICAL) &&
+                !debug_is_awaiting(),
+                "debug_evaluate_probe reports probe failure cleanly without prematurely entering AWAIT");
+
+    /* Trigger directly via DEBUG_TRIGGER_PROBE macro to verify __FILE__/__LINE__/__func__ capture */
+    TEST_ASSERT(DEBUG_TRIGGER_PROBE("func.custom_cog", "test.functional",
+                                    "Manual surface DEBUG_TRIGGER_PROBE verification"),
+                "DEBUG_TRIGGER_PROBE executes fallback -> AWAIT transition");
+    TEST_ASSERT(debug_is_awaiting() && (debug_get_step_mode() == DEBUG_STEP_AWAIT),
+                "Debugger entered DEBUG_STEP_AWAIT after probe trigger");
 
     debug_tripwire_report_t report;
     TEST_ASSERT(debug_get_tripwire_report(&report) &&
                 report.fallback_completed &&
                 report.await_active &&
                 report.snapshot_locked &&
-                strcmp(report.probe_id, "func.custom_cog") == 0,
+                (strcmp(report.probe_id, "func.custom_cog") == 0),
                 "Tripwire report records probe ID, Safe-Mode completion, snapshot lock, and AWAIT");
 
     char rep_text[1024];
     TEST_ASSERT(debug_dump_tripwire_report(rep_text, sizeof(rep_text)) &&
-                strstr(rep_text, "func.custom_cog") != NULL,
-                "debug_dump_tripwire_report formats active probe report");
+                (strstr(rep_text, "func.custom_cog") != NULL),
+                "debug_dump_tripwire_report includes active probe ID");
 
-    TEST_ASSERT(!debug_resolve_await(&restored, DEBUG_STEP_RUN, "Attempt before fixing probe") &&
+    TEST_ASSERT(!debug_resolve_await(&restored, DEBUG_STEP_RUN, "Attempt before repairing probe") &&
                 debug_is_awaiting(),
-                "debug_resolve_await blocks exit while failing probe remains unhealthy");
+                "debug_resolve_await blocks exit while probe remains unhealthy");
 
     s_func_probe_healthy = true;
     TEST_ASSERT(debug_resolve_await(&restored, DEBUG_STEP_RUN, "Probe repaired and state restored") &&
                 !debug_is_awaiting() &&
-                debug_get_step_mode() == DEBUG_STEP_RUN,
+                (debug_get_step_mode() == DEBUG_STEP_RUN),
                 "debug_resolve_await resumes cleanly once probe passes again");
+    TEST_TRACE("DEBUG_TRIGGER_PROBE -> debug_resolve_await", "func.custom_cog", "AWAIT resolved");
 
     debug_clear_validation_probes();
     debug_shutdown();
-    printf("  [EMERGE-4] Section 4 passed: All emergent composite behaviors verified.\n");
 }
 
 /*
 ================================================================================
-BLOCK 5: CLOSING BLOCK / TEST RUNNER HANDSHAKE
-Stratum: Layer 4 (Verification Suite) | Machine: test.functional.debug
+BLOCK 4: AUDIT PROCEDURES BLOCK
+( Subsystem Preflights & Non-Destructive Audit Gates )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.functional.debug
+Mission:       Verify `debug_fallback` and `debug` preflight and audit contracts.
+================================================================================
+*/
+
+static void test_debug_functional_audit_gates(void)
+{
+    cornerstone_test_section(0, "Preflight & Block 4 Self-Audit Gate");
+
+    diag_result_t fb_preflight = debug_fallback_preflight();
+    TEST_ASSERT(fb_preflight.passed && (fb_preflight.severity == SEVERITY_PASS),
+                "debug_fallback_preflight passes");
+    TEST_ASSERT(debug_fallback_audit(), "debug_fallback_audit passes");
+
+    diag_result_t preflight = debug_preflight();
+    TEST_ASSERT(preflight.passed && (preflight.severity == SEVERITY_PASS),
+                "debug_preflight passes");
+
+    diag_result_t audit = debug_audit(false);
+    TEST_ASSERT(audit.passed && (audit.severity == SEVERITY_PASS),
+                "debug_audit(false) passes");
+
+    debug_shutdown();
+    debug_fallback_shutdown();
+}
+
+/*
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Test Runner Entry Point & Summary Handshake )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 4: Verification Suite
+Module:        test.functional.debug
+Mission:       Execute Block 4 preflight gates and Sections 1-4 sequentially.
 ================================================================================
 */
 
 int main(void)
 {
-    printf("================================================================================\n");
-    printf("     Tenebris and Lux - Interactive State Debugger Functional Test Suite        \n");
-    printf("================================================================================\n");
+    cornerstone_test_begin(TEST_DEBUG_FUNC_SUITE_NAME, "FUNCTIONAL");
 
+    test_debug_functional_audit_gates();
     test_debug_functional_always_pass();
     test_debug_functional_failing();
     test_debug_functional_assertions_and_guarantees();
     test_debug_functional_emergence();
 
-    printf("================================================================================\n");
-    printf("VERDICT: ALL DEBUGGER FUNCTIONAL COGS SATISFIED (4/4 SECTIONS PASS)\n");
-    printf("================================================================================\n");
-
+    cornerstone_test_summary(TEST_DEBUG_FUNC_SUITE_NAME, s_tests_run, s_tests_passed);
     return 0;
 }

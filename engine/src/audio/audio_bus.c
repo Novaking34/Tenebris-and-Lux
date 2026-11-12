@@ -130,7 +130,7 @@ Sub-Assembly 2.3: Static Module State Storage (.bss Allocations) & Manifest Anch
 --------------------------------------------------------------------------------
 */
 
-static audio_bus_state_t s_audio_bus = {0};
+static audio_bus_state_t s_audio_bus;
 
 const module_metadata_t audio_bus_manifest = {
     MODULE_ID,

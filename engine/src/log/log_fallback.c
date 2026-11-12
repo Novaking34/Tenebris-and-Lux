@@ -1,63 +1,64 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          log_fallback.c
-@id            log.fallback
+@file          engine/src/log/log_fallback.c
+@id            cog.log.fallback
 @layer         Layer 0: Core Utilities
+@archetype     quarantined_fallback | stateful
 @version       0.1.1-dev
 @interface_rev Rev 5
-@date          2026-11-10
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
-@system        Forensic Telemetry & Flight Recorder Engine
-@role          Implementation of the Tier-0 BIOS Safe-Mode Telemetry Code Page,
-               Compiled-In .rodata ROM Vault, and Early-Boot Replay Ring
-@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
-               3. Quarantined outside normal production initialization; external
-                  data loading failure triggers tripwire + ROM Safe Mode.
-               4. Safe-Mode & ROM configs unconditionally keep loaded_from_data=false.
-               5. Read-only / full disk faults degrade seamlessly to .bss RAM Ring
-                  + stderr without crashing or silencing critical alerts.
-               6. Universal 5-Block Lifecycle Protocol enforced across files.
-               7. Strictly ISO C-style comments only (zero double-slash comments).
+@system        Forensic Telemetry Safe-Mode BIOS & Compiled ROM Vault
+@role          Runtime Engine & Chassis: Pre-init .bss replay buffer, emergency
+               stream sink, 10 compiled telemetry ROMs, and pure JSON hydration.
+@maturity      Rev 5 Baseline | Self-contained BIOS & 57.9 KiB ROM vault verified across all 4 test tiers.
+@chassis       zero-heap | .bss 12.3 KiB (s_fb) + .rodata 57.9 KiB (10 telemetry ROMs) + stack <= 1 KiB.
+@scale         O(n) linear scan across JSON profile key boundaries; O(1) ROM table lookup & BIOS ring push.
+@seams         in: log_telemetry_rom.h (generated) | uses: cog.manifest, cog.log.types, cog.io.master_loader | probes: log_fb.* | dag: core.util.log_fallback
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Full-disk / read-only faults degrade silently to .bss ring + stderr without aborting boot.
+               3. Monolith, floppy compact preset, and all 10 .rodata ROM profiles stamp loaded_from_data = false.
+               4. log_fallback_preflight() audits all embedded ROM presets without mutating active s_fb counters.
 
 PURPOSE & ARCHITECTURAL ROLE:
-  Implements the BIOS-level Safe-Mode flight recorder and compiled-in .rodata
-  telemetry ROM vault for Tenebris and Lux. Keeps forensic telemetry live from
-  line 1 of main() before CLI flags, path_finder roots, or disk streams open,
-  and hydrates full canonical telemetry profiles from embedded .rodata JSON
-  byte arrays when external config directories are offline or missing.
+  Executes the Tier-0 Safe-Mode BIOS flight recorder and hydrates canonical
+  telemetry configurations directly from immutable ELF .rodata byte arrays when
+  disk mounts or JSON files are unavailable.
 
   ### For Game Designers & Non-Programmers:
-  Think of this module as the game's emergency black box and built-in ROM manual.
-  If the game fails early during startup, boots off a tiny locked floppy disk,
-  or has missing configuration folders, this module records events into emergency
-  memory, prints fatal alerts safely, loads built-in factory presets from engine
-  ROM, and replays stored boot logs as soon as the main log file opens.
+  Guarantees zero blind crashes at startup: line-1 boot notes stay preserved in
+  emergency memory and stream smoothly into the main log archive once started,
+  while built-in factory presets remain intact even on write-protected media.
 
   ### For Systems Programmers & Engine Architects:
-  - 100% Static Compile-Time .rodata & .bss: Zero dynamic memory allocation.
-  - Shared Pure JSON Setting Parser: Provides log_fallback_parse_config_json()
-    and log_fallback_severity_from_string() directly to log.c without duplication.
-  - Side-Effect-Free Audit Verification: Preflight checks validate monolith,
-    floppy compact preset, and all 10 embedded ROM JSON files cleanly without
-    mutating live runtime counters.
+  - Controlled Memory Chassis: .bss occupies 12,312 B (s_fb) for pre-init replay;
+    .rodata occupies 57,856 B housing all 10 compiled telemetry JSON ROM payloads.
+  - Bottleneck & Headroom: Pure stack-scanned JSON field parsing keeps zero-heap
+    purity; rotation triggers safely cap disk spill in degraded environments.
+  - Probe & Config Wiring: Single canonical log_fallback_parse_config_json()
+    eliminates dual-parser drift between ROM boot and cog.log disk loading.
 ================================================================================
 */
 
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200809L
+#endif
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
-Stratum: Layer 0 (Core Utilities) | Machine: core.util.log_fallback
+BLOCK 2: OPENING BLOCK
+( BIOS Dependencies, Safe-Mode Chassis, Config ROM Vault & O(1) Guards )
 ================================================================================
-Mission: 3-tier downward include hierarchy, Safe-Mode ROM/ring limits, private
-state storage (.bss & .rodata), and reentrancy guard inlines.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.log.fallback
+Mission:       Wire BIOS deps and log_telemetry_rom.h vault, house Safe-Mode
+               chassis in 2.3, and guard ROM/disk fallback.
 ================================================================================
 */
 
@@ -66,12 +67,13 @@ state storage (.bss & .rodata), and reentrancy guard inlines.
 Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Library Dependencies (None)
-Tier 3: Internal Engine Foundation Headers + Build-Generated Telemetry ROM Header
+Tier 2: External Library Dependencies (None in Layer 0/1)
+Tier 3: Internal Engine Foundation Headers & Config ROM Vault
 --------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -81,37 +83,55 @@ Tier 3: Internal Engine Foundation Headers + Build-Generated Telemetry ROM Heade
 #include <sys/stat.h>
 #include <time.h>
 
-/* --- Tier 2: External Library Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None in Layer 0/1) --- */
 
-/* --- Tier 3: Internal Engine Foundation Headers --- */
+/* --- Tier 3: Internal Engine Foundation Headers & Config ROM Vault --- */
+#include "log/log_fallback.h"
 #include "core/manifest.h"
+#include "log/log_types.h"
+#include "log_telemetry_rom.h"
 #include "core/math_utils.h"
 #include "core/string_utils.h"
 #include "core/time_utils.h"
 #include "debug/debug_fallback.h"
 #include "io/fs_utils.h"
+#include "io/io_fallback.h"
 #include "io/json_utils.h"
 #include "io/master_loader.h"
 #include "log/log.h"
-#include "log/log_fallback.h"
-#include "log_telemetry_rom.h"
 
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Compile-Time Constants
 --------------------------------------------------------------------------------
 */
+/** @brief Canonical manifest identifier linking Safe-Mode BIOS telemetry. */
 #define MODULE_ID                 LOG_FALLBACK_MODULE_ID
+/** @brief Default internal log category emitted by fallback diagnostics. */
 #define LOCAL_LOG_CAT             LOG_CAT_LOG
+/** @brief Human-readable Safe-Mode BIOS module prefix for emergency messages. */
 #define LOCAL_MODULE_TAG          "LogFallback"
+/** @brief Stack path buffer capacity (bytes) for Safe-Mode file opening. */
 #define LOG_FB_PATH_CAP           256U
+/** @brief Hard ceiling on fallback rotation count during degraded disk I/O. */
 #define LOG_FB_MAX_ROTATION_CAP   25U
+/** @brief Fixed capacity (bytes) storing the active Safe-Mode ROM profile ID. */
+#define LOG_FB_PROFILE_BUF_CAP    32U
+
+static_assert(
+    LOG_FALLBACK_RING_CAPACITY >= 4U && LOG_FALLBACK_RING_CAPACITY <= 256U,
+    "LOG_FALLBACK_RING_CAPACITY must remain bounded for Tier-0 .bss chassis"
+);
+static_assert(
+    LOG_FB_PATH_CAP >= 64U && LOG_FB_MAX_ROTATION_CAP >= 1U,
+    "Safe-Mode disk path and rotation caps must remain strictly positive"
+);
 
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.2: Private Structural Ontology & Non-Anonymous Data Types
 --------------------------------------------------------------------------------
-Table-driven severity token descriptor and consolidated Safe-Mode singleton.
+Table-driven severity token descriptor, BIOS state struct, and probe decls.
 --------------------------------------------------------------------------------
 */
 
@@ -126,8 +146,8 @@ Table-driven severity token descriptor and consolidated Safe-Mode singleton.
  * Centralizes token lookup in .rodata so log_fallback and log.c share one map.
  */
 typedef struct log_fb_sev_token {
-    const char     *token;
-    log_severity_t  severity;
+    const char     *token;    /**< Case-insensitive JSON severity string token. */
+    log_severity_t  severity; /**< Target telemetry severity enumeration value. */
 } log_fb_sev_token_t;
 
 /**
@@ -142,31 +162,35 @@ typedef struct log_fb_sev_token {
  * Strictly allocated in .bss with zero heap overhead and reentrant guard flags.
  */
 typedef struct log_fallback_state {
-    bool                 booted;
-    bool                 disk_fault;
-    bool                 rom_hydrated;
-    bool                 in_record;
-    log_fallback_sink_t  active_sink;
-    log_config_t         config;
-    FILE                *file;
-    size_t               current_bytes;
-    uint64_t             sequence_counter;
-    uint64_t             total_replayed;
-    uint64_t             disk_bytes_written;
-    char                 active_rom_profile[32];
-    log_entry_t          ring[LOG_FALLBACK_RING_CAPACITY];
-    size_t               ring_head;
-    size_t               ring_count;
+    bool                 booted;                                /**< True once BIOS boot ran. */
+    bool                 disk_fault;                            /**< True after write/open failure. */
+    bool                 rom_hydrated;                          /**< True if ROM preset hydrated. */
+    bool                 in_record;                             /**< Reentrancy guard flag. */
+    log_fallback_sink_t  active_sink;                           /**< Active output sink tier. */
+    log_config_t         config;                                /**< Active Safe-Mode config copy. */
+    FILE                *file;                                  /**< Optional emergency log stream. */
+    size_t               current_bytes;                         /**< Bytes written to current file. */
+    uint64_t             sequence_counter;                      /**< Monotonic BIOS entry seq ID. */
+    uint64_t             total_replayed;                        /**< Total entries drained upward. */
+    uint64_t             disk_bytes_written;                    /**< Lifetime BIOS bytes written. */
+    char                 active_rom_profile[LOG_FB_PROFILE_BUF_CAP]; /**< Loaded ROM preset key. */
+    log_entry_t          ring[LOG_FALLBACK_RING_CAPACITY];      /**< Fixed pre-init replay ring. */
+    size_t               ring_head;                             /**< Circular head index. */
+    size_t               ring_count;                            /**< Active entry count in ring. */
 } log_fallback_state_t;
+
+/* Forward declaration binding Sub-Assembly 2.3 log_fallback_manifest to Block 4.2. */
+diag_result_t log_fallback_preflight(void);
 
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.3: Static Module State Storage (.rodata & .bss Allocations)
 --------------------------------------------------------------------------------
-Immutable factory configuration templates, label tables, and zero-heap state.
+Immutable factory configuration templates, label tables, manifest, and .bss ring.
 --------------------------------------------------------------------------------
 */
 
+/** @brief Immutable Safe-Mode BIOS fallback config preset (.rodata). */
 static const log_config_t s_log_fallback_template = {
     .log_dir = LOG_FALLBACK_DIR,
     .base_filename = LOG_FALLBACK_BASE_FILENAME,
@@ -180,6 +204,7 @@ static const log_config_t s_log_fallback_template = {
     .loaded_from_data = false
 };
 
+/** @brief Immutable ultra-compact floppy-grade Safe-Mode preset (.rodata). */
 static const log_config_t s_log_floppy_template = {
     .log_dir = LOG_FALLBACK_FLOPPY_DIR,
     .base_filename = LOG_FALLBACK_FLOPPY_FILENAME,
@@ -193,6 +218,7 @@ static const log_config_t s_log_floppy_template = {
     .loaded_from_data = false
 };
 
+/** @brief Immutable JSON severity string-to-enum map (.rodata). */
 static const log_fb_sev_token_t s_fb_sev_tokens[] = {
     { "FATAL",    LOG_SEV_FATAL    },
     { "CRITICAL", LOG_SEV_CRITICAL },
@@ -204,6 +230,7 @@ static const log_fb_sev_token_t s_fb_sev_tokens[] = {
     { "TRACE",    LOG_SEV_TRACE    }
 };
 
+/** @brief Immutable telemetry severity labels indexed by log_severity_t (.rodata). */
 static const char *const s_fb_sev_labels[LOG_SEV_COUNT] = {
     "FATAL",
     "CRITICAL",
@@ -214,14 +241,17 @@ static const char *const s_fb_sev_labels[LOG_SEV_COUNT] = {
     "TRACE"
 };
 
+/** @brief Immutable telemetry channel names indexed by log_category_t (.rodata). */
 static const char *const s_fb_cat_labels[LOG_CAT_COUNT] = {
     "DEBUG",
     "LOG",
     "EVENT",
     "MESSAGE",
-    "CHARACTER"
+    "CHARACTER",
+    "IO"
 };
 
+/** @brief Immutable sink mode labels indexed by log_fallback_sink_t (.rodata). */
 static const char *const s_fb_sink_names[] = {
     "UNARMED",
     "RING_ONLY",
@@ -229,39 +259,95 @@ static const char *const s_fb_sink_names[] = {
     "DISK_AND_RING"
 };
 
-static log_fallback_state_t s_fb = {
-    .booted = false,
-    .disk_fault = false,
-    .rom_hydrated = false,
-    .in_record = false,
-    .active_sink = LOG_FALLBACK_SINK_UNARMED,
-    .file = NULL,
-    .current_bytes = 0,
-    .sequence_counter = 0,
-    .total_replayed = 0,
-    .disk_bytes_written = 0,
-    .ring_head = 0,
-    .ring_count = 0
+/** @brief Documented Safe-Mode BIOS architectural invariants bound to manifest. */
+static const char *const s_log_fb_invariants[] = {
+    "ALLOC_ZERO_HEAP across Tier-0 BIOS pre-init ring and parser",
+    "Read-only or full-disk faults degrade silently to .bss ring + stderr",
+    "Monolith, floppy preset, and all 10 telemetry ROMs set loaded_from_data = false",
+    "log_fallback_preflight() audits ROM presets without mutating active s_fb state"
 };
+
+/** @brief Public module metadata node registering Safe-Mode BIOS in manifest. */
+const module_metadata_t log_fallback_manifest = {
+    LOG_FALLBACK_MODULE_ID,
+    "log/log_fallback.h",
+    LAYER_0_CORE_UTIL,
+    { 0, 1, 1 },
+    5,
+    "2026-11-11",
+    "Tier-0 Safe-Mode telemetry BIOS, replay ring, and compiled .rodata ROM vault",
+    4,
+    { "core.util.fs", "core.util.json", "core.util.string", "core.util.time" },
+    ALLOC_ZERO_HEAP,
+    CONCURRENCY_REENTRANT,
+    15,
+    4,
+    {
+        s_log_fb_invariants[0],
+        s_log_fb_invariants[1],
+        s_log_fb_invariants[2],
+        s_log_fb_invariants[3]
+    },
+    log_fallback_preflight
+};
+
+/** @brief Consolidated Safe-Mode BIOS runtime singleton (.bss). */
+static log_fallback_state_t s_fb;
 
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Predicates
 --------------------------------------------------------------------------------
-Pure inline validators and formatting helpers operating strictly without heap.
+Pure O(1) inline validators and clamping predicates operating without heap.
 --------------------------------------------------------------------------------
 */
 
+/**
+ * @brief Checks in O(1) time whether a telemetry severity code is in range.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Prevents invalid or corrupted message urgency tags from crashing Safe-Mode logs.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Unsigned range check valid even for negative signed enum values.
+ *
+ * @param sev Telemetry severity enumeration value to inspect.
+ * @return True if strictly within `[0, LOG_SEV_COUNT)`.
+ */
 static inline bool log_fb_is_sev_valid(log_severity_t sev)
 {
     return (size_t)sev < (size_t)LOG_SEV_COUNT;
 }
 
+/**
+ * @brief Checks in O(1) time whether a telemetry category channel is in range.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Ensures Safe-Mode log notes always route to a recognized diagnostic stream.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Unsigned bounds guard before indexing `s_fb_cat_labels[]`.
+ *
+ * @param cat Telemetry channel enumeration value to inspect.
+ * @return True if strictly within `[0, LOG_CAT_COUNT)`.
+ */
 static inline bool log_fb_is_cat_valid(log_category_t cat)
 {
     return (size_t)cat < (size_t)LOG_CAT_COUNT;
 }
 
+/**
+ * @brief Maps normalized moral sway `[-1.0f, +1.0f]` to clamped integer `[-100, +100]`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Translates Tenebris (-100%) to Lux (+100%) floating-point grades into crisp whole percentages.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Handles NaN safely via negated range test and rounds half-away-from-zero without `<math.h>`.
+ *
+ * @param grade Normalized alignment float on `[-1.0f, +1.0f]`.
+ * @return Clamped signed integer percentage on `[-100, +100]`.
+ */
 static inline int log_fb_grade_to_percent(float grade)
 {
     if (!(grade >= -1.0f && grade <= 1.0f)) {
@@ -278,6 +364,30 @@ static inline int log_fb_grade_to_percent(float grade)
     return math_clamp_int(rounded, -100, 100);
 }
 
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.5: Monitored BIOS Support Infrastructure (Non-Inline Internal)
+--------------------------------------------------------------------------------
+Support Role:  Tier-0 UTC ISO-8601 microsecond clock formatting for BIOS entries.
+Pattern Watch: If non-BIOS modules outside log_fallback require UTC ISO-8601
+               microsecond timestamps, elevate into engine/include/core/time_utils.h.
+Linkage Rule:  Strictly static functions only; zero static arrays or .bss storage.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Formats current UTC wall-clock time as `YYYY-MM-DDTHH:MM:SS.uuuuuuZ`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Stamps every emergency flight record with an unambiguous UTC microsecond timestamp.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Stack-only POSIX `clock_gettime(CLOCK_REALTIME)` + `gmtime_r()` formatter; non-blocking
+ * and safe when called from `log_fallback_record()` without touching `s_fb`.
+ *
+ * @param buf      Destination character buffer (non-NULL).
+ * @param buf_size Destination capacity in bytes (`> 0`).
+ */
 static void log_fb_format_iso_ts(char *buf, size_t buf_size)
 {
     struct timespec ts;
@@ -306,14 +416,269 @@ static void log_fb_format_iso_ts(char *buf, size_t buf_size)
     );
 }
 
+/**
+ * @brief Internal ROM hydration cog with selectable side-effect telemetry recording.
+ *
+ * Resolves the target profile from the compiled-in ROM manifest when `profile_name`
+ * is NULL or empty, verifies the 5-block envelope via `master_loader_load_from_memory()`,
+ * and hydrates strictly within `block_3_body` without `strstr()` buffer scans.
+ *
+ * @param[in] profile_name     ROM setting ID or NULL/empty for manifest default.
+ * @param[out] out_config      Destination Safe-Mode configuration struct.
+ * @param[in] update_telemetry True during live load; false during side-effect-free preflight.
+ * @return true if ROM asset hydrated cleanly with `loaded_from_data == false`.
+ */
+static bool log_fallback_load_rom_profile_internal(
+    const char *profile_name,
+    log_config_t *out_config,
+    bool update_telemetry
+) {
+    if (out_config == NULL) {
+        return false;
+    }
+
+    char target_id[64];
+    if (profile_name == NULL || profile_name[0] == '\0') {
+        const char *menu_json = NULL;
+        size_t menu_len = 0;
+        if (!log_fallback_get_rom_asset("manifest", &menu_json, &menu_len)) {
+            debug_fallback_record_fault(
+                "log.fallback",
+                "Embedded telemetry ROM missing manifest asset",
+                __FILE__,
+                __LINE__,
+                "log_fallback_load_rom_profile_internal"
+            );
+            return false;
+        }
+
+        master_loader_t menu_loader;
+        if (!master_loader_load_from_memory(&menu_loader, menu_json, menu_len)) {
+            debug_fallback_record_fault(
+                "log.fallback",
+                "Embedded telemetry ROM manifest failed 5-block validation",
+                __FILE__,
+                __LINE__,
+                "log_fallback_load_rom_profile_internal"
+            );
+            return false;
+        }
+
+        /* Scope strictly to block_3_body.menu first so Block 1/2/4 strings cannot collide */
+        if (!master_loader_get_string(&menu_loader, "menu", "active_setting", target_id, sizeof(target_id)) &&
+            !master_loader_get_string(&menu_loader, "menu", "default_setting", target_id, sizeof(target_id)) &&
+            !master_loader_get_string(&menu_loader, NULL, "active_setting", target_id, sizeof(target_id)) &&
+            !master_loader_get_string(&menu_loader, NULL, "default_setting", target_id, sizeof(target_id))) {
+            return false;
+        }
+    } else {
+        str_safe_copy(target_id, profile_name, sizeof(target_id));
+    }
+
+    if (str_case_eq(target_id, "manifest") ||
+        str_case_eq(target_id, "severity_weights") ||
+        str_case_eq(target_id, "engine_channels") ||
+        str_case_eq(target_id, "game_channels")) {
+        return false;
+    }
+
+    const char *prof_json = NULL;
+    size_t prof_len = 0;
+    if (!log_fallback_get_rom_asset(target_id, &prof_json, &prof_len)) {
+        return false;
+    }
+
+    master_loader_t prof_loader;
+    if (!master_loader_load_from_memory(&prof_loader, prof_json, prof_len)) {
+        debug_fallback_record_fault(
+            "log.fallback",
+            "Embedded telemetry ROM setting asset failed 5-block validation",
+            __FILE__,
+            __LINE__,
+            "log_fallback_load_rom_profile_internal"
+        );
+        return false;
+    }
+
+    if (!log_fallback_parse_config_span(
+            prof_loader.body_start,
+            prof_loader.body_len,
+            out_config,
+            NULL,
+            NULL,
+            0U
+        )) {
+        return false;
+    }
+
+    if (out_config->log_dir[0] == '\0' || out_config->base_filename[0] == '\0') {
+        return false;
+    }
+
+    /* Critical Provenance Invariant: Offline ROM profiles NEVER claim live disk provenance */
+    out_config->loaded_from_data = false;
+
+    if (update_telemetry) {
+        s_fb.rom_hydrated = true;
+        str_safe_copy(
+            s_fb.active_rom_profile,
+            (out_config->profile_name[0] != '\0') ? out_config->profile_name : target_id,
+            sizeof(s_fb.active_rom_profile)
+        );
+    }
+
+    return true;
+}
+
+/**
+ * @brief Normalizes `log_dir` inside repository build layouts to prevent root pollution.
+ *
+ * Ensures standalone repository invocations sandbox logs into `build/logs` while CTest
+ * subprocesses launched directly inside `build/` write to relative `logs/`.
+ *
+ * @param[in,out] cfg Safe-Mode configuration whose `log_dir` field is normalized in place.
+ */
+static void log_fb_resolve_safe_dir(log_config_t *cfg)
+{
+    if (cfg == NULL) {
+        return;
+    }
+
+    if (strcmp(cfg->log_dir, "logs") == 0) {
+        struct stat st_build;
+        if (stat("build", &st_build) == 0 && S_ISDIR(st_build.st_mode)) {
+            str_safe_copy(cfg->log_dir, "build/logs", sizeof(cfg->log_dir));
+        }
+    } else if (strncmp(cfg->log_dir, "build/logs", 10) == 0) {
+        struct stat st_build;
+        if (stat("build", &st_build) != 0 || !S_ISDIR(st_build.st_mode)) {
+            if (fs_file_exists("CTestTestfile.cmake") || fs_file_exists("CMakeCache.txt")) {
+                str_safe_copy(cfg->log_dir, "logs", sizeof(cfg->log_dir));
+            }
+        }
+    }
+}
+
+/**
+ * @brief Rotates the compact Safe-Mode disk archive stream if size cap is reached.
+ *
+ * Closes `s_fb.file`, cascades `.1`..`.max_files`, reopens active archive, and
+ * degrades cleanly into `LOG_FALLBACK_SINK_RING_AND_STDERR` on OS reopen fault.
+ */
+static void log_fb_rotate_disk_if_needed(void)
+{
+    if (s_fb.file == NULL || s_fb.config.max_file_size_bytes == 0U ||
+        s_fb.current_bytes < s_fb.config.max_file_size_bytes) {
+        return;
+    }
+
+    fclose(s_fb.file);
+    s_fb.file = NULL;
+
+    size_t max_files = s_fb.config.max_rotated_files;
+    if (max_files == 0U) {
+        max_files = 1U;
+    } else if (max_files > LOG_FB_MAX_ROTATION_CAP) {
+        max_files = LOG_FB_MAX_ROTATION_CAP;
+    }
+
+    char base_path[LOG_FB_PATH_CAP];
+    char src_path[LOG_FB_PATH_CAP + 16U];
+    char dst_path[LOG_FB_PATH_CAP + 16U];
+
+    str_path_join(base_path, sizeof(base_path), s_fb.config.log_dir, s_fb.config.base_filename);
+
+    snprintf(dst_path, sizeof(dst_path), "%s.%zu", base_path, max_files);
+    remove(dst_path);
+
+    for (size_t idx = max_files; idx > 1U; idx--) {
+        snprintf(src_path, sizeof(src_path), "%s.%zu", base_path, idx - 1U);
+        snprintf(dst_path, sizeof(dst_path), "%s.%zu", base_path, idx);
+        rename(src_path, dst_path);
+    }
+
+    snprintf(dst_path, sizeof(dst_path), "%s.1", base_path);
+    rename(base_path, dst_path);
+
+    s_fb.file = fopen(base_path, "a");
+    s_fb.current_bytes = 0;
+
+    if (s_fb.file == NULL) {
+        s_fb.disk_fault = true;
+        s_fb.active_sink = s_fb.config.echo_to_console
+            ? LOG_FALLBACK_SINK_RING_AND_STDERR
+            : LOG_FALLBACK_SINK_RING_ONLY;
+        debug_fallback_record_fault(
+            "log.fallback",
+            "Fallback log archive rotation failed opening new file stream",
+            __FILE__,
+            __LINE__,
+            "test_log_fallback_unit.c:Section4"
+        );
+        debug_fallback_finish_with_fallback(
+            "log.fallback",
+            "Degraded Safe-Mode rotation sink cleanly to static .bss RAM ring/stderr"
+        );
+    }
+}
+
+/**
+ * @brief Pushes an entry into the circular Tier-0 `.bss` FIFO black-box queue.
+ *
+ * @param[in] entry Formatted telemetry entry to copy into the ring tail.
+ */
+static void log_fb_ring_push(const log_entry_t *entry)
+{
+    s_fb.ring[s_fb.ring_head] = *entry;
+    s_fb.ring_head = (s_fb.ring_head + 1U) % LOG_FALLBACK_RING_CAPACITY;
+    if (s_fb.ring_count < LOG_FALLBACK_RING_CAPACITY) {
+        s_fb.ring_count++;
+    }
+}
+
+/**
+ * @brief Shared FIFO unrolling helper reading oldest-first entries out of `s_fb.ring`.
+ *
+ * Eliminates duplicate index modular arithmetic between `log_fallback_peek_entries()`
+ * and `log_fallback_drain_entries()`.
+ *
+ * @param[out] out_entries Optional destination array (NULL allowed for discard drains).
+ * @param[in]  max_entries Maximum entries requested by caller.
+ * @return Number of available entries resolved in `[0 .. min(max_entries, ring_count)]`.
+ */
+static size_t log_fb_copy_ring_entries(log_entry_t *out_entries, size_t max_entries)
+{
+    if (max_entries == 0U || s_fb.ring_count == 0U) {
+        return 0U;
+    }
+
+    size_t count = (s_fb.ring_count < max_entries) ? s_fb.ring_count : max_entries;
+    if (out_entries != NULL) {
+        size_t oldest =
+            (s_fb.ring_head + LOG_FALLBACK_RING_CAPACITY - s_fb.ring_count) %
+            LOG_FALLBACK_RING_CAPACITY;
+
+        for (size_t i = 0; i < count; i++) {
+            size_t idx = (oldest + i) % LOG_FALLBACK_RING_CAPACITY;
+            out_entries[i] = s_fb.ring[idx];
+        }
+    }
+
+    return count;
+}
+
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
-Stratum: Layer 0 (Core Utilities) | Machine: core.util.log_fallback
+BLOCK 3: BODY BLOCK
+( Safe-Mode BIOS Implementation, .rodata ROM Hydration & Fault Recording )
 ================================================================================
-Mission: Construct baseline and floppy Safe-Mode configurations, parse JSON
-telemetry configs cleanly, resolve compiled-in .rodata ROM payloads, capture
-early-boot telemetry into static .bss storage, and handle disk-fault degradation.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0 (Core Utilities)
+Module:        cog.log.fallback
+Mission:       Construct baseline and floppy Safe-Mode configurations, parse JSON
+               telemetry configs cleanly inside bounded spans, resolve compiled-in
+               `.rodata` ROM payloads, capture early-boot telemetry into static `.bss`
+               storage, and degrade gracefully across disk hardware faults.
 ================================================================================
 */
 
@@ -372,26 +737,31 @@ log_config_t log_fallback_get_floppy_config(void)
  * @brief Checks if a Safe-Mode / fallback configuration carries recognized provenance.
  *
  * ### For Game Designers & Non-Programmers:
- * Verifies a Safe-Mode config matches an official emergency preset or built-in ROM.
+ * Verifies a Safe-Mode config matches an official emergency preset or built-in ROM
+ * so corrupted uninitialized structs are caught immediately.
  *
  * ### For Systems Programmers & Engine Architects:
- * Validates offline provenance (!loaded_from_data) against monolith_fallback,
- * floppy_compact, or an embedded setting ID present in .rodata telemetry ROM.
+ * Validates offline provenance (`!loaded_from_data`) against `monolith_fallback`,
+ * `floppy_compact`, or an embedded setting ID present in `.rodata` telemetry ROM.
+ * Excludes non-setting metadata tables (`manifest`, `severity_weights`, etc.).
  *
  * @param[in] cfg Configuration struct to inspect.
  * @return true if cfg represents a valid recognized Safe-Mode/ROM profile.
  */
 bool log_fallback_is_recognized_profile(const log_config_t *cfg)
 {
+    /* Step 1: Reject NULL structs or live disk-sourced configs pretending to be BIOS fallbacks */
     if (cfg == NULL || cfg->loaded_from_data) {
         return false;
     }
 
+    /* Step 2: Check compile-time static Safe-Mode & compact floppy presets */
     if (str_case_eq(cfg->profile_name, LOG_FALLBACK_PROFILE_NAME) ||
         str_case_eq(cfg->profile_name, LOG_FALLBACK_FLOPPY_PROFILE_NAME)) {
         return true;
     }
 
+    /* Step 3: Probe compiled-in .rodata telemetry ROM excluding non-setting manifests */
     if (cfg->profile_name[0] != '\0' &&
         !str_case_eq(cfg->profile_name, "manifest") &&
         !str_case_eq(cfg->profile_name, "severity_weights") &&
@@ -410,7 +780,8 @@ bool log_fallback_is_recognized_profile(const log_config_t *cfg)
  * Translates words like "INFO", "WARN", or "TRACE" inside telemetry configs.
  *
  * ### For Systems Programmers & Engine Architects:
- * Iterates .rodata s_fb_sev_tokens[] via str_case_eq() cleanly without heap.
+ * Iterates `.rodata` `s_fb_sev_tokens[]` via `str_case_eq()` cleanly without heap
+ * allocations or hidden static state.
  *
  * @param[in]  str     Case-insensitive severity string.
  * @param[out] out_sev Populated severity rank.
@@ -434,42 +805,67 @@ bool log_fallback_severity_from_string(const char *str, log_severity_t *out_sev)
 }
 
 /**
- * @brief Parses a JSON "setting" payload into a validated log_config_t.
+ * @brief Span-bounded JSON "setting" payload parser fenced strictly inside [json_start, json_len).
  *
  * ### For Game Designers & Non-Programmers:
- * Reads log folders, file caps, and severity filters from JSON config text.
+ * Reads log folders, file caps, and severity filters cleanly out of an isolated
+ * `block_3_body` JSON slice so adjacent header or audit blocks never interfere.
  *
  * ### For Systems Programmers & Engine Architects:
- * Pure zero-heap setting extractor shared between compiled-in ROM hydration and
- * log.c filesystem config loading, reporting failure tripwires cleanly to callers
- * without hidden global state mutations.
+ * Resolves any optional nested `"setting"` object span via `json_find_object_span()`,
+ * extracts attributes strictly via `json_get_*_span()`, validates rotation/byte bounds,
+ * and leaves `loaded_from_data == false`. Zero heap, fixed 64-byte stack scratch.
  *
- * @param[in]  scope        Pointer into JSON payload ("setting" block or body).
+ * @param[in]  json_start   Slice start pointer (`block_3_body` or nested `"setting"` object).
+ * @param[in]  json_len     Byte length of `json_start` (`0` measures NUL-terminated string).
  * @param[out] out_config   Populated configuration structure.
  * @param[out] out_tripwire Optional failure tripwire enum code (may be NULL).
  * @param[out] err_buf      Optional human-readable error message buffer (may be NULL).
- * @param[in]  err_cap      Capacity of err_buf in bytes.
- * @return true if attributes parsed and validated within bounds; false otherwise.
+ * @param[in]  err_cap      Capacity of `err_buf` in bytes.
+ * @return true if attributes parsed and validated within bounds; false on violation.
  */
-bool log_fallback_parse_config_json(
-    const char *scope,
+bool log_fallback_parse_config_span(
+    const char *json_start,
+    size_t json_len,
     log_config_t *out_config,
     log_tripwire_t *out_tripwire,
     char *err_buf,
     size_t err_cap
 ) {
-    if (scope == NULL || out_config == NULL) {
+    /* Step 1: Validate inputs and establish fenced target span */
+    if (json_start == NULL || out_config == NULL) {
         if (out_tripwire != NULL) {
             *out_tripwire = LOG_TRIPWIRE_SETTING_INVALID;
         }
         if (err_buf != NULL && err_cap > 0U) {
-            str_safe_copy(err_buf, "NULL scope or out_config in JSON setting parser.", err_cap);
+            str_safe_copy(err_buf, "NULL span or out_config in JSON setting parser.", err_cap);
         }
         return false;
     }
 
+    size_t span_len = (json_len > 0U) ? json_len : strlen(json_start);
+    if (span_len == 0U) {
+        if (out_tripwire != NULL) {
+            *out_tripwire = LOG_TRIPWIRE_SETTING_INVALID;
+        }
+        if (err_buf != NULL && err_cap > 0U) {
+            str_safe_copy(err_buf, "Empty JSON slice passed to setting parser.", err_cap);
+        }
+        return false;
+    }
+
+    const char *scope_start = json_start;
+    size_t scope_len = span_len;
+    const char *setting_obj = NULL;
+    size_t setting_len = 0U;
+    if (json_find_object_span(json_start, span_len, "setting", &setting_obj, &setting_len)) {
+        scope_start = setting_obj;
+        scope_len = setting_len;
+    }
+
+    /* Step 2: Apply Safe-Mode defaults cleanly before reading optional JSON overrides */
     char tmp[64];
-    size_t size_val = 0;
+    size_t size_val = 0U;
     bool bool_val = false;
 
     memset(out_config, 0, sizeof(*out_config));
@@ -479,24 +875,25 @@ bool log_fallback_parse_config_json(
     out_config->use_colors = true;
     out_config->loaded_from_data = false;
 
-    if (json_get_string(scope, "id", tmp, sizeof(tmp))) {
+    /* Step 3: Extract identifiers, filesystem paths, byte caps, and severity cutoffs */
+    if (json_get_string_span(scope_start, scope_len, "id", tmp, sizeof(tmp))) {
         str_safe_copy(out_config->profile_name, tmp, sizeof(out_config->profile_name));
     }
-    if (json_get_string(scope, "log_dir", tmp, sizeof(tmp))) {
+    if (json_get_string_span(scope_start, scope_len, "log_dir", tmp, sizeof(tmp))) {
         str_safe_copy(out_config->log_dir, tmp, sizeof(out_config->log_dir));
     }
-    if (json_get_string(scope, "base_filename", tmp, sizeof(tmp))) {
+    if (json_get_string_span(scope_start, scope_len, "base_filename", tmp, sizeof(tmp))) {
         str_safe_copy(out_config->base_filename, tmp, sizeof(out_config->base_filename));
     }
 
-    if (json_get_size_t(scope, "max_file_size_bytes", &size_val)) {
+    if (json_get_size_t_span(scope_start, scope_len, "max_file_size_bytes", &size_val)) {
         out_config->max_file_size_bytes = size_val;
     }
-    if (json_get_size_t(scope, "max_rotated_files", &size_val)) {
+    if (json_get_size_t_span(scope_start, scope_len, "max_rotated_files", &size_val)) {
         out_config->max_rotated_files = size_val;
     }
 
-    if (json_get_string(scope, "min_severity", tmp, sizeof(tmp))) {
+    if (json_get_string_span(scope_start, scope_len, "min_severity", tmp, sizeof(tmp))) {
         log_severity_t parsed_sev;
         if (log_fallback_severity_from_string(tmp, &parsed_sev)) {
             out_config->min_severity = parsed_sev;
@@ -516,16 +913,17 @@ bool log_fallback_parse_config_json(
         }
     }
 
-    if (json_get_bool(scope, "save_by_category", &bool_val)) {
+    if (json_get_bool_span(scope_start, scope_len, "save_by_category", &bool_val)) {
         out_config->save_by_category = bool_val;
     }
-    if (json_get_bool(scope, "echo_to_console", &bool_val)) {
+    if (json_get_bool_span(scope_start, scope_len, "echo_to_console", &bool_val)) {
         out_config->echo_to_console = bool_val;
     }
-    if (json_get_bool(scope, "use_colors", &bool_val)) {
+    if (json_get_bool_span(scope_start, scope_len, "use_colors", &bool_val)) {
         out_config->use_colors = bool_val;
     }
 
+    /* Step 4: Enforce hard Layer 0 disk rotation and non-zero byte boundaries */
     if (out_config->max_file_size_bytes == 0U ||
         out_config->max_rotated_files == 0U ||
         out_config->max_rotated_files > LOG_FB_MAX_ROTATION_CAP) {
@@ -543,6 +941,33 @@ bool log_fallback_parse_config_json(
     }
 
     return true;
+}
+
+/**
+ * @brief Parses a JSON "setting" payload into a validated `log_config_t`.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Reads log folders, file caps, and severity filters from NUL-terminated JSON text.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Convenience NUL-terminated adapter delegating strictly to `log_fallback_parse_config_span()`,
+ * reporting failure tripwires cleanly to callers without mutating global `.bss` state.
+ *
+ * @param[in]  scope        NUL-terminated JSON payload ("setting" block or body).
+ * @param[out] out_config   Populated configuration structure.
+ * @param[out] out_tripwire Optional failure tripwire enum code (may be NULL).
+ * @param[out] err_buf      Optional human-readable error message buffer (may be NULL).
+ * @param[in]  err_cap      Capacity of `err_buf` in bytes.
+ * @return true if attributes parsed and validated within bounds; false otherwise.
+ */
+bool log_fallback_parse_config_json(
+    const char *scope,
+    log_config_t *out_config,
+    log_tripwire_t *out_tripwire,
+    char *err_buf,
+    size_t err_cap
+) {
+    return log_fallback_parse_config_span(scope, 0U, out_config, out_tripwire, err_buf, err_cap);
 }
 
 /*
@@ -624,102 +1049,17 @@ bool log_fallback_get_rom_info(log_fallback_rom_info_t *out_info)
 }
 
 /**
- * @brief Internal ROM hydration cog with selectable side-effect telemetry recording.
- */
-static bool log_fallback_load_rom_profile_internal(
-    const char *profile_name,
-    log_config_t *out_config,
-    bool update_telemetry
-) {
-    if (out_config == NULL) {
-        return false;
-    }
-
-    char target_id[64];
-    if (profile_name == NULL || profile_name[0] == '\0') {
-        const char *menu_json = NULL;
-        size_t menu_len = 0;
-        if (!log_fallback_get_rom_asset("manifest", &menu_json, &menu_len)) {
-            return false;
-        }
-
-        master_loader_t menu_loader;
-        if (!master_loader_load_from_memory(&menu_loader, menu_json, menu_len)) {
-            return false;
-        }
-
-        const char *menu_scope = strstr(menu_loader.body_start, "\"menu\"");
-        if (menu_scope == NULL) {
-            menu_scope = menu_loader.body_start;
-        }
-
-        if (!json_get_string(menu_scope, "active_setting", target_id, sizeof(target_id))) {
-            if (!json_get_string(menu_scope, "default_setting", target_id, sizeof(target_id))) {
-                return false;
-            }
-        }
-    } else {
-        str_safe_copy(target_id, profile_name, sizeof(target_id));
-    }
-
-    if (str_case_eq(target_id, "manifest") ||
-        str_case_eq(target_id, "severity_weights") ||
-        str_case_eq(target_id, "engine_channels") ||
-        str_case_eq(target_id, "game_channels")) {
-        return false;
-    }
-
-    const char *prof_json = NULL;
-    size_t prof_len = 0;
-    if (!log_fallback_get_rom_asset(target_id, &prof_json, &prof_len)) {
-        return false;
-    }
-
-    master_loader_t prof_loader;
-    if (!master_loader_load_from_memory(&prof_loader, prof_json, prof_len)) {
-        return false;
-    }
-
-    const char *setting_scope = strstr(prof_loader.body_start, "\"setting\"");
-    if (setting_scope == NULL) {
-        setting_scope = prof_loader.body_start;
-    }
-
-    if (!log_fallback_parse_config_json(setting_scope, out_config, NULL, NULL, 0U)) {
-        return false;
-    }
-
-    if (out_config->log_dir[0] == '\0' || out_config->base_filename[0] == '\0') {
-        return false;
-    }
-
-    /* Critical Provenance Invariant: Offline ROM profiles NEVER claim live disk provenance */
-    out_config->loaded_from_data = false;
-
-    if (update_telemetry) {
-        s_fb.rom_hydrated = true;
-        str_safe_copy(
-            s_fb.active_rom_profile,
-            (out_config->profile_name[0] != '\0') ? out_config->profile_name : target_id,
-            sizeof(s_fb.active_rom_profile)
-        );
-    }
-
-    return true;
-}
-
-/**
- * @brief Hydrates a log_config_t directly from compiled-in .rodata ROM assets.
+ * @brief Hydrates a `log_config_t` directly from compiled-in `.rodata` ROM assets.
  *
  * ### For Game Designers & Non-Programmers:
  * Loads official telemetry presets directly from compiled-in engine ROM when the
  * disk configuration directories are offline or unavailable.
  *
  * ### For Systems Programmers & Engine Architects:
- * Feeds embedded ROM JSON into master_loader_load_from_memory() and parses cleanly
- * via log_fallback_parse_config_json(), enforcing loaded_from_data == false.
+ * Delegates to `log_fallback_load_rom_profile_internal()` with `update_telemetry = true`,
+ * marking `s_fb.rom_hydrated` and enforcing `loaded_from_data == false`.
  *
- * @param[in]  profile_name Profile ID (or NULL to resolve ROM manifest's active_setting).
+ * @param[in]  profile_name Profile ID (or NULL to resolve ROM manifest's `active_setting`).
  * @param[out] out_config   Populated configuration structure.
  * @return true if ROM manifest/profile parsed cleanly; false otherwise.
  */
@@ -737,102 +1077,6 @@ cascade compact floppy archives cleanly, and drain entries for primary handoff.
 */
 
 /**
- * @brief Normalizes log_dir inside repository build layouts to prevent root pollution.
- */
-static void log_fb_resolve_safe_dir(log_config_t *cfg)
-{
-    if (cfg == NULL) {
-        return;
-    }
-
-    if (strcmp(cfg->log_dir, "logs") == 0) {
-        struct stat st_build;
-        if (stat("build", &st_build) == 0 && S_ISDIR(st_build.st_mode)) {
-            str_safe_copy(cfg->log_dir, "build/logs", sizeof(cfg->log_dir));
-        }
-    } else if (strncmp(cfg->log_dir, "build/logs", 10) == 0) {
-        struct stat st_build;
-        if (stat("build", &st_build) != 0 || !S_ISDIR(st_build.st_mode)) {
-            if (fs_file_exists("CTestTestfile.cmake") || fs_file_exists("CMakeCache.txt")) {
-                str_safe_copy(cfg->log_dir, "logs", sizeof(cfg->log_dir));
-            }
-        }
-    }
-}
-
-/**
- * @brief Rotates the compact Safe-Mode disk archive stream if size cap is reached.
- */
-static void log_fb_rotate_disk_if_needed(void)
-{
-    if (s_fb.file == NULL || s_fb.config.max_file_size_bytes == 0U ||
-        s_fb.current_bytes < s_fb.config.max_file_size_bytes) {
-        return;
-    }
-
-    fclose(s_fb.file);
-    s_fb.file = NULL;
-
-    size_t max_files = s_fb.config.max_rotated_files;
-    if (max_files == 0U) {
-        max_files = 1U;
-    } else if (max_files > LOG_FB_MAX_ROTATION_CAP) {
-        max_files = LOG_FB_MAX_ROTATION_CAP;
-    }
-
-    char base_path[LOG_FB_PATH_CAP];
-    char src_path[LOG_FB_PATH_CAP + 16U];
-    char dst_path[LOG_FB_PATH_CAP + 16U];
-
-    str_path_join(base_path, sizeof(base_path), s_fb.config.log_dir, s_fb.config.base_filename);
-
-    snprintf(dst_path, sizeof(dst_path), "%s.%zu", base_path, max_files);
-    remove(dst_path);
-
-    for (size_t idx = max_files; idx > 1U; idx--) {
-        snprintf(src_path, sizeof(src_path), "%s.%zu", base_path, idx - 1U);
-        snprintf(dst_path, sizeof(dst_path), "%s.%zu", base_path, idx);
-        rename(src_path, dst_path);
-    }
-
-    snprintf(dst_path, sizeof(dst_path), "%s.1", base_path);
-    rename(base_path, dst_path);
-
-    s_fb.file = fopen(base_path, "a");
-    s_fb.current_bytes = 0;
-
-    if (s_fb.file == NULL) {
-        s_fb.disk_fault = true;
-        s_fb.active_sink = s_fb.config.echo_to_console
-            ? LOG_FALLBACK_SINK_RING_AND_STDERR
-            : LOG_FALLBACK_SINK_RING_ONLY;
-        debug_fallback_record_fault(
-            "log.fallback",
-            "Fallback log archive rotation failed opening new file stream",
-            __FILE__,
-            __LINE__,
-            "test_log_fallback_unit.c:Section4"
-        );
-        debug_fallback_finish_with_fallback(
-            "log.fallback",
-            "Degraded Safe-Mode rotation sink cleanly to static .bss RAM ring/stderr"
-        );
-    }
-}
-
-/**
- * @brief Pushes an entry into the circular Tier-0 .bss FIFO black-box queue.
- */
-static void log_fb_ring_push(const log_entry_t *entry)
-{
-    s_fb.ring[s_fb.ring_head] = *entry;
-    s_fb.ring_head = (s_fb.ring_head + 1U) % LOG_FALLBACK_RING_CAPACITY;
-    if (s_fb.ring_count < LOG_FALLBACK_RING_CAPACITY) {
-        s_fb.ring_count++;
-    }
-}
-
-/**
  * @brief Captures a telemetry message inside the Tier-0 BIOS Safe-Mode black box.
  *
  * ### For Game Designers & Non-Programmers:
@@ -840,9 +1084,14 @@ static void log_fb_ring_push(const log_entry_t *entry)
  * log system finishes initializing or when storage is read-only.
  *
  * ### For Systems Programmers & Engine Architects:
- * Self-arms BIOS ring on first invocation if not yet booted, preserves sequence
- * ordering, mirrors critical/diskless errors to stderr, and writes compact
- * Safe-Mode files with automatic disk-fault degradation.
+ * Self-arms BIOS ring on first invocation if not yet booted, preserves monotonic
+ * Safe-Mode sequence numbers, mirrors critical/diskless errors to stderr, and writes
+ * compact Safe-Mode files with automatic disk-fault degradation via `debug_fallback`.
+ *
+ * @triggers
+ * - On `fputs()` failure or post-rotation `fopen()` error: records fault into
+ *   `debug_fallback_record_fault("log.fallback", ...)` and transitions active sink to
+ *   `LOG_FALLBACK_SINK_RING_AND_STDERR`.
  *
  * @param[in] severity Log urgency level.
  * @param[in] category Thematic log channel.
@@ -865,6 +1114,7 @@ uint64_t log_fallback_record(
     const char *fmt,
     ...
 ) {
+    /* Step 1: Enforce reentrancy lock, valid enum range, and auto-arm Tier-0 BIOS */
     if (s_fb.in_record) {
         return 0;
     }
@@ -883,6 +1133,7 @@ uint64_t log_fallback_record(
     s_fb.sequence_counter++;
     uint64_t seq = s_fb.sequence_counter;
 
+    /* Step 2: Populate fixed-width record with microsecond monotonic clock and clamped grade */
     log_entry_t entry;
     memset(&entry, 0, sizeof(entry));
     entry.sequence_id = seq;
@@ -916,6 +1167,7 @@ uint64_t log_fallback_record(
         str_safe_copy(entry.message, "(null format string)", sizeof(entry.message));
     }
 
+    /* Step 3: Commit entry into static FIFO ring and format bounded text line */
     log_fb_ring_push(&entry);
 
     char line_buf[LOG_MAX_LINE_BUFFER];
@@ -937,6 +1189,7 @@ uint64_t log_fallback_record(
         entry.message
     );
 
+    /* Step 4: Emit to optional Safe-Mode disk archive (degrading cleanly on write error) + stderr */
     if (written > 0) {
         size_t write_len = ((size_t)written < sizeof(line_buf))
             ? (size_t)written
@@ -984,65 +1237,44 @@ uint64_t log_fallback_record(
  * Views early-boot backup messages without erasing them from Safe-Mode memory.
  *
  * ### For Systems Programmers & Engine Architects:
- * Copies oldest-first entries out of the static .bss circular buffer cleanly.
+ * Copies up to `max_entries` oldest-first entries out of `s_fb.ring` via shared
+ * `log_fb_copy_ring_entries()` without advancing queue counters.
  *
  * @param[out] out_entries Caller array receiving copies of buffered entries.
- * @param[in]  max_entries Maximum element capacity of out_entries.
+ * @param[in]  max_entries Maximum element capacity of `out_entries`.
  * @return Number of entries copied.
  */
 size_t log_fallback_peek_entries(log_entry_t *out_entries, size_t max_entries)
 {
-    if (out_entries == NULL || max_entries == 0U || s_fb.ring_count == 0U) {
+    if (out_entries == NULL) {
         return 0U;
     }
 
-    size_t count = (s_fb.ring_count < max_entries) ? s_fb.ring_count : max_entries;
-    size_t oldest =
-        (s_fb.ring_head + LOG_FALLBACK_RING_CAPACITY - s_fb.ring_count) %
-        LOG_FALLBACK_RING_CAPACITY;
-
-    for (size_t i = 0; i < count; i++) {
-        size_t idx = (oldest + i) % LOG_FALLBACK_RING_CAPACITY;
-        out_entries[i] = s_fb.ring[idx];
-    }
-
-    return count;
+    return log_fb_copy_ring_entries(out_entries, max_entries);
 }
 
 /**
  * @brief Drains buffered Tier-0 Safe-Mode entries in FIFO order for primary handoff.
  *
  * ### For Game Designers & Non-Programmers:
- * Hands off early boot messages stored in Safe Mode to the main log file.
+ * Hands off early boot messages stored in Safe Mode to the main log file cleanly.
  *
  * ### For Systems Programmers & Engine Architects:
- * Consumes up to max_entries in oldest-first order, updating ring_count and
- * total_replayed so log_init() can flush boot logs cleanly into s_log.file.
+ * Unrolls oldest-first entries via `log_fb_copy_ring_entries()` and decrements
+ * `s_fb.ring_count` while incrementing `s_fb.total_replayed` for `log_init()` replay.
  *
- * @param[out] out_entries Caller array receiving entries (or NULL to discard).
- * @param[in]  max_entries Maximum capacity of out_entries.
+ * @param[out] out_entries Caller array receiving entries (or NULL to discard cleanly).
+ * @param[in]  max_entries Maximum capacity of `out_entries`.
  * @return Number of entries drained.
  */
 size_t log_fallback_drain_entries(log_entry_t *out_entries, size_t max_entries)
 {
-    if (max_entries == 0U || s_fb.ring_count == 0U) {
-        return 0U;
+    size_t count = log_fb_copy_ring_entries(out_entries, max_entries);
+    if (count > 0U) {
+        s_fb.ring_count -= count;
+        s_fb.total_replayed += (uint64_t)count;
     }
 
-    size_t count = (s_fb.ring_count < max_entries) ? s_fb.ring_count : max_entries;
-    size_t oldest =
-        (s_fb.ring_head + LOG_FALLBACK_RING_CAPACITY - s_fb.ring_count) %
-        LOG_FALLBACK_RING_CAPACITY;
-
-    if (out_entries != NULL) {
-        for (size_t i = 0; i < count; i++) {
-            size_t idx = (oldest + i) % LOG_FALLBACK_RING_CAPACITY;
-            out_entries[i] = s_fb.ring[idx];
-        }
-    }
-
-    s_fb.ring_count -= count;
-    s_fb.total_replayed += (uint64_t)count;
     return count;
 }
 
@@ -1058,7 +1290,16 @@ limits, and compiled-in .rodata ROM health cleanly with zero side effects.
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 4.1: Machine Self-Audit & Pre-Flight Validation Tripwires
+Sub-Assembly 4.1: Contract, Input & Cog Verification Cogs
+--------------------------------------------------------------------------------
+(Static compile-time contracts, provenance invariants, and pure shared parser
+bounds are verified directly via pre-flight diagnostics in Sub-Assembly 4.2.)
+--------------------------------------------------------------------------------
+*/
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.2: Machine Self-Audit & Pre-Flight Validation Tripwires
 @triggers
   - Validates fallback monolith + floppy preset + 10 compiled-in .rodata ROMs
   - Invoked by log.c Block 4 preflight/audit & "log.fallback_bios" debug probe
@@ -1174,7 +1415,7 @@ diag_result_t log_fallback_preflight(void)
 
         master_loader_t loader;
         if (!master_loader_load_from_memory(&loader, (const char *)asset->data, asset->size) ||
-            !loader_is_loaded(&loader) ||
+            !loader_is_ready(&loader) ||
             !loader_header_is_5block(&loader.header) ||
             loader.header.schema_id[0] == '\0') {
             res.passed = false;
@@ -1487,6 +1728,9 @@ bool log_fallback_boot(const log_config_t *opt_cfg)
     if (opt_cfg == NULL) {
         s_fb.config = s_log_floppy_template;
         s_fb.config.loaded_from_data = false;
+        if (io_fallback_is_disk_read_only()) {
+            s_fb.disk_fault = true;
+        }
         s_fb.active_sink = LOG_FALLBACK_SINK_RING_AND_STDERR;
         s_fb.booted = true;
         return true;
@@ -1503,6 +1747,15 @@ bool log_fallback_boot(const log_config_t *opt_cfg)
         s_fb.config.max_rotated_files = LOG_FALLBACK_FLOPPY_MAX_FILES;
     }
     if (s_fb.config.log_dir[0] == '\0' || s_fb.config.base_filename[0] == '\0') {
+        s_fb.disk_fault = true;
+        s_fb.active_sink = s_fb.config.echo_to_console
+            ? LOG_FALLBACK_SINK_RING_AND_STDERR
+            : LOG_FALLBACK_SINK_RING_ONLY;
+        s_fb.booted = true;
+        return true;
+    }
+
+    if (io_fallback_is_disk_read_only()) {
         s_fb.disk_fault = true;
         s_fb.active_sink = s_fb.config.echo_to_console
             ? LOG_FALLBACK_SINK_RING_AND_STDERR

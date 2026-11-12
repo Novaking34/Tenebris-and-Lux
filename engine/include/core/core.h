@@ -15,7 +15,7 @@ BLOCK 1: METADATA BLOCK
 @system        Master Core Foundation Utilities Umbrella Subsystem
 @role          Master aggregation umbrella header for the entire Core Foundation stratum.
 @invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               2. Progressive ISO C23 target with graceful C17/C11 floor (-Wall -Wextra -Wpedantic) and C++20/C++17 header compatibility.
                3. All enums and structs must possess explicit non-anonymous tags.
                4. Complete presentation decoupling: Pure mathematical and monotonic timing state.
                5. Quarantined fallback isolation: Fallback profiles only used when data is absent.
@@ -88,6 +88,10 @@ Tier 3: Internal Engine Foundation Headers
 #include "core/formula_eval.h"
 #include "core/formula_eval_fallback.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.1: Pre-Conditions, Constants & Buffer Limits
@@ -110,16 +114,16 @@ heap allocations (ALLOC_ZERO_HEAP) in .rodata and .bss.
 #define CORE_TARGET_FPS_DEFAULT   PACER_TARGET_FPS_DEFAULT
 
 /** Canonical moral sway continuum absolute floor (-100, Pure Tenebris). */
-#define CORE_SWAY_MIN             MATH_CANONICAL_SWAY_MIN
+#define CORE_SWAY_MIN             MATH_FALLBACK_SWAY_MIN
 
 /** Canonical moral sway continuum absolute ceiling (+100, Pure Lux). */
-#define CORE_SWAY_MAX             MATH_CANONICAL_SWAY_MAX
+#define CORE_SWAY_MAX             MATH_FALLBACK_SWAY_MAX
 
 /** Canonical weapon resonance charge absolute floor (0). */
-#define CORE_RESONANCE_MIN        MATH_CANONICAL_RESONANCE_MIN
+#define CORE_RESONANCE_MIN        MATH_FALLBACK_RESONANCE_MIN
 
 /** Canonical weapon resonance charge absolute ceiling (100). */
-#define CORE_RESONANCE_MAX        MATH_CANONICAL_RESONANCE_MAX
+#define CORE_RESONANCE_MAX        MATH_FALLBACK_RESONANCE_MAX
 
 /** Reference canonical logical viewport width in pixels (16:9 aspect). */
 #define CORE_LOGICAL_WIDTH        640
@@ -295,6 +299,10 @@ Mission: Direct callers to constituent subsystem lifecycle init and teardown hoo
 None. (Stateless foundation layer / pure stack-allocated execution).
 --------------------------------------------------------------------------------
 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* TENEBRIS_LUX_CORE_H */
 

@@ -15,7 +15,7 @@ BLOCK 1: METADATA BLOCK
 @system        Central Manifest Registry & Pre-Flight DAG Policy Engine
 @role          Metadata Types, DAG Dependency Graph & Pre-Flight Contracts
 @invariants    1. Zero dynamic heap allocations (ALLOC_ZERO_HEAP: stack/static only).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
+               2. Progressive ISO C23 target with graceful C17/C11 floor (-Wall -Wextra -Wpedantic) and C++20/C++17 header compatibility.
                3. Static allocation bounds: Capacity hard-capped at MANIFEST_MAX_MODULES.
                4. Severity taxonomy: PASS < INFO < WARNING < CRITICAL < FATAL.
                5. Fatal errors unconditionally halt boot; critical faults downgrade.
@@ -65,7 +65,8 @@ Tier 3: Internal Engine Foundation Headers (None - Bedrock Root)
 --------------------------------------------------------------------------------
 */
 
-/* --- Tier 1: Standard ISO C11 Library Headers --- */
+/* --- Tier 1: Standard ISO C Library Headers --- */
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -74,17 +75,114 @@ Tier 3: Internal Engine Foundation Headers (None - Bedrock Root)
 
 /* --- Tier 3: Internal Engine Foundation Headers (None - Bedrock Root) --- */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Pre-Conditions, Constants & Buffer Limits
+Sub-Assembly 2.1: Pre-Conditions, Progressive Standard Macros & Buffer Limits
 --------------------------------------------------------------------------------
-Compile-time sizing limits for registry module nodes, dependencies, and rules.
-For Designers: Bounds ensure the engine registers up to 32 major game systems,
-each with up to 8 core rules and 4 prerequisite dependencies, verifying all are
-ready before the first screen appears.
-For Programmers: Guarantees 100% zero-heap allocation (ALLOC_ZERO_HEAP) in .rodata.
+Compile-time sizing limits for registry module nodes, dependencies, rules, and
+Cornerstone's "Fall-Down" ISO C23 / C17 / C11 + C++20 / C++17 capability macros.
+
+For Designers:
+Allows Cornerstone to take advantage of modern compiler safety checks on current
+hardware while stepping cleanly onto older systems without legacy clutter. Also
+bounds the engine registry to up to 32 major systems, 8 core rules, and 4 links.
+
+For Programmers:
+- Guarantees 100% zero-heap allocation (ALLOC_ZERO_HEAP) in .rodata and .bss.
+- Exposes CS_C_STD_TIER (23/17/11/0) and CS_CXX_STD_TIER (20/17/11/0) plus
+  graceful ISO attribute fall-down macros (CS_NODISCARD, CS_MAYBE_UNUSED,
+  CS_FALLTHROUGH, CS_UNREACHABLE, CS_ALIGNOF, CS_NORETURN, CS_STATIC_ASSERT,
+  CS_HAS_EMBED) compiled cleanly without extensions under -Wpedantic.
 --------------------------------------------------------------------------------
 */
+
+/** Active ISO C standard tier compiled for this translation unit (23, 17, 11, or 0 in C++). */
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#    define CS_C_STD_TIER 23
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201710L
+#    define CS_C_STD_TIER 17
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#    define CS_C_STD_TIER 11
+#else
+#    define CS_C_STD_TIER 0
+#endif
+
+/** Active ISO C++ standard tier when included from C++ (20, 17, 11, or 0 in C). */
+#if defined(__cplusplus) && __cplusplus >= 202002L
+#    define CS_CXX_STD_TIER 20
+#elif defined(__cplusplus) && __cplusplus >= 201703L
+#    define CS_CXX_STD_TIER 17
+#elif defined(__cplusplus)
+#    define CS_CXX_STD_TIER 11
+#else
+#    define CS_CXX_STD_TIER 0
+#endif
+
+/** Marks return values that callers MUST inspect (C23/C++17+ [[nodiscard]], C11/17 floor empty). */
+#if (CS_CXX_STD_TIER >= 17) || (CS_C_STD_TIER >= 23)
+#    define CS_NODISCARD [[nodiscard]]
+#else
+#    define CS_NODISCARD
+#endif
+
+/** Silences unused-entity diagnostics cleanly on intentional dormant/platform helpers. */
+#if (CS_CXX_STD_TIER >= 17) || (CS_C_STD_TIER >= 23)
+#    define CS_MAYBE_UNUSED [[maybe_unused]]
+#else
+#    define CS_MAYBE_UNUSED
+#endif
+
+/** Annotates explicit switch-case fall-through cleanly under -Wextra -Wpedantic. */
+#if (CS_CXX_STD_TIER >= 17) || (CS_C_STD_TIER >= 23)
+#    define CS_FALLTHROUGH [[fallthrough]]
+#elif defined(__GNUC__) && (__GNUC__ >= 7)
+#    define CS_FALLTHROUGH __attribute__((fallthrough))
+#elif defined(__clang__) && defined(__has_attribute)
+#    if __has_attribute(fallthrough)
+#        define CS_FALLTHROUGH __attribute__((fallthrough))
+#    else
+#        define CS_FALLTHROUGH ((void)0)
+#    endif
+#else
+#    define CS_FALLTHROUGH ((void)0)
+#endif
+
+/** Marks statically unreachable execution branches cleanly across C23/C17/C11/C++. */
+#if (CS_C_STD_TIER >= 23) && defined(unreachable)
+#    define CS_UNREACHABLE() unreachable()
+#elif defined(__GNUC__) || defined(__clang__)
+#    define CS_UNREACHABLE() __builtin_unreachable()
+#else
+#    define CS_UNREACHABLE() ((void)0)
+#endif
+
+/** Portable alignment query resolving to C23/C++ alignof vs C11/C17 _Alignof without <stdalign.h>. */
+#if defined(__cplusplus) || (CS_C_STD_TIER >= 23)
+#    define CS_ALIGNOF(type) alignof(type)
+#else
+#    define CS_ALIGNOF(type) _Alignof(type)
+#endif
+
+/** Portable non-returning function specifier (C23/C++ [[noreturn]] vs C11/C17 _Noreturn). */
+#if defined(__cplusplus) || (CS_C_STD_TIER >= 23)
+#    define CS_NORETURN [[noreturn]]
+#else
+#    define CS_NORETURN _Noreturn
+#endif
+
+/** Portable compile-time assertion (C23/C++ keyword vs C11/C17 <assert.h> macro). */
+#define CS_STATIC_ASSERT(cond, msg) static_assert((cond), msg)
+
+/** Non-zero when C23 #embed directive is natively available for binary/text ROM embedding. */
+#ifdef __has_embed
+#    define CS_HAS_EMBED 1
+#else
+#    define CS_HAS_EMBED 0
+#endif
 
 /** Maximum number of registered engine/game subsystem metadata nodes. */
 #define MANIFEST_MAX_MODULES      32
@@ -286,7 +384,7 @@ Guarantees zero heap, pure reentrancy, and fast pre-flight assertion checks.
  * @param[in] sev Severity value to check.
  * @return true if severity is within [SEVERITY_PASS .. SEVERITY_FATAL].
  */
-static inline bool diag_severity_is_valid(diag_severity_t sev) {
+CS_NODISCARD static inline bool diag_severity_is_valid(diag_severity_t sev) {
     return sev >= SEVERITY_PASS && sev <= SEVERITY_FATAL;
 }
 
@@ -296,7 +394,7 @@ static inline bool diag_severity_is_valid(diag_severity_t sev) {
  * @param[in] res Pointer to diagnostic result record.
  * @return true if res is non-NULL, passed is true, and severity is SEVERITY_PASS.
  */
-static inline bool diag_result_is_pass(const diag_result_t *res) {
+CS_NODISCARD static inline bool diag_result_is_pass(const diag_result_t *res) {
     return (res != NULL) && res->passed && (res->severity == SEVERITY_PASS);
 }
 
@@ -306,7 +404,7 @@ static inline bool diag_result_is_pass(const diag_result_t *res) {
  * @param[in] layer Layer value to check.
  * @return true if layer is within [LAYER_0_CORE_UTIL .. LAYER_4_TESTS].
  */
-static inline bool module_layer_is_valid(module_layer_t layer) {
+CS_NODISCARD static inline bool module_layer_is_valid(module_layer_t layer) {
     return layer >= LAYER_0_CORE_UTIL && layer < LAYER_COUNT;
 }
 
@@ -316,7 +414,7 @@ static inline bool module_layer_is_valid(module_layer_t layer) {
  * @param[in] policy Memory allocation policy to check.
  * @return true if policy is within [ALLOC_ZERO_HEAP .. ALLOC_DYNAMIC].
  */
-static inline bool alloc_policy_is_valid(alloc_policy_t policy) {
+CS_NODISCARD static inline bool alloc_policy_is_valid(alloc_policy_t policy) {
     return policy >= ALLOC_ZERO_HEAP && policy <= ALLOC_DYNAMIC;
 }
 
@@ -601,5 +699,9 @@ open/close file streams, and tear down hardware handles.
 None. (Stateless module / pure stack-allocated execution).
 --------------------------------------------------------------------------------
 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* TENEBRIS_LUX_CORE_MANIFEST_H */

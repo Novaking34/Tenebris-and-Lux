@@ -1,68 +1,66 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          log.c
-@id            log.engine
+@file          engine/src/log/log.c
+@id            cog.log
 @layer         Layer 0: Core Utilities
+@archetype     operational | stateful
 @version       0.1.1-dev
 @interface_rev Rev 5
-@date          2026-11-10
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Forensic Telemetry & Flight Recorder Engine
-@role          High-performance, zero-heap logging, telemetry, and forensic
-               flight recorder subsystem delivering structured, machine-greppable
-               audit trails with ISO 8601 timestamps, microsecond monotonic deltas,
-               gradient moral grading, automated size rotation, and in-memory
-               circular ring buffering for live viewport HUD inspection.
-@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
-               3. Monotonic sequence counter: ID strictly increments per entry.
-               4. Gradient grade strictly bounded in [-1.0f, +1.0f] <-> [-100, +100].
-               5. Fixed-width token columns guarantee deterministic regex/grep parsing.
-               6. Automated rotation bounds: active log file never exceeds byte threshold.
-               7. Static memory boundary: in-flight ring buffer never dynamic allocates.
-               8. Universal 5-Block Lifecycle Protocol enforced across header and source.
+@role          Runtime Engine & Chassis: Circular ring storage, disk stream
+               rotation, VFS config hydration, and validation probe dispatch.
+@maturity      Rev 5 Baseline | Dual-sink rotation & BIOS ROM downgrade verified; watch 16 KiB VFS scratch.
+@chassis       zero-heap | .data ~24.7 KiB (s_log+tables) + .bss 16.4 KiB (s_log_vfs_scratch) + .rodata ~8.6 KiB.
+@scale         O(1) log append & rotation check; O(k) ring copy across k entries; stack line framing <= 1 KiB.
+@seams         in: telemetry/<profile>.json, rom://telemetry | uses: cog.log.fallback, cog.debug, io/ | probes: log.* -> DEBUG_STEP_AWAIT | dag: core.util.log
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Consolidated rotate_archive_stream() bounds master and categorized disk streams cleanly.
+               3. Corrupt/offline config files trip telemetry validation probes and downgrade to cog.log.fallback ROMs.
+               4. log_audit() snapshots and restores runtime state without dropping active boot provenance.
 
 PURPOSE & ARCHITECTURAL ROLE:
-  Forensic flight recorder and diagnostic audit pipeline for the Tenebris and Lux
-  tactical RPG simulation engine.
-  Resolves layered telemetry settings from engine/config/diagnostics/telemetry/
-  (via the VFS "config" domain: game/config/ -> engine/config/ -> linkers)
-  with quarantined emergency fallback protection (log_fallback + debug_fallback).
+  Implements the live Layer 0 telemetry engine: populates s_log circular queues,
+  resolves layered telemetry JSON manifests through VFS routes with Safe-Mode
+  downgrade, rotates bounded log archives, and dispatches probes on I/O faults.
 
   ### For Game Designers & Non-Programmers:
-  Acts as the black-box flight recorder of the game. Every combat action, stance
-  shift, and narrative dialogue prompt is recorded with precise moral sway and
-  timing metrics. When Debug Mode is active or configuration files are broken,
-  the subsystem automatically logs diagnostic telemetry banners and alerts the
-  debugger without crashing the game.
+  Protects runtime observability even if disk permissions fail or presets are
+  misconfigured: early BIOS messages replay automatically once disk streams open,
+  while broken telemetry files downgrade safely and latch debugger alerts instead
+  of crashing play sessions.
 
   ### For Systems Programmers & Engine Architects:
-  - 100% Zero-Heap Memory Model (ALLOC_ZERO_HEAP): All descriptors live in .rodata
-    and all runtime queues/buffers reside in static .bss or caller stack frames.
-  - Table-driven severity/category descriptors and VFS candidate resolution tables
-    allow taxonomy extensions without rewriting conditional branches.
-  - Consolidated archive rotation cog (rotate_archive_stream) eliminates duplicated
-    rollover logic between master logs and categorized streams.
-  - Integrated Debug Mode & Fallback diagnostics: tripwires latch local state and
-    forward directly to debug_trap_tripwire() when debug_is_active(), while
-    pre-flight checks validate both log_fallback_audit() and debug_fallback_audit().
+  - Controlled Memory Chassis: .data 24,672 B (s_log) and .bss 16,384 B
+    (s_log_vfs_scratch) dominate static footprint; candidate target for shared
+    VFS scratch pooling once io/ Master Loader consolidation completes.
+  - Bottleneck & Headroom: Synchronized fflush() on fatal/error tiers; ring wrap
+    is branchless modulo indexing under fixed capacity.
+  - Probe & Config Wiring: Shares log_fallback_parse_config_json() cleanly and
+    escalates failed preflight probes via debug_trigger_probe().
 ================================================================================
 */
 
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200809L
+#endif
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / MODULE ONTOLOGY & 3-TIER INCLUDES
-Stratum: Layer 0 (Core Utilities) | Machine: core.util.log
+BLOCK 2: OPENING BLOCK
+( 3-Tier Includes, Private Ontology, Unified Memory Chassis & Inline Frontier )
 ================================================================================
-Mission: Telemetry limits, 3-tier downward include hierarchy, table-driven
-taxonomy descriptors, encapsulated singleton state, and pre-conditional helpers.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.log
+Mission:       Bind deps, log/debug setup, private structs, unified
+               .bss/.rodata chassis, and support helpers.
 ================================================================================
 */
 
@@ -71,12 +69,13 @@ taxonomy descriptors, encapsulated singleton state, and pre-conditional helpers.
 Include Hierarchy: 3-Tier Downward Architecture
 --------------------------------------------------------------------------------
 Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Dependencies (None)
+Tier 2: External Library Dependencies (None in Layer 0/1)
 Tier 3: Internal Engine Foundation Headers
 --------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <assert.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -90,10 +89,13 @@ Tier 3: Internal Engine Foundation Headers
 #include <time.h>
 #include <unistd.h>
 
-/* --- Tier 2: External Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None in Layer 0/1) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
+#include "log/log.h"
 #include "core/manifest.h"
+#include "log/log_types.h"
+#include "log/log_fallback.h"
 #include "core/math_utils.h"
 #include "core/string_utils.h"
 #include "core/time_utils.h"
@@ -103,8 +105,6 @@ Tier 3: Internal Engine Foundation Headers
 #include "io/json_utils.h"
 #include "io/master_loader.h"
 #include "io/path_finder.h"
-#include "log/log.h"
-#include "log/log_fallback.h"
 
 /*
 --------------------------------------------------------------------------------
@@ -113,14 +113,33 @@ Sub-Assembly 2.1: Module Manifest Anchor, Category Tags & Compile-Time Constants
 Compile-time bounds for VFS buffer capacities, archive ceilings, and formatting.
 --------------------------------------------------------------------------------
 */
-#define MODULE_ID               "core.util.log"
+/** @brief Canonical manifest identifier registering the primary logger engine. */
+#define MODULE_ID               LOG_MODULE_ID
+/** @brief Default telemetry category used when log.c emits self-diagnostics. */
 #define LOCAL_LOG_CAT           LOG_CAT_LOG
+/** @brief Human-readable module prefix stamped on internal diagnostics. */
 #define LOCAL_MODULE_TAG        "LogEngine"
+/** @brief ANSI escape sequence resetting terminal text attributes. */
 #define ANSI_RESET              "\033[0m"
+/** @brief Maximum rotated telemetry archive generations permitted on disk. */
 #define LOG_MAX_ROTATION_CAP    25U
+/** @brief Maximum expected JSON setting payload size (bytes). */
 #define LOG_SETTING_BUF_CAP     8192U
+/** @brief Shared static VFS JSON read buffer capacity (bytes). */
 #define LOG_MANIFEST_BUF_CAP    16384U
+/** @brief Fixed stack buffer capacity (bytes) for resolved telemetry file paths. */
 #define LOG_PATH_BUF_CAP        512U
+/** @brief Fixed buffer capacity (bytes) storing latched tripwire diagnostics. */
+#define LOG_TRIPWIRE_MSG_CAP    256U
+
+static_assert(
+    LOG_SETTING_BUF_CAP <= LOG_MANIFEST_BUF_CAP,
+    "LOG_MANIFEST_BUF_CAP must house the largest telemetry setting JSON buffer"
+);
+static_assert(
+    LOG_RING_BUFFER_CAPACITY >= 8U && LOG_MAX_ROTATION_CAP >= 1U && LOG_PATH_BUF_CAP >= 256U,
+    "Telemetry ring, rotation, and path buffer bounds must remain operational"
+);
 
 /*
 --------------------------------------------------------------------------------
@@ -195,8 +214,8 @@ typedef struct log_token_alias {
  * Supports domain-scoped path_finder resolution and legacy path fallback cleanly.
  */
 typedef struct log_vfs_probe {
-    const char *domain;   /**< VFS domain ("config", etc.) or NULL for generic data probe. */
-    const char *template; /**< Relative path or printf format ("%s.json"). */
+    const char *domain;        /**< VFS domain ("config", etc.) or NULL for generic data probe. */
+    const char *path_template; /**< Relative path or printf format ("%s.json"). */
 } log_vfs_probe_t;
 
 /**
@@ -212,24 +231,52 @@ typedef struct log_vfs_probe {
  * including safe_mode provenance and recursive-write reentrancy protection.
  */
 typedef struct log_subsystem_state {
-    log_config_t   config;
-    bool           initialized;
-    bool           safe_mode;
-    bool           in_write;
-    FILE          *file;
-    size_t         current_bytes;
-    uint64_t       sequence_counter;
-    size_t         rotation_count;
-    uint32_t       high_watermark_entries;
-    log_tripwire_t tripwire_status;
-    char           tripwire_details[256];
-    FILE          *cat_files[LOG_CAT_COUNT];
-    size_t         cat_bytes[LOG_CAT_COUNT];
-    log_entry_t    ring_buffer[LOG_RING_BUFFER_CAPACITY];
-    size_t         ring_head;
-    size_t         ring_count;
-    bool           debug_probes_registered;
+    log_config_t   config;                               /**< Active runtime logger config. */
+    bool           initialized;                          /**< True once log_init() succeeded. */
+    bool           safe_mode;                            /**< True when downgraded to Safe-Mode. */
+    bool           in_write;                             /**< Reentrancy lock during disk emit. */
+    FILE          *file;                                 /**< Primary flight-recorder stream. */
+    size_t         current_bytes;                        /**< Bytes written to active file. */
+    uint64_t       sequence_counter;                     /**< Monotonic global entry counter. */
+    size_t         rotation_count;                       /**< Completed archive rotation count. */
+    uint32_t       high_watermark_entries;               /**< Peak ring buffer occupancy seen. */
+    log_tripwire_t tripwire_status;                      /**< Latched fault tripwire code. */
+    char           tripwire_details[LOG_TRIPWIRE_MSG_CAP]; /**< Human-readable tripwire note. */
+    FILE          *cat_files[LOG_CAT_COUNT];             /**< Per-channel split streams. */
+    size_t         cat_bytes[LOG_CAT_COUNT];             /**< Per-channel byte counters. */
+    log_entry_t    ring_buffer[LOG_RING_BUFFER_CAPACITY];/**< Fixed in-memory flight ring. */
+    size_t         ring_head;                            /**< Circular FIFO head index. */
+    size_t         ring_count;                           /**< Valid entries stored in ring. */
+    bool           debug_probes_registered;              /**< True once probes registered in dbg. */
 } log_subsystem_state_t;
+
+/**
+ * @struct log_audit_guard
+ * @brief Stack-scoped runtime state snapshot used by `log_audit()`.
+ *
+ * Preserves active console/severity policy, sequence counters, ring head/count,
+ * and the single ring slot overwritten by Check 3 without duplicating the full
+ * 24 KB `s_log` structure in static `.bss`.
+ */
+typedef struct log_audit_guard {
+    bool           was_initialized;
+    bool           saved_echo;
+    log_severity_t saved_min_severity;
+    uint64_t       saved_sequence_counter;
+    uint32_t       saved_watermark;
+    size_t         saved_rotation_count;
+    size_t         saved_ring_head;
+    size_t         saved_ring_count;
+    log_tripwire_t saved_tripwire_status;
+    log_entry_t    saved_ring_slot;
+} log_audit_guard_t;
+
+/* Forward declarations binding 2.3 validation probes & log_manifest to Block 4.2. */
+diag_result_t log_validate_manifest_contract(void);
+diag_result_t log_validate_setting_contract(void);
+diag_result_t log_validate_rotation_bounds(void);
+diag_result_t log_validate_telemetry_integrity(void);
+diag_result_t log_preflight(void);
 
 /*
 --------------------------------------------------------------------------------
@@ -239,6 +286,7 @@ Immutable taxonomy lookup tables in .rodata and the unified .bss state container
 --------------------------------------------------------------------------------
 */
 
+/** @brief Canonical severity formatting descriptors (.rodata). */
 static const log_severity_desc_t s_severity_table[LOG_SEV_COUNT] = {
     { LOG_SEV_FATAL,    "FATAL",    "FATAL   ", "\033[1;31m", 100U, true  },
     { LOG_SEV_CRITICAL, "CRITICAL", "CRITICAL", "\033[0;31m", 80U,  true  },
@@ -254,11 +302,14 @@ static const log_category_desc_t s_category_table[LOG_CAT_COUNT] = {
     { LOG_CAT_LOG,       "LOG",       "LOG      ", "log"       },
     { LOG_CAT_EVENT,     "EVENT",     "EVENT    ", "event"     },
     { LOG_CAT_MESSAGE,   "MESSAGE",   "MESSAGE  ", "message"   },
-    { LOG_CAT_CHARACTER, "CHARACTER", "CHARACTER", "character" }
+    { LOG_CAT_CHARACTER, "CHARACTER", "CHARACTER", "character" },
+    { LOG_CAT_IO,        "IO",        "IO       ", "io"        }
 };
 
 static const log_token_alias_t s_category_aliases[] = {
-    { "SYSTEM", LOG_CAT_LOG }
+    { "SYSTEM", LOG_CAT_LOG },
+    { "ENG_IO", LOG_CAT_IO  },
+    { "VFS",    LOG_CAT_IO  }
 };
 
 static const log_vfs_probe_t s_manifest_probes[] = {
@@ -351,31 +402,24 @@ static const debug_validation_probe_t s_log_validation_probes[5] = {
     }
 };
 
-static log_subsystem_state_t s_log = {
-    .initialized = false,
-    .safe_mode = false,
-    .in_write = false,
-    .file = NULL,
-    .current_bytes = 0,
-    .sequence_counter = 0,
-    .rotation_count = 0,
-    .high_watermark_entries = 0,
-    .tripwire_status = LOG_TRIPWIRE_CLEAR,
-    .tripwire_details = "All data pipeline tripwires clear.",
-    .cat_files = { NULL },
-    .cat_bytes = { 0 },
-    .ring_head = 0,
-    .ring_count = 0,
-    .debug_probes_registered = false
-};
+/**
+ * @brief Shared static VFS JSON read buffer in .bss (16,384 bytes).
+ *
+ * Reused sequentially by `log_load_config_from_manifest()` (after extracting
+ * stack-local `active_id`) and `log_load_config_from_file()`, keeping all .bss
+ * allocations centralized in Sub-Assembly 2.3 and saving 8,192 B vs separate buffers.
+ */
+static char s_log_vfs_scratch[LOG_MANIFEST_BUF_CAP];
+
+static log_subsystem_state_t s_log;
 
 const module_metadata_t log_manifest = {
-    "core.util.log",
+    LOG_MODULE_ID,
     "log/log.h",
     LAYER_0_CORE_UTIL,
     { 0, 1, 1 },
     5,
-    "2026-11-10",
+    "2026-11-11",
     "Forensic telemetry, gradient moral grading, and rotated flight recorder",
     4,
     { "core.util.fs", "core.util.json", "core.util.string", "core.util.time" },
@@ -397,13 +441,22 @@ const module_metadata_t log_manifest = {
 --------------------------------------------------------------------------------
 Sub-Assembly 2.4: Pre-Conditional Helper Inlines & Fast Tripwires
 --------------------------------------------------------------------------------
-Fast range predicates, watermark updates, debug-mode checks, and tripwire latches
-that bridge operational faults directly into debugger diagnostics when active.
+Fast range predicates, watermark updates, debug-mode checks, and scoped tripwire
+macros bridging pure O(1) guards into Sub-Assembly 2.5 support routines.
 --------------------------------------------------------------------------------
 */
 
 /**
- * @brief Fast range check verifying a severity enum fits canonical table bounds.
+ * @brief Fast O(1) range check verifying a severity enum fits canonical bounds.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Guards telemetry routing against out-of-range message priority numbers.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Single unsigned comparison safe across negative signed enum representations.
+ *
+ * @param sev Severity value to validate.
+ * @return True if strictly within `[0, LOG_SEV_COUNT)`.
  */
 static inline bool log_is_severity_valid(log_severity_t sev)
 {
@@ -411,7 +464,16 @@ static inline bool log_is_severity_valid(log_severity_t sev)
 }
 
 /**
- * @brief Fast range check verifying a category enum fits canonical table bounds.
+ * @brief Fast O(1) range check verifying a category enum fits canonical bounds.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Keeps telemetry channels (EVENT, CHARACTER, IO, etc.) safely inside valid table rows.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Unsigned array-bound predicate guarding `s_category_table[]` lookups.
+ *
+ * @param cat Category enumeration value to validate.
+ * @return True if strictly within `[0, LOG_CAT_COUNT)`.
  */
 static inline bool log_is_category_valid(log_category_t cat)
 {
@@ -419,7 +481,15 @@ static inline bool log_is_category_valid(log_category_t cat)
 }
 
 /**
- * @brief Predicate returning true when engine debugging or high-verbosity trace is active.
+ * @brief Predicate returning true when debugger or high-verbosity trace is active.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Tells telemetry routines whether extra diagnostic detail should be captured.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Short-circuits via `debug_is_active()` before inspecting active threshold.
+ *
+ * @return True if debugger active or runtime threshold >= `LOG_SEV_DEBUG`.
  */
 static inline bool log_is_debug_mode(void)
 {
@@ -428,7 +498,15 @@ static inline bool log_is_debug_mode(void)
 }
 
 /**
- * @brief Tracks high watermark occupancy of the circular in-memory ring buffer.
+ * @brief Tracks peak occupancy watermark of the circular in-memory ring buffer.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Measures the busiest memory log spike observed during a run for capacity tuning.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Branch-minimal high-watermark latch into `s_log.high_watermark_entries`.
+ *
+ * @param current_count Current ring buffer entry count.
  */
 static inline void log_update_watermark(size_t current_count)
 {
@@ -437,20 +515,51 @@ static inline void log_update_watermark(size_t current_count)
     }
 }
 
+/* Internal forward declaration enabling O(1) tripwire expansion in Sub-Assembly 2.4 macros. */
+static void log_latch_tripwire_ex(
+    const char *probe_id,
+    log_tripwire_t status,
+    const char *msg,
+    const char *file,
+    int line,
+    const char *func
+);
+
+/** @brief Latches a logging tripwire using inferred probe routing and caller coordinates. */
+#define LOG_SET_TRIPWIRE(status, msg) \
+    log_latch_tripwire_ex(NULL, (status), (msg), __FILE__, __LINE__, __func__)
+
+/** @brief Latches a logging tripwire targeted at an explicit cog.debug probe identifier. */
+#define LOG_SET_TRIPWIRE_EX(probe_id, status, msg) \
+    log_latch_tripwire_ex((probe_id), (status), (msg), __FILE__, __LINE__, __func__)
+
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.5: Monitored Support Infrastructure (Non-Inline Internal)
+--------------------------------------------------------------------------------
+Support Role:  Diagnostic tripwire latching, probe-ID routing, and Safe-Mode
+               fallback echo linking cog.log faults into cog.debug.
+Pattern Watch: If multiple Layer 0 subsystems duplicate tripwire-latch +
+               debug_trigger_probe() glue, elevate a shared probe-latch helper
+               into engine/include/debug/debug.h or core diagnostics.
+Linkage Rule:  Strictly static functions only; zero static arrays or .bss storage.
+--------------------------------------------------------------------------------
+*/
+
 /**
- * @brief Latches an internal tripwire state and notifies debugger when active.
+ * @brief Selects the canonical cog.debug probe ID matching a latched tripwire code.
  *
  * ### For Game Designers & Non-Programmers:
- * Records an alarm flag and explanation whenever logging setup hits broken
- * paths or invalid limits, notifying the debugger if debug mode is turned on.
+ * Maps each logging warning or config fault to the right diagnostic test alarm.
  *
  * ### For Systems Programmers & Engine Architects:
- * Latches s_log.tripwire_status and s_log.tripwire_details. When debug_is_active()
- * is true, forwards exact source coordinates to debug_trap_tripwire(). When
- * debugger is inactive, inspects debug_fallback policy cleanly without polluting
- * standalone negative-path test suites.
+ * Inspects `status` and caller function name to distinguish write/rotation bounds faults.
+ *
+ * @param status Tripwire fault classification code.
+ * @param func   Originating C function name (`__func__`) or NULL.
+ * @return Immutable probe identifier string literal.
  */
-static inline const char *log_select_probe_for_tripwire(
+static const char *log_select_probe_for_tripwire(
     log_tripwire_t status,
     const char *func
 ) {
@@ -473,7 +582,26 @@ static inline const char *log_select_probe_for_tripwire(
     }
 }
 
-static inline void log_latch_tripwire_ex(
+/**
+ * @brief Latches an internal tripwire state and notifies debugger when active.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Records an alarm flag and explanation whenever logging setup hits broken
+ * paths or invalid limits, notifying the debugger if debug mode is turned on.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Kept non-inline in Sub-Assembly 2.5 to avoid .text bloat across caller expansion
+ * sites. Latches `s_log.tripwire_status` and `s_log.tripwire_details`; forwards
+ * coordinates to `debug_trigger_probe()` when active or prints Safe-Mode notices.
+ *
+ * @param probe_id Explicit debugger probe ID or NULL for automatic inference.
+ * @param status   Tripwire status enum to latch.
+ * @param msg      Human-readable diagnostic summary.
+ * @param file     Caller source path (`__FILE__`).
+ * @param line     Caller line number (`__LINE__`).
+ * @param func     Caller function symbol (`__func__`).
+ */
+static void log_latch_tripwire_ex(
     const char *probe_id,
     log_tripwire_t status,
     const char *msg,
@@ -533,21 +661,387 @@ static inline void log_latch_tripwire_ex(
     }
 }
 
-#define LOG_SET_TRIPWIRE(status, msg) \
-    log_latch_tripwire_ex(NULL, (status), (msg), __FILE__, __LINE__, __func__)
+/**
+ * @brief Span-bounded JSON setting attribute parser delegating to `log_fallback`.
+ *
+ * Isolates setting attribute parsing and bounds checking strictly inside
+ * `[json_start, json_start + json_len)` so file and profile loaders never
+ * duplicate parsing code or leak keys across envelopes.
+ *
+ * @param[in]  json_start Slice start pointer (`block_3_body` or setting object).
+ * @param[in]  json_len   Slice byte length (`0` measures NUL-terminated buffer).
+ * @param[out] out_config Configuration struct initialized with parsed attributes.
+ * @return true if parsed cleanly; false with latched tripwire on violation.
+ */
+static bool log_parse_config_payload_span(
+    const char *json_start,
+    size_t json_len,
+    log_config_t *out_config
+) {
+    log_tripwire_t err_code = LOG_TRIPWIRE_CLEAR;
+    char err_msg[256];
+    err_msg[0] = '\0';
 
-#define LOG_SET_TRIPWIRE_EX(probe_id, status, msg) \
-    log_latch_tripwire_ex((probe_id), (status), (msg), __FILE__, __LINE__, __func__)
+    if (log_fallback_parse_config_span(
+            json_start, json_len, out_config, &err_code, err_msg, sizeof(err_msg)
+        )) {
+        return true;
+    }
+
+    LOG_SET_TRIPWIRE(
+        (err_code != LOG_TRIPWIRE_CLEAR) ? err_code : LOG_TRIPWIRE_SETTING_INVALID,
+        (err_msg[0] != '\0') ? err_msg : "Failed to parse telemetry JSON setting."
+    );
+    return false;
+}
+
+/**
+ * @brief Formats an ISO 8601 UTC timestamp string with microsecond resolution.
+ *
+ * Generates a fixed-width UTC timestamp matching `YYYY-MM-DDTHH:MM:SS.uuuuuuZ`.
+ *
+ * @param[out] buf      Destination character buffer.
+ * @param[in]  buf_size Capacity of `buf` in bytes.
+ */
+static void generate_iso_timestamp(char *buf, size_t buf_size)
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    struct tm tm_utc;
+    gmtime_r(&ts.tv_sec, &tm_utc);
+
+    long usec = ts.tv_nsec / 1000L;
+    snprintf(
+        buf,
+        buf_size,
+        "%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ",
+        tm_utc.tm_year + 1900,
+        tm_utc.tm_mon + 1,
+        tm_utc.tm_mday,
+        tm_utc.tm_hour,
+        tm_utc.tm_min,
+        tm_utc.tm_sec,
+        usec
+    );
+}
+
+/**
+ * @brief Shared archive rotation cog cascading old logs and reopening active stream.
+ *
+ * Unifies primary log rotation and per-category archive rotation with explicit
+ * `rename()` and `fopen()` fault escalation via `LOG_SET_TRIPWIRE()`.
+ *
+ * @param[in]     dir            Directory holding active and archived files.
+ * @param[in]     base_filename  Base archive file name (e.g. `"tenebris_lux.log"`).
+ * @param[in,out] io_file        Address of active `FILE *` stream handle.
+ * @param[in,out] io_bytes       Address of active stream byte counter.
+ * @param[out]    out_first_rot  Optional buffer receiving path to `.1` archive.
+ * @param[in]     first_rot_size Capacity of `out_first_rot` buffer.
+ * @return true if rotation and reopen succeeded; false on stream reopen fault.
+ */
+static bool rotate_archive_stream(
+    const char *dir,
+    const char *base_filename,
+    FILE **io_file,
+    size_t *io_bytes,
+    char *out_first_rot,
+    size_t first_rot_size
+) {
+    if (*io_file != NULL) {
+        fclose(*io_file);
+        *io_file = NULL;
+    }
+
+    char old_path[LOG_PATH_BUF_CAP];
+    char new_path[LOG_PATH_BUF_CAP];
+    char name_old[256];
+    char name_new[256];
+
+    for (int i = (int)s_log.config.max_rotated_files - 1; i >= 1; i--) {
+        snprintf(name_old, sizeof(name_old), "%s.%d", base_filename, i);
+        snprintf(name_new, sizeof(name_new), "%s.%d", base_filename, i + 1);
+        str_path_join(old_path, sizeof(old_path), dir, name_old);
+        str_path_join(new_path, sizeof(new_path), dir, name_new);
+        if (rename(old_path, new_path) != 0 && errno != ENOENT) {
+            LOG_SET_TRIPWIRE(
+                LOG_TRIPWIRE_BOUNDS_VIOLATION,
+                "OS error renaming historical rotated log archive file."
+            );
+        }
+    }
+
+    char base_path[LOG_PATH_BUF_CAP];
+    char first_rot[LOG_PATH_BUF_CAP];
+    char name_first[256];
+
+    str_path_join(base_path, sizeof(base_path), dir, base_filename);
+    snprintf(name_first, sizeof(name_first), "%s.1", base_filename);
+    str_path_join(first_rot, sizeof(first_rot), dir, name_first);
+
+    if (rename(base_path, first_rot) != 0 && errno != ENOENT) {
+        LOG_SET_TRIPWIRE(
+            LOG_TRIPWIRE_BOUNDS_VIOLATION,
+            "OS error archiving active log file into .1 slot."
+        );
+    }
+
+    if (out_first_rot != NULL && first_rot_size > 0U) {
+        str_safe_copy(out_first_rot, first_rot, first_rot_size);
+    }
+
+    *io_file = fopen(base_path, "a");
+    *io_bytes = 0U;
+
+    if (*io_file == NULL) {
+        LOG_SET_TRIPWIRE(
+            LOG_TRIPWIRE_BOUNDS_VIOLATION,
+            "Failed to reopen log file stream after rotation."
+        );
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * @brief Rotates category-specific dedicated log file if byte threshold is breached.
+ *
+ * @param[in] cat Target functional telemetry category channel.
+ */
+static void rotate_category_file(log_category_t cat)
+{
+    if (!log_is_category_valid(cat)) {
+        return;
+    }
+    if (s_log.cat_files[cat] == NULL ||
+        s_log.cat_bytes[cat] < s_log.config.max_file_size_bytes) {
+        return;
+    }
+
+    const char *cat_dir_name = log_category_dir_name(cat);
+    char cat_dir[256];
+    char base_name[128];
+
+    snprintf(cat_dir, sizeof(cat_dir), "%s/%s", s_log.config.log_dir, cat_dir_name);
+    snprintf(base_name, sizeof(base_name), "%s.log", cat_dir_name);
+
+    rotate_archive_stream(
+        cat_dir,
+        base_name,
+        &s_log.cat_files[cat],
+        &s_log.cat_bytes[cat],
+        NULL,
+        0U
+    );
+}
+
+/**
+ * @brief Pushes a formatted entry into the static circular flight recorder buffer.
+ *
+ * @param[in] entry Formatted telemetry record to enqueue.
+ */
+static void log_ring_push(const log_entry_t *entry)
+{
+    s_log.ring_buffer[s_log.ring_head] = *entry;
+    s_log.ring_head = (s_log.ring_head + 1U) % LOG_RING_BUFFER_CAPACITY;
+    if (s_log.ring_count < LOG_RING_BUFFER_CAPACITY) {
+        s_log.ring_count++;
+    }
+    log_update_watermark(s_log.ring_count);
+}
+
+/**
+ * @brief Shared circular ring reader copying entries chronologically or newest-first.
+ *
+ * Consolidates ring arithmetic shared by `log_get_recent_entries()` (FIFO oldest-first)
+ * and `log_get_top_entries()` (LIFO newest-first).
+ *
+ * @param[out] dest         Destination caller buffer receiving `log_entry_t` copies.
+ * @param[in]  max_entries  Maximum entry capacity of `dest`.
+ * @param[in]  newest_first True to extract reverse-chronological; false for oldest-first.
+ * @return Number of entries copied in `[0 .. min(max_entries, ring_count)]`.
+ */
+static size_t log_copy_ring_entries(
+    log_entry_t *dest,
+    size_t max_entries,
+    bool newest_first
+) {
+    if (dest == NULL || max_entries == 0U || s_log.ring_count == 0U) {
+        return 0U;
+    }
+
+    size_t count = (max_entries < s_log.ring_count) ? max_entries : s_log.ring_count;
+    size_t base_idx = newest_first
+        ? ((s_log.ring_head + LOG_RING_BUFFER_CAPACITY - 1U) % LOG_RING_BUFFER_CAPACITY)
+        : ((s_log.ring_head + LOG_RING_BUFFER_CAPACITY - count) % LOG_RING_BUFFER_CAPACITY);
+
+    for (size_t i = 0U; i < count; i++) {
+        size_t idx = newest_first
+            ? ((base_idx + LOG_RING_BUFFER_CAPACITY - i) % LOG_RING_BUFFER_CAPACITY)
+            : ((base_idx + i) % LOG_RING_BUFFER_CAPACITY);
+        dest[i] = s_log.ring_buffer[idx];
+    }
+
+    return count;
+}
+
+/**
+ * @brief Lazily opens category stream and dispatches formatted line to category disk archive.
+ *
+ * @param[in] category    Target functional category channel.
+ * @param[in] line_buffer Formatted log record line (with trailing newline).
+ * @param[in] write_len   Byte length of `line_buffer`.
+ */
+static void log_dispatch_category_file(
+    log_category_t category,
+    const char *line_buffer,
+    size_t write_len
+) {
+    if (!s_log.config.save_by_category || !log_is_category_valid(category)) {
+        return;
+    }
+
+    if (s_log.cat_files[category] == NULL) {
+        const char *dir_name = log_category_dir_name(category);
+        char cat_dir[256];
+        snprintf(cat_dir, sizeof(cat_dir), "%s/%s", s_log.config.log_dir, dir_name);
+        if (!fs_ensure_directory(cat_dir)) {
+            LOG_SET_TRIPWIRE(
+                LOG_TRIPWIRE_BOUNDS_VIOLATION,
+                "Failed to synthesize category log subdirectory."
+            );
+            return;
+        }
+
+        char cat_path[LOG_PATH_BUF_CAP];
+        snprintf(cat_path, sizeof(cat_path), "%s/%s.log", cat_dir, dir_name);
+        s_log.cat_files[category] = fopen(cat_path, "a");
+        if (s_log.cat_files[category] == NULL) {
+            LOG_SET_TRIPWIRE(
+                LOG_TRIPWIRE_BOUNDS_VIOLATION,
+                "Failed to open category log stream for writing."
+            );
+            return;
+        }
+
+        struct stat st_cat;
+        if (stat(cat_path, &st_cat) == 0) {
+            s_log.cat_bytes[category] = (size_t)st_cat.st_size;
+        } else {
+            s_log.cat_bytes[category] = 0U;
+        }
+    }
+
+    if (fputs(line_buffer, s_log.cat_files[category]) == EOF) {
+        LOG_SET_TRIPWIRE(
+            LOG_TRIPWIRE_BOUNDS_VIOLATION,
+            "I/O write fault while writing categorized log entry."
+        );
+        return;
+    }
+
+    s_log.cat_bytes[category] += write_len;
+    fflush(s_log.cat_files[category]);
+    rotate_category_file(category);
+}
+
+/**
+ * @brief Mirrors formatted entry to stdout/stderr with table-driven ANSI color highlighting.
+ *
+ * @param[in] severity    Entry severity controlling stdout vs stderr selection & ANSI color.
+ * @param[in] entry       Structured record supplying timestamp/entity/grade columns.
+ * @param[in] line_buffer Fallback plain formatted line used when ANSI colors are off.
+ */
+static void log_dispatch_console(
+    log_severity_t severity,
+    const log_entry_t *entry,
+    const char *line_buffer
+) {
+    if (!s_log.config.echo_to_console) {
+        return;
+    }
+
+    FILE *out = (severity <= LOG_SEV_ERROR) ? stderr : stdout;
+    if (s_log.config.use_colors && log_is_severity_valid(severity)) {
+        fprintf(
+            out,
+            "%s[%s] [ID#%08llu] [%-8s] [CAT:%-9s] [%-10s] [GRADE:%+04d] %s%s\n",
+            s_severity_table[severity].ansi_color,
+            entry->iso_timestamp,
+            (unsigned long long)entry->sequence_id,
+            log_severity_name(entry->severity),
+            log_category_name(entry->category),
+            entry->entity,
+            entry->grade_percent,
+            entry->message,
+            ANSI_RESET
+        );
+    } else {
+        fputs(line_buffer, out);
+    }
+}
+
+/**
+ * @brief Captures live `s_log` metadata and target ring slot prior to `log_audit()`.
+ */
+static void log_audit_capture_state(log_audit_guard_t *guard, bool verbose)
+{
+    guard->was_initialized = s_log.initialized;
+    guard->saved_echo = s_log.config.echo_to_console;
+    guard->saved_min_severity = s_log.config.min_severity;
+    guard->saved_sequence_counter = s_log.sequence_counter;
+    guard->saved_watermark = s_log.high_watermark_entries;
+    guard->saved_rotation_count = s_log.rotation_count;
+    guard->saved_ring_head = guard->was_initialized ? s_log.ring_head : 0U;
+    guard->saved_ring_count = s_log.ring_count;
+    guard->saved_tripwire_status = s_log.tripwire_status;
+    guard->saved_ring_slot = s_log.ring_buffer[guard->saved_ring_head];
+
+    if (!guard->was_initialized) {
+        log_config_t test_cfg = log_get_default_config();
+        test_cfg.echo_to_console = false;
+        test_cfg.min_severity = LOG_SEV_TRACE;
+        log_init(&test_cfg);
+    } else {
+        s_log.config.echo_to_console = verbose;
+        s_log.config.min_severity = LOG_SEV_TRACE;
+    }
+}
+
+/**
+ * @brief Restores `s_log` metadata and ring slot symmetrically after `log_audit()`.
+ */
+static void log_audit_restore_state(const log_audit_guard_t *guard)
+{
+    if (!guard->was_initialized) {
+        if (s_log.initialized) {
+            log_shutdown();
+        }
+    } else {
+        s_log.config.echo_to_console = guard->saved_echo;
+        s_log.config.min_severity = guard->saved_min_severity;
+    }
+
+    s_log.ring_buffer[guard->saved_ring_head] = guard->saved_ring_slot;
+    s_log.ring_head = guard->saved_ring_head;
+    s_log.ring_count = guard->saved_ring_count;
+    s_log.sequence_counter = guard->saved_sequence_counter;
+    s_log.high_watermark_entries = guard->saved_watermark;
+    s_log.rotation_count = guard->saved_rotation_count;
+    s_log.tripwire_status = guard->saved_tripwire_status;
+}
 
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
-Stratum: Layer 0 (Core Utilities) | Machine: core.util.log
+BLOCK 3: BODY BLOCK
+( Operational Business Logic, Span Scopes & Runtime Hydration )
 ================================================================================
-Mission: Ingest, resolve, and hydrate telemetry configuration profiles via VFS;
-evaluate gradient moral grades; manage automated log rotation; dispatch
-formatted machine-greppable entries; and maintain circular flight recorder ring.
-All verification gates live in Block 4 and lifecycle drivers live in Block 5.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0 (Core Utilities)
+Module:        cog.log
+Mission:       Ingest and resolve telemetry profiles via VFS and master_loader,
+               compute bounded moral/alignment grade transforms, rotate active disk
+               archives, dispatch machine-greppable flight records, and query rings.
 ================================================================================
 */
 
@@ -566,63 +1060,30 @@ Mission: Ingest, resolve, and configure logging profiles via VFS and master load
 */
 
 /**
- * @brief Parses JSON setting key-value attributes into a validated log_config_t.
- *
- * ### For Game Designers & Non-Programmers:
- * Extracts folder names, file size limits, log level filters, and console color
- * flags from a telemetry settings JSON document.
- *
- * ### For Systems Programmers & Engine Architects:
- * Isolates setting attribute extraction and bounds checking into a single pure
- * helper so file and profile loaders never duplicate JSON parsing code.
- *
- * @param[in]  scope      Pointer to parsed JSON scope ("setting" object or file body).
- * @param[out] out_config Configuration struct initialized with parsed attributes.
- * @return true if parsed and bounds-checked cleanly; false with tripwire on violation.
- */
-static bool log_parse_config_payload(const char *scope, log_config_t *out_config)
-{
-    log_tripwire_t err_code = LOG_TRIPWIRE_CLEAR;
-    char err_msg[256];
-    err_msg[0] = '\0';
-
-    if (log_fallback_parse_config_json(scope, out_config, &err_code, err_msg, sizeof(err_msg))) {
-        return true;
-    }
-
-    LOG_SET_TRIPWIRE(
-        (err_code != LOG_TRIPWIRE_CLEAR) ? err_code : LOG_TRIPWIRE_SETTING_INVALID,
-        (err_msg[0] != '\0') ? err_msg : "Failed to parse telemetry JSON setting."
-    );
-    return false;
-}
-
-/**
  * @brief Returns the default configuration resolved strictly from the data-driven manifest.
  *
  * ### For Game Designers & Non-Programmers:
- * Retrieves the starting recording settings (such as minimum log level and folder paths)
- * configured in the game's manifest files, automatically escalating through the compiled-in
- * .rodata ROM Safe-Mode preset (or factory monolith floor) if disk manifests are missing.
+ * Picks the active telemetry preset from the game's manifest on disk, stepping down
+ * automatically through built-in `.rodata` ROM presets or emergency defaults if files are absent.
  *
  * ### For Systems Programmers & Engine Architects:
- * Probes manifest.json to locate and hydrate the default log_config_t structure,
- * escalating on failure via compiled-in ROM Safe-Mode hydration (loaded_from_data=false)
- * and finally log_get_monolith_fallback_config().
+ * Attempts `log_load_config_from_manifest(NULL, &cfg)` first. On failure latches
+ * `LOG_TRIPWIRE_MANIFEST_MISSING`, probes compiled-in ROM via `log_fallback_load_rom_profile()`,
+ * and falls back to `log_get_monolith_fallback_config()` with `loaded_from_data == false`.
  *
- * @return Resolved default log_config_t structure.
+ * @return Resolved default `log_config_t` structure.
  */
 log_config_t log_get_default_config(void)
 {
     log_config_t cfg;
     memset(&cfg, 0, sizeof(cfg));
 
-    /* Primary Path: Dynamic resolution from VFS config telemetry manifest */
+    /* Step 1: Primary Path via dynamic VFS config telemetry manifest */
     if (log_load_config_from_manifest(NULL, &cfg)) {
         return cfg;
     }
 
-    /* Tripwire Fallback Path 1: Data pipeline breach escalates to compiled-in ROM Safe Mode */
+    /* Step 2: Escalate manifest outage to telemetry tripwire + compiled-in ROM Safe Mode */
     LOG_SET_TRIPWIRE(
         LOG_TRIPWIRE_MANIFEST_MISSING,
         "Data pipeline breach: telemetry manifest missing; escalating to ROM Safe Mode."
@@ -633,7 +1094,7 @@ log_config_t log_get_default_config(void)
         return cfg;
     }
 
-    /* Tripwire Fallback Path 2: Final quarantined monolithic floor */
+    /* Step 3: Final quarantined monolithic floor if ROM asset hydration fails */
     cfg = log_get_monolith_fallback_config();
     cfg.loaded_from_data = false;
     return cfg;
@@ -643,18 +1104,22 @@ log_config_t log_get_default_config(void)
  * @brief Loads a log configuration profile from a specified JSON data file.
  *
  * ### For Game Designers & Non-Programmers:
- * Loads a custom logging profile from a specific file (e.g. for debugging combat).
+ * Loads a custom logging profile from disk (such as a verbose development or quiet preset)
+ * and promotes it as an authenticated data-driven config.
  *
  * ### For Systems Programmers & Engine Architects:
- * Ingests file contents via master_loader (with fs_read fallback for bare test JSON),
- * extracts attributes into out_config, validates bounds, and marks provenance.
+ * Ingests file contents via `master_loader_load_from_path()` (falling back to bounded
+ * `fs_read_file_contents()` for envelope-less test fixtures), parses strictly within
+ * `[loader.body_start, body_len)` via `log_parse_config_payload_span()` without raw
+ * `strstr()` scans, clears tripwire status on success, and marks `loaded_from_data = true`.
  *
  * @param[in]  filepath   Path to JSON setting file.
  * @param[out] out_config Output configuration structure to populate.
- * @return true if successfully loaded and validated; false on failure.
+ * @return true if successfully loaded and validated; false with tripwire on failure.
  */
 bool log_load_config_from_file(const char *filepath, log_config_t *out_config)
 {
+    /* Step 1: Guard against NULL arguments */
     if (filepath == NULL || out_config == NULL) {
         LOG_SET_TRIPWIRE(
             LOG_TRIPWIRE_SETTING_INVALID,
@@ -663,11 +1128,15 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config)
         return false;
     }
 
-    static char file_buf[LOG_SETTING_BUF_CAP];
+    /* Step 2: Ingest payload into shared .bss scratch via 5-block master_loader or raw FS */
     master_loader_t loader;
-    bool loaded = master_loader_load_from_path(&loader, filepath, file_buf, sizeof(file_buf));
+    size_t read_cap = LOG_SETTING_BUF_CAP;
+    if (read_cap > sizeof(s_log_vfs_scratch)) {
+        read_cap = sizeof(s_log_vfs_scratch);
+    }
+    bool loaded = master_loader_load_from_path(&loader, filepath, s_log_vfs_scratch, read_cap);
     if (!loaded) {
-        if (!fs_read_file_contents(filepath, file_buf, sizeof(file_buf))) {
+        if (!fs_read_file_contents(filepath, s_log_vfs_scratch, read_cap)) {
             char err_msg[256];
             snprintf(
                 err_msg,
@@ -680,15 +1149,19 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config)
         }
     }
 
-    const char *scope = strstr(file_buf, "\"setting\"");
-    if (scope == NULL) {
-        scope = (loaded && loader.body_start != NULL) ? loader.body_start : file_buf;
-    }
+    /* Step 3: Parse bounded body span (or bare fixture buffer) eliminating raw strstr() */
+    const char *span_start = (loaded && loader_has_valid_body(&loader))
+        ? loader.body_start
+        : s_log_vfs_scratch;
+    size_t span_len = (loaded && loader_has_valid_body(&loader))
+        ? loader.body_len
+        : strlen(s_log_vfs_scratch);
 
-    if (!log_parse_config_payload(scope, out_config)) {
+    if (!log_parse_config_payload_span(span_start, span_len, out_config)) {
         return false;
     }
 
+    /* Step 4: Mark verified disk provenance and emit trace telemetry when active */
     out_config->loaded_from_data = true;
     s_log.tripwire_status = LOG_TRIPWIRE_CLEAR;
 
@@ -712,18 +1185,21 @@ bool log_load_config_from_file(const char *filepath, log_config_t *out_config)
  * @brief Loads active log configuration profile from manifest "main menu" file.
  *
  * ### For Game Designers & Non-Programmers:
- * Reads the active logging preset selected in the master telemetry manifest.
+ * Finds `manifest.json`, checks which preset name is selected in `"menu"`, and loads
+ * that preset automatically.
  *
  * ### For Systems Programmers & Engine Architects:
- * Probes VFS "config" domain candidate paths (or caller override), validates the
- * manifest JSON menu, extracts active_setting/default_setting, and delegates loading.
+ * Resolves candidate manifest paths via `s_manifest_probes[]`, ingests via `master_loader`,
+ * extracts `active_setting`/`default_setting` strictly inside `block_3_body.menu` (no raw
+ * `strstr()`), and delegates loading via VFS profile discovery or sibling file path.
  *
  * @param[in]  manifest_path Optional path to manifest (NULL for VFS auto-discovery).
  * @param[out] out_config    Output configuration structure to populate.
- * @return true if manifest and target profile were loaded; false on fallback.
+ * @return true if manifest and target profile were loaded; false on fallback/tripwire.
  */
 bool log_load_config_from_manifest(const char *manifest_path, log_config_t *out_config)
 {
+    /* Step 1: Validate caller output struct */
     if (out_config == NULL) {
         LOG_SET_TRIPWIRE(
             LOG_TRIPWIRE_MANIFEST_INVALID,
@@ -732,6 +1208,7 @@ bool log_load_config_from_manifest(const char *manifest_path, log_config_t *out_
         return false;
     }
 
+    /* Step 2: Locate manifest file via explicit override or VFS probe table */
     char resolved_path[PATH_FINDER_MAX_PATH];
     bool found = false;
 
@@ -749,11 +1226,11 @@ bool log_load_config_from_manifest(const char *manifest_path, log_config_t *out_
             const log_vfs_probe_t *probe = &s_manifest_probes[i];
             if (probe->domain != NULL) {
                 found = path_finder_resolve(
-                    probe->domain, probe->template, resolved_path, sizeof(resolved_path)
+                    probe->domain, probe->path_template, resolved_path, sizeof(resolved_path)
                 );
             } else {
                 found = fs_resolve_data_path(
-                    probe->template, resolved_path, sizeof(resolved_path)
+                    probe->path_template, resolved_path, sizeof(resolved_path)
                 );
             }
             if (found) {
@@ -770,10 +1247,13 @@ bool log_load_config_from_manifest(const char *manifest_path, log_config_t *out_
         return false;
     }
 
-    static char manifest_buf[LOG_MANIFEST_BUF_CAP];
+    /* Step 3: Load manifest envelope via master_loader or bounded raw read */
     master_loader_t loader;
-    if (!master_loader_load_from_path(&loader, resolved_path, manifest_buf, sizeof(manifest_buf))) {
-        if (!fs_read_file_contents(resolved_path, manifest_buf, sizeof(manifest_buf))) {
+    bool loaded = master_loader_load_from_path(
+        &loader, resolved_path, s_log_vfs_scratch, sizeof(s_log_vfs_scratch)
+    );
+    if (!loaded) {
+        if (!fs_read_file_contents(resolved_path, s_log_vfs_scratch, sizeof(s_log_vfs_scratch))) {
             LOG_SET_TRIPWIRE(
                 LOG_TRIPWIRE_MANIFEST_INVALID,
                 "Manifest file unreadable or empty."
@@ -782,20 +1262,39 @@ bool log_load_config_from_manifest(const char *manifest_path, log_config_t *out_
         }
     }
 
-    const char *menu_block = strstr(manifest_buf, "\"menu\"");
-    const char *scope = (menu_block != NULL) ? menu_block : manifest_buf;
-
+    /* Step 4: Extract active_setting / default_setting cleanly via span-bounded JSON */
     char active_id[64];
-    if (!json_get_string(scope, "active_setting", active_id, sizeof(active_id))) {
-        if (!json_get_string(scope, "default_setting", active_id, sizeof(active_id))) {
-            LOG_SET_TRIPWIRE(
-                LOG_TRIPWIRE_MANIFEST_INVALID,
-                "Manifest menu missing active_setting or default_setting."
-            );
-            return false;
+    bool has_id = false;
+    if (loaded && loader_has_valid_body(&loader)) {
+        has_id =
+            master_loader_get_string(&loader, "menu", "active_setting", active_id, sizeof(active_id)) ||
+            master_loader_get_string(&loader, "menu", "default_setting", active_id, sizeof(active_id)) ||
+            master_loader_get_string(&loader, NULL, "active_setting", active_id, sizeof(active_id)) ||
+            master_loader_get_string(&loader, NULL, "default_setting", active_id, sizeof(active_id));
+    } else {
+        size_t raw_len = strlen(s_log_vfs_scratch);
+        const char *menu_span = s_log_vfs_scratch;
+        size_t menu_len = raw_len;
+        const char *sub_span = NULL;
+        size_t sub_len = 0U;
+        if (json_find_object_span(s_log_vfs_scratch, raw_len, "menu", &sub_span, &sub_len)) {
+            menu_span = sub_span;
+            menu_len = sub_len;
         }
+        has_id =
+            json_get_string_span(menu_span, menu_len, "active_setting", active_id, sizeof(active_id)) ||
+            json_get_string_span(menu_span, menu_len, "default_setting", active_id, sizeof(active_id));
     }
 
+    if (!has_id) {
+        LOG_SET_TRIPWIRE(
+            LOG_TRIPWIRE_MANIFEST_INVALID,
+            "Manifest menu missing active_setting or default_setting."
+        );
+        return false;
+    }
+
+    /* Step 5: Resolve target profile via VFS search or sibling directory next to manifest */
     if (log_load_config_profile(active_id, out_config)) {
         return true;
     }
@@ -845,7 +1344,7 @@ bool log_load_config_profile(const char *profile_name, log_config_t *out_config)
 
     for (size_t i = 0; i < probe_count; i++) {
         const log_vfs_probe_t *probe = &s_profile_probes[i];
-        snprintf(file_req, sizeof(file_req), probe->template, profile_name);
+        snprintf(file_req, sizeof(file_req), probe->path_template, profile_name);
 
         bool matched = false;
         if (probe->domain != NULL) {
@@ -873,7 +1372,7 @@ bool log_load_config_profile(const char *profile_name, log_config_t *out_config)
  * @brief Returns the active configuration profile name.
  *
  * ### For Game Designers & Non-Programmers:
- * Checks which logging preset is currently active.
+ * Reports the name of the active logging preset, or `"default"` if none is set yet.
  *
  * ### For Systems Programmers & Engine Architects:
  * Returns pointer to the active null-terminated profile identifier in s_log.
@@ -902,113 +1401,19 @@ Mission: Manage directory synthesis, timestamps, archive rotation, and state.
 */
 
 /**
- * @brief Formats an ISO 8601 UTC timestamp string with microsecond resolution.
- *
- * Generates a fixed-width UTC timestamp matching YYYY-MM-DDTHH:MM:SS.uuuuuuZ.
- */
-static void generate_iso_timestamp(char *buf, size_t buf_size)
-{
-    struct timespec ts;
-    clock_gettime(CLOCK_REALTIME, &ts);
-    struct tm tm_utc;
-    gmtime_r(&ts.tv_sec, &tm_utc);
-
-    long usec = ts.tv_nsec / 1000L;
-    snprintf(
-        buf,
-        buf_size,
-        "%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ",
-        tm_utc.tm_year + 1900,
-        tm_utc.tm_mon + 1,
-        tm_utc.tm_mday,
-        tm_utc.tm_hour,
-        tm_utc.tm_min,
-        tm_utc.tm_sec,
-        usec
-    );
-}
-
-/**
- * @brief Shared archive rotation cog cascading old logs and reopening active stream.
+ * @brief Checks if the logging subsystem has been initialized and is active.
  *
  * ### For Game Designers & Non-Programmers:
- * Keeps log folders tidy by sliding older backups down (.1 -> .2 -> .3 ...) and
- * starting a clean new active log file whenever the size limit is reached.
+ * Verifies whether the flight recorder is currently online and recording events.
  *
  * ### For Systems Programmers & Engine Architects:
- * Unifies master log rotation and per-category archive rotation into one shared
- * cog with explicit rename() and fopen() error checking via LOG_SET_TRIPWIRE.
+ * Direct O(1) query against internal singleton flag `s_log.initialized`.
  *
- * @param[in]     dir            Directory holding active and archived files.
- * @param[in]     base_filename  Base archive file name (e.g. "tenebris_lux.log").
- * @param[in,out] io_file        Address of active FILE* stream handle (reopened on return).
- * @param[in,out] io_bytes       Address of active stream byte counter (reset to 0).
- * @param[out]    out_first_rot  Optional buffer receiving path to archive .1.
- * @param[in]     first_rot_size Capacity of out_first_rot buffer.
- * @return true if rotation and reopen succeeded; false on stream reopen fault.
+ * @return true if initialized and active; false otherwise.
  */
-static bool rotate_archive_stream(
-    const char *dir,
-    const char *base_filename,
-    FILE **io_file,
-    size_t *io_bytes,
-    char *out_first_rot,
-    size_t first_rot_size
-) {
-    if (*io_file != NULL) {
-        fclose(*io_file);
-        *io_file = NULL;
-    }
-
-    char old_path[LOG_PATH_BUF_CAP];
-    char new_path[LOG_PATH_BUF_CAP];
-    char name_old[256];
-    char name_new[256];
-
-    for (int i = (int)s_log.config.max_rotated_files - 1; i >= 1; i--) {
-        snprintf(name_old, sizeof(name_old), "%s.%d", base_filename, i);
-        snprintf(name_new, sizeof(name_new), "%s.%d", base_filename, i + 1);
-        str_path_join(old_path, sizeof(old_path), dir, name_old);
-        str_path_join(new_path, sizeof(new_path), dir, name_new);
-        if (rename(old_path, new_path) != 0 && errno != ENOENT) {
-            LOG_SET_TRIPWIRE(
-                LOG_TRIPWIRE_BOUNDS_VIOLATION,
-                "OS error renaming historical rotated log archive file."
-            );
-        }
-    }
-
-    char base_path[LOG_PATH_BUF_CAP];
-    char first_rot[LOG_PATH_BUF_CAP];
-    char name_first[256];
-
-    str_path_join(base_path, sizeof(base_path), dir, base_filename);
-    snprintf(name_first, sizeof(name_first), "%s.1", base_filename);
-    str_path_join(first_rot, sizeof(first_rot), dir, name_first);
-
-    if (rename(base_path, first_rot) != 0 && errno != ENOENT) {
-        LOG_SET_TRIPWIRE(
-            LOG_TRIPWIRE_BOUNDS_VIOLATION,
-            "OS error archiving active log file into .1 slot."
-        );
-    }
-
-    if (out_first_rot != NULL && first_rot_size > 0) {
-        str_safe_copy(out_first_rot, first_rot, first_rot_size);
-    }
-
-    *io_file = fopen(base_path, "a");
-    *io_bytes = 0;
-
-    if (*io_file == NULL) {
-        LOG_SET_TRIPWIRE(
-            LOG_TRIPWIRE_BOUNDS_VIOLATION,
-            "Failed to reopen log file stream after rotation."
-        );
-        return false;
-    }
-
-    return true;
+bool log_is_active(void)
+{
+    return s_log.initialized;
 }
 
 /**
@@ -1019,14 +1424,16 @@ static bool rotate_archive_stream(
  * starting a fresh file so disk storage stays cleanly bounded.
  *
  * ### For Systems Programmers & Engine Architects:
- * Checks s_log.current_bytes against max_file_size_bytes, invokes the shared
- * rotate_archive_stream() helper, increments s_log.rotation_count, and stamps
- * a rotation boundary header line into the new file.
+ * Evaluates `s_log.current_bytes >= max_file_size_bytes`, delegates archive rolling
+ * to `rotate_archive_stream()` (which raises `LOG_TRIPWIRE_BOUNDS_VIOLATION` on OS
+ * reopen failure), increments `s_log.rotation_count` strictly when rotation succeeded,
+ * and stamps a rotation boundary line into the reopened stream.
  *
- * @return true if rotation occurred; false otherwise.
+ * @return true if rotation succeeded; false if not needed or reopen failed.
  */
 bool log_rotate_if_needed(void)
 {
+    /* Step 1: Verify initialized stream and byte threshold breach */
     if (!s_log.initialized || s_log.file == NULL) {
         return false;
     }
@@ -1034,6 +1441,7 @@ bool log_rotate_if_needed(void)
         return false;
     }
 
+    /* Step 2: Roll historical archives via shared Sub-Assembly 2.5 stream cog */
     size_t prev_bytes = s_log.current_bytes;
     char first_rot[LOG_PATH_BUF_CAP];
     first_rot[0] = '\0';
@@ -1046,9 +1454,13 @@ bool log_rotate_if_needed(void)
         first_rot,
         sizeof(first_rot)
     );
-    s_log.rotation_count++;
+    if (!rotated) {
+        return false;
+    }
 
-    if (rotated && s_log.file != NULL) {
+    /* Step 3: Record rotation metric and stamp boundary header into fresh stream */
+    s_log.rotation_count++;
+    if (s_log.file != NULL) {
         char iso_ts[32];
         generate_iso_timestamp(iso_ts, sizeof(iso_ts));
         fprintf(
@@ -1064,52 +1476,6 @@ bool log_rotate_if_needed(void)
     }
 
     return true;
-}
-
-/**
- * @brief Rotates category-specific dedicated log file if byte threshold is breached.
- */
-static void rotate_category_file(log_category_t cat)
-{
-    if (!log_is_category_valid(cat)) {
-        return;
-    }
-    if (s_log.cat_files[cat] == NULL ||
-        s_log.cat_bytes[cat] < s_log.config.max_file_size_bytes) {
-        return;
-    }
-
-    const char *cat_dir_name = log_category_dir_name(cat);
-    char cat_dir[256];
-    char base_name[128];
-
-    snprintf(cat_dir, sizeof(cat_dir), "%s/%s", s_log.config.log_dir, cat_dir_name);
-    snprintf(base_name, sizeof(base_name), "%s.log", cat_dir_name);
-
-    rotate_archive_stream(
-        cat_dir,
-        base_name,
-        &s_log.cat_files[cat],
-        &s_log.cat_bytes[cat],
-        NULL,
-        0
-    );
-}
-
-/**
- * @brief Checks if the logging subsystem has been initialized and is active.
- *
- * ### For Game Designers & Non-Programmers:
- * Verifies whether the flight recorder is currently online and recording events.
- *
- * ### For Systems Programmers & Engine Architects:
- * Direct query against internal singleton flag s_log.initialized.
- *
- * @return true if initialized and active; false otherwise.
- */
-bool log_is_active(void)
-{
-    return s_log.initialized;
 }
 
 /*
@@ -1128,125 +1494,25 @@ Mission: Format, serialize, buffer, and emit structured flight recorder entries.
 */
 
 /**
- * @brief Pushes a formatted entry into the static circular flight recorder buffer.
- */
-static void log_ring_push(const log_entry_t *entry)
-{
-    s_log.ring_buffer[s_log.ring_head] = *entry;
-    s_log.ring_head = (s_log.ring_head + 1U) % LOG_RING_BUFFER_CAPACITY;
-    if (s_log.ring_count < LOG_RING_BUFFER_CAPACITY) {
-        s_log.ring_count++;
-    }
-    log_update_watermark(s_log.ring_count);
-}
-
-/**
- * @brief Lazily opens category stream and dispatches formatted line to category disk archive.
- */
-static void log_dispatch_category_file(
-    log_category_t category,
-    const char *line_buffer,
-    size_t write_len
-) {
-    if (!s_log.config.save_by_category || !log_is_category_valid(category)) {
-        return;
-    }
-
-    if (s_log.cat_files[category] == NULL) {
-        const char *dir_name = log_category_dir_name(category);
-        char cat_dir[256];
-        snprintf(cat_dir, sizeof(cat_dir), "%s/%s", s_log.config.log_dir, dir_name);
-        if (!fs_ensure_directory(cat_dir)) {
-            LOG_SET_TRIPWIRE(
-                LOG_TRIPWIRE_BOUNDS_VIOLATION,
-                "Failed to synthesize category log subdirectory."
-            );
-            return;
-        }
-
-        char cat_path[LOG_PATH_BUF_CAP];
-        snprintf(cat_path, sizeof(cat_path), "%s/%s.log", cat_dir, dir_name);
-        s_log.cat_files[category] = fopen(cat_path, "a");
-        if (s_log.cat_files[category] == NULL) {
-            LOG_SET_TRIPWIRE(
-                LOG_TRIPWIRE_BOUNDS_VIOLATION,
-                "Failed to open category log stream for writing."
-            );
-            return;
-        }
-
-        struct stat st_cat;
-        if (stat(cat_path, &st_cat) == 0) {
-            s_log.cat_bytes[category] = (size_t)st_cat.st_size;
-        } else {
-            s_log.cat_bytes[category] = 0;
-        }
-    }
-
-    if (fputs(line_buffer, s_log.cat_files[category]) == EOF) {
-        LOG_SET_TRIPWIRE(
-            LOG_TRIPWIRE_BOUNDS_VIOLATION,
-            "I/O write fault while writing categorized log entry."
-        );
-        return;
-    }
-
-    s_log.cat_bytes[category] += write_len;
-    fflush(s_log.cat_files[category]);
-    rotate_category_file(category);
-}
-
-/**
- * @brief Mirrors formatted entry to stdout/stderr with table-driven ANSI color highlighting.
- */
-static void log_dispatch_console(
-    log_severity_t severity,
-    const log_entry_t *entry,
-    const char *line_buffer
-) {
-    if (!s_log.config.echo_to_console) {
-        return;
-    }
-
-    FILE *out = (severity <= LOG_SEV_ERROR) ? stderr : stdout;
-    if (s_log.config.use_colors && log_is_severity_valid(severity)) {
-        fprintf(
-            out,
-            "%s[%s] [ID#%08llu] [%-8s] [CAT:%-9s] [%-10s] [GRADE:%+04d] %s%s\n",
-            s_severity_table[severity].ansi_color,
-            entry->iso_timestamp,
-            (unsigned long long)entry->sequence_id,
-            log_severity_name(entry->severity),
-            log_category_name(entry->category),
-            entry->entity,
-            entry->grade_percent,
-            entry->message,
-            ANSI_RESET
-        );
-    } else {
-        fputs(line_buffer, out);
-    }
-}
-
-/**
  * @brief Emits a structured log entry into the ring buffer, file, and console.
  *
  * ### For Game Designers & Non-Programmers:
- * Writes an event to the game's flight recorder journal, capturing the character involved,
- * their current moral balance percentage, and what action took place.
+ * Records an in-game or engine event to the flight recorder journal along with the
+ * actor name, balance gauge percentage, source tag, and formatted summary.
  *
  * ### For Systems Programmers & Engine Architects:
- * Validates severity/reentrancy, formats fixed-width records with microsecond deltas
- * and ISO 8601 UTC timestamps, commits into circular ring buffer, and emits safely
- * across primary log, category archive, and console outputs with zero heap allocation.
+ * Guards against recursive calls (`s_log.in_write`), routes pre-init logs into
+ * `log_fallback_record()`, clamps NaN/out-of-range grades safely, pushes into the
+ * static `.bss` ring via `log_ring_push()`, dispatches synchronized disk/category
+ * archives with Safe-Mode failover on `fputs()` errors, and mirrors to console.
  *
  * @param[in] severity Graded severity level.
  * @param[in] category Target functional category.
- * @param[in] entity   Entity/Character name (e.g. "Elijah", "Katrina", "System").
+ * @param[in] entity   Entity/Actor label (e.g. "Player", "Companion", "System").
  * @param[in] grade    Normalized grade [-1.0f .. +1.0f].
- * @param[in] file     Source file name (__FILE__).
- * @param[in] line     Source line number (__LINE__).
- * @param[in] func     Source function name (__func__).
+ * @param[in] file     Source file name (`__FILE__`).
+ * @param[in] line     Source line number (`__LINE__`).
+ * @param[in] func     Source function name (`__func__`).
  * @param[in] fmt      Printf-style format string.
  * @return Monotonic sequence ID assigned to the entry, or 0 on filter drop/failure.
  */
@@ -1416,13 +1682,18 @@ uint64_t log_write_entry(
  * @brief Converts a normalized float grade [-1.0f, +1.0f] to integer percent [-100, +100].
  *
  * ### For Game Designers & Non-Programmers:
- * Converts an internal moral sway decimal into a clean -100% to +100% readout.
+ * Maps an internal normalized balance value to a human-readable percentage readout.
  *
  * ### For Systems Programmers & Engine Architects:
- * NaN-safe clamps grade to [-1.0f, 1.0f] and rounds symmetrically into [-100, 100].
+ * Performs NaN-safe clamping across `[-1.0f, 1.0f]`, scales by `100.0f`, and rounds
+ * symmetrically via half-away-from-zero conversion clamped through `math_clamp_int()`.
+ *
+ * @param[in] grade Normalized floating-point balance ratio in `[-1.0f .. +1.0f]`.
+ * @return Signed integer percentage in `[-100 .. +100]` (`0` on NaN).
  */
 int log_grade_to_percent(float grade)
 {
+    /* Step 1: Reject NaN safely to 0 and clamp finite values to [-1.0f, +1.0f] */
     if (!(grade >= -1.0f && grade <= 1.0f)) {
         if (grade > 1.0f) {
             grade = 1.0f;
@@ -1432,6 +1703,8 @@ int log_grade_to_percent(float grade)
             return 0;
         }
     }
+
+    /* Step 2: Scale and apply symmetric integer rounding */
     float scaled = grade * 100.0f;
     int rounded = (scaled >= 0.0f) ? (int)(scaled + 0.5f) : (int)(scaled - 0.5f);
     return math_clamp_int(rounded, -100, 100);
@@ -1441,10 +1714,14 @@ int log_grade_to_percent(float grade)
  * @brief Converts an integer percent [-100, +100] to a normalized float grade [-1.0f, +1.0f].
  *
  * ### For Game Designers & Non-Programmers:
- * Converts a whole-number percentage into an internal decimal balance ratio.
+ * Converts a whole-number display percentage back into an internal telemetry grade.
  *
  * ### For Systems Programmers & Engine Architects:
- * Clamps percent to [-100, 100] and maps to floating-point representation in [-1.0f, 1.0f].
+ * Clamps integer input via `math_clamp_int(percent, -100, 100)` before dividing
+ * by `100.0f` to prevent normalized overrun.
+ *
+ * @param[in] percent Whole-number percentage (`-100 .. +100`).
+ * @return Normalized float value strictly inside `[-1.0f .. +1.0f]`.
  */
 float log_percent_to_grade(int percent)
 {
@@ -1468,10 +1745,12 @@ Mission: Retrieve ordered entries from in-memory ring buffer for HUD readout.
  * @brief Retrieves cumulative total number of log entries recorded.
  *
  * ### For Game Designers & Non-Programmers:
- * Returns the lifetime count of events recorded since the game started.
+ * Shows the lifetime count of events logged during the active run.
  *
  * ### For Systems Programmers & Engine Architects:
- * Returns the 64-bit monotonic sequence counter value held in s_log.
+ * Direct O(1) read of `s_log.sequence_counter` monotonic 64-bit event index.
+ *
+ * @return Cumulative count of recorded log entries.
  */
 uint64_t log_get_total_entries(void)
 {
@@ -1482,10 +1761,10 @@ uint64_t log_get_total_entries(void)
  * @brief Copies recent log entries from in-memory ring buffer in chronological order.
  *
  * ### For Game Designers & Non-Programmers:
- * Reads the latest recorded events in chronological order (oldest to newest) for HUD display.
+ * Extracts the latest recorded messages ordered oldest-to-newest for log viewers.
  *
  * ### For Systems Programmers & Engine Architects:
- * Unrolls circular ring buffer into caller-provided array with zero heap allocation.
+ * Delegates FIFO circular buffer unrolling to shared `log_copy_ring_entries(dest, max_entries, false)`.
  *
  * @param[out] dest        Destination buffer array.
  * @param[in]  max_entries Maximum entries to copy.
@@ -1493,28 +1772,17 @@ uint64_t log_get_total_entries(void)
  */
 size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries)
 {
-    if (dest == NULL || max_entries == 0 || s_log.ring_count == 0) {
-        return 0;
-    }
-    size_t count = (max_entries < s_log.ring_count) ? max_entries : s_log.ring_count;
-    size_t start_idx =
-        (s_log.ring_head + LOG_RING_BUFFER_CAPACITY - count) % LOG_RING_BUFFER_CAPACITY;
-
-    for (size_t i = 0; i < count; i++) {
-        size_t idx = (start_idx + i) % LOG_RING_BUFFER_CAPACITY;
-        dest[i] = s_log.ring_buffer[idx];
-    }
-    return count;
+    return log_copy_ring_entries(dest, max_entries, false);
 }
 
 /**
  * @brief Retrieves top recent entries in reverse chronological order (newest first).
  *
  * ### For Game Designers & Non-Programmers:
- * Reads the most recent messages with newest first, ideal for battle log scrolling.
+ * Pulls the latest messages newest-first so debug overlays show recent events on top.
  *
  * ### For Systems Programmers & Engine Architects:
- * Iterates backward from ring head into caller destination array.
+ * Delegates LIFO backward traversal to shared `log_copy_ring_entries(dest, max_entries, true)`.
  *
  * @param[out] dest        Destination buffer array.
  * @param[in]  max_entries Maximum entries to retrieve.
@@ -1522,17 +1790,7 @@ size_t log_get_recent_entries(log_entry_t *dest, size_t max_entries)
  */
 size_t log_get_top_entries(log_entry_t *dest, size_t max_entries)
 {
-    if (dest == NULL || max_entries == 0 || s_log.ring_count == 0) {
-        return 0;
-    }
-    size_t count = (max_entries < s_log.ring_count) ? max_entries : s_log.ring_count;
-
-    for (size_t i = 0; i < count; i++) {
-        size_t idx =
-            (s_log.ring_head + LOG_RING_BUFFER_CAPACITY - 1U - i) % LOG_RING_BUFFER_CAPACITY;
-        dest[i] = s_log.ring_buffer[idx];
-    }
-    return count;
+    return log_copy_ring_entries(dest, max_entries, true);
 }
 
 /*
@@ -1548,14 +1806,18 @@ Mission: Convert between string tokens and strongly-typed enum representations.
 */
 
 /**
- * @brief Converts a human-readable severity string into its typed log_severity_t enum.
+ * @brief Converts a human-readable severity string into its typed `log_severity_t` enum.
  *
  * ### For Game Designers & Non-Programmers:
- * Converts text like "WARNING" or "INFO" from a config file into an internal code.
+ * Resolves severity labels written in telemetry profiles into engine severity levels.
  *
  * ### For Systems Programmers & Engine Architects:
- * Scans static descriptor table s_severity_table[] followed by s_severity_aliases[]
- * for extensible, branch-free token resolution.
+ * Delegates cleanly to `log_fallback_severity_from_string()` so primary and BIOS
+ * token alias tables share one canonical `.rodata` truth source.
+ *
+ * @param[in]  str     Case-insensitive severity token string.
+ * @param[out] out_sev Populated `log_severity_t` enumeration value.
+ * @return true if token recognized; false on NULL pointer or unknown token.
  */
 bool log_severity_from_string(const char *str, log_severity_t *out_sev)
 {
@@ -1563,14 +1825,17 @@ bool log_severity_from_string(const char *str, log_severity_t *out_sev)
 }
 
 /**
- * @brief Converts a human-readable category string into its typed log_category_t enum.
+ * @brief Converts a human-readable category string into its typed `log_category_t` enum.
  *
  * ### For Game Designers & Non-Programmers:
- * Converts category text like "CHARACTER" or "EVENT" into an internal routing channel.
+ * Resolves subsystem channel names from JSON files into routing categories.
  *
  * ### For Systems Programmers & Engine Architects:
- * Scans static descriptor table s_category_table[] followed by s_category_aliases[]
- * for extensible, branch-free token resolution.
+ * Scans static `.rodata` `s_category_table[]` then `s_category_aliases[]` via `str_case_eq()`.
+ *
+ * @param[in]  str     Case-insensitive category string token.
+ * @param[out] out_cat Populated `log_category_t` enumeration value.
+ * @return true if token recognized; false on NULL pointer or unknown token.
  */
 bool log_category_from_string(const char *str, log_category_t *out_cat)
 {
@@ -1600,10 +1865,13 @@ bool log_category_from_string(const char *str, log_category_t *out_cat)
  * @brief Returns the human-readable fixed-width string for a severity level.
  *
  * ### For Game Designers & Non-Programmers:
- * Gets a clean aligned label (such as "FATAL   ", "INFO    ") for readable logs.
+ * Supplies clean uniform severity tags for readable log columns.
  *
  * ### For Systems Programmers & Engine Architects:
- * Direct O(1) lookup against s_severity_table[] in .rodata.
+ * O(1) bounds-checked index into `s_severity_table[].padded_label` in `.rodata`.
+ *
+ * @param[in] severity Telemetry severity level enum value.
+ * @return Immutable fixed-width `.rodata` label (`"UNKNOWN "` when out of range).
  */
 const char *log_severity_name(log_severity_t severity)
 {
@@ -1617,10 +1885,13 @@ const char *log_severity_name(log_severity_t severity)
  * @brief Returns the human-readable fixed-width string for a category.
  *
  * ### For Game Designers & Non-Programmers:
- * Gets the display name of a subsystem category for log filtering.
+ * Supplies clean padded channel names so log tables align neatly.
  *
  * ### For Systems Programmers & Engine Architects:
- * Direct O(1) lookup against s_category_table[] in .rodata.
+ * O(1) bounds-checked index into `s_category_table[].padded_label` in `.rodata`.
+ *
+ * @param[in] category Telemetry category enum value.
+ * @return Immutable fixed-width `.rodata` label (`"UNKNOWN  "` when out of range).
  */
 const char *log_category_name(log_category_t category)
 {
@@ -1631,13 +1902,16 @@ const char *log_category_name(log_category_t category)
 }
 
 /**
- * @brief Returns the folder name associated with a category (e.g. "character", "event").
+ * @brief Returns the folder name associated with a category (e.g. `"character"`, `"event"`).
  *
  * ### For Game Designers & Non-Programmers:
- * Gets the subfolder name where specialized logs for this topic are stored.
+ * Supplies the subfolder name used when per-category disk logging is active.
  *
  * ### For Systems Programmers & Engine Architects:
- * Direct O(1) lookup returning s_category_table[].dir_name constant.
+ * O(1) bounds-checked lookup returning immutable `s_category_table[].dir_name`.
+ *
+ * @param[in] category Telemetry category enum value.
+ * @return Immutable `.rodata` subdirectory segment (`"general"` when out of range).
  */
 const char *log_category_dir_name(log_category_t category)
 {
@@ -1727,6 +2001,10 @@ log_tripwire_t log_get_tripwire_status(void)
  */
 const char *log_get_tripwire_details(void)
 {
+    if (s_log.tripwire_status == LOG_TRIPWIRE_CLEAR &&
+        s_log.tripwire_details[0] == '\0') {
+        return "All data pipeline tripwires clear.";
+    }
     return s_log.tripwire_details;
 }
 
@@ -2038,13 +2316,8 @@ diag_result_t log_audit(bool verbose)
         printf("--- Running Core Utilities: Telemetry Subsystem Diagnostic Audit ---\n");
     }
 
-    bool was_initialized = s_log.initialized;
-    if (!s_log.initialized) {
-        log_config_t test_cfg = log_get_default_config();
-        test_cfg.echo_to_console = false;
-        test_cfg.min_severity = LOG_SEV_TRACE;
-        log_init(&test_cfg);
-    }
+    log_audit_guard_t guard;
+    log_audit_capture_state(&guard, verbose);
 
     /* Check 1: Preflight self-check */
     diag_result_t pre = log_preflight();
@@ -2052,9 +2325,7 @@ diag_result_t log_audit(bool verbose)
         if (verbose) {
             printf("  [FAIL] log_preflight invariant check failed: %s\n", pre.details);
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return pre;
     }
     if (verbose) {
@@ -2070,9 +2341,7 @@ diag_result_t log_audit(bool verbose)
         if (verbose) {
             printf("  [FAIL] Percent to grade conversion failed.\n");
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return err;
     }
     if (verbose) {
@@ -2088,9 +2357,7 @@ diag_result_t log_audit(bool verbose)
         if (verbose) {
             printf("  [FAIL] Sequence counter monotonicity violated.\n");
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return err;
     }
     if (verbose) {
@@ -2106,9 +2373,7 @@ diag_result_t log_audit(bool verbose)
         if (verbose) {
             printf("  [FAIL] Ring buffer entry retrieval failed.\n");
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return err;
     }
     if (verbose) {
@@ -2116,16 +2381,14 @@ diag_result_t log_audit(bool verbose)
     }
 
     /* Check 5: Top entries retrieval (newest first) */
-    log_entry_t top_entries[25];
-    size_t top_fetched = log_get_top_entries(top_entries, 25);
+    log_entry_t top_entries[4];
+    size_t top_fetched = log_get_top_entries(top_entries, 4);
     if (top_fetched == 0 || top_entries[0].sequence_id != after) {
         diag_result_t err = { false, SEVERITY_CRITICAL, MODULE_ID, "top_entries", "Top retrieval failed" };
         if (verbose) {
             printf("  [FAIL] Top entries retrieval failed.\n");
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return err;
     }
     if (verbose) {
@@ -2140,9 +2403,7 @@ diag_result_t log_audit(bool verbose)
         if (verbose) {
             printf("  [FAIL] Data-driven manifest loading failed.\n");
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return err;
     }
     if (verbose) {
@@ -2158,9 +2419,7 @@ diag_result_t log_audit(bool verbose)
             if (verbose) {
                 printf("  [WARN] Quiet profile attributes mismatch.\n");
             }
-            if (!was_initialized) {
-                log_shutdown();
-            }
+            log_audit_restore_state(&guard);
             return err;
         }
         if (verbose) {
@@ -2174,9 +2433,7 @@ diag_result_t log_audit(bool verbose)
         if (verbose) {
             printf("  [FAIL] Monolithic fallback code page failed audit.\n");
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return err;
     }
     if (verbose) {
@@ -2189,18 +2446,14 @@ diag_result_t log_audit(bool verbose)
         if (verbose) {
             printf("  [FAIL] Debugger fallback code page failed audit.\n");
         }
-        if (!was_initialized) {
-            log_shutdown();
-        }
+        log_audit_restore_state(&guard);
         return err;
     }
     if (verbose) {
         printf("  [PASS] Emergency debugger fallback code page audit verified.\n");
     }
 
-    if (!was_initialized) {
-        log_shutdown();
-    }
+    log_audit_restore_state(&guard);
 
     diag_result_t ok = { true, SEVERITY_PASS, MODULE_ID, "full_audit", "All audit checks passed" };
     return ok;
@@ -2341,6 +2594,14 @@ bool log_init(const log_config_t *config)
     if (s_log.initialized) {
         log_shutdown();
     }
+    if (s_log.tripwire_status == LOG_TRIPWIRE_CLEAR &&
+        s_log.tripwire_details[0] == '\0') {
+        str_safe_copy(
+            s_log.tripwire_details,
+            "All data pipeline tripwires clear.",
+            sizeof(s_log.tripwire_details)
+        );
+    }
 
     if (config != NULL) {
         s_log.config = *config;
@@ -2437,7 +2698,7 @@ bool log_init(const log_config_t *config)
     fprintf(
         s_log.file,
         "================================================================================\n"
-        "[%s] [SYSTEM INIT] Tenebris and Lux Forensic Telemetry Subsystem Initialized\n"
+        "[%s] [SYSTEM INIT] Cornerstone Forensic Telemetry Subsystem Initialized\n"
         "Standard: ISO 8601 | Profile: %s | Source: %s | SafeMode: %s\n"
         "================================================================================\n",
         iso_ts,

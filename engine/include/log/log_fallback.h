@@ -1,96 +1,94 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          log_fallback.h
+@file          engine/include/log/log_fallback.h
+@id            cog.log.fallback
 @layer         Layer 0: Core Utilities
+@archetype     quarantined_fallback | stateful
 @version       0.1.1-dev
 @interface_rev Rev 5
-@date          2026-11-08
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
-@system        Forensic Telemetry & Flight Recorder Engine
-@role          Tier-0 BIOS Safe-Mode Telemetry Code Page & Compiled-In ROM Vault
-@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
-               3. Quarantined execution path: Never invoked in normal production.
-               4. Provenance tracking: loaded_from_data is unconditionally false.
-               5. Profile identity explicitly stamped as LOG_FALLBACK_PROFILE_NAME
-                  or compact floppy preset LOG_FALLBACK_FLOPPY_PROFILE_NAME.
-               6. Compiled-in .rodata telemetry ROM hydrates configs with zero disk I/O.
-               7. Universal 5-Block Lifecycle Protocol enforced across header and source.
-               8. Strictly ISO C-style comments only (zero double-slash comments).
+@system        Forensic Telemetry Safe-Mode BIOS & Compiled ROM Vault
+@role          Public Contract & Seam: Tier-0 Safe-Mode logger BIOS, compact
+               floppy profile accessors, and shared pure config-JSON parser.
+@maturity      Rev 5 Baseline | Tier-0 zero-disk boot, 10 embedded telemetry ROMs & shared parser verified.
+@chassis       zero-heap | Early-boot .bss ring & ROM descriptor structs exposed via read-only accessors.
+@scale         O(1) BIOS record & drain; scales cleanly across all 10 build-generated telemetry ROM entries.
+@seams         in: telemetry_rom.h (generated) | uses: cog.manifest, cog.log.types (quarantined) | probes: telemetry_fallback.* | dag: core.util.log_fallback
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Quarantined include invariant: includes only core/manifest.h and log/log_types.h (never log.h or debug.h).
+               3. Fallback/ROM provenance unconditionally preserves loaded_from_data = false.
+               4. Shared log_fallback_parse_config_json() serves both Safe-Mode ROM and cog.log disk paths.
 
 PURPOSE & ARCHITECTURAL ROLE:
-  Tier-0 Safe-Mode BIOS logger, emergency monolith defaults, and compiled-in
-  .rodata telemetry ROM vault. Serves two cooperating roles:
-  (a) Early-Boot / Crash Capture: Arms before log_init() on static .bss RAM
-      buffers so pre-init faults, write-protected/full disks, and shutdown
-      events are safely captured and replayed once log_init() mounts disk I/O.
-  (b) Boot-Time Compiled-In ROM: Embeds all 10 telemetry JSON definitions into
-      immutable .rodata arrays so offline or 1.44 MB floppy deployments can
-      parse and hydrate complete profiles via master_loader_load_from_memory().
+  Establishes the quarantined Tier-0 Safe-Mode telemetry contract compiled
+  directly into the engine so early main() boot, bare-metal/floppy installs,
+  and emergency downgrades operate cleanly before disk I/O or VFS initializes.
 
   ### For Game Designers & Non-Programmers:
-  Think of this module as the computer's Safe Mode and BIOS flight recorder.
-  Even before the game finds its folders on disk, or if someone deletes config
-  files or puts the engine on a locked floppy disk, this backup system keeps
-  essential error logs in emergency memory, loads built-in factory copies of
-  the telemetry presets, and replays early boot notes once the main logger starts.
+  Acts as the aircraft emergency black box and built-in factory preset manual.
+  Even if someone launches the game without external config folders or on a
+  tiny locked medium, startup faults stay recorded and factory presets still load.
 
   ### For Systems Programmers & Engine Architects:
-  - 100% Static Compile-Time .rodata & .bss: Zero dynamic heap allocation.
-  - Unified JSON Setting Parser: Provides log_fallback_parse_config_json()
-    shared directly with log.c so Safe-Mode ROM hydration and disk loading
-    never duplicate config extraction logic.
-  - Explicit provenance tagging: Safe-Mode & ROM configs preserve
-    loaded_from_data == false while exposing detailed ROM/sink diagnostics.
+  - Ownership & Reentrancy: Owns quarantined pre-init ring storage in .bss and
+    immutable ROM tables in .rodata; callers borrow const views or drain records.
+  - Extension Seam: Adding telemetry JSON presets to engine/config/diagnostics/
+    automatically expands telemetry_rom.h via cmake/GenerateConfigRom.cmake.
+  - Explicit Non-Goal: Never implements full multi-file VFS traversal or archive
+    indexing (delegated upward to cog.log and path_finder).
 ================================================================================
 */
 
-#ifndef TENEBRIS_LUX_LOG_FALLBACK_H
-#define TENEBRIS_LUX_LOG_FALLBACK_H
+#ifndef CORNERSTONE_LOG_LOG_FALLBACK_H
+#define CORNERSTONE_LOG_LOG_FALLBACK_H
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
-Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+BLOCK 2: OPENING BLOCK
+( Tier-0 Safe-Mode BIOS Quarantine, ROM Contracts & Standalone Frontier )
 ================================================================================
-Mission: Quarantined emergency fallback limits, include ladder, and static
-helper predicates for telemetry bootstrapping when data manifests are offline.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.log.fallback
+Mission:       Quarantined standalone BIOS interface free of primary headers.
 ================================================================================
-*/
-
-/*
---------------------------------------------------------------------------------
-Include Hierarchy: 3-Tier Downward Architecture
---------------------------------------------------------------------------------
-Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Library Dependencies (None)
-Tier 3: Internal Engine Foundation Headers
---------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-/* --- Tier 2: External Library Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None in Layer 0/1) --- */
 
-/* --- Tier 3: Internal Engine Foundation Headers --- */
+/* --- Tier 3: Internal Engine Foundation Headers (Quarantined) --- */
 #include "core/manifest.h"
+#include "log/log_types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Pre-Conditions & Fallback Configuration Constants
+Sub-Assembly 2.1: Pre-Conditions, BIOS Limits & Compile-Time Proofs
 --------------------------------------------------------------------------------
 Compile-time static defaults for emergency boot and headless testing.
-For Designers: Fallback parameters guarantee logs are recorded even if config
-files are deleted, saving up to 10 historical 1MB files in the "logs" folder.
-For Programmers: Immutable constants residing in .rodata with zero heap allocation.
+
+### For Game Designers & Non-Programmers:
+Fallback parameters guarantee logs stay recorded even if config files are
+deleted, retaining up to 10 historical 1 MiB files in the fallback log folder.
+
+### For Systems Programmers & Engine Architects:
+Immutable constants residing in `.rodata` with zero heap allocation and
+compile-time bounds proving BIOS ring capacities never exceed primary limits.
 --------------------------------------------------------------------------------
 */
 
@@ -139,16 +137,30 @@ For Programmers: Immutable constants residing in .rodata with zero heap allocati
 /** Fixed Tier-0 .bss ring capacity for pre-init / Safe-Mode capture. */
 #define LOG_FALLBACK_RING_CAPACITY       32U
 
+static_assert(
+    LOG_FALLBACK_RING_CAPACITY <= LOG_RING_BUFFER_CAPACITY,
+    "BIOS fallback replay ring must fit cleanly inside primary flight ring"
+);
+static_assert(
+    LOG_FALLBACK_MAX_FILES <= LOG_DEFAULT_MAX_FILES,
+    "Fallback archive cap must remain within primary rotation limits"
+);
+
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.2: Manifest & Pre-Flight Hooks
 --------------------------------------------------------------------------------
-Pre-flight verification anchor for the fallback code page.
+Pre-flight verification anchor and stateful BIOS manifest record.
 --------------------------------------------------------------------------------
 */
 
 /** Unique module identifier string for the Logging Fallback subsystem. */
 #define LOG_FALLBACK_MODULE_ID         "log.fallback"
+
+/**
+ * Manifest record for the Tier-0 Safe-Mode Telemetry BIOS & ROM Vault.
+ */
+extern const module_metadata_t log_fallback_manifest;
 
 /*
 --------------------------------------------------------------------------------
@@ -259,8 +271,15 @@ static inline bool log_fallback_sink_uses_disk(log_fallback_sink_t sink) {
 
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / MONOLITHIC FALLBACK API DECLARATIONS
-Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+BLOCK 3: BODY BLOCK
+( Tier-0 Safe-Mode BIOS Cogs, ROM Vault Queries & Fault Recovery )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0 (Core Utilities)
+Module:        cog.log.fallback
+Mission:       Provide dependency-minimal telemetry fallback profiles, compiled-in
+               `.rodata` ROM config resolution, shared JSON setting parsers, and
+               Tier-0 RAM/disk capture and replay primitives before primary init.
 ================================================================================
 */
 
@@ -351,6 +370,35 @@ bool log_fallback_is_recognized_profile(const log_config_t *cfg);
  * @return true if recognized; false otherwise.
  */
 bool log_fallback_severity_from_string(const char *str, log_severity_t *out_sev);
+
+/**
+ * @brief Span-bounded JSON "setting" payload parser fenced strictly inside [json_start, json_len).
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Reads log folder, filename, file cap, and severity settings safely from an isolated
+ * `block_3_body` JSON slice so adjacent header or audit blocks can never leak values in.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Zero-heap span-bounded parser shared by compiled-in ROM hydration and `log.c`
+ * `master_loader` ingestion, eliminating `strstr()` full-buffer scans. Keeps
+ * `out_config->loaded_from_data == false`; callers promote provenance on verified disk loads.
+ *
+ * @param[in]  json_start   Slice start pointer (`block_3_body` or nested `"setting"` object).
+ * @param[in]  json_len     Byte length of `json_start` (`0` measures NUL-terminated string).
+ * @param[out] out_config   Populated configuration structure.
+ * @param[out] out_tripwire Optional failure tripwire enum code (may be NULL).
+ * @param[out] err_buf      Optional human-readable error buffer (may be NULL).
+ * @param[in]  err_cap      Capacity of `err_buf` in bytes.
+ * @return true if attributes parsed and validated within bounds; false on fault.
+ */
+bool log_fallback_parse_config_span(
+    const char *json_start,
+    size_t json_len,
+    log_config_t *out_config,
+    log_tripwire_t *out_tripwire,
+    char *err_buf,
+    size_t err_cap
+);
 
 /**
  * @brief Parses a JSON "setting" payload into a validated log_config_t.
@@ -454,7 +502,7 @@ bool log_fallback_load_rom_profile(const char *profile_name, log_config_t *out_c
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 3.3: Tier-0 Safe-Mode Capture, Replay & Emergency Ignition
+Sub-Assembly 3.3: Tier-0 Safe-Mode Capture, Disk-Fault Degradation & Replay
 --------------------------------------------------------------------------------
 @triggers
   - Block 4 Audits : log_fallback_validate_boot_contract() [disk_fault & boot invariants]
@@ -538,24 +586,6 @@ size_t log_fallback_peek_entries(log_entry_t *out_entries, size_t max_entries);
  * @return Number of entries drained.
  */
 size_t log_fallback_drain_entries(log_entry_t *out_entries, size_t max_entries);
-
-/**
- * @brief Explicitly initializes the logging engine using the emergency monolithic code page.
- *
- * Designed for catastrophic disaster recovery, early kernel panic logging,
- * and isolated offline unit tests where the filesystem data hierarchy is
- * unavailable or intentionally excluded.
- *
- * ### For Game Designers & Non-Programmers:
- * Emergency backup starter for the logging system during catastrophic boot errors.
- *
- * ### For Systems Programmers & Engine Architects:
- * Attempts ROM Safe-Mode / static monolith handoff to log_init(), falling back to
- * Tier-0 RAM Ring + stderr Safe-Mode capture cleanly if writable disk is unavailable.
- *
- * @return true on successful primary or Safe-Mode activation; false only on internal fault.
- */
-bool log_init_emergency_monolith(void);
 
 /*
 ================================================================================
@@ -710,9 +740,27 @@ bool log_fallback_execute_dump_card(const log_config_t *cfg, char *out_buf, size
 --------------------------------------------------------------------------------
 Sub-Assembly 5.2: Subsystem Lifecycle Initialization & Teardown
 Mission: Manage Tier-0 BIOS Safe-Mode lifecycle, arm/close optional Safe-Mode
-disk streams, and tear down static black-box capture buffers cleanly.
+disk streams, initialize emergency monolith boots, and tear down capture buffers cleanly.
 --------------------------------------------------------------------------------
 */
+
+/**
+ * @brief Explicitly initializes the logging engine using the emergency monolithic code page.
+ *
+ * Designed for catastrophic disaster recovery, early kernel panic logging,
+ * and isolated offline unit tests where the filesystem data hierarchy is
+ * unavailable or intentionally excluded.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Emergency ignition switch for the logging system during catastrophic boot errors.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Attempts static monolith handoff into `log_init()`, degrading cleanly into Tier-0
+ * RAM Ring + stderr Safe Mode via `log_fallback_boot()` if writable disk is unavailable.
+ *
+ * @return true on successful primary or Safe-Mode activation; false only on internal fault.
+ */
+bool log_init_emergency_monolith(void);
 
 /**
  * @brief Arms the Tier-0 BIOS Safe-Mode logger before CLI flags or disk VFS boot.
@@ -746,8 +794,18 @@ void log_fallback_shutdown(void);
 /**
  * @brief Queries whether the Tier-0 BIOS Safe-Mode logger is currently armed.
  *
+ * ### For Game Designers & Non-Programmers:
+ * Reports whether the emergency early-boot recorder is currently turned on.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) read-only inspection of the static `.bss` BIOS initialization latch.
+ *
  * @return true if log_fallback_boot() (or auto-arm) is currently active.
  */
 bool log_fallback_is_booted(void);
 
-#endif /* TENEBRIS_LUX_LOG_FALLBACK_H */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CORNERSTONE_LOG_LOG_FALLBACK_H */

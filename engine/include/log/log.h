@@ -1,146 +1,131 @@
 /*
 ================================================================================
 BLOCK 1: METADATA BLOCK
-( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 ================================================================================
 @project       Tenebris and Lux
-@file          log.h
+@file          engine/include/log/log.h
+@id            cog.log
 @layer         Layer 0: Core Utilities
+@archetype     operational | stateful
 @version       0.1.1-dev
 @interface_rev Rev 5
-@date          2026-11-08
+@date          2026-11-11
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Forensic Telemetry & Flight Recorder Engine
-@role          High-performance, zero-heap logging, telemetry, and forensic
-               flight recorder subsystem delivering structured, machine-greppable
-               audit trails with ISO 8601 timestamps, microsecond monotonic deltas,
-               gradient moral grading, automated size rotation, and in-memory
-               circular ring buffering for live viewport HUD inspection.
-@invariants    1. Zero dynamic heap allocations in Layer 0 (ALLOC_ZERO_HEAP).
-               2. Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic).
-               3. Monotonic sequence counter: ID strictly increments per entry.
-               4. Gradient grade strictly bounded in [-1.0f, +1.0f] <-> [-100, +100].
-               5. Fixed-width token columns guarantee deterministic regex/grep parsing.
-               6. Automated rotation bounds: active log file never exceeds byte threshold.
-               7. Static memory boundary: in-flight ring buffer never dynamic allocates.
-               8. Universal 5-Block Lifecycle Protocol enforced across header and source.
+@role          Public Contract & Seam: Zero-heap structured telemetry, severity
+               bitmasks, moral-sway grading [-1.0, +1.0], and HUD ring queries.
+@maturity      Rev 5 Baseline | BIOS ROM fallback & probe tripwires active; awaiting VFS master_loader wiring.
+@chassis       zero-heap | Public handle/config POD bounds; in-flight ring cap defined cleanly via LOG_* macros.
+@scale         O(1) append/ring query; capacity scales via LOG_RING_CAPACITY & telemetry profile JSON thresholds.
+@seams         in: engine/config/diagnostics/telemetry/<profile>.json | uses: cog.log.types, cog.log.fallback, cog.debug | probes: telemetry.* -> DEBUG_STEP_AWAIT | dag: core.util.log
+@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.
+               2. Monotonic sequence IDs strictly increment per emitted record.
+               3. Gradient moral grade stays bounded in [-1.0f, +1.0f] <-> [-100, +100].
+               4. Active disk log size never exceeds configured rotation cap without rollover.
 
 PURPOSE & ARCHITECTURAL ROLE:
-  Forensic flight recorder and diagnostic audit pipeline for the Tenebris and Lux
-  tactical RPG simulation engine.
-  Provides structured, reproducible execution trails that bridge pure headless C11
-  simulation state with GUI runtime viewports and developer diagnostic telemetry.
-  Integrates directly with data-driven configuration assets residing in
-  engine/config/diagnostics/telemetry/ (manifest.json, default.json, development.json,
-  production.json, quiet.json, combat_focus.json, forensic_telemetry.json)
-  with quarantined emergency fallback protection (log_fallback.h).
+  Defines the public Layer 0 forensic flight recorder contract: structured log
+  records, ENGINE vs GAME category channels, weighted severities, rotating disk
+  policies, and the circular ring query API consumed by CLI and X11 HUDs.
 
   ### For Game Designers & Non-Programmers:
-  This module acts like the black-box flight recorder of an aircraft. Whenever
-  a hero strikes, casts a spell, shifts combat stances, or trips a story event,
-  this system records exactly what happened, when it happened, which entity
-  performed it, and the exact moral balance of the world at that moment.
+  Provides the black-box flight recorder interface for the simulation. Designers
+  can filter ENGINE vs GAME channels, inspect moral balance alongside combat events,
+  and swap verbosity presets cleanly in engine/config/diagnostics/telemetry/ JSONs.
 
   ### For Systems Programmers & Engine Architects:
-  - 100% Zero-Heap Memory Model (ALLOC_ZERO_HEAP): All buffers, ring queues,
-    and line formatting buffers reside in .bss or on caller CPU stack frames.
-  - Multi-tier severity hierarchy: FATAL down to TRACE with bitmask filtering.
-  - Dual-destination dispatch: simultaneous emission to rotating disk archives
-    and fixed-capacity circular ring buffer for runtime HUD inspection.
+  - Ownership & Reentrancy: Global singleton state owned internally; caller-owned
+    POD config structs passed by value/pointer without heap ownership transfer.
+  - Extension Seam: Add severities, channels, or output sinks via telemetry table
+    descriptors and JSON manifests without altering caller call sites.
+  - Explicit Non-Goal: Does not retain full state rewind snapshots (delegated to
+    cog.debug) or own UI rendering layout.
 ================================================================================
 */
 
-#ifndef TENEBRIS_LUX_LOG_H
-#define TENEBRIS_LUX_LOG_H
+#ifndef CORNERSTONE_LOG_LOG_H
+#define CORNERSTONE_LOG_LOG_H
 
 /*
 ================================================================================
-BLOCK 2: OPENING BLOCK / TYPES & DOMAIN ONTOLOGY
-Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+BLOCK 2: OPENING BLOCK
+( Public Contract Limits, Fallback Link, Ontology & O(1) Pre-Conditions )
 ================================================================================
-Mission: Telemetry limits, downward include ladder, log manifests, structural
-ontology, and pre-conditional validation predicates for diagnostic flight recording.
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0: Core Utilities
+Module:        cog.log
+Mission:       Declare limits, downward + fallback links, public types, and O(1) guards.
 ================================================================================
-*/
-
-/*
---------------------------------------------------------------------------------
-Include Hierarchy: 3-Tier Downward Architecture
---------------------------------------------------------------------------------
-Tier 1: Standard ISO C11 Library Headers
-Tier 2: External Library Dependencies (None)
-Tier 3: Internal Engine Foundation Headers
---------------------------------------------------------------------------------
 */
 
 /* --- Tier 1: Standard ISO C11 Library Headers --- */
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
-/* --- Tier 2: External Library Dependencies (None) --- */
+/* --- Tier 2: External Library Dependencies (None in Layer 0/1) --- */
 
 /* --- Tier 3: Internal Engine Foundation Headers --- */
 #include "core/manifest.h"
+#include "log/log_types.h"
+#include "log/log_fallback.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.1: Pre-Conditions & Telemetry Buffer Limits
+Sub-Assembly 2.1: Pre-Conditions, Operational Paths & Compile-Time Proofs
 --------------------------------------------------------------------------------
-Compile-time sizing bounds for the flight recorder and log rotation pipeline.
-For Designers: Bounds ensure log lines and entity names are cleanly formatted.
-For Programmers: Guarantees zero heap allocation (ALLOC_ZERO_HEAP) in static buffers.
+Operational VFS anchor constants and cross-contract static assertions proving
+compatibility between shared telemetry types and Tier-0 BIOS replay queues.
+
+### For Game Designers & Non-Programmers:
+Identifies the canonical telemetry manifest (`diagnostics/telemetry/manifest.json`)
+and default profile (`"default"`) loaded cleanly during engine initialization.
+
+### For Systems Programmers & Engine Architects:
+Physical record/line/ring bounds live in `log/log_types.h` (`cog.log.types`).
+Here `static_assert` proofs enforce zero-heap ring capacity subsumption.
 --------------------------------------------------------------------------------
 */
 
-/**
- * @brief Maximum length in bytes for character or entity name tokens.
- * Sized to 16 bytes to fit "Player", "Elijah", "Katrina", "MasterLoader", etc.
- */
-#define LOG_MAX_ENTITY_LEN       16
+/** Canonical VFS config path to the master telemetry manifest JSON. */
+#define LOG_MANIFEST_PATH        "diagnostics/telemetry/manifest.json"
 
-/**
- * @brief Maximum payload length in bytes for a single log message text.
- * Sized to 256 bytes for single-line combat, story, and diagnostic events.
- */
-#define LOG_MAX_MESSAGE_LEN      256
+/** Canonical default telemetry preset identifier used during auto-boot. */
+#define LOG_DEFAULT_PROFILE      "default"
 
-/**
- * @brief Maximum capacity in bytes for a fully formatted output log line.
- * Sized to 512 bytes to safely contain ISO timestamp, category, monotonic
- * delta microsecond counter, moral grade percentage, and message payload.
- */
-#define LOG_MAX_LINE_BUFFER      512
+/** Hard upper ceiling for archived log rotation count (`1..25`). */
+#define LOG_MAX_ROTATION_FILES   25U
 
-/**
- * @brief Default file size threshold triggering automatic log archive rotation.
- * Sized to 1,048,576 bytes (1 MB) to prevent disk bloat during long campaigns.
- */
-#define LOG_DEFAULT_MAX_BYTES    (1024 * 1024)
-
-/**
- * @brief Default maximum number of rotated archive files retained on disk.
- * Retains up to 25 historical files before purging the oldest archive.
- */
-#define LOG_DEFAULT_MAX_FILES    25
-
-/**
- * @brief Fixed capacity of the in-memory circular flight recorder ring buffer.
- * Holds the most recent 64 events for instantaneous live HUD display.
- */
-#define LOG_RING_BUFFER_CAPACITY 64
+static_assert(
+    LOG_RING_BUFFER_CAPACITY >= LOG_FALLBACK_RING_CAPACITY,
+    "Primary flight ring must hold entire Tier-0 BIOS replay queue"
+);
+static_assert(
+    LOG_DEFAULT_MAX_BYTES >= LOG_FALLBACK_FLOPPY_MAX_BYTES,
+    "Default archive byte cap must meet or exceed compact Safe-Mode cap"
+);
+static_assert(
+    LOG_DEFAULT_MAX_FILES == LOG_MAX_ROTATION_FILES,
+    "Default file retention bound must match operational rotation ceiling"
+);
 
 /*
 --------------------------------------------------------------------------------
 Sub-Assembly 2.2: Manifest & Pre-Flight Hooks
 --------------------------------------------------------------------------------
-Pre-flight verification anchor for the engine's Loose-Bolts initialization DAG.
+Pre-flight verification anchor for the engine initialization DAG.
 --------------------------------------------------------------------------------
 */
 
 /** Unique module identifier string for the Zero-Heap Logging Engine. */
-#define LOG_MODULE_ID                  "log.engine"
+#define LOG_MODULE_ID                  "core.util.log"
 
 /**
  * Manifest record for the Zero-Heap Logging Engine.
@@ -149,203 +134,133 @@ extern const module_metadata_t log_manifest;
 
 /*
 --------------------------------------------------------------------------------
-Sub-Assembly 2.3: Structural Entity & Object Definitions
+Sub-Assembly 2.3: Structural Entity & Object Definitions (Cross-Reference)
 --------------------------------------------------------------------------------
-Ontological types for graded telemetry, category routing, and log snapshots.
+Shared telemetry ontology (`log_severity_t`, `log_category_t`, `log_entry_t`,
+`log_tripwire_t`, `log_config_t`, `log_stats_t`) is defined canonically in
+`log/log_types.h` (`cog.log.types`); BIOS sink/ROM/replay types
+(`log_fallback_sink_t`, `log_fallback_profile_t`, `log_fallback_rom_info_t`,
+`log_fallback_stats_t`) are declared in `log/log_fallback.h` (`cog.log.fallback`).
 --------------------------------------------------------------------------------
 */
-
-/**
- * @enum log_severity
- * @brief Graded severity taxonomy for engine diagnostics and telemetry events.
- * Ordered from highest severity (FATAL) down to finest detail (TRACE).
- *
- * For Designers: Defines how critical an event is:
- *   - FATAL/CRITICAL: Showstoppers that break gameplay.
- *   - ERROR/WARNING: Problems that were handled gracefully with fallbacks.
- *   - INFO: Normal story, quest, and milestone announcements.
- *   - DEBUG/TRACE: Deep technical numbers for battle balance and frame timing.
- *
- * For Programmers: Strict integer ordering enables bitmask and threshold filtering.
- */
-typedef enum log_severity {
-    LOG_SEV_FATAL = 0,    /**< Unrecoverable crash or state corruption. */
-    LOG_SEV_CRITICAL,     /**< Severe failure threatening gameplay loop. */
-    LOG_SEV_ERROR,        /**< Discrete operation failure with fallback. */
-    LOG_SEV_WARNING,      /**< Suspicious condition or degraded state. */
-    LOG_SEV_INFO,         /**< Major milestone or narrative state shift. */
-    LOG_SEV_DEBUG,        /**< Granular spatial, coordinate, or stance data. */
-    LOG_SEV_TRACE,        /**< High-frequency per-tick calculation telemetry. */
-    LOG_SEV_COUNT
-} log_severity_t;
-
-/**
- * @enum log_category
- * @brief Functional categorization of logging events for focused channel filtering.
- *
- * For Designers: Divides game events into distinct thematic channels:
- *   - CHARACTER: Hero and enemy combat actions, stance shifts, and health changes.
- *   - MESSAGE: Dialogue spoken by NPCs, narrative exposition, and story scrolls.
- *   - EVENT: World triggers, quest progression, and battle victory/defeat.
- *   - LOG/DEBUG: System startup messages and technical performance metrics.
- *
- * For Programmers: Allows splitting logs into separate files or viewport HUD tabs.
- */
-typedef enum log_category {
-    LOG_CAT_DEBUG = 0,    /**< Low-level developer engine trace. */
-    LOG_CAT_LOG,          /**< Standard system lifecycle and startup logs. */
-    LOG_CAT_EVENT,        /**< Significant world, combat, or quest trigger. */
-    LOG_CAT_MESSAGE,      /**< Narrative dialogue or NPC communicative prompt. */
-    LOG_CAT_CHARACTER,    /**< Protagonist/enemy spatial & relic stance action. */
-    LOG_CAT_COUNT
-} log_category_t;
-
-/**
- * @struct log_entry
- * @brief Static telemetry record stored in memory ring buffer and emitted to disk.
- *
- * For Designers: A discrete "black box" flight recorder entry capturing everything
- * that happened at an exact moment in time, including which character acted and
- * what the moral alignment of the world was when it occurred.
- *
- * For Programmers: 100% stack/static record. Zero dynamic heap allocation.
- */
-typedef struct log_entry {
-    uint64_t sequence_id;                  /**< Monotonic sequence identifier. */
-    uint64_t monotonic_us;                /**< Monotonic clock delta (microseconds). */
-    char iso_timestamp[32];               /**< UTC ISO 8601 timestamp string. */
-    log_severity_t severity;              /**< Graded severity level. */
-    log_category_t category;              /**< Domain category. */
-    char entity[LOG_MAX_ENTITY_LEN + 1];  /**< Character or system entity identifier. */
-    float grade;                          /**< Normalized continuum [-1.0f .. +1.0f]. */
-    int grade_percent;                    /**< Readout integer [-100 .. +100]. */
-    const char *file;                     /**< Source file anchor (__FILE__). */
-    int line;                             /**< Source line anchor (__LINE__). */
-    const char *func;                     /**< Source function anchor (__func__). */
-    char message[LOG_MAX_MESSAGE_LEN + 1];/**< Clean message payload. */
-} log_entry_t;
-
-/**
- * @enum log_tripwire
- * @brief Diagnostic tripwire state for the data-driven logging pipeline.
- *
- * For Designers: Circuit breakers that catch corrupt data files and automatically
- * engage safe defaults without crashing the game.
- *
- * For Programmers: Latching error enum verified during pre-flight self-audit.
- */
-typedef enum log_tripwire {
-    LOG_TRIPWIRE_CLEAR = 0,        /**< No tripwires active; data pipeline healthy. */
-    LOG_TRIPWIRE_MANIFEST_MISSING, /**< Telemetry manifest could not be found. */
-    LOG_TRIPWIRE_MANIFEST_INVALID, /**< Manifest unparseable or lacks menu entries. */
-    LOG_TRIPWIRE_SETTING_MISSING,  /**< Designated setting JSON profile not found. */
-    LOG_TRIPWIRE_SETTING_INVALID,  /**< Setting file syntax or attributes corrupted. */
-    LOG_TRIPWIRE_BOUNDS_VIOLATION  /**< Configuration violated byte/file limits. */
-} log_tripwire_t;
-
-/**
- * @struct log_config
- * @brief Runtime configuration for the logging subsystem.
- *
- * For Designers: Configurable settings profile determining where logs are saved,
- * how much history is kept, and whether colored text appears in developer consoles.
- *
- * For Programmers: Loaded dynamically from engine/config/diagnostics/telemetry/.
- */
-typedef struct log_config {
-    char log_dir[64];            /**< Target directory for log files (e.g. "build/logs"). */
-    char base_filename[64];      /**< Primary active log filename (e.g. "tenebris_lux.log"). */
-    size_t max_file_size_bytes;  /**< Byte threshold triggering file rotation. */
-    size_t max_rotated_files;    /**< Maximum archive files retained (10-25, default 25). */
-    log_severity_t min_severity; /**< Filter cutoff (events below this are ignored). */
-    bool save_by_category;       /**< Write typed logs to logs/<category>/<cat>.log folders. */
-    bool echo_to_console;        /**< Mirror formatted logs to stdout/stderr. */
-    bool use_colors;             /**< Emit ANSI color escape sequences on console. */
-    char profile_name[32];       /**< Name of loaded data profile (e.g. "development"). */
-    bool loaded_from_data;       /**< True if dynamically loaded from JSON data sources. */
-} log_config_t;
-
-/**
- * @struct log_stats
- * @brief Aggregate runtime telemetry report constructed by Block 5 execution procedures.
- *
- * For Designers: A scorecard showing total messages logged, file size, and status.
- *
- * For Programmers: Telemetry structure constructed by log_execute_inspect().
- */
-typedef struct log_stats {
-    uint64_t total_entries;       /**< Total log entries written since initialization. */
-    size_t ring_buffer_count;     /**< Number of active entries in circular ring buffer. */
-    size_t rotation_count;        /**< Number of file rotations executed. */
-    size_t active_file_bytes;     /**< Current size in bytes of active log file. */
-    log_severity_t min_severity;  /**< Current active severity filter threshold. */
-    bool is_active;               /**< true if logging subsystem is initialized. */
-    bool loaded_from_data;        /**< true if active profile was loaded from JSON. */
-    char active_profile[32];      /**< Active profile identifier. */
-} log_stats_t;
 
 /*
 --------------------------------------------------------------------------------
-Fallback Safety Subsystem Integration
+Sub-Assembly 2.4: Pre-Conditional Helper Cogs & Operational Inlines
 --------------------------------------------------------------------------------
-The complete logging engine API incorporates the quarantined emergency fallback.
---------------------------------------------------------------------------------
-*/
-#include "log/log_fallback.h"
-
-/*
---------------------------------------------------------------------------------
-Sub-Assembly 2.4: Pre-Conditional Helper Cogs & Non-Business Inlines
---------------------------------------------------------------------------------
-Pure, static inline validation predicates and non-business query helpers.
-Guarantees zero heap, pure reentrancy, and fast pre-flight assertion checks.
+Pure O(1) inline validation predicates complementing the shared vocabulary
+predicates declared in `log/log_types.h`.
 --------------------------------------------------------------------------------
 */
 
 /**
- * @brief Predicate verifying if a log severity value is within valid range.
+ * @brief Predicate verifying whether a logging config defines a usable disk sink.
  *
- * @param[in] sev Severity value to check.
- * @return true if severity is within canonical [0, LOG_SEV_COUNT - 1] bounds.
+ * ### For Game Designers & Non-Programmers:
+ * Confirms log presets name a real output folder and file with valid size/archive
+ * caps before disk logging starts.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) pre-condition guard inspecting folder/file non-emptiness and nonzero caps.
+ *
+ * @param[in] cfg Configuration record to validate.
+ * @return true if disk directory, base filename, and rotation caps are non-empty.
  */
-static inline bool log_severity_is_valid(log_severity_t sev) {
-    return sev >= LOG_SEV_FATAL && sev < LOG_SEV_COUNT;
+static inline bool log_config_has_sink(const log_config_t *cfg)
+{
+    return (cfg != NULL) &&
+           (cfg->log_dir[0] != '\0') &&
+           (cfg->base_filename[0] != '\0') &&
+           (cfg->max_file_size_bytes > 0U) &&
+           (cfg->max_rotated_files > 0U);
 }
 
 /**
- * @brief Predicate verifying if a log category value is within valid range.
+ * @brief Predicate verifying whether a captured telemetry entry carries usable fields.
  *
- * @param[in] cat Category value to check.
- * @return true if category is within canonical [0, LOG_CAT_COUNT - 1] bounds.
+ * ### For Game Designers & Non-Programmers:
+ * Checks that a recorded flight-box note has valid severity, category, grade,
+ * and message payload before formatting or replay.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Composes O(1) `log_types.h` range checks cleanly with NUL payload validation.
+ *
+ * @param[in] entry Telemetry record pointer to validate.
+ * @return true if entry bounds and enums lie within canonical contract limits.
  */
-static inline bool log_category_is_valid(log_category_t cat) {
-    return cat >= LOG_CAT_DEBUG && cat < LOG_CAT_COUNT;
+static inline bool log_entry_has_payload(const log_entry_t *entry)
+{
+    return (entry != NULL) &&
+           log_severity_is_valid(entry->severity) &&
+           log_category_is_valid(entry->category) &&
+           log_grade_is_valid(entry->grade) &&
+           (entry->message[0] != '\0');
 }
 
 /**
- * @brief Predicate verifying if a moral grade value is within valid bounds.
+ * @brief Master logging macro capturing source location (`__FILE__`, `__LINE__`, `__func__`).
  *
- * @param[in] grade Normalized float grade value.
- * @return true if grade is within [-1.0f, +1.0f].
+ * ### For Game Designers & Non-Programmers:
+ * Automatically tags every game log event with the exact source location for fast diagnosis.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Convenience preprocessor wrapper expanding at caller sites to `log_write_entry()`.
+ *
+ * @param[in] sev    Graded severity level (`log_severity_t`).
+ * @param[in] cat    Target functional category (`log_category_t`).
+ * @param[in] entity Actor or subsystem label string.
+ * @param[in] grade  Normalized alignment gradient `[-1.0f .. +1.0f]`.
  */
-static inline bool log_grade_is_valid(float grade) {
-    return grade >= -1.0f && grade <= 1.0f;
-}
+#define LOG_RECORD(sev, cat, entity, grade, ...) \
+    log_write_entry(sev, cat, entity, grade, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
-/**
- * @brief Predicate verifying if the logging subsystem tripwire is clear.
- *
- * @param[in] wire Tripwire state to check.
- * @return true if tripwire is LOG_TRIPWIRE_CLEAR.
- */
-static inline bool log_tripwire_is_clear(log_tripwire_t wire) {
-    return wire == LOG_TRIPWIRE_CLEAR;
-}
+/** @brief Convenience logging macro for FATAL severity events. */
+#define LOG_FATAL(cat, entity, grade, ...) \
+    LOG_RECORD(LOG_SEV_FATAL, cat, entity, grade, __VA_ARGS__)
+
+/** @brief Convenience logging macro for CRITICAL severity events. */
+#define LOG_CRITICAL(cat, entity, grade, ...) \
+    LOG_RECORD(LOG_SEV_CRITICAL, cat, entity, grade, __VA_ARGS__)
+
+/** @brief Convenience logging macro for ERROR severity events. */
+#define LOG_ERROR(cat, entity, grade, ...) \
+    LOG_RECORD(LOG_SEV_ERROR, cat, entity, grade, __VA_ARGS__)
+
+/** @brief Convenience logging macro for WARNING severity events. */
+#define LOG_WARN(cat, entity, grade, ...) \
+    LOG_RECORD(LOG_SEV_WARNING, cat, entity, grade, __VA_ARGS__)
+
+/** @brief Convenience logging macro for INFO severity events. */
+#define LOG_INFO(cat, entity, grade, ...) \
+    LOG_RECORD(LOG_SEV_INFO, cat, entity, grade, __VA_ARGS__)
+
+/** @brief Convenience logging macro for DEBUG severity events. */
+#define LOG_DEBUG(cat, entity, grade, ...) \
+    LOG_RECORD(LOG_SEV_DEBUG, cat, entity, grade, __VA_ARGS__)
+
+/** @brief Convenience logging macro for TRACE severity events. */
+#define LOG_TRACE(cat, entity, grade, ...) \
+    LOG_RECORD(LOG_SEV_TRACE, cat, entity, grade, __VA_ARGS__)
+
+/** @brief Convenience logging macro for character event telemetry. */
+#define LOG_CHAR_EVENT(char_name, grade, ...) \
+    log_write_entry(LOG_SEV_INFO, LOG_CAT_CHARACTER, char_name, grade, __FILE__, __LINE__, __func__, __VA_ARGS__)
+
+/** @brief Convenience logging macro for dialogue and actor message telemetry. */
+#define LOG_CHAR_MSG(char_name, grade, ...) \
+    log_write_entry(LOG_SEV_INFO, LOG_CAT_MESSAGE, char_name, grade, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /*
 ================================================================================
-BLOCK 3: BODY BLOCK / CORE LOGIC & BUSINESS FUNCTIONS
-Stratum: Layer 0 (Core Utilities) | Subsystem: Forensic Telemetry Engine
+BLOCK 3: BODY BLOCK
+( Public Operational Cogs, State Accessors & Domain APIs )
+================================================================================
+Engine:        Cornerstone Game Engine
+Stratum:       Layer 0 (Core Utilities)
+Module:        cog.log
+Mission:       Declare public operational APIs for VFS telemetry profile loading,
+               archive rotation, structured log emission, ring buffer inspection,
+               and deterministic severity/category taxonomy lookups.
 ================================================================================
 */
 
@@ -394,7 +309,7 @@ log_config_t log_get_default_config(void);
  * ### For Systems Programmers & Engine Architects:
  * Deserializes JSON telemetry profile keys into caller-allocated log_config_t.
  *
- * @param[in]  filepath   Path to JSON setting file (e.g. "system/diagnostics/telemetry/development.json").
+ * @param[in]  filepath   Path to JSON setting file (e.g. "engine/config/diagnostics/telemetry/development.json").
  * @param[out] out_config Output configuration structure to populate.
  * @return true if successfully loaded and validated; false on failure.
  */
@@ -522,8 +437,8 @@ Mission: Format, serialize, and emit structured flight recorder entries.
  *
  * @param[in] severity Graded severity level.
  * @param[in] category Target functional category.
- * @param[in] entity   Entity/Character name (e.g. "Elijah", "Katrina", "System").
- * @param[in] grade    Normalized grade [-1.0f .. +1.0f] (e.g. moral sway or health).
+ * @param[in] entity   Entity/Actor label (e.g. "Player", "Companion", "System").
+ * @param[in] grade    Normalized grade [-1.0f .. +1.0f] (e.g. alignment sway or vitals).
  * @param[in] file     Source file name (__FILE__).
  * @param[in] line     Source line number (__LINE__).
  * @param[in] func     Source function name (__func__).
@@ -547,7 +462,10 @@ uint64_t log_write_entry(log_severity_t severity,
  * Converts an internal moral sway decimal into a clean -100% to +100% readout.
  *
  * ### For Systems Programmers & Engine Architects:
- * Clamps grade to [-1.0f, 1.0f] and scales to signed 32-bit integer percentage.
+ * Clamps `grade` to [-1.0f, 1.0f] and scales symmetrically into a signed 32-bit integer percentage.
+ *
+ * @param[in] grade Normalized floating-point balance ratio in `[-1.0f .. +1.0f]`.
+ * @return Integer percentage clamped to `[-100 .. +100]` (`0` on NaN).
  */
 int log_grade_to_percent(float grade);
 
@@ -558,7 +476,10 @@ int log_grade_to_percent(float grade);
  * Converts a whole-number percentage into an internal decimal balance ratio.
  *
  * ### For Systems Programmers & Engine Architects:
- * Clamps percent to [-100, 100] and maps to floating-point representation in [-1.0f, 1.0f].
+ * Clamps `percent` to [-100, 100] and maps to floating-point representation in [-1.0f, 1.0f].
+ *
+ * @param[in] percent Integer percentage value (`-100 .. +100`).
+ * @return Normalized float clamped inside `[-1.0f .. +1.0f]`.
  */
 float log_percent_to_grade(int percent);
 
@@ -586,6 +507,8 @@ Mission: Retrieve ordered entries from in-memory ring buffer for HUD readout.
  *
  * ### For Systems Programmers & Engine Architects:
  * Returns the 64-bit monotonic sequence counter value.
+ *
+ * @return Cumulative count of entries emitted since initialization.
  */
 uint64_t log_get_total_entries(void);
 
@@ -642,7 +565,11 @@ Mission: Convert between string tokens and strongly-typed enum representations.
  * Converts text like "WARNING" or "INFO" from a config file into an internal code.
  *
  * ### For Systems Programmers & Engine Architects:
- * Case-insensitive string matching returning log_severity_t value via out_sev pointer.
+ * Case-insensitive string matching returning `log_severity_t` value via `out_sev` pointer.
+ *
+ * @param[in]  str     Case-insensitive severity string token.
+ * @param[out] out_sev Destination pointer receiving parsed `log_severity_t`.
+ * @return true if token matched canonical or alias severity tables; false otherwise.
  */
 bool log_severity_from_string(const char *str, log_severity_t *out_sev);
 
@@ -653,7 +580,11 @@ bool log_severity_from_string(const char *str, log_severity_t *out_sev);
  * Converts category text like "combat" or "relic" into an internal routing category.
  *
  * ### For Systems Programmers & Engine Architects:
- * Case-insensitive string matching returning log_category_t value via out_cat pointer.
+ * Case-insensitive string matching returning `log_category_t` value via `out_cat` pointer.
+ *
+ * @param[in]  str     Case-insensitive category token string.
+ * @param[out] out_cat Destination pointer receiving parsed `log_category_t`.
+ * @return true if token matched canonical or alias category tables; false otherwise.
  */
 bool log_category_from_string(const char *str, log_category_t *out_cat);
 
@@ -664,7 +595,10 @@ bool log_category_from_string(const char *str, log_category_t *out_cat);
  * Gets a clean 5-letter label (such as "FATAL", "ERROR", "INFO ") for readable log files.
  *
  * ### For Systems Programmers & Engine Architects:
- * Returns pointer to fixed-width statically allocated string in .rodata.
+ * Returns pointer to fixed-width statically allocated string in `.rodata`.
+ *
+ * @param[in] severity Telemetry severity level enum value.
+ * @return Immutable fixed-width `.rodata` severity label (`"UNKNOWN "` if out of range).
  */
 const char *log_severity_name(log_severity_t severity);
 
@@ -675,7 +609,10 @@ const char *log_severity_name(log_severity_t severity);
  * Gets the display name of a subsystem category for log filtering.
  *
  * ### For Systems Programmers & Engine Architects:
- * Returns fixed-width 10-character string identifier for deterministic alignment.
+ * Returns fixed-width 9-character string identifier for deterministic alignment.
+ *
+ * @param[in] category Telemetry category enum value.
+ * @return Immutable fixed-width `.rodata` category label (`"UNKNOWN  "` if out of range).
  */
 const char *log_category_name(log_category_t category);
 
@@ -687,74 +624,11 @@ const char *log_category_name(log_category_t category);
  *
  * ### For Systems Programmers & Engine Architects:
  * Returns category subfolder name string constant for filesystem routing.
+ *
+ * @param[in] category Telemetry category enum value.
+ * @return Immutable `.rodata` directory segment string (`"general"` if out of range).
  */
 const char *log_category_dir_name(log_category_t category);
-
-/*
---------------------------------------------------------------------------------
-Sub-Assembly 3.6: Convenience Logging Macros
---------------------------------------------------------------------------------
-*/
-
-/**
- * @brief Master logging macro capturing source location (__FILE__, __LINE__, __func__).
- */
-#define LOG_RECORD(sev, cat, entity, grade, ...) \
-    log_write_entry(sev, cat, entity, grade, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for FATAL severity events.
- */
-#define LOG_FATAL(cat, entity, grade, ...) \
-    LOG_RECORD(LOG_SEV_FATAL, cat, entity, grade, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for CRITICAL severity events.
- */
-#define LOG_CRITICAL(cat, entity, grade, ...) \
-    LOG_RECORD(LOG_SEV_CRITICAL, cat, entity, grade, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for ERROR severity events.
- */
-#define LOG_ERROR(cat, entity, grade, ...) \
-    LOG_RECORD(LOG_SEV_ERROR, cat, entity, grade, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for WARNING severity events.
- */
-#define LOG_WARN(cat, entity, grade, ...) \
-    LOG_RECORD(LOG_SEV_WARNING, cat, entity, grade, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for INFO severity events.
- */
-#define LOG_INFO(cat, entity, grade, ...) \
-    LOG_RECORD(LOG_SEV_INFO, cat, entity, grade, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for DEBUG severity events.
- */
-#define LOG_DEBUG(cat, entity, grade, ...) \
-    LOG_RECORD(LOG_SEV_DEBUG, cat, entity, grade, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for TRACE severity events.
- */
-#define LOG_TRACE(cat, entity, grade, ...) \
-    LOG_RECORD(LOG_SEV_TRACE, cat, entity, grade, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for character event telemetry.
- */
-#define LOG_CHAR_EVENT(char_name, grade, ...) \
-    log_write_entry(LOG_SEV_INFO, LOG_CAT_CHARACTER, char_name, grade, __FILE__, __LINE__, __func__, __VA_ARGS__)
-
-/**
- * @brief Convenience logging macro for in-game dialogue and messages.
- */
-#define LOG_CHAR_MSG(char_name, grade, ...) \
-    log_write_entry(LOG_SEV_INFO, LOG_CAT_MESSAGE, char_name, grade, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 /*
 ================================================================================
@@ -864,6 +738,15 @@ void log_register_debug_probes(void);
 /**
  * @brief Block 4 validation cog asserting telemetry manifest pipeline & ROM table health.
  *
+ * ### For Game Designers & Non-Programmers:
+ * Verifies that the telemetry main-menu file (`manifest.json`) and its backup
+ * built-in ROM copy are healthy before the game selects a logging preset.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) non-destructive check verifying no `LOG_TRIPWIRE_MANIFEST_*` latch is
+ * raised, `log_fallback_get_rom_info()` reports >0 `.rodata` ROM assets, and an
+ * initialized engine holds a non-empty `profile_name`.
+ *
  * @triggers
  * - Probe ID     : `"log.manifest_pipeline"` (`LOG_TRIPWIRE_MANIFEST_MISSING`/`INVALID`)
  * - Source       : Sub-Assembly 3.1 (`log_load_config_from_manifest`, `log_get_default_config`)
@@ -875,6 +758,15 @@ diag_result_t log_validate_manifest_contract(void);
 
 /**
  * @brief Block 4 validation cog asserting telemetry setting profile & config invariants.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Checks that whichever logging JSON preset you or a modder selected has safe
+ * severity levels, valid file names, and sane log file size limits.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) side-effect-free predicate verifying `LOG_TRIPWIRE_SETTING_*` latches are
+ * clear, `max_file_size_bytes > 0`, `max_rotated_files <= LOG_MAX_ROTATION_CAP`,
+ * `log_severity_is_valid(min_severity)`, and `base_filename[0] != '\0'`.
  *
  * @triggers
  * - Probe ID     : `"log.setting_profile"` (`LOG_TRIPWIRE_SETTING_MISSING`/`INVALID`)
@@ -891,6 +783,15 @@ diag_result_t log_validate_setting_contract(void);
 /**
  * @brief Block 4 validation cog asserting log rotation ceiling and storage stream bounds.
  *
+ * ### For Game Designers & Non-Programmers:
+ * Confirms log archive files will not grow without limit or exceed the allowed
+ * backup count on disk, preventing runaway log storage bugs.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) validation gate asserting `LOG_TRIPWIRE_BOUNDS_VIOLATION` clear,
+ * `max_file_size_bytes` ceiling invariance, `max_rotated_files <= LOG_MAX_ROTATION_CAP`,
+ * and open primary `FILE *` / `current_bytes` consistency when initialized.
+ *
  * @triggers
  * - Probe ID     : `"log.rotation_io_bounds"` (`LOG_TRIPWIRE_BOUNDS_VIOLATION`)
  * - Source       : Sub-Assembly 3.2 & 5.2 (`rotate_archive_stream`, `log_rotate_if_needed`,
@@ -904,6 +805,15 @@ diag_result_t log_validate_rotation_bounds(void);
 
 /**
  * @brief Block 4 validation cog asserting ring buffer FIFO watermarks & dispatch stream state.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Ensures the 64-entry live in-memory flight recorder buffer and file writers are
+ * healthy and synchronized without dropping or overflowing slots.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * O(1) state integrity check verifying `ring_count <= LOG_RING_BUFFER_CAPACITY`,
+ * `ring_head < LOG_RING_BUFFER_CAPACITY`, and `sequence_counter` consistency
+ * under static zero-heap `.data`/`.bss` ownership.
  *
  * @triggers
  * - Probe ID     : `"log.write_telemetry"`
@@ -1037,4 +947,8 @@ bool log_init(const log_config_t *config);
  */
 void log_shutdown(void);
 
-#endif /* TENEBRIS_LUX_LOG_H */
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CORNERSTONE_LOG_LOG_H */
