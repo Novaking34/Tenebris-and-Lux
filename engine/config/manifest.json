@@ -6,13 +6,14 @@
     "layer": "Layer 0: Core Utilities",
     "version": "0.1.1-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-08",
+    "date": "2026-11-11",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "role": "Standalone Engine Configuration Master Manifest orchestrating runtime, diagnostics, viewport, and audio.",
+    "role": "Standalone Engine Configuration Master Manifest orchestrating runtime, io, diagnostics, viewport, and audio.",
     "where_the_data_lives": {
       "topology": "Standalone Engine Configuration Architecture",
       "runtime_tree": "engine/config/runtime/ (math, time, string)",
+      "io_tree": "engine/config/io/ (fs_buffers, vfs_routes, loader_contracts)",
       "diagnostics_tree": "engine/config/diagnostics/ (telemetry, debugger, taxonomy, formats)",
       "viewport_tree": "engine/config/viewport/ (scalers, assets, display)",
       "audio_tree": "engine/config/audio/ (channels, mixing, ducking)"
@@ -42,7 +43,7 @@
       "domain_id": "config",
       "schema_id": "tenlux.engine.config_root.v1",
       "target_stratum": "Layer 0: Core Utilities",
-      "sub_domains": [ "runtime", "diagnostics", "viewport", "audio", "input" ]
+      "sub_domains": [ "runtime", "io", "diagnostics", "viewport", "audio", "input" ]
     },
     "generic_helper_contracts": {
       "path_resolver": "path_finder_resolve",
@@ -73,6 +74,14 @@
         "status": "active",
         "where_it_lives": "engine/config/runtime/",
         "what_it_enables": "Bounded math, continuum ranges, time pacing, string buffers."
+      },
+      {
+        "id": "io",
+        "title": "Zero-Heap Filesystem, VFS & Master Loader",
+        "manifest_path": "io/manifest.json",
+        "status": "active",
+        "where_it_lives": "engine/config/io/",
+        "what_it_enables": "Bounded POSIX file reads, 3-tier VFS routing, 5-block JSON envelope parsing, and Tier-0 BIOS ROMs."
       },
       {
         "id": "diagnostics",
@@ -197,15 +206,24 @@
         "category": "input",
         "where_it_lives": "engine/config/input/",
         "what_it_enables": "Keyboard hotkeys, gamepad buttons, repeat rates, and deadzones."
+      },
+      {
+        "id": "io",
+        "title": "Filesystem, VFS & Master Data Loader",
+        "manifest_path": "io/manifest.json",
+        "status": "active",
+        "category": "io",
+        "where_it_lives": "engine/config/io/",
+        "what_it_enables": "Bounded file buffers, VFS search routing, JSON parser caps, and ROM fallbacks."
       }
     ],
     "settings_manifest": "settings.json"
   },
   "block_4_audit": {
     "audit_metrics": {
-      "sub_domain_count": 5,
-      "subsystem_count": 10,
-      "active_subsystems": 10
+      "sub_domain_count": 6,
+      "subsystem_count": 11,
+      "active_subsystems": 11
     },
     "verification_tripwires": [
       {

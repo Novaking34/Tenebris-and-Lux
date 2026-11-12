@@ -69,7 +69,8 @@
           "LOG",
           "EVENT",
           "MESSAGE",
-          "CHARACTER"
+          "CHARACTER",
+          "IO"
         ]
       },
       "severity_filter_mask": "0x7F",

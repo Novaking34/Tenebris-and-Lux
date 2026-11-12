@@ -225,6 +225,46 @@
                     "root_cause_hints": "Log directory reached configured max_rotated_files (25).",
                     "suggested_remedy": "Normal maintenance lifecycle; archives safely rotated.",
                     "breadcrumb_pattern": "[ERR_ENG_IO_ROTATION_LIMIT] Pruned oldest rotated archive"
+                  },
+                  {
+                    "code_hex": "0x0504",
+                    "mnemonic": "ERR_ENG_IO_WRITE_BLOCKED_RO",
+                    "severity_default": "WARNING",
+                    "severity_weight": 45,
+                    "description": "Disk write or directory creation blocked by Floppy Safe-Mode read-only latch.",
+                    "root_cause_hints": "Engine running in Floppy Read-Only Safe Mode or read-only storage.",
+                    "suggested_remedy": "Keep telemetry and saves in static RAM ring/buffers or clear read-only latch.",
+                    "breadcrumb_pattern": "[ERR_ENG_IO_WRITE_BLOCKED_RO] Blocked write to '{target_path}'"
+                  },
+                  {
+                    "code_hex": "0x0505",
+                    "mnemonic": "ERR_ENG_IO_PATH_OVERFLOW",
+                    "severity_default": "ERROR",
+                    "severity_weight": 60,
+                    "description": "Resolved path exceeded bounded POSIX path buffer ceiling or failed traversal check.",
+                    "root_cause_hints": "Oversized data root, long filename, or disallowed '..' traversal segment.",
+                    "suggested_remedy": "Ensure VFS path and root fit within path_max_bytes without escaping sandbox.",
+                    "breadcrumb_pattern": "[ERR_ENG_IO_PATH_OVERFLOW] Rejected path '{req_path}'"
+                  },
+                  {
+                    "code_hex": "0x0506",
+                    "mnemonic": "ERR_ENG_IO_TRUNCATED_READ",
+                    "severity_default": "WARNING",
+                    "severity_weight": 40,
+                    "description": "File payload exceeded caller bounded buffer or active max_config_bytes ceiling.",
+                    "root_cause_hints": "Config or JSON file grew larger than buffer ladder tier allows.",
+                    "suggested_remedy": "Raise buffer tier in fs_buffers.json or compact oversized manifest.",
+                    "breadcrumb_pattern": "[ERR_ENG_IO_TRUNCATED_READ] Read truncated on '{file_path}'"
+                  },
+                  {
+                    "code_hex": "0x0507",
+                    "mnemonic": "ERR_ENG_IO_ROM_MISSING",
+                    "severity_default": "ERROR",
+                    "severity_weight": 65,
+                    "description": "Requested Config ROM stem missing or failed 5-block envelope integrity check.",
+                    "root_cause_hints": "Unknown rom:// URI or stale generated *_rom.h header after CMake change.",
+                    "suggested_remedy": "Rebuild with CMake ROM generator or supply valid rom:// stem.",
+                    "breadcrumb_pattern": "[ERR_ENG_IO_ROM_MISSING] ROM stem absent '{rom_uri}'"
                   }
                 ]
               },
@@ -250,6 +290,16 @@
                     "root_cause_hints": "Key missing from manifest or profile catalog.",
                     "suggested_remedy": "Supply key in data file or rely on C11 fallback default.",
                     "breadcrumb_pattern": "[ERR_ENG_IO_JSON_KEY_MISSING] Key '{key}' absent in '{scope}'"
+                  },
+                  {
+                    "code_hex": "0x0603",
+                    "mnemonic": "ERR_ENG_IO_JSON_DEPTH_EXCEEDED",
+                    "severity_default": "ERROR",
+                    "severity_weight": 60,
+                    "description": "JSON structural nesting exceeded bounded zero-heap max_json_depth limit.",
+                    "root_cause_hints": "Deeply nested or malformed JSON input exceeds max_json_depth (32).",
+                    "suggested_remedy": "Flatten JSON nesting or validate structural brackets before parsing.",
+                    "breadcrumb_pattern": "[ERR_ENG_IO_JSON_DEPTH_EXCEEDED] Depth > {max_depth} near offset {offset}"
                   }
                 ]
               }
@@ -502,8 +552,8 @@
   "block_4_audit": {
     "audit_metrics": {
       "domain_count": 2,
-      "total_registered_errors": 20,
-      "engine_error_count": 13,
+      "total_registered_errors": 25,
+      "engine_error_count": 18,
       "game_error_count": 7
     },
     "verification_tripwires": [

@@ -35,7 +35,7 @@
     },
     "static_declarations": {
       "schema_id": "tenlux.data.debug_menu.v1",
-      "target_subsystem": "core.util.debug",
+      "target_subsystem": "cog.debug",
       "max_snapshots": 64
     },
     "generic_helper_contracts": {

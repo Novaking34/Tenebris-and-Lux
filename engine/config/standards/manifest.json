@@ -7,11 +7,11 @@
     "layer": "Layer 0: Core Foundation Strata",
     "version": "0.1.1-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-09",
+    "date": "2026-11-11",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "system": "C11 Engine Architectural Standards Manifest",
-    "role": "Orchestrator for Engine Standards, Subsystem Registries & Block Policies",
+    "system": "Cornerstone Game Engine Architectural Standards Manifest",
+    "role": "Orchestrator for Cornerstone Engine Standards, Subsystem Registries & Block Policies",
     "invariants": [
       "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
       "Zero dynamic heap allocations in Layer 0/1/2 (ALLOC_ZERO_HEAP)",
@@ -29,21 +29,29 @@
     }
   },
   "block_3_body": {
+    "engine_name": "Cornerstone",
+    "engine_display_name": "Cornerstone Game Engine",
+    "flagship_game_name": "Tenebris and Lux",
     "engine_include_root": "engine/include",
     "engine_source_root": "engine/src",
-    "total_registered_headers": 41,
+    "total_registered_headers": 44,
+    "layer_0_headers": 31,
+    "layer_2_headers": 13,
     "enforced_invariants": [
       "zero_heap_layer_0_1_2",
       "strict_iso_c_comments_invariant_18",
       "anti_domain_bleed_covenant_11",
       "procedural_fallback_floor_covenant_12",
+      "dual_audience_documentation_covenant_17",
+      "controlled_memory_chassis_covenant_19",
+      "autonomous_probe_fallback_await_loop_20",
       "two_sub_assembly_block_4_architecture",
       "two_sub_assembly_block_5_architecture"
     ]
   },
   "block_4_audit": {
     "audit_metrics": {
-      "registered_headers": 41,
+      "registered_headers": 44,
       "mandatory_blocks": 5
     },
     "verification_tripwires": [

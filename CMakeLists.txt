@@ -1,115 +1,256 @@
 # ==============================================================================
 # BLOCK 1: METADATA BLOCK
-# ( Project Identity, Minimum Version & Language Configuration )
+# ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 # ==============================================================================
 # @project       Tenebris and Lux
 # @file          CMakeLists.txt
-# @layer         Build & Toolchain Configuration (Layer 0 Infrastructure)
-# @version       0.1.0-dev
+# @id            build.root.cmake
+# @layer         Layer 0 Infrastructure (Build & Test Orchestration)
+# @archetype     operational | stateful
+# @version       0.1.1-dev
 # @interface_rev Rev 5
-# @date          2026-11-06
-# @updated       2026-11-06
+# @date          2026-11-11
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
-# @system        Root CMake Build & Automated Test Orchestration Engine
-# @role          Compilation Coordinator, Invariant Guard & CTest Test Runner
-# @invariants    1. Strict ISO C11 standard conformance (no vendor extensions).
-#                2. Zero-warning compilation policy across GCC, Clang (-Wall
-#                   -Wextra -Wpedantic), and MSVC (/W4).
-#                3. Zero external binary runtime downloads (native X11 + POSIX).
-#                4. Multi-tier verification integrated via CTest (26/26).
-#                5. Strict 80-column line width discipline across all lines.
-#                6. Domain-split architecture: engine/ (L0/L2) vs game/ (L1/L3).
+# @system        Cornerstone Game Engine Build & Automated CTest Coordinator
+# @role          Root CMake Build Graph: Implements Cornerstone's "Fall-Down"
+#                ISO C23 -> C17 -> C11 toolchain ladder (plus C++20/17 header
+#                verification), compiles ROM vaults and layered OBJECT libraries,
+#                links `tenebris-lux`, and registers all CTest suites.
+# @maturity      Rev 5 Baseline | Progressive C23/17/11 & C++20/17 Fall-Down + L0/L1/L2 OBJECT libs.
+# @chassis       zero-runtime-deps | Compiles L0/L1/L2 OBJECT units once cleanly (no per-test rebuild bloat).
+# @scale         O(T) static target graph over L0 (25 c), L1 (24 c), L2 (12 c), and 65+ CTest checks.
+# @seams         in: engine/, game/, tests/, cmake/GenerateConfigRom.cmake | probes: optional C++20/17 & -Werror checks
+# @invariants    1. Progressive ISO C23 target with graceful C17/C11 floor (CMAKE_C_EXTENSIONS OFF).
+#                2. Zero-warning compilation policy across GCC, Clang (-Wall -Wextra -Wpedantic), MSVC (/W4).
+#                3. Structural Layer 0 isolation: tenebris_engine_util excludes game/include paths.
+#                4. Compiled-in .rodata Config ROM headers generated out-of-source under build/generated/.
+#                5. Four-tier Layer 4 verification suite + CLI contracts registered cleanly in CTest (65+ tests).
 #
 # PURPOSE & ARCHITECTURAL ROLE:
-#   Root CMake build specification for Tenebris and Lux. Enforces an explicit
-#   domain split between the reusable C11 game engine architecture (engine/)
-#   and the narrative tactical strategy RPG game implementation (game/).
-#   Coordinates compilation across Layer 0 utilities through Layer 4 tests.
+#   Root CMake build specification for Tenebris and Lux (powered by the
+#   Cornerstone Game Engine). Separates Layer 0 utilities, Layer 1 game
+#   simulation, and Layer 2 X11 presentation into reusable OBJECT libraries so
+#   test executables link compiled cogs once instead of recompiling them dozens
+#   of times. Targets ISO C23 first and gracefully steps down to C17 or C11 on
+#   older toolchains without backward-compatibility shims.
 #
-# PEDAGOGICAL MISSION & THE BATON-PASSING LIFECYCLE:
-#   This build specification models the Universal 5-Block Lifecycle Protocol:
-#   - Block 1 (Metadata): Identity, provenance, and toolchain invariants.
-#   - Block 2 (Opening/Objects): Declares compiler objects, C11, and flags.
-#   - Block 3 (Body/Procedure): Compiles engine and game domain targets.
-#   - Block 4 (Audit/Harnesses): Builds four-tier verification test targets.
-#   - Block 5 (Closing/CTest): Registers and executes all 26 automated tests.
+#   ### For Game Designers & Non-Programmers:
+#   Builds both the playable game (`tenebris-lux`) and every automated health
+#   check across all 4 testing tiers (`ctest`), baking fresh emergency ROM
+#   backups whenever `engine/config/` presets are edited.
+#
+#   ### For Systems Programmers & Engine Architects:
+#   Implements Cornerstone Rev 5 build hygiene:
+#   - Block 1 (Metadata): Build identity, toolchain invariants & topology.
+#   - Block 2 (Opening): Progressive C23->17->11 enforcement, includes & helpers.
+#   - Block 3 (Body): ROM vault generation, L0/L1/L2 OBJECT libs & `tenebris-lux`.
+#   - Block 4 (Audit): 4-tier test targets + optional C++20/17 header compat verification.
+#   - Block 5 (Closing): CLI contract tests, CTest property binding & suite labels.
 # ==============================================================================
 
 cmake_minimum_required(VERSION 3.24)
-project(TenebrisLux VERSION 0.1.0 LANGUAGES C)
+project(TenebrisLux VERSION 0.1.1 LANGUAGES C)
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
-# ( Compiler Standards, Diagnostic Flags & Global Settings )
-# Stratum: Build Toolchain | Machine: build.toolchain.cmake
+# ( Compiler Standards, Diagnostic Options, Include Strata & Build Helpers )
+# ==============================================================================
+# Engine:        Cornerstone Game Engine
+# Stratum:       Layer 0 Infrastructure (Build & Test Orchestration)
+# Module:        build.root.cmake
+# Mission:       Establish progressive C23/C17/C11 & C++20/17 fall-down flags,
+#                Layer 0 vs game include isolation, X11 discovery, and DRY helpers.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 2.1: ISO C11 STANDARD ENFORCEMENT ]
-# Mission: Guarantee language conformity across all compiler toolchains.
+# Sub-Assembly 2.1: Progressive ISO C23->C17->C11 Conformance & Audit Options
 # ------------------------------------------------------------------------------
+set(CORNERSTONE_C_STANDARD "AUTO" CACHE STRING
+    "ISO C standard tier: AUTO (probes C23 -> C17 -> C11), 23, 17, or 11"
+)
+set_property(CACHE CORNERSTONE_C_STANDARD PROPERTY STRINGS "AUTO" "23" "17" "11")
 
-# Mandate ISO C11 (ISO/IEC 9899:2011) as the baseline language standard.
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CORNERSTONE_CXX_STANDARD "AUTO" CACHE STRING
+    "ISO C++ header verification tier: AUTO (probes C++20 -> C++17), 20, or 17"
+)
+set_property(CACHE CORNERSTONE_CXX_STANDARD PROPERTY STRINGS "AUTO" "20" "17")
 
-# Disable non-standard compiler dialect extensions (e.g., -std=gnu11) to ensure
-# complete cross-platform portability without vendor lock-in.
-set(CMAKE_C_EXTENSIONS OFF)
-
-# ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 2.2: LANGUAGE SERVER & IDE INTEGRATION ]
-# Mission: Generate compile_commands.json for clangd and IDE code analysis.
-# ------------------------------------------------------------------------------
-
-# Emit compilation database for compile-time diagnostic tooling, static
-# analyzers, and Language Server Protocol (LSP) engines (clangd, ccls).
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 2.3: HARDWARE PRESENTATION SUBSYSTEM DISCOVERY ]
-# Mission: Locate native X11 double-buffered windowing libraries.
-# ------------------------------------------------------------------------------
-
-# Discover native X11 windowing subsystem for Linux/POSIX desktop rendering.
-# This enables zero-dependency native double-buffering without heavyweight
-# third-party display dependencies.
-find_package(X11 REQUIRED)
-
-# ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 2.4: COMPILER WARNING & HYGIENE POLICY ]
-# Mission: Configure zero-warning tolerance flags for GCC, Clang, and MSVC.
-# ------------------------------------------------------------------------------
-
-# Enforce strict compiler warning flags across supported toolchains.
-# Code must compile completely warning-free under -Wall -Wextra -Wpedantic.
-if(MSVC)
-    # Microsoft Visual C++ warning level 4
-    set(GAME_WARNING_FLAGS /W4)
+if(CORNERSTONE_C_STANDARD STREQUAL "AUTO")
+    if("c_std_23" IN_LIST CMAKE_C_COMPILE_FEATURES)
+        set(_cs_c_tier 23)
+    elseif("c_std_17" IN_LIST CMAKE_C_COMPILE_FEATURES)
+        set(_cs_c_tier 17)
+    else()
+        set(_cs_c_tier 11)
+    endif()
+elseif(CORNERSTONE_C_STANDARD MATCHES "^(11|17|23)$")
+    set(_cs_c_tier "${CORNERSTONE_C_STANDARD}")
 else()
-    # GCC and Clang rigorous diagnostic warnings and pedantic conformance
-    set(GAME_WARNING_FLAGS -Wall -Wextra -Wpedantic)
+    message(FATAL_ERROR
+        "Invalid CORNERSTONE_C_STANDARD='${CORNERSTONE_C_STANDARD}'. Expected AUTO, 23, 17, or 11."
+    )
 endif()
 
-# Global include directories spanning engine and game domain trees
-set(COMMON_INCLUDES
-    engine/include
-    game/include
-    ${CMAKE_CURRENT_SOURCE_DIR}
+set(CMAKE_C_STANDARD ${_cs_c_tier})
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+message(STATUS
+    "[Cornerstone] ISO C tier: C${_cs_c_tier} "
+    "(requested: ${CORNERSTONE_C_STANDARD}, floor: C11, extensions: OFF)"
 )
+
+option(CORNERSTONE_ENABLE_WERROR
+    "Treat compiler warnings as hard build errors across Cornerstone & game targets"
+    OFF
+)
+option(CORNERSTONE_VERIFY_CPP_HEADERS
+    "Compile-check Rev 5 Cornerstone public headers under C++20/C++17 via CheckLanguage(CXX)"
+    OFF
+)
+
+# ------------------------------------------------------------------------------
+# Sub-Assembly 2.2: Language Server Integration & Layered Include Boundaries
+# ------------------------------------------------------------------------------
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Layer 0 public include roots MUST NEVER include `game/include` (Invariant 11).
+set(ENGINE_PUBLIC_INCLUDES
+    "${CMAKE_CURRENT_SOURCE_DIR}/engine/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+# Application, viewport (until decoupled), and game simulation include roots.
+set(COMMON_INCLUDES
+    "${CMAKE_CURRENT_SOURCE_DIR}/engine/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/game/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+# Layer 4 test harnesses may additionally include shared test harness headers.
+set(TEST_INCLUDES
+    ${COMMON_INCLUDES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/tests"
+)
+
+# ------------------------------------------------------------------------------
+# Sub-Assembly 2.3: Native X11 Discovery & Strict Warning Flags
+# ------------------------------------------------------------------------------
+find_package(X11 REQUIRED)
+
+if(MSVC)
+    set(GAME_WARNING_FLAGS /W4)
+    if(CORNERSTONE_ENABLE_WERROR)
+        list(APPEND GAME_WARNING_FLAGS /WX)
+    endif()
+else()
+    set(GAME_WARNING_FLAGS -Wall -Wextra -Wpedantic)
+    if(CORNERSTONE_ENABLE_WERROR)
+        list(APPEND GAME_WARNING_FLAGS -Werror)
+    endif()
+endif()
+
+# ------------------------------------------------------------------------------
+# Sub-Assembly 2.4: Composable Cornerstone Build & CTest Helper Functions
+# ------------------------------------------------------------------------------
+# Accumulator populated by cornerstone_add_test_executable() and finalized in Block 5.
+set(CORNERSTONE_CTEST_NAMES "")
+
+# Generates a compiled-in .rodata Config ROM header target via GenerateConfigRom.cmake.
+function(cornerstone_add_config_rom)
+    set(_one
+        TARGET
+        OUTPUT_HEADER
+        HEADER_GUARD
+        SYMBOL_PREFIX
+        STRUCT_TAG
+        TYPE_NAME
+        TABLE_NAME
+        VAR_PREFIX
+        BANNER_TITLE
+        ID_MODE
+        COMMENT
+    )
+    set(_multi SUBDIRS)
+    cmake_parse_arguments(ROM "" "${_one}" "${_multi}" ${ARGN})
+
+    set(_rom_root "${CMAKE_CURRENT_SOURCE_DIR}/engine/config")
+    set(_rom_script "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake")
+    set(_glob_patterns "")
+    foreach(_sub IN LISTS ROM_SUBDIRS)
+        list(APPEND _glob_patterns "${_rom_root}/${_sub}/*.json")
+    endforeach()
+
+    file(GLOB _rom_jsons CONFIGURE_DEPENDS ${_glob_patterns})
+    list(SORT _rom_jsons)
+
+    string(JOIN ";" _subdirs_joined ${ROM_SUBDIRS})
+
+    add_custom_command(
+        OUTPUT "${ROM_OUTPUT_HEADER}"
+        COMMAND "${CMAKE_COMMAND}"
+            "-DCONFIG_ROOT=${_rom_root}"
+            "-DSUBDIRS=${_subdirs_joined}"
+            "-DOUTPUT_FILE=${ROM_OUTPUT_HEADER}"
+            "-DHEADER_GUARD=${ROM_HEADER_GUARD}"
+            "-DSYMBOL_PREFIX=${ROM_SYMBOL_PREFIX}"
+            "-DSTRUCT_TAG=${ROM_STRUCT_TAG}"
+            "-DTYPE_NAME=${ROM_TYPE_NAME}"
+            "-DTABLE_NAME=${ROM_TABLE_NAME}"
+            "-DVAR_PREFIX=${ROM_VAR_PREFIX}"
+            "-DBANNER_TITLE=${ROM_BANNER_TITLE}"
+            "-DID_MODE=${ROM_ID_MODE}"
+            -P "${_rom_script}"
+        DEPENDS
+            "${_rom_script}"
+            ${_rom_jsons}
+        COMMENT "${ROM_COMMENT}"
+        VERBATIM
+    )
+
+    add_custom_target("${ROM_TARGET}" DEPENDS "${ROM_OUTPUT_HEADER}")
+endfunction()
+
+# Registers a Layer 4 test executable, links Layer 0 utils + extras, and adds CTest entry.
+function(cornerstone_add_test_executable)
+    set(_one TARGET TEST_NAME)
+    set(_multi SOURCES LIBS EXTRA_INCLUDES LABELS)
+    cmake_parse_arguments(TST "" "${_one}" "${_multi}" ${ARGN})
+
+    add_executable("${TST_TARGET}" ${TST_SOURCES})
+    target_include_directories("${TST_TARGET}" PRIVATE
+        ${TEST_INCLUDES}
+        ${TST_EXTRA_INCLUDES}
+    )
+    target_link_libraries("${TST_TARGET}" PRIVATE
+        tenebris_engine_util
+        ${TST_LIBS}
+    )
+    target_compile_options("${TST_TARGET}" PRIVATE ${GAME_WARNING_FLAGS})
+
+    add_test(NAME "${TST_TEST_NAME}" COMMAND "${TST_TARGET}")
+    if(TST_LABELS)
+        set_tests_properties("${TST_TEST_NAME}" PROPERTIES LABELS "${TST_LABELS}")
+    endif()
+
+    set(_updated_list ${CORNERSTONE_CTEST_NAMES} "${TST_TEST_NAME}")
+    set(CORNERSTONE_CTEST_NAMES "${_updated_list}" PARENT_SCOPE)
+endfunction()
 
 # ==============================================================================
 # BLOCK 3: BODY BLOCK
-# ( Target Definitions, Source Manifests & Link Libraries )
-# Stratum: Build Targets | Machine: build.targets.engine
+# ( Layer 0 ROM Vaults, Reusable OBJECT Libraries & Primary Binary )
+# ==============================================================================
+# Engine:        Cornerstone Game Engine
+# Stratum:       Layers 0, 1, 2 & 3 (Core Engine, Game Sim, Viewport, App Plug)
+# Module:        build.targets.engine
+# Mission:       Generate Config ROM headers and compile each architectural
+#                stratum once cleanly as an OBJECT library before linking.
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.1: LAYER 0 ENGINE UTILITY SOURCES & HEADERS ]
-# Mission: Foundational zero-heap mathematical, geometric, and timing modules.
+# Sub-Assembly 3.1: Layer 0 Engine Utilities, Config ROM Vaults & OBJECT Library
 # ------------------------------------------------------------------------------
-
 set(ENGINE_CORE_SOURCES
     engine/src/core/manifest.c
     engine/src/core/math_utils.c
@@ -127,6 +268,7 @@ set(ENGINE_CORE_SOURCES
 )
 
 set(ENGINE_IO_SOURCES
+    engine/src/io/io_fallback.c
     engine/src/io/fs_utils.c
     engine/src/io/json_utils.c
     engine/src/io/path_finder.c
@@ -171,96 +313,71 @@ set(ENGINE_UTIL_HEADERS
     engine/include/core/formula_eval.h
     engine/include/core/formula_eval_fallback.h
     engine/include/core/core.h
+    engine/include/io/io_fallback.h
     engine/include/io/fs_utils.h
     engine/include/io/json_utils.h
     engine/include/io/path_finder.h
     engine/include/io/master_loader.h
     engine/include/io/io.h
-    engine/include/log/log.h
+    engine/include/log/log_types.h
     engine/include/log/log_fallback.h
-    engine/include/debug/debug.h
+    engine/include/log/log.h
+    engine/include/debug/debug_types.h
     engine/include/debug/debug_fallback.h
+    engine/include/debug/debug.h
     engine/include/audio/audio_types.h
     engine/include/audio/audio_bus.h
     engine/include/audio/audio_fallback.h
     engine/include/audio/audio.h
 )
 
-# ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.1A: TELEMETRY & DIAGNOSTICS ROM EMBEDDING + LAYER 0 LIB ]
-# Mission: Generate compiled-in .rodata telemetry & diagnostics ROM headers via
-# unified GenerateConfigRom.cmake and compile Layer 0 utilities cleanly once.
-# ------------------------------------------------------------------------------
-
-set(CONFIG_ROM_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/engine/config")
-
-set(TELEMETRY_ROM_DIR "${CONFIG_ROM_ROOT}/diagnostics/telemetry")
-file(GLOB TELEMETRY_ROM_JSONS CONFIGURE_DEPENDS "${TELEMETRY_ROM_DIR}/*.json")
-list(SORT TELEMETRY_ROM_JSONS)
-
-set(TELEMETRY_ROM_HEADER
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/log_telemetry_rom.h"
+set(TELEMETRY_ROM_HEADER "${CMAKE_CURRENT_BINARY_DIR}/generated/log_telemetry_rom.h")
+cornerstone_add_config_rom(
+    TARGET        generate_telemetry_rom
+    SUBDIRS       diagnostics/telemetry
+    OUTPUT_HEADER "${TELEMETRY_ROM_HEADER}"
+    HEADER_GUARD  "TENEBRIS_LOG_TELEMETRY_ROM_H"
+    SYMBOL_PREFIX "LOG_TELEMETRY_ROM"
+    STRUCT_TAG    "log_rom_asset"
+    TYPE_NAME     "log_rom_asset_t"
+    TABLE_NAME    "s_log_telemetry_rom_table"
+    VAR_PREFIX    "s_rom_telemetry_"
+    BANNER_TITLE  "AUTO-GENERATED ENGINE TELEMETRY ROM IMAGE (DO NOT EDIT MANUALLY)"
+    ID_MODE       "STEM"
+    COMMENT       "Generating compiled-in .rodata telemetry ROM header"
 )
 
-add_custom_command(
-    OUTPUT "${TELEMETRY_ROM_HEADER}"
-    COMMAND "${CMAKE_COMMAND}"
-        "-DCONFIG_ROOT=${CONFIG_ROM_ROOT}"
-        "-DSUBDIRS=diagnostics/telemetry"
-        "-DOUTPUT_FILE=${TELEMETRY_ROM_HEADER}"
-        "-DHEADER_GUARD=TENEBRIS_LOG_TELEMETRY_ROM_H"
-        "-DSYMBOL_PREFIX=LOG_TELEMETRY_ROM"
-        "-DSTRUCT_TAG=log_rom_asset"
-        "-DTYPE_NAME=log_rom_asset_t"
-        "-DTABLE_NAME=s_log_telemetry_rom_table"
-        "-DVAR_PREFIX=s_rom_telemetry_"
-        "-DBANNER_TITLE=AUTO-GENERATED ENGINE TELEMETRY ROM IMAGE (DO NOT EDIT MANUALLY)"
-        "-DID_MODE=STEM"
-        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
-    DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
-        ${TELEMETRY_ROM_JSONS}
-    COMMENT "Generating compiled-in .rodata telemetry ROM header"
-    VERBATIM
+set(DEBUG_DIAG_ROM_HEADER "${CMAKE_CURRENT_BINARY_DIR}/generated/debug_diagnostics_rom.h")
+cornerstone_add_config_rom(
+    TARGET        generate_diagnostics_rom
+    SUBDIRS       diagnostics/debugger diagnostics/taxonomy
+    OUTPUT_HEADER "${DEBUG_DIAG_ROM_HEADER}"
+    HEADER_GUARD  "TENEBRIS_DEBUG_DIAGNOSTICS_ROM_H"
+    SYMBOL_PREFIX "DEBUG_DIAGNOSTICS_ROM"
+    STRUCT_TAG    "debug_rom_asset"
+    TYPE_NAME     "debug_rom_asset_t"
+    TABLE_NAME    "s_debug_diagnostics_rom_table"
+    VAR_PREFIX    "s_rom_diag_"
+    BANNER_TITLE  "AUTO-GENERATED ENGINE DEBUG & TAXONOMY ROM IMAGE (DO NOT EDIT MANUALLY)"
+    ID_MODE       "SUBDIR_STEM"
+    COMMENT       "Generating compiled-in .rodata debug & taxonomy ROM header"
 )
 
-add_custom_target(generate_telemetry_rom DEPENDS "${TELEMETRY_ROM_HEADER}")
-
-set(DEBUG_DIAG_ROM_DIR "${CONFIG_ROM_ROOT}/diagnostics/debugger")
-set(DEBUG_TAXONOMY_ROM_DIR "${CONFIG_ROM_ROOT}/diagnostics/taxonomy")
-file(GLOB DEBUG_DIAG_ROM_JSONS CONFIGURE_DEPENDS
-    "${DEBUG_DIAG_ROM_DIR}/*.json"
-    "${DEBUG_TAXONOMY_ROM_DIR}/*.json"
+set(IO_CONFIG_ROM_HEADER "${CMAKE_CURRENT_BINARY_DIR}/generated/io_config_rom.h")
+cornerstone_add_config_rom(
+    TARGET        generate_io_rom
+    SUBDIRS       io
+    OUTPUT_HEADER "${IO_CONFIG_ROM_HEADER}"
+    HEADER_GUARD  "TENEBRIS_IO_CONFIG_ROM_H"
+    SYMBOL_PREFIX "IO_CONFIG_ROM"
+    STRUCT_TAG    "io_rom_asset"
+    TYPE_NAME     "io_rom_asset_t"
+    TABLE_NAME    "s_io_config_rom_table"
+    VAR_PREFIX    "s_rom_io_"
+    BANNER_TITLE  "AUTO-GENERATED ENGINE I/O & VFS ROM IMAGE (DO NOT EDIT MANUALLY)"
+    ID_MODE       "STEM"
+    COMMENT       "Generating compiled-in .rodata I/O & VFS ROM header"
 )
-list(SORT DEBUG_DIAG_ROM_JSONS)
-
-set(DEBUG_DIAG_ROM_HEADER
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/debug_diagnostics_rom.h"
-)
-
-add_custom_command(
-    OUTPUT "${DEBUG_DIAG_ROM_HEADER}"
-    COMMAND "${CMAKE_COMMAND}"
-        "-DCONFIG_ROOT=${CONFIG_ROM_ROOT}"
-        "-DSUBDIRS=diagnostics/debugger;diagnostics/taxonomy"
-        "-DOUTPUT_FILE=${DEBUG_DIAG_ROM_HEADER}"
-        "-DHEADER_GUARD=TENEBRIS_DEBUG_DIAGNOSTICS_ROM_H"
-        "-DSYMBOL_PREFIX=DEBUG_DIAGNOSTICS_ROM"
-        "-DSTRUCT_TAG=debug_rom_asset"
-        "-DTYPE_NAME=debug_rom_asset_t"
-        "-DTABLE_NAME=s_debug_diagnostics_rom_table"
-        "-DVAR_PREFIX=s_rom_diag_"
-        "-DBANNER_TITLE=AUTO-GENERATED ENGINE DEBUG & TAXONOMY ROM IMAGE (DO NOT EDIT MANUALLY)"
-        "-DID_MODE=SUBDIR_STEM"
-        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
-    DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/GenerateConfigRom.cmake"
-        ${DEBUG_DIAG_ROM_JSONS}
-    COMMENT "Generating compiled-in .rodata debug & taxonomy ROM header"
-    VERBATIM
-)
-
-add_custom_target(generate_diagnostics_rom DEPENDS "${DEBUG_DIAG_ROM_HEADER}")
 
 add_library(tenebris_engine_util OBJECT
     ${ENGINE_UTIL_SOURCES}
@@ -269,22 +386,20 @@ add_library(tenebris_engine_util OBJECT
 add_dependencies(tenebris_engine_util
     generate_telemetry_rom
     generate_diagnostics_rom
+    generate_io_rom
 )
 target_include_directories(tenebris_engine_util
     PRIVATE
         "${CMAKE_CURRENT_BINARY_DIR}/generated"
     PUBLIC
-        engine/include
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${ENGINE_PUBLIC_INCLUDES}
 )
 target_compile_options(tenebris_engine_util PRIVATE ${GAME_WARNING_FLAGS})
 target_link_libraries(tenebris_engine_util PUBLIC m)
 
 # ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.2: LAYER 1 GAME SIMULATION SOURCES & HEADERS ]
-# Mission: Pure simulation state, relics, stances, topology & dispatchers.
+# Sub-Assembly 3.2: Layer 1 Game Simulation Sources & Reusable OBJECT Library
 # ------------------------------------------------------------------------------
-
 set(GAME_HERO_SOURCES
     game/src/hero/sim_state.c
 )
@@ -370,11 +485,17 @@ set(GAME_SIM_HEADERS
     game/include/dispatch/dispatcher.h
 )
 
-# ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.3: LAYER 2 ENGINE VIEWPORT PRESENTATION SOURCES & HEADERS ]
-# Mission: Double-buffered X11 presentation, layout, HUD & TrueType fonts.
-# ------------------------------------------------------------------------------
+add_library(tenebris_game_sim OBJECT
+    ${GAME_SIM_SOURCES}
+    ${GAME_SIM_HEADERS}
+)
+target_include_directories(tenebris_game_sim PUBLIC ${COMMON_INCLUDES})
+target_compile_options(tenebris_game_sim PRIVATE ${GAME_WARNING_FLAGS})
+target_link_libraries(tenebris_game_sim PRIVATE tenebris_engine_util)
 
+# ------------------------------------------------------------------------------
+# Sub-Assembly 3.3: Layer 2 Engine Viewport Presentation Sources & OBJECT Library
+# ------------------------------------------------------------------------------
 set(ENGINE_VIEWPORT_SOURCES
     engine/src/viewport/raster/gui.c
     engine/src/viewport/raster/gui_fallback.c
@@ -407,792 +528,608 @@ set(ENGINE_VIEWPORT_HEADERS
     engine/include/viewport/styling/gui_assets.h
 )
 
-# ------------------------------------------------------------------------------
-# [ SUB-ASSEMBLY 3.4: PRIMARY GAME ENGINE EXECUTABLE TARGET ]
-# Mission: Compile executable linking entry router, simulation, GUI, and utils.
-# ------------------------------------------------------------------------------
-
-add_executable(tenebris-lux
-    game/src/main.c
+add_library(tenebris_engine_viewport OBJECT
     ${ENGINE_VIEWPORT_SOURCES}
-    ${GAME_SIM_SOURCES}
     ${ENGINE_VIEWPORT_HEADERS}
-    ${GAME_SIM_HEADERS}
+)
+target_include_directories(tenebris_engine_viewport PUBLIC
+    ${COMMON_INCLUDES}
+    ${X11_INCLUDE_DIR}
+)
+target_compile_options(tenebris_engine_viewport PRIVATE ${GAME_WARNING_FLAGS})
+target_link_libraries(tenebris_engine_viewport
+    PRIVATE
+        tenebris_engine_util
+    PUBLIC
+        ${X11_LIBRARIES}
+        m
 )
 
-# Private include paths: internal headers and X11 system display headers
+# ------------------------------------------------------------------------------
+# Sub-Assembly 3.4: Primary Game Application Executable (`tenebris-lux`)
+# ------------------------------------------------------------------------------
+add_executable(tenebris-lux
+    game/src/main.c
+)
 target_include_directories(tenebris-lux PRIVATE
     ${COMMON_INCLUDES}
     ${X11_INCLUDE_DIR}
 )
-
-# Link Layer 0 engine utilities and native X11 client library
 target_link_libraries(tenebris-lux PRIVATE
     tenebris_engine_util
+    tenebris_game_sim
+    tenebris_engine_viewport
     ${X11_LIBRARIES}
+    m
 )
-
-# Attach strict compiler warning flags to the primary game target
 target_compile_options(tenebris-lux PRIVATE ${GAME_WARNING_FLAGS})
 
 # ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES & GAME DEV TESTING BLOCK
-# ( Four-Tier Verification Strata: Functional, Unit, Integrated, & System )
-# Stratum: Verification | Machine: build.tests.ctest
+# ( Four-Tier Verification Strata & Optional C++ Header Compat Probes )
+# ==============================================================================
+# Engine:        Cornerstone Game Engine
+# Stratum:       Layer 4 (Verification Suite)
+# Module:        build.tests.ctest
+# Mission:       Construct crisp Functional, Unit, Integrated, and System
+#                test targets progressing from coarse API smoke to fine soak.
 # ==============================================================================
 
 include(CTest)
 if(BUILD_TESTING)
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.1: FUNCTIONAL DEBUGGING HARNESS ]
-    # Mission: Isolate and debug individual cogs with step-by-step telemetry.
+    # Sub-Assembly 4.1: Functional Debugging Harnesses (Coarse Surface)
     # --------------------------------------------------------------------------
-    # Grand Functional Orchestrator & Giant Function Registry (52 Registered Cogs)
-    add_executable(test_functional
-        tests/functional/test_functional.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
+    cornerstone_add_test_executable(
+        TARGET         test_functional
+        TEST_NAME      functional_cogs_test
+        SOURCES        tests/functional/test_functional.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         functional engine sim
     )
-    target_include_directories(test_functional PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
+    cornerstone_add_test_executable(
+        TARGET    test_io_functional
+        TEST_NAME functional_io_test
+        SOURCES   tests/functional/test_io_functional.c
+        LABELS    functional io
     )
-    target_link_libraries(test_functional PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_functional PRIVATE ${GAME_WARNING_FLAGS})
-
-    # IO Subsystem Functional Assertion & Diagnostic Trace Harness
-    add_executable(test_io_functional
-        tests/functional/test_io_functional.c
+    cornerstone_add_test_executable(
+        TARGET    test_log_functional
+        TEST_NAME functional_log_test
+        SOURCES   tests/functional/test_log_functional.c
+        LABELS    functional log
     )
-    target_include_directories(test_io_functional PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_io_functional PRIVATE tenebris_engine_util)
-    target_compile_options(test_io_functional PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Logging Subsystem Functional Assertion & Diagnostic Trace Harness
-    add_executable(test_log_functional
-        tests/functional/test_log_functional.c
+    cornerstone_add_test_executable(
+        TARGET    test_debug_functional
+        TEST_NAME functional_debug_test
+        SOURCES   tests/functional/test_debug_functional.c
+        LABELS    functional debug
     )
-    target_include_directories(test_log_functional PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_log_functional PRIVATE tenebris_engine_util)
-    target_compile_options(test_log_functional PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Debugger Subsystem Functional Assertion & Diagnostic Trace Harness
-    add_executable(test_debug_functional
-        tests/functional/test_debug_functional.c
+    cornerstone_add_test_executable(
+        TARGET    test_core_functional
+        TEST_NAME functional_core_test
+        SOURCES   tests/functional/test_core_functional.c
+        LIBS      m
+        LABELS    functional core
     )
-    target_include_directories(test_debug_functional PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_debug_functional PRIVATE tenebris_engine_util)
-    target_compile_options(test_debug_functional PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Utilities Subsystem Functional Assertion & Diagnostic Trace Harness
-    add_executable(test_core_functional
-        tests/functional/test_core_functional.c
+    cornerstone_add_test_executable(
+        TARGET    test_audio_functional
+        TEST_NAME functional_audio_test
+        SOURCES   tests/functional/test_audio_functional.c
+        LABELS    functional audio
     )
-    target_include_directories(test_core_functional PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_core_functional PRIVATE tenebris_engine_util m)
-    target_compile_options(test_core_functional PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Audio Subsystem Functional Assertion Harness
-    add_executable(test_audio_functional
-        tests/functional/test_audio_functional.c
+    cornerstone_add_test_executable(
+        TARGET         test_viewport_functional
+        TEST_NAME      functional_viewport_test
+        SOURCES        tests/functional/test_viewport_functional.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         functional viewport
     )
-    target_include_directories(test_audio_functional PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_audio_functional PRIVATE tenebris_engine_util)
-    target_compile_options(test_audio_functional PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Viewport & Movie Reel Functional Assertion Harness
-    add_executable(test_viewport_functional
-        tests/functional/test_viewport_functional.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_viewport_functional PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
-    )
-    target_link_libraries(test_viewport_functional PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_viewport_functional PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.2: LAYER 0, LAYER 1 & LAYER 2 SUBSYSTEM UNIT HARNESSES ]
-    # Mission: Verify isolated subsystem contracts across ontological sections.
+    # Sub-Assembly 4.2: Isolated Subsystem Unit Harnesses
     # --------------------------------------------------------------------------
+    # Core Utilities (6 Operational + 6 Fallback Monoliths)
+    cornerstone_add_test_executable(
+        TARGET    test_math_utils_unit
+        TEST_NAME unit_math_utils_test
+        SOURCES   tests/unit/core/test_math_utils_unit.c
+        LIBS      m
+        LABELS    unit core
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_math_utils_fallback_unit
+        TEST_NAME unit_math_utils_fallback_test
+        SOURCES   tests/unit/core/test_math_utils_fallback_unit.c
+        LIBS      m
+        LABELS    unit core fallback
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_time_utils_unit
+        TEST_NAME unit_time_utils_test
+        SOURCES   tests/unit/core/test_time_utils_unit.c
+        LABELS    unit core
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_time_utils_fallback_unit
+        TEST_NAME unit_time_utils_fallback_test
+        SOURCES   tests/unit/core/test_time_utils_fallback_unit.c
+        LABELS    unit core fallback
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_string_utils_unit
+        TEST_NAME unit_string_utils_test
+        SOURCES   tests/unit/core/test_string_utils_unit.c
+        LABELS    unit core
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_string_utils_fallback_unit
+        TEST_NAME unit_string_utils_fallback_test
+        SOURCES   tests/unit/core/test_string_utils_fallback_unit.c
+        LABELS    unit core fallback
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_geom_utils_unit
+        TEST_NAME unit_geom_utils_test
+        SOURCES   tests/unit/core/test_geom_utils_unit.c
+        LIBS      m
+        LABELS    unit core
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_geom_utils_fallback_unit
+        TEST_NAME unit_geom_utils_fallback_test
+        SOURCES   tests/unit/core/test_geom_utils_fallback_unit.c
+        LIBS      m
+        LABELS    unit core fallback
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_clock_pacer_unit
+        TEST_NAME unit_clock_pacer_test
+        SOURCES   tests/unit/core/test_clock_pacer_unit.c
+        LABELS    unit core
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_clock_pacer_fallback_unit
+        TEST_NAME unit_clock_pacer_fallback_test
+        SOURCES   tests/unit/core/test_clock_pacer_fallback_unit.c
+        LABELS    unit core fallback
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_formula_eval_unit
+        TEST_NAME unit_formula_eval_test
+        SOURCES   tests/unit/core/test_formula_eval_unit.c
+        LIBS      m
+        LABELS    unit core
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_formula_eval_fallback_unit
+        TEST_NAME unit_formula_eval_fallback_test
+        SOURCES   tests/unit/core/test_formula_eval_fallback_unit.c
+        LIBS      m
+        LABELS    unit core fallback
+    )
 
-    # Presentation GUI Palette Unit Test
-    add_executable(test_gui_palette_unit
-        tests/unit/viewport/test_gui_palette_unit.c
-        engine/src/viewport/styling/gui_palette.c
+    # Layer 0 I/O Subsystems (4 Operational + 1 Tier-0 BIOS Fallback)
+    cornerstone_add_test_executable(
+        TARGET    test_io_fallback_unit
+        TEST_NAME unit_io_fallback_test
+        SOURCES   tests/unit/io/test_io_fallback_unit.c
+        LABELS    unit io fallback
     )
-    target_include_directories(test_gui_palette_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
+    cornerstone_add_test_executable(
+        TARGET    test_fs_utils_unit
+        TEST_NAME unit_fs_utils_test
+        SOURCES   tests/unit/io/test_fs_utils_unit.c
+        LABELS    unit io
     )
-    target_link_libraries(test_gui_palette_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES})
-    target_compile_options(test_gui_palette_unit PRIVATE ${GAME_WARNING_FLAGS})
+    cornerstone_add_test_executable(
+        TARGET    test_path_finder_unit
+        TEST_NAME unit_path_finder_test
+        SOURCES   tests/unit/io/test_path_finder_unit.c
+        LABELS    unit io
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_json_utils_unit
+        TEST_NAME unit_json_utils_test
+        SOURCES   tests/unit/io/test_json_utils_unit.c
+        LABELS    unit io
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_master_loader_unit
+        TEST_NAME unit_master_loader_test
+        SOURCES   tests/unit/io/test_master_loader_unit.c
+        LABELS    unit io
+    )
 
-    # Presentation GUI Layout Unit Test
-    add_executable(test_gui_layout_unit
-        tests/unit/viewport/test_gui_layout_unit.c
-        engine/src/viewport/hud/gui_layout.c
+    # Forensic Telemetry Logging Subsystems
+    cornerstone_add_test_executable(
+        TARGET    test_log_unit
+        TEST_NAME unit_log_engine_test
+        SOURCES   tests/unit/log/test_log_unit.c
+        LABELS    unit log
     )
-    target_include_directories(test_gui_layout_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_gui_layout_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_gui_layout_unit PRIVATE ${GAME_WARNING_FLAGS})
+    cornerstone_add_test_executable(
+        TARGET    test_log_fallback_unit
+        TEST_NAME unit_log_fallback_test
+        SOURCES   tests/unit/log/test_log_fallback_unit.c
+        LABELS    unit log fallback
+    )
 
-    # Presentation GUI Screens Unit Test
-    add_executable(test_gui_screens_unit
-        tests/unit/viewport/test_gui_screens_unit.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
+    # Interactive State Debugger Subsystems
+    cornerstone_add_test_executable(
+        TARGET    test_debug_unit
+        TEST_NAME unit_debug_engine_test
+        SOURCES   tests/unit/debug/test_debug_unit.c
+        LABELS    unit debug
     )
-    target_include_directories(test_gui_screens_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
+    cornerstone_add_test_executable(
+        TARGET    test_debug_fallback_unit
+        TEST_NAME unit_debug_fallback_test
+        SOURCES   tests/unit/debug/test_debug_fallback_unit.c
+        LABELS    unit debug fallback
     )
-    target_link_libraries(test_gui_screens_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_gui_screens_unit PRIVATE ${GAME_WARNING_FLAGS})
 
-    # Presentation GUI Widgets Unit Test
-    add_executable(test_gui_widgets_unit
-        tests/unit/viewport/test_gui_widgets_unit.c
-        engine/src/viewport/hud/gui_widgets.c
-        engine/src/viewport/hud/gui_layout.c
-        engine/src/viewport/styling/gui_palette.c
+    # Audio Bus & Fallback Subsystems
+    cornerstone_add_test_executable(
+        TARGET    test_audio_bus_unit
+        TEST_NAME unit_audio_bus_test
+        SOURCES   tests/unit/audio/test_audio_bus_unit.c
+        LABELS    unit audio
     )
-    target_include_directories(test_gui_widgets_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
+    cornerstone_add_test_executable(
+        TARGET    test_audio_fallback_unit
+        TEST_NAME unit_audio_fallback_test
+        SOURCES   tests/unit/audio/test_audio_fallback_unit.c
+        LABELS    unit audio fallback
     )
-    target_link_libraries(test_gui_widgets_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_gui_widgets_unit PRIVATE ${GAME_WARNING_FLAGS})
 
-    # Presentation GUI Fonts Unit Test
-    add_executable(test_gui_fonts_unit
-        tests/unit/viewport/test_gui_fonts_unit.c
-        engine/src/viewport/styling/gui_fonts.c
+    # Viewport Isolated Module Unit Tests (Single-Cog & Minimal-Dependency Slices)
+    cornerstone_add_test_executable(
+        TARGET         test_reel_unit
+        TEST_NAME      unit_reel_test
+        SOURCES        tests/unit/viewport/test_reel_unit.c engine/src/viewport/reel/reel.c
+        LIBS           ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
     )
-    target_include_directories(test_gui_fonts_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
+    cornerstone_add_test_executable(
+        TARGET    test_reel_fallback_unit
+        TEST_NAME unit_reel_fallback_test
+        SOURCES   tests/unit/viewport/test_reel_fallback_unit.c engine/src/viewport/reel/reel_fallback.c
+        LABELS    unit viewport fallback
     )
-    target_link_libraries(test_gui_fonts_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_gui_fonts_unit PRIVATE ${GAME_WARNING_FLAGS})
+    cornerstone_add_test_executable(
+        TARGET         test_gui_palette_unit
+        TEST_NAME      unit_gui_palette_test
+        SOURCES        tests/unit/viewport/test_gui_palette_unit.c engine/src/viewport/styling/gui_palette.c
+        LIBS           ${X11_LIBRARIES}
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_gui_layout_unit
+        TEST_NAME unit_gui_layout_test
+        SOURCES   tests/unit/viewport/test_gui_layout_unit.c engine/src/viewport/hud/gui_layout.c
+        LABELS    unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_gui_screens_unit
+        TEST_NAME      unit_gui_screens_test
+        SOURCES        tests/unit/viewport/test_gui_screens_unit.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_gui_widgets_unit
+        TEST_NAME      unit_gui_widgets_test
+        SOURCES        tests/unit/viewport/test_gui_widgets_unit.c
+                       engine/src/viewport/hud/gui_widgets.c
+                       engine/src/viewport/hud/gui_layout.c
+                       engine/src/viewport/styling/gui_palette.c
+        LIBS           ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_gui_fonts_unit
+        TEST_NAME      unit_gui_fonts_test
+        SOURCES        tests/unit/viewport/test_gui_fonts_unit.c engine/src/viewport/styling/gui_fonts.c
+        LIBS           ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_gui_assets_unit
+        TEST_NAME      unit_gui_assets_test
+        SOURCES        tests/unit/viewport/test_gui_assets_unit.c
+                       engine/src/viewport/styling/gui_assets.c
+                       engine/src/viewport/styling/gui_palette.c
+        LIBS           ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_gui_view2d_unit
+        TEST_NAME      unit_gui_view2d_test
+        SOURCES        tests/unit/viewport/test_gui_view2d_unit.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_gui_hud_unit
+        TEST_NAME      unit_gui_hud_test
+        SOURCES        tests/unit/viewport/test_gui_hud_unit.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_gui_raster_unit
+        TEST_NAME      unit_gui_raster_test
+        SOURCES        tests/unit/viewport/test_gui_raster_unit.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         unit viewport
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_gui_fallback_unit
+        TEST_NAME unit_gui_fallback_test
+        SOURCES   tests/unit/viewport/test_gui_fallback_unit.c engine/src/viewport/raster/gui_fallback.c
+        LABELS    unit viewport fallback
+    )
 
-    # Presentation GUI Assets Unit Test
-    add_executable(test_gui_assets_unit
-        tests/unit/viewport/test_gui_assets_unit.c
-        engine/src/viewport/styling/gui_assets.c
-        engine/src/viewport/styling/gui_palette.c
+    # Layer 1 Game Simulation Domain Unit Tests
+    cornerstone_add_test_executable(
+        TARGET    test_combat
+        TEST_NAME unit_combat_test
+        SOURCES   tests/unit/test_combat_unit.c
+        LIBS      tenebris_game_sim
+        LABELS    unit sim
     )
-    target_include_directories(test_gui_assets_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
+    cornerstone_add_test_executable(
+        TARGET    test_items
+        TEST_NAME unit_items_test
+        SOURCES   tests/unit/test_items_unit.c
+        LIBS      tenebris_game_sim
+        LABELS    unit sim
     )
-    target_link_libraries(test_gui_assets_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_gui_assets_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Simulation Combat Subsystem Unit Test
-    add_executable(test_combat
-        tests/unit/test_combat_unit.c
-        ${GAME_SIM_SOURCES}
+    cornerstone_add_test_executable(
+        TARGET    test_world
+        TEST_NAME unit_world_test
+        SOURCES   tests/unit/test_world_unit.c
+        LIBS      tenebris_game_sim
+        LABELS    unit sim
     )
-    target_include_directories(test_combat PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_combat PRIVATE tenebris_engine_util)
-    target_compile_options(test_combat PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Simulation Items Subsystem Unit Test
-    add_executable(test_items
-        tests/unit/test_items_unit.c
-        ${GAME_SIM_SOURCES}
+    cornerstone_add_test_executable(
+        TARGET    test_dispatch
+        TEST_NAME unit_dispatch_test
+        SOURCES   tests/unit/test_dispatch_unit.c
+        LIBS      tenebris_game_sim
+        LABELS    unit sim
     )
-    target_include_directories(test_items PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_items PRIVATE tenebris_engine_util)
-    target_compile_options(test_items PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Simulation World Subsystem Unit Test
-    add_executable(test_world
-        tests/unit/test_world_unit.c
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_world PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_world PRIVATE tenebris_engine_util)
-    target_compile_options(test_world PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Simulation Dispatch Subsystem Unit Test
-    add_executable(test_dispatch
-        tests/unit/test_dispatch_unit.c
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_dispatch PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_dispatch PRIVATE tenebris_engine_util)
-    target_compile_options(test_dispatch PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Presentation GUI View2D Unit Test
-    add_executable(test_gui_view2d_unit
-        tests/unit/viewport/test_gui_view2d_unit.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_gui_view2d_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
-    )
-    target_link_libraries(test_gui_view2d_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_gui_view2d_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Presentation GUI HUD Unit Test
-    add_executable(test_gui_hud_unit
-        tests/unit/viewport/test_gui_hud_unit.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_gui_hud_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
-    )
-    target_link_libraries(test_gui_hud_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_gui_hud_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Presentation GUI Raster Unit Test
-    add_executable(test_gui_raster_unit
-        tests/unit/viewport/test_gui_raster_unit.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_gui_raster_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
-    )
-    target_link_libraries(test_gui_raster_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_gui_raster_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Presentation GUI Fallback Monolith Unit Test
-    add_executable(test_gui_fallback_unit
-        tests/unit/viewport/test_gui_fallback_unit.c
-        engine/src/viewport/raster/gui_fallback.c
-    )
-    target_include_directories(test_gui_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_gui_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_gui_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Filesystem Utilities Subsystem Unit Test
-    add_executable(test_fs_utils_unit
-        tests/unit/io/test_fs_utils_unit.c
-    )
-    target_include_directories(test_fs_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_fs_utils_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_fs_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # VFS Pathfinding Subsystem Unit Test
-    add_executable(test_path_finder_unit
-        tests/unit/io/test_path_finder_unit.c
-    )
-    target_include_directories(test_path_finder_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_path_finder_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_path_finder_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Zero-Heap JSON Engine Subsystem Unit Test
-    add_executable(test_json_utils_unit
-        tests/unit/io/test_json_utils_unit.c
-    )
-    target_include_directories(test_json_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_json_utils_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_json_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Master Data Loader Subsystem Unit Test
-    add_executable(test_master_loader_unit
-        tests/unit/io/test_master_loader_unit.c
-    )
-    target_include_directories(test_master_loader_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_master_loader_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_master_loader_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Forensic Telemetry Engine Subsystem Unit Test
-    add_executable(test_log_unit
-        tests/unit/log/test_log_unit.c
-    )
-    target_include_directories(test_log_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_log_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_log_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Emergency Logging Fallback Monolith Unit Test
-    add_executable(test_log_fallback_unit
-        tests/unit/log/test_log_fallback_unit.c
-    )
-    target_include_directories(test_log_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_log_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_log_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Debugger Engine Subsystem Unit Test
-    add_executable(test_debug_unit
-        tests/unit/debug/test_debug_unit.c
-    )
-    target_include_directories(test_debug_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_debug_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_debug_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Emergency Debugging Fallback Monolith Unit Test
-    add_executable(test_debug_fallback_unit
-        tests/unit/debug/test_debug_fallback_unit.c
-    )
-    target_include_directories(test_debug_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_debug_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_debug_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Mathematics Engine Unit Test
-    add_executable(test_math_utils_unit
-        tests/unit/core/test_math_utils_unit.c
-    )
-    target_include_directories(test_math_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_math_utils_unit PRIVATE tenebris_engine_util m)
-    target_compile_options(test_math_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Mathematics Fallback Monolith Unit Test
-    add_executable(test_math_utils_fallback_unit
-        tests/unit/core/test_math_utils_fallback_unit.c
-    )
-    target_include_directories(test_math_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_math_utils_fallback_unit PRIVATE tenebris_engine_util m)
-    target_compile_options(test_math_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Time Engine Unit Test
-    add_executable(test_time_utils_unit
-        tests/unit/core/test_time_utils_unit.c
-    )
-    target_include_directories(test_time_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_time_utils_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_time_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Time Fallback Monolith Unit Test
-    add_executable(test_time_utils_fallback_unit
-        tests/unit/core/test_time_utils_fallback_unit.c
-    )
-    target_include_directories(test_time_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_time_utils_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_time_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Safe String Engine Unit Test
-    add_executable(test_string_utils_unit
-        tests/unit/core/test_string_utils_unit.c
-    )
-    target_include_directories(test_string_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_string_utils_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_string_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Safe String Fallback Monolith Unit Test
-    add_executable(test_string_utils_fallback_unit
-        tests/unit/core/test_string_utils_fallback_unit.c
-    )
-    target_include_directories(test_string_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_string_utils_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_string_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Geometry & Viewport Engine Unit Test
-    add_executable(test_geom_utils_unit
-        tests/unit/core/test_geom_utils_unit.c
-    )
-    target_include_directories(test_geom_utils_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_geom_utils_unit PRIVATE tenebris_engine_util m)
-    target_compile_options(test_geom_utils_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Geometry Fallback Monolith Unit Test
-    add_executable(test_geom_utils_fallback_unit
-        tests/unit/core/test_geom_utils_fallback_unit.c
-    )
-    target_include_directories(test_geom_utils_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_geom_utils_fallback_unit PRIVATE tenebris_engine_util m)
-    target_compile_options(test_geom_utils_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Frame Pacing Orchestrator Unit Test
-    add_executable(test_clock_pacer_unit
-        tests/unit/core/test_clock_pacer_unit.c
-    )
-    target_include_directories(test_clock_pacer_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_clock_pacer_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_clock_pacer_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Frame Pacing Fallback Monolith Unit Test
-    add_executable(test_clock_pacer_fallback_unit
-        tests/unit/core/test_clock_pacer_fallback_unit.c
-    )
-    target_include_directories(test_clock_pacer_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_clock_pacer_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_clock_pacer_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Battle Formula Orchestrator Unit Test
-    add_executable(test_formula_eval_unit
-        tests/unit/core/test_formula_eval_unit.c
-    )
-    target_include_directories(test_formula_eval_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_formula_eval_unit PRIVATE tenebris_engine_util m)
-    target_compile_options(test_formula_eval_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Battle Formula Fallback Monolith Unit Test
-    add_executable(test_formula_eval_fallback_unit
-        tests/unit/core/test_formula_eval_fallback_unit.c
-    )
-    target_include_directories(test_formula_eval_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_formula_eval_fallback_unit PRIVATE tenebris_engine_util m)
-    target_compile_options(test_formula_eval_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Presentation Movie Reel & Scene Depth Unit Test
-    add_executable(test_reel_unit
-        tests/unit/viewport/test_reel_unit.c
-        engine/src/viewport/reel/reel.c
-    )
-    target_include_directories(test_reel_unit PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
-    )
-    target_link_libraries(test_reel_unit PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_reel_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Presentation Movie Reel Fallback Monolith Unit Test
-    add_executable(test_reel_fallback_unit
-        tests/unit/viewport/test_reel_fallback_unit.c
-        engine/src/viewport/reel/reel_fallback.c
-    )
-    target_include_directories(test_reel_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_reel_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_reel_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Audio Event Bus & Mixer Subsystem Unit Test
-    add_executable(test_audio_bus_unit
-        tests/unit/audio/test_audio_bus_unit.c
-    )
-    target_include_directories(test_audio_bus_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_audio_bus_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_audio_bus_unit PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Emergency Audio Fallback Profile Unit Test
-    add_executable(test_audio_fallback_unit
-        tests/unit/audio/test_audio_fallback_unit.c
-    )
-    target_include_directories(test_audio_fallback_unit PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_audio_fallback_unit PRIVATE tenebris_engine_util)
-    target_compile_options(test_audio_fallback_unit PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.3: LAYER 0, LAYER 1 & LAYER 2 INTEGRATED HARNESSES ]
-    # Mission: Verify cross-subsystem coordination, DAG dependencies & runs.
+    # Sub-Assembly 4.3: Cross-Subsystem Integrated Harnesses
     # --------------------------------------------------------------------------
-
-    # Grand Integrated Engine Utilities & Audiovisual Harness
-    add_executable(test_utils
-        tests/integrated/test_utils.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
+    cornerstone_add_test_executable(
+        TARGET         test_utils
+        TEST_NAME      integrated_utils_test
+        SOURCES        tests/integrated/test_utils.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         integrated engine
     )
-    target_include_directories(test_utils PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
+    cornerstone_add_test_executable(
+        TARGET    test_sim_integrated
+        TEST_NAME integrated_sim_test
+        SOURCES   tests/integrated/test_sim_integrated.c
+        LIBS      tenebris_game_sim
+        LABELS    integrated sim
     )
-    target_link_libraries(test_utils PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_utils PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Simulation Cross-Subsystem Integration Harness
-    add_executable(test_sim_integrated
-        tests/integrated/test_sim_integrated.c
-        ${GAME_SIM_SOURCES}
+    cornerstone_add_test_executable(
+        TARGET    test_io_integrated
+        TEST_NAME integrated_io_test
+        SOURCES   tests/integrated/test_io_integrated.c
+        LABELS    integrated io
     )
-    target_include_directories(test_sim_integrated PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_sim_integrated PRIVATE tenebris_engine_util)
-    target_compile_options(test_sim_integrated PRIVATE ${GAME_WARNING_FLAGS})
-
-    # IO Layer Cross-Subsystem Integration Harness
-    add_executable(test_io_integrated
-        tests/integrated/test_io_integrated.c
+    cornerstone_add_test_executable(
+        TARGET    test_log_integrated
+        TEST_NAME integrated_log_test
+        SOURCES   tests/integrated/test_log_integrated.c
+        LABELS    integrated log
     )
-    target_include_directories(test_io_integrated PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_io_integrated PRIVATE tenebris_engine_util)
-    target_compile_options(test_io_integrated PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Logging Subsystem Cross-Pipeline Integration Harness
-    add_executable(test_log_integrated
-        tests/integrated/test_log_integrated.c
+    cornerstone_add_test_executable(
+        TARGET    test_debug_integrated
+        TEST_NAME integrated_debug_test
+        SOURCES   tests/integrated/test_debug_integrated.c
+        LABELS    integrated debug
     )
-    target_include_directories(test_log_integrated PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_log_integrated PRIVATE tenebris_engine_util)
-    target_compile_options(test_log_integrated PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Debugger Subsystem Cross-Pipeline Integration Harness
-    add_executable(test_debug_integrated
-        tests/integrated/test_debug_integrated.c
+    cornerstone_add_test_executable(
+        TARGET    test_core_integrated
+        TEST_NAME integrated_core_test
+        SOURCES   tests/integrated/test_core_integrated.c
+        LIBS      m
+        LABELS    integrated core
     )
-    target_include_directories(test_debug_integrated PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_debug_integrated PRIVATE tenebris_engine_util)
-    target_compile_options(test_debug_integrated PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Utilities Cross-Pipeline Integration Harness
-    add_executable(test_core_integrated
-        tests/integrated/test_core_integrated.c
+    cornerstone_add_test_executable(
+        TARGET    test_audio_integrated
+        TEST_NAME integrated_audio_test
+        SOURCES   tests/integrated/test_audio_integrated.c
+        LIBS      tenebris_game_sim
+        LABELS    integrated audio
     )
-    target_include_directories(test_core_integrated PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_core_integrated PRIVATE tenebris_engine_util m)
-    target_compile_options(test_core_integrated PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Audio Subsystem Cross-Pipeline Integration Harness
-    add_executable(test_audio_integrated
-        tests/integrated/test_audio_integrated.c
-        ${GAME_SIM_SOURCES}
+    cornerstone_add_test_executable(
+        TARGET         test_viewport_integrated
+        TEST_NAME      integrated_viewport_test
+        SOURCES        tests/integrated/test_viewport_integrated.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         integrated viewport
     )
-    target_include_directories(test_audio_integrated PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_audio_integrated PRIVATE tenebris_engine_util)
-    target_compile_options(test_audio_integrated PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Viewport Subsystem Cross-Pipeline Integration Harness
-    add_executable(test_viewport_integrated
-        tests/integrated/test_viewport_integrated.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_viewport_integrated PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
-    )
-    target_link_libraries(test_viewport_integrated PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_viewport_integrated PRIVATE ${GAME_WARNING_FLAGS})
 
     # --------------------------------------------------------------------------
-    # [ SUB-ASSEMBLY 4.4: LAYER 1 & LAYER 2 SYSTEM HARNESSES ]
-    # Mission: Verify state limits, stance state machine, scenarios & latency.
+    # Sub-Assembly 4.4: System-Level Endurance, Fuzz & Stress Harnesses
     # --------------------------------------------------------------------------
+    cornerstone_add_test_executable(
+        TARGET    test_game_invariants
+        TEST_NAME system_game_invariants_test
+        SOURCES   tests/system/test_game_invariants.c
+        LIBS      tenebris_game_sim
+        LABELS    system sim
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_gameplay_scenarios
+        TEST_NAME system_gameplay_scenarios_test
+        SOURCES   tests/system/test_gameplay_scenarios.c
+        LIBS      tenebris_game_sim
+        LABELS    system sim
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_io_system
+        TEST_NAME system_io_test
+        SOURCES   tests/system/test_io_system.c
+        LABELS    system io
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_log_system
+        TEST_NAME system_log_test
+        SOURCES   tests/system/test_log_system.c
+        LABELS    system log
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_debug_system
+        TEST_NAME system_debug_test
+        SOURCES   tests/system/test_debug_system.c
+        LABELS    system debug
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_core_system
+        TEST_NAME system_core_test
+        SOURCES   tests/system/test_core_system.c
+        LIBS      m
+        LABELS    system core
+    )
+    cornerstone_add_test_executable(
+        TARGET    test_audio_system
+        TEST_NAME system_audio_test
+        SOURCES   tests/system/test_audio_system.c
+        LABELS    system audio
+    )
+    cornerstone_add_test_executable(
+        TARGET         test_viewport_system
+        TEST_NAME      system_viewport_test
+        SOURCES        tests/system/test_viewport_system.c
+        LIBS           tenebris_engine_viewport tenebris_game_sim ${X11_LIBRARIES} m
+        EXTRA_INCLUDES ${X11_INCLUDE_DIR}
+        LABELS         system viewport
+    )
 
-    # System State Invariants Harness
-    add_executable(test_game_invariants
-        tests/system/test_game_invariants.c
-        ${GAME_SIM_SOURCES}
-        ${GAME_SIM_HEADERS}
-    )
-    target_include_directories(test_game_invariants PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_game_invariants PRIVATE tenebris_engine_util)
-    target_compile_options(test_game_invariants PRIVATE ${GAME_WARNING_FLAGS})
+    # --------------------------------------------------------------------------
+    # Sub-Assembly 4.5: Opt-In C++20/C++17 Header Compatibility Verification Probe
+    # --------------------------------------------------------------------------
+    if(CORNERSTONE_VERIFY_CPP_HEADERS)
+        include(CheckLanguage)
+        check_language(CXX)
+        if(CMAKE_CXX_COMPILER)
+            enable_language(CXX)
+            if(CORNERSTONE_CXX_STANDARD STREQUAL "AUTO")
+                if("cxx_std_20" IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+                    set(_cs_cxx_tier 20)
+                else()
+                    set(_cs_cxx_tier 17)
+                endif()
+            elseif(CORNERSTONE_CXX_STANDARD MATCHES "^(17|20)$")
+                set(_cs_cxx_tier "${CORNERSTONE_CXX_STANDARD}")
+            else()
+                message(FATAL_ERROR
+                    "Invalid CORNERSTONE_CXX_STANDARD='${CORNERSTONE_CXX_STANDARD}'. Expected AUTO, 20, or 17."
+                )
+            endif()
 
-    # System Gameplay Scenarios & Replay Determinism Harness
-    add_executable(test_gameplay_scenarios
-        tests/system/test_gameplay_scenarios.c
-        ${GAME_SIM_SOURCES}
-        ${GAME_SIM_HEADERS}
-    )
-    target_include_directories(test_gameplay_scenarios PRIVATE
-        ${COMMON_INCLUDES}
-    )
-    target_link_libraries(test_gameplay_scenarios PRIVATE tenebris_engine_util)
-    target_compile_options(test_gameplay_scenarios
-        PRIVATE ${GAME_WARNING_FLAGS})
+            message(STATUS
+                "[Cornerstone] C++ header compatibility tier: C++${_cs_cxx_tier} "
+                "(requested: ${CORNERSTONE_CXX_STANDARD}, floor: C++17, extensions: OFF)"
+            )
 
-    # IO Layer System Stress, Determinism & Fuzz Harness
-    add_executable(test_io_system
-        tests/system/test_io_system.c
-    )
-    target_include_directories(test_io_system PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_io_system PRIVATE tenebris_engine_util)
-    target_compile_options(test_io_system PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Logging Layer System Stress & Rotation Cascade Harness
-    add_executable(test_log_system
-        tests/system/test_log_system.c
-    )
-    target_include_directories(test_log_system PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_log_system PRIVATE tenebris_engine_util)
-    target_compile_options(test_log_system PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Debugger Layer System Stress & High-Turn Rewind Harness
-    add_executable(test_debug_system
-        tests/system/test_debug_system.c
-    )
-    target_include_directories(test_debug_system PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_debug_system PRIVATE tenebris_engine_util)
-    target_compile_options(test_debug_system PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Core Utilities Layer System Stress & Pacing Cadence Harness
-    add_executable(test_core_system
-        tests/system/test_core_system.c
-    )
-    target_include_directories(test_core_system PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_core_system PRIVATE tenebris_engine_util m)
-    target_compile_options(test_core_system PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Audio Layer System Stress & Golden Replay Harness
-    add_executable(test_audio_system
-        tests/system/test_audio_system.c
-    )
-    target_include_directories(test_audio_system PRIVATE ${COMMON_INCLUDES})
-    target_link_libraries(test_audio_system PRIVATE tenebris_engine_util)
-    target_compile_options(test_audio_system PRIVATE ${GAME_WARNING_FLAGS})
-
-    # Viewport Layer System Stress, Resizing & Movie Reel Enduro Harness
-    add_executable(test_viewport_system
-        tests/system/test_viewport_system.c
-        ${ENGINE_VIEWPORT_SOURCES}
-        ${GAME_SIM_SOURCES}
-    )
-    target_include_directories(test_viewport_system PRIVATE
-        ${COMMON_INCLUDES}
-        ${X11_INCLUDE_DIR}
-    )
-    target_link_libraries(test_viewport_system PRIVATE tenebris_engine_util ${X11_LIBRARIES} m)
-    target_compile_options(test_viewport_system PRIVATE ${GAME_WARNING_FLAGS})
+            set(_cpp_probe_src "${CMAKE_CURRENT_BINARY_DIR}/generated/cornerstone_cpp_compat.cpp")
+            file(WRITE "${_cpp_probe_src}"
+                "/* Auto-generated Cornerstone C++20/17 Header Compatibility Probe */\n"
+                "#include \"core/core.h\"\n"
+                "#include \"log/log.h\"\n"
+                "#include \"log/log_fallback.h\"\n"
+                "#include \"debug/debug.h\"\n"
+                "#include \"debug/debug_fallback.h\"\n"
+                "#include \"io/io.h\"\n"
+                "#include \"audio/audio.h\"\n"
+                "#include \"viewport/viewport.h\"\n"
+                "CS_STATIC_ASSERT(CS_CXX_STD_TIER >= 17, \"Cornerstone requires C++17+ floor\");\n"
+                "int main(void) {\n"
+                "    return (diag_severity_is_valid(SEVERITY_PASS) &&\n"
+                "            core_dimensions_are_valid(640, 360)) ? 0 : 1;\n"
+                "}\n"
+            )
+            add_executable(test_cpp_header_compat "${_cpp_probe_src}")
+            set_target_properties(test_cpp_header_compat PROPERTIES
+                CXX_STANDARD ${_cs_cxx_tier}
+                CXX_STANDARD_REQUIRED ON
+                CXX_EXTENSIONS OFF
+            )
+            target_include_directories(test_cpp_header_compat PRIVATE
+                ${ENGINE_PUBLIC_INCLUDES}
+                ${X11_INCLUDE_DIR}
+            )
+            target_link_libraries(test_cpp_header_compat PRIVATE
+                tenebris_engine_util
+                ${X11_LIBRARIES}
+                m
+            )
+            target_compile_options(test_cpp_header_compat PRIVATE ${GAME_WARNING_FLAGS})
+            add_test(NAME audit_cpp_headers_test COMMAND test_cpp_header_compat)
+            set_tests_properties(audit_cpp_headers_test PROPERTIES LABELS "audit;cpp")
+            list(APPEND CORNERSTONE_CTEST_NAMES audit_cpp_headers_test)
+        else()
+            message(WARNING "CORNERSTONE_VERIFY_CPP_HEADERS=ON ignored: no C++ compiler detected")
+        endif()
+    endif()
 
 # ==============================================================================
 # BLOCK 5: CLOSING BLOCK
-# ( Automated Test Registrations & CTest Verification Suite )
+# ( CLI Interface Contracts, Test Properties & CTest Execution Handshake )
+# ==============================================================================
+# Engine:        Cornerstone Game Engine
+# Stratum:       Layer 3 / Layer 4 Verification Boundary
+# Module:        build.root.cmake
+# Mission:       Register CLI behavioral checks and apply uniform workspace-root
+#                working directories across all registered CTest suites.
 # ==============================================================================
 
-    # CLI Interface Contract Verification Tests
+    # --------------------------------------------------------------------------
+    # Sub-Assembly 5.1: Primary Binary CLI & Boot Audit Registrations
+    # --------------------------------------------------------------------------
     add_test(NAME cli_help_test COMMAND tenebris-lux --help)
     add_test(NAME cli_version_test COMMAND tenebris-lux --version)
     add_test(NAME subsystem_audit_test COMMAND tenebris-lux --audit)
-
-    # Functional Tests (Individual Cog & Pipeline Debugging)
-    add_test(NAME functional_cogs_test COMMAND test_functional)
-    add_test(NAME functional_io_test COMMAND test_io_functional)
-    add_test(NAME functional_log_test COMMAND test_log_functional)
-    add_test(NAME functional_debug_test COMMAND test_debug_functional)
-    add_test(NAME functional_core_test COMMAND test_core_functional)
-    add_test(NAME functional_audio_test COMMAND test_audio_functional)
-    add_test(NAME functional_viewport_test COMMAND test_viewport_functional)
-
-    # Unit Tests: Core Subsystems
-    add_test(NAME unit_math_utils_test COMMAND test_math_utils_unit)
-    add_test(NAME unit_math_utils_fallback_test COMMAND test_math_utils_fallback_unit)
-    add_test(NAME unit_time_utils_test COMMAND test_time_utils_unit)
-    add_test(NAME unit_time_utils_fallback_test COMMAND test_time_utils_fallback_unit)
-    add_test(NAME unit_string_utils_test COMMAND test_string_utils_unit)
-    add_test(NAME unit_string_utils_fallback_test COMMAND test_string_utils_fallback_unit)
-    add_test(NAME unit_geom_utils_test COMMAND test_geom_utils_unit)
-    add_test(NAME unit_geom_utils_fallback_test COMMAND test_geom_utils_fallback_unit)
-    add_test(NAME unit_clock_pacer_test COMMAND test_clock_pacer_unit)
-    add_test(NAME unit_clock_pacer_fallback_test COMMAND test_clock_pacer_fallback_unit)
-    add_test(NAME unit_formula_eval_test COMMAND test_formula_eval_unit)
-    add_test(NAME unit_formula_eval_fallback_test COMMAND test_formula_eval_fallback_unit)
-
-    # Unit Tests: IO Subsystems
-    add_test(NAME unit_fs_utils_test COMMAND test_fs_utils_unit)
-    add_test(NAME unit_path_finder_test COMMAND test_path_finder_unit)
-    add_test(NAME unit_json_utils_test COMMAND test_json_utils_unit)
-    add_test(NAME unit_master_loader_test COMMAND test_master_loader_unit)
-
-    # Unit Tests: Telemetry Logging Subsystems
-    add_test(NAME unit_log_engine_test COMMAND test_log_unit)
-    add_test(NAME unit_log_fallback_test COMMAND test_log_fallback_unit)
-
-    # Unit Tests: State Debugger Subsystems
-    add_test(NAME unit_debug_engine_test COMMAND test_debug_unit)
-    add_test(NAME unit_debug_fallback_test COMMAND test_debug_fallback_unit)
-
-    # Unit Tests: Audio Subsystems
-    add_test(NAME unit_audio_bus_test COMMAND test_audio_bus_unit)
-    add_test(NAME unit_audio_fallback_test COMMAND test_audio_fallback_unit)
-
-    # Unit Tests: Viewport Subsystems (1:1 Parity for each code file)
-    add_test(NAME unit_reel_test COMMAND test_reel_unit)
-    add_test(NAME unit_reel_fallback_test COMMAND test_reel_fallback_unit)
-    add_test(NAME unit_gui_palette_test COMMAND test_gui_palette_unit)
-    add_test(NAME unit_gui_layout_test COMMAND test_gui_layout_unit)
-    add_test(NAME unit_gui_screens_test COMMAND test_gui_screens_unit)
-    add_test(NAME unit_gui_widgets_test COMMAND test_gui_widgets_unit)
-    add_test(NAME unit_gui_fonts_test COMMAND test_gui_fonts_unit)
-    add_test(NAME unit_gui_assets_test COMMAND test_gui_assets_unit)
-    add_test(NAME unit_gui_view2d_test COMMAND test_gui_view2d_unit)
-    add_test(NAME unit_gui_hud_test COMMAND test_gui_hud_unit)
-    add_test(NAME unit_gui_raster_test COMMAND test_gui_raster_unit)
-    add_test(NAME unit_gui_fallback_test COMMAND test_gui_fallback_unit)
-
-    # Unit Tests: Game Simulation Subsystems
-    add_test(NAME unit_combat_test COMMAND test_combat)
-    add_test(NAME unit_items_test COMMAND test_items)
-    add_test(NAME unit_world_test COMMAND test_world)
-    add_test(NAME unit_dispatch_test COMMAND test_dispatch)
-
-    # Integrated Tests (Cross-Subsystem Coordination)
-    add_test(NAME integrated_utils_test COMMAND test_utils)
-    add_test(NAME integrated_sim_test COMMAND test_sim_integrated)
-    add_test(NAME integrated_io_test COMMAND test_io_integrated)
-    add_test(NAME integrated_log_test COMMAND test_log_integrated)
-    add_test(NAME integrated_debug_test COMMAND test_debug_integrated)
-    add_test(NAME integrated_core_test COMMAND test_core_integrated)
-    add_test(NAME integrated_audio_test COMMAND test_audio_integrated)
-    add_test(NAME integrated_viewport_test COMMAND test_viewport_integrated)
-
-    # System Tests (Full Simulation Invariants, Scenarios & Long-Running Endurance)
-    add_test(NAME system_game_invariants_test COMMAND test_game_invariants)
-    add_test(NAME system_gameplay_scenarios_test COMMAND test_gameplay_scenarios)
-    add_test(NAME system_io_test COMMAND test_io_system)
-    add_test(NAME system_log_test COMMAND test_log_system)
-    add_test(NAME system_debug_test COMMAND test_debug_system)
-    add_test(NAME system_core_test COMMAND test_core_system)
-    add_test(NAME system_audio_test COMMAND test_audio_system)
-    add_test(NAME system_viewport_test COMMAND test_viewport_system)
-
     set_tests_properties(
         cli_help_test
         cli_version_test
         subsystem_audit_test
-        functional_cogs_test
-        functional_io_test
-        functional_log_test
-        functional_debug_test
-        functional_core_test
-        functional_audio_test
-        functional_viewport_test
-        unit_math_utils_test
-        unit_math_utils_fallback_test
-        unit_time_utils_test
-        unit_time_utils_fallback_test
-        unit_string_utils_test
-        unit_string_utils_fallback_test
-        unit_geom_utils_test
-        unit_geom_utils_fallback_test
-        unit_clock_pacer_test
-        unit_clock_pacer_fallback_test
-        unit_formula_eval_test
-        unit_formula_eval_fallback_test
-        unit_fs_utils_test
-        unit_path_finder_test
-        unit_json_utils_test
-        unit_master_loader_test
-        unit_log_engine_test
-        unit_log_fallback_test
-        unit_debug_engine_test
-        unit_debug_fallback_test
-        unit_audio_bus_test
-        unit_audio_fallback_test
-        unit_reel_test
-        unit_reel_fallback_test
-        unit_gui_palette_test
-        unit_gui_layout_test
-        unit_gui_screens_test
-        unit_gui_widgets_test
-        unit_gui_fonts_test
-        unit_gui_assets_test
-        unit_gui_view2d_test
-        unit_gui_hud_test
-        unit_gui_raster_test
-        unit_gui_fallback_test
-        unit_combat_test
-        unit_items_test
-        unit_world_test
-        unit_dispatch_test
-        integrated_utils_test
-        integrated_sim_test
-        integrated_io_test
-        integrated_log_test
-        integrated_debug_test
-        integrated_core_test
-        integrated_audio_test
-        integrated_viewport_test
-        system_game_invariants_test
-        system_gameplay_scenarios_test
-        system_io_test
-        system_log_test
-        system_debug_test
-        system_core_test
-        system_audio_test
-        system_viewport_test
+        PROPERTIES LABELS "cli;audit"
+    )
+    list(APPEND CORNERSTONE_CTEST_NAMES
+        cli_help_test
+        cli_version_test
+        subsystem_audit_test
+    )
+
+    # --------------------------------------------------------------------------
+    # Sub-Assembly 5.2: Uniform Working Directory Binding for All CTest Entries
+    # --------------------------------------------------------------------------
+    set_tests_properties(${CORNERSTONE_CTEST_NAMES}
         PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
 endif()
-
-# End of CMakeLists.txt

@@ -1,0 +1,159 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/io/vfs_routes.json",
+    "id": "engine.config.io.vfs_routes",
+    "layer": "Layer 0: Core Utilities / VFS Pathfinding",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Layered Virtual Filesystem routing specification defining 3-tier config precedence, candidate roots, and domain search directories.",
+    "where_the_data_lives": {
+      "topology": "Engine VFS Routing Table Specification",
+      "path": "engine/config/io/vfs_routes.json",
+      "header_binding": "engine/include/io/path_finder.h"
+    },
+    "what_it_enables": [
+      "Deterministic 3-tier resolution: game overrides -> engine defaults -> presentation linkers",
+      "Multi-root workspace probing (repo root, build/ subdir, or mounted mod directory)",
+      "Zero-disk Safe-Mode virtual rom:// routing when disk files are absent",
+      "Clean alignment to Rev 5 runtime/, diagnostics/, io/, and standards/ subtrees"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocation during VFS path probes (ALLOC_ZERO_HEAP)",
+      "Resolved path output strictly < 512 bytes (PATH_FINDER_MAX_PATH)",
+      "All resolved strings unconditionally null-terminated"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "path_finder_header": "io/path_finder.h",
+      "bios_header": "io/io_fallback.h"
+    },
+    "static_declarations": {
+      "subdomain_id": "io",
+      "schema_id": "tenlux.data.io_vfs_routes.v1",
+      "target_subsystem": "cog.path_finder",
+      "max_root_bytes": 256,
+      "max_path_bytes": 512
+    },
+    "generic_helper_contracts": {
+      "mount_root": "path_finder_set_data_root",
+      "load_routes": "path_finder_load_routes",
+      "resolve": "path_finder_resolve",
+      "resolve_asset": "path_finder_resolve_asset"
+    },
+    "capacities": {
+      "config_tier_count": 3,
+      "candidate_root_count": 6,
+      "asset_root_count": 4,
+      "domain_search_count": 36
+    }
+  },
+  "block_3_body": {
+    "default_data_root": "game/data",
+    "env_override_var": "TL_DATA_ROOT",
+    "block_path_traversal": true,
+    "max_symlink_depth": 4,
+    "allow_mod_mounts": true,
+    "rom_fallback_enabled": true,
+    "probe_await_on_corrupt": true,
+    "config_precedence": [
+      "game/config/",
+      "engine/config/",
+      "game/data/presentation/config/"
+    ],
+    "fallback_candidate_roots": [
+      "game/data",
+      "../game/data",
+      "engine/config",
+      "../engine/config",
+      "data",
+      "../data"
+    ],
+    "asset_roots": [
+      "game/assets",
+      "../game/assets",
+      "assets",
+      "../assets"
+    ],
+    "domain_search_paths": [
+      "",
+      "runtime/",
+      "runtime/math/",
+      "runtime/string/",
+      "runtime/time/",
+      "diagnostics/",
+      "diagnostics/telemetry/",
+      "diagnostics/debugger/",
+      "diagnostics/taxonomy/",
+      "diagnostics/formats/",
+      "io/",
+      "audio/",
+      "viewport/",
+      "input/",
+      "standards/",
+      "standards/blocks/",
+      "mechanics/",
+      "mechanics/items/",
+      "mechanics/combat/",
+      "mechanics/tactics/",
+      "mechanics/campaign/",
+      "mechanics/campaign/dispatch/",
+      "world/",
+      "world/geography/",
+      "world/battlefields/",
+      "world/terrains/",
+      "entities/",
+      "entities/classes/",
+      "entities/roster/",
+      "presentation/",
+      "presentation/config/",
+      "presentation/audio/",
+      "presentation/ui/",
+      "presentation/ui/fonts/",
+      "presentation/visuals/",
+      "presentation/visuals/palettes/"
+    ],
+    "diagnostic_aliases": {
+      "log_prefix": "diagnostics/telemetry/",
+      "debug_prefix": "diagnostics/debugger/",
+      "io_prefix": "io/"
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "config_tier_count": 3,
+      "candidate_root_count": 6,
+      "asset_root_count": 4,
+      "domain_search_count": 36,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "CONFIG_PRECEDENCE_3TIER",
+        "rule": "config_precedence order preserves game overrides before engine defaults",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "NO_STALE_SYSTEM_PREFIX",
+        "rule": "diagnostic_aliases map cleanly to diagnostics/telemetry and diagnostics/debugger",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "unit_test": "unit_path_finder_test",
+      "rom_fallback_asset": "io/vfs_routes.json"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json"
+    }
+  }
+}
+

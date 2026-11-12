@@ -54,7 +54,8 @@
         "LOG",
         "EVENT",
         "MESSAGE",
-        "CHARACTER"
+        "CHARACTER",
+        "IO"
       ]
     },
     "generic_helper_contracts": {

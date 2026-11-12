@@ -7,7 +7,7 @@
     "layer": "Layer 0: Core Foundation Strata",
     "version": "0.1.1-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-09",
+    "date": "2026-11-11",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "system": "C11 Engine Block 5 Closing Specialization",
@@ -34,8 +34,15 @@
   "block_3_body": {
     "dump_card_suffix": "_execute_dump_card",
     "lifecycle_init_suffix": "_init",
+    "lifecycle_boot_suffix": "_boot",
     "lifecycle_shutdown_suffix": "_shutdown",
     "lifecycle_teardown_suffix": "_teardown",
+    "bios_archetypes_using_boot": [
+      "quarantined_fallback"
+    ],
+    "fallback_provenance_rule": "Monolith, floppy preset, and ROM-hydrated configs stamp loaded_from_data = false unconditionally.",
+    "dump_card_signature_and_width_rule": "Cards target 60-column inner width (or 62-char +---+ box borders with aligned right pipes). io/ and viewport operational APIs return character counts (size_t/int); fallback BIOS twins match existing subsystem callers unless normalized in coordinated facade updates.",
+    "dump_card_domain_neutrality_rule": "Engine diagnostic dump cards format generic slot data or inspection_cards.json schema templates with zero hardcoded game-specific character or relic lore.",
     "stateless_exemption_literal": "None. (Stateless module / pure stack-allocated execution).",
     "pure_types_statutory_text": "Operational rasterization, subsystem lifecycle initialization, and diagnostic dump cards are declared in",
     "facade_umbrella_statutory_text": "Sub-Assembly 5.1: Executable Procedures, Inspection & Diagnostic Cards Cross-References"

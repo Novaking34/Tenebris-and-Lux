@@ -7,7 +7,7 @@
     "layer": "Layer 0: Core Foundation Strata",
     "version": "0.1.1-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-09",
+    "date": "2026-11-11",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "system": "C11 Engine Block 4 Audit Specialization",
@@ -34,6 +34,13 @@
   "block_3_body": {
     "audit_cog_pattern": "_audit",
     "preflight_cog_pattern": "_preflight",
+    "probe_registry_type": "debug_validation_probe_t",
+    "triggers_cross_reference_tag": "@triggers",
+    "tripwire_await_contract": "Fail condition / validation probe -> record Tier-0 fault -> complete downgraded step in Safe Mode -> hold DEBUG_STEP_AWAIT until validated state recovery.",
+    "live_probe_vs_telemetry_counter_rule": "Ambient validate_fn probes called by debug_check_tripwires() evaluate live invariants, active policy bounds, and .rodata ROM parity rather than sticky lifetime error counters; explicit fault handlers invoke debug_trigger_probe() guarded by debug_is_active().",
+    "non_awaiting_expected_negative_rule": "Expected negative guards (e.g. RO floppy writes, optional file miss) emit LOG_CAT_IO telemetry and DEBUG_REACTION_LOG_AND_CONTINUE / await_on_trigger=false without halting DEBUG_STEP_AWAIT.",
+    "layer4_probe_test_linkage": "Unit, functional, and integrated suites must connect log_init (LOG_CAT_IO), debug_init, and debug_check_tripwires() alongside explicit DEBUG_STEP_AWAIT -> debug_resolve_await() recovery checks.",
+    "non_destructive_audit_rule": "Preflight and audit checks must be stack-pure or preserve/restore live state cleanly with zero heap allocation.",
     "pure_types_statutory_text": "Functional audits, layout tripwires, and pre-flight routines are declared in",
     "facade_umbrella_statutory_text": "Sub-Assembly 4.1: Contract, Input & Cog Verification Cross-References"
   },

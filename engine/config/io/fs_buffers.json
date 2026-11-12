@@ -1,0 +1,114 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/io/fs_buffers.json",
+    "id": "engine.config.io.fs_buffers",
+    "layer": "Layer 0: Core Utilities / Filesystem",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Filesystem bounded buffer ladder, POSIX stat/write safety policy, and read-only Safe-Mode constraints for fs_utils.",
+    "where_the_data_lives": {
+      "topology": "Engine Filesystem & Buffer Policy Profile",
+      "path": "engine/config/io/fs_buffers.json",
+      "header_binding": "engine/include/io/fs_utils.h"
+    },
+    "what_it_enables": [
+      "Strictly bounded zero-heap file reading preventing oversized asset OOM/DoS",
+      "Unconditional null-termination across all buffer truncation paths",
+      "Recursive mkdir parent creation under 512-byte POSIX path limits",
+      "Floppy / Safe-Mode read-only disk latch protecting write-protected hosts"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocation across all POSIX wrappers (ALLOC_ZERO_HEAP)",
+      "Canonical buffer sizes strictly ordered: 1024 < 8192 < 32768 <= 65536",
+      "POSIX path buffers capped cleanly at FS_PATH_MAX (512 bytes)",
+      "Writes blocked cleanly when read_only_mode is active"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "fs_utils_header": "io/fs_utils.h",
+      "bios_header": "io/io_fallback.h"
+    },
+    "static_declarations": {
+      "subdomain_id": "io",
+      "schema_id": "tenlux.data.io_fs_profile.v1",
+      "target_subsystem": "cog.fs_utils",
+      "target_struct": "fs_utils_policy_t"
+    },
+    "generic_helper_contracts": {
+      "policy_loader": "fs_utils_load_policy",
+      "bounded_reader": "fs_read_file_bounded",
+      "safe_writer": "fs_write_file_contents",
+      "dir_creator": "fs_ensure_directory"
+    },
+    "capacities": {
+      "small_bytes": 1024,
+      "medium_bytes": 8192,
+      "large_bytes": 32768,
+      "max_config_bytes": 65536,
+      "path_max_bytes": 512
+    }
+  },
+  "block_3_body": {
+    "profile_name": "fs_buffers",
+    "default_root": "game/data",
+    "small_bytes": 1024,
+    "medium_bytes": 8192,
+    "large_bytes": 32768,
+    "max_config_bytes": 65536,
+    "path_max_bytes": 512,
+    "posix_dir_mode_octal": "0755",
+    "reject_on_truncation": true,
+    "flush_on_write": true,
+    "atomic_write": true,
+    "block_path_traversal": true,
+    "temp_suffix": ".tl_tmp",
+    "read_only_mode": false,
+    "rom_fallback_enabled": true,
+    "error_codes": {
+      "file_not_found": "0x0501",
+      "read_failure": "0x0502",
+      "write_blocked_ro": "0x0504",
+      "path_overflow": "0x0505",
+      "truncated_read": "0x0506",
+      "rom_missing": "0x0507"
+    }
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "small_bytes": 1024,
+      "medium_bytes": 8192,
+      "large_bytes": 32768,
+      "max_config_bytes": 65536,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "FS_BUFFER_CEILINGS",
+        "rule": "small_bytes == 1024 && medium_bytes == 8192 && large_bytes == 32768 && max_config_bytes == 65536",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "FS_TRUNCATION_NULL_SAFE",
+        "rule": "reject_on_truncation == true with unconditional null termination",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "loader": "fs_utils_load_policy",
+      "unit_test": "unit_fs_utils_test"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json"
+    }
+  }
+}
+

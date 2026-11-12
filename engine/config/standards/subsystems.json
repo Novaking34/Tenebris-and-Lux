@@ -7,15 +7,15 @@
     "layer": "Layer 0: Core Foundation Strata",
     "version": "0.1.1-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-09",
+    "date": "2026-11-11",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "system": "C11 Subsystem Header Archetype Registry",
-    "role": "Declarative Registry of All 41 Engine Headers and Their Architectural Contracts",
+    "system": "Cornerstone C11 Subsystem Header Archetype Registry",
+    "role": "Declarative Registry of All 44 Cornerstone Engine Headers and Their Architectural Contracts",
     "invariants": [
-      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic) with C++ extern \"C\" header compatibility",
       "Zero dynamic heap allocations in Layer 0/1/2 (ALLOC_ZERO_HEAP)",
-      "All 41 engine headers mapped with archetype and statefulness"
+      "All 44 Cornerstone engine headers mapped with archetype and statefulness"
     ]
   },
   "block_2_opening": {
@@ -28,7 +28,7 @@
         "operational": "Full functional C cog exposing public APIs, audits, and dump cards.",
         "pure_types": "Statutory pure-type header defining static structures and inline predicates.",
         "facade_umbrella": "Subsystem aggregator header re-exporting modules and cross-references.",
-        "quarantined_fallback": "Isolated zero-dependency emergency fallback cog."
+        "quarantined_fallback": "Isolated zero-dependency Tier-0 BIOS Safe-Mode cog (static .bss flight-box + compiled .rodata ROM vault when stateful)."
       }
     }
   },
@@ -54,17 +54,20 @@
       "core/time_utils.h": { "subsystem": "core.time", "layer": 0, "archetype": "operational", "stateful": false },
       "core/time_utils_fallback.h": { "subsystem": "core.time.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
 
-      "debug/debug.h": { "subsystem": "debug", "layer": 0, "archetype": "operational", "stateful": true },
-      "debug/debug_fallback.h": { "subsystem": "debug.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "debug/debug.h": { "id": "cog.debug", "subsystem": "debug", "layer": 0, "archetype": "operational", "stateful": true },
+      "debug/debug_fallback.h": { "id": "cog.debug.fallback", "subsystem": "debug.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": true },
+      "debug/debug_types.h": { "id": "cog.debug.types", "subsystem": "debug.types", "layer": 0, "archetype": "pure_types", "stateful": false },
 
-      "io/fs_utils.h": { "subsystem": "io.fs", "layer": 0, "archetype": "operational", "stateful": true },
-      "io/io.h": { "subsystem": "io", "layer": 0, "archetype": "facade_umbrella", "stateful": false },
-      "io/json_utils.h": { "subsystem": "io.json", "layer": 0, "archetype": "operational", "stateful": true },
-      "io/master_loader.h": { "subsystem": "io.loader", "layer": 0, "archetype": "operational", "stateful": true },
-      "io/path_finder.h": { "subsystem": "io.vfs", "layer": 0, "archetype": "operational", "stateful": true },
+      "io/fs_utils.h": { "id": "cog.fs_utils", "subsystem": "io.fs", "layer": 0, "archetype": "operational", "stateful": true },
+      "io/io.h": { "id": "cog.io", "subsystem": "io", "layer": 0, "archetype": "facade_umbrella", "stateful": false },
+      "io/io_fallback.h": { "id": "cog.io.fallback", "subsystem": "io.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": true },
+      "io/json_utils.h": { "id": "cog.json_utils", "subsystem": "io.json", "layer": 0, "archetype": "operational", "stateful": true },
+      "io/master_loader.h": { "id": "cog.master_loader", "subsystem": "io.loader", "layer": 0, "archetype": "operational", "stateful": true },
+      "io/path_finder.h": { "id": "cog.path_finder", "subsystem": "io.vfs", "layer": 0, "archetype": "operational", "stateful": true },
 
-      "log/log.h": { "subsystem": "log", "layer": 0, "archetype": "operational", "stateful": true },
-      "log/log_fallback.h": { "subsystem": "log.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": false },
+      "log/log.h": { "id": "cog.log", "subsystem": "log", "layer": 0, "archetype": "operational", "stateful": true },
+      "log/log_fallback.h": { "id": "cog.log.fallback", "subsystem": "log.fallback", "layer": 0, "archetype": "quarantined_fallback", "stateful": true },
+      "log/log_types.h": { "id": "cog.log.types", "subsystem": "log.types", "layer": 0, "archetype": "pure_types", "stateful": false },
 
       "viewport/hud/gui_hud.h": { "subsystem": "viewport.hud", "layer": 2, "archetype": "operational", "stateful": false },
       "viewport/hud/gui_layout.h": { "subsystem": "viewport.layout", "layer": 2, "archetype": "operational", "stateful": false },
@@ -84,8 +87,8 @@
   },
   "block_4_audit": {
     "audit_metrics": {
-      "total_registered": 41,
-      "layer_0_headers": 28,
+      "total_registered": 44,
+      "layer_0_headers": 31,
       "layer_2_headers": 13
     },
     "verification_tripwires": [

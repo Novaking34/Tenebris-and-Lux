@@ -2,33 +2,71 @@
   "$schema": "tenlux.tools.block_2_opening.v1",
   "block_1_metadata": {
     "project": "Tenebris and Lux",
+    "file": "tools/config/blocks/block_2_opening.json",
+    "id": "tools.standards.block_2",
     "layer": "Developer Tooling Strata",
-    "version": "0.1.0",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
     "system": "OmniCode Protocol Block 2 Generic Standards",
-    "role": "Specification for Block 2 Opening, Types & Ontology"
+    "role": "Specification for Block 2 Opening, C++ Compatibility, Unified Chassis & Monitored 2.5 Support Gate"
   },
   "block_2_opening": {
     "block_marker": "BLOCK 2: OPENING BLOCK",
+    "mandatory_banner_fields": [
+      "Engine:",
+      "Stratum:",
+      "Module:",
+      "Mission:"
+    ],
     "required_sub_assemblies": [
       "Sub-Assembly 2.1",
       "Sub-Assembly 2.2",
       "Sub-Assembly 2.3",
       "Sub-Assembly 2.4"
+    ],
+    "optional_sub_assemblies": [
+      "Sub-Assembly 2.5"
     ]
   },
   "block_3_body": {
-    "sub_assembly_2_1_mission": "Imports, dependencies, and compile-time constants",
-    "sub_assembly_2_2_mission": "Domain forward hooks and opaque type pointers",
-    "sub_assembly_2_3_mission": "Concrete structures, enums, unions, and typedefs",
-    "sub_assembly_2_4_mission": "Pre-conditional helper cogs and non-business inline predicates",
-    "exempt_archetypes": ["pure_types"]
+    "sub_assembly_2_1_mission": "Module identity constants, logging tags (.c), compile-time bounds, and static_assert proofs",
+    "sub_assembly_2_2_mission": "Manifest & pre-flight hooks (.h operational) or private structural ontology & probe forward decls (.c)",
+    "sub_assembly_2_3_mission": "Tagged public ontology with Dual-Audience Doxygen (.h) and unified .rodata/.data/.bss chassis + manifest + probes (.c)",
+    "sub_assembly_2_4_mission": "Pre-conditional O(1) static inline helpers, pure predicates, public convenience ergonomic #define macros, and scoped logging/tripwire frontier macros",
+    "sub_assembly_2_5_mission": "Optional (.c only) monitored static support infrastructure keeping Block 3 pure business logic while surfacing split-out patterns",
+    "rom_asset_header_pattern": "*_rom.h",
+    "ban_function_local_static_buffers": true,
+    "forbid_2_5_in_headers": true,
+    "require_2_5_pattern_watch": true,
+    "warn_non_inline_in_2_4": true,
+    "require_tier_headers": true,
+    "require_extern_c_in_headers": true,
+    "enforce_matching_endif": true,
+    "enforce_quarantined_fallback_headers": true,
+    "validate_paired_c_sources": true,
+    "exempt_archetypes_block_3_4_5": [
+      "pure_types"
+    ],
+    "header_archetypes": [
+      "operational",
+      "quarantined_fallback",
+      "facade_umbrella",
+      "pure_types"
+    ],
+    "source_archetypes": [
+      "operational",
+      "quarantined_fallback"
+    ]
   },
   "block_4_audit": {
     "audit_enabled": true,
-    "verify_monotonic_sub_assemblies": true
+    "verify_monotonic_sub_assemblies": true,
+    "verify_posix_macro_placement": true
   },
   "block_5_closing": {
     "rejection_action": "fail_file"
   }
 }
-

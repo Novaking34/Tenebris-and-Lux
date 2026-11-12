@@ -2,21 +2,46 @@
   "$schema": "tenlux.tools.block_3_body.v1",
   "block_1_metadata": {
     "project": "Tenebris and Lux",
+    "file": "tools/config/blocks/block_3_body.json",
+    "id": "tools.standards.block_3",
     "layer": "Developer Tooling Strata",
-    "version": "0.1.0",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
     "system": "OmniCode Protocol Block 3 Generic Standards",
-    "role": "Specification for Block 3 Body, Logic & Business Functions"
+    "role": "Specification for Block 3 Business Logic, .h/.c Pairing Parity, Telemetry & Reconstructible Docs"
   },
   "block_2_opening": {
     "block_marker": "BLOCK 3: BODY BLOCK",
+    "required_banner_fields": [
+      "Engine:",
+      "Stratum:",
+      "Module:",
+      "Mission:"
+    ],
     "required_sub_assemblies": [
       "Sub-Assembly 3.1",
       "Sub-Assembly 3.2"
+    ],
+    "optional_bios_sub_assemblies": [
+      "Sub-Assembly 3.3"
     ]
   },
   "block_3_body": {
     "require_pure_functions": true,
     "disallow_lifecycle_init_shutdown": true,
+    "disallow_duplicate_parsers": true,
+    "ban_macros_in_block_3": true,
+    "forbid_static_in_block_3": true,
+    "forbid_lifecycle_and_procedures_in_block_3": true,
+    "enforce_sub_assembly_symbol_parity": true,
+    "require_per_fn_doxygen_in_block_3": true,
+    "require_source_reconstructible_docs": true,
+    "dual_audience_archetypes": ["operational", "quarantined_fallback"],
+    "triggers_tag": "@triggers",
+    "dual_audience_balance_contract": "Plain-English impact & mod/config semantics for non-programmers/designers/modders plus exact memory, complexity, reentrancy, failure codes, and probes for systems engineers; paired .c docs remain self-sufficient to regenerate .h cleanly.",
     "exempt_archetypes": ["pure_types", "facade_umbrella"]
   },
   "block_4_audit": {
@@ -27,4 +52,3 @@
     "rejection_action": "fail_file"
   }
 }
-

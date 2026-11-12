@@ -1,0 +1,98 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/io/floppy_safe.json",
+    "id": "engine.config.io.floppy_safe",
+    "layer": "Layer 0: Core Engine / I/O Policy Profile",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Minimal Read-Only Safe-Mode I/O Policy for Floppy / Damaged Media",
+    "invariants": [
+      "Zero dynamic heap allocations (ALLOC_ZERO_HEAP)",
+      "Small <= Medium <= Large <= Max Config Buffer Ladder",
+      "Enforces read_only_mode = true to block all disk writes and mkdir calls",
+      "Hydrates via compiled .rodata ROM vault even when storage is offline"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": [
+      "Compiled into io_config_rom.h via CMake GenerateConfigRom",
+      "Validates cleanly under io_fallback_validate_policy_contract()"
+    ],
+    "static_declarations": {
+      "schema_id": "tenlux.engine.io_policy.v1",
+      "target_stratum": "Layer 0: Core Utilities / I/O & VFS",
+      "target_struct": "io_fallback_config_t"
+    },
+    "generic_helper_contracts": {
+      "policy_parser": "io_fallback_parse_policy_json",
+      "rom_loader": "io_fallback_load_rom_config",
+      "fs_loader": "fs_utils_load_policy"
+    },
+    "capacities": {
+      "max_config_bytes": 32768,
+      "path_max_bytes": 256,
+      "max_json_depth": 16
+    }
+  },
+  "block_3_body": {
+    "profile_name": "floppy_safe",
+    "default_root": "game/data",
+    "small_bytes": 512,
+    "medium_bytes": 4096,
+    "large_bytes": 16384,
+    "max_config_bytes": 32768,
+    "path_max_bytes": 256,
+    "max_json_depth": 16,
+    "max_json_tokens": 512,
+    "reject_on_truncation": true,
+    "require_5block_envelope": true,
+    "enforce_schema_id": true,
+    "rom_fallback_enabled": true,
+    "read_only_mode": true,
+    "probe_await_on_corrupt_policy": false,
+    "posix_dir_mode_octal": "0555",
+    "flush_on_write": false,
+    "atomic_write": false,
+    "block_path_traversal": true,
+    "max_symlink_depth": 1,
+    "allow_mod_mounts": false,
+    "strict_utf8_escapes": false,
+    "reject_duplicate_keys": false,
+    "hot_reload_enabled": false,
+    "rom_fallback_asset": "rom://io/floppy_safe.json"
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "max_config_bytes": 32768,
+      "path_max_bytes": 256,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "FLOPPY_READ_ONLY_ENFORCED",
+        "rule": "read_only_mode == true && rom_fallback_enabled == true",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "unit_tests": [
+        "unit_io_fallback_test",
+        "unit_fs_utils_test"
+      ],
+      "cli_audit_command": "./build/tenebris-lux --audit"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json",
+      "current_directory": "config/io"
+    }
+  }
+}
+

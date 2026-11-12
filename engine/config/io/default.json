@@ -1,0 +1,114 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/io/default.json",
+    "id": "engine.config.io.default",
+    "layer": "Layer 0: Core Utilities / I/O & VFS",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Unified default I/O runtime policy consumed by Tier-0 BIOS Safe-Mode, fs_utils, json_utils, path_finder, and master_loader.",
+    "where_the_data_lives": {
+      "topology": "Standalone Engine I/O Configuration Profile",
+      "path": "engine/config/io/default.json",
+      "parent_manifest": "engine/config/io/manifest.json"
+    },
+    "what_it_enables": [
+      "Deterministic caller buffer ceilings for zero-heap asset loading",
+      "Clean downgrade to .rodata I/O ROM streams when disk files are absent",
+      "Read-only Safe-Mode disk lock for floppy or write-protected deployments",
+      "Debugger probe and DEBUG_STEP_AWAIT escalation on corrupted config contracts"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocations across Layer 0 I/O (ALLOC_ZERO_HEAP)",
+      "0 < small_bytes < medium_bytes < large_bytes <= max_config_bytes <= 65536",
+      "path_max_bytes strictly bounded in [64, 512]",
+      "Safe-Mode & ROM-hydrated instances preserve loaded_from_data == false"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "bios_header": "io/io_fallback.h",
+      "fs_header": "io/fs_utils.h"
+    },
+    "static_declarations": {
+      "subdomain_id": "io",
+      "schema_id": "tenlux.engine.io_policy.v1",
+      "target_stratum": "Layer 0: Core Utilities / I/O & VFS",
+      "target_struct": "io_fallback_config_t"
+    },
+    "generic_helper_contracts": {
+      "policy_parser": "io_fallback_parse_policy_json",
+      "rom_loader": "io_fallback_load_rom_config",
+      "fs_loader": "fs_utils_load_policy"
+    },
+    "capacities": {
+      "max_config_bytes": 65536,
+      "path_max_bytes": 512,
+      "max_json_depth": 32
+    }
+  },
+  "block_3_body": {
+    "profile_name": "default",
+    "default_root": "game/data",
+    "small_bytes": 1024,
+    "medium_bytes": 8192,
+    "large_bytes": 32768,
+    "max_config_bytes": 65536,
+    "path_max_bytes": 512,
+    "max_json_depth": 32,
+    "max_json_tokens": 1024,
+    "reject_on_truncation": true,
+    "require_5block_envelope": true,
+    "enforce_schema_id": true,
+    "rom_fallback_enabled": true,
+    "read_only_mode": false,
+    "probe_await_on_corrupt_policy": true,
+    "posix_dir_mode_octal": "0755",
+    "flush_on_write": true,
+    "atomic_write": false,
+    "block_path_traversal": true,
+    "max_symlink_depth": 4,
+    "allow_mod_mounts": true,
+    "strict_utf8_escapes": false,
+    "reject_duplicate_keys": false,
+    "hot_reload_enabled": false,
+    "rom_fallback_asset": "rom://io/default.json"
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "small_bytes": 1024,
+      "medium_bytes": 8192,
+      "large_bytes": 32768,
+      "max_config_bytes": 65536,
+      "path_max_bytes": 512,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "BUFFER_LADDER_ORDER",
+        "rule": "small_bytes < medium_bytes < large_bytes <= max_config_bytes",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "PATH_BOUND_SAFE",
+        "rule": "64 <= path_max_bytes <= 512",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "parser": "io_fallback_parse_policy_json",
+      "rom_fallback_asset": "io/default.json"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json"
+    }
+  }
+}
+

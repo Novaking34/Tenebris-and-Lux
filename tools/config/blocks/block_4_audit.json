@@ -3,21 +3,25 @@
   "block_1_metadata": {
     "project": "Tenebris and Lux",
     "layer": "Developer Tooling Strata",
-    "version": "0.1.0",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
     "system": "OmniCode Protocol Block 4 Generic Standards",
-    "role": "Specification for Block 4 Verification & Validation Audits"
+    "role": "Specification for Block 4 Verification, Probes & Tripwire AWAIT"
   },
   "block_2_opening": {
-    "block_marker": "BLOCK 4: AUDIT PROCEDURES",
+    "block_marker": "BLOCK 4: AUDIT PROCEDURES BLOCK",
     "required_sub_assemblies": [
       "Sub-Assembly 4.1",
       "Sub-Assembly 4.2"
     ]
   },
   "block_3_body": {
-    "sub_assembly_4_1_pattern": "_audit",
-    "sub_assembly_4_2_pattern": "_preflight",
+    "sub_assembly_4_1_name": "Contract, Input & Cog Verification Cogs",
+    "sub_assembly_4_1_pattern": "_is_data_driven/_is_safe_mode/_get_tripwire/_reset_tripwire",
+    "sub_assembly_4_2_name": "Machine Self-Audit & Pre-Flight Validation Tripwires",
+    "sub_assembly_4_2_pattern": "_preflight + _audit + _validate_* probes",
     "require_both_audit_and_preflight": true,
+    "probe_tripwire_protocol": "@triggers -> debug_validation_probe_t -> Safe-Mode downgrade -> DEBUG_STEP_AWAIT",
     "exempt_archetypes": ["pure_types", "facade_umbrella"]
   },
   "block_4_audit": {

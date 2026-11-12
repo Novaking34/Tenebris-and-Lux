@@ -7,22 +7,42 @@
     "layer": "Layer 0: Core Foundation Strata",
     "version": "0.1.1-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-09",
+    "date": "2026-11-11",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
-    "system": "C11 Engine Block 3 Body Specialization",
-    "role": "Specification for Engine Header Function Documentation & Pure Logic",
+    "system": "Cornerstone C11 Engine Block 3 Body Specialization",
+    "role": "Canonical Template Schema for Composable Business Logic, .h/.c Parity, Telemetry & Reconstructible Docs",
     "invariants": [
-      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
-      "Dual Audience Documentation Covenant (Covenant 17)"
+      "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic) and C++ header compatibility",
+      "Dual Audience Documentation Covenant (Covenant 17) + Reconstruct-from-Source (.c) Contract",
+      "Block 3 houses composable non-lifecycle cogs only: macros stay in 2.4, static helpers in 2.5, audits in 4, procedures in 5.1, lifecycle in 5.2",
+      "Block 3 emits recursion-guarded telemetry and validation probes so engine behavior is observable under fault and Safe-Mode paths"
     ]
   },
   "block_2_opening": {
     "pre_conditions": {
-      "language": "ISO C11 (-std=c11)",
-      "standards_version": "Rev 5"
+      "language": "ISO C11 (-std=c11) / C++11+ extern \"C\" compatible",
+      "standards_version": "Rev 5",
+      "engine_name": "Cornerstone",
+      "engine_display_name": "Cornerstone Game Engine",
+      "flagship_game_name": "Tenebris and Lux"
     },
     "static_declarations": {
+      "strict_template_domains": [
+        "log",
+        "debug",
+        "io"
+      ],
+      "banner_rule": "================================================================================",
+      "section_rule": "--------------------------------------------------------------------------------",
+      "block_3_title": "BLOCK 3: BODY BLOCK",
+      "field_column_width": 15,
+      "required_banner_fields": [
+        "Engine:",
+        "Stratum:",
+        "Module:",
+        "Mission:"
+      ],
       "required_sub_assemblies": [
         "Sub-Assembly 3.1",
         "Sub-Assembly 3.2"
@@ -35,17 +55,173 @@
   },
   "block_3_body": {
     "pure_types_statutory_text": "define purely static structures",
-    "facade_umbrella_statutory_text": "all functional APIs are declared in their respective domain headers"
+    "facade_umbrella_statutory_text": "all functional APIs are declared in their respective domain headers",
+    "dual_audience_applicable_archetypes": [
+      "operational",
+      "quarantined_fallback"
+    ],
+    "optional_bios_sub_assembly": "Sub-Assembly 3.3",
+    "triggers_cross_reference_tag": "@triggers",
+    "ban_macros_in_block_3": true,
+    "forbid_static_in_block_3": true,
+    "forbid_lifecycle_and_procedures_in_block_3": true,
+    "enforce_sub_assembly_symbol_parity": true,
+    "require_per_fn_doxygen_in_block_3": true,
+    "require_source_reconstructible_docs": true,
+    "zero_duplication_parser_rule": "Primary modules reuse *_fallback shared JSON schema parsers cleanly without raw boundary-blind strstr() scanning or silent clamping workarounds.",
+    "header_and_source_doc_parity": "Assume headers were magically deleted and must be regenerated from .c alone: paired .h and .c share identical Sub-Assembly 3.1..3.N structure and symbol placement, and every public cog in both .h and .c carries complete Dual-Audience, @param, @return, and @triggers Doxygen (without copying prose verbatim) plus step-by-step internal why comments in .c.",
+    "block_3_logging_and_debugging_contract": "Block 3 operations must provide live observability via reentrancy- and preflight-guarded telemetry (*_EMIT_LOG / LOG_SET_TRIPWIRE / io_fallback_record_fault / debug_fallback_record_fault) and trigger Block 4 probes via debug_trigger_probe() on corrupt payloads, bounds overflows, path traversal rejections, rewind checksum tampering, and Safe-Mode downgrades.",
+    "shim_retirement_policy": "Legacy wrappers retained solely for unmodernized strata (e.g. debug_trap_tripwire while core/ migrates) must be flagged @deprecated with replacement target (debug_trigger_probe) and purged once callers migrate.",
+    "dual_audience_balance_guidelines": {
+      "For Game Designers & Non-Programmers": "Plain-English purpose, editable JSON config keys for modders/players, gameplay/UX impact, and Safe-Mode behavior.",
+      "For Systems Programmers & Engine Architects": "Header = caller contract, complexity, zero-heap guarantee, failure returns; Source = exact stack scratch frames, .bss/.rodata chassis writes, lockouts, delegation helpers, and @triggers probes."
+    },
+    "archetype_subtitles": {
+      "universal_fallback_header": "( Composable Business Logic & Core Functional Cogs )",
+      "universal_fallback_source": "( Composable Business Logic & Implementation Engine )",
+      "operational_header": "( Public Operational Cogs, State Accessors & Domain APIs )",
+      "quarantined_fallback_header": "( Tier-0 Safe-Mode BIOS Cogs, ROM Vault Queries & Fault Recovery )",
+      "facade_umbrella_header": "( Subsystem API Aggregation & Statutory Delegation Notice )",
+      "pure_types_header": "( Statutory Pure-Types Notice & Structural Boundary )",
+      "operational_source": "( Operational Business Logic, Span Scopes & Runtime Hydration )",
+      "quarantined_fallback_source": "( Safe-Mode BIOS Implementation, .rodata ROM Hydration & Fault Recording )"
+    },
+    "c_block_3_templates": {
+      "universal_fallback_header": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Composable Business Logic & Core Functional Cogs )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<module>[.<variant>]>",
+        "Mission:       <Expose pure, non-lifecycle domain APIs consumed by Block 4 & 5.>",
+        "================================================================================",
+        "*/",
+        "",
+        "/* Sub-Assembly 3.1 .. 3.N: Per-function @brief + Dual-Audience + @param + @return + @triggers */"
+      ],
+      "universal_fallback_source": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Composable Business Logic & Implementation Engine )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<module>[.<variant>]>",
+        "Mission:       <Implement every Sub-Assembly 3.X public cog cleanly, calling 2.5>",
+        "               <helpers only and preparing state/data for Block 4 & Block 5.>",
+        "================================================================================",
+        "*/",
+        "",
+        "/* Sub-Assembly 3.1 .. 3.N: Mirrors .h 1:1 with reconstructible Doxygen + Step comments */"
+      ],
+      "operational_header": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Public Operational Cogs, State Accessors & Domain APIs )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<module>>",
+        "Mission:       <Declare composable public APIs feeding Block 4 audits & Block 5 cards.>",
+        "================================================================================",
+        "*/",
+        "",
+        "/* Zero #define macros (2.4), zero _audit/_preflight (4), zero _execute/_dump/_init (5) */"
+      ],
+      "quarantined_fallback_header": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Tier-0 Safe-Mode BIOS Cogs, ROM Vault Queries & Fault Recovery )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<module>.fallback>",
+        "Mission:       <Declare Safe-Mode templates, single-source parsers, ROM lookup & BIOS cogs.>",
+        "================================================================================",
+        "*/",
+        "",
+        "/* Sub-Assembly 3.1 (Parsers) -> 3.2 (ROM Vault) -> 3.3 (BIOS Ops); zero _boot/_init in Block 3 */"
+      ],
+      "facade_umbrella_header": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Subsystem API Aggregation & Statutory Delegation Notice )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<subsys>>",
+        "Mission:       <Note: all functional APIs are declared in their respective domain headers>",
+        "               <aggregated via Block 2 Tier 3; zero duplicate prototypes reside here.>",
+        "================================================================================",
+        "*/"
+      ],
+      "pure_types_header": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Statutory Pure-Types Notice & Structural Boundary )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<module>.types>",
+        "Mission:       <Note: This header is strictly intended to define purely static structures>",
+        "               <and inline predicates; runtime business APIs live in primary headers.>",
+        "================================================================================",
+        "*/"
+      ],
+      "operational_source": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Operational Business Logic, Span Scopes & Runtime Hydration )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<module>>",
+        "Mission:       <Implement matching Sub-Assembly 3.1..3.N functions with guarded telemetry,>",
+        "               <debug probes, zero static helpers (2.5), and reconstructible Doxygen.>",
+        "================================================================================",
+        "*/"
+      ],
+      "quarantined_fallback_source": [
+        "/*",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Safe-Mode BIOS Implementation, .rodata ROM Hydration & Fault Recording )",
+        "================================================================================",
+        "Engine:        Cornerstone Game Engine",
+        "Stratum:       <Layer N: Stratum Name>",
+        "Module:        <cog.<module>.fallback>",
+        "Mission:       <Implement BIOS Sub-Assemblies 3.1..3.3 with loaded_from_data = false,>",
+        "               <zero static helpers inside Block 3 (2.5), and reconstructible Doxygen.>",
+        "================================================================================",
+        "*/"
+      ]
+    }
   },
   "block_4_audit": {
     "audit_metrics": {
       "dual_audience_sections_count": 2,
-      "sub_assemblies_count": 2
+      "sub_assemblies_count": 2,
+      "archetype_templates_count": 6,
+      "universal_fallback_templates_count": 2
     },
     "verification_tripwires": [
       {
         "name": "DUAL_AUDIENCE_SECTIONS",
-        "rule": "Every operational API function must include designer & programmer sections",
+        "rule": "Every operational & fallback Block 3 cog carries Designer/Programmer, @param, and @return in both .h and .c",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "SUB_ASSEMBLY_SYMBOL_PARITY",
+        "rule": "Paired .h and .c match Sub-Assembly 3.X numbers, symbol placement, zero static helpers, and zero lifecycle/procedure functions",
         "status": "VERIFIED_PASS"
       }
     ],

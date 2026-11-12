@@ -32,7 +32,7 @@
     },
     "static_declarations": {
       "schema_id": "tenlux.data.tripwire_matrix.v1",
-      "registered_tripwire_count": 8,
+      "registered_tripwire_count": 13,
       "reaction_modes": [
         "PANIC_HALT",
         "FALLBACK_MODE",
@@ -143,19 +143,79 @@
         "tripwire_latch": false,
         "is_recoverable": true,
         "developer_action": "Verify unit stance finite state machine edge table in combat.c."
+      },
+      {
+        "tripwire_id": "TW_ENG_IO_READONLY_GUARD",
+        "name": "Floppy Safe-Mode Read-Only Write Guard",
+        "domain": "ENGINE",
+        "bound_error": "ERR_ENG_IO_WRITE_BLOCKED_RO",
+        "trigger_condition": "Disk write or mkdir attempted while Floppy Read-Only latch is armed",
+        "reaction": "FALLBACK_MODE",
+        "fallback_action": "Block disk I/O cleanly, increment read_only_blocks, keep telemetry in RAM ring, and await if debug probe active.",
+        "tripwire_latch": true,
+        "is_recoverable": true,
+        "developer_action": "Inspect caller attempting write/mkdir during Floppy RO Safe Mode or clear read-only policy latch."
+      },
+      {
+        "tripwire_id": "TW_ENG_IO_BUFFER_BOUNDS",
+        "name": "Zero-Heap I/O Buffer & Policy Bounds Guard",
+        "domain": "ENGINE",
+        "bound_error": "ERR_ENG_IO_TRUNCATED_READ",
+        "trigger_condition": "Payload exceeds buffer tier cap or loaded I/O policy fails monotonic ladder bounds",
+        "reaction": "SATURATE_CLAMP",
+        "fallback_action": "Reject truncated/corrupt policy cleanly, restore Safe-Mode ROM policy, and flag debug probe if armed.",
+        "tripwire_latch": true,
+        "is_recoverable": true,
+        "developer_action": "Check buffer sizing against fs_buffers.json limits or restore malformed config JSON."
+      },
+      {
+        "tripwire_id": "TW_ENG_IO_ROM_INTEGRITY",
+        "name": "Config ROM Vault Envelope Integrity Guard",
+        "domain": "ENGINE",
+        "bound_error": "ERR_ENG_IO_ROM_MISSING",
+        "trigger_condition": "Compiled .rodata ROM asset fails 5-block validation or disk policy parity fallback occurs",
+        "reaction": "FALLBACK_MODE",
+        "fallback_action": "Hydrate emergency Safe-Mode BIOS template with loaded_from_data=false and log diagnostic fault.",
+        "tripwire_latch": true,
+        "is_recoverable": true,
+        "developer_action": "Inspect engine/config/io/*.json schema integrity and rerun CMake GenerateConfigRom."
+      },
+      {
+        "tripwire_id": "TW_ENG_JSON_SYNTAX",
+        "name": "Zero-Heap JSON Syntax & Policy Integrity Guard",
+        "domain": "ENGINE",
+        "bound_error": "ERR_ENG_IO_JSON_SYNTAX_ERROR",
+        "trigger_condition": "Unterminated string/container, illegal escape, or invalid json_policy_t encountered in inspection or validation",
+        "reaction": "FALLBACK_MODE",
+        "fallback_action": "Abort token parse safely, restore ROM Safe-Mode parser policy, record IO_ERR_JSON_SYNTAX telemetry, and trap io.json.syntax -> DEBUG_STEP_AWAIT.",
+        "tripwire_latch": true,
+        "is_recoverable": true,
+        "developer_action": "Validate JSON syntax, quotes, escape sequences, and loader_contracts bounds."
+      },
+      {
+        "tripwire_id": "TW_ENG_JSON_DEPTH_EXCEEDED",
+        "name": "Zero-Heap JSON Nesting Depth Guard",
+        "domain": "ENGINE",
+        "bound_error": "ERR_ENG_IO_JSON_DEPTH_EXCEEDED",
+        "trigger_condition": "Nested JSON object/array bracket depth exceeds active max_json_depth policy ceiling (<= 32)",
+        "reaction": "FALLBACK_MODE",
+        "fallback_action": "Abort deep recursive block scan cleanly, record IO_ERR_JSON_DEPTH_EXCEEDED telemetry, and trap io.json.depth_bounds -> DEBUG_STEP_AWAIT.",
+        "tripwire_latch": true,
+        "is_recoverable": true,
+        "developer_action": "Flatten deeply nested JSON hierarchy within max_json_depth or inspect corrupted brackets."
       }
     ]
   },
   "block_4_audit": {
     "audit_metrics": {
-      "tripwire_count": 8,
+      "tripwire_count": 13,
       "unrecoverable_count": 1,
-      "recoverable_count": 7
+      "recoverable_count": 12
     },
     "verification_tripwires": [
       {
         "name": "TRIPWIRE_COUNT",
-        "rule": "count(tripwires) == 8",
+        "rule": "count(tripwires) == 13",
         "status": "VERIFIED_PASS"
       },
       {

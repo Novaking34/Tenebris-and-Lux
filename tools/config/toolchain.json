@@ -3,8 +3,8 @@
   "block_1_metadata": {
     "project": "Tenebris and Lux",
     "layer": "Developer Tooling Strata",
-    "version": "0.1.0",
-    "interface_rev": "Rev 1",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "system": "Universal OmniCode Toolchain Generic Configuration",
@@ -18,13 +18,29 @@
   "block_3_body": {
     "blocks_dir": "tools/config/blocks",
     "project_standards_dir": "engine/config/standards",
+    "c_standard_ladder": [
+      "C23",
+      "C17",
+      "C11"
+    ],
+    "cxx_header_ladder": [
+      "C++20",
+      "C++17"
+    ],
+    "warning_flags": [
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic"
+    ],
     "enabled_linters": [
       "metadata_tags",
       "sub_assemblies",
       "doxygen_dual_audience",
       "c_comment_invariant",
       "dump_card_presence",
-      "stateless_exemption"
+      "stateless_exemption",
+      "bios_boot_lifecycle",
+      "rom_and_probe_triggers"
     ]
   },
   "block_4_audit": {

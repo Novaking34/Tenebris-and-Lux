@@ -3,9 +3,10 @@
   "block_1_metadata": {
     "project": "Tenebris and Lux",
     "layer": "Developer Tooling Strata",
-    "version": "0.1.0",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
     "system": "OmniCode Protocol Block 5 Generic Standards",
-    "role": "Specification for Block 5 Closing, Execution & Lifecycle"
+    "role": "Specification for Block 5 Closing, Dump Cards & BIOS/Engine Lifecycles"
   },
   "block_2_opening": {
     "block_marker": "BLOCK 5: CLOSING BLOCK",
@@ -18,7 +19,10 @@
     "dump_card_suffix": "_execute_dump_card",
     "stateless_exemption_literal": "None. (Stateless module / pure stack-allocated execution).",
     "stateful_lifecycle_init_suffix": "_init",
+    "stateful_lifecycle_boot_suffix": "_boot",
     "stateful_lifecycle_shutdown_suffix": "_shutdown",
+    "stateful_lifecycle_teardown_suffix": "_teardown",
+    "bios_boot_archetypes": ["quarantined_fallback"],
     "exempt_archetypes": ["pure_types", "facade_umbrella"]
   },
   "block_4_audit": {

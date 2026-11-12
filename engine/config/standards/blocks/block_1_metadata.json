@@ -7,14 +7,15 @@
     "layer": "Layer 0: Core Foundation Strata",
     "version": "0.1.1-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-09",
+    "date": "2026-11-11",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "system": "C11 Engine Block 1 Metadata Specialization",
-    "role": "Specification for Engine Header Provenance & Invariant 18",
+    "role": "Canonical Template Schema for Block 1 Provenance, Scaling Telemetry & Invariant 18",
     "invariants": [
       "Strict ISO C11 adherence (-std=c11, -Wall -Wextra -Wpedantic)",
-      "Strict ISO C comments only (Invariant 18; zero // comments)"
+      "Strict ISO C comments only (Invariant 18; zero // comments)",
+      "Canonical Block 1 comment template serves as both human template and validator schema"
     ]
   },
   "block_2_opening": {
@@ -28,24 +29,198 @@
       "canonical_repository_expected": "https://github.com/Novaking34/tenebris-lux",
       "banned_comment_tokens": [ "//" ],
       "comment_wrapper_open": "/*",
-      "comment_wrapper_close": "*/"
+      "comment_wrapper_close": "*/",
+      "banner_rule": "================================================================================",
+      "block_1_title": "BLOCK 1: METADATA BLOCK",
+      "block_1_subtitle": "( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )",
+      "tag_column_width": 15
     }
   },
   "block_3_body": {
     "url_whitelist_for_double_slash": [
-      "https://github.com/Novaking34/tenebris-lux"
+      "https://github.com/Novaking34/tenebris-lux",
+      "rom://"
     ],
-    "require_file_path_comment": true
+    "recommended_tags": [
+      "@id",
+      "@archetype",
+      "@maturity",
+      "@chassis",
+      "@scale",
+      "@seams"
+    ],
+    "ordered_tags": [
+      "@project",
+      "@file",
+      "@id",
+      "@layer",
+      "@archetype",
+      "@version",
+      "@interface_rev",
+      "@date",
+      "@author",
+      "@repository",
+      "@system",
+      "@role",
+      "@maturity",
+      "@chassis",
+      "@scale",
+      "@seams",
+      "@invariants"
+    ],
+    "growth_tags": [
+      "@id",
+      "@archetype",
+      "@maturity",
+      "@chassis",
+      "@scale",
+      "@seams"
+    ],
+    "strict_template_domains": [
+      "log",
+      "debug",
+      "io"
+    ],
+    "id_standard": {
+      "c_cog_pattern": "^cog\\.[a-z0-9_]+(\\.[a-z0-9_]+)?$",
+      "rule": "Movement-resilient logical identity: use cog.<module>[.<variant>] without encoding volatile directories or layer numbers; @file records current repo-relative path and @layer records current compilation stratum."
+    },
+    "archetype_taxonomy": [
+      "operational",
+      "quarantined_fallback",
+      "facade_umbrella",
+      "pure_types"
+    ],
+    "statefulness_taxonomy": [
+      "stateful",
+      "stateless"
+    ],
+    "maturity_taxonomy": [
+      "Bootstrap",
+      "Hardening",
+      "Rev 5 Baseline",
+      "Frozen"
+    ],
+    "cross_file_parity": {
+      "header_source_id_parity": true,
+      "header_source_system_parity": true,
+      "header_source_archetype_parity": true,
+      "header_source_layer_parity": true,
+      "header_source_date_sync_on_edit": true
+    },
+    "id_taxonomy_note": "Paired .h/.c cogs declare identical movement-resilient @id (cog.<stem>[.<variant>]) matching subsystems.json; @file holds current repo-relative path.",
+    "require_dual_audience_overview_in_purpose": true,
+    "require_file_path_comment": true,
+    "section_profiles_by_kind": {
+      "header": {
+        "purpose_focus": "Contract surface, caller guarantees, reentrancy/state ownership, extension seam, explicit non-goal.",
+        "designer_focus": "Tuning knobs, Safe-Mode guarantees, diagnostic UX/tooling impact.",
+        "programmer_focus": "Ownership & Reentrancy | Extension Seam | Explicit Non-Goal."
+      },
+      "source": {
+        "purpose_focus": "Live runtime engine, state ownership, ROM/VFS wiring, probe handlers.",
+        "designer_focus": "Runtime failure protection, Safe-Mode behavior, live observability without repeating .h prose.",
+        "programmer_focus": "Controlled Memory Chassis (.bss/.data/.rodata/stack) | Hot-Path Bottleneck & Headroom | Probe & Config Wiring."
+      }
+    },
+    "anti_patterns": [
+      "Line-count ceilings in Block 1 metadata",
+      "Baked filesystem directories or layer numbers inside @id (e.g., core.util.*)",
+      "Generic boilerplate invariants copy-pasted across files instead of Stratum Baseline + file-specific laws",
+      "Duplicate prose echoed verbatim between paired .h and .c files",
+      "Speculative line-by-line function inventories inside Block 1 metadata"
+    ],
+    "c_block_1_template": {
+      "header": [
+        "/*",
+        "================================================================================",
+        "BLOCK 1: METADATA BLOCK",
+        "( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )",
+        "================================================================================",
+        "@project       Tenebris and Lux",
+        "@file          <engine/include/.../*.h>",
+        "@id            <cog.<module>[.<variant>]>",
+        "@layer         <Layer N: Stratum Name>",
+        "@archetype     <operational | quarantined_fallback | facade_umbrella | pure_types> | <stateful | stateless>",
+        "@version       <0.1.1-dev>",
+        "@interface_rev Rev 5",
+        "@date          <YYYY-MM-DD>",
+        "@author        CreativeWorkzStudio LLC / ProfessorSeanEX",
+        "@repository    https://github.com/Novaking34/tenebris-lux",
+        "@system        <Unified Subsystem Name shared by .h and .c>",
+        "@role          <Public Contract & Seam summary>",
+        "@maturity      <Stage | Continuity/Upgrade State>",
+        "@chassis       zero-heap | <public struct/handle bounds & max buffer limits>",
+        "@scale         <complexity ceiling & capacity levers driven by config JSON>",
+        "@seams         <in: cfg/rom | uses: deps | probes: id -> DEBUG_STEP_AWAIT | dag: macro>",
+        "@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.",
+        "               2..N. <File-specific verifiable contract invariants>",
+        "",
+        "PURPOSE & ARCHITECTURAL ROLE:",
+        "  <Concise public contract overview and architectural boundary.>",
+        "",
+        "  ### For Game Designers & Non-Programmers:",
+        "  <Plain-English impact on tuning, diagnostics, Safe-Mode reliability, or workflow.>",
+        "",
+        "  ### For Systems Programmers & Engine Architects:",
+        "  <Ownership & Reentrancy; Extension Seam; Explicit Non-Goal.>",
+        "================================================================================",
+        "*/"
+      ],
+      "source": [
+        "/*",
+        "================================================================================",
+        "BLOCK 1: METADATA BLOCK",
+        "( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )",
+        "================================================================================",
+        "@project       Tenebris and Lux",
+        "@file          <engine/src/.../*.c>",
+        "@id            <cog.<module>[.<variant>]>",
+        "@layer         <Layer N: Stratum Name>",
+        "@archetype     <operational | quarantined_fallback> | <stateful | stateless>",
+        "@version       <0.1.1-dev>",
+        "@interface_rev Rev 5",
+        "@date          <YYYY-MM-DD>",
+        "@author        CreativeWorkzStudio LLC / ProfessorSeanEX",
+        "@repository    https://github.com/Novaking34/tenebris-lux",
+        "@system        <Unified Subsystem Name shared by .h and .c>",
+        "@role          <Runtime Engine & Memory Chassis summary>",
+        "@maturity      <Stage | Continuity/Upgrade State>",
+        "@chassis       zero-heap | <measured .bss/.data/.rodata/stack byte budget>",
+        "@scale         <runtime Big-O scaling, saturation behavior & bottleneck headroom>",
+        "@seams         <in: cfg/rom | uses: deps | probes: id -> DEBUG_STEP_AWAIT | dag: macro>",
+        "@invariants    1. Stratum Baseline: ALLOC_ZERO_HEAP, ISO C11 (-std=c11 -Wall -Wextra -Wpedantic, Invariant 18), 5-Block Protocol.",
+        "               2..N. <File-specific runtime invariants & probe wiring>",
+        "",
+        "PURPOSE & ARCHITECTURAL ROLE:",
+        "  <Concise runtime execution overview complementing the paired header.>",
+        "",
+        "  ### For Game Designers & Non-Programmers:",
+        "  <Plain-English runtime protection, fallback recovery, and observability behavior.>",
+        "",
+        "  ### For Systems Programmers & Engine Architects:",
+        "  <Controlled Memory Chassis; Bottleneck & Headroom; Probe & Config Wiring.>",
+        "================================================================================",
+        "*/"
+      ]
+    }
   },
   "block_4_audit": {
     "audit_metrics": {
       "mandatory_tags_count": 11,
+      "strict_ordered_tags_count": 17,
+      "growth_tags_count": 6,
       "mandatory_sections_count": 1
     },
     "verification_tripwires": [
       {
         "name": "INVARIANT_18_PURITY",
         "rule": "Zero // comments outside whitelisted URLs",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "BLOCK_1_TEMPLATE_PARITY",
+        "rule": "Strict-domain .h/.c files match ordered_tags and c_block_1_template banner structure",
         "status": "VERIFIED_PASS"
       }
     ],

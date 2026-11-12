@@ -1,0 +1,153 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "engine/config/io/loader_contracts.json",
+    "id": "engine.config.io.loader_contracts",
+    "layer": "Layer 0: Core Utilities / Master Loader & JSON",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Contract specification governing zero-heap JSON scanning depth, 5-block envelope mandates, schema ID verification, and Safe-Mode downgrade thresholds.",
+    "where_the_data_lives": {
+      "topology": "Engine JSON & Master Loader Contract Registry",
+      "path": "engine/config/io/loader_contracts.json",
+      "header_bindings": [
+        "engine/include/io/json_utils.h",
+        "engine/include/io/master_loader.h"
+      ]
+    },
+    "what_it_enables": [
+      "Scoped key extraction confined strictly to block_3_body preventing header metadata collisions",
+      "Strict semver and schema_id enforcement across engine and game datasets",
+      "Deterministic JSON tokenization bounds under ALLOC_ZERO_HEAP",
+      "Consistent 0x0601 / 0x0602 syntax & missing-key taxonomy reporting"
+    ],
+    "invariants": [
+      "Zero dynamic heap allocation during tokenization or asset loading (ALLOC_ZERO_HEAP)",
+      "All loaded JSON assets must contain block_3_body when require_5block_envelope is true",
+      "Nested JSON bracket/brace depth strictly capped at max_json_depth (32)"
+    ]
+  },
+  "block_2_opening": {
+    "pre_conditions": {
+      "json_header": "io/json_utils.h",
+      "loader_header": "io/master_loader.h",
+      "bios_header": "io/io_fallback.h"
+    },
+    "static_declarations": {
+      "subdomain_id": "io",
+      "schema_id": "tenlux.data.io_loader_contracts.v1",
+      "target_subsystems": [
+        "cog.json_utils",
+        "cog.master_loader"
+      ]
+    },
+    "generic_helper_contracts": {
+      "load_memory": "master_loader_load_from_memory",
+      "load_domain": "master_loader_load",
+      "validate_schema": "master_loader_validate_schema",
+      "validate_contract": "master_loader_validate_contract",
+      "load_contract": "master_loader_load_contract",
+      "inspect_token": "json_inspect_token"
+    },
+    "capacities": {
+      "max_json_depth": 32,
+      "max_json_tokens": 1024,
+      "max_payload_bytes": 65536
+    }
+  },
+  "block_3_body": {
+    "max_json_depth": 32,
+    "max_json_tokens": 1024,
+    "max_payload_bytes": 65536,
+    "require_block_1_metadata": true,
+    "require_5block_envelope": true,
+    "enforce_schema_id": true,
+    "require_monotonic_version": true,
+    "allow_legacy_block2_types": true,
+    "probe_await_on_corrupt": true,
+    "strict_utf8_escapes": false,
+    "reject_duplicate_keys": false,
+    "expected_major_minor_version": "0.1",
+    "error_codes": {
+      "json_syntax_error": "0x0601",
+      "json_key_missing": "0x0602",
+      "json_depth_exceeded": "0x0603",
+      "rom_missing": "0x0507",
+      "manifest_missing_tripwire": "TW_ENG_IO_MANIFEST_MISSING",
+      "rom_integrity_tripwire": "TW_ENG_IO_ROM_INTEGRITY"
+    },
+    "core_schemas": [
+      "tenlux.engine.io_manifest.v1",
+      "tenlux.engine.io_policy.v1",
+      "tenlux.data.io_fs_profile.v1",
+      "tenlux.data.io_vfs_routes.v1",
+      "tenlux.data.io_loader_contracts.v1",
+      "tenlux.data.log_menu.v1",
+      "tenlux.data.debug_menu.v1",
+      "tenlux.data.tripwire_matrix.v1"
+    ]
+  },
+  "block_4_audit": {
+    "audit_metrics": {
+      "max_json_depth": 32,
+      "max_json_tokens": 1024,
+      "core_schema_count": 8,
+      "zero_heap_compliant": true
+    },
+    "verification_tripwires": [
+      {
+        "name": "FIVE_BLOCK_BODY_REQUIRED",
+        "rule": "require_5block_envelope == true && require_block_1_metadata == true",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "PARSER_DEPTH_BOUNDED",
+        "rule": "0 < max_json_depth <= 32",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "JSON_SYNTAX_TRIPWIRE",
+        "rule": "TW_ENG_JSON_SYNTAX bound to 0x0601 (ERR_ENG_IO_JSON_SYNTAX_ERROR) via io.json.syntax",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "JSON_DEPTH_TRIPWIRE",
+        "rule": "TW_ENG_JSON_DEPTH_EXCEEDED bound to 0x0603 (ERR_ENG_IO_JSON_DEPTH_EXCEEDED) via io.json.depth_bounds",
+        "status": "VERIFIED_PASS"
+      },
+      {
+        "name": "JSON_POLICY_LADDER",
+        "rule": "0 < max_key_len <= 64 && max_token_len <= 128 && max_json_tokens <= 1024",
+        "status": "VERIFIED_PASS"
+      }
+    ],
+    "self_audit_target": "./build/tenebris-lux --audit"
+  },
+  "block_5_closing": {
+    "execution_handshake": {
+      "unit_tests": [
+        "unit_json_utils_test",
+        "unit_master_loader_test"
+      ],
+      "helper_entrypoints": [
+        "json_utils_load_policy",
+        "json_utils_validate_span",
+        "json_utils_register_debug_probes",
+        "json_utils_get_stats",
+        "master_loader_load_contract",
+        "master_loader_validate_contract",
+        "master_loader_register_debug_probes",
+        "master_loader_get_stats"
+      ],
+      "rom_fallback_asset": "io/loader_contracts.json"
+    },
+    "navigation": {
+      "parent_menu": "manifest.json",
+      "root_manifest": "../manifest.json"
+    }
+  }
+}
+

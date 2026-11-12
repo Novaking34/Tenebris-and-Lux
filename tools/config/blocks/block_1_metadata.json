@@ -3,9 +3,11 @@
   "block_1_metadata": {
     "project": "Tenebris and Lux",
     "layer": "Developer Tooling Strata",
-    "version": "0.1.0",
+    "version": "0.1.1-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-11",
     "system": "OmniCode Protocol Block 1 Generic Standards",
-    "role": "Specification for Block 1 Metadata & Provenance"
+    "role": "Specification for Block 1 Metadata, Movement-Resilient IDs & Growth Telemetry"
   },
   "block_2_opening": {
     "block_marker": "BLOCK 1: METADATA",
@@ -22,14 +24,30 @@
       "@role",
       "@invariants"
     ],
+    "recommended_tags": [
+      "@id",
+      "@archetype",
+      "@maturity",
+      "@chassis",
+      "@scale",
+      "@seams"
+    ],
     "mandatory_sections": [
       "PURPOSE & ARCHITECTURAL ROLE:"
+    ],
+    "recommended_sections": [
+      "### For Game Designers & Non-Programmers:",
+      "### For Systems Programmers & Engine Architects:"
     ]
   },
   "block_3_body": {
     "tag_delimiters": ["@", ":"],
     "check_file_path_match": true,
-    "require_purpose_description": true
+    "require_purpose_description": true,
+    "require_dual_audience_overview": true,
+    "enforce_template_alignment": true,
+    "enforce_tag_order": true,
+    "validate_paired_c_sources": true
   },
   "block_4_audit": {
     "audit_enabled": true,
