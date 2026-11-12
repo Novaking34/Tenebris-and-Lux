@@ -1,0 +1,120 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Engineering Milestone & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/dev_logs/2026/11/architecture/devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc
+@id            docs.devlog.019
+@layer         Documentation / Engineering Chronology (Volume VI)
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-11
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        BIOS Fallback Vaults, AWAIT Probes & Progressive C23 Ladder
+@role          Chronological Milestone Record (Commit 76a443a + Root Rev 5 Spine)
+@audience      Systems Programmers, Compiler/Build Engineers, QA Engineers
+@snapshots     uses: snap_manifest_fn_preflight
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Zero-disk Safe-Mode boot via quarantined *_fallback.[ch] & .rodata ROMs.
+               3. Progressive ISO C23 target falling cleanly to C17/C11 & C++20/C++17.
+================================================================================
+////
+
+= DevLog 019: BIOS/ROM Vaults, AWAIT Tripwire Probes & The C23 Fall-Down Ladder
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.1.1-dev, 2026-11-11
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Chronological Context, Architectural Pattern & Root-Tree Convergence )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Milestone Synopsis ---
+[NOTE]
+====
+*Volume VI — Engineering Chronology (DevLog 019)* +
+*Milestone Dates:* 2026-11-11 – 2026-11-12 | *Baseline:* Commit `76a443a` + Root Stratum (`log/`, `debug/`, `io/`) & `CMakeLists.txt` Upgrade +
+*Series Navigation:* link:devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[← DevLog 018] | link:../README.adoc[Nov 2026 Index] | link:devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc[DevLog 020 →]
+
+This milestone fuses Cornerstone's Rev 5 autonomous root stratum (`log/`, `debug/`, and `io/`), replacing ad-hoc stubs with a unified `.rodata` Config ROM generator (`cmake/GenerateConfigRom.cmake`), quarantined BIOS fallback modules (`*_fallback.[ch]` + `*_types.h`), an autonomous **Probe → Safe-Mode Downgrade → `DEBUG_STEP_AWAIT` Tripwire Loop**, a Controlled Memory Chassis cleanup, and Cornerstone's **"Fall-Down Stairs" C23 → C17 → C11 (+ C++20/17)** portability ladder anchored in `engine/include/core/manifest.h`.
+====
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Root Stratum Triangle, Unified Config ROM Vault, Fall-Down C23 Ladder & Tests )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Root Stratum Spine (log -> debug -> io) ---
+== 1. The Autonomous Root Spine: `log/` + `debug/` + `io/`
+
+Rather than building independent utility islands, Rev 5 connects the first three subsystems into one self-healing boot tree ("roots feeding the rest of `engine/`"):
+
+[source,text]
+------
+1. log/     (Boots Before Disk/VFS)
+     |  - Quarantined log_types.h + log_fallback.[ch] + rom://telemetry
+     v
+2. debug/   (Captures Faults & Holds Execution)
+     |  - Quarantined debug_types.h + debug_fallback.[ch] + rom://diagnostics
+     |  - Registers probes -> triggers Safe-Mode downgrade -> DEBUG_STEP_AWAIT
+     v
+3. io/      (Hydrates Disk / VFS / rom:// Safely)
+        - path_finder, fs_utils, json_utils, master_loader + io_fallback.[ch]
+        - Hydrates only verified block_3_body spans; falls back to rom://io on fault
+------
+
+* **Unified `.rodata` Config ROM Vault (`cmake/GenerateConfigRom.cmake`):** Retired single-domain `cmake/GenerateTelemetryRom.cmake` in favor of a generalized build-time generator converting `engine/config/**/*.json` catalogs into read-only ELF `.rodata` headers under `build/generated/`. Missing or corrupt disk files fall back directly to authentic structured engine defaults (`rom://`) rather than duplicated hardcoded literals.
+* **Quarantined Leaf Headers & Fallbacks:** Extracted `engine/include/log/log_types.h` and `engine/include/debug/debug_types.h` to prevent circular includes, and introduced `engine/include/{io/io_fallback.h}` + `engine/src/io/io_fallback.c` alongside quarantined `log_fallback.[ch]` and `debug_fallback.[ch]`.
+* **Controlled Memory Chassis Diet:** Audited ELF `.bss` footprints (`size -A`), trimming idle static scratch allocations (such as oversized buffers in `audio_bus.c`) so chassis memory overhead remains minimal and honest.
+
+// --- Sub-Assembly 3.2: Cornerstone Fall-Down Ladder (C23/C17/C11 & C++20/17) ---
+== 2. "Engine-as-a-Java" Portability: The C23 Fall-Down Ladder
+
+Cornerstone targets forward-looking ISO **C23** (`-std=c23`) and **C++20** (`-std=c++20`) without dragging along deprecated legacy shims—yet steps gracefully down onto older compilers via `CORNERSTONE_C_STANDARD=AUTO|23|17|11` and `CORNERSTONE_CXX_STANDARD=AUTO|20|17` configured inside a 5-block refactored `CMakeLists.txt`.
+
+include::../../../../snapshots/snap_manifest_fn_preflight.adoc[]
+
+* **Central Capability Macros (`engine/include/core/manifest.h`):** Exposes `CS_C_STD_TIER` (`23`/`17`/`11`/`0`) and `CS_CXX_STD_TIER` (`20`/`17`/`11`/`0`) plus `CS_NODISCARD`, `CS_MAYBE_UNUSED`, `CS_FALLTHROUGH`, `CS_UNREACHABLE`, `CS_ALIGNOF`, `CS_NORETURN`, `CS_STATIC_ASSERT`, and `CS_HAS_EMBED`, all compiling cleanly with zero GNU extension warnings under `-Wall -Wextra -Wpedantic`.
+* **No Backward-Compatibility Crutches:** Instead of emulating removed historical idioms, building against the C17/C11 floor lets every module use modern attributes when compiled in C23 and fall safely down one step without losing deterministic correctness.
+
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( 4-Tier Verification Expansion Across log, debug, and io )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Upgrading the 4 Verification Tiers ---
+== 3. Crude-to-Fine Verification Across `log/`, `debug/`, and `io/` (`tests/`)
+
+Extracted shared deterministic harness macros into `tests/common/` (`cornerstone_test.h`) and systematically upgraded every verification tier across the root subsystems (`test_log_*`, `test_debug_*`, `test_io_*`, plus new `tests/unit/io/test_io_fallback_unit.c`):
+
+. **Layer 1 Unit & Fallback Isolation:** Exercises ROM parsing, ring wrap-around, watchpoints, and BIOS Safe-Mode boot with empty/broken VFS paths.
+. **Layer 2 Functional Contracts:** Validates 5-block JSON loading boundaries (`block_3_body` scoping) and categorized hex fault counters (`0x0201..0x0207`).
+. **Layer 3 Integrated Cross-Module Flows:** Tests `io/` + `log/` + `debug/` probe escalation into `DEBUG_STEP_AWAIT` under live downgrades.
+. **Layer 4 System Suites:** Verifies deterministic full-boot parity and shutdown `.bss` zero-reset across repeated sessions (65 CTest targets in the suite).
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Forward Path to core/ Audting & Documentation Modernization )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Horizon ---
+== 4. Next Horizon: Documenting the Root Tree & Auditing `core/`
+
+With the root spine (`log/` → `debug/` → `io/`), Config ROM Vaults, C23 Fall-Down macros, and `tests/` fully aligned under Rev 5, the immediate priority became documenting this exact architecture through live code snapshots and clean multi-volume PDFs (DevLog 020) before advancing Block 3 audits into `core/`, `audio/`, and `viewport/`.
+
+*Navigation:* link:devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[← DevLog 018] | link:../README.adoc[Nov 2026 DevLog Index] | link:devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc[Next: DevLog 020 →]

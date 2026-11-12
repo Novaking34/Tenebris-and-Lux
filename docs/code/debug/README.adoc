@@ -1,0 +1,106 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/debug/README.adoc
+@id            docs.code.debug.index
+@layer         Documentation / Volume V: debug/ Module Index
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 0 State Debugger Folder Index
+@role          File-by-File Reading Map for engine/{include,src}/debug/ and tests/
+@audience      Designers, Testers, C/Rust Engineers
+@snapshots     none
+@invariants    1. Excluded from compiled Volume TOC via README filename rule.
+               2. Covers all 5 source/header files and 5 debug test targets.
+               3. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+================================================================================
+////
+
+= State Debugger & Probe Engine (`engine/{include,src}/debug/`) Index
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Folder Framing )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Index Orientation ---
+This directory pairs every C header and implementation file inside Cornerstone's **State Debugger Subsystem** alongside its 4-tier test verification guide.
+
+[TIP]
+====
+Read link:../debug_system.adoc[the State Debugger Overview] first for the big-picture probe loop before inspecting individual translation units.
+====
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Paired Inventory Table )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Module Documentation Catalog ---
+== Paired Module & Test Documentation
+
+[cols="2,2,4",options="header"]
+|===
+| Chapter File | Engine Source / Test Coverage | Scope
+
+| link:01_debug_engine_and_probes.adoc[01_debug_engine_and_probes.adoc]
+| `engine/include/debug/debug.h` + `engine/src/debug/debug.c`
+| 64-slot snapshot ring, FNV-1a state hashing, GCD wrap rotation, breakpoints, 32-slot probe registry, `DEBUG_STEP_AWAIT`, rewind, and inspection cards.
+
+| link:02_debug_types_and_telemetry.adoc[02_debug_types_and_telemetry.adoc]
+| `engine/include/debug/debug_types.h`
+| Stateless leaf POD vocabulary (`debug_state_fields_t`, `debug_snapshot_t`, tripwire enums, config records) eliminating `void *` erasure.
+
+| link:03_debug_fallback_bios.adoc[03_debug_fallback_bios.adoc]
+| `engine/include/debug/debug_fallback.h` + `engine/src/debug/debug_fallback.c`
+| Tier-0 debugger BIOS fault capture, `DEBUG_STEP_AWAIT` fallback latch, and `.rodata` ROM vault over `debugger/` and `taxonomy/` configs.
+
+| link:04_debug_testing_and_tripwires.adoc[04_debug_testing_and_tripwires.adoc]
+| `tests/{unit,functional,integrated,system}/` (`_debug_`)
+| 4-tier verification ladder across ring wrap, rewind integrity, fallback BIOS isolation, and system recovery.
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Quick Verification )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Folder Lint & CTest ---
+== Verification Commands
+
+[source,bash]
+------
+asciidoctor --failure-level=WARN -o /dev/null docs/code/debug/*.adoc
+ctest --test-dir build -R "_debug_" --output-on-failure
+------
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Folder Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Related Maps
+
+* link:../log/README.adoc[Previous Subsystem: `docs/code/log/`]
+* link:../README.adoc[Back to `docs/code/` Root Index]
+* link:../io/README.adoc[Next Subsystem: `docs/code/io/`]
+

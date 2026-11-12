@@ -1,0 +1,172 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/io/05_master_loader_hydration.adoc
+@id            docs.code.io.master_loader
+@layer         Documentation / Volume V: Paired Module (master_loader.h + master_loader.c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        5-Block JSON Contract Orchestrator (`cog.master_loader`)
+@role          Paired Documentation for master_loader.h and master_loader.c
+@audience      Designers, Modders, Gameplay Engineers, Systems Architects
+@snapshots     uses: snap_master_loader_sub3_2
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Strictly isolates data queries inside block_3_body spans.
+               3. Zero heap allocation: 112 B .bss (s_loader_state) + caller buffers.
+================================================================================
+////
+
+= Paired Module: 5-Block Contract Hydrator (`master_loader.h` + `master_loader.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( File Pair Contract, Controlled Chassis & Data-Integrity Promise )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Module Identity & Boundaries ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.master_loader`)
+
+| Public Contract (`.h`)
+| `engine/include/io/master_loader.h` (987 lines) — `loader_status_t`, `loader_header_t`, `master_loader_t`, `master_loader_stats_t`, `block_3_body` getters, schema/version validators, probes, and audit controls.
+
+| Runtime Engine (`.c`)
+| `engine/src/io/master_loader.c` (2,051 lines) — orchestrator wiring `path_finder` VFS lookup, `fs_utils` file/ROM reads, `json_utils` span queries, `cog.log`, and `cog.debug` probes.
+
+| Controlled Chassis
+| `.bss 112 B` (`s_loader_state`) + `.rodata 5,916 B` + transient preflight stack frame; caller-owned `master_loader_t` slices capped at `max_payload_bytes <= 65536`, `max_json_depth <= 32`, `max_json_tokens <= 1024`.
+
+| Seams & Probes
+| `in: engine/config/io/loader_contracts.json, rom://io` \| `uses: cog.path_finder, cog.fs_utils, cog.json_utils, cog.log, cog.debug` \| `probes: io.loader.* -> DEBUG_STEP_AWAIT` \| `dag: core.io.master_loader`
+|===
+
+// --- Sub-Assembly 2.2: Dual-Audience Purpose ---
+**For Game Designers & Data Authors**: `master_loader` is the gatekeeper every JSON file in `engine/config/` and `game/data/` must pass through. It checks file headers (`block_1_metadata` and `block_2_opening`), enforces schema compatibility, and lets gameplay code read *only* inside `block_3_body` so a typo in file notes or metadata never hijacks a stat formula. If disk data is missing or corrupted, it falls back seamlessly to `rom://io` compiled defaults without crashing.
+
+**For Engine Programmers**: Instead of duplicating JSON parsing or path lookup per game system, `master_loader.[ch]` binds all lower `io/` primitives under one deterministic state machine backed by runtime policy (`master_loader_load_contract()`), strict error counters (`syntax_errors` `0x0204`, `schema_mismatches` `0x0203`, `version_mismatches` `0x0207`, `body_missing_errors` `0x0206`), and `DEBUG_STEP_AWAIT` traps.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Hydration Pipeline, Scoped block_3_body Accessors & Policy Contracts )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Ingestion Routes & 5-Block Envelope Parsing ---
+== Dual-Path Hydration: Disk, VFS, `rom://` & Memory
+
+[cols="2,4",options="header"]
+|===
+| Entry Point | Execution Path & Provenance Tracking
+
+| `master_loader_load()`
+| Resolves `(domain, rel_path)` via `path_finder_resolve()`. Sets `loaded_from_data = true` and `loaded_from_rom = false` for disk payloads, or `loaded_from_rom = true` and `loaded_from_data = false` when hydrated from `rom://io`.
+
+| `master_loader_load_from_path()`
+| Reads an explicit file path via bounded `fs_utils`, skipping domain search while still enforcing full 5-block header validation and size bounds.
+
+| `master_loader_load_from_memory()`
+| Parses an already-resident byte buffer (`.rodata` ROM image or test fixture) in place with zero filesystem calls.
+|===
+
+During envelope parsing, `loader_header_t` inspects `is_5block`, `has_block_1`, and `has_block_2`, then isolates `[body_start, body_start + body_len)` over `raw_len` before returning `master_loader_t` to the caller. Missing `block_3_body` records `body_missing_errors` (`0x0206`) and trips Safe-Mode diagnostics rather than silently reading stale or adjacent fields.
+
+// --- Sub-Assembly 3.2: Scoped Body Accessors ---
+== Strictly Scoped `block_3_body` Getters
+
+All runtime property queries are pinned strictly inside the verified `block_3_body` window (or an optional named `sub_obj` child inside `block_3_body`):
+
+include::../../snapshots/snap_master_loader_sub3_2.adoc[]
+
+Typed extractors cover the full primitive and structured vocabulary without dynamic memory allocation:
+
+* `master_loader_get_string()` — copies and unconditionally NUL-terminates string values.
+* `master_loader_get_int()`, `master_loader_get_size_t()`, `master_loader_get_float()`, `master_loader_get_bool()` — strict typed extraction with fallback signaling on wrong types.
+* `master_loader_find_array()` and `master_loader_get_array_object()` — zero-copy array cursor iteration over object elements inside `block_3_body`.
+
+// --- Sub-Assembly 3.3: Runtime Policy Contract Management ---
+== Runtime Loader Policy (`loader_contracts.json`)
+
+Rather than baking ceilings permanently into code, `master_loader_init()` hydrates `engine/config/io/loader_contracts.json` (with `rom://io` safe fallback on corruption, incrementing `corrupt_contract_downgrades`):
+
+* `master_loader_load_contract()`, `master_loader_get_contract()`, `master_loader_set_contract()` — inspect or override byte/depth/token limits and strict schema rules in controlled tests.
+* `master_loader_validate_schema()`, `master_loader_validate_version()`, `master_loader_validate_envelope()`, `master_loader_validate_contract()` — granular contract gates executed prior to trusting any loaded JSON table.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Diagnostic Telemetry, Probes & Self-Audit Commands )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Telemetry Counters & Error Taxonomy ---
+== Error Taxonomy & Diagnostic Probes (`Block 4`)
+
+Every failure increments machine-inspectable counters in `master_loader_stats_t` (readable via `master_loader_get_stats()`) alongside categorized hex codes registered under `io.loader.*`:
+
+[cols="2,1,3",options="header"]
+|===
+| Telemetry Counter (`master_loader_stats_t`) | Code | Fault Condition & Escalation
+
+| `not_found_errors`
+| `0x0201`
+| Neither disk domains nor `rom://` fallback satisfied the target relative path.
+
+| `overflow_errors`
+| `0x0202`
+| File or payload exceeded caller slice or `max_payload_bytes` (`<= 65536`).
+
+| `schema_mismatches`
+| `0x0203`
+| `block_2_opening` declared an unexpected `schema_id`.
+
+| `syntax_errors`
+| `0x0204`
+| Malformed JSON braces/escapes or nesting exceeding `max_json_depth` (`<= 32`).
+
+| `body_missing_errors`
+| `0x0206`
+| Required `block_3_body` object absent from a 5-block envelope.
+
+| `version_mismatches`
+| `0x0207`
+| Manifest contract version incompatible with the active engine target.
+|===
+
+`master_loader_register_debug_probes()` and `master_loader_trigger_probe()` wire these thresholds directly into `cog.debug` so violations halt execution in `DEBUG_STEP_AWAIT` during audit/debug runs instead of failing silently downstream.
+
+// --- Sub-Assembly 4.2: Preflight & Audit Entry Points ---
+* `master_loader_preflight()` verifies `s_loader_state.initialized`, `contract_from_data`, and probe registration before `main()` advances past `io/`.
+* `master_loader_audit()` runs deep structural self-checks on cached policy limits and live load counters (`total_loads = disk_loads + rom_loads + memory_loads`, `body_queries`).
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Execution Wrappers, Lifecycle & Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Inspection & Execution Helpers ---
+== Inspection Commands & Lifecycle Ownership
+
+Operational tooling and Layer 3 startup call `master_loader_execute_inspect()`, `master_loader_execute_dump_card()`, and `master_loader_execute_load_verified()` to print human-readable status cards and assert strict load contracts before accepting gameplay assets. `master_loader_shutdown()` clears `s_loader_state` back to dormant `.bss` zeroes deterministically between sessions or test suites.
+
+// --- Sub-Assembly 5.2: Navigation ---
+* Back to link:README.adoc[Layer 0 I/O Folder Index] or link:../io_pipeline.adoc[Layer 0 I/O Subsystem Overview].
+* Next module: link:06_io_fallback_bios_and_rom.adoc[Paired Module: `io_fallback.h` + `io_fallback.c`].

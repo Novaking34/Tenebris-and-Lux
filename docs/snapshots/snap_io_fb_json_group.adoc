@@ -1,0 +1,37 @@
+[[snap_plate_snap_io_fb_json_group]]
+.Shared Zero-Heap JSON Block Resolver & VFS Parser Group (`engine/src/io/io_fallback.c#L779-L806` · Mode: `Group`)
+[source,c,linenums,start=779]
+------
+static bool io_fb_resolve_body_span(const char *json_text,
+                                    size_t json_len,
+                                    bool allow_strlen,
+                                    const char **out_body_start,
+                                    const char **out_body_end)
+{
+    if (json_text == NULL || out_body_start == NULL || out_body_end == NULL) {
+        return false;
+    }
+
+    size_t effective_len = (json_len > 0U) ? json_len : (allow_strlen ? strlen(json_text) : 0U);
+    if (effective_len == 0U || effective_len > IO_FB_JSON_MAX_BYTES) {
+        return false;
+    }
+
+    const char *json_end = json_text + effective_len;
+    const char *body_start = NULL;
+    size_t body_len = 0U;
+    if (!io_fb_find_block_span(json_text, json_end, "block_3_body", '{', '}',
+                               &body_start, &body_len) ||
+        body_start == NULL || body_len == 0U) {
+        return false;
+    }
+
+    *out_body_start = body_start;
+    *out_body_end = body_start + body_len;
+    return true;
+}
+------
+
+_Tier-0 in-place span scanning reused seamlessly between BIOS fallback and master_loader._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L779-L1194`) -> <<snap_wholesale_snap_io_fb_json_group,Appendix: Shared Zero-Heap JSON Block Resolver & VFS Parser Group>>.]

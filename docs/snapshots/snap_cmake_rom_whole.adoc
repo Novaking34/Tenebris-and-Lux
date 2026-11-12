@@ -1,0 +1,56 @@
+[[snap_plate_snap_cmake_rom_whole]]
+.Build-Time Compiled .rodata Config ROM Generator (`cmake/GenerateConfigRom.cmake#L113-L156` · Mode: `Whole`)
+[source,cmake,linenums,start=113]
+------
+# ==============================================================================
+# BLOCK 3: BODY BLOCK
+# ( Deterministic Discovery, Hex-to-C Encoding & Table Construction )
+# ==============================================================================
+# Engine:        Cornerstone Game Engine
+# Stratum:       Layer 0 Infrastructure (Build Tooling)
+# Module:        build.rom.config
+# Mission:       Traverse sorted configuration domains and encode every JSON
+#                asset into null-terminated .rodata C arrays and table rows.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Sub-Assembly 3.1: Sorted Domain Traversal & Identifier Mapping
+# ------------------------------------------------------------------------------
+set(_sorted_subdirs ${SUBDIRS})
+list(SORT _sorted_subdirs) # <1>
+
+foreach(_subdir IN LISTS _sorted_subdirs)
+    set(_abs_dir "${CONFIG_ROOT}/${_subdir}")
+    if(NOT IS_DIRECTORY "${_abs_dir}")
+        message(FATAL_ERROR
+            "GenerateConfigRom.cmake: Subdirectory does not exist: '${_abs_dir}'")
+    endif()
+
+    file(GLOB _dir_jsons "${_abs_dir}/*.json") # <2>
+    list(SORT _dir_jsons)
+    list(LENGTH _dir_jsons _dir_count)
+
+    if(_dir_count EQUAL 0)
+        message(FATAL_ERROR
+            "GenerateConfigRom.cmake: No JSON files found in '${_abs_dir}'")
+    endif()
+
+    string(APPEND _subdirs_doc "  engine/config/${_subdir}/ (${_dir_count} assets)\n")
+    get_filename_component(_subdir_leaf "${_subdir}" NAME)
+
+    # --------------------------------------------------------------------------
+    # Sub-Assembly 3.2: Deterministic Byte-Array Encoding & Table Row Emission
+    # --------------------------------------------------------------------------
+    foreach(_json_path IN LISTS _dir_jsons)
+        get_filename_component(_stem "${_json_path}" NAME_WE)
+        get_filename_component(_filename "${_json_path}" NAME)
+
+        if(ID_MODE STREQUAL "STEM")
+------
+
+<1> Sorts configuration subdirectories so generated .rodata asset tables remain deterministic across hosts.
+<2> Discovers all JSON configs in each domain directory before sorting and byte-encoding them.
+
+_Transforms engine/config/**/*.json directly into immutable ELF .rodata C byte tables at configure/build time._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L1-L302`) -> <<snap_wholesale_snap_cmake_rom_whole,Appendix: Build-Time Compiled .rodata Config ROM Generator>>.]

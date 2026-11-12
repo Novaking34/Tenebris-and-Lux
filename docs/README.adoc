@@ -1,65 +1,212 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/README.adoc
+@id            docs.root.index
+@layer         Documentation / Master Knowledge Portal
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Documentation Architecture, Living Book Pipeline & Snapshot Vault
+@role          Central Repository Knowledge Map & Multi-Audience Navigation Hub
+@audience      Everyone: Designers, Writers, Artists, Testers, Students & C/Rust Engineers
+@snapshots     uses: docs/snapshots/INDEX.adoc (see docs/code_snapshots_manifest.json)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Accurate Rev 5 source taxonomy (engine/ = Cornerstone; game/ = Tenebris and Lux).
+               3. Data-driven publishing: manifests, PDF theme, and live code snapshots compile cleanly into .adoc, .md, and .pdf.
+================================================================================
+////
+
 = Documentation Architecture & Living Repository Index
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.2.0, 2026-11-02
-:doctype: book
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes, Orientation & Role-Based Entry Points )
+================================================================================
+////
 
-Welcome to the central documentation index for *Tenebris and Lux* ("Darkness and Light"),
-the premier Tactical Strategy RPG (TRPG) of CreativeWorkzStudio. This repository follows the
-AsciiDoc (`.adoc`) documentation standard for clean, modular, and comprehensive game development manuals.
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:engine-name: Cornerstone Game Engine
+:game-name: Tenebris and Lux
+:snapshot-index: snapshots/INDEX.adoc
+:arch-index: architecture/README.adoc
 
-== 1. Documentation Taxonomy & Directory Index
+// --- Sub-Assembly 2.2: Welcoming Orientation ---
+Welcome to the living library of *{game-name}* (`game/`) and the *{engine-name}* (`engine/`).
+You do **not** need a background in senior systems engineering to read, tune, write lore for, or build upon this project.
+Every technical guide follows a dual-audience structure: plain-English mental models first, paired with live code plates for programmers who want to look under the hood.
 
-[cols="1,2,3", options="header"]
+[TIP]
+====
+*New to the repository?* Read link:{arch-index}[the Architecture Index] and link:architecture/ARCHITECTURE.adoc[System Architecture Overview] first, or open link:INSTALL.adoc[the Installation & Build Guide] to compile and boot the game locally.
+====
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Library Map, Data-Driven Book Pipeline, Snapshots & 5-Block Writing Standard )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Directory Map Across Compiled Volumes ---
+== Repository Documentation Domains
+
+All project knowledge lives under `docs/` and is organized into six compiled volumes plus live publishing data files:
+
+[cols="2,2,4",options="header"]
 |===
-| Category | Directory | Description
-| **Installation** | **link:INSTALL.adoc[INSTALL.adoc]** | System requirements, CMake compilation workflows, direct GCC/Clang instructions, and troubleshooting.
-| **Architecture** | **link:architecture/README.adoc[docs/architecture/]** | 
-  - **link:architecture/ARCHITECTURE.adoc[ARCHITECTURE.adoc]**: System boundaries, 5-block lifecycle, TRPG architecture, and engine evolution roadmap. +
-  - **link:architecture/dual_frontend_architecture.adoc[dual_frontend_architecture.adoc]**: Headless CLI + native double-buffered X11 GUI specifications. +
-  - **link:architecture/preflight_and_manifest_spec.adoc[preflight_and_manifest_spec.adoc]**: Central Manifest registry, executable metadata contracts, loose-bolts machine checks, and expected vs actual gap analysis. +
-  - **link:architecture/data_driven_architecture.adoc[data_driven_architecture.adoc]**: Data-driven runtime model, JSON schemas, catalog manifests, and profiles.
-| **Lore & World** | **link:lore/README.adoc[docs/lore/]** | 
-  - **link:lore/world_and_lore.adoc[world_and_lore.adoc]**: Primordial neutrality of Lux and Tenebris, the Kingdom of Sacyra, and the re-awakened Dark Lord. +
-  - **link:lore/genesis_and_historical_canon.adoc[genesis_and_historical_canon.adoc]**: Historical canon across Eras I–VI, Usuru's 11th festival tragedy, 7-Year Great War, and 3,000-year dynastic wave. +
-  - **link:lore/master_storyboard_chronicle.adoc[master_storyboard_chronicle.adoc]**: 20-scene master storyboard sequence from the founding forges to the Prophecy of Kings. +
-  - **link:lore/thematic_triad.adoc[thematic_triad.adoc]**: Past/Present/Future thematic triad ("Trauma is Inherited, Destiny is Chosen"). +
-  - **link:lore/characters.adoc[characters.adoc]**: Dramatis personae of Elijah Ro-enheart, Lady Katrina Jaren, and the Custom Bearer.
-| **Game Design** | **link:game_design/README.adoc[docs/game_design/]** | 
-  - **link:game_design/tactical_trpg_system.adoc[tactical_trpg_system.adoc]**: Tactical Strategy RPG system: 2D grid positioning, terrain, and cinematic duels. +
-  - **link:game_design/relics_and_combat.adoc[relics_and_combat.adoc]**: Relic mechanics, stances, tempering/dissipation, and relic embellishments. +
-  - **link:game_design/campaign_structure_and_endings.adoc[campaign_structure_and_endings.adoc]**: Two-half campaign, "The King's Curse", midpoint fork, and 5-route ending matrix. +
-  - **link:game_design/dreamscape_and_temporal_architecture.adoc[dreamscape_and_temporal_architecture.adoc]**: Dreamscape engine verification, Dream Compass, and nocturnal temporal phasing. +
-  - **link:game_design/world_topography.adoc[world_topography.adoc]**: Sacyran provinces, encounters, and threat scaling. +
-  - **link:game_design/game_testing.adoc[game_testing.adoc]**: The philosophy of game development testing vs. standard software testing. +
-  - **link:game_design/demo_baseline/README.adoc[demo_baseline/]**: 2017–2018 Historical Demo Baseline & Extraction Compendium.
-| **Developer Logs** | **link:dev_logs/README.adoc[docs/dev_logs/]** | 
-  - **link:dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc[devlog_001]**: Inception, survival battery audit, paradigm pivot, and game dev testing. +
-  - **link:dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc[devlog_002]**: 2014–2018 RPG Maker genesis, Kingdom of Sacyra, dual protagonists, and TRPG evolution. +
-  - **link:dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc[devlog_008]**: Canonical skills (Lux Barrio, Cuttatio), The Dreamscape baseline, and "The Dark Lord" ground-truth pacing. +
-  - **link:dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc[devlog_009]**: 3,000-year dynastic wave, 20-scene master storyboard, thematic triad, and 5-route ending matrix. +
-  - **link:dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc[devlog_010]**: Layer 0 modularization and data-driven configuration assets. +
-  - **link:dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc[devlog_011]**: Four-tier verification hierarchy and ontological testing framework. +
-  - **link:dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc[devlog_012]**: Interactive state debugger, snapshot ring buffer, and time-travel rewind.
-| **Code Tours** | **link:code/README.adoc[docs/code/]** | 
-  - **link:code/core_utilities.adoc[core_utilities.adoc]**: Walkthrough of Layer 0 `include/util/` and `src/util/` (math, string, geometry, timing, data, log). +
-  - **link:code/debug_system.adoc[debug_system.adoc]**: Walkthrough of Layer 0 Debugger (`util/debug/`), zero-heap ring buffer, and time-travel rewind. +
-  - **link:code/simulation_engine.adoc[simulation_engine.adoc]**: Walkthrough of Layer 1 `include/sim/game.h` and `src/sim/game.c`. +
-  - **link:code/presentation_gui.adoc[presentation_gui.adoc]**: Walkthrough of Layer 2 `include/gui/gui.h` and `src/gui/gui.c`. +
-  - **link:code/test_suite.adoc[test_suite.adoc]**: Walkthrough of Layer 4 four-tier verification strata (`functional/`, `unit/`, `integrated/`, `system/`).
+| Directory / File | Target Volume(s) | What You Will Find Inside
+
+| link:INSTALL.adoc[docs/INSTALL.adoc]
+| Volume V / Standalone
+| Prerequisites, CMake configuration presets, Rust tooling setup, and verification commands.
+
+| link:lore/[docs/lore/]
+| Volume I & Volume II
+| Canon story bibles, character dossiers, realm geography, and historical timelines for *{game-name}*.
+
+| link:game_design/[docs/game_design/]
+| Volume III
+| RPG mechanics, class trees, affinity formulas, item designs, UI wireframes, and gameplay progression specs.
+
+| link:dev_logs/[docs/dev_logs/]
+| Volume IV
+| Engineering chronicles, milestone retrospectives, architectural decisions, and Rev 4/5 upgrade records.
+
+| link:architecture/[docs/architecture/]
+| Volume V (Foundations)
+| Multi-audience tours of *{engine-name}*, the 5 Compilation Strata, Safe-Mode BIOS, probes, and data-driven configs.
+
+| link:code/[docs/code/]
+| Volume V (Implementations)
+| Subsystem-by-subsystem C implementation breakdowns covering `engine/` and `game/`.
+
+| link:{snapshot-index}[docs/snapshots/]
+| Volume V Appendix A
+| Live textbook code snapshot plates (`whole`, `block`, `subassembly`, `function`, `group`) synchronized directly from source files.
+
+| link:volumes/[docs/volumes/] & link:MASTER_GUIDE.adoc[docs/MASTER_GUIDE.*]
+| Compiled Outputs
+| Standalone six-volume books (`VOLUME_I` through `VOLUME_VI`) and the unified Master Guide rendered as `.adoc`, `.md`, and `.pdf`.
 |===
 
-== 2. Ontological Documentation Principles
+// --- Sub-Assembly 3.2: Data-Driven Publishing Pipeline & Config Vault ---
+== Data-Driven Publishing Pipeline (`master_guide`)
 
-All documentation adheres to three core rules:
+Rather than hardcoding book layout rules inside Rust code, our guidebook compiler (`tools/src/guide.rs` & `tools/src/bin/master_guide.rs`) reads structured 5-block JSON specifications right out of `docs/`:
 
-* **Form Precedes Fullness**: Define rules, boundaries, and mathematical invariants before authoring prose or gameplay tables.
-* **Bi-Directional Traceability**: Every mechanic introduced in documentation maps directly to an invariant verification function in the engine.
-* **Universal Accessibility**: Ground the mechanics so they function identically whether driven by terminal keyboards or graphical viewports.
+[cols="2,4",options="header"]
+|===
+| Specification File | Architectural Responsibility
+
+| link:master_guide_manifest.json[docs/master_guide_manifest.json]
+| Master book manifest defining volume titles, directory scan order, excluded transient paths, theme selection, and snapshot inclusion toggles.
+
+| link:guide_theme_config.json[docs/guide_theme_config.json]
+| Data-driven PDF book theme blueprint compiled automatically to `docs/themes/cornerstone-book-theme.yml` (compact Letter layout, typography, margins, headers/footers, and chapter page-break rules).
+
+| link:code_snapshots_manifest.json[docs/code_snapshots_manifest.json]
+| Catalog of live code snapshot plates supporting five extraction modes: `whole`, `block`, `subassembly`, `function`, and `group`.
+
+| link:adoc_5block_standard.json[docs/adoc_5block_standard.json]
+| Canonical specification for formatting `.adoc` manuals under the Universal 5-Block Protocol (`//// ... ////` banners + `//` sub-assemblies).
+|===
+
+.Textbook Code Snapshots: Inline Excerpts + Wholesale Appendix
+****
+When chapters embed `include::../snapshots/<id>.adoc[]`, readers see a concise, line-numbered excerpt with callout notes right next to the explanation.
+During book compilation, `master_guide` can also append **Appendix A: Wholesale Source Code Reference Plates** so anyone studying a concept can inspect complete files and full blocks without cluttering the narrative flow.
+****
+
+// --- Sub-Assembly 3.3: Engine vs. Game Boundary & 5-Block Documentation Standard ---
+== Cornerstone Engine vs. Game Boundary Principles
+
+Our documentation mirrors the exact physical strata defined in `AGENTS.md`:
+
+[cols="1,2,3",options="header"]
+|===
+| Stratum / Tree | Role | Source & Config Roots
+
+| Engine (*{engine-name}*)
+| The Big Machine: math, logging, debugger probes, VFS I/O, 7-bus audio, and X11 viewport. Zero story lore or game headers.
+a|
+* Headers: `engine/include/{core,log,debug,io,audio,viewport}/`
+* Sources: `engine/src/{core,log,debug,io,audio,viewport}/`
+* Configs: `engine/config/` (with Safe-Mode BIOS `.rodata` ROMs)
+
+| Game (*{game-name}*)
+| The Master Turn Gear: turn-based RPG combat, heroes, twin relics, realms, ending routes, and dispatch routing.
+a|
+* Headers: `game/include/`
+* Sources: `game/src/{combat,hero,relics,world,ending,dispatch}/`, `game/src/main.c`
+* Data: `game/data/` & `game/assets/`
+|===
+
+[[five-block-adoc-standard]]
+== Organizing AsciiDoc Like Source Code (5-Block Standard)
+
+Just as every `.c`, `.h`, `.json`, and `.cmake` file separates metadata, opening contracts, body logic, audits, and closing navigation, new AsciiDoc documents use native AsciiDoc comments so metadata stays invisible in rendered HTML/PDF/Markdown output while remaining readable in source:
+
+* **Block Banners (`BLOCK 1` .. `BLOCK 5`)**: Enclosed inside native AsciiDoc block fences (`////` ... `////`). Placing `BLOCK 1` immediately above line `= Document Title` keeps Asciidoctor title, author, revision, and `:toc:` parsing 100% valid.
+* **Sub-Assembly Dividers**: Use single-line comments (`// --- Sub-Assembly X.Y: Description ---`) inside `BLOCK 2` through `BLOCK 5`.
+* **Rich Textbook Constructs**: Prefer `[NOTE]`/`[TIP]`/`[IMPORTANT]`/`[WARNING]` delimited blocks (`====`), `****` designer/engineer callout sidebars, `[source,<lang>,linenums,start=N]` code blocks with `// <1>` callouts, `a|` rich table cells, `[qanda]` checkpoints, and `include::../snapshots/<id>.adoc[]` plates.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Verification Commands, Publishing Checks & Reader Q&A )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Publishing & Validation Audit Commands ---
+== Verification & Publishing Checkpoints
+
+Before committing updates to documentation, snapshot manifests, or PDF theme specifications, run the native toolchain checks from repository root:
+
+[source,bash]
+----
+# 1. Extract all code snapshot plates into docs/snapshots/
+cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --snapshots
+
+# 2. Rebuild all 6 Volumes + MASTER_GUIDE (.adoc, .md, .pdf)
+cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --all
+
+# 3. Validate standalone AsciiDoc files with strict warning checks
+asciidoctor --failure-level=WARN -o /dev/null docs/README.adoc docs/architecture/*.adoc
+
+# 4. Run repository schema & engine/game unit verification
+./tools/target/debug/tl_tools validate all && ctest --test-dir build --output-on-failure
+----
+
+[qanda]
+Why keep Block 1..5 comments in `.adoc` files if HTML and PDF hide them?::
+  They give both human authors and AI agents an unmistakable structural spine inside raw `.adoc` source files without leaking boilerplate banners into rendered books or Markdown exports.
+Can non-programmers update documentation safely?::
+  Yes. Narrative chapters live cleanly in `BLOCK 3`, formatting themes live in readable JSON (`docs/guide_theme_config.json`), and live code listings update automatically via `--snapshots` whenever C or Rust code shifts.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Volume Reading Paths & Anchor Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Recommended Reading Order ---
+== Next Readings
+
+. Start with link:{arch-index}[Architecture Index] and link:architecture/ARCHITECTURE.adoc[System Architecture Overview] for the end-to-end blueprint.
+. Explore link:architecture/resilience_bios_and_probes.adoc[Safe-Mode BIOS, Flight Logs & Debug Probes] and link:architecture/data_driven_architecture.adoc[Data-Driven Configs & Dual Data Taxonomy] to see live snapshots in action.
+. Inspect link:{snapshot-index}[the Snapshot Vault Index] to browse every extracted code plate and source range.

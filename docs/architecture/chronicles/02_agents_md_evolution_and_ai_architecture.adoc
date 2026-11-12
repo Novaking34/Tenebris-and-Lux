@@ -1,0 +1,122 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/architecture/chronicles/02_agents_md_evolution_and_ai_architecture.adoc
+@id            docs.arch.chronicles.agents_evolution
+@layer         Documentation / Volume V: Architecture Chronicles
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Cognitive Architecture & Human-AI Engineering Collaboration
+@role          Reflection on AGENTS.md Evolution & AI-Assisted Engine Design
+@audience      Designers, Tooling Engineers, AI Collaborators, Project Leads
+@snapshots     none (architectural governance & reflection)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Reflects verified AGENTS.md Rev 5 structure, 21 invariants & tools.
+               3. Separates human creative direction from automated invariant checking.
+================================================================================
+////
+
+= Evolution of `AGENTS.md`: Engineering a Cognitive Compass for Human-AI Co-Creation
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Problem of Context Drift & Role of Governance Rev 5 )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Why Static Style Guides Fail Autonomous Agents ---
+Long-running software projects involving C11/C23 systems programming, Rust verification tools, JSON schema contracts, and deep RPG lore break predictably under standard AI workflows for one reason: **context drift**. Left unanchored across multi-hour sprints, autonomous agents invent plausible-sounding lore names, re-introduce heap allocations in deterministic code, tuck quick shims over broken contracts, or forget how earlier subsystems were verified.
+
+Across Iterations leading up to Governance Revision 5 (`Rev 5`), `AGENTS.md` evolved away from a loose checklist into a **5-Block Cognitive Compass** encoding *why* Cornerstone works the way it does alongside *how* every boundary is mechanically verified.
+
+[cols="2,4",options="header"]
+|===
+| Governance Evolution | Engineering Shift Achieved
+
+| Passive Prose -> 21 Explicit Invariants
+| Turns soft preferences into binary rules (`ALLOC_ZERO_HEAP`, strict ISO C, anti-domain-bleed, authentic canon: Sole Antagonist *The Dark Lord Usuru*).
+
+| File-Path IDs -> Movement-Resilient `@id`
+| Allows cogs elevated from `game/` -> `engine/` to keep logical identity (`cog.<module>`) while `@file` and `@layer` update cleanly.
+
+| Arbitrary Style -> Universal 5-Block Protocol
+| Forces every C header, C source, JSON payload, CMake script, and AsciiDoc chapter into predictable structural slots (`BLOCK 1..5`).
+|===
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( How Cornerstone Structures Human Direction & Machine Enforcement )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Preserving Human Creative Authorship ---
+== Keeping the Operator in the Director's Chair
+
+Automated systems fail when they strip architectural judgment away from the human creator. Cornerstone's `Rev 5` ruleset intentionally splits responsibility between **human creative direction** and **automated structural discipline**:
+
+1. **Waterfall Bedrock vs. Agile Exploration (`AGENTS.md` §0.1)**: The agent never compromises fixed physical laws (zero heap in Layers 0–2, downward dependencies, zero domain bleed inside `engine/`), freeing the human director to iterate boldly on gameplay mechanics, tone, documentation depth, and visual presentation without worrying that an experimental sprint will rot the foundation.
+2. **Dual-Audience Documentation Covenant (`Invariant 17`)**: Requiring every header, operational API, and architecture document to speak clearly both *For Game Designers & Non-Programmers* and *For Systems Programmers & Engine Architects* forces the AI to translate every low-level optimization into plain-English creative impact.
+3. **Active Proposal Over Blind Guessing**: When toolchains step between C23, C17, and C11 (`CORNERSTONE_C_STANDARD=AUTO`) or telemetry uncovers `.bss` bloat, the architecture surfaces explicit options and seams so the operator steers design priorities consciously.
+
+// --- Sub-Assembly 3.2: Code & Docs as Shared Machine-Checked Memory ---
+== Why 5-Block AsciiDoc & Automated Validators Defeat Context Drift
+
+Treating documentation files with the same **Universal 5-Block Comment Protocol** (`//// BLOCK 1..5 ////` and `// --- Sub-Assembly X.Y`) used in C and JSON closes a gap that normally ruins project documentation: docs going stale quietly after code moves.
+
+[cols="2,4",options="header"]
+|===
+| Feedback Loop | What It Guarantees Automatically
+
+| `master_guide --snapshots`
+| Extracts verbatim source spans (`Whole`, `Block`, `Subassembly`, `Function`, `Group`) directly from live `engine/`, `game/`, `tests/`, and `cmake/` files into textbook plates—eliminating hand-copied drift.
+
+| `master_guide --validate-layout`
+| Reads data-driven PDF geometry constraints (`docs/adoc_pdf_layout_rules.json`), catches mid-file title resets, broken `include::` targets, unbalanced code fences, and over-tall/over-wide code listings before `asciidoctor-pdf` wastes pages.
+
+| `tl_tools validate all` + CTest
+| Audits Block 1–5 conformance, compiler warning cleanliness (`-Wall -Wextra -Wpedantic`), Rust `-D warnings`, and all 4-tier tests after edits land.
+|===
+
+Because layout budgets, snapshot bindings (`@snapshots uses: ...`), chassis telemetry (`@chassis`), and probe routes (`@seams`) live explicitly in repository files rather than transient chat history, **every new session inherits exact structural truth immediately**.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Reflective Health Check on AI-Assisted Architecture )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Honest Failure Modes Avoided ---
+== Architectural Smells `AGENTS.md` Actively Catches
+
+* **Fake Fallbacks & Dead Stubs**: Explicitly banned in favor of compiled `.rodata` ROM vaults (`cmake/GenerateConfigRom.cmake`) and quarantined `*_fallback.[ch]` engines sharing verified JSON parsers.
+* **Hidden Static Scratch Bloat**: Caught directly by `@chassis` measurement (`size -A`, `nm --size-sort -S -r`), turning silent `.bss` waste into transparent numbers.
+* **Non-Canonical Lore Drift**: Blocked at Block 1 governance and `game/data/` contract checks so *Tenebris and Lux* never acquires hallucinated characters, relics, or factions.
+* **Unreadable Auto-Generated PDFs**: Solved by separating human narrative into structured 5-block chapters, verifying exact printable page dimensions mathematically, and compiling live textbook plates + wholesale appendices cleanly.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Continuing the Living Architecture )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+* Previous chronicle: link:01_root_stratum_story_and_game_payoff.adoc[Chronicle 1: Why Strengthening `log/`, `debug/`, and `io/` Pays Every Future Turn].
+* Explore root governance directly in link:../../../AGENTS.md[`AGENTS.md`], or return to link:../README.adoc[Architecture Index].
+

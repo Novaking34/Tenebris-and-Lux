@@ -1,0 +1,53 @@
+[[snap_plate_snap_log_sub4_1_probes]]
+.Flight Log Subsystem Probe Registration & Validation Guards (Sub-Assembly 4.1) (`engine/src/log/log.c#L1934-L1977` · Mode: `Subassembly`)
+[source,c,linenums,start=1934]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 4.1: Contract, Input & Cog Verification Cogs
+Mission: Verify received parameters, configuration contracts, and data provenance;
+verify that declared subsystem cogs run properly as standalone units.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Returns whether the active logging subsystem was configured from data sources.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Checks if settings were loaded from actual JSON files rather than emergency defaults.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Queries provenance boolean s_log.config.loaded_from_data.
+ *
+ * @return true if loaded from JSON data; false if using fallback code page.
+ */
+bool log_is_data_driven(void)
+{
+    return s_log.config.loaded_from_data;
+}
+
+/**
+ * @brief Queries whether the logging engine is currently operating in Safe Mode.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Returns true if the engine booted using compiled-in ROM backups or emergency
+ * defaults instead of live external JSON directories on disk.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Checks initialization state alongside s_log.safe_mode (!loaded_from_data).
+ *
+ * @return true if active and running in Safe Mode; false otherwise.
+ */
+bool log_is_safe_mode(void)
+{
+    return s_log.initialized && s_log.safe_mode;
+}
+
+/**
+ * @brief Returns the current state of the logging data pipeline tripwire.
+ *
+------
+
+_Shows how cog.log verifies its own static ring limits and binds probes into cog.debug._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L1934-L2028`) -> <<snap_wholesale_snap_log_sub4_1_probes,Appendix: Flight Log Subsystem Probe Registration & Validation Guards (Sub-Assembly 4.1)>>.]

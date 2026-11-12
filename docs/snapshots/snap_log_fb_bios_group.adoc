@@ -1,0 +1,49 @@
+[[snap_plate_snap_log_fb_bios_group]]
+.Tier-0 Flight Log BIOS Boot & Early-Entry Replay Drain (`engine/src/log/log_fallback.c#L1701-L1740` · Mode: `Group`)
+[source,c,linenums,start=1701]
+------
+/**
+ * @brief Arms the Tier-0 BIOS Safe-Mode logger before CLI flags or disk VFS boot.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Turns on emergency logging immediately when the program starts so early boot
+ * bugs or missing folders are never lost, while leaving repo folders clean.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * When opt_cfg is NULL, arms purely in .bss ring + stderr alert mode with zero
+ * filesystem I/O. When opt_cfg is supplied, opens bounded Safe-Mode disk output
+ * (applying build/logs sandbox protection) and degrades gracefully to RAM Ring +
+ * stderr if mkdir/fopen fails on read-only or full media.
+ *
+ * @param[in] opt_cfg Optional Safe-Mode config (NULL for clean RAM BIOS boot).
+ * @return true on clean BIOS Safe-Mode arming (survives disk failures).
+ */
+bool log_fallback_boot(const log_config_t *opt_cfg)
+{
+    if (s_fb.file != NULL) {
+        fflush(s_fb.file);
+        fclose(s_fb.file);
+        s_fb.file = NULL;
+    }
+
+    s_fb.disk_fault = false;
+    s_fb.current_bytes = 0;
+
+    if (opt_cfg == NULL) {
+        s_fb.config = s_log_floppy_template;
+        s_fb.config.loaded_from_data = false;
+        if (io_fallback_is_disk_read_only()) {
+            s_fb.disk_fault = true;
+        }
+        s_fb.active_sink = LOG_FALLBACK_SINK_RING_AND_STDERR;
+        s_fb.booted = true;
+        return true;
+    }
+
+    s_fb.config = *opt_cfg;
+    s_fb.config.loaded_from_data = false;
+------
+
+_Arms the 64-entry pre-VFS BIOS ring before disk mount and replays captured records once primary cog.log boots._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L1256-L1801`) -> <<snap_wholesale_snap_log_fb_bios_group,Appendix: Tier-0 Flight Log BIOS Boot & Early-Entry Replay Drain>>.]

@@ -1,0 +1,55 @@
+[[snap_plate_snap_main_preflight_block4]]
+.Application Audit Integration (game/src/main.c BLOCK 4) (`game/src/main.c#L193-L238` · Mode: `Block`)
+[source,c,linenums,start=193]
+------
+// =============================================================================
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// Stratum: Layer 3 (Application Entry) | Machine: Presentation Router
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// [ SUB-ASSEMBLY 4.1: COMPREHENSIVE SUBSYSTEM SELF-AUDIT SUITE ]
+// Mission: Execute pre-flight manifest checks, sim invariants, and GUI bounds.
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief Executes the comprehensive engine self-audit suite and manifests.
+ *
+ * ### Machine Role & Mission
+ * Serves as the `--audit` diagnostic tripwire. Executes:
+ * 1. Pre-flight verification across all registered modules with DAG checks.
+ * 2. Layer 1 simulation invariant audit (`game_run_self_audit()`).
+ * 3. Layer 2 GUI viewport layout and collision audit (`gui_audit_layout()`).
+ * Returns non-zero if any invariant check or pre-flight test fails.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 3 (Application Entry & Presentation Router)
+ * - Machine: app.entry.main (Executable Entry & Presentation Router)
+ * - Assembly: Diagnostic Self-Audit & Pre-Flight Verification
+ * - Cog: Full Engine Diagnostics & Invariant Self-Audit Suite
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Stack allocation only).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Synchronous diagnostic sweep).
+ * - Latency Budget: < 5000 microseconds execution time.
+ *
+ * @return 0 if all invariant checks pass; non-zero if any check fails.
+ */
+static int run_full_subsystem_audit(void)
+{
+    log_init(NULL);
+    LOG_INFO(LOG_CAT_LOG, "Audit", 0.0f, "Starting comprehensive diagnostic self-audit");
+
+    /* Step 1: Initialize central manifest and run pre-flight diagnostics */
+    manifest_registry_t registry;
+    init_engine_manifest(&registry);
+    manifest_run_preflight(&registry);
+    manifest_print_report(&registry);
+
+    /* Step 2: Evaluate pre-flight outcome for fatal loose-bolts */
+    if (registry.status == PREFLIGHT_STATUS_HALT_FATAL) {
+------
+
+_Shows Layer 3 executing run_full_subsystem_audit() across Engine + Game + Test invariants from --audit._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L193-L334`) -> <<snap_wholesale_snap_main_preflight_block4,Appendix: Application Audit Integration (game/src/main.c BLOCK 4)>>.]

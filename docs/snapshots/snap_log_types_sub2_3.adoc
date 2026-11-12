@@ -1,0 +1,51 @@
+[[snap_plate_snap_log_types_sub2_3]]
+.Flight Log Leaf Vocabulary & Entry Layout (log_types.h Sub-Assembly 2.3) (`engine/include/log/log_types.h#L153-L194` · Mode: `Subassembly`)
+[source,c,linenums,start=153]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Shared Structural Entity & Telemetry Value Definitions
+--------------------------------------------------------------------------------
+Canonical non-anonymous enums and POD structures shared across operational and
+quarantined BIOS telemetry cogs.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @enum log_severity
+ * @brief Graded severity taxonomy for engine diagnostics and telemetry events.
+ *
+ * Ordered from highest severity (FATAL) down to finest detail (TRACE).
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Defines how critical an event is:
+ *   - FATAL/CRITICAL: Showstoppers that threaten gameplay continuity.
+ *   - ERROR/WARNING: Problems handled gracefully with automatic fallbacks.
+ *   - INFO: Normal story, quest, and milestone announcements.
+ *   - DEBUG/TRACE: Granular technical values for combat balance and timing.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Strict integer ordering enables threshold filtering and weight-table lookup.
+ */
+typedef enum log_severity {
+    LOG_SEV_FATAL = 0,    /**< Unrecoverable failure or fatal state corruption. */
+    LOG_SEV_CRITICAL,     /**< Severe failure threatening gameplay loop. */
+    LOG_SEV_ERROR,        /**< Discrete operation failure with fallback. */
+    LOG_SEV_WARNING,      /**< Suspicious condition or degraded state. */
+    LOG_SEV_INFO,         /**< Major milestone or narrative state shift. */
+    LOG_SEV_DEBUG,        /**< Granular spatial, coordinate, or stance telemetry. */
+    LOG_SEV_TRACE,        /**< High-frequency per-tick calculation telemetry. */
+    LOG_SEV_COUNT         /**< Enumerator bound sentinel (not a valid severity). */
+} log_severity_t;
+
+/**
+ * @enum log_category
+ * @brief Functional categorization of logging events for focused channel filtering.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Divides events into distinct thematic channels (`CHARACTER`, `MESSAGE`,
+------
+
+_Zero-.bss leaf types shared cleanly by cog.log and quarantined cog.log.fallback._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L153-L303`) -> <<snap_wholesale_snap_log_types_sub2_3,Appendix: Flight Log Leaf Vocabulary & Entry Layout (log_types.h Sub-Assembly 2.3)>>.]

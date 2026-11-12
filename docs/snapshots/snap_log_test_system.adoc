@@ -1,0 +1,47 @@
+[[snap_plate_snap_log_test_system]]
+.Flight Log System Emergence Verification (test_log_system_emergence) (`tests/system/test_log_system.c#L283-L320` · Mode: `Function`)
+[source,c,linenums,start=283]
+------
+/**
+ * @brief Executes 10,000-entry chaos load, floppy BIOS endurance burst, and probe checks.
+ */
+static void test_log_system_emergence(void)
+{
+    printf("  [PASS-4] Running Section 4: Emergence (10,000-Entry Chaos, Floppy BIOS & Probes)...\n");
+
+    TEST_ASSERT(debug_init(NULL), "Debugger online to monitor log system endurance");
+
+    log_config_t cfg = log_get_default_config();
+    cfg.echo_to_console = false;
+    cfg.min_severity = LOG_SEV_TRACE;
+    cfg.save_by_category = true;
+    cfg.max_file_size_bytes = 16384U;
+    cfg.max_rotated_files = 10U;
+    str_safe_copy(cfg.log_dir, "build/logs/system_chaos", sizeof(cfg.log_dir));
+    str_safe_copy(cfg.base_filename, "chaos.log", sizeof(cfg.base_filename));
+
+    TEST_ASSERT(log_init(&cfg), "Initialized for chaos stress");
+
+    for (int i = 1; i <= TEST_LOG_SYS_CHAOS_COUNT; i++) {
+        log_severity_t sev = (log_severity_t)(i % LOG_SEV_COUNT);
+        log_category_t cat = (log_category_t)(i % LOG_CAT_COUNT);
+        float grade = ((float)(i % 200) - 100.0f) / 100.0f;
+
+        LOG_RECORD(sev, cat, "ChaosAgent", grade, "High-stress event step #%06d", i);
+
+        if (i % 2000 == 0) {
+            log_entry_t sample[10];
+            size_t fetched = log_get_top_entries(sample, 10U);
+            TEST_ASSERT_INT_EQ((int)fetched, 10,
+                               "Ring buffer top entries query succeeds during live write");
+        }
+    }
+
+    log_stats_t final_stats;
+    TEST_ASSERT(log_execute_inspect(&final_stats), "Inspected final chaos stats");
+    TEST_ASSERT(final_stats.total_entries >= (uint64_t)TEST_LOG_SYS_CHAOS_COUNT,
+------
+
+_Exercises full boot, rotation, Safe-Mode telemetry profile fallback, and recovery across Layer 4._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L283-L385`) -> <<snap_wholesale_snap_log_test_system,Appendix: Flight Log System Emergence Verification (test_log_system_emergence)>>.]

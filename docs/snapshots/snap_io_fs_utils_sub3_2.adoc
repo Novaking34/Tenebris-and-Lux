@@ -1,0 +1,51 @@
+[[snap_plate_snap_io_fs_utils_sub3_2]]
+.Bounded POSIX Filesystem & Read-Only Guard API (fs_utils.h Sub-Assembly 3.2) (`engine/include/io/fs_utils.h#L359-L400` · Mode: `Subassembly`)
+[source,c,linenums,start=359]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Bounded Buffered I/O & Directory Management Cogs
+Mission: Bounded text reading, safe file writing, and parent directory synthesis.
+
+  ### For Game Designers & Non-Programmers:
+  Loads configuration and story files safely within memory caps and saves outputs
+  atomically while blocking mutations during Read-Only Safe Mode.
+
+  ### For Systems Programmers & Engine Architects:
+  Enforces active policy ceilings (`max_config_bytes`, `path_max_bytes`), NUL
+  termination, Safe-Mode RO protection, and shared Tier-0 BIOS atomic write/mkdir.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Reads entire text file contents into a bounded, caller-supplied buffer.
+ *
+ * Guarantees unconditional null termination and prevents buffer overruns.
+ * If the file exceeds `buf_size - 1` or `max_config_bytes`, the read is safely rejected.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Loads an entire text file safely into memory, guaranteeing it never overflows or crashes the engine.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Convenience wrapper delegating cleanly into `fs_read_file_bounded()` without length output.
+ *
+ * @param[in]  filepath Null-terminated path or `"rom://..."` URI to target file.
+ * @param[out] buf      Caller-supplied memory destination buffer.
+ * @param[in]  buf_size Byte capacity of destination buffer (including null terminator).
+ * @return true if file opened and completely read within buffer bounds; false otherwise.
+ * @triggers Inherits truncation fault and warning log behavior from `fs_read_file_bounded()`.
+ */
+bool fs_read_file_contents(const char *filepath, char *buf, size_t buf_size);
+
+/**
+ * @brief Reads file or `"rom://..."` text and reports exact count of bytes read.
+ *
+ * Similar to `fs_read_file_contents()`, and writes the exact number of bytes read
+ * (excluding NUL terminator) into optional `out_bytes_read`.
+ *
+ * ### For Game Designers & Non-Programmers:
+------
+
+_Caller-owned bounded file transfers with truncation protection and Safe-Mode write locks._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L359-L455`) -> <<snap_wholesale_snap_io_fs_utils_sub3_2,Appendix: Bounded POSIX Filesystem & Read-Only Guard API (fs_utils.h Sub-Assembly 3.2)>>.]

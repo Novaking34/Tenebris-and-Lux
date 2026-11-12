@@ -1,22 +1,66 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Engineering Chronology & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/dev_logs/README.adoc
+@id            docs.dev_logs.index
+@layer         Documentation / Engineering Chronology Index
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Developer Logs Index & Engineering Chronology (001-020)
+@role          Chronological Master Index Across 2026/10 & 2026/11 DevLogs
+@audience      Designers, Lore Writers, Systems Architects, AI Agents
+@snapshots     n/a (chronological index)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Chronological integrity covering devlog_001 through devlog_020.
+================================================================================
+////
+
 = Developer Logs Index & Engineering Chronology
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.2, 2026-10-26
+v0.2.0-dev, 2026-11-12
 :doctype: article
+:toc: macro
 :icons: font
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Directory Purpose & Calendar Archives )
+================================================================================
+////
 
+// --- Sub-Assembly 2.1: Directory Synopsis ---
+[NOTE]
+====
 This directory preserves the living engineering and game design chronicle of *Tenebris and Lux*.
 Every major architectural milestone, paradigm shift, and design breakthrough is documented
 here to provide enduring context for human developers and AI pair programmers.
 Developer logs are organized chronologically by calendar hierarchy (`YYYY/MM/`) and categorized
 thematically (`architecture/`, `lore_and_design/`).
+====
 
+toc::[]
+
+// --- Sub-Assembly 2.2: Calendar Archives ---
 == Calendar Archives
 
-* **xref:2026/10/README.adoc[October 2026 Monthly Chronicle]** (7 Logs)
-* **xref:2026/11/README.adoc[November 2026 Monthly Chronicle]** (7 Logs)
+* **xref:2026/10/README.adoc[October 2026 Monthly Chronicle]** (8 Logs)
+* **xref:2026/11/README.adoc[November 2026 Monthly Chronicle]** (12 Logs)
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Complete DevLog 001..020 Manifest )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Complete DevLog Manifest ---
 
 == Complete Dev Log Manifest
 
@@ -129,5 +173,61 @@ thematically (`architecture/`, `lore_and_design/`).
     - Elevated orchestrator cogs (clock_pacer fixed-step accumulator, formula_eval, geom_utils viewport scaling and 2.5D math).
     - Built standalone quarantined fallback modules (`*_fallback.[ch]`) with zero dynamic heap allocation.
     - Expanded automated verification suite to 51/51 passing CTests (100%) and 20 registered engine modules in pre-flight audit.
+
+16. **link:2026/11/architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc[devlog_016_git_validator_movie_reel_and_audio_elevation.adoc]**  
+    *Native Git Commit Validation, Audio Elevation & Movie Reel Viewport* (2026-11-08 | Architecture):
+    - Integrated native Rust `git_validator`, `.githooks/commit-msg`, and 5-block CI commit gate checks.
+    - Aligned presentation catalogs to 5-block JSON schemas and the High-Fantasy Hope palette.
+    - Elevated `audio/` mixing into Layer 0 and built deterministic Layer 2 Movie Reel scene orchestration.
+    - Integrated Offline Work 4 stats and expanded audiovisual 4-tier tests (`36427ba`..`52149a3`).
+
+17. **link:2026/11/lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc]**  
+    *Orthogonal 35 Classes, 28 Jobs, Generational War & 4D Dream Clock* (2026-11-09 | Lore & Design):
+    - Reconciled 2017–2018 Master Guide assumptions (Sir Roté, flat class lists, Hero/Dark One vs. Usuru, Trainee/Mystic identities).
+    - Codified the 35-Class 5-Tier Pascal Pyramid and 28-Job 5-Pillar Vocation Compendium (*Offline Work 5 & 6*).
+    - Mapped the Adolescent Crucible, King Jihad's Poisoned Mandate, Midpoint Fork, Two-Pass Grand Tour, and 10–20-year War.
+    - Specified `sacyra_calendar_t` and 4D `story_point_receipt_t` contracts for True Ending registration.
+
+18. **link:2026/11/architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc]**  
+    *Standalone Engine Config Decoupling & Rev 5 Block 1/2 Standardization* (2026-11-10 | Architecture):
+    - Decoupled standalone `engine/config/` from `game/data/` across `v0.1.1` (`489c3b6`..`d552752`).
+    - Modularized Rust `tools/src/validator/` against `block_1..5.json` and 44 engine headers in `subsystems.json`.
+    - Standardized movement-resilient `@id` tags, `@chassis`/`@scale`/`@seams` Block 1 telemetry, and `extern "C"` Block 2 hygiene.
+
+19. **link:2026/11/architecture/devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc]**  
+    *BIOS/ROM Vaults, AWAIT Tripwire Probes & The C23 Fall-Down Ladder* (2026-11-11 | Architecture):
+    - Fused root `log/` + `debug/` + `io/` BIOS Safe-Mode fallback (`*_fallback.[ch]`, `*_types.h`) and `.rodata` Config ROM generation (`GenerateConfigRom.cmake`).
+    - Wired Probe -> Safe-Mode Downgrade -> `DEBUG_STEP_AWAIT` tripwire loop (`76a443a`) and trimmed idle `.bss` buffers.
+    - Implemented Cornerstone's Progressive C23 -> C17 -> C11 (+ C++20/17) Fall-Down Ladder in `manifest.h` and `CMakeLists.txt`.
+    - Standardized 4-tier test suites via `tests/common/cornerstone_test.h` and expanded CTest coverage to 65 targets.
+
+20. **link:2026/11/architecture/devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc[devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc]**  
+    *5-Block AsciiDoc, Live Code Snapshots & Paired Module Textbooks* (2026-11-12 | Architecture):
+    - Built 5-mode live C/CMake snapshot extraction and anchor deduplication in `tools/src/guide.rs` (`docs/snapshots/`).
+    - Enforced PDF page-budget & syntax hygiene (`docs/adoc_pdf_layout_rules.json` + `--validate-layout`) and eliminated Volume V whitespace bloat.
+    - Created paired `.h`+`.c` documentation folders (`docs/code/{log,debug,io}/`), `docs/architecture/chronicles/`, and unified `Offline-Work-1..6` into a 5-block linked series.
+
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Chronological Continuity Checks )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Chronological Completeness ---
+== Chronological Continuity Audit
+
+All twenty logs (`devlog_001` through `devlog_020`) are indexed across October and November 2026 and compiled into **Volume VI: Engineering Chronology & Development Logs** inside `docs/master_guide_manifest.json`.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Upstream Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+*Back to Documentation Hub:* link:../README.adoc[Documentation Master Index] | *Monthly Archives:* xref:2026/10/README.adoc[2026/10] | xref:2026/11/README.adoc[2026/11]
+
 
 

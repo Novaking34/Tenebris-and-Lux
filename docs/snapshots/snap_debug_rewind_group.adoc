@@ -1,0 +1,47 @@
+[[snap_plate_snap_debug_rewind_group]]
+.Deterministic State Capture & Time-Travel Rewind (debug.c) (`engine/src/debug/debug.c#L1503-L1540` · Mode: `Group`)
+[source,c,linenums,start=1503]
+------
+/**
+ * @brief Rewinds state fields back to snapshot `index` after cryptographic checksum check.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Restores actor stats from an earlier saved frame, pausing safely in AWAIT if memory
+ * corruption altered the snapshot's stored fingerprint.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Fetches snapshot via `debug_get_snapshot()`, verifies `debug_compute_state_hash(&snap.state)`
+ * matches `snap.state_hash` (engaging `DEBUG_TRIPWIRE_HASH_MISMATCH` + Safe-Mode AWAIT +
+ * `LOG_ERROR` on mismatch), and emits `LOG_INFO` on verified restore.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_unit.c:Section1`
+ *
+ * @param[in]  index      Chronological target snapshot offset.
+ * @param[out] out_fields Restored simulation state fields on verified success.
+ * @return true if checksum passed and `out_fields` populated; false on error or mismatch.
+ */
+bool debug_rewind_to_snapshot(size_t index, debug_state_fields_t *out_fields)
+{
+    /* Step 1: Validate preconditions and fetch chronological snapshot copy */
+    if (!s_debug_active || out_fields == NULL) {
+        return false;
+    }
+
+    debug_snapshot_t snap;
+    if (!debug_get_snapshot(index, &snap)) {
+        return false;
+    }
+
+    /* Step 2: Verify determinism checksum against tampering before restoring */
+    uint32_t verify_hash = debug_compute_state_hash(&snap.state);
+    if (verify_hash != snap.state_hash) {
+        s_debug.tripwire_status = DEBUG_TRIPWIRE_HASH_MISMATCH;
+        snprintf(s_debug.tripwire_details, sizeof(s_debug.tripwire_details),
+                 "Rewind checksum mismatch on snap #%lu (0x%08X != 0x%08X)",
+                 (unsigned long)snap.snapshot_id, verify_hash, snap.state_hash);
+------
+
+_Captures FNV-1a hashed simulation states in a 64-slot ring and restores bounded prior frames cleanly._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L1264-L1567`) -> <<snap_wholesale_snap_debug_rewind_group,Appendix: Deterministic State Capture & Time-Travel Rewind (debug.c)>>.]

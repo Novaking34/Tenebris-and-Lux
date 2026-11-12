@@ -1,0 +1,106 @@
+{
+  "block_1_metadata": {
+    "schema": "tenlux.data.guide_theme_config.v1",
+    "id": "docs.config.pdf_theme",
+    "version": "0.2.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-12",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Data-driven typography, spacing, color, and page-budget specification compiled into Asciidoctor-PDF YAML themes",
+    "invariants": [
+      "All generated theme keys map directly to Asciidoctor PDF 2.3+ supported default-theme properties.",
+      "Compact textbook spacing eliminates orphan whitespace while keeping clear visual hierarchy.",
+      "Monospace code listings at 7.5pt fit >= 100 columns on a page without awkward mid-line wraps."
+    ]
+  },
+  "block_2_types": {
+    "theme_name": "cornerstone-book",
+    "extends": "default",
+    "generated_yaml_path": "docs/themes/cornerstone-book-theme.yml"
+  },
+  "block_3_body": {
+    "page": {
+      "size": "Letter",
+      "layout": "portrait",
+      "margin_top_in": 0.55,
+      "margin_right_in": 0.50,
+      "margin_bottom_in": 0.58,
+      "margin_left_in": 0.50,
+      "background_color": "FFFFFF"
+    },
+    "typography": {
+      "font_color": "1E293B",
+      "base_font_size": 9.5,
+      "line_height_length": 12.2,
+      "text_align": "left",
+      "link_color": "1D4ED8",
+      "codespan_color": "9F1239",
+      "code_font_size": 7.5,
+      "code_line_height": 1.16,
+      "code_padding": 6,
+      "code_line_gap": 2.2,
+      "code_background_color": "F6F8FA",
+      "code_border_color": "CBD5E1"
+    },
+    "spacing": {
+      "vertical_rhythm": 10.5,
+      "horizontal_rhythm": 10.5,
+      "block_margin_bottom": 7.5,
+      "prose_margin_bottom": 6.0,
+      "list_item_spacing": 2.5,
+      "heading_margin_top": 8.0,
+      "heading_margin_bottom": 4.5,
+      "heading_min_height_after": 16.0,
+      "heading_h1_scale": 2.35,
+      "heading_h2_scale": 1.85,
+      "heading_h3_scale": 1.38,
+      "heading_h4_scale": 1.14,
+      "heading_h5_scale": 1.0,
+      "heading_h6_scale": 0.9
+    },
+    "breaks": {
+      "part_break_before": "always",
+      "chapter_break_before": "always"
+    },
+    "blocks": {
+      "admonition_padding": [5, 9, 5, 9],
+      "admonition_rule_color": "3B82F6",
+      "admonition_rule_width": 1.5,
+      "sidebar_background_color": "F8FAFC",
+      "sidebar_border_color": "CBD5E1",
+      "sidebar_padding": [8, 10, 8, 10],
+      "table_cell_padding": [3, 5, 3, 5],
+      "table_border_color": "CBD5E1",
+      "table_stripe_background_color": "F8FAFC",
+      "table_head_background_color": "E2E8F0",
+      "toc_line_height": 1.25
+    },
+    "running_chrome": {
+      "header_height": 22,
+      "header_font_size": 7.5,
+      "header_font_color": "64748B",
+      "header_border_color": "E2E8F0",
+      "header_right": "{section-or-chapter-title}",
+      "header_left": "{document-title}",
+      "footer_height": 22,
+      "footer_font_size": 7.5,
+      "footer_font_color": "64748B",
+      "footer_border_color": "E2E8F0",
+      "footer_left": "Cornerstone Game Engine & Tenebris and Lux · {revnumber}",
+      "footer_right": "Page {page-number} of {page-count}"
+    }
+  },
+  "block_4_audit": {
+    "target_metrics": [
+      "Zero chapter break pages before subsection (===) headings",
+      "Running page chrome rendered on all body pages",
+      "Zero Asciidoctor-PDF theme warnings"
+    ]
+  },
+  "block_5_closing": {
+    "owner": "CreativeWorkzStudio Publishing",
+    "status": "ACTIVE"
+  }
+}
+

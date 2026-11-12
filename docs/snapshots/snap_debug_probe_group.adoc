@@ -1,0 +1,54 @@
+[[snap_plate_snap_debug_probe_group]]
+.Autonomous Validation Probes & Tripwire Trap Chain (`engine/src/debug/debug.c#L2367-L2411` · Mode: `Group`)
+[source,c,linenums,start=2367]
+------
+/**
+ * @brief Legacy compatibility helper that latches a state-corruption tripwire trap.
+ *
+ * @deprecated Prefer `debug_trigger_probe()` or `DEBUG_TRIGGER_PROBE()` so every trap
+ *             carries a structured probe ID, tier classification, and forensic report.
+ *
+ *   ### For Game Designers & Non-Programmers:
+ *   Preserved safety brake for older modules that report state errors without
+ *   naming a specific modern probe identifier.
+ *
+ *   ### For Systems Programmers & Engine Architects:
+ *   Latches `DEBUG_TRIPWIRE_STATE_CORRUPT`, increments `traps_triggered`, notifies
+ *   BIOS via `debug_fallback_record_fault()`, performs guarded snapshot lock and
+ *   `DEBUG_STEP_AWAIT` entry when active and non-audit, and emits `LOG_WARN`.
+ *
+ * @param[in] subsystem Subsystem tag reporting the fault, or NULL for `"unknown"`.
+ * @param[in] condition Description of the violated condition, or NULL for `"anomaly"`.
+ * @param[in] file      Originating source file (`__FILE__`).
+ * @param[in] line      Originating source line (`__LINE__`).
+ * @triggers Latches tripwire state, records BIOS fault, and warns via guarded log output.
+ */
+void debug_trap_tripwire(const char *subsystem, const char *condition,
+                         const char *file, int line)
+{
+    /* Step 1: Latch classic STATE_CORRUPT code and forensic detail string verbatim */
+    s_debug.tripwire_status = DEBUG_TRIPWIRE_STATE_CORRUPT;
+    s_debug.traps_triggered++;
+
+    snprintf(s_debug.tripwire_details, sizeof(s_debug.tripwire_details),
+             "[%s] %s (%s:%d)",
+             (subsystem != NULL) ? subsystem : "unknown",
+             (condition != NULL) ? condition : "anomaly",
+             (file != NULL) ? file : "unknown", line);
+
+    /* Step 2: Record fault in Tier-0 BIOS and complete via Safe-Mode fallback */
+    (void)debug_fallback_record_fault(
+        subsystem,
+        (condition != NULL) ? condition : "anomaly",
+        file,
+        line,
+        "debug_trap_tripwire"
+    );
+
+    if (s_debug_active && !s_debug.in_probe && !s_debug.in_audit) {
+        (void)debug_fallback_finish_with_fallback(
+------
+
+_Realizes the Probe -> Safe-Mode Downgrade -> DEBUG_STEP_AWAIT loop inside Layer 0 debug infrastructure._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L1918-L2438`) -> <<snap_wholesale_snap_debug_probe_group,Appendix: Autonomous Validation Probes & Tripwire Trap Chain>>.]

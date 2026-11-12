@@ -1,0 +1,117 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/io/README.adoc
+@id            docs.code.io.index
+@layer         Documentation / Volume V: io/ Module Index
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 0 Zero-Heap I/O Folder Index
+@role          File-by-File Reading Map for engine/{include,src}/io/ and tests/
+@audience      Designers, Data Authors, Testers, C/Rust Engineers
+@snapshots     none
+@invariants    1. Excluded from compiled Volume TOC via README filename rule.
+               2. Maps all 11 C/H source files and 8 I/O test targets completely.
+               3. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+================================================================================
+////
+
+= Zero-Heap I/O & VFS Pipeline (`engine/{include,src}/io/`) Index
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Folder Framing )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Orientation ---
+This directory pairs every header and implementation file inside Cornerstone's **I/O & VFS Stratum** alongside its 4-tier testing guide.
+
+[TIP]
+====
+Read link:../io_pipeline.adoc[the I/O Pipeline Overview] first for the assembly-line mental model before examining each cog's source contracts.
+====
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Paired Module & Test Catalog )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: File Inventory ---
+== Paired Module & Test Documentation
+
+[cols="2,2,4",options="header"]
+|===
+| Chapter File | Engine Source / Test Coverage | Scope
+
+| link:01_io_umbrella_and_pipeline.adoc[01_io_umbrella_and_pipeline.adoc]
+| `engine/include/io/io.h`
+| Stateless compile-time umbrella re-exporting all 5 child cogs and coordinating subsystem audit gates.
+
+| link:02_fs_utils_bounded_io.adoc[02_fs_utils_bounded_io.adoc]
+| `engine/include/io/fs_utils.h` + `engine/src/io/fs_utils.c`
+| Bounded POSIX file/directory primitives, policy hydration (`fs_buffers.json`), Safe-Mode RO lock, and `rom://` fallback bridge.
+
+| link:03_path_finder_vfs.adoc[03_path_finder_vfs.adoc]
+| `engine/include/io/path_finder.h` + `engine/src/io/path_finder.c`
+| Upward repo anchoring and 3-tier VFS path resolution (`game/config/` -> `engine/config/` -> `game/data/presentation/config/`).
+
+| link:04_json_utils_parser.adoc[04_json_utils_parser.adoc]
+| `engine/include/io/json_utils.h` + `engine/src/io/json_utils.c`
+| Single-pass zero-heap JSON span locator, nested object/array extractors, and depth `<= 32` stack validation.
+
+| link:05_master_loader_hydration.adoc[05_master_loader_hydration.adoc]
+| `engine/include/io/master_loader.h` + `engine/src/io/master_loader.c`
+| 5-block envelope verification, non-owning `block_3_body` slicing, schema checks, and corrupt-contract Safe-Mode downgrade.
+
+| link:06_io_fallback_bios_and_rom.adoc[06_io_fallback_bios_and_rom.adoc]
+| `engine/include/io/io_fallback.h` + `engine/src/io/io_fallback.c`
+| Unified Tier-0 I/O BIOS across all 4 I/O pillars, floppy boot, fault ring, and 8 `.rodata` ROMs (`io_config_rom.h`).
+
+| link:07_io_testing_and_downgrades.adoc[07_io_testing_and_downgrades.adoc]
+| `tests/{unit/io,functional,integrated,system}/`
+| All 8 CTest targets verifying VFS precedence, parser clamping, ROM boot, and downgrade recovery.
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Quick Folder Checks )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Folder Lint & CTest ---
+== Verification Commands
+
+[source,bash]
+------
+asciidoctor --failure-level=WARN -o /dev/null docs/code/io/*.adoc
+ctest --test-dir build -L io --output-on-failure
+------
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Folder Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Related Maps
+
+* link:../debug/README.adoc[Previous Subsystem: `docs/code/debug/`]
+* link:../README.adoc[Back to `docs/code/` Root Index]
+

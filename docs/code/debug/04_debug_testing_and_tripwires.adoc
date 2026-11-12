@@ -1,0 +1,125 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/debug/04_debug_testing_and_tripwires.adoc
+@id            docs.code.debug.testing
+@layer         Documentation / Volume V: Layer 4 Debugger Test Guide
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 4 State Debugger & Tripwire Verification Suite
+@role          4-Tier Test Architecture Guide for engine/{include,src}/debug/
+@audience      Designers, QA Engineers, C Engineers
+@snapshots     uses: snap_debug_test_unit
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Maps all 5 verified CTest targets (unit, fallback, functional, integrated, system).
+               3. Verifies probe traps, GCD ring rotation, rewind determinism, and DEBUG_STEP_AWAIT.
+================================================================================
+////
+
+= Verification Suite: State Debugger, Rewind & Tripwires Across All 4 Tiers
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Test Inventory & Crude-to-Fine Ladder )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Test Matrix ---
+Because `cog.debug` serves as Cornerstone's self-verification backbone (`tests/common/cornerstone_test.h`), testing `debug/` requires both proving the debugger's own state math in isolation *and* proving that child modules trigger probes and `DEBUG_STEP_AWAIT` cleanly when integrated.
+
+[cols="1,2,2,3",options="header"]
+|===
+| Tier | CTest Target | Source File | Primary Verification Focus
+
+| Unit
+| `unit_debug_engine_test`
+| `tests/unit/debug/test_debug_unit.c`
+| Snapshot capture/hash determinism, GCD wrap with locked slots, watchpoints, time-travel rewind, and probe registration.
+
+| Unit (BIOS)
+| `unit_debug_fallback_test`
+| `tests/unit/debug/test_debug_fallback_unit.c`
+| Emergency ROM hydration, `debug_fallback_boot()`, fault capture, and fallback `AWAIT` clear transitions.
+
+| Functional
+| `functional_debug_test`
+| `tests/functional/test_debug_functional.c`
+| External caller simulation: stepping mode, inspection cards, and tripwire dumps via public headers.
+
+| Integrated
+| `integrated_debug_test`
+| `tests/integrated/test_debug_integrated.c`
+| Cross-module coordination tying `debug` + `debug_fallback` + `log` + `io/` JSON debugger profiles cleanly.
+
+| System
+| `system_debug_test`
+| `tests/system/test_debug_system.c`
+| End-to-end tripwire escalation, missing-disk downgrade drills, and `debug_audit()` recovery checks.
+|===
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Band Design & Emergence Snapshot )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: What the Five Test Bands Prove in Debug ---
+== Fine-Grained Invariants Tested Across `debug/`
+
+* **`always_pass` & `never_fail`**: Confirms clean `debug_init()` / `debug_shutdown()`, null-safe snapshot getters, and zero-crash clamping when callers pass out-of-range snapshot indices.
+* **`assertions_and_guarantees`**: Verifies deterministic 32-bit FNV-1a checksums across identical `debug_state_fields_t` structs and strict protection of locked milestone snapshots during circular buffer wrap.
+* **`emergence` & `audit_gates`**: Exercises full probe traps (`debug_trigger_probe` -> `debug_trap_tripwire` -> `DEBUG_STEP_AWAIT` -> `debug_resolve_await`) alongside `debug_audit()` isolation using `s_audit_backup`.
+
+// --- Sub-Assembly 3.2: Live Unit Emergence Snapshot (`test_debug_unit_emergence`) ---
+== Live Emergence Check (`test_debug_unit_emergence`)
+
+include::../../snapshots/snap_debug_test_unit.adoc[]
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( CTest Commands & Q&A )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Running Debugger Verification ---
+== Running the Debugger Verification Targets
+
+[source,bash]
+------
+ctest --test-dir build -L debug --output-on-failure
+ctest --test-dir build \
+  -R "^(unit_debug_|functional_debug_|integrated_debug_|system_debug_)" --output-on-failure
+------
+
+[qanda]
+Why does `system_debug_test` take slightly longer (~0.58 s) than pure arithmetic unit tests?::
+  `system_debug_test` exercises full snapshot dumps, forensic cards, multi-cycle ring rotations, probe evaluations, and disk/ROM profile transitions across the integrated stack cleanly inside CTest.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Continue Reading
+
+* Revisit debugger implementation: link:01_debug_engine_and_probes.adoc[`debug.h` + `debug.c`]
+* Advance to the next root pillar: link:../io_pipeline.adoc[Layer 0 Zero-Heap I/O Pipeline Overview]

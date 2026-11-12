@@ -1,0 +1,57 @@
+[[snap_plate_snap_gui_types_sub2_3]]
+.Layer 2 640x360 Viewport & 2.5D Movie Reel Data Structures (gui_types.h Sub-Assembly 2.3) (`engine/include/viewport/raster/gui_types.h#L138-L185` · Mode: `Subassembly`)
+[source,c,linenums,start=138]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Structural Entity & Object Definitions
+--------------------------------------------------------------------------------
+Core types, layout bounding rectangles, color models, view modes, and widget
+structures for the desktop presentation engine.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @enum gui_screen_mode
+ * @brief Presentation screen views and modal navigation states.
+ *
+ * For Designers:
+ * Represents the 5 primary game screens accessible via the top navigation tabs:
+ * Tactical Grid, Hero Dossier, Inventory, Provincial Map, and Chronicle Codex.
+ *
+ * For Programmers:
+ * Bounded enumerator indexed [0, 4] matching tab descriptors.
+ */
+typedef enum gui_screen_mode {
+    GUI_SCREEN_TACTICAL = 0,    /**< 2.5D / 2D Tactical battlefield & combat */
+    GUI_SCREEN_STATUS,          /**< Full protagonist dossier & attributes */
+    GUI_SCREEN_INVENTORY,       /**< Bag, key items, Grandma's Watch */
+    GUI_SCREEN_WORLD_MAP,       /**< Provincial realm topology & travel */
+    GUI_SCREEN_CHRONICLE        /**< Complete lore codex & history of deeds */
+} gui_screen_mode_t;
+
+/**
+ * @struct gui_tab
+ * @brief Top navigation tab descriptor.
+ *
+ * For Designers:
+ * A clickable header tab bar button linking directly to a primary screen.
+ *
+ * For Programmers:
+ * Bounded rectangular button descriptor with single hotkey accelerator.
+ */
+typedef struct gui_tab {
+    int x;
+    int y;
+    int width;
+    int height;
+    const char *label;
+    gui_screen_mode_t screen;
+    char hotkey;
+} gui_tab_t;
+
+------
+
+_Canonical non-anonymous structs driving screens, palettes, layouts, and dimetric depth sorting._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L138-L448`) -> <<snap_wholesale_snap_gui_types_sub2_3,Appendix: Layer 2 640x360 Viewport & 2.5D Movie Reel Data Structures (gui_types.h Sub-Assembly 2.3)>>.]

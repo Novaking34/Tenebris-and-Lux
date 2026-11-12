@@ -1,0 +1,71 @@
+[[snap_plate_snap_manifest_ladder_sub2_1]]
+.Cornerstone Fall-Down Stairs Portability Ladder (C23/C17/C11 & C++20/17) (`engine/include/core/manifest.h#L82-L143` · Mode: `Subassembly`)
+[source,c,linenums,start=82]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.1: Pre-Conditions, Progressive Standard Macros & Buffer Limits
+--------------------------------------------------------------------------------
+Compile-time sizing limits for registry module nodes, dependencies, rules, and
+Cornerstone's "Fall-Down" ISO C23 / C17 / C11 + C++20 / C++17 capability macros.
+
+For Designers:
+Allows Cornerstone to take advantage of modern compiler safety checks on current
+hardware while stepping cleanly onto older systems without legacy clutter. Also
+bounds the engine registry to up to 32 major systems, 8 core rules, and 4 links.
+
+For Programmers:
+- Guarantees 100% zero-heap allocation (ALLOC_ZERO_HEAP) in .rodata and .bss.
+- Exposes CS_C_STD_TIER (23/17/11/0) and CS_CXX_STD_TIER (20/17/11/0) plus
+  graceful ISO attribute fall-down macros (CS_NODISCARD, CS_MAYBE_UNUSED,
+  CS_FALLTHROUGH, CS_UNREACHABLE, CS_ALIGNOF, CS_NORETURN, CS_STATIC_ASSERT,
+  CS_HAS_EMBED) compiled cleanly without extensions under -Wpedantic.
+--------------------------------------------------------------------------------
+*/
+
+/** Active ISO C standard tier compiled for this translation unit (23, 17, 11, or 0 in C++). */
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#    define CS_C_STD_TIER 23
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201710L
+#    define CS_C_STD_TIER 17
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#    define CS_C_STD_TIER 11
+#else
+#    define CS_C_STD_TIER 0
+#endif
+
+/** Active ISO C++ standard tier when included from C++ (20, 17, 11, or 0 in C). */
+#if defined(__cplusplus) && __cplusplus >= 202002L
+#    define CS_CXX_STD_TIER 20
+#elif defined(__cplusplus) && __cplusplus >= 201703L
+#    define CS_CXX_STD_TIER 17
+#elif defined(__cplusplus)
+#    define CS_CXX_STD_TIER 11
+#else
+#    define CS_CXX_STD_TIER 0
+#endif
+
+/** Marks return values that callers MUST inspect (C23/C++17+ [[nodiscard]], C11/17 floor empty). */
+#if (CS_CXX_STD_TIER >= 17) || (CS_C_STD_TIER >= 23)
+#    define CS_NODISCARD [[nodiscard]]
+#else
+#    define CS_NODISCARD
+#endif
+
+/** Silences unused-entity diagnostics cleanly on intentional dormant/platform helpers. */
+#if (CS_CXX_STD_TIER >= 17) || (CS_C_STD_TIER >= 23)
+#    define CS_MAYBE_UNUSED [[maybe_unused]]
+#else
+#    define CS_MAYBE_UNUSED
+#endif
+
+/** Annotates explicit switch-case fall-through cleanly under -Wextra -Wpedantic. */
+#if (CS_CXX_STD_TIER >= 17) || (CS_C_STD_TIER >= 23)
+#    define CS_FALLTHROUGH [[fallthrough]]
+#elif defined(__GNUC__) && (__GNUC__ >= 7)
+#    define CS_FALLTHROUGH __attribute__((fallthrough))
+------
+
+_Compile-time standard detection establishing C23/C17/C11 and C++20/C++17 parity without legacy shims._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L82-L194`) -> <<snap_wholesale_snap_manifest_ladder_sub2_1,Appendix: Cornerstone Fall-Down Stairs Portability Ladder (C23/C17/C11 & C++20/17)>>.]

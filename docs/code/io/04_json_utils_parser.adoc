@@ -1,0 +1,118 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/io/04_json_utils_parser.adoc
+@id            docs.code.io.json_utils
+@layer         Documentation / Volume V: Paired Module (json_utils.h + json_utils.c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Zero-Heap Single-Pass JSON Scanner (`cog.json_utils`)
+@role          Paired Documentation for json_utils.h and json_utils.c
+@audience      Designers, Data Modders, C/Rust Engineers
+@snapshots     uses: snap_io_json_utils_sub3_1
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Zero malloc, zero idle static scratch bloat (144 B .bss s_json_state).
+               3. Bounded nesting depth <= 32 on caller stack; payload <= 64 KiB.
+================================================================================
+////
+
+= Paired Module: Zero-Heap JSON Scanner (`json_utils.h` + `json_utils.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( File Pair Contract & Chassis Profile )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Module Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.json_utils`)
+
+| Public Contract (`.h`)
+| `engine/include/io/json_utils.h` (1,205 lines) — token/object/array span locators, typed getters, policy contracts, probes, and lifecycle hooks.
+
+| Runtime Engine (`.c`)
+| `engine/src/io/json_utils.c` (3,092 lines) — string-escape-aware single-pass parser, depth guards, and zero-static-buffer scanning.
+
+| Chassis Footprint
+| `.bss 144 B` (`s_json_state`) + `.rodata 5,740 B` + zero function-local static scratch buffers; stack depth capped at `<= 32`.
+
+| Policy Config
+| `engine/config/io/loader_contracts.json` (`probes: io.json.* -> DEBUG_STEP_AWAIT`).
+|===
+
+// --- Sub-Assembly 2.2: Why Span Scanning Beats DOM Trees in C ---
+Standard JSON libraries allocate dozens or hundreds of tiny heap nodes per file—making fragmentation unavoidable and deterministic memory budgeting nearly impossible. `json_utils.[ch]` skips building a heap DOM altogether: it walks raw JSON text in a single pass over caller memory (`O(N)`), tracks nesting safely up to depth `32`, and returns exact `(ptr, len)` spans ready for zero-copy slicing.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Token Locators, Typed Getters, Arrays & Span Extractors )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Token Locator & Span API (`Sub-Assemblies 3.1–3.4`) ---
+== Single-Pass Token Locators & Typed Extractors (`Sub-Assemblies 3.1–3.4`)
+
+`Sub-Assembly 3.1` locates bounded child `{ ... }` and `[ ... ]` byte ranges cleanly inside any slice without mutating the source text (essential when scanning immutable `.rodata` ROMs!):
+
+include::../../snapshots/snap_io_json_utils_sub3_1.adoc[]
+
+[cols="2,4",options="header"]
+|===
+| Sub-Assembly | Core Capabilities
+
+| Nested Value Getters (`3.2`)
+| `json_get_string()`, `json_get_int()`, `json_get_size_t()`, `json_get_float()`, `json_get_bool()`, plus scoped `json_find_object()` and `json_get_object_*()` helpers.
+
+| Array Scanning (`3.3`)
+| `json_find_array()`, `json_array_get_count()`, `json_array_get_string()`, and `json_array_get_object()` for indexed table iteration.
+
+| Span-Bounded Scanners (`3.4`)
+| `json_get_{string,int,size_t,float,bool}_span()` scan strictly inside a `[start, start+len)` boundary—forming the backbone of `master_loader`'s `block_3_body` isolation.
+
+| Runtime Policy (`3.4`)
+| `json_utils_load_policy()`, `json_utils_get_policy()`, and `json_utils_set_policy()` synchronize token/depth limits from `loader_contracts.json`.
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Validation, Probes & Self-Audit )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Structural Guards & Probes (`Blocks 4 & 5`) ---
+== Structural Guards & Validation Probes (`Sub-Assemblies 4.1–5.2`)
+
+* `json_validate_span()` and `json_utils_enforce_valid_span()` reject truncated strings, unbalanced braces, or excessive nesting before domain extractors read bad keys.
+* `json_utils_validate_policy_contract()`, `json_utils_register_debug_probes()` (3 probes in `s_json_probes[3]`), `json_preflight()`, and `json_utils_audit()` wire syntax/depth breaches cleanly into `cog.debug`.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Readings ---
+== Continue in `io/`
+
+* Next layer (5-block contract enforcer): link:05_master_loader_hydration.adoc[`master_loader.h` + `master_loader.c`]
+* Shared ROM span resolver: link:06_io_fallback_bios_and_rom.adoc[`io_fallback.h` + `io_fallback.c`]
+

@@ -1,0 +1,115 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Engineering Milestone & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/dev_logs/2026/11/architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc
+@id            docs.devlog.018
+@layer         Documentation / Engineering Chronology (Volume VI)
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-10
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Standalone Engine Config Decoupling & Block 1/2 Standardization
+@role          Chronological Milestone Record (Commits 489c3b6 v0.1.1 .. d552752)
+@audience      Engine Architects, Systems Programmers, Tooling Maintainers
+@snapshots     n/a (structural engine refactoring milestone)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Strict engine/ vs game/ config separation & VFS override precedence.
+               3. Movement-resilient @id tags paired with @chassis/@scale/@seams.
+================================================================================
+////
+
+= DevLog 018: Standalone Engine Config Decoupling & Rev 5 Block 1/2 Standardization
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.1.1-dev, 2026-11-10
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Milestone Context, Releases & Core Transformations )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Milestone Synopsis ---
+[NOTE]
+====
+*Volume VI — Engineering Chronology (DevLog 018)* +
+*Milestone Date:* 2026-11-10 | *Baseline Commits:* `489c3b6` (`tag: v0.1.1`) → `d552752` +
+*Series Navigation:* link:../lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[← DevLog 017] | link:../README.adoc[Nov 2026 Index] | link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[DevLog 019 →]
+
+Tagged as **`v0.1.1`**, this milestone physically severed engine baseline mechanics from RPG domain lore, codified the **Rev 5 Block 1 Growth Schema** and **Block 2 `extern "C"` Header Discipline**, modularized the Rust pre-flight validator, and resolved include-hierarchy discontinuities across every translation unit in `engine/src/`.
+====
+
+toc::[]
+
+// --- Sub-Assembly 2.2: Commit Record ---
+[cols="1,1,4",options="header"]
+|===
+| Commit | Date | Scope & Architectural Deliverable
+
+| `489c3b6` (`v0.1.1`)
+| 2026-11-10
+| `feat(engine):` Decoupled standalone `engine/config/` from `game/data/`, modularized Rust `validator/`, formalized `engine/config/standards/blocks/block_1..5.json`, and rolled out Rev 5 Block 1 telemetry across headers.
+
+| `d552752`
+| 2026-11-10
+| `refactor(engine):` Standardized Block 2 opening blocks (`extern "C"` placement, 3-tier include hierarchy, C++-safe struct zero-initialization) and resolved module discontinuities across `engine/src/`.
+|===
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Standalone Config VFS, Block 1 Telemetry & Block 2 Hygiene )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Dual Data Taxonomy & Standalone Engine Configs ---
+== 1. Separating Engine Mechanics (`engine/config/`) from Game Lore (`game/data/`)
+
+Before `v0.1.1`, presentation profiles, viewport themes, audio channels, and core math configs lived alongside gameplay data. Because Cornerstone (`engine/`) must boot and power completely different games without `game/` present, baseline engine configurations were extracted cleanly into `engine/config/` while reserving `game/data/` strictly for Sacyra lore and RPG content:
+
+* **Standalone Mechanical Tree:** Organized `engine/config/` across `viewport/`, `audio/`, `input/`, `runtime/` (`math/`, `time/`, `string/`), `diagnostics/` (`telemetry/`, `debugger/`, `taxonomy/`, `formats/`), and `standards/` (`manifest.json`, `subsystems.json`, `blocks/block_1..5.json`).
+* **Layered VFS Resolution (`path_finder`):** Established deterministic override search order—(1) `game/config/<rel_path>`, (2) `engine/config/<rel_path>`, and (3) `game/data/presentation/config/<rel_path>`—so game customizations override engine defaults without duplicating shared machinery.
+
+// --- Sub-Assembly 3.2: Rev 5 Block 1 Growth Schema & Block 2 Normalization ---
+== 2. Movement-Resilient Metadata & Unified Block 2 Opening Contracts
+
+To turn file headers into real-time scaling radar rather than static boilerplate, `engine/config/standards/blocks/block_1_metadata.json` introduced the Rev 5 **Block 1 Growth Schema**:
+
+* **Movement-Resilient `@id` vs. Volatile `@file` / `@layer`:** Stopped baking folder paths into `@id` (`core.util.*`), moving every cog toward invariant logical identifiers (`cog.<module>`) while tracking current paths and compilation strata separately.
+* **Growth Telemetry Tags:** Every Block 1 header declares `@maturity`, `@chassis` (measured `.bss`/`.data`/`.rodata`/stack footprints), `@scale` (Big-O & hard config levers), and `@seams` (`in: cfg/rom | uses: deps | probes: ... -> DEBUG_STEP_AWAIT | dag: ...`).
+* **Block 2 Strict Hygiene (`d552752`):** Placed `_POSIX_C_SOURCE 200809L` cleanly above Block 2 in POSIX sources, enforced the **3-Tier Downward Include Hierarchy** (ISO C stdlib → Tier 2 External [X11 in Layer 2 only] → Tier 3 Internal Engine), moved `extern "C" {` strictly *below* `#include` directives in headers, and replaced empty `{0}` aggregates with clean `.bss` zero-initialized singletons so C and C++ compilers agree identically.
+
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Modular Validator & Cross-Unit Audits )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Validator Modularization & Seam Sweeps ---
+== 3. Validator Modularization & Header Contract Verification
+
+* **Modular Rust Validator (`tools/src/validator/`):** Split monolithic checks into domain modules (`blocks.rs`, `config.rs`, `headers.rs`, `git_commit.rs`), validating JSON 5-block schemas (`engine/config/standards/blocks/block_1..5.json`) alongside all `44` registered Cornerstone engine headers in `engine/config/standards/subsystems.json`.
+* **Zero Discontinuities:** Swept `engine/src/` under strict `-Wall -Wextra -Wpedantic` to eliminate stray includes, broken guard naming, and `.h`/`.c` `@system` drift.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Structural Readiness for BIOS/ROM Vaults & Next Steps )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Horizon ---
+== 4. Readiness for Tier-0 BIOS & `.rodata` ROM Vaults
+
+With `engine/config/` cleanly separated, validator contracts machine-checked, and Block 1/Block 2 interfaces unified, the engine was ready to compile `engine/config/` JSON payloads straight into `.rodata` Config ROM vaults and wire Safe-Mode downgrade probes across `log/`, `debug/`, and `io/` (DevLog 019).
+
+*Navigation:* link:../lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[← DevLog 017] | link:../README.adoc[Nov 2026 DevLog Index] | link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[Next: DevLog 019 →]
+

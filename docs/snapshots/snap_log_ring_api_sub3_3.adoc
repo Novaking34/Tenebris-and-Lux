@@ -1,0 +1,49 @@
+[[snap_plate_snap_log_ring_api_sub3_3]]
+.Flight Recorder Formatted Entry Dispatch API (log.h Sub-Assembly 3.3) (`engine/include/log/log.h#L406-L445` · Mode: `Subassembly`)
+[source,c,linenums,start=406]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.3: Formatted Entry Dispatch Cogs
+Mission: Format, serialize, and emit structured flight recorder entries.
+@triggers
+  - Tripwires      : LOG_TRIPWIRE_SETTING_INVALID / BOUNDS_VIOLATION -> probe "log.write_telemetry"
+  - Block 4 Audits : log_validate_telemetry_integrity(), log_preflight()
+  - Layer 4 Tests  :
+      * tests/unit/log/test_log_unit.c
+        [Section 3: INVARIANTS & CONSTRAINTS / test_log_unit_assertions_and_guarantees]
+        [Section 4: RING BUFFER FIFO OVERWRITE & FILE ROTATION / test_log_unit_emergence]
+      * tests/functional/test_log_functional.c
+        [Section 3: INVARIANTS & SATURATION / test_log_functional_assertions_and_guarantees]
+      * tests/integrated/test_log_integrated.c
+        [Section 4: CATEGORICAL DISK ROUTING & HUD RING BUFFER / test_log_integrated_emergence]
+      * tests/system/test_log_system.c
+        [Section 1: NOMINAL HIGH-THROUGHPUT BURST / test_log_system_always_pass]
+        [Section 3: FIXED-WIDTH REGEX DETERMINISM / test_log_system_assertions_and_guarantees]
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Emits a structured log entry into the ring buffer, file, and console.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Writes an event to the game's flight recorder journal, capturing the character involved,
+ * their current moral balance percentage, and what action took place.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Formats a fixed-column log record with microsecond monotonic timestamp and ISO 8601 UTC time,
+ * pushes it to the static circular ring buffer, and writes to disk archives with zero heap allocation.
+ *
+ * @param[in] severity Graded severity level.
+ * @param[in] category Target functional category.
+ * @param[in] entity   Entity/Actor label (e.g. "Player", "Companion", "System").
+ * @param[in] grade    Normalized grade [-1.0f .. +1.0f] (e.g. alignment sway or vitals).
+ * @param[in] file     Source file name (__FILE__).
+ * @param[in] line     Source line number (__LINE__).
+ * @param[in] func     Source function name (__func__).
+ * @param[in] fmt      Printf-style format string.
+------
+
+_Public categorized log macros and fixed-stack formatting interface for engine and game channels._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L406-L484`) -> <<snap_wholesale_snap_log_ring_api_sub3_3,Appendix: Flight Recorder Formatted Entry Dispatch API (log.h Sub-Assembly 3.3)>>.]

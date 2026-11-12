@@ -1,0 +1,144 @@
+{
+  "block_1_metadata": {
+    "schema": "tenlux.data.adoc_5block_standard.v1",
+    "id": "docs.standards.adoc_5block",
+    "version": "0.2.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-12",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Universal 5-Block Protocol specification for AsciiDoc technical, architectural, and game-design documentation",
+    "invariants": [
+      "Comment Syntax Purity: Multi-line Block 1..5 banners use native AsciiDoc block comments (//// ... ////); Sub-Assembly dividers use single-line comments (// --- Sub-Assembly X.Y: ... ---).",
+      "Valid Asciidoctor Header Order: BLOCK 1 ////...//// precedes line 1 (= Document Title), keeping {doctitle}, {author}, {revnumber}, and :toc: natively valid in standalone asciidoctor.",
+      "Zero Comment Leakage: All ////...//// blocks and non-fence // lines are omitted by Asciidoctor HTML/PDF and stripped cleanly by tools/src/guide.rs during Markdown compilation.",
+      "Section Depth Discipline: Standalone chapters start internal headings at == (level 1); guide.rs automatically shifts chapters +1 under Book chapters so PDF output never creates spurious chapter page breaks.",
+      "Snapshot Traceability: Embedded code listings reference verified IDs from docs/code_snapshots_manifest.json via include::../snapshots/<id>.adoc[] so both inline excerpts and Wholesale Appendix plates stay live."
+    ]
+  },
+  "block_2_types": {
+    "comment_tokens": {
+      "block_fence": "////",
+      "line_comment": "//",
+      "subassembly_prefix": "// --- Sub-Assembly ",
+      "callout_c_style_suffix": "// <N>",
+      "callout_hash_style_suffix": "# <N>"
+    },
+    "required_block_headers": [
+      "BLOCK 1: METADATA BLOCK",
+      "BLOCK 2: OPENING BLOCK",
+      "BLOCK 3: BODY BLOCK",
+      "BLOCK 4: AUDIT BLOCK",
+      "BLOCK 5: CLOSING BLOCK"
+    ],
+    "block1_tags": [
+      "@project",
+      "@file",
+      "@id",
+      "@layer",
+      "@version",
+      "@interface_rev",
+      "@date",
+      "@author",
+      "@repository",
+      "@system",
+      "@role",
+      "@audience",
+      "@snapshots",
+      "@invariants"
+    ],
+    "recommended_asciidoc_features": [
+      "[NOTE], [TIP], [IMPORTANT], [WARNING] delimited example blocks (====)",
+      "[source,<lang>,linenums,start=<N>] synchronized code plates with callout lists (<1>, <2>)",
+      "**** delimited sidebars for Designer Box / Engineer Deep-Dive callout panels",
+      "[cols=\"...\",options=\"header\"] tables using a| AsciiDoc rich cells where lists/code appear in table cells",
+      "[qanda] definition lists for onboarding Q&A and self-audit checks",
+      "[[anchor]] explicit cross-references and ifdef::has-snapshot-appendix[] wholesale links"
+    ]
+  },
+  "block_3_body": {
+    "template_blocks": {
+      "block_1": [
+        "////",
+        "================================================================================",
+        "BLOCK 1: METADATA BLOCK",
+        "( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )",
+        "================================================================================",
+        "@project       Tenebris and Lux",
+        "@file          <docs-relative path>",
+        "@id            <docs.<area>.<slug>>",
+        "@layer         <Documentation / Volume N: Title>",
+        "@version       0.2.0-dev",
+        "@interface_rev Rev 5",
+        "@date          YYYY-MM-DD",
+        "@author        CreativeWorkzStudio LLC / ProfessorSeanEX",
+        "@repository    https://github.com/Novaking34/tenebris-lux",
+        "@system        <Subject Subsystem or Design Pillar>",
+        "@role          <Pedagogical & Technical Scope>",
+        "@audience      <Designers, Writers, Gameplay Scripters, C/Rust Engineers>",
+        "@snapshots     <comma-separated snapshot IDs or none>",
+        "@invariants    1. <Document-specific invariant>",
+        "================================================================================",
+        "////"
+      ],
+      "block_2": [
+        "= <Document Title>",
+        "CreativeWorkzStudio LLC / ProfessorSeanEX",
+        "v0.2.0-dev, YYYY-MM-DD",
+        ":toc: macro",
+        ":icons: font",
+        ":source-highlighter: rouge",
+        "",
+        "////",
+        "================================================================================",
+        "BLOCK 2: OPENING BLOCK",
+        "( Document Attributes, Opening Framing & Audience Orientation )",
+        "================================================================================",
+        "////",
+        "",
+        "// --- Sub-Assembly 2.1: Standalone Document Attributes & Defaults ---",
+        "",
+        "// --- Sub-Assembly 2.2: Opening Framing & Quick Orientation ---"
+      ],
+      "block_3": [
+        "////",
+        "================================================================================",
+        "BLOCK 3: BODY BLOCK",
+        "( Core Concepts, Architecture Diagrams, Data Tables & Code Snapshot Plates )",
+        "================================================================================",
+        "////"
+      ],
+      "block_4": [
+        "////",
+        "================================================================================",
+        "BLOCK 4: AUDIT BLOCK",
+        "( Verification Matrix, Reader Checkpoints & Executable Inspection Commands )",
+        "================================================================================",
+        "////"
+      ],
+      "block_5": [
+        "////",
+        "================================================================================",
+        "BLOCK 5: CLOSING BLOCK",
+        "( Cross-Volume Navigation, Next Readings & Wholesale Code References )",
+        "================================================================================",
+        "////"
+      ]
+    }
+  },
+  "block_4_audit": {
+    "verification_checks": [
+      "asciidoctor --failure-level=WARN -o /dev/null <file.adoc>",
+      "tl_tools guide (or master_guide --all) produces clean .adoc, .md, and .pdf without orphaned headings or raw //// fences"
+    ]
+  },
+  "block_5_closing": {
+    "status": "ACTIVE_STANDARD",
+    "adopted_rev": "Rev 5",
+    "applies_to": [
+      "docs/architecture/*.adoc",
+      "future design specs, code tours, and lore manuscripts"
+    ]
+  }
+}
+

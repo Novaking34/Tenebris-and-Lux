@@ -1,0 +1,144 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/io/06_io_fallback_bios_and_rom.adoc
+@id            docs.code.io.fallback
+@layer         Documentation / Volume V: Paired Module (io_fallback.h + io_fallback.c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Safe-Mode I/O BIOS & .rodata ROM Vault (`cog.io.fallback`)
+@role          Paired Documentation for io_fallback.h and io_fallback.c
+@audience      Designers, QA Engineers, Systems Architects
+@snapshots     uses: snap_io_fallback_bios_group, snap_io_fb_json_group
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Zero-disk boot via 8 compiled .rodata ROMs in io_config_rom.h.
+               3. Bounded 8,312 B .bss chassis + 40,256 B .rodata + <= 1 KiB stack.
+================================================================================
+////
+
+= Paired Module: Safe-Mode I/O BIOS & ROM Vault (`io_fallback.h` + `io_fallback.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( File Pair Contract, BIOS Isolation & Memory Envelope )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Module Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.io.fallback`)
+
+| Public Contract (`.h`)
+| `engine/include/io/io_fallback.h` (1,519 lines) — `IO_ERR_*` codes, `io_fallback_config_t`, `io_fb_vfs_routes_t`, shared safe JSON parsers, ROM vault lookup, unified emergency cogs, and BIOS boot/downgrade controls.
+
+| Runtime Engine (`.c`)
+| `engine/src/io/io_fallback.c` (3,355 lines) — standalone floppy-grade I/O engine operating cleanly when `fs_utils`, `path_finder`, `json_utils`, or `master_loader` fail or disk assets are absent.
+
+| Controlled Chassis
+| `.bss 8,312 B` (`s_io_fb`) + `.rodata 40,256 B` (8 embedded I/O ROMs generated into `io_config_rom.h`) + stack `<= 1 KiB`.
+
+| Seams & Archetype
+| `quarantined_fallback \| stateful` \| `in: io_config_rom.h` \| `uses: cog.log.fallback, cog.debug.fallback` \| `probes: io_fallback.* -> DEBUG_STEP_AWAIT` \| `dag: io.fallback_bios`
+|===
+
+// --- Sub-Assembly 2.2: Why I/O Has Its Own Bootable BIOS ---
+**For Designers & Playtesters**: Deleting or breaking `engine/config/io/` on disk does not brick Cornerstone. Instead, `io_fallback` acts like a motherboard BIOS stored directly inside read-only binary memory (`.rodata`): it still knows every VFS search route, still extracts fields from `block_3_body`, logs the missing disk file via `log_fallback`, and hands diagnostics straight to `debug_fallback` / `DEBUG_STEP_AWAIT`.
+
+**For Systems Programmers**: `io_fallback.[ch]` obeys strict quarantine boundaries (`*_fallback.[ch]` convention). Notice that its shared JSON body parser (`io_fb_resolve_body_span()`, `io_fallback_parse_vfs_routes_json()`) also feeds the full-featured I/O stack when booting from ROM, eliminating duplicate parser logic while preventing circular dependencies with `master_loader` or `path_finder`.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Shared Safe-Mode JSON Parser, .rodata ROM Vault & Unified Recovery Cogs )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Shared Safe-Mode JSON Parsers (`Sub-Assembly 3.1`) ---
+== Shared ROM-Safe JSON Policy Parsers
+
+Because disk configuration might be unreachable or unreadable during boot, `Sub-Assembly 3.1` parses JSON byte spans directly inside read-only `.rodata` memory without scratch arrays on the heap:
+
+include::../../snapshots/snap_io_fb_json_group.adoc[]
+
+* `io_fb_resolve_body_span()` isolates `block_3_body` bounds cleanly inside immutable ROM text.
+* `io_fallback_parse_vfs_routes_json()` extracts `io_fb_vfs_routes_t` search domains (`config`, `data`, `assets`) deterministically into `.bss` so even floppy Safe-Mode resolves logical routes accurately.
+
+// --- Sub-Assembly 3.2: Compiled `.rodata` Vault (`rom://io`) ---
+== Compiled `.rodata` Config ROM Vault (`Sub-Assembly 3.2`)
+
+At build time, `cmake/GenerateConfigRom.cmake` compiles **8 canonical `engine/config/io/*.json` files** into `io_config_rom.h` totaling `40,256 B` of read-only `.rodata`. `Sub-Assembly 3.2` exposes O(1)/bounded name resolution over `rom://io`, allowing `path_finder` and `master_loader` to hydrate identical JSON contracts whether loaded from disk or emergency binary memory.
+
+// --- Sub-Assembly 3.3: Unified Safe-Mode Cogs & Fault Ring ---
+== Unified 4-Pillar Emergency Cogs (`Sub-Assembly 3.3`)
+
+`Sub-Assembly 3.3` consolidates minimalist emergency fallbacks for **all four I/O operational pillars** inside one ring-buffered state block (`s_io_fb`, `8,312 B`):
+
+1. **Bounded Read Fallback**: Safe bounds-checked file/memory slice copies rejecting overflow (`IO_ERR_*`).
+2. **Route Fallback**: Resolves canonical domain priorities using `io_fb_vfs_routes_t` hydrated from `io_config_rom.h`.
+3. **Token/Span Fallback**: Minimal key lookup inside validated `block_3_body` slices.
+4. **Fault Ring Buffer**: Captures failure provenance (`loaded_from_data = false`), error codes, and path breadcrumbs without losing early faults before `cog.log` is even online.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Fallback Probes & Safe-Mode Verification )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Registered BIOS Probes (`s_io_fb_probes[2]`) ---
+== Autonomous Probes & Safe-Mode Inspection (`Block 4`)
+
+`Sub-Assembly 4.1` maintains `s_io_fb_probes[2]` bound to `cog.debug.fallback` under the `io_fallback.*` namespace. When disk configuration corruption triggers emergency takeover, `io_fallback_downgrade_safe_mode()` emits structured fault cards across both `log_fallback` and `debug_fallback` so `DEBUG_STEP_AWAIT` pauses inspection cleanly on the root cause rather than masking missing files.
+
+`Sub-Assembly 4.2` verifies ROM vault integrity, `io_fallback_config_t` sanity, and active fault counts before signaling readiness up to `io_audit()`.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Dump Cards, Floppy Boot Controls & Deterministic Reset )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1 & 5.2: BIOS Boot & Downgrade Lifecycle ---
+== BIOS Boot, Floppy Mode & Deterministic Teardown (`Block 5`)
+
+include::../../snapshots/snap_io_fallback_bios_group.adoc[]
+
+[cols="2,4",options="header"]
+|===
+| Control Hook | Operational Role
+
+| `io_fallback_boot()`
+| Standard BIOS startup hydrating `io_config_rom.h` tables into `s_io_fb`.
+
+| `io_fallback_boot_floppy()`
+| Explicit zero-disk minimal boot mode testing zero external filesystem reliance.
+
+| `io_fallback_downgrade_safe_mode()`
+| Transitions active failure into read-only Safe-Mode ROM service and trips `io_fallback.*` debug probes.
+
+| `io_fallback_teardown()` / `io_fallback_is_booted()`
+| Shuts down the fallback chassis cleanly or queries live BIOS readiness state.
+
+| `io_fallback_reset_for_testing()`
+| Deterministic Layer 4 test reset scrubbing `s_io_fb` cleanly between unit/system test cases.
+|===
+
+* Back to link:README.adoc[Layer 0 I/O Folder Index] or link:05_master_loader_hydration.adoc[Previous Module: `master_loader.h` + `master_loader.c`].
+* Next document: link:07_io_testing_and_downgrades.adoc[Layer 4 I/O Testing & Downgrade Drills].
+

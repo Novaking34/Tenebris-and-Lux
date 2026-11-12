@@ -1,0 +1,120 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Ludonarrative Milestone & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/dev_logs/2026/11/lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc
+@id            docs.devlog.017
+@layer         Documentation / Engineering Chronology (Volume VI)
+@version       0.1.1-dev
+@interface_rev Rev 5
+@date          2026-11-09
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Orthogonal 35 Classes / 28 Jobs, Generational War & 4D Dream Clock
+@role          Canon Reconciliation & Layer 1 Progression Architecture Record
+@audience      Designers, Lore Writers, Gameplay Engineers
+@snapshots     n/a (lore & simulation design milestone)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Strictly separates Class (Combat Domain) vs. Job (World Vocation).
+               3. True Ending ("The Ugly Truth") requires 4D DREAM_CLOCK_ON receipts.
+================================================================================
+////
+
+= DevLog 017: Orthogonal 35 Classes, 28 Jobs, Generational War & 4D Dream Clock
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.1.1-dev, 2026-11-09
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Chronological Context, Reconciliations & Design Overview )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Milestone Synopsis ---
+[NOTE]
+====
+*Volume VI — Engineering Chronology (DevLog 017)* +
+*Milestone Date:* 2026-11-09 | *Canonical Sources:* link:../../../offline_work/Offline-Work-5.adoc[Offline Work 5] & link:../../../offline_work/Offline-Work-6.adoc[Offline Work 6] +
+*Series Navigation:* link:../architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc[← DevLog 016] | link:../README.adoc[Nov 2026 Index] | link:../architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[DevLog 018 →]
+
+This lore-and-systems milestone synthesizes **Offline Work 5** and **Offline Work 6**, resolving ambiguities inherited from the 2017–2018 RPG Maker MV archives (`Folder 1` and `Folder 2`), codifying the **35-Class Pascal Pyramid** alongside the **28-Job 5-Pillar Vocation Compendium**, framing the **10-to-20-year Generational War** under the **Two-Pass Grand Tour**, and specifying the zero-heap **4D Dream Clock** state contracts.
+====
+
+toc::[]
+
+// --- Sub-Assembly 2.2: Master Guide Canon Reconciliations ---
+== 1. Resolving 2017–2018 Demo & Early Documentation Ambiguities
+
+Cross-referencing the 2018 *classes_and_growth.adoc* tables against the full multi-route canon resolved four long-standing structural compressions:
+
+* **Flattened "7 Combat Classes" → Orthogonal Class × Job:** Legacy RPG Maker MV tables packed *Warrior, Mage, Rogue (Thief), Priest, Summoner, Hero,* and *Guard* into one list. Canon separates them into: (a) 3 Basic + 2 Advanced Base Classes (`W, M, R, P, S`), (b) **The Hero** / **The Dark One** as Tier 5 Moral Apex Classes (`±50 .. ±100`), and (c) **Guard** (*Town Sentry / Royal Man-at-Arms*) as a Civic World Vocation (**Job**).
+* **Protagonist Titles vs. Unofficial Classes:** *"Vanguard of Lux"*, *"Outrider of Tenebris"*, and *"Secret Chronicler"* are narrative focalizations. Mechanically in-story, Elijah and Katrina are multi-domain **Trainees** (`W+M+R`), while `<chosen_name>` is Chrono's initiate **Mystic** (`P+S`). Playthrough 1 grants single-domain "training wheels"; clearing the campaign unlocks official Hard-Mode **Trainee** (`2.2×` EXP) and **Mystic** (`1.8×` EXP) in New Game+.
+* **Sir Roté's Dual Designation:** Recognized cleanly through Class vs. Job orthogonality—Roté's **Class** is **Priest**, while his Crown **Job** is **Border Outrider / Court Herald**.
+* **Antagonist Identity & Class:** Confirms **Usuru** (personal name), **The Dark Lord** (title), and **The Dark One** (literal Tier 5 Moral Evil Apex Class at `-100 .. -50`).
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Orthogonal Pyramid, 28 Jobs, Adolescent Crucible & Two-Pass Grand Tour )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: 35-Class Pyramid & 28-Job Vocation Engine ---
+== 2. Orthogonal Character Engine: 35 Classes & 28 World Jobs
+
+[cols="1,3",options="header"]
+|===
+| Progression Axis | Canonical Rules & Static Bitmask Representation
+
+| *Class (Combat Domain)*
+| 5-Tier combinatorial pyramid governed by Pascal's Triangle (`C(5,1)=5`, `C(5,2)=10`, `C(5,3)=10`, `C(5,4)=5` Paragons, plus 2 Special Initiates and 3 Cosmic Apex Classes = `35` total `class_id_t` values). Unlocks permanent muscle-memory skills and passive traits. Remaining inside `[-50, +50]` (**Bystander Corridor**) caps progression at Tier 4 Paragons (`High Justiciar`..`Ascendant Mystic`).
+
+| *Job (World Vocation)*
+| `28` vocations (`job_id_t`) across **5 Societal Pillars**: Frontier Labor (1–6), Civic/Military/Law (7–12), Scholarship/Trade/Underworld (13–18), Ecclesiastical Faith (19–23), and Ecology/Veil Seers (24–28). Enforces the **"No Starter Job in Dio Village"** rule (`JOB_NONE_DIO_VILLAGE` until crossing into Whispering Woods). Rank 1–4 tools swap with active station kits; Rank 5 banks permanent Mastery Perks into `banked_job_perks_mask`.
+
+| *NG+ Encore Mastery*
+| Re-selecting a previously mastered Base Class in NG+ starts mastery at `15%–25%` (*Attunement Resonance*) and awards evolved capstone skills (*Sovereign Phantom Slash*, *Cataclysmic Convergence*, *Shadow Transposition*, *Chrono's Emergency Decree*, *Astral Triad Covenant*).
+|===
+
+// --- Sub-Assembly 3.2: Adolescent Crucible, Generational War & Grand Tour ---
+== 3. Adolescent Crucible, Poisoned Mandate & Two-Pass Grand Tour
+
+* **The Youth Tragedy:** Establishing that Elijah, Katrina, and `<chosen_name>` open at **15–18 years old** illuminates the genesis catastrophe: **Usuru** was an uncommissioned **11-year-old** nomad bound to Libira's *Three-Day Law*, **Prince Mi-ren** a terrified `15–18`-year-old boy in oversized regent armor, and **Prince Casatti** a `14–17`-year-old academy rebel.
+* **The Poisoned Mandate & Midpoint Fork (Act I Climax):** Sending greenhorn protagonists on a sweeping Act I tour under King Jihad's royal writs is both a geopolitical smokescreen and a literal re-enactment of Usuru's *Three-Day Wanderer* pilgrimage (**Two-Pass Spiral World Design**). At the 50% Sacyra Castle Siege, **killing King Jihad** triggers a chaotic Neutral power vacuum, whereas **Uncorrupting Jihad** keeps him alive as a disgraced living indictment forcing institutional truth (*"The Ugly Truth"*).
+* **10-to-20-Year Maturation:** Act II (*2nd Great War*, Years 4–12, Ages 19–27) and Act III (*Sovereign Eclipse*, Years 13–20, Ages 28–35+) visibly age Dio Village and its heroes so weathered 30-year-old adults finally confront an immortal warlord still frozen inside an 11-year-old binary wound.
+
+// --- Sub-Assembly 3.3: 4D Dream Clock Registration ---
+== 4. The 4D "Dream Clock" Temporal Registration Engine
+
+Turning the Dream Clock **OFF** does not freeze story time (protagonists still age across Acts I–III and reach all **9 Standard Matrix Endings** via 3D event vectors `[Location, Action, Sway]`). Enabling **Dream Clock ON** (`DREAM_CLOCK_ON_REGISTERED`) adds the 4th coordinate (`sacyra_calendar_t` timestamp) to `story_point_receipt_t`, dynamically alters what occurs at world story points (such as intercepting couriers across Libira's 7-day lag or acting during nocturnal `20:00–04:00` Veil windows), and is mathematically required to promote the campaign into the **10th True Ending ("The Ugly Truth")**.
+
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Zero-Heap Progression & Clock Invariants )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Verified Layer 1 Data Contracts ---
+== 5. Layer 1 Zero-Heap Contract Verification
+
+* **Bitmask Density (`ALLOC_ZERO_HEAP`):** All 35 classes fit inside `uint64_t mastered_classes_mask` (`0..34`) and `uint8_t class_mastery_pct[35]`; all 28 jobs fit inside `uint32_t banked_job_perks_mask` and `uint8_t job_rank[28]` (`actor_vocation_state_t`).
+* **Temporal Compactness:** `sacyra_calendar_t`, `story_point_receipt_t`, and `campaign_chronicle_state_t` require no heap pointers and map directly onto Layer 0 `time_utils` monotonic ticks scaled by tunable `engine/config/runtime/time/` parameters.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Archival Trail & Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+*Archival Sources:* link:../../../offline_work/Offline-Work-5.adoc[Offline Work 5] | link:../../../offline_work/Offline-Work-6.adoc[Offline Work 6] +
+*Navigation:* link:../architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc[← DevLog 016] | link:../README.adoc[Nov 2026 DevLog Index] | link:../architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[Next: DevLog 018 →]
+

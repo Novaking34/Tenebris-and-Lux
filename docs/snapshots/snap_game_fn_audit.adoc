@@ -1,0 +1,71 @@
+[[snap_plate_snap_game_fn_audit]]
+.Layer 1 Deterministic Simulation State Audit (sim_state_audit) (`game/src/hero/sim_state.c#L315-L376` · Mode: `Function`)
+[source,c,linenums,start=315]
+------
+game_audit_report_t sim_state_audit(const player_state_t *state)
+{
+    game_audit_report_t report;
+    report.is_valid = true;
+    report.error_count = 0;
+    report.error_log[0] = '\0';
+
+    if (state == NULL) {
+        report.is_valid = false;
+        report.error_count = 1;
+        snprintf(report.error_log, sizeof(report.error_log),
+                 "[ERROR] Player state pointer is NULL.");
+        return report;
+    }
+
+    if (state->shield_power < 0 || state->shield_power > MAX_RESONANCE) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Shield power (%d) outside bounds [0, %d]. ",
+            state->shield_power, MAX_RESONANCE);
+    }
+
+    if (state->sword_edge < 0 || state->sword_edge > MAX_RESONANCE) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Sword edge (%d) outside bounds [0, %d]. ",
+            state->sword_edge, MAX_RESONANCE);
+    }
+
+    if (state->moral_sway < -100 || state->moral_sway > 100) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Moral sway (%d) outside bounds [-100, 100]. ",
+            state->moral_sway);
+    }
+
+    if (state->stance < 0 || state->stance >= STANCE_COUNT) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Stance enum (%d) outside valid range [0, %d). ",
+            state->stance, STANCE_COUNT);
+    }
+
+    if (state->location < 0 || state->location >= LOC_COUNT) {
+        report.is_valid = false;
+        report.error_count++;
+        snprintf(report.error_log + strlen(report.error_log),
+            sizeof(report.error_log) - strlen(report.error_log),
+            "[ERROR] Location enum (%d) outside valid range [0, %d). ",
+            state->location, LOC_COUNT);
+    }
+
+    return report;
+}
+------
+
+_Pure simulation integrity audit verifying hero stats, inventory bounds, morality sway, and world state with zero frontend dependencies._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L315-L376`) -> <<snap_wholesale_snap_game_fn_audit,Appendix: Layer 1 Deterministic Simulation State Audit (sim_state_audit)>>.]

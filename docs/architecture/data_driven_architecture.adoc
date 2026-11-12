@@ -1,115 +1,166 @@
-= Technical Specification: Data-Driven Architecture & Manifest System
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/architecture/data_driven_architecture.adoc
+@id            docs.architecture.data_driven
+@layer         Documentation / Volume V: Chapter 3
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Dual Data Taxonomy, Layered VFS & 5-Block JSON Architecture
+@role          Zero-Heap JSON Ingestion, Precedence Routing & Designer Empowerment
+@audience      Designers, Modders, Writers, Gameplay Scripters, C/Rust Engineers
+@snapshots     snap_vfs_routes_cfg_whole, snap_vfs_routes_body_block, snap_master_loader_sub3_2, snap_io_fb_json_group
+@invariants    1. Explains engine/config vs game/data separation clearly.
+               2. Demonstrates whole, block, subassembly, and group JSON/C snapshots.
+               3. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+================================================================================
+////
+
+= Data-Driven Architecture: Dual Data Taxonomy, Layered VFS & 5-Block JSON
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.1.0, 2026-11-02
-:doctype: article
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
 
-[abstract]
-== Abstract & Architectural Mandate
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes & Creator-First Framing )
+================================================================================
+////
 
-This specification establishes the **Data-Driven Subsystem** for *Tenebris and Lux*.
-Transitioning from hardcoded compile-time values to externalized, validated data files,
-this architecture enforces the **"Manifest as Main Menu" and "Files as Settings"** ontological
-pattern. This pattern enables live configuration hot-swapping, deterministic testing,
-and seamless integration between C11 Layer 0 engine utilities and high-level tools.
-It encompasses logging profiles (`data/log/`), mathematical continuum boundaries (`data/math/`),
-frame pacing budgets (`data/time/`), and lexical token disciplines (`data/string/`).
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:engine-name: Cornerstone Game Engine
+:game-name: Tenebris and Lux
 
-== 1. System Philosophy: Manifest as Main Menu
+// --- Sub-Assembly 2.2: Opening Orientation ---
+You should never need to recompile C source code just to adjust a damage curve, swap a font theme, remap controls, or tweak a debug threshold.
+*{engine-name}* is engineered so creators work in structured **5-Block JSON**, while compiled Rust tooling (`tl_tools`) and C23 zero-heap loaders keep every setting trustworthy at runtime.
 
-=== 1.1 The Menu-to-Settings Ontological Pattern
+toc::[]
 
-Traditional game configuration often conflates cataloguing with concrete configuration.
-Under the *Tenebris and Lux* architecture, a clean structural boundary is maintained:
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Dual Data Taxonomy, 3-Tier VFS Precedence & Zero-Heap JSON Ingestion )
+================================================================================
+////
 
-* **The Manifest (`manifest.json`)**: Operates as the **"Main Menu"**. It catalogs, describes,
-  indexes, and exposes selectable configuration entries (`menu_items`). It enforces invariants
-  governing which settings are available, provides default selections, and maps hotkey shortcuts.
-* **The Data Files (`*.json`)**: Operate as the concrete **"Settings"**. Each file represents a
-  fully-formed, isolated configuration state conforming directly to the underlying engine structures
-  (e.g., `log_config_t`, `math_config_t`, `time_config_t`, `string_config_t`).
+// --- Sub-Assembly 3.1: Dual Data Taxonomy ---
+[[data_taxonomy]]
+== Dual Data Taxonomy: Engine Profiles vs. Game Canon
 
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                   DATA ROOT CATALOG (data/manifest.json)               │
-│               Master index across all engine data subsystems           │
-└───────┬───────────────────┬────────────────────┬───────────────────┬───┘
-        │                   │                    │                   │
-        ▼                   ▼                    ▼                   ▼
-┌───────────────┐   ┌───────────────┐    ┌───────────────┐   ┌───────────────┐
-│    LOGGING    │   │     MATH      │    │     TIME      │   │    STRING     │
-│ data/log/     │   │ data/math/    │    │ data/time/    │   │ data/string/  │
-│ manifest.json │   │ manifest.json │    │ manifest.json │   │ manifest.json │
-└───────┬───────┘   └───────┬───────┘    └───────┬───────┘   └───────┬───────┘
-        │                   │                    │                   │
-        ▼                   ▼                    ▼                   ▼
-  - default.json      - default.json       - default.json      - default.json
-  - development.json                       - high_refresh.json
-  - production.json
-  - quiet.json
-  - combat_focus.json
-  - forensic_telemetry.json
-```
+Cornerstone strictly separates **how the machine runs** from **what story universe it runs**:
 
-=== 1.2 OmniCode 5-Block Conformance in JSON Serialization
+[cols="2,3,4",options="header"]
+|===
+| Data Domain | Canonical Root | Example Subtrees & Contents
 
-In accordance with the repository standard, every JSON data asset strictly adheres
-to the **Universal 5-Block Lifecycle Protocol**:
+| Machine Profiles (Engine)
+| `engine/config/`
+a|
+* `viewport/`: window layout, `640x360` scalers, themes, typography, assets.
+* `audio/`, `input/`: mixer channels, default keyboard & gamepad bindings.
+* `runtime/`, `io/`: math formulas, VFS routes, filesystem buffer policies.
+* `diagnostics/`, `standards/`: telemetry rules, probe matrix, 5-block specs.
 
-1. **Block 1: `_metadata`**: Identity tags (`@project`, `@file`, `@id`, `@version`, `@author`, `@invariants`).
-2. **Block 2: `_types`**: Schema specification, target C struct bindings, enum sets.
-3. **Block 3: `menu` / `profile` / `setting`**: Operational payload containing menu entries or profile parameters.
-4. **Block 4: `_audit`**: Diagnostic limits, rotation caps, and memory footprint contracts (`ALLOC_ZERO_HEAP`).
-5. **Block 5: `_navigation`**: Upstream parent manifest links and fallback targets.
+| Domain Canon (Game)
+| `game/data/`
+a|
+* `entities/`: vocations, roster templates, protagonist stats.
+* `mechanics/`: Twin Relics, combat skills, tactical terrain, dispatch scripts.
+* `world/`, `presentation/`: Libira & Sacyra provinces, UI data overrides.
+|===
 
-== 2. Active Data-Driven Subsystems
+[TIP]
+====
+*Why split these trees?* A new game built on *{engine-name}* replaces `game/data/` completely while keeping `engine/config/` intact. Meanwhile, *{game-name}* can override individual engine defaults cleanly through VFS precedence without mutating upstream engine baselines.
+====
 
-=== 2.1 Logging & Telemetry (`data/log/`)
+// --- Sub-Assembly 3.2: Layered VFS Precedence ---
+[[data_vfs]]
+== Layered VFS Precedence (`path_finder`)
 
-Defines six distinct configuration profiles (`default`, `development`, `production`,
-`forensic_telemetry`, `quiet`, `combat_focus`) controlling min severity, console ANSI echoing,
-file rotation limits, and telemetry tracking categories.
+Instead of scattering raw string paths like `../../data/foo.json` across C files, every subsystem queries logical domains through `path_finder` (`engine/include/io/path_finder.h`). For the `"config"` domain, `vfs_routes.json` defines an explicit override cascade:
 
-=== 2.2 Mathematical Continuum (`data/math/`)
+1. `game/config/<rel_path>` — Game-specific or user mod override (highest priority).
+2. `engine/config/<rel_path>` — Standalone engine baseline default.
+3. `game/data/presentation/config/<rel_path>` — Symbolic presentation linkers.
 
-Defines canonical bounds and continuum limits governing game metaphysics:
+Examine the live **`vfs_routes.json`** configuration (`whole` file tracked via Appendix A, with `block_3_body` highlighted inline):
 
-* **Resonance Limits**: `[0, 100]` strictly preventing relic over-saturation or underflow.
-* **Moral Sway Continuum**: Symmetric `[-100, +100]` with equilibrium anchor at `0`.
-* **Equilibrium Stance Band**: `[-25, +25]` threshold for dual relic synergy.
-* **Overload / Eclipse Thresholds**: `+75` (Radiance) and `-75` (Abyssal Eclipse).
-* **Viewport Dimensions**: Default desktop presentation bounds (`800 x 600`).
+include::../snapshots/snap_vfs_routes_cfg_whole.adoc[]
 
-=== 2.3 Monotonic Timing & Frame Pacing (`data/time/`)
+// --- Sub-Assembly 3.3: 5-Block JSON Envelope & Body Isolation ---
+[[data_5block_json]]
+== The 5-Block JSON Contract & `block_3_body` Isolation
 
-Defines latency budgets and frame sleep targets:
+Just like source files and documentation chapters, every data config shares the exact 5-block skeleton (`block_1_metadata`, `block_2_types`/`block_2_opening`, `block_3_body`, `block_4_audit`, `block_5_closing`).
 
-* **`default.json`**: 60 FPS profile (`16.666667 ms` frame budget, `50.0 us` simulation turn budget).
-* **`high_refresh.json`**: 120 FPS profile (`8.333333 ms` frame budget, `25.0 us` simulation turn budget).
+To prevent accidental leaks where an authoring invariant string in metadata could be misparsed as a live setting, `master_loader` **never** reads top-level metadata during runtime config queries. It isolates `block_3_body` first—shown directly by this `block`-granularity JSON snapshot:
 
-=== 2.4 Lexical Buffers & Token Dictionary (`data/string/`)
+include::../snapshots/snap_vfs_routes_body_block.adoc[]
 
-Defines textual safety limits and canonical identifiers:
+// --- Sub-Assembly 3.4: Zero-Heap Scoped Accessors & Parser Sharing ---
+[[data_json_loaders]]
+== Zero-Heap Scoped Accessors (`master_loader`) & Shared Span Parsers
 
-* **Buffer Capacities**: Max path (512 B), max name (64 B), max command (128 B), line discipline (80 chars).
-* **Stance Tokens**: `NEUTRAL`, `WARDING`, `STRIKING`, `EQUILIBRIUM`.
-* **Action Verbs**: `help`, `version`, `audit`, `cli`, `gui`, `barrio`, `cuttatio`, `duo`, `stance`, `journey`, `inspect`, `name`, `quit`.
+In Layer 0 (`ALLOC_ZERO_HEAP`), parsing JSON must allocate **zero heap memory**. Caller buffers (`fs_utils`), Tier-0 span scanners (`io_fallback`), and typed scoped accessors (`master_loader`) collaborate over caller-owned buffers:
 
-== 3. The Fallback Tripwire Protocol
+include::../snapshots/snap_master_loader_sub3_2.adoc[]
 
-A central invariant of the data-driven architecture is **Fault-Tolerant Determinism**:
+Under the hood, both BIOS boot routines and `master_loader` reuse the same shared span-resolution cogs inside `engine/src/io/io_fallback.c`:
 
-1. **Attempt Data Load**: Subsystems first attempt to deserialize settings from their respective `data/` JSON file.
-2. **Tripwire Detection**: If the path does not exist, file permissions fail, or JSON formatting is invalid, the engine detects this condition immediately without crashing or memory corruption.
-3. **Hardcoded Fallback Activation**: The subsystem loads its compile-time fallback baseline (e.g. `math_get_default_config()`, `time_get_default_config()`, `string_get_default_config()`, `log_get_default_config()`).
-4. **Diagnostic Telemetry**: A warning trace is emitted to the diagnostic log detailing the fallback event and preserving system stability.
+include::../snapshots/snap_io_fb_json_group.adoc[]
 
-== 4. Verification & Diagnostic Testing
+.Where Publication & Theme Configs Plug In
+****
+Even this textbook manual follows the exact same rule: `docs/master_guide_manifest.json`, `docs/guide_theme_config.json`, `docs/code_snapshots_manifest.json`, and `docs/adoc_5block_standard.json` drive typography, PDF margins, code extraction modes, and chapter assembly purely from JSON data rather than Rust constants.
+****
 
-All data files in `data/` and its subsystem folders are validated for syntactic correctness,
-schema compliance, and referential integrity by CTest suites (`test_utils`, `test_log`, `test_game_invariants`)
-and developer tooling (`tl_tools`).
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Data Validation Tooling & Self-Check Q&A )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Validating JSON Contracts ---
+== Validating Data Files Before Commit
+
+[source,bash]
+----
+# Audit all engine/config/ and game/data/ 5-block manifests & JSON schemas
+./tools/target/debug/tl_tools validate all
+
+# Launch with a custom mod/testing mount via CLI override
+./build/tenebris-lux --audit --data-root game/data
+----
+
+[qanda]
+Can `master_loader` accidentally read a description string from `block_1_metadata`?::
+No. Every typed lookup in `master_loader` first narrows the scan window strictly inside `"block_3_body"`.
+
+Who checks that 5-block JSON configs remain well-formed?::
+`tl_tools validate all` (`tools/src/validator/json_data.rs`) verifies every config file under `engine/config/` and `game/data/` before compilation or commits.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Volume Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Where to Go Next
+
+* Previous: Chapter 2 — link:resilience_bios_and_probes.adoc[Zero-Disk Safe-Mode BIOS, Config ROM Vaults & Autonomous Probe Loop].
+* Next: Chapter 4 — link:preflight_and_manifest_spec.adoc[Central Manifest Registry & Pre-Flight Loose-Bolts Inspection].
+* Code Tour: Explore the I/O module details in link:../code/io_pipeline.adoc[Layer 0 Zero-Heap I/O Pipeline].

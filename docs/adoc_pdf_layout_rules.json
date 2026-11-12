@@ -1,0 +1,101 @@
+{
+  "block_1_metadata": {
+    "schema": "tenlux.data.adoc_pdf_layout_rules.v1",
+    "id": "docs.standards.pdf_layout_rules",
+    "version": "0.2.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-12",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Data-driven single-page PDF printable-area budget and AsciiDoc layout/hygiene validator specification",
+    "invariants": [
+      "All printable area budgets derive directly from docs/guide_theme_config.json (US Letter 612x792pt, margins [0.55, 0.50, 0.58, 0.50]in, 9.5pt body / 7.5pt code).",
+      "Zero unpaired AsciiDoc block delimiters across authored chapters and extracted snapshot plates.",
+      "Modernized 5-block chapters enforce native //// BLOCK 1..5 banners, valid relative includes, and PDF-clean line/height budgets."
+    ]
+  },
+  "block_2_opening": {
+    "source_theme_config": "docs/guide_theme_config.json",
+    "pdf_units_per_inch": 72.0,
+    "strict_target_globs": [
+      "docs/README.adoc",
+      "docs/architecture/**/*.adoc",
+      "docs/code/README.adoc",
+      "docs/code/logging_system.adoc",
+      "docs/code/debug_system.adoc",
+      "docs/code/io_pipeline.adoc",
+      "docs/code/log/*.adoc",
+      "docs/code/debug/*.adoc",
+      "docs/code/io/*.adoc"
+    ],
+    "strict_target_prefixes": [
+      "docs/README.adoc",
+      "docs/architecture/",
+      "docs/code/README.adoc",
+      "docs/code/logging_system.adoc",
+      "docs/code/debug_system.adoc",
+      "docs/code/io_pipeline.adoc",
+      "docs/code/log/",
+      "docs/code/debug/",
+      "docs/code/io/",
+      "docs/offline_work/"
+    ]
+  },
+  "block_3_body": {
+    "page_geometry": {
+      "paper_format": "Letter",
+      "paper_width_pt": 612.0,
+      "paper_height_pt": 792.0,
+      "margin_top_pt": 39.6,
+      "margin_right_pt": 36.0,
+      "margin_bottom_pt": 41.76,
+      "margin_left_pt": 36.0,
+      "header_chrome_pt": 22.0,
+      "footer_chrome_pt": 22.0,
+      "printable_width_pt": 540.0,
+      "printable_height_pt": 666.64,
+      "body_font_size_pt": 9.5,
+      "body_line_height_pt": 12.2,
+      "estimated_prose_lines_per_page": 52,
+      "estimated_prose_chars_per_line": 90,
+      "estimated_prose_chars_per_page": 4500,
+      "code_font_size_pt": 7.5,
+      "code_line_height_pt": 8.7,
+      "code_box_inner_width_pt": 528.0,
+      "estimated_code_lines_per_page": 72,
+      "safe_code_cols_with_linenums": 104,
+      "safe_code_cols_no_linenums": 112,
+      "hard_code_cols_max": 128,
+      "recommended_inline_snapshot_lines": 55,
+      "max_inline_snapshot_lines": 68
+    },
+    "validation_rules": {
+      "require_balanced_delimiters": true,
+      "forbid_spurious_abstract_headings": true,
+      "forbid_midfile_level0_headings": true,
+      "forbid_thematic_break_in_strict_targets": true,
+      "require_5block_banners_in_strict_targets": true,
+      "required_block_tokens": [
+        "BLOCK 1:",
+        "BLOCK 2:",
+        "BLOCK 3:",
+        "BLOCK 4:",
+        "BLOCK 5:"
+      ],
+      "verify_include_paths_exist": true,
+      "enforce_snapshot_line_and_width_budgets": true,
+      "forbid_listing_delimiter_collisions": true
+    }
+  },
+  "block_4_audit": {
+    "validator_command": "cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --validate-layout",
+    "standalone_lint": "asciidoctor --failure-level=WARN -o /dev/null <file.adoc>",
+    "failure_policy": "fail_on_structural_or_strict_violations"
+  },
+  "block_5_closing": {
+    "status": "ACTIVE_VALIDATOR_SPEC",
+    "maintained_with": "docs/guide_theme_config.json",
+    "consumed_by": "tools/src/guide.rs"
+  }
+}
+

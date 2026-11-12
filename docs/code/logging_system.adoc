@@ -1,183 +1,150 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/logging_system.adoc
+@id            docs.code.log.overview
+@layer         Documentation / Volume V: Layer 0 Logging Overview
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 0 Categorized Flight Logging Subsystem (`cog.log`)
+@role          Architectural Overview & Subfolder Router for log/ Paired Modules
+@audience      Designers, Testers, QA Engineers, C/Rust Engineers
+@snapshots     uses: snap_log_ring_api_sub3_3, snap_log_sub4_1_probes
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Reflects exact Rev 5 file inventory (log.{h,c}, log_types.h, log_fallback.{h,c}).
+               3. Zero orphan thematic breaks (''') or spurious [abstract] == headings.
+================================================================================
+////
+
 = Codebase Tour: Layer 0 Categorized Flight Logging Subsystem
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-07
-:doctype: article
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes, Executive Framing & Mental Model )
+================================================================================
+////
 
-This document provides a technical walkthrough and architectural manual for the
-*Layer 0 Categorized Flight Logging Subsystem* (`engine/include/log/` and `engine/src/log/`).
-As the telemetry and flight-recorder apparatus of **The Big Machine**, the logging
-subsystem provides zero-heap circular ring recording, categorized channel routing,
-sub-microsecond message dispatch, automatic log rotation, and data-driven telemetry
-profiles driven by JSON manifests in `game/data/system/diagnostics/telemetry/`.
-With strict enforcement of `ALLOC_ZERO_HEAP`, thread-safe reentrancy, and quarantined
-emergency fallbacks, logging diagnostics can run continuously without affecting frame
-pacing or deterministic simulation outcomes.
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:subsystem-root: engine/include/log/ & engine/src/log/
+:config-root: engine/config/diagnostics/telemetry/
 
-'''
+// --- Sub-Assembly 2.2: Welcoming Orientation ---
+Think of the *Layer 0 Categorized Flight Logging Subsystem* (`{subsystem-root}`) as an aircraft's black-box flight recorder: long before windows open or disk folders are found, it quietly records every subsystem heartbeat into fixed memory without ever asking the operating system for dynamic heap (`ALLOC_ZERO_HEAP`).
 
-== 1. Architectural Philosophy & Mission
+[TIP]
+====
+*How this chapter fits with the `log/` folder*: Read this overview for the big picture, then dive into link:log/README.adoc[docs/code/log/] for paired walkthroughs of `log.h` + `log.c`, `log_types.h`, `log_fallback.h` + `log_fallback.c`, and the 4-tier `log` verification suite.
+====
 
-Logging in *Tenebris and Lux* is not a crude wrapper around `printf`. It is an
-engineered **Flight Recorder**:
+toc::[]
 
-[source,text]
-----
-┌────────────────────────────────────────────────────────────────────────┐
-│                   LAYER 0 FLIGHT LOGGING SUBSYSTEM                     │
-│                                                                        │
-│   [Severity Taxonomy]   TRACE (0) -> DEBUG -> INFO -> WARN -> ERROR    │
-│   [Channel Separation]  Engine Strata (VFS, GUI) vs. Game Domain (Sim) │
-│   [Ring Recording]      Zero-Heap In-Memory Ring Buffer (256 Entries)  │
-│   [Disk Rotation]       Automatic Rolling Log Files (.log.0 .. .log.3) │
-│   [Telemetry Profiles]  Development / Production / Quiet / Combat      │
-│   [Quarantined Fallback]Zero-Dependency Emergency Monolith Safety Net  │
-└────────────────────────────────────────────────────────────────────────┘
-----
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Architecture, Verified Rev 5 Inventory & Paired Subfolder Index )
+================================================================================
+////
 
-=== Key Architectural Pillars
-1. **Zero Dynamic Heap Allocations (`ALLOC_ZERO_HEAP`)**:
-   Log messages are formatted into fixed-size stack buffers (`LOG_LINE_MAX_LEN = 256`).
-   The circular ring buffer resides in a static BSS structure, allocating zero bytes at runtime.
-2. **Channel Separation (Engine vs. Game)**:
-   Telemetry is segregated into dedicated channel masks:
-   * *Engine Channels*: `LOG_CHAN_CORE`, `LOG_CHAN_IO`, `LOG_CHAN_VIEWPORT`, `LOG_CHAN_MEMORY`.
-   * *Game Domain Channels*: `LOG_CHAN_SIM`, `LOG_CHAN_COMBAT`, `LOG_CHAN_HERO`, `LOG_CHAN_RELICS`.
-3. **Flight-Recorder Rotation**:
-   When active log files reach `LOG_MAX_FILE_BYTES` (typically 256 KB), the engine
-   automatically rolls the active file to `.log.0`, `.log.1`, `.log.2`, preventing unbounded
-   disk growth.
-4. **Quarantined Fallback Isolation**:
-   If filesystem I/O fails or logging configurations are unavailable, the quarantined
-   fallback (`log_fallback.[ch]`) seamlessly routes critical alerts to standard error
-   without risking process crashes.
+// --- Sub-Assembly 3.1: Architectural Pillars & Flight Recorder Pipeline ---
+== Architectural Philosophy: The Flight Recorder
 
-'''
+Printing raw debug text straight to the terminal breaks down the moment a real game hits frame budgets, file-permission errors, or multi-step bug reproduction. Cornerstone replaces ad-hoc `printf` calls with a two-stage deterministic flight recorder:
 
-== 2. Subsystem Layout & File Manifest
+. **Pre-VFS Tier-0 BIOS Capture (`log_fallback`)**: Before `io/` mounts disk routes, `log_fallback_boot()` arms a 64-entry static BIOS ring buffer (`12.3 KiB .bss`) backed by 10 compiled-in `.rodata` telemetry ROMs (`57.9 KiB`). Early boot messages are never lost.
+. **Early-Entry Replay Drain (`log_fallback_drain_entries`)**: Once `log_init()` comes online, every entry captured during Tier-0 boot is drained cleanly into the primary circular ring buffer so the chronological timeline has zero gaps.
+. **Categorized Primary Ring & Rolling Disk Stream (`cog.log`)**: Messages are formatted on fixed stack frames (`<= 1 KiB`), stored in a bounded circular ring, tagged by severity (`TRACE`..`FATAL`) and channel mask (engine vs. game), and automatically rotated on disk when size ceilings are reached.
+. **Autonomous Probe Hooks & Safe-Mode Downgrade**: Sub-Assembly `4.1` binds `log.*` health probes directly into `cog.debug`, allowing damaged JSON telemetry configs to degrade safely onto compiled ROM profiles and optionally pause at `DEBUG_STEP_AWAIT`.
 
-[source,text]
-----
-engine/include/log/
-├── log.h              // Public 5-block logging interface & convenience macros
-├── log_engine.h       // Internal telemetry engine, channel masks & ring buffer
-└── log_fallback.h     // Quarantined zero-dependency emergency fallback
+// --- Sub-Assembly 3.2: Verified Rev 5 Source, Header & Config Inventory ---
+== Verified Rev 5 File & Documentation Map
 
-engine/src/log/
-├── log.c              // Public routing facade meshing engine with fallback
-├── log_engine.c       // Ring buffer allocation, disk flusher, log rotation
-└── log_fallback.c     // Direct-to-stream emergency fallback implementation
+[cols="2,2,3",options="header"]
+|===
+| Companion Doc | Engine Files Covered | Role & Chassis Highlights
 
-game/data/system/diagnostics/telemetry/
-├── manifest.json      // Subsystem catalog and active telemetry profile
-├── development.json   // Verbose trace profile for local feature engineering
-├── production.json    // Strict warnings/errors profile for deployment
-├── quiet.json         // Silent profile suppressing non-critical messages
-└── combat_focus.json  // High-frequency combat and stance telemetry profile
-----
+| link:log/01_log_router_and_ring.adoc[01: Router & Ring Engine]
+| `engine/include/log/log.h` + `engine/src/log/log.c` (`cog.log`)
+| Primary circular ring recorder, channel masks, disk rotation, telemetry config loader, and `log.*` debug probes (`~24.7 KiB .data`, `16.4 KiB .bss` VFS scratch, `~8.6 KiB .rodata`).
 
-'''
+| link:log/02_log_types_and_contracts.adoc[02: Vocabulary Leaf Types]
+| `engine/include/log/log_types.h` (`cog.log.types`)
+| Pure POD enums, bounds, `log_entry_t`, `log_config_t`, and `log_stats_t`. Zero `.bss`/`.data` state; breaks circular dependency between `log` and `log_fallback`.
 
-== 3. Core Engine Cogs & API Tour
+| link:log/03_log_fallback_bios.adoc[03: Tier-0 Fallback BIOS]
+| `engine/include/log/log_fallback.h` + `engine/src/log/log_fallback.c` (`cog.log.fallback`)
+| Quarantined emergency BIOS (`12.3 KiB .bss`) and 10 compiled `.rodata` telemetry ROMs (`57.9 KiB`), shared JSON config parser, and replay drain into primary logging.
 
-=== 3.1 Severity Taxonomy & Public Macros (`log.h`)
+| link:log/04_log_testing_and_probes.adoc[04: Logging Verification Suite]
+| 5 CTest targets across `tests/{unit,functional,integrated,system}/`
+| Progressive crude-to-fine test coverage across happy path, hostile NULL/bounds, invariant checks, cross-tier replay emergence, and machine self-audit.
+|===
 
-Logging levels are strictly ordered integers from `0` to `5`:
+=== Telemetry Profiles in `{config-root}`
 
-[source,c]
-----
-typedef enum {
-    LOG_LEVEL_TRACE = 0,  /**< Detailed frame-by-frame and state tracing */
-    LOG_LEVEL_DEBUG = 1,  /**< Diagnostic inspection and subsystem transitions */
-    LOG_LEVEL_INFO  = 2,  /**< Milestone lifecycle events and state milestones */
-    LOG_LEVEL_WARN  = 3,  /**< Non-fatal invariant warnings and clamping alerts */
-    LOG_LEVEL_ERROR = 4,  /**< Critical contract breaches and component errors */
-    LOG_LEVEL_FATAL = 5   /**< Fatal unrecoverable anomalies halting engine */
-} log_level_t;
-----
+Behavior is controlled without recompiling C code through JSON manifests in `engine/config/diagnostics/telemetry/`:
 
-Developers log through standardized macros that automatically capture call site metadata
-(`__FILE__`, `__LINE__`):
+* `manifest.json` & `default.json` — baseline catalog and default profile binding.
+* `development.json`, `production.json`, `quiet.json`, `combat_focus.json` — operational severity/channel presets.
+* `engine_channels.json`, `game_channels.json`, `severity_weights.json`, `forensic_telemetry.json` — channel taxonomies, severity weights, and forensic export rules (all 10 mirrored into `log_telemetry_rom.h` at build time).
 
-[source,c]
-----
-#define LOG_TRACE(chan, fmt, ...) log_dispatch(LOG_LEVEL_TRACE, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-#define LOG_DEBUG(chan, fmt, ...) log_dispatch(LOG_LEVEL_DEBUG, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-#define LOG_INFO(chan, fmt, ...)  log_dispatch(LOG_LEVEL_INFO,  chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-#define LOG_WARN(chan, fmt, ...)  log_dispatch(LOG_LEVEL_WARN,  chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-#define LOG_ERROR(chan, fmt, ...) log_dispatch(LOG_LEVEL_ERROR, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-#define LOG_FATAL(chan, fmt, ...) log_dispatch(LOG_LEVEL_FATAL, chan, __FILE__, __LINE__, fmt, ##__VA_ARGS__)
-----
+// --- Sub-Assembly 3.3: Live Public Dispatch API Snapshot ---
+== Live Public Dispatch Contract
 
-=== 3.2 In-Memory Flight Recorder Ring Buffer (`log_engine.[ch]`)
+`log.h` exposes clean categorized dispatch routines so engine subsystems and gameplay modules share one unified timeline without allocating memory:
 
-The logging engine maintains a static circular ring buffer holding the most recent
-`LOG_RING_CAPACITY` log records (default 256):
+include::../snapshots/snap_log_ring_api_sub3_3.adoc[]
 
-[source,c]
-----
-typedef struct {
-    uint64_t timestamp_ns;
-    log_level_t level;
-    uint32_t channel;
-    char message[LOG_LINE_MAX_LEN];
-} log_record_t;
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Probe Registration Snapshot, Verification Commands & Q&A )
+================================================================================
+////
 
-/* Retrieves historical records from the circular ring */
-size_t log_ring_get_entries(log_record_t *out_records, size_t max_count);
+// --- Sub-Assembly 4.1: Probe Wiring Plate ---
+== Autonomous Probe Wiring (`cog.log` -> `cog.debug`)
 
-/* Flushes buffered ring messages to disk during shutdown or crash diagnostics */
-void log_engine_flush(void);
-----
+Rather than silently swallowing ring overflows or missing telemetry files, `log.c` registers live probes inside Sub-Assembly `4.1`:
 
-*Invariants Enforced*:
-* Ring wrapping uses modulo arithmetic with zero memory reallocations.
-* Timestamps are queried from the monotonic clock (`CLOCK_MONOTONIC`) in nanoseconds.
+include::../snapshots/snap_log_sub4_1_probes.adoc[]
 
-=== 3.3 Log Rotation & Disk Archiving
+// --- Sub-Assembly 4.2: Executable Verification Commands & Q&A ---
+== Self-Audit & Quick Verification
 
-Log files are placed strictly within `build/logs/` (or configured directory), maintaining
-a rolling archive:
+[source,bash]
+------
+ctest --test-dir build -R "_log_" --output-on-failure
+./build/tenebris-lux --audit
+------
 
-[source,c]
-----
-/* Evaluates current log file size and rotates if exceeding threshold */
-void log_engine_rotate_if_needed(void);
-----
+[qanda]
+Why split `log_types.h` out of `log.h`?::
+  Both primary `log.c` and quarantined `log_fallback.c` need `log_entry_t` and `log_config_t`. Keeping types in a stateless leaf header prevents circular includes while letting `log_fallback` boot cleanly even if the full logging layer is down.
+What happens if telemetry files on disk are missing or corrupt?::
+  `log_fallback_load_rom_profile()` hydrates the matching profile directly from the compiled `.rodata` ROM vault, preserves `loaded_from_data = false`, and reports the downgrade cleanly through debugger probes.
 
-When `tenebris_lux_dev.log` exceeds its limit:
-1. `tenebris_lux_dev.log.2` is rolled to `.log.3` (or truncated).
-2. `tenebris_lux_dev.log.1` is rolled to `.log.2`.
-3. `tenebris_lux_dev.log.0` is rolled to `.log.1`.
-4. `tenebris_lux_dev.log` is renamed to `.log.0`.
-5. A fresh `tenebris_lux_dev.log` is opened with Block 1 provenance headers.
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Navigation & Companion Subfolder Index )
+================================================================================
+////
 
-=== 3.4 Quarantined Fallback Isolation (`log_fallback.[ch]`)
+// --- Sub-Assembly 5.1: Companion Navigation ---
+== Companion Deep-Dive Chapters
 
-If the target log path is not writable or `log_engine_init` encounters an invariant breach:
-* The facade immediately routes all logging calls to `log_fallback_dispatch`.
-* Messages format into stack buffers and output directly to `stdout`/`stderr` using `vsnprintf`.
-* Zero allocations, zero file locks, and zero recursion risk.
-
-'''
-
-== 4. Verification & Testing Matrix
-
-Logging telemetry is continuously verified through 4 test strata:
-1. **Functional Tests (`tests/functional/test_log_functional.c`)**:
-   Verifies level formatting, channel bitmask filtering, and prefix formatting.
-2. **Unit Tests (`tests/unit/log/test_log_unit.c`, `test_log_engine_unit.c`, `test_log_fallback_unit.c`)**:
-   Tests circular ring buffer overflow, multi-file log rotation, and fallback isolation.
-3. **Integrated Tests (`tests/integrated/test_log_integrated.c`)**:
-   Tests concurrent multi-subsystem logging with active simulation events.
-4. **System Tests (`tests/system/test_log_system.c`)**:
-   Simulates 10,000 rapid log events, verifying zero memory leaks, file descriptor conservation,
-   and file size bounding.
+. Open link:log/01_log_router_and_ring.adoc[Paired `log.h` + `log.c` Walkthrough] for the ring buffer and disk rotation internals.
+. Read link:log/02_log_types_and_contracts.adoc[`log_types.h` Leaf Vocabulary] and link:log/03_log_fallback_bios.adoc[Paired `log_fallback.h` + `log_fallback.c` BIOS].
+. Continue to link:debug_system.adoc[State Debugger Overview] or link:io_pipeline.adoc[I/O Pipeline Overview].

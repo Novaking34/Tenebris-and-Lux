@@ -1,0 +1,109 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/io/03_path_finder_vfs.adoc
+@id            docs.code.io.path_finder
+@layer         Documentation / Volume V: Paired Module (path_finder.h + path_finder.c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Upward Repo Anchoring & 3-Tier Layered VFS (`cog.path_finder`)
+@role          Paired Documentation for path_finder.h and path_finder.c
+@audience      Designers, Modders, Build Engineers, C Programmers
+@snapshots     uses: snap_io_path_finder_sub3_2, snap_vfs_routes_body_block
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Deterministic O(roots * candidates <= 36) resolution with zero heap allocations.
+               3. Strict 3-tier config precedence: game/config -> engine/config -> game/data/presentation/config.
+================================================================================
+////
+
+= Paired Module: Layered VFS & Root Resolver (`path_finder.h` + `path_finder.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( File Pair Contract & Precedence Table )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Module Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.path_finder`)
+
+| Public Contract (`.h`)
+| `engine/include/io/path_finder.h` (719 lines) — root discovery, route loading, multi-tier VFS resolution, probes, and audit gates.
+
+| Runtime Engine (`.c`)
+| `engine/src/io/path_finder.c` (1,992 lines) — POSIX `lstat`/`readlink` root anchoring, internal `vfs_hydrate_routes_internal()`, and route search.
+
+| Chassis Footprint
+| `.bss 288 B` (`s_vfs_state`) + `.rodata 5,300 B`; max path `PATH_FINDER_MAX_PATH = 512`, `MAX_ROOT = 256`.
+
+| Route Config
+| `engine/config/io/vfs_routes.json` (<= 3 config tiers, <= 36 routes; `probes: io.vfs.* -> DEBUG_STEP_AWAIT`).
+|===
+
+// --- Sub-Assembly 2.2: Why Layered VFS Changes Game Development ---
+Whether you launch the compiled binary from repository root, from inside `build/`, or from a nested CTest build folder, `path_finder` walks upward deterministically to anchor the workspace root. Even better: designers can drop an override JSON inside `game/config/` to tweak *Tenebris and Lux* without ever mutating Cornerstone's baseline defaults inside `engine/config/`.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Root Management, 3-Tier VFS Precedence & Resolution API )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Data-Driven VFS Precedence Matrix ---
+== How Multi-Tier Resolution Works (`vfs_routes.json`)
+
+When a subsystem asks for domain `"config"` with relative path `diagnostics/telemetry/default.json`, `path_finder` consults the hydrated route table (`io_fb_vfs_routes_t`) in fixed precedence:
+
+include::../../snapshots/snap_vfs_routes_body_block.adoc[]
+
+// --- Sub-Assembly 3.2: Multi-Tier Resolution Contract (`Sub-Assembly 3.2`) ---
+== Public Resolution API (`Sub-Assemblies 3.1–3.2`)
+
+include::../../snapshots/snap_io_path_finder_sub3_2.adoc[]
+
+* **Root & Route Setup (`3.1`)**: `path_finder_set_data_root()`, `path_finder_load_routes()`, `path_finder_set_routes()`, and `path_finder_get_routes()`.
+* **Domain Lookups (`3.2`)**: `path_finder_resolve()`, `path_finder_find_manifest()`, `path_finder_resolve_asset()`, and `path_finder_resolve_with_hint()`. When no disk file matches any tier, callers smoothly receive a deterministic `rom://` URI or Safe-Mode fallback notice cleanly.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Route Contract Checks, Probes & Cards )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Probes & Self-Audit (`Blocks 4 & 5`) ---
+== Validation, Probes & Inspection (`Sub-Assemblies 4.1–5.2`)
+
+* **Validation (`4.1`–`4.2`)**: `path_finder_validate_routes_contract()`, `path_finder_register_debug_probes()`, `path_finder_trigger_routes_probe()`, `path_finder_preflight()`, and `path_finder_audit()`.
+* **Inspection & Lifecycle (`5.1`–`5.2`)**: `path_finder_execute_resolve()`, `path_finder_execute_dump_card()`, `path_finder_get_stats()`, `path_finder_init()`, and `path_finder_shutdown()`.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Readings ---
+== Continue in `io/`
+
+* Next stage (tokenizing found files): link:04_json_utils_parser.adoc[`json_utils.h` + `json_utils.c`]
+* Pre-flight manifest loader: link:05_master_loader_hydration.adoc[`master_loader.h` + `master_loader.c`]
+

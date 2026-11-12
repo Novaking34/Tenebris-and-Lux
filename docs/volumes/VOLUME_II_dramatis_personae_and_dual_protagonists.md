@@ -1,7 +1,7 @@
 # Volume II: Dramatis Personae & Dual Protagonist Dynamics
 
 > **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  
-> **Compendium**: Tenebris and Lux Master Guide — Volume II  
+> **Compendium**: Tenebris and Lux Master Guide — Volume II (0.2.0-dev)  
 > **Purpose**: Context Document for Google Gemini & NotebookLM Workflows
 
 ## Volume Synopsis
@@ -33,50 +33,33 @@ _Comprehensive character dossiers, founding princes, dual protagonist synergies,
 
 ## Chapter 1: Dual Protagonist Dynamics & Tri-Perspective Architecture
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/protagonists/dual_protagonist_dynamics.adoc`
+> **Source**: `docs/lore/characters/protagonists/dual_protagonist_dynamics.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 The narrative core and mechanical heartbeat of *Tenebris and Lux* is the interplay between
 **Elijah Ro-enheart** and **Lady Katrina Jaren**, complemented by the optional overarching perspective
 of the customizable **Bearer** (`<chosen_name>`). Contrasting in social caste, philosophical outlook,
 and combat rhythm, their evolving partnership mirrors the cosmic relationship between Light and Darkness.
 
-## 1. Thematic & Social Contrast Matrix
+### Thematic & Social Contrast Matrix
 
-[cols="1,2,2", options="header"]
-|===
-| Dimension | Elijah Ro-enheart | Katrina Jaren
+| Dimension | Elijah Ro-enheart | Katrina Jaren |
+| --- | --- | --- |
+| **Social Caste** | Military Lineage / Son of the Guard Head | High Aristocracy / House Jaren |
+| **Institutional Allegiance** | Royal Army (Structure, Law, Duty) | Adventurers' Guild Aspirant (Freedom, Merit) |
+| **Relic Affinity** | **The Shield of Lux** (Defense, Preservation) | **The Sword of Tenebris** (Offense, Severance) |
+| **Thematic Echo** | **Usuru** (The Frontier Wound / Redemptive Grace) | **Prince Casatti** (The Renouncing Blade / Truth) |
+| **Moral Trajectory** | From rigid obedience to moral conscience | From cynical detachment to noble sacrifice |
 
-| **Social Caste**
-| Military Lineage / Son of the Guard Head
-| High Aristocracy / House Jaren
 
-| **Institutional Allegiance**
-| Royal Army (Structure, Law, Duty)
-| Adventurers' Guild Aspirant (Freedom, Merit)
-
-| **Relic Affinity**
-| **The Shield of Lux** (Defense, Preservation)
-| **The Sword of Tenebris** (Offense, Severance)
-
-| **Thematic Echo**
-| **Usuru** (The Frontier Wound / Redemptive Grace)
-| **Prince Casatti** (The Renouncing Blade / Truth)
-
-| **Moral Trajectory**
-| From rigid obedience to moral conscience
-| From cynical detachment to noble sacrifice
-|===
-
-## 2. Interpersonal Chemistry & Narrative Progression
+### Interpersonal Chemistry & Narrative Progression
 
 Elijah and Katrina embody the classic dramatic friction between an earnest, rule-following guardian
 and an irreverent, sharp-witted rogue. Where Elijah pauses to consult protocol, Katrina acts impulsively,
 cutting through bureaucratic red tape with sarcastic practicality.
 
-### Narrative Evolution Across the Campaign
+#### Narrative Evolution Across the Campaign
 1. **Act I (The Provincial Divide):** Initial friction in Dio Village. Katrina mocks Elijah's military formality;
    Elijah cautions against Katrina's cynical disregard for property and propriety.
 2. **Act I Climax (The Capital Conspiracy):** Sacyra Castle. Katrina's insight into aristocratic deception
@@ -85,7 +68,7 @@ cutting through bureaucratic red tape with sarcastic practicality.
    cosmic threshold, the heroes overcome individual biases, passing relics fluidly between each other to
    unlock the **Stance of Equilibrium** (*Duo-Loca Bashin n Slash*).
 
-## 3. The Tri-Perspective Architecture: Witness Protagonist & Keystone Route
+### The Tri-Perspective Architecture: Witness Protagonist & Keystone Route
 
 Requiring the player to experience Elijah, Katrina, and finally the customizable Bearer (`<chosen_name>`)
 utilizes three formal narrative game design structures:
@@ -107,7 +90,7 @@ utilizes three formal narrative game design structures:
    - The outside Observer's conscious choice collapses the tragic wavefunction, unlocking the 10th True Ending
      (**"The Ugly Truth"**) and permanently mending the planar tear.
 
-## 4. Tactical Synergy on the TRPG Battlefield
+### Tactical Synergy on the TRPG Battlefield
 
 1. **The Phalanx Pivot:** Elijah pins enemy vanguards with his Shield of Lux Zone of Control (ZOC) aura.
    Katrina uses high mobility to circle the battle line and execute flanking criticals.
@@ -121,17 +104,16 @@ utilizes three formal narrative game design structures:
 
 ## Chapter 2: Elijah Ro-enheart: Vanguard of Lux
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/protagonists/elijah_ro_enheart.adoc`
+> **Source**: `docs/lore/characters/protagonists/elijah_ro_enheart.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Elijah Ro-enheart** is the frontline heavy vanguard anchor of *Tenebris and Lux*
 and the initial bearer of the **Shield of Lux**. Steeped in the military traditions
 of the Royal Guard yet haunted by the unexplained disappearance of his father,
 Elijah represents the struggle between rigid institutional duty and personal honor.
 
-## 1. Identity & Heritage
+### Identity & Heritage
 
 * **Full Name**: Elijah Ro-enheart
 * **Title / Rank**: Cadet Vanguard, Sacyran Royal Defense Corps
@@ -149,43 +131,39 @@ Elijah represents the struggle between rigid institutional duty and personal hon
   cropped dark hair. Wears fitted silver-steel infantry plate over deep navy
   quilted gambeson, marked with the defensive crest of the Ro-enhearts.
 
-## 2. Psychological Profile & Demeanor
+### Psychological Profile & Demeanor
 
 Elijah is earnest, polite, disciplined, and deeply considerate. While raised
 within the hierarchy of military discipline, he possesses an intrinsic moral
 compass that values the safety of innocent civilians above abstract royal decrees.
 
-### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+#### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
 * *Respect for Elders & Prudence*:
-  [quote, Elijah, Dio Village - Grandma's House]
   "I shouldn't go in this chest. I need to talk to Grandma first. She's very
   particular about her things."
 * *The Father Mystery*:
-  [quote, Elijah, Opening Quest]
   "Maybe it is something about dad! I haven't seen him since my 10th birthday.
   This might be my chance to get answers!"
 * *Civic Duty & Moral Conscience*:
-  [quote, Elijah, Lower Village Confrontation]
   "I can't believe that I am doing this... the baron is the richest man in the
   village... but he's been exploiting the town! This is for the good!"
 
-## 3. Martial Doctrine & TRPG Grid Mechanics
+### Martial Doctrine & TRPG Grid Mechanics
 
 Elijah functions as the defensive bulwark of the tactical party, controlling
 chokepoints and mitigating damage for allied skirmishers.
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Specification
-| **TRPG Grid Role** | Frontline Heavy Vanguard / Fortress Anchor
-| **Movement Budget** | 3 Cells (Medium-Heavy Infantry)
-| **Zone of Control (ZOC)**| Projects heavy ZOC tiles, halting enemy sprint moves
-| **Primary Relic** | **The Shield of Lux** (Resonance `[0, 100]`)
-| **Tactical Signature** | `Warding Aura`: Projects a 2-cell radius barrier dome
-| **Poise & Knockback** | Immune to 1-cell forced displacement; absorbs shock
-|===
+| Dimension | Specification |
+| --- | --- |
+| **TRPG Grid Role** | Frontline Heavy Vanguard / Fortress Anchor |
+| **Movement Budget** | 3 Cells (Medium-Heavy Infantry) |
+| **Zone of Control (ZOC)** | Projects heavy ZOC tiles, halting enemy sprint moves |
+| **Primary Relic** | **The Shield of Lux** (Resonance `[0, 100]`) |
+| **Tactical Signature** | `Warding Aura`: Projects a 2-cell radius barrier dome |
+| **Poise & Knockback** | Immune to 1-cell forced displacement; absorbs shock |
 
-### Tactical Synergies
+
+#### Tactical Synergies
 1. **Bottleneck Holding**: Elijah anchors narrow corridors, absorbing melee
    punishment while building Lux resonance via successful deflections.
 2. **Aegis Interception**: Steps into adjacent cells to intercept lethal strikes
@@ -196,17 +174,16 @@ chokepoints and mitigating damage for allied skirmishers.
 
 ## Chapter 3: Lady Katrina Jaren: The Outrider Blade
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/protagonists/katrina_jaren.adoc`
+> **Source**: `docs/lore/characters/protagonists/katrina_jaren.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Lady Katrina Jaren** is the high-mobility skirmisher of *Tenebris and Lux*
 and the initial wielder of the **Sword of Tenebris**. Born to high aristocracy
 yet repulsed by the deceit and stagnation of the Royal Court, Katrina seeks
 autonomy within the meritocratic ranks of the Adventurers' Guild.
 
-## 1. Identity & Heritage
+### Identity & Heritage
 
 * **Full Name**: Lady Katrina Jaren
 * **Title / Standing**: Noble Court Aspirant (Estranged); Guild Novice
@@ -223,46 +200,41 @@ autonomy within the meritocratic ranks of the Adventurers' Guild.
   leather arming doublets over noble-weave tunic, with rapier and long-dagger
   scabbards balanced for rapid unsheathing.
 
-## 2. Psychological Profile & Demeanor
+### Psychological Profile & Demeanor
 
 Katrina is quick-witted, irreverent, opportunistic, and intensely independent.
 She detests empty aristocratic pretension and speaks with an unvarnished,
 sarcastic candor that often unnerves formal soldiers like Elijah. Beneath her
 cynical exterior lies a fierce loyalty to those she deems genuine.
 
-### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+#### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
 * *Impatience with Stagnation & Cynicism*:
-  [quote, Katrina, Dio Village - Grandma's House]
   "The will. I love you gran, but a girl gotta get out of this dead-end town.
   Batty old woman seems to mind that chest... Crazy old woman, that will is mine!"
 * *Pragmatic Opportunism*:
-  [quote, Katrina, The Sword Shrine]
   "Free sword for your girl~!"
 * *Fiery Independence & Temper*:
-  [quote, Katrina, Monica's Grove]
   "LISTEN HERE YOU OLD-! What is wrong with you... Gran, I'm not your errand
   girl! This is YOUR friend."
 * *Reluctant Heroism*:
-  [quote, Katrina, Lower Village Heist]
   "Ok... here we go... let's do this. I have to do at least one good thing today."
 
-## 3. Martial Doctrine & TRPG Grid Mechanics
+### Martial Doctrine & TRPG Grid Mechanics
 
 Katrina excels at rapid battlefield repositioning, flanking maneuvers, and
 armor-piercing critical strikes.
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Specification
-| **TRPG Grid Role** | High-Mobility Skirmisher / Flanking Striker
-| **Movement Budget** | 4–5 Cells (Light Scout / Infiltrator)
-| **Zone of Control (ZOC)**| Evasive Infiltration: Ignores basic enemy ZOC delays
-| **Primary Relic** | **The Sword of Tenebris** (Edge Sharpness `[0, 100]`)
-| **Tactical Signature** | `Phantom Slash`: Teleports behind target cell to strike
-| **Evasion & Stealth** | Gains 25% evasion when ending turn on obscured tiles
-|===
+| Dimension | Specification |
+| --- | --- |
+| **TRPG Grid Role** | High-Mobility Skirmisher / Flanking Striker |
+| **Movement Budget** | 4–5 Cells (Light Scout / Infiltrator) |
+| **Zone of Control (ZOC)** | Evasive Infiltration: Ignores basic enemy ZOC delays |
+| **Primary Relic** | **The Sword of Tenebris** (Edge Sharpness `[0, 100]`) |
+| **Tactical Signature** | `Phantom Slash`: Teleports behind target cell to strike |
+| **Evasion & Stealth** | Gains 25% evasion when ending turn on obscured tiles |
 
-### Tactical Synergies
+
+#### Tactical Synergies
 1. **Flanking Tandem**: Moves across enemy flanks while Elijah holds attention,
    landing backstab criticals with the abyssal edge of Tenebris.
 2. **Hit-and-Run Decoupling**: Uses remaining move points to disengage after
@@ -273,10 +245,9 @@ armor-piercing critical strikes.
 
 ## Chapter 4: The Custom Bearer: Steward of Balance
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/protagonists/custom_bearer.adoc`
+> **Source**: `docs/lore/characters/protagonists/custom_bearer.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 The **Custom Bearer** (designated within the simulation engine as `<chosen_name>`)
 represents the third sovereign axis of the *Tenebris and Lux* tri-perspective narrative
@@ -285,14 +256,13 @@ Bearer enters the world through the ethereal **Dream Chamber** under the steward
 **Chrono**, unencumbered by the heavy generational trauma that binds both Elijah Ro-enheart
 and Katrina Jaren.
 
-[quote, Chrono, The Dream Chamber - Awakening of the Relic Bearer]
 ____
 You are not bound to the grief of what was broken, nor the cynicism of what remains.
 Touch the stone of your choosing, bearer. The twin relics will answer to your intent,
 and the dawn or dusk of Sacyra will bear the shape of your resolve.
 ____
 
-## 1. Identity & Narrative Axis
+### Identity & Narrative Axis
 
 * **Canonical Designation**: `<chosen_name>` (User-defined; defaults to `Elijah` if skipped).
 * **Narrative Archetype**: The Steward of Balance / The Unwritten Destiny.
@@ -301,38 +271,36 @@ ____
 * **Spiritual Lineage**: Spiritual successor to **Prince Mi-ren**, who held the sacred vigil
   and sought institutional equilibrium across the founding era.
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Characteristic Specification
-| **Moral Sway Potential** | Completely unbound: dynamic range `[-100, +100]`.
-| **Relic Mastery** | Dual-wield fluency: simultaneous mastery of *Lux Barrio* and *Cuttatio Tenebris*.
-| **Dialogue Register** | Inquisitive, perceptive, pragmatic, and unswayed by courtly protocol.
-| **Ending Affinity** | Unique accessibility to *The Sovereign Accord* and *The Cycle Shattered*.
-|===
+| Dimension | Characteristic Specification |
+| --- | --- |
+| **Moral Sway Potential** | Completely unbound: dynamic range `[-100, +100]`. |
+| **Relic Mastery** | Dual-wield fluency: simultaneous mastery of *Lux Barrio* and *Cuttatio Tenebris*. |
+| **Dialogue Register** | Inquisitive, perceptive, pragmatic, and unswayed by courtly protocol. |
+| **Ending Affinity** | Unique accessibility to *The Sovereign Accord* and *The Cycle Shattered*. |
 
-## 2. Archetype Stone Awakening (The Four Disciplines)
+
+### Archetype Stone Awakening (The Four Disciplines)
 
 Upon awakening within the Dream Chamber, the Custom Bearer approaches the four primordial
 archetype monoliths under Chrono's observation. Selecting an archetype configures the
 starting base parameter profile:
 
-[cols="1,1,2,2", options="header"]
-|===
-| Archetype Stone | Class Designation | Starting Stat Profile | Tactical Grid Role
-| **Aegis Monolith** | *Vanguard* | HP: 480, DEF: 28, ATK: 24, MAT: 18 | Frontline fortress; barrier interception.
-| **Shadow Monolith** | *Outrider* | HP: 380, DEF: 18, ATK: 32, MAT: 22 | High mobility; flank severance strikes.
-| **Aether Monolith** | *Mystic* | HP: 340, DEF: 16, ATK: 20, MAT: 36 | Elemental burst; area-of-effect zoning.
-| **Equilibrium Monolith**| *Steward* | HP: 420, DEF: 22, ATK: 26, MAT: 26 | Balanced hybrid; stance chaining.
-|===
+| Archetype Stone | Class Designation | Starting Stat Profile | Tactical Grid Role |
+| --- | --- | --- | --- |
+| **Aegis Monolith** | *Vanguard* | HP: 480, DEF: 28, ATK: 24, MAT: 18 | Frontline fortress; barrier interception. |
+| **Shadow Monolith** | *Outrider* | HP: 380, DEF: 18, ATK: 32, MAT: 22 | High mobility; flank severance strikes. |
+| **Aether Monolith** | *Mystic* | HP: 340, DEF: 16, ATK: 20, MAT: 36 | Elemental burst; area-of-effect zoning. |
+| **Equilibrium Monolith** | *Steward* | HP: 420, DEF: 22, ATK: 26, MAT: 26 | Balanced hybrid; stance chaining. |
 
-[NOTE]
-#### 
-Unlike fixed protagonists whose relic bias is established by lineage, the Custom Bearer
-accumulates *Resonance Charges* dynamically. Channeling defense builds Lux resonance,
-while initiating offensive flanks charges Tenebris edge.
-#### 
 
-## 3. Psychological Dynamic: The Unburdened Gaze
+> **[NOTE]**
+> 
+> Unlike fixed protagonists whose relic bias is established by lineage, the Custom Bearer
+> accumulates *Resonance Charges* dynamically. Channeling defense builds Lux resonance,
+> while initiating offensive flanks charges Tenebris edge.
+
+
+### Psychological Dynamic: The Unburdened Gaze
 
 While Elijah sees the world through the lens of military honor and his father's mystery,
 and Katrina views society through betrayal and aristocratic corruption, the Custom Bearer
@@ -345,27 +313,27 @@ approaches the crisis with empirical curiosity:
 * **Before King Jihad**: Detects the rhythmic harmonic distortion of *The King's Curse*
   leaking from beneath the High Throne before the royal court notices the monarch's decay.
 
-****
-**Thematic Invariant: Inherited Trauma vs. Chosen Destiny**
+> **Sidebar**
+> 
+> **Thematic Invariant: Inherited Trauma vs. Chosen Destiny**
+>
+> The Custom Bearer embodies the second clause of the overarching narrative axiom:
+> *"Trauma is Inherited; Destiny is Chosen."* By refusing to allow ancient grudges between
+> Libira and Sacyra to dictate their actions, the Custom Bearer can forge alliances that
+> neither historical faction believed possible.
 
-The Custom Bearer embodies the second clause of the overarching narrative axiom:
-*"Trauma is Inherited; Destiny is Chosen."* By refusing to allow ancient grudges between
-Libira and Sacyra to dictate their actions, the Custom Bearer can forge alliances that
-neither historical faction believed possible.
-****
 
-## 4. TRPG Grid Mechanics & Signature Abilities
+### TRPG Grid Mechanics & Signature Abilities
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Specification
-| **Base Movement** | 4 Tiles (Variable by chosen Archetype Stone: 3 to 5 tiles).
-| **Zone of Control** | Dynamic projection based on active combat stance.
-| **Signature Stance** | *Harmonic Equilibrium* (`STANCE_EQUILIBRIUM`): $+15\%$ to both DEF and ATK.
-| **Ultimate Skill** | *Duo-Loca Bashin n Slash* (Twilight Magic Slash combining Lux and Tenebris).
-|===
+| Dimension | Specification |
+| --- | --- |
+| **Base Movement** | 4 Tiles (Variable by chosen Archetype Stone: 3 to 5 tiles). |
+| **Zone of Control** | Dynamic projection based on active combat stance. |
+| **Signature Stance** | *Harmonic Equilibrium* (`STANCE_EQUILIBRIUM`): $+15\%$ to both DEF and ATK. |
+| **Ultimate Skill** | *Duo-Loca Bashin n Slash* (Twilight Magic Slash combining Lux and Tenebris). |
 
-### Tactical Synergies
+
+#### Tactical Synergies
 1. **Adaptive Stance Shifting**: Can shift stances without consuming action points once per turn,
    allowing instant transition from defensive warding to aggressive edge severance.
 2. **Moral Sway Polarization**: Can align with either light or dark embellishments at the
@@ -376,10 +344,9 @@ neither historical faction believed possible.
 
 ## Chapter 5: Prince Mi-ren: Sovereign of the Vigil
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/founders/prince_mi_ren.adoc`
+> **Source**: `docs/lore/characters/founders/prince_mi_ren.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Prince Mi-ren** was the elder founding prince of the Kingdom of Sacyra during Era I
 (The Primordial Dawn & The Accord of Kings). While his younger brother, Prince Casatti,
@@ -388,14 +355,13 @@ institutions of the Crown, and held the legendary **Four-Year Vigil** over his b
 mysterious slumber. In the narrative triad of *Tenebris and Lux*, Prince Mi-ren represents
 the archetype of **The Steward of Order** and the philosophical progenitor of the Custom Bearer.
 
-[quote, Prince Mi-ren, Royal Archive Tablet - The Founding Accord]
 ____
 A wall does not exist to lock men in, but to ensure that what we plant inside may grow
 without fear of the winter gale. If my brother must walk the dark wild, then I shall build
 a hearth warm enough to guide his spirit home.
 ____
 
-## 1. Identity & Lineage
+### Identity & Lineage
 
 * **Full Title**: Prince Mi-ren the Steadfast, First Warden of the High Court, Architect of Sacyra.
 * **Dynastic Era**: Era I–II (Founding Epoch, approximately 3,000 Years Before the Main Campaign).
@@ -405,43 +371,35 @@ ____
   - **Successor Lineage**: His bloodline formed the foundational dynasty of the First 30 Kings,
     eventually degenerating millennia later into the hollow reign of King Jihad.
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Characteristic Specification
-| **Martial Discipline** | Classical Phalanx & Warding Architecture; heavy royal shieldbearer.
-| **Metaphysical Affinity** | **The Shield of Lux** (Resonance with warding, preservation, and structure).
-| **Thematic Anchor** | Institutional Duty, Self-Sacrifice, Bureaucratic Order.
-|===
+| Dimension | Characteristic Specification |
+| --- | --- |
+| **Martial Discipline** | Classical Phalanx & Warding Architecture; heavy royal shieldbearer. |
+| **Metaphysical Affinity** | **The Shield of Lux** (Resonance with warding, preservation, and structure). |
+| **Thematic Anchor** | Institutional Duty, Self-Sacrifice, Bureaucratic Order. |
 
-## 2. Historical Chronicle & The Four-Year Vigil
+
+### Historical Chronicle & The Four-Year Vigil
 
 When the two founding princes completed their training, they faced a philosophical fork:
 the untamed frontier required exploration, while the nascent kingdom required permanent
 governance and defensible walls.
 
-[cols="1,3", options="header"]
-|===
-| Event Phase | Historical Deed & Chronicle
-| **The Division of Labor** | Mi-ren took responsibility for the Crown, founding the Royal Guard,
-  designing the granaries, and codifying Sacyran civil law.
-| **The Slumber of Casatti** | When Prince Casatti collapsed into a four-year coma during his
-  wilderness campaign, Mi-ren refused to abandon his brother, maintaining a continuous daily vigil
-  at his bedside while governing the kingdom through sleepless devotion.
-| **The Festival of Peoples**| Established the international gathering in the capital, inviting
-  surrounding realms to exchange culture, technology, and mutual peace every spring.
-| **The Tragic Rupture** | In the 11th year, when the planar tether snapped beneath the High Throne,
-  Mi-ren threw his own life-force into the warding perimeter to shield the capital's populace from
-  abyssal incineration.
-|===
+| Event Phase | Historical Deed & Chronicle |
+| --- | --- |
+| **The Division of Labor** | Mi-ren took responsibility for the Crown, founding the Royal Guard,<br>designing the granaries, and codifying Sacyran civil law. |
+| **The Slumber of Casatti** | When Prince Casatti collapsed into a four-year coma during his<br>wilderness campaign, Mi-ren refused to abandon his brother, maintaining a continuous daily vigil<br>at his bedside while governing the kingdom through sleepless devotion. |
+| **The Festival of Peoples** | Established the international gathering in the capital, inviting<br>surrounding realms to exchange culture, technology, and mutual peace every spring. |
+| **The Tragic Rupture** | In the 11th year, when the planar tether snapped beneath the High Throne,<br>Mi-ren threw his own life-force into the warding perimeter to shield the capital's populace from<br>abyssal incineration. |
 
-[NOTE]
-#### 
-Prince Mi-ren's great tragedy was his belief that systemic perfection could eliminate human suffering.
-By focusing entirely on the capital's defense, his administrative network failed to recognize the
-desperation building in frontier outposts like Libira, inadvertently sowing the seeds of Usuru's revolt.
-#### 
 
-## 3. Thematic Mirror: The Custom Bearer & Prince Mi-ren
+> **[NOTE]**
+> 
+> Prince Mi-ren's great tragedy was his belief that systemic perfection could eliminate human suffering.
+> By focusing entirely on the capital's defense, his administrative network failed to recognize the
+> desperation building in frontier outposts like Libira, inadvertently sowing the seeds of Usuru's revolt.
+
+
+### Thematic Mirror: The Custom Bearer & Prince Mi-ren
 
 In the **Past / Present / Future Thematic Triad**, Prince Mi-ren serves as the historical
 touchstone for the **Custom Bearer**:
@@ -460,10 +418,9 @@ touchstone for the **Custom Bearer**:
 
 ## Chapter 6: Prince Casatti: The Outrider Blade of Truth
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/founders/prince_casatti.adoc`
+> **Source**: `docs/lore/characters/founders/prince_casatti.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Prince Casatti** was the younger founding prince of Sacyra during Era I. Rejecting the
 ceremonial comforts of the royal palace, Casatti rode into the frontier wilderness to chart
@@ -473,7 +430,6 @@ wielding the **Sword of Tenebris** as an instrument of decisive severance and un
 In the overarching narrative of *Tenebris and Lux*, Casatti serves as the direct historical
 predecessor and spiritual mirror to **Lady Katrina Jaren**.
 
-[quote, Prince Casatti, Fragmented Journal Recovered from the Whispering Caverns]
 ____
 My brother measures safety by the thickness of a parapet. He does not understand that
 stone can rot from within while looking immaculate to the sun. There are times when peace
@@ -481,7 +437,7 @@ is simply another word for cowardice. When the branch turns gangrenous, you do n
 it with oil—you strike it from the trunk.
 ____
 
-## 1. Identity & Provenance
+### Identity & Provenance
 
 * **Full Title**: Prince Casatti the Swift, The Frontier Ranger, Bearer of the First Edge.
 * **Dynastic Era**: Era I–II (Founding Epoch, approximately 3,000 Years Before the Main Campaign).
@@ -491,15 +447,14 @@ ____
   - **Spiritual Heir**: **Lady Katrina Jaren**, who inherits his martial mindset, defiance of
     aristocratic complacency, and razor-sharp swordsmanship.
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Characteristic Specification
-| **Martial Discipline** | High-mobility skirmishing, critical edge strikes, flank severance.
-| **Metaphysical Affinity** | **The Sword of Tenebris** (Resonance with severance, decisive truth, shadow).
-| **Thematic Anchor** | Radical Truth, Severing Stagnation, Rejection of Hypocrisy.
-|===
+| Dimension | Characteristic Specification |
+| --- | --- |
+| **Martial Discipline** | High-mobility skirmishing, critical edge strikes, flank severance. |
+| **Metaphysical Affinity** | **The Sword of Tenebris** (Resonance with severance, decisive truth, shadow). |
+| **Thematic Anchor** | Radical Truth, Severing Stagnation, Rejection of Hypocrisy. |
 
-## 2. The Four-Year Slumber & The Ethereal Transfiguration
+
+### The Four-Year Slumber & The Ethereal Transfiguration
 
 While exploring the frontier passes bordering the ancient realm of Libira, Casatti touched
 an anomalous obsidian monolith vibrating with abyssal frequency. The contact thrust him into
@@ -513,14 +468,14 @@ a deep suspended animation that lasted four full years:
    to the Shield of Lux, Casatti demonstrated that light without darkness produces blinding
    arrogance, while darkness tempered by discipline brings clarity.
 
-[IMPORTANT]
-#### 
-Casatti's critique of the royal court's decadence was violently rejected by the conservative
-nobles of Sacyra. Frustrated by courtly hypocrisy, he spent his remaining years defending
-the frontier peasantry, establishing the traditions later adopted by the **Adventurers' Guild**.
-#### 
+> **[IMPORTANT]**
+> 
+> Casatti's critique of the royal court's decadence was violently rejected by the conservative
+> nobles of Sacyra. Frustrated by courtly hypocrisy, he spent his remaining years defending
+> the frontier peasantry, establishing the traditions later adopted by the **Adventurers' Guild**.
 
-## 3. Thematic Mirror: Katrina Jaren & Prince Casatti
+
+### Thematic Mirror: Katrina Jaren & Prince Casatti
 
 The narrative parallels between Prince Casatti and Lady Katrina Jaren are exact:
 
@@ -537,10 +492,9 @@ The narrative parallels between Prince Casatti and Lady Katrina Jaren are exact:
 
 ## Chapter 7: Usuru the Wanderer: Sovereign of Grief
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/founders/usuru_the_wanderer.adoc`
+> **Source**: `docs/lore/characters/founders/usuru_the_wanderer.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 Before he was feared across the ages as **The Dark Lord**, he was a nameless boy born to an
 impoverished family on the arid borders of the **Kingdom of Libira** during Era IV. Known
@@ -551,7 +505,6 @@ catastrophically altered by the snapping of the planar tether during the 11th Fe
 Usuru chose his name in defiance, crowned himself sovereign of Libira, and declared the
 devastating **Seven-Year Great War**.
 
-[quote, Sovereign Usuru, Speech to the Assembly of Libira - Dawn of the Great War]
 ____
 We waited seven days for their riders to tell us if our children were allowed to starve.
 We bowed when their golden heralds told us that peace demanded our silence. But when I
@@ -560,7 +513,7 @@ not leave us behind by mistake—they left us behind because we were quiet. Libi
 quiet no longer.
 ____
 
-## 1. Identity & Origin
+### Identity & Origin
 
 * **Birth Identity**: Nameless Boy of Libira (Born to a frontier shepherd family).
 * **Chosen Name**: **Usuru** (Ancient Libiran root meaning *"He Who Remembers What Was Buried"*).
@@ -569,15 +522,14 @@ ____
   later corrupted across the millennia into **The Dark Lord**.
 * **Affiliation**: Kingdom of Libira; Supreme Commander of the 6-Power Coalition against Sacyra.
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Specification
-| **Defining Trait** | Restlessness; profound observational empathy curdling into volcanic resentment.
-| **Original Motivation**| Yearning to bridge the geographic and communication gulf between Libira and Sacyra.
-| **Thematic Axis** | **The Past** (The unhealed frontier wound, mirrored by Elijah Ro-enheart).
-|===
+| Dimension | Specification |
+| --- | --- |
+| **Defining Trait** | Restlessness; profound observational empathy curdling into volcanic resentment. |
+| **Original Motivation** | Yearning to bridge the geographic and communication gulf between Libira and Sacyra. |
+| **Thematic Axis** | **The Past** (The unhealed frontier wound, mirrored by Elijah Ro-enheart). |
 
-## 2. The Wanderer's Pilgrimage & The "Quiet Complaint"
+
+### The Wanderer's Pilgrimage & The "Quiet Complaint"
 
 Due to the lack of an outpost relay system, a message sent from the Royal Capital took seven
 grueling days of desert riding to reach Libira. While the capital feasted, Libira struggled
@@ -595,13 +547,13 @@ against drought, bandit raids, and forgotten infrastructure.
    abyssal energy that sealed the First King in the Dreamscape and violently warped the distance
    between Libira and Sacyra into an impenetrable spatial rift.
 
-[WARNING]
-#### 
-Believing the sudden spatial expansion was a deliberate imperial curse cast by the Sacyran court
-to permanently exile Libira, the boy's devotion inverted into pure, consuming hatred.
-#### 
+> **[WARNING]**
+> 
+> Believing the sudden spatial expansion was a deliberate imperial curse cast by the Sacyran court
+> to permanently exile Libira, the boy's devotion inverted into pure, consuming hatred.
 
-## 3. Ascension, War & Metaphysical Corruption
+
+### Ascension, War & Metaphysical Corruption
 
 Returning across the warped desert passes, the youth took the name **Usuru**, mounted the dais
 of the Libiran assembly hall, and proclaimed the end of subservience:
@@ -615,7 +567,7 @@ of the Libiran assembly hall, and proclaimed the end of subservience:
   commanding *Dream Eaters*. By the war's end, his humanity had burned away, leaving behind the
   eternal, brooding sovereign now remembered only as **The Dark Lord**.
 
-## 4. Thematic Mirror: Elijah Ro-enheart & Usuru
+### Thematic Mirror: Elijah Ro-enheart & Usuru
 
 Usuru serves as the tragic historical negative to **Elijah Ro-enheart**:
 
@@ -629,10 +581,9 @@ Usuru serves as the tragic historical negative to **Elijah Ro-enheart**:
 
 ## Chapter 8: Chrono: Sage of the Ancient Archives & Dream Guardian
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/sages_and_ancients/chrono.adoc`
+> **Source**: `docs/lore/characters/sages_and_ancients/chrono.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Chrono** is the eternal archival sage and guardian of **The Dream Chamber**
 within the ethereal substrate of **The Dreamscape** (`LOC_THE_DREAMSCAPE`).
@@ -640,7 +591,6 @@ Witness to the 3,000-year dynastic wave and the catastrophic snapping of the pla
 tether during the 11th Festival of Peoples, Chrono serves as the guide, mentor,
 and mechanic instructor for the newly awakened Relic Bearer.
 
-[quote, Chrono, The Dream Chamber - Tutorial Trial]
 ____
 Time is neither a line nor a river, child of Sacyra. It is a loom of resonance.
 When the First King attempted to hold the veil open, the shuttle broke. What you call
@@ -648,7 +598,7 @@ monsters are merely the untethered threads of that unbroken night seeking form.
 Raise your ward. Let us see if your spirit remembers how to hold the dawn.
 ____
 
-## 1. Identity & Provenance
+### Identity & Provenance
 
 * **Full Designation**: Chrono, Keeper of the Monoliths and Primordial Archives.
 * **Affiliation**: Pre-Dynastic Sacyran Order of Scribes; Guardian of the Dream Veil.
@@ -658,29 +608,28 @@ ____
   eyes glow with muted amber luminescence. He holds the *Codex of Eras*, an unwritten ledger
   of potential futures.
 
-[cols="1,2", options="header"]
-|===
-| Dimension | Specification
-| **Age / Lifespan** | Ageless; active since the dawn of the First Dynasty (>3,000 years).
-| **Primary Relic** | **The Chrono Astrolabe** (Attunes pocket dimensions and temporal flow).
-| **Tone & Register** | Measured, archaic, compassionate yet unsentimental; philosophical.
-| **Mechanical Role** | Archetype Stone Selection, Combat Tutorial Arbiter, Dream Compass Attuner.
-|===
+| Dimension | Specification |
+| --- | --- |
+| **Age / Lifespan** | Ageless; active since the dawn of the First Dynasty (>3,000 years). |
+| **Primary Relic** | **The Chrono Astrolabe** (Attunes pocket dimensions and temporal flow). |
+| **Tone & Register** | Measured, archaic, compassionate yet unsentimental; philosophical. |
+| **Mechanical Role** | Archetype Stone Selection, Combat Tutorial Arbiter, Dream Compass Attuner. |
 
-## 2. Archival Purpose & Historical Memory
+
+### Archival Purpose & Historical Memory
 
 Chrono was present when Prince Mi-ren held his vigil in the capital and when Prince Casatti
 fell into the four-year coma. He witnessed Usuru the Wanderer arrive as a nameless pilgrim,
 and documented the exact instant the 11th-year ritual collapsed beneath the High Throne.
 
-[IMPORTANT]
-#### 
-Chrono does not intervene directly in the mortal wars of Sacyra. The Laws of the Veil
-forbid an Archival Sage from taking up arms against the living or the void. His duty is
-solely to ensure that the chosen Relic Bearer understands the consequences of moral intent.
-#### 
+> **[IMPORTANT]**
+> 
+> Chrono does not intervene directly in the mortal wars of Sacyra. The Laws of the Veil
+> forbid an Archival Sage from taking up arms against the living or the void. His duty is
+> solely to ensure that the chosen Relic Bearer understands the consequences of moral intent.
 
-### The Three Archival Directives
+
+#### The Three Archival Directives
 1. **Preserve the Blueprint of Balance**: Record the deeds of each monarch across the 3,000-year
    dynastic wave, tracking the accumulation of stasis residue beneath the capital.
 2. **Attune the Relic Bearer**: Test the newly awakened soul against the *Dream Eaters* to verify
@@ -688,53 +637,49 @@ solely to ensure that the chosen Relic Bearer understands the consequences of mo
 3. **Calibrate The Dream Compass**: Awaken the dormant temporal gearwork within *Grandma's Watch*,
    transforming a rustic heirloom into an instrument capable of navigating nocturnal planar shifts.
 
-## 3. Canonical Voice & Dialogue
+### Canonical Voice & Dialogue
 
 * *The Philosophy of Stance*:
-  [quote, Chrono, Combat Mechanics Initiation]
   "To wield only Lux is to become a frozen statue, impervious yet inert. To wield only
   Tenebris is to become a devouring blade, sharp yet hollow. True mastery lies in the
   threshold where the two kiss and do not consume one another."
 
 * *Warning of The King's Curse*:
-  [quote, Chrono, Midpoint Revelation]
   "King Jihad is not evil, bearer. He is thirsty. And a thirsty man standing over an open
   well of liquid night will drink until his belly bursts and his soul turns black."
 
 * *The Fate of Usuru*:
-  [quote, Chrono, The Planar Threshold]
   "Do not despise the Dark Lord. Mourn him. For before he was a sovereign of ruin, he was a
   lonely boy whose quiet complaint went unheard by a court blinded by its own radiance."
 
-## 4. Ludological Role in the TRPG Engine
+### Ludological Role in the TRPG Engine
 
-[cols="1,2", options="header"]
-|===
-| Gameplay Phase | Systemic Interaction
-| **Prologue (Awakening)** | Guides archetype stone interaction; spawns initial Dream Eater combatants.
-| **Act I Interludes** | Re-encountered during rest at campfires when the player falls into dream meditation.
-| **Act II (Midpoint)** | Deciphers the runes carved into *Grandma's Watch*, unlocking the Dream Compass.
-| **Act III (Endgame)** | Unlocks the *Sanctum of Forgotten Memories*, revealing Usuru's uncorrupted dialogue.
-|===
+| Gameplay Phase | Systemic Interaction |
+| --- | --- |
+| **Prologue (Awakening)** | Guides archetype stone interaction; spawns initial Dream Eater combatants. |
+| **Act I Interludes** | Re-encountered during rest at campfires when the player falls into dream meditation. |
+| **Act II (Midpoint)** | Deciphers the runes carved into *Grandma's Watch*, unlocking the Dream Compass. |
+| **Act III (Endgame)** | Unlocks the *Sanctum of Forgotten Memories*, revealing Usuru's uncorrupted dialogue. |
 
-****
-**Sidebar: Chrono's Codex & Invariant Validation**
 
-Within the C11 simulation engine, Chrono serves as the diagnotic voice of the
-subsystem self-audit routines (`core.util.manifest`, `sim.engine.state`). When the engine
-performs an invariant check, the telemetry trace reflects Chrono's unyielding standard:
-zero heap corruption, bounded moral sway, and deterministic state transitions.
-****
+> **Sidebar**
+> 
+> **Sidebar: Chrono's Codex & Invariant Validation**
+>
+> Within the C11 simulation engine, Chrono serves as the diagnotic voice of the
+> subsystem self-audit routines (`core.util.manifest`, `sim.engine.state`). When the engine
+> performs an invariant check, the telemetry trace reflects Chrono's unyielding standard:
+> zero heap corruption, bounded moral sway, and deterministic state transitions.
+
 
 
 ---
 
 ## Chapter 9: Grandma Magolia: Matriarch of Dio Village
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/dio_village/grandma_magolia.adoc`
+> **Source**: `docs/lore/characters/dio_village/grandma_magolia.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Grandma Magolia** (Magolia Ro-enheart) is the beloved matriarch of Dio
 Village, mother to Commander Gareth Ro-enheart, and grandmother to Elijah
@@ -742,7 +687,7 @@ Ro-enheart. Providing warmth, historical perspective, and the family heirloom
 (*Grandma's Watch*), Grandma Magolia anchors the heroes to the human heart
 of Sacyra.
 
-## 1. Identity & Family Ties
+### Identity & Family Ties
 
 * **Full Name**: Magolia Ro-enheart ("Grandma Magolia")
 * **Residence**: Grandma's House (Two-story timber cottage, Dio Upper Ward)
@@ -753,31 +698,27 @@ of Sacyra.
     during her rebellion against House Jaren court tutors)
   - **Lifelong Friend**: Monica the Mystic (companion since youth)
 
-## 2. Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
 
 Grandma Magolia speaks with gentle affection, nostalgic wisdom, and quiet
 sadness regarding the decline of provincial Sacyra.
 
 * *The Heirloom Quest*:
-  [quote, Grandma Magolia, Map 21 / Map 7]
   "Hello sweetie, could you please go upstairs and search in the chest and grab
   what's inside? It's something that has great significance."
 * *Reflections on the Kingdom's Neglect*:
-  [quote, Grandma Magolia, Map 21 / Map 7]
   "This town used to be full of life. *sighs* The kingdom doesn't pay much
   attention to this place anymore..."
 * *Passing Down the Heirloom Watch*:
-  [quote, Grandma Magolia, Map 21 / Map 7]
   "Thank you honey. This watch has been in the family for a long time. Oh, how
   it brings back memories of better days. I think you should keep it. It's my
   gift to you. And here's a bit of money. I know that you'll need it more than
   little ol' me."
 * *A Lifelong Bond with Monica*:
-  [quote, Grandma Magolia, Map 21 / Map 7]
   "Oh me and Monica go way back. She was such a wild child, always getting into
   mischief. You'll love her."
 
-## 3. The Heirloom Timepiece: Grandma's Watch
+### The Heirloom Timepiece: Grandma's Watch
 
 Grandma Magolia bequeaths **Grandma's Watch** to the party. In the original
 2017–2018 RPG Maker project, this item activated the global calendar and
@@ -791,10 +732,9 @@ budgets.
 
 ## Chapter 10: Monica the Mystic & Goddess Lyri
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/dio_village/monica_and_lyri.adoc`
+> **Source**: `docs/lore/characters/dio_village/monica_and_lyri.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Monica the Mystic** (known as *The Sage* in village folklore) and her
 elemental familiar **Lyri** reside in an arcane grove on the outskirts of
@@ -802,7 +742,7 @@ Upper Dio Village. Sarcastic, sharp-tongued, yet deeply attuned to the metaphysi
 currents of Sacyra, Monica is the first local authority to confirm that the
 forces of Darkness have re-awakened.
 
-## 1. Identity & Mystical Lineage
+### Identity & Mystical Lineage
 
 * **Name**: Monica (*The Mystic / The Sage*)
 * **Companion Familiar**: **Lyri**, an ethereal nature spirit who perceives
@@ -810,27 +750,24 @@ forces of Darkness have re-awakened.
 * **Residence**: Monica's House & Mystic Grove (Dio Upper Ward)
 * **Alliances**: Lifelong confidante of Grandma Magolia; contact of Chrono the Sage.
 
-## 2. Canonical Voice & Demeanor (2017–2018 RPG Maker Origin)
+### Canonical Voice & Demeanor (2017–2018 RPG Maker Origin)
 
 Monica possesses a biting, irreverent wit, greeting newcomers with playful
 insults before demonstrating profound arcane knowledge.
 
 * *Blunt First Impressions*:
-  [quote, Monica to Elijah, Map 27 / Map 29]
   "And who in the blaze are YOU! ... So you are Magolia's grandson. She made you
   sound more handsome than you are."
 * *Clashing with Katrina*:
-  [quote, Monica to Katrina, Map 27 / Map 29]
   "So you are Magolia's granddaughter. She made you sound prettier than you are." +
   *Katrina*: "LISTEN HERE YOU OLD-!" +
   *Monica*: "Tis only a joke. Now why have you come here? Do you have some milk?"
 * *Lyri's Whispers & The Darkness*:
-  [quote, Monica, Map 27 / Map 29]
   "A wise woman she is. Lyri has been whispering in me ear about the forces of
   darkness. I'll help, but first, get that hooligan from the city limits. Not
   only is he preventing folks from leaving, he's also messing with me business."
 
-## 3. Arcane Role in the Campaign
+### Arcane Role in the Campaign
 
 1. **Attunement to the Void**: Through Lyri, Monica senses the breaking of the
    ancient seals on the Abyssal Threshold long before the Royal Court admits it.
@@ -845,17 +782,16 @@ insults before demonstrating profound arcane knowledge.
 
 ## Chapter 11: Eric the Lumberjack & The Moral Litmus
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/dio_village/eric_the_lumberjack.adoc`
+> **Source**: `docs/lore/characters/dio_village/eric_the_lumberjack.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Eric** is a former lumberjack residing in the Upper Ward of Dio Village. His
 livelihood was shattered when a mysterious abyssal portal manifested in the
 timber forests, driving him into poverty. He introduces the heroes to the
 **Ring of Fire** and anchors the early **Test of Honesty** moral dilemma.
 
-## 1. Identity & Background
+### Identity & Background
 
 * **Name**: Eric
 * **Occupation**: Former Master Woodman / Timberjack (Unemployed due to monsters)
@@ -863,31 +799,28 @@ timber forests, driving him into poverty. He introduces the heroes to the
 * **Economic Situation**: Deeply impoverished, struggling to afford food as
   monster activity blocks access to the logging roads.
 
-## 2. Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
 
 Eric represents the vulnerable provincial working class bearing the brunt of
 unnatural cosmic incursions.
 
 * *The Struggle of Provincial Labor*:
-  [quote, Eric, Map 28]
   "We've been seeing a lot of monsters appear near the woods recently. I wonder
   what's that all about. And with jobs being tight, money is hard to come by."
 * *The Story of the Portal & The Ring of Fire*:
-  [quote, Eric, Map 28]
   "Thank you. Thank you so much, here I believe that this will be more useful to
   you than me. The name is Eric and that ring has a story. I used to be a
   lumberjack until that weird portal appeared. I found this ring and held on to
   it ever since. I'm sure that ring's fire power will come in handy if you plan
   on leaving the village."
 
-## 3. The Test of Honesty & Moral Continuum
+### The Test of Honesty & Moral Continuum
 
 Eric's home contains a famous interactive vignette from the 2017–2018 project:
 the **Self-Aware Pot**.
 
 * If the player attempts to loot Eric's shelf pot, the pot speaks directly to the
   player:
-  [quote, Self-Aware Pot, Map 28]
   "What kind of game do you think this is! You can't just steal whatever you
   want! How rude!"
 * Taking the 10 Gold increments the internal `Moral (Evil)` counter, while
@@ -900,37 +833,34 @@ the **Self-Aware Pot**.
 
 ## Chapter 12: John the Thief & Outlaw Resistance
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/dio_village/john_the_thief.adoc`
+> **Source**: `docs/lore/characters/dio_village/john_the_thief.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **John the Thief** is an underworld operative and smuggler residing in the
 back alleys of Dio Village's Lower Ward. Cynical and gruff, John nonetheless
 acts as an unofficial protector of the poor, redistributing goods and offering
 clandestine sidequests to heroes willing to bypass the law.
 
-## 1. Identity & Underworld Standing
+### Identity & Underworld Standing
 
 * **Name**: John (*"John the Thief"*)
 * **Occupation**: Smuggler, Fence, and Independent Rogue Operative
 * **Territory**: Lower Ward Alleys & Shopping District
 * **Philosophy**: Pragmatic survivalism; contempt for aristocratic landlords.
 
-## 2. Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
 
 John initially meets outsiders with hostility, softening only when heroes
 demonstrate that they care about the common people.
 
 * *Gruff Rebuff*:
-  [quote, John, Map 31]
   "What do you want kid! Can't you see that I'm busy!"
 * *Recognizing Civic Virtue*:
-  [quote, John, Map 31]
   "So you're the one that's helping the little people of this village out. I have
   a little task for you..."
 
-## 3. Quest & Mechanics Role
+### Quest & Mechanics Role
 
 John the Thief introduces the **Stolen Goods** tactical retrieval mechanics.
 In the 2017–2018 LeTBS combat engine, recovered bandit contraband appeared as
@@ -942,24 +872,23 @@ as the quest receiver who turns recovered goods into vital supplies and gold.
 
 ## Chapter 13: The St. Baron & Feudal Exploitation
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/dio_village/st_baron.adoc`
+> **Source**: `docs/lore/characters/dio_village/st_baron.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **The St. Baron** is the wealthiest aristocrat and dominant landowner of Dio
 Village. Residing in a secluded manor in the Lower Ward, the St. Baron uses
 exorbitant rent, grain hoarding, and monopolies to subjugate the impoverished
 citizens, serving as a primary symbol of noble corruption outside the capital.
 
-## 1. Identity & Standing
+### Identity & Standing
 
 * **Title**: The St. Baron of Dio Province
 * **Residence**: The St. Baron's Manor (Lower Dio Village)
 * **Status**: High provincial gentry; tax collector for the eastern march
 * **Reputation**: Ruthless, miserly, and widely despised by the working poor.
 
-## 2. Socio-Economic Conflict in Dio Lower Ward
+### Socio-Economic Conflict in Dio Lower Ward
 
 While the Upper Ward remains pastoral and self-sufficient, the Lower Ward
 suffers under the St. Baron's heavy-handed economic extortion. By controlling
@@ -967,14 +896,12 @@ grain warehouses and money-lending stalls, the Baron has forced shopkeepers and
 laborers into debt bondage.
 
 * *The Hero's Moral Justification (Elijah)*:
-  [quote, Elijah, Lower Village Infiltration]
   "I can't believe that I am doing this... the baron is the richest man in the
   village... but he's been using the town! This is for the good!"
 * *The Rogue's Determination (Katrina)*:
-  [quote, Katrina, Lower Village Infiltration]
   "Ok... here we go... let's do this. I have to do at least one good thing today."
 
-## 3. Narrative & Quest Role
+### Narrative & Quest Role
 
 The St. Baron represents the mundane human corruption that flourishes when the
 Crown neglects its borders. Infiltrating the St. Baron's estate to recover stolen
@@ -986,17 +913,16 @@ scenario, forcing Elijah to break legal statutes for the higher moral good.
 
 ## Chapter 14: High Priest Roté & The Royal Omens
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/kingdom_and_court/sir_rote.adoc`
+> **Source**: `docs/lore/characters/kingdom_and_court/sir_rote.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Sir Roté** is a veteran scout, senior knight, and herald of the Sacyran
 Royal Guard. His urgent, breathless arrival at Sacyra Castle serves as the
 opening narrative incitement of the game, delivering news of the rising island,
 the unnatural storm, and the return of the primordial Darkness.
 
-## 1. Identity & Standing
+### Identity & Standing
 
 * **Full Name**: Sir Roté of the Royal Guard
 * **Rank / Office**: Senior Outrider Captain / First Scout of the Realm
@@ -1004,24 +930,21 @@ the unnatural storm, and the return of the primordial Darkness.
 * **Visual Demeanor**: Weather-worn plate mail spattered with mud from frantic
   galloping, exhausted, earnest, and deeply devoted to the Crown.
 
-## 2. Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
 
 Sir Roté represents the perspective of the loyal rank-and-file soldier who
 believes unquestioningly in his monarch's ability to save the realm.
 
 * *Observation at the Frontier (Start-Up / Castle Gates)*:
-  [quote, Roté, Map 2 & Map 3 / Map 8]
   "The king... huff... huff... huff... he must know immediately! And to think...
   The storm... The rising island... All of these events before the Festival of
   Heroes. The king will know how to stop this, he must know..."
 * *The Urgent Report to King Jihad*:
-  [quote, Roté, Throne Room - Map 4 / Map 9]
   "MY KING! It's here! The darkness... it has returned!"
 * *The Uneasy Hesitation*:
-  [quote, Roté, Hearing King Jihad's Gag Order]
   "Y... Y... Yes my king..."
 
-## 3. Narrative Role & Dynamic
+### Narrative Role & Dynamic
 
 Sir Roté serves as a tragic mirror to Elijah Ro-enheart. Both men revere the
 oath of the Royal Guard. However, while Roté suppresses his growing unease
@@ -1035,10 +958,9 @@ Elijah and Katrina to infiltrate the castle archives.
 
 ## Chapter 15: King Jihad & The Treasonous Ambition
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/kingdom_and_court/king_jihad.adoc`
+> **Source**: `docs/lore/characters/kingdom_and_court/king_jihad.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **King Jihad** (referenced in ancient annals as *D. Jihad*) is the reigning
 monarch of the **Kingdom of Sacyra**. Outwardly a dignified sovereign presiding
@@ -1046,7 +968,7 @@ over the chivalric traditions and the **Festival of Heroes**, King Jihad secretl
 harbors a perilous ambition: to seize and harness the forbidden abyssal power of
 the returning **Dark Lord** to establish absolute dominion over the realm.
 
-## 1. Identity & Sovereign Office
+### Identity & Sovereign Office
 
 * **Full Name**: King Jihad of Sacyra (Monarchical Title: *D. Jihad*)
 * **Office**: Crown Sovereign, King of Sacyra, High Commander of the Realm
@@ -1054,28 +976,18 @@ the returning **Dark Lord** to establish absolute dominion over the realm.
 * **Political Standing**: Balances the aristocratic Noble Houses against the
   meritocratic Adventurers' Guild while commanding the elite Royal Guard.
 
-## 2. The Grotesque Inversion of the Founding Dynasty
+### The Grotesque Inversion of the Founding Dynasty
 
 King Jihad stands as the exact moral and structural inverse of the First King and Prince Mi-ren:
 
-[cols="1,2,2", options="header"]
-|===
-| Dimension | The Founding Dynasty (First King & Mi-ren) | The Modern Inversion (King Jihad)
+| Dimension | The Founding Dynasty (First King & Mi-ren) | The Modern Inversion (King Jihad) |
+| --- | --- | --- |
+| **State of the Monarch** | Physical body comatose/dead during festival week, while his **spirit remained pure and lucid** in The Dreamscape to guide the realm. | Physical body healthy upon the throne, while his **heart is thoroughly corrupted** by greed for void power. |
+| **Purpose of Secrecy** | Concealed the First King's passing out of filial duty and preservation until teenage Mi-ren officially came of age. | Imposes a gag order (`"don't tell the people"`) so heroes do not interfere before Jihad can usurp void power for himself. |
+| **Relation to Prophecy** | Forged Lux and Tenebris to enact justice, protect life, and seek forgiveness. | Covets the **Prophecy of Kings**, seeking to hijack void supremacy without understanding that Lux dissipates in a corrupt heart. |
 
-| **State of the Monarch**
-| Physical body comatose/dead during festival week, while his **spirit remained pure and lucid** in The Dreamscape to guide the realm.
-| Physical body healthy upon the throne, while his **heart is thoroughly corrupted** by greed for void power.
 
-| **Purpose of Secrecy**
-| Concealed the First King's passing out of filial duty and preservation until teenage Mi-ren officially came of age.
-| Imposes a gag order (`"don't tell the people"`) so heroes do not interfere before Jihad can usurp void power for himself.
-
-| **Relation to Prophecy**
-| Forged Lux and Tenebris to enact justice, protect life, and seek forgiveness.
-| Covets the **Prophecy of Kings**, seeking to hijack void supremacy without understanding that Lux dissipates in a corrupt heart.
-|===
-
-## 3. "The King's Curse" & Abyssal Possession
+### 3. "The King's Curse" & Abyssal Possession
 
 * **The Planar Hazard:** For 3,000 years, Sacyran monarchs were exposed to residual spiritual shear
   from the open planar rift beneath the High Throne dias, left when Usuru shattered the First King's
@@ -1087,19 +999,17 @@ King Jihad stands as the exact moral and structural inverse of the First King an
 * **Act I Midpoint Climax:** Defeating King Jihad at Sacyra Castle exposes this possession, revealing that
   the true threat lies deep in the subterranean Abyssal Vaults where the ancient soul of Usuru still waits.
 
-## 4. Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
+### Canonical Voice & Dialogue (2017–2018 RPG Maker Origin)
 
 * *The Secret Soliloquy:*
-  [quote, D. Jihad, High Throne Room]
   "The fools... that power... that wicked power! Soon I will rule over this land,
   and not even the Dark Lord will have power over me!"
 * *Suppressing the Truth:*
-  [quote, King Jihad to Sir Roté]
   "Thank you Roté, what would I do without your careful watch... Gather up the
   guard! We need to prepare! Darkness will soon return to this land. And don't
   tell the people of this discovery... You all are dismissed."
 
-## 5. Socio-Political Role in the Campaign
+### Socio-Political Role in the Campaign
 
 1. **State Censorship:** Enforces an information blackout along the border, ignoring Sir Roté's warnings.
 2. **Gareth's Disappearance:** Dispatched Commander Gareth Ro-enheart on a suicide mission into the
@@ -1112,17 +1022,16 @@ King Jihad stands as the exact moral and structural inverse of the First King an
 
 ## Chapter 16: Commander Gareth Ro-enheart & The Vanished Guard
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/characters/kingdom_and_court/commander_gareth_ro_enheart.adoc`
+> **Source**: `docs/lore/characters/kingdom_and_court/commander_gareth_ro_enheart.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 **Commander Gareth Ro-enheart** was the renowned Head of the Royal Guard, hero
 of the Sunken Citadel, and father to Elijah Ro-enheart. His unexplained
 disappearance under sealed royal orders following Elijah's 10th birthday forms
 the primary personal catalyst driving Elijah's journey across Sacyra.
 
-## 1. Identity & Lineage
+### Identity & Lineage
 
 * **Full Name**: Commander Gareth Ro-enheart
 * **Title**: Former Head of the Sacyran Royal Guard; Knight-Commander of Sacyra
@@ -1131,7 +1040,7 @@ the primary personal catalyst driving Elijah's journey across Sacyra.
   - **Mother**: Magolia Ro-enheart ("Grandma Magolia", matriarch of Dio Village)
 * **Status**: Missing in Action / Sealed Royal Dispatch (Presumed Alive)
 
-## 2. Legend & Martial Legacy
+### Legend & Martial Legacy
 
 Gareth Ro-enheart is remembered throughout Sacyra as an incorruptible paragon
 of chivalric virtue. Decades prior, when an allied barbarian host breached the
@@ -1139,11 +1048,10 @@ frontier palisades, Commander Gareth anchored the Sunken Citadel for seven days
 without relief, personally deflecting siege bolts with his reinforced tower shield.
 
 He passed this philosophy to his young son Elijah:
-[quote, Gareth Ro-enheart]
 "A shield is not a wall to hide behind, but a promise made to the people standing
 behind you."
 
-## 3. The 10th Birthday Vanishing & Royal Intrigue
+### The 10th Birthday Vanishing & Royal Intrigue
 
 On the morning following Elijah's **10th birthday**, Commander Gareth received
 a direct royal summons from King Jihad and departed the capital with an elite
@@ -1160,17 +1068,16 @@ retinue for the southern frontier. Neither he nor his men ever returned.
 
 ## Chapter 17: Threat Dossier: The Dark Lord
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/threats/the_dark_lord.adoc`
+> **Source**: `docs/lore/threats/the_dark_lord.adoc`
 
-[abstract]
-## Overview
+### Overview
 
 In the authentic 2017–2018 demo script and canonical narrative architecture, the ultimate
 antagonist is designated strictly as **The Dark Lord**. He is not a generic cardboard demon,
 but the tragic culmination of three millennia of festering bitterness born from the catastrophe
 of the 11th Festival: the ancient Libiran youth **Usuru**.
 
-## 1. Ground-Truth Canonical Identity & Origin
+### Ground-Truth Canonical Identity & Origin
 
 * **The Nameless Wanderer of Libira:** Born on the remote southern frontier of Libira during
   the First King's reign, he grew up as a restless three-day wanderer whose sole enduring devotion
@@ -1187,7 +1094,7 @@ of the 11th Festival: the ancient Libiran youth **Usuru**.
   his unresolved grief and fury curdled over three thousand years until his mortal name was lost
   to history, remembered only with terror as **The Dark Lord**.
 
-## 2. Narrative Function: The Overarching "A Plot"
+### Narrative Function: The Overarching "A Plot"
 
 * **Existential Backdrop:** The Dark Lord is not an early-game hallway encounter. He represents
   the overarching existential shadow ("The A Plot") looming over Sacyra.
@@ -1198,7 +1105,7 @@ of the 11th Festival: the ancient Libiran youth **Usuru**.
   with the annual **Festival of Heroes**, knowing that the boundary to the Dreamscape thins to
   gossamer during that week, providing a planar bridge to reclaim the surface world.
 
-## 3. "The King's Curse" & Possession of King Jihad
+### 3. "The King's Curse" & Possession of King Jihad
 
 * **The Planar Rift:** When Usuru shattered the First King's stasis array 3,000 years ago, he left
   a jagged planar wound directly beneath the dias of the High Throne.
@@ -1208,7 +1115,7 @@ of the 11th Festival: the ancient Libiran youth **Usuru**.
 * **Two-Half Campaign Resolution:** In Act I, heroes confront the possessed King Jihad; in Act II,
   they must travel into the deep abyssal threshold to face The Dark Lord himself.
 
-## 4. Metaphysical Neutrality & True Resolution
+### Metaphysical Neutrality & True Resolution
 
 * **Not Elemental Evil:** Darkness (Tenebris) is a cosmic apex force of rest, mystery, and severance.
   The Dark Lord represents Tenebris corrupted by an unhealed heart of vengeance.
@@ -1222,9 +1129,9 @@ of the 11th Festival: the ancient Libiran youth **Usuru**.
 
 ## Chapter 18: Threat Dossier: Dream Eaters
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/lore/threats/dream_eaters.adoc`
+> **Source**: `docs/lore/threats/dream_eaters.adoc`
 
-## 1. Astral Parasites of the Slumber Realm
+### Astral Parasites of the Slumber Realm
 
 **Dream Eaters** are shifting metaphysical entities native to the borders of The Dreamscape.
 

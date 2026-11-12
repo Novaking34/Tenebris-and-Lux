@@ -1,25 +1,27 @@
 = Volume III: Ludology & Tactical TRPG Combat Mechanics
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-07
+v0.2.0-dev, 2026-11-12
 :doctype: book
 :toc: left
-:toclevels: 3
-:sectnums:
+:toclevels: 2
+:sectnumlevels: 3
 :icons: font
 :source-highlighter: rouge
-:pdf-theme: default
+:has-snapshot-appendix:
 
-[abstract]
-== Volume Synopsis
+:sectnums:
 
+[NOTE]
+.Volume III Synopsis
+====
 Grid-based tactical warfare, relic stance machines, terrain modifiers, continuous invariant testing, and game design curation.
+====
 
-== Chapter 1: Dual-Layer TRPG Combat Architecture
+== Dual-Layer TRPG Combat Architecture
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/tactical_trpg_system.adoc`
+*Source File*: `docs/game_design/tactical_trpg_system.adoc`
 
-[abstract]
-== Overview
+=== Overview
 
 This document specifies the dual-layer combat architecture of *Tenebris and Lux*:
 a **Tactical Strategy RPG (TRPG)** featuring a **grid-based tactical battlefield** coupled with
@@ -27,7 +29,7 @@ a **Tactical Strategy RPG (TRPG)** featuring a **grid-based tactical battlefield
 RPG Maker genesis of CreativeWorkzStudio, this design bridges grand tactical positioning with visceral,
 action-driven 2D engagement.
 
-== 1. Dual-Layer Battle Architecture
+=== Dual-Layer Battle Architecture
 
 The combat engine operates across two seamless, interconnected operational loops:
 
@@ -50,12 +52,12 @@ The combat engine operates across two seamless, interconnected operational loops
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-== 2. Phase 1: Grid-Based Tactical Battlefield
+=== Phase 1: Grid-Based Tactical Battlefield
 
 The overarching strategic layer takes place upon a discrete 2D grid map representing the castles,
 frontier passes, and battlegrounds of the **Kingdom of Sacyra**.
 
-=== 1. Grid Topography & Spatial Invariants
+==== Grid Topography & Spatial Invariants
 
 * **Coordinate Space**: Discrete integer grid `(grid_x, grid_y)`.
 * **Unit Footprint**: Standard units occupy a $1 \times 1$ grid tile; major boss constructs
@@ -68,27 +70,27 @@ frontier passes, and battlegrounds of the **Kingdom of Sacyra**.
   - **Void Mire (Abyssal Blight)**: $2.5\times$ movement cost, inflicts $-5$ HP decay
     per turn on non-void units.
 
-=== 2. Movement & Zone of Control (ZOC)
+==== Movement & Zone of Control (ZOC)
 
 * **Movement Budget**: Units possess a base `movement_tiles` statistic (e.g. Katrina: 6 tiles; Elijah: 4 tiles in heavy armor).
 * **Zone of Control**: Moving into an adjacent tile directly forward of a hostile soldier halts further movement for that turn, anchoring frontline formations.
 * **Directional Facing**: Units finish their turn facing one of four cardinal directions (`NORTH`, `SOUTH`, `EAST`, `WEST`). Attacking an enemy from their flank grants $+15\%$ critical chance; attacking from the rear guarantees an unguardable strike.
 
-=== 3. Turn Sequencing
+==== Turn Sequencing
 
 * **Dynamic Initiative Order**: Turn execution is governed by unit Agility. Fast skirmishers (like Katrina) act earlier in the round, while heavy vanguard armorers act later with higher defensive resilience.
 
-== 3. Phase 2: Cinematic Combat Resolution (Side-View Action)
+=== Phase 2: Cinematic Combat Resolution (Side-View Action)
 
 When an attacker initiates an assault or when two opposing units clash on the grid, the game seamlessly
 transitions into a dedicated **2D Side-View Cinematic Battle Scene**.
 
-=== 1. Visual & Staging Presentation
+==== Visual & Staging Presentation
 
 * The attacker approaches from the left (player units) or right (enemy units) across a dynamic 2D battlefield backdrop matching the current terrain (e.g., Sunken Citadel battlements, ash-strewn frontier).
 * Character sprites render with expressive combat animations: Idle combat stance, forward dash, heavy strike, shield block, recoil, stagger, and victory flourishes.
 
-=== 2. Combat Mechanics During Cinematic Resolution
+==== Combat Mechanics During Cinematic Resolution
 
 1. **Active Input & Timed Agency**:
    - Rather than passive numbers scrolling past, combat resolution incorporates timed player inputs:
@@ -103,11 +105,11 @@ transitions into a dedicated **2D Side-View Cinematic Battle Scene**.
      - `STANCE_STRIKING`: Katrina or Elijah lowers their center of gravity, dragging the Sword of Tenebris as twilight embers trail the blade.
      - `STANCE_EQUILIBRIUM`: Fluid parry-and-counter sequencing utilizing both armaments in rapid harmony.
 
-== 4. Dual-Protagonist Synergy: Elijah & Katrina
+=== Dual-Protagonist Synergy: Elijah & Katrina
 
 The tactical depth of *Tenebris and Lux* emerges from combining the distinct capabilities of Elijah and Katrina:
 
-=== Elijah Ro-enheart (Frontline Guardian)
+==== Elijah Ro-enheart (Frontline Guardian)
 
 [cols="1,3", options="header"]
 |===
@@ -119,7 +121,7 @@ The tactical depth of *Tenebris and Lux* emerges from combining the distinct cap
 | **Cinematic Moves** | *Aegis Slam*, *Radiant Shockwave*, *Bastion Guard*, *Solar Flare Riposte*.
 |===
 
-=== Katrina Jaren (Tactical Skirmisher)
+==== Katrina Jaren (Tactical Skirmisher)
 
 [cols="1,3", options="header"]
 |===
@@ -131,7 +133,7 @@ The tactical depth of *Tenebris and Lux* emerges from combining the distinct cap
 | **Cinematic Moves** | *Abyssal Dash*, *Crescent Sever*, *Shadow Dance*, *Mist-Veil Feint*.
 |===
 
-=== Tandem Linked Combat (The Duo Duel)
+==== Tandem Linked Combat (The Duo Duel)
 
 When Elijah and Katrina are positioned on adjacent grid tiles and either initiates combat, both heroes
 enter the cinematic side-view battle scene together:
@@ -139,7 +141,7 @@ enter the cinematic side-view battle scene together:
 * **Shield & Sword Flank**: Elijah executes an *Aegis Slam* that knocks the enemy backward, launching them into Katrina's airborne *Crescent Sever*.
 * **Harmonized Equilibrium**: Both heroes combine the radiance of Lux and the edge of Tenebris, unleashing a dual finishing art that sweeps across multiple targets.
 
-== 5. Persistent State & Moral Sway Feedback
+=== Persistent State & Moral Sway Feedback
 
 Upon completion of the cinematic resolution:
 
@@ -150,12 +152,12 @@ Upon completion of the cinematic resolution:
    - Executing fleeing enemies with abyssal severance or utilizing forbidden void arts tilts sway toward **Malice (-)**.
    - Moral sway unlocks distinct strategic faction options across the Kingdom of Sacyra.
 
-== Chapter 2: The Twin Relics, Combat Stances & Moral Sway
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/relics_and_combat.adoc`
+== The Twin Relics, Combat Stances & Moral Sway
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/relics_and_combat.adoc`
+
+=== Overview
 
 This document specifies the core ludological mechanics of *Tenebris and Lux* in the **Kingdom of Sacyra**
 and **The Dreamscape**: the twin primordial relics (**The Shield of Lux** and **The Sword of Tenebris**),
@@ -163,7 +165,7 @@ the dynamic combat stance state machine, the moral sway continuum (`[-100, +100]
 skills: **Defend** (Lux Barrio), **Attack** (Cuttatio Tenebris), and **Special** (Basic Magic, Basic Ward,
 Basic Charm, and Duo-Loca Bashin n Slash).
 
-== 1. Primordial Neutrality & Relic Mechanics
+=== Primordial Neutrality & Relic Mechanics
 
 Neither relic is inherently good nor evil. They are manifestations of cosmic apex forces whose morality is
 dictated solely by the intentions and choices of their wielders—canonically **Elijah Ro-enheart** and
@@ -180,7 +182,7 @@ dictated solely by the intentions and choices of their wielders—canonically **
 | **Resource Dynamics** | Regenerates on guard; absorbs incoming assault | Consumes edge on strikes; hones outside combat
 |===
 
-== 2. The Combat Stance State Machine
+=== The Combat Stance State Machine
 
 The battle posture shifts dynamically across four discrete combat stances:
 
@@ -210,7 +212,7 @@ The battle posture shifts dynamically across four discrete combat stances:
    - Grid Effect: Immunity to positioning debuffs and void mire terrain penalties.
    - Combat Effect: Simultaneously restores $+15$ Shield power and $+15$ Sword edge; parries incoming strikes while counter-attacking for $20$ damage; nudges moral sway toward center ($0$).
 
-== 3. The Moral Sway Continuum & Decoupled Elemental Expression
+=== The Moral Sway Continuum & Decoupled Elemental Expression
 
 The moral trajectory of Sacyra's champions is tracked along a continuous bounded integer axis:
 
@@ -221,24 +223,24 @@ The moral trajectory of Sacyra's champions is tracked along a continuous bounded
                  └─── [ -50 to +50: Bystander ] ──┘
 ----
 
-=== 3.1. Decoupling Morality ("The Why") from Elemental Expression ("The How")
+==== Decoupling Morality ("The Why") from Elemental Expression ("The How")
 Neither Lux nor Tenebris dictates a character's moral alignment:
 * **Virtuous Lux (`+1 ... +100`):** Selfless sanctuary, kinetic mitigation (*Lux Barrio*), and restorative peace.
 * **Tyrannical Lux (`-100 ... -1`):** Blinding glare, totalitarian enforcement of rigid order, and calcifying living will into petrified stasis (The Mi-ren Fallacy).
 * **Virtuous Tenebris (`+1 ... +100`):** Surgical severance (*Cuttatio Tenebris*), cutting corrupt bindings, and executing Absolute Justice without unnecessary bloodshed (The Casatti Ideal).
 * **Malevolent Tenebris (`-100 ... -1`):** Creeping entropic rot, nihilistic bloodlust, and devouring devastation (The Dark Lord).
 
-=== 3.2. The Bystander Corridor (`[-50, +50]`) as Net Moral Inertia
+==== The Bystander Corridor (`[-50, +50]`) as Net Moral Inertia
 The `[-50, +50]` band represents **Net Moral Inertia**, where opposing deeds cancel out into zero net displacement. Staying within this corridor traps the protagonists in 3,000 years of repeating cyclical tragedy. Breaking past $\pm 50$ through deliberate micro-choices (such as aiding Eric or John in Dio Village) asserts heroic agency: *"Trauma is Inherited, Destiny is Chosen."*
 
-=== 3.3. Equilibrium (`0`)
+==== Equilibrium (`0`)
 Maintained by active discipline rather than passive fence-sitting; balancing the blade and the aegis so that radiant light tempers the void without collapsing into calcified stasis or entropic rot. Unlocks the tandem secret art *Duo-Loca Bashin n Slash*.
 
-== 4. Tactical Actions & Combat Skills
+=== Tactical Actions & Combat Skills
 
 In the revised, authentic combat framework, basic actions expand into dedicated martial and arcane skills:
 
-=== 4.1. Defend (`defend` / `ward`)
+==== Defend (`defend` / `ward`)
 * **Standard Defend**: Braces behind the Shield of Lux, regenerating $+10 \dots +15$ shield power and mitigating incoming damage.
 * **Basic Skill: `Lux Barrio` (`barrio`)**:
   - Manifests a radiant, geometric barrier of pure light.
@@ -246,7 +248,7 @@ In the revised, authentic combat framework, basic actions expand into dedicated 
   - **Duration Roll**: Deterministically rolls for **$2 \dots 5$ turns** (`2 + (turns % 4)`).
   - **Resonance**: Saturates Shield of Lux by $+20$ points (capped at $100$) and awards $+3$ moral virtue.
 
-=== 4.2. Attack (`attack` / `strike`)
+==== Attack (`attack` / `strike`)
 * **Standard Attack**: Strikes the target enemy using the Sword of Tenebris, consuming edge points and dealing physical damage (`(ATK * 2) - DEF`).
 * **Basic Skill: `Cuttatio Tenebris` (`cuttatio`)**:
   - A sweeping abyssal crescent slash infused with dark mist.
@@ -254,7 +256,7 @@ In the revised, authentic combat framework, basic actions expand into dedicated 
   - **Splash Damage**: Deals **$20\%$ splash damage** to surrounding and flanking foes (`threat_surrounding_hp`).
   - **Edge Dynamic**: Consumes $8 \dots 12$ edge points.
 
-=== 4.3. Special (`special` / `balance`)
+==== Special (`special` / `balance`)
 Replaces balance with a four-fold technique tree honoring the twin relics and arcane arts:
 
 1. **`Basic Magic` (`magic`)**:
@@ -275,11 +277,11 @@ Replaces balance with a four-fold technique tree honoring the twin relics and ar
    - **Relic Harmony**: Simultaneously restores $+15$ Shield power and $+15$ Sword edge, while nudging moral sway toward absolute cosmic equilibrium ($0$).
    - Costs $12$ MP.
 
-=== 4.4. Hero Customization & Protagonist Lore
+==== Hero Customization & Protagonist Lore
 * While **Elijah Ro-enheart** and **Katrina Jaren** remain the canonical dual protagonists representing the Shield of Lux and Sword of Tenebris, the player can dynamically designate their own hero identity using the `name <chosen_name>` command.
 * All narrative chronicle logs, character severity tags, and telemetry traces adapt cleanly to the bearer's active name.
 
-== 5. The Metaphysical Law of Tempering & Dissipation
+=== The Metaphysical Law of Tempering & Dissipation
 
 The interaction between the Shield of Lux and the Sword of Tenebris is governed by the ancient law established during the 7-Year Great War:
 
@@ -287,7 +289,7 @@ The interaction between the Shield of Lux and the Sword of Tenebris is governed 
 * **The Fragility of Radiance (Dissipation):** While Lux tempers Tenebris, it requires emotional and ethical stability. Any sudden surge of terror, malice, or panic causes Lux to **dissipate immediately**, collapsing protective barriers and leaving Tenebris unbridled.
 * **Ludonarrative Impact:** In combat, executing dark commands with negative moral sway degrades Lux Barrio duration rolls, while maintaining Equilibrium (`0` sway) maximizes barrier resilience and tandem skill execution.
 
-== 6. The Relic Embellishment System
+=== The Relic Embellishment System
 
 Throughout the campaign, the Shield of Lux and Sword of Tenebris are actively embellished through quest outcomes, moral choices, and auxiliary relics:
 
@@ -300,7 +302,7 @@ Throughout the campaign, the Shield of Lux and Sword of Tenebris are actively em
 4. **Armory Relics (Medusa's Sword & Heart Shield):**
    - Optional material infusions granting petrification stasis or passive HP vitality warding.
 
-== 7. Relic Profiles & The Ten-Ending Campaign Matrix
+=== Relic Profiles & The Ten-Ending Campaign Matrix
 
 The final profile of relic embellishments along the `[-100, +100]` Moral Sway continuum maps into the 3x3 matrix crowned by the 10th synthesis ending:
 * **Lux-Good (`[+50, +100]`):** *The Radiant Sanctuary* — Selfless protection without tyranny.
@@ -315,12 +317,11 @@ The final profile of relic embellishments along the `[-100, +100]` Moral Sway co
 * **Synthesis (10th Route):** *The True Ending ("The Ugly Truth")* — Unlocked via Elijah, Katrina, and the Custom Bearer (`<chosen_name>`) alongside nocturnal Dreamscape trials, mending the 3,000-year planar tear.
 
 
-== Chapter 3: Campaign Architecture, The King's Curse & Multi-Ending Specification
+== Campaign Architecture, The King's Curse & Multi-Ending Specification
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/campaign_structure_and_endings.adoc`
+*Source File*: `docs/game_design/campaign_structure_and_endings.adoc`
 
-[abstract]
-== Overview & Ludological Philosophy
+=== Overview & Ludological Philosophy
 
 This specification articulates the structural macro-architecture of the campaign in *Tenebris and Lux*,
 including the two-half campaign progression, the metaphysical etiology of "The King's Curse," the midpoint
@@ -329,7 +330,7 @@ the premise of ludonarrative consent, the engine allows casual players to experi
 tactical campaign, while reserving the mythological truth for players who actively engage with nocturnal
 Dreamscape trials.
 
-== 1. The Two-Half Campaign Structure
+=== The Two-Half Campaign Structure
 
 The overarching campaign is organized into two distinct dramatic and mechanical halves:
 
@@ -354,12 +355,12 @@ The overarching campaign is organized into two distinct dramatic and mechanical 
 └────────────────────────────────────────────────────────────────────────┘
 ----
 
-=== 1.1. Act I: Stopping King Jihad (The Sovereign of Ambition)
+==== Act I: Stopping King Jihad (The Sovereign of Ambition)
 Act I centers on terrestrial, socio-political conflict. Operating from Dio Village through the Whispering
 Woods and Capital marches, the party uncovers King Jihad's treasonous suppression of border alerts. The
 act culminates during the **Festival of Heroes** at Sacyra Castle, where King Jihad is confronted and defeated.
 
-=== 1.2. The Etiology of "The King's Curse" & Royal Possession
+==== The Etiology of "The King's Curse" & Royal Possession
 Court superstition long spoke of a hereditary madness afflicting monarchs of Sacyra. Forensic narrative
 architecture reveals that "The King's Curse" is not a demonic hex, but an active **metaphysical hazard**:
 
@@ -372,7 +373,7 @@ architecture reveals that "The King's Curse" is not a demonic hex, but an active
   medium mirrors mortal intent, Jihad's megalomania inverted the flow, allowing a dormant psychic remnant
   of Usuru (**The Dark Lord**) to possess his body.
 
-== 2. The Midpoint Fork: Neutral Path vs. True Ending Path
+=== The Midpoint Fork: Neutral Path vs. True Ending Path
 
 Defeating King Jihad reveals the void possession, forcing the narrative into its primary structural fork:
 
@@ -394,7 +395,7 @@ Defeating King Jihad reveals the void possession, forcing the narrative into its
 (Heroic Myth)  (Tyrant/Usurper)                    (Elijah + Katrina) (Custom Bearer)
 ----
 
-=== 2.1. Why Basic Completion Is the Neutral Ending
+==== Why Basic Completion Is the Neutral Ending
 By design, any player who simply plays the main story linearly from start to finish will reach the end
 of the campaign. However, skipping the missable nocturnal **Dream Compass** trials produces the **Neutral Ending**:
 
@@ -403,14 +404,14 @@ of the campaign. However, skipping the missable nocturnal **Dream Compass** tria
 * Usuru's ancient wound of betrayal is left unhealed, and the systemic neglect between the Capital and frontier
   provinces remains unchanged, ensuring the cycle will repeat.
 
-=== 2.2. Player Consent to Know the Deeper Lore
+==== Player Consent to Know the Deeper Lore
 Video games are distinguished by interactive agency. Forcing forty minutes of historical exposition down the
 player's throat violates ludic pacing. By gating the full mythological truth behind optional, nocturnal
 Dreamscape trials, the game honors the player's agency: players who desire a fast-paced tactical campaign
 can enjoy a satisfying heroic conclusion, while players who actively investigate the mystery are rewarded
 with the full mythological reality.
 
-=== 2.3. Why the True Ending Is "The Ugly Truth"
+==== Why the True Ending Is "The Ugly Truth"
 The canonical True Ending is neither a simplistic fairy-tale triumph nor a dark nihilistic collapse. It is
 **"The Ugly Truth"** that dismantles the self-serving propaganda of both sides:
 
@@ -421,12 +422,12 @@ The canonical True Ending is neither a simplistic fairy-tale triumph nor a dark 
 * It reveals that Sacyra's three millennia of golden peace were bought at the cost of deliberate neglect
   toward frontier provinces like Libira and Dio Village.
 
-== 3. Relic Embellishment & The Ten-Ending Campaign Matrix
+=== Relic Embellishment & The Ten-Ending Campaign Matrix
 
 Throughout both acts, the player's choices, side quests, and stance preferences actively **embellish**
 the Shield of Lux and Sword of Tenebris along the `[-100, +100]` **Moral Sway** continuum.
 
-=== 3.1. Telemetry Over Point Locks & The Bystander Corridor
+==== Telemetry Over Point Locks & The Bystander Corridor
 Players do not aim for brittle, exact integers to unlock endings. Instead, `moral_sway` acts as
 continuous behavioral telemetry showing where the player's philosophy is steering the world:
 
@@ -438,7 +439,7 @@ continuous behavioral telemetry showing where the player's philosophy is steerin
 * **Equilibrium (`0`):** An active, razor-thin discipline where Lux and Tenebris temper each other without
   collapsing into calcification or entropic rot.
 
-=== 3.2. The 3x3 Ending Matrix + The 10th True Ending
+==== The 3x3 Ending Matrix + The 10th True Ending
 
 Combining the three elemental expressions (**Lux**, **Tenebris**, and **Statera** / Equilibrium) with
 the three moral bands (**Good** `[+50, +100]`, **Neutral** `[-50, +50]`, and **Bad** `[-100, -50]`)
@@ -481,7 +482,7 @@ produces nine distinct campaign resolutions, crowned by a tenth synthesis ending
   Unlocked only by experiencing Elijah's campaign, Katrina's campaign, and finally the Custom Bearer (`<chosen_name>`) while completing all nocturnal Dreamscape trials. Sacyra confronts its 3,000-year institutional guilt, releases the First King's trapped soul, reconciles Usuru's childhood grief, exposes King Jihad, and permanently mends the planar tear in the Room of Sages.
 |===
 
-=== 3.3. The Witness Protagonist, Keystone Route & Observer Effect
+==== The Witness Protagonist, Keystone Route & Observer Effect
 
 Reaching the True Ending ("The Ugly Truth") relies on three formal game design structures:
 
@@ -498,7 +499,7 @@ Reaching the True Ending ("The Ugly Truth") relies on three formal game design s
    - Left to themselves, Sacyra's internal factions repeat the tragic 3,000-year cycle.
    - The outside Observer's conscious engagement collapses the tragic wavefunction into historical reconciliation.
 
-=== 3.4. Chrono's Chronicle Ledger: NG+ Timeline Navigation
+==== Chrono's Chronicle Ledger: NG+ Timeline Navigation
 
 To ensure that exploring the full matrix never devolves into repetitive grinding:
 
@@ -510,7 +511,7 @@ To ensure that exploring the full matrix never devolves into repetitive grinding
   explore all 9 matrix endings without replaying introductory chapters.
 * **Diegetic Saves:** Saving is rooted diegetically at **Grandma Magolia's Hearth** and **Chrono's Room of Sages**.
 
-== 4. Systemic Invariants & Engine Triggers
+=== Systemic Invariants & Engine Triggers
 
 All ending routes and campaign forks are evaluated through deterministic engine invariants in Layer 1:
 
@@ -523,12 +524,12 @@ All ending routes and campaign forks are evaluated through deterministic engine 
 4. **Observer Flags:** The 10th True Ending requires validation flags `flag_elijah_cleared`,
    `flag_katrina_cleared`, and `dreamscape_trials_mask == 0xFF`.
 
-== Chapter 4: The Dreamscape & Temporal Architecture
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/dreamscape_and_temporal_architecture.adoc`
+== The Dreamscape & Temporal Architecture
 
-[abstract]
-== Overview & Engine Integration
+*Source File*: `docs/game_design/dreamscape_and_temporal_architecture.adoc`
+
+=== Overview & Engine Integration
 
 This document specifies the technical, mechanical, and temporal architecture of **The Dreamscape**
 in *Tenebris and Lux*. Grounded in the recovered 2017–2018 RPG Maker MV demo baseline (Maps 006, 008,
@@ -536,12 +537,12 @@ in *Tenebris and Lux*. Grounded in the recovered 2017–2018 RPG Maker MV demo b
 sequence with Chrono the Sage, the terrestrial demo gating, the evolution of **Grandma's Watch** into
 **The Dream Compass**, and nocturnal event-driven temporal phasing.
 
-== 1. Engine Architecture & Topological Verification
+=== Engine Architecture & Topological Verification
 
 The Dreamscape is not an ephemeral cutscene or narrative metaphor; it is an active, fully integrated
 subsystem registered within the Layer 1 simulation engine:
 
-=== 1.1. Explicit Province Registration
+==== Explicit Province Registration
 The plane is codified as an explicit topological enumeration in `include/sim/sim_types.h`:
 
 [source,c]
@@ -555,7 +556,7 @@ typedef enum {
 } location_id_t;
 ----
 
-=== 1.2. Tactical LeTBS Battlefields
+==== Tactical LeTBS Battlefields
 The Dreamscape encompasses five dedicated grid environments extracted from the historical archives:
 
 * **Map 006 (Chrono's Archive / The Hall of Sages):** Archetype stone pedestals, floating crystal
@@ -567,7 +568,7 @@ The Dreamscape encompasses five dedicated grid environments extracted from the h
 * **Maps 041 & 042 (The Deep Astral Depths):** High-level nocturnally phased battlefields featuring
   astral leyline conduits that replenish MP while inflicting planar shear.
 
-=== 1.3. Parameterized Combatants: The Dream Eaters
+==== Parameterized Combatants: The Dream Eaters
 The Dreamscape is populated by **Dream Eaters**—parasitic entities dispatched across the thinning veil
 by The Dark Lord to devour ancestral records prior to the Festival of Heroes:
 
@@ -581,33 +582,33 @@ Threat Profile: Dream Eater
 └── Tactical AI: Rushes fragile casters; vulnerable to radiant deflection (Lux Barrio).
 ----
 
-=== 1.4. Bidirectional Topology
+==== Bidirectional Topology
 The spatial graph connects seamlessly between the metaphysical and physical planes:
 * Northward: `Awaken` $\to$ `LOC_DIO_VILLAGE` (Grandma Magolia's Hearth).
 * Southward: `Slumber Meditation` $\to$ `LOC_THE_DREAMSCAPE` (Requires Dream Compass nighttime flag).
 
-== 2. Narrative Inception: The Astral Rite of Awakening
+=== Narrative Inception: The Astral Rite of Awakening
 
-=== 2.1. Unformed Potential in the Astral Archive
+==== Unformed Potential in the Astral Archive
 The game opens not in a mundane tavern or military camp, but inside the timeless ether of **The Dreamscape**.
 Because this plane houses 3,000 years of ancestral memory—and the marooned soul of the First King—having
 **Chrono the Sage** guide the player through class archetype stones elevates character creation into
 a canonical ritual of spiritual attunement.
 
-=== 2.2. Tri-Perspective Adaptability
+==== Tri-Perspective Adaptability
 Opening in unformed ether allows the simulation to cleanly accommodate any of the three playable vantage
 points—**Elijah Ro-enheart**, **Lady Katrina Jaren**, or a custom-named bearer (`<chosen_name>`)—before
 their identity crystallizes into physical form.
 
-=== 2.3. The Ludonarrative Shock of "AWAKEN!"
+==== The Ludonarrative Shock of "AWAKEN!"
 After proving tactical mastery against Dream Eaters in the abstract void, Chrono banishes the player
 with an urgent command: _"AWAKEN!"_. The immediate cut to Grandma Magolia's crackling birch hearth in
 Dio Village shocks the player into physical reality, establishing a stark contrast between cosmic
 destiny and human vulnerability.
 
-== 3. Terrestrial Gating & The Dream Compass
+=== Terrestrial Gating & The Dream Compass
 
-=== 3.1. Chapter 1 Demo Gating as a Terrestrial Anchor
+==== Chapter 1 Demo Gating as a Terrestrial Anchor
 Throughout Chapter 1 (the entire demo narrative), the player is strictly locked out of returning to
 The Dreamscape. This design rule prevents premature cosmic dilution, forcing the player to invest
 emotionally in the grounded human stakes of Dio Village:
@@ -616,7 +617,7 @@ emotionally in the grounded human stakes of Dio Village:
 * John the Thief's moral crusade against the predatory St. Baron.
 * Monica the Mystic's grief beside the totem of fallen border soldiers.
 
-=== 3.2. From Grandma's Watch to The Dream Compass
+==== From Grandma's Watch to The Dream Compass
 In the opening sequence, the player retrieves **Grandma's Watch** from the upstairs chest in Dio Village
 (Map 020). Mechanically, this initializes the Layer 0 `time_utils` 24-hour monotonic clock:
 
@@ -633,7 +634,7 @@ Layer 0 Monotonic Clock Subsystem
 Upon concluding the Chapter 1 demo introduction, Grandma's Watch undergoes its first metaphysical
 transmutation, evolving into **The Dream Compass**.
 
-=== 3.3. Nocturnal Synchronization & Scarcity
+==== Nocturnal Synchronization & Scarcity
 The Dream Compass acts as a dimensional resonant tuning fork with strict activation criteria:
 * **Nighttime Window Only:** The Dream Compass functions exclusively during nocturnal hours
   (`20:00 <= hour || hour <= 04:00`). During daylight hours, the compass needle spins aimlessly.
@@ -643,12 +644,12 @@ The Dream Compass acts as a dimensional resonant tuning fork with strict activat
   prevented from becoming a trivial grinding hub, preserving its sacred mystery and directly linking
   quest availability to the monotonic clock's relentless countdown toward the Festival of Heroes.
 
-== Chapter 5: World Topography, Provinces & Battlefield Terrain
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/world_topography.adoc`
+== World Topography, Provinces & Battlefield Terrain
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/world_topography.adoc`
+
+=== Overview
 
 This document specifies the authentic spatial geography, province layouts, environmental encounters,
 and tactical grid battlefields governing the **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`)
@@ -658,7 +659,7 @@ the narrative begins within the ethereal trials of **The Dreamscape** before awa
 hamlet of **Dio Village**. Players may guide the canonical champions (**Elijah Ro-enheart** and
 **Katrina Jaren**) or customize their chosen bearer's designation.
 
-== 1. Spatial Structure: The Realm Topology
+=== Spatial Structure: The Realm Topology
 
 The campaign begins in the trial realm of slumber and transitions into the physical topology of Sacyra:
 
@@ -685,7 +686,7 @@ The campaign begins in the trial realm of slumber and transitions into the physi
 └───────────────────────────────────────┘
 ----
 
-=== 1. The Dreamscape (`LOC_THE_DREAMSCAPE`)
+==== The Dreamscape (`LOC_THE_DREAMSCAPE`)
 * **Role**: The ethereal realm of ancient trials guided by Chrono where the illusion of the dream shatters.
 * **Environment**: Floating crystal archways, shifting astral mist, and mechanism trial chambers.
 * **Significance**: The hero awakens here to learn the fundamentals of combat and relic resonance.
@@ -694,7 +695,7 @@ The campaign begins in the trial realm of slumber and transitions into the physi
 * **Grid Battlefield**: Astral tiles, floating platforms, and ethereal leylines granting MP regeneration.
 * **Connections**: North / Awaken $\to$ Dio Village.
 
-=== 2. Dio Village (`LOC_DIO_VILLAGE`)
+==== Dio Village (`LOC_DIO_VILLAGE`)
 * **Role**: Pastoral ancestral hamlet in Sacyra; the true awakening point of the physical journey.
 * **Environment**: Cozy stone cottages with thatched roofs, Grandma Magolia's welcoming hearth,
   Eric the lumberjack's timber yard, and the local general trading post.
@@ -703,7 +704,7 @@ The campaign begins in the trial realm of slumber and transitions into the physi
 * **Threat Vigor**: $0$ (Sanctified village sanctuary; recovery, dialogue, and lore exchange).
 * **Connections**: South $\to$ The Dreamscape (slumber meditation); North $\to$ Whispering Woods.
 
-=== 3. Whispering Woods (`LOC_WHISPERING_WOODS`)
+==== Whispering Woods (`LOC_WHISPERING_WOODS`)
 * **Role**: Dense ancient forest enveloping Dio Village, separating the hamlet from the kingdom's interior.
 * **Environment**: Towering ironwood boughs, rustling autumn canopy, and hidden woodland trails.
 * **Encounter**: **Umbral Wolf** ($85$ Threat HP, $14$ DEF, $10$ MDF, $60$ Flank Vigor).
@@ -712,7 +713,7 @@ The campaign begins in the trial realm of slumber and transitions into the physi
   - Tree root chokepoints where *Lux Barrio* shields flanking allies from pack ambushes.
 * **Connections**: South $\to$ Dio Village; East / North $\to$ The Sacyran Marches.
 
-=== 4. The Sacyran Marches (`LOC_SACYRA_MARCHES`)
+==== The Sacyran Marches (`LOC_SACYRA_MARCHES`)
 * **Role**: The windswept frontier marches leading toward the Royal Court of King Jihad and the Capital.
 * **Environment**: Craggy hills, fortified signal towers, and military encampments.
 * **Encounter**: **Shadow Scout & Vanguard Patrol** ($110$ Threat HP, $18$ DEF, $14$ MDF, $80$ Flank Vigor).
@@ -721,7 +722,7 @@ The campaign begins in the trial realm of slumber and transitions into the physi
   - Broad fields allowing full maneuverability of twin-relic equilibrium strikes.
 * **Connections**: West / South $\to$ Whispering Woods.
 
-== 2. The Overarching Menace: The Dark Lord
+=== The Overarching Menace: The Dark Lord
 
 In the authentic 2017–2018 canonical script, the ultimate antagonist is designated strictly as **The Dark Lord**:
 * He is never named "Malakor" or burdened with synthetic titles in canon.
@@ -731,12 +732,12 @@ In the authentic 2017–2018 canonical script, the ultimate antagonist is design
 * The wielder's mastery of the Shield of Lux and Sword of Tenebris prepares them for this looming confrontation
   without rushing directly into the final battle.
 
-== Chapter 6: Continuous Invariant Testing Philosophy
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/game_testing.adoc`
+== Continuous Invariant Testing Philosophy
 
-[abstract]
-== Abstract
+*Source File*: `docs/game_design/game_testing.adoc`
+
+=== Abstract
 
 In classical software engineering, testing focuses primarily on stateless input/output validation,
 API schemas, and unit function assertions (`assert(f(x) == y)`). In game development, testing
@@ -744,7 +745,7 @@ requires an entirely distinct paradigm: verifying continuous state continuity, e
 softlock immunity, deterministic replay parity, and strict 60 FPS frame-budget headroom.
 This document outlines the testing philosophy governing *Tenebris and Lux*.
 
-== 1. The Fundamental Divergence
+=== The Fundamental Divergence
 
 [cols="1,2,2", options="header"]
 |===
@@ -756,9 +757,9 @@ This document outlines the testing philosophy governing *Tenebris and Lux*.
 | **Time Budget** | Milliseconds/seconds per request | 16.6 milliseconds total frame budget (60 FPS) with microseconds for simulation
 |===
 
-== 2. Core Pillars of Game Development Testing
+=== Core Pillars of Game Development Testing
 
-=== Pillar 1: Dynamic State Invariants & Bounded Continuity
+==== Pillar 1: Dynamic State Invariants & Bounded Continuity
 
 In a game like *Tenebris and Lux*, state variables (`shield_power`, `sword_edge`, `moral_sway`, `threat_hp`)
 are constantly mutated across hundreds of player turns. A single off-by-one error or uncapped addition
@@ -772,7 +773,7 @@ will cause state drift, resulting in overflow, negative health zombies, or invul
   routine that asserts all invariants simultaneously and outputs a detailed diagnostic manifest
   without crashing the game process.
 
-=== Pillar 2: Deterministic Replay ("Golden Master Replay")
+==== Pillar 2: Deterministic Replay ("Golden Master Replay")
 
 Games are emergent systems. If two players—or an automated CI runner—replay the exact same sequence of
 commands from the same seed, the end state must be **100% bitwise identical**:
@@ -789,7 +790,7 @@ TEST_ASSERT(run1.threat_hp    == run2.threat_hp,    "Deterministic threat");
 This ensures that gameplay balance, combat resolution, and narrative branching do not drift across
 compiler optimizations, operating systems, or refactored engine code.
 
-=== Pillar 3: Softlock Immunity & Degenerate Play Detection
+==== Pillar 3: Softlock Immunity & Degenerate Play Detection
 
 A **softlock** occurs when a player is technically still playing, but has no valid action forward:
 - Running out of relic energy during an un-fleeable battle.
@@ -800,7 +801,7 @@ Our automated stress suite executes **1,000 rapid chaotic commands** (combining 
 rapid stance transitions, and empty tokens), verifying that the game engine rejects nonsense safely,
 maintains continuous memory integrity, and never enters a deadlocked state.
 
-=== Pillar 4: Economy & Combat Balance Invariance
+==== Pillar 4: Economy & Combat Balance Invariance
 
 Game testing must verify that no single player action is universally dominant (the "dominant strategy" flaw).
 If a player can simply spam `ward` forever without consequence, or if `strike` renders all other actions
@@ -809,7 +810,7 @@ useless, the game design collapses:
 - Striking inflicts decisive severance damage, but consumes finite sword edge.
 - Balancing recovers both relics and parries attacks, but requires timing and resets extreme moral sway.
 
-=== Pillar 5: Frame-Budget Latency Headroom
+==== Pillar 5: Frame-Budget Latency Headroom
 
 In standard software, a backend database query taking 50 ms is acceptable. In game development,
 a game running at 60 FPS has **only 16.6 milliseconds** to:
@@ -822,19 +823,19 @@ Simulation logic must therefore execute in **microseconds**.
 In our automated benchmark (`test_gameplay_scenarios`), 10,000 action turns execute in **160 ms**
 (**16.02 $\mu\text{s}$ per turn**), consuming less than **$0.1\%$** of a 60 FPS frame.
 
-== Chapter 7: Game Design Curation & Triaging Matrix
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/game_design_curation.adoc`
+== Game Design Curation & Triaging Matrix
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/game_design_curation.adoc`
+
+=== Overview
 
 This document formalizes the architectural triage of the 2017–2018 RPG Maker MV
 demo datasets. It separates generic RPG Maker Runtime Package (RTP) boilerplate
 from temporary testing experiments and identifies the authentic, fleshed-out
 canonical systems to be reconstructed in the native C11 game engine.
 
-== 1. Triage Categorization Taxonomy
+=== Triage Categorization Taxonomy
 
 To prevent technical debt from legacy game engine defaults from contaminating
 our custom C11 engine, all extracted game data is triaged into three strict
@@ -848,7 +849,7 @@ analytical categories:
 | **Tier 3: Fleshed-Out Canonical Pillars** | Core story scripts, dual-protagonist dialogue dynamics, moral dilemma quests, LeTBS grid tactics, and key relics. | **Preserve & Reconstruct**. Faithfully implement as axiomatic invariants in C11.
 |===
 
-== 2. Tier 1: RPG Maker RTP Defaults (To Discard or Re-Architect)
+=== Tier 1: RPG Maker RTP Defaults (To Discard or Re-Architect)
 
 [cols="2,2,3", options="header"]
 |===
@@ -860,7 +861,7 @@ analytical categories:
 | **Default Title Theme** | `Theme6` / `CrossedSwords` title screen graphic | Default MV asset packaging. Replaced by bespoke Sacyran coat of arms and twin relic artwork.
 |===
 
-== 3. Tier 2: Prototype & Testing Sketches (Concepts to Evolve)
+=== Tier 2: Prototype & Testing Sketches (Concepts to Evolve)
 
 [cols="2,2,3", options="header"]
 |===
@@ -871,12 +872,12 @@ analytical categories:
 | **Plugin Experiments** | `LeTBS/firestorm.json`, `LeTBS/test.json`, `QMaps/` | Initial experiments with Lecode's Tactical Battle System and Quasi Movement plugins. Proves grid-based TRPG was the true target genre.
 |===
 
-== 4. Tier 3: Fleshed-Out Canonical Pillars (Core Invariants to Reconstruct)
+=== Tier 3: Fleshed-Out Canonical Pillars (Core Invariants to Reconstruct)
 
 The following systems represent the authentic creative vision of *Tenebris and Lux*
 and must be preserved and reconstructed in C11:
 
-=== 1. Dual-Protagonist Dynamics & Narrative Branching
+==== Dual-Protagonist Dynamics & Narrative Branching
 * **Elijah Ro-enheart (`\n[1]`)**: Son of vanished Commander Gareth Ro-enheart.
   Dutiful, protective vanguard bearer of the Shield of Lux. Dialogue reflects
   reverence for duty, family loyalty, and hesitation to violate laws.
@@ -885,7 +886,7 @@ and must be preserved and reconstructed in C11:
   Tenebris. Dialogue features sardonic wit, impatience with provincial stagnation,
   and fierce defense of the vulnerable.
 
-=== 2. The Moral Sway Continuum Engine
+==== The Moral Sway Continuum Engine
 * **Ethical Mechanics**: Discrete moral choices tracking across `Moral (Good)`
   and `Moral (Evil)` within the invariant continuum `[-100, +100]`.
 * **The Test of Honesty (Eric's House, Map 28)**:
@@ -895,7 +896,7 @@ and must be preserved and reconstructed in C11:
   - Feudal exploitation vs. outrider rebellion, forcing the heroes to choose
     between legal compliance and moral justice.
 
-=== 3. Lecode Tactical Battle System (LeTBS) Mechanics
+==== Lecode Tactical Battle System (LeTBS) Mechanics
 * **Grid Movement & Range Geometries**:
   - Movement Points (4 MP baseline), modified by skills like *Light Steps* (+1) and *Heavy Hit* (-3).
   - Scope shapes: `circle(r)`, `circle(max, min)` (annular), `line(n)`, `square(r)`.
@@ -905,16 +906,17 @@ and must be preserved and reconstructed in C11:
 * **Turn Timeline Manipulation**:
   - *Accelerate*, *Decelerate*, and *Emergency Turn* altering the turn queue.
 
-=== 4. The Monotonic 24-Hour Time Engine
+==== The Monotonic 24-Hour Time Engine
 * **Grandma's Watch**: Family heirloom activating real-time calendar and clock
   tracking (Seconds, Minutes, Hours, Days, Weeks, Months, Years), corresponding
   directly to Layer 0 `time_utils`.
 
-== Chapter 8: Combat Game Note: Attack Action & Cuttatio Tenebris
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/combat/attack_and_cuttatio_tenebris.adoc`
+== Combat Game Note: Attack Action & Cuttatio Tenebris
 
-== 1. Design Intent & Gameplay Philosophy
+*Source File*: `docs/game_design/combat/attack_and_cuttatio_tenebris.adoc`
+
+=== Design Intent & Gameplay Philosophy
 
 The **Attack** action channels the entropy and severance aspects of the **Sword of Tenebris**. Rather than generic single-target chipping, offensive melee strikes in *Tenebris and Lux* embody high-risk severance and crowd-cleaving outrider tactics:
 
@@ -931,7 +933,7 @@ The **Attack** action channels the entropy and severance aspects of the **Sword 
   - **20% Area Splash Damage**: In tactical combat with multiple enemy formations or surrounding reinforcements, **$20\%$ of the primary damage** cascades onto adjacent flanking targets (`threat_surrounding_hp`).
   - **Minimum Splash Threshold**: Guarantees at least $1$ damage to flanking targets if any primary damage is dealt, preventing armor-rounding deadzones.
 
-== 2. Numerical Invariants & Formulas
+=== Numerical Invariants & Formulas
 
 [cols="1,2,2", options="header"]
 |===
@@ -944,11 +946,12 @@ The **Attack** action channels the entropy and severance aspects of the **Sword 
 | **Moral Sway Effect** | $+0$ (Neutral) / $+1$ on kill | $+2$ (Controlled Severance)
 |===
 
-== Chapter 9: Combat Game Note: Defend Action & Lux Barrio
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/combat/defend_and_lux_barrio.adoc`
+== Combat Game Note: Defend Action & Lux Barrio
 
-== 1. Design Intent & Gameplay Philosophy
+*Source File*: `docs/game_design/combat/defend_and_lux_barrio.adoc`
+
+=== Design Intent & Gameplay Philosophy
 
 In tactical RPG design, standard "Guard" or "Defend" commands often feel like wasted turns or passive stalls. In *Tenebris and Lux*, the **Defend** action is an active tactical commitment that interfaces with the metaphysical resonance of the **Shield of Lux**:
 
@@ -964,7 +967,7 @@ In tactical RPG design, standard "Guard" or "Defend" commands often feel like wa
   - **Resonance Surge**: Surges Shield of Lux charge by $+20$ points and awards $+3$ virtue.
   - **Offensive Counter-Stagger**: When used against an attacking foe, deals $15 \dots 25$ HP of reflective shockwave damage, capable of routing low-vigor skirmishers directly.
 
-== 2. Numerical Invariants & Formulas
+=== Numerical Invariants & Formulas
 
 [cols="1,2,2", options="header"]
 |===
@@ -978,11 +981,12 @@ In tactical RPG design, standard "Guard" or "Defend" commands often feel like wa
 | **Moral Sway Effect** | $+1$ Virtue | $+3$ Virtue
 |===
 
-== Chapter 10: Combat Game Note: Special Abilities & Duo-Loca Bashin n Slash
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/combat/special_abilities_and_duo_loca.adoc`
+== Combat Game Note: Special Abilities & Duo-Loca Bashin n Slash
 
-== 1. Design Intent & The Four-Fold Special Suite
+*Source File*: `docs/game_design/combat/special_abilities_and_duo_loca.adoc`
+
+=== Design Intent & The Four-Fold Special Suite
 
 The **Special** action suite expands the former "Balance" command into a versatile toolkit that balances resource expenditure (Mana Points / Tactical Points) against tactical problem-solving:
 
@@ -1014,11 +1018,12 @@ The **Special** action suite expands the former "Balance" command into a versati
    - **Relic Harmonization**: Simultaneously replenishes $+15$ Shield of Lux and $+15$ Sword of Tenebris, while nudging moral sway by $3$ points toward cosmic equilibrium ($0$).
    - **Cost**: $12$ MP.
 
-== Chapter 11: Combat Game Note: Tactical Stance State Machine
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/combat/stance_state_machine.adoc`
+== Combat Game Note: Tactical Stance State Machine
 
-== 1. State Machine Completeness
+*Source File*: `docs/game_design/combat/stance_state_machine.adoc`
+
+=== State Machine Completeness
 
 The tactical stance machine governs the battle posture of the bearer across four discrete, strongly-connected states:
 
@@ -1047,17 +1052,17 @@ The tactical stance machine governs the battle posture of the bearer across four
 4. **`STANCE_EQUILIBRIUM` (Twin Harmonized)**:
    - Balances both relics simultaneously. Enhances Duo-Loca execution and parry/riposte dynamics.
 
-== Chapter 12: Armory, Equipment & Inventory Registry (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/armory_and_inventory.adoc`
+== Armory, Equipment & Inventory Registry (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/armory_and_inventory.adoc`
+
+=== Overview
 
 This document details all weapons, protective armors, restorative items, and key relics
 defined in `Weapons.json`, `Armors.json`, and `Items.json`.
 
-== 1. Weapons & Relic Armaments
+=== Weapons & Relic Armaments
 
 [cols="^1,2,^1,^1,^1,^1,^1,4", options="header"]
 |===
@@ -1069,7 +1074,7 @@ defined in `Weapons.json`, `Armors.json`, and `Items.json`.
 | `5` | **Medusa's Sword** | Sword | 1600\G | +17 | +0 | +0 | The sword used to slay Medusa. It is said to have her petrifying powers.
 |===
 
-== 2. Defensive Armor & Relic Wards
+=== Defensive Armor & Relic Wards
 
 [cols="^1,2,^1,^1,^1,^1,^1,4", options="header"]
 |===
@@ -1082,7 +1087,7 @@ defined in `Weapons.json`, `Armors.json`, and `Items.json`.
 | `6` | **Ring of Fire** | General Armor | 0\G | +0 | +5 | +0 | 
 |===
 
-== 3. Consumable Items & Quest Relics
+=== Consumable Items & Quest Relics
 
 [cols="^1,2,^1,^1,4", options="header"]
 |===
@@ -1097,17 +1102,17 @@ defined in `Weapons.json`, `Armors.json`, and `Items.json`.
 | `8` | **Compass of Morality** | 0\G | No (Key Relic) | 
 |===
 
-== Chapter 13: Bestiary & Troop Encounters (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/bestiary_and_troops.adoc`
+== Bestiary & Troop Encounters (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/bestiary_and_troops.adoc`
+
+=== Overview
 
 This document catalogs all 22+ hostile monsters, wild fauna, bandits, void entities,
 and interactive battlefield props from `Enemies.json` and `Troops.json`.
 
-== 1. Monster Bestiary
+=== Monster Bestiary
 
 [cols="^1,2,^1,^1,^1,^1,^1,^1,^1,^1,2", options="header"]
 |===
@@ -1134,7 +1139,7 @@ and interactive battlefield props from `Enemies.json` and `Troops.json`.
 | `38` | **Stolen Goods** | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | Basic Attack
 |===
 
-== 2. Neutral & Interactive Grid Entities
+=== Neutral & Interactive Grid Entities
 
 The demo utilized the battle engine to render interactive tactical grid entities:
 * **Wooden Chest (`Enemy 35`)**: `HP: 50` | Yields 200 Gold upon destruction via Common Event 5.
@@ -1144,7 +1149,7 @@ The demo utilized the battle engine to render interactive tactical grid entities
 * **Stolen Goods (`Enemy 38`)**: `HP: 1` | Objective dropped upon defeat of Mage Bandit.
 * **Invincible Neutral (`Enemy 32`)**: `HP: 99,999` | Static grid anchor.
 
-== 3. Troop Encounter Formations
+=== Troop Encounter Formations
 
 [cols="^1,2,3", options="header"]
 |===
@@ -1161,20 +1166,20 @@ The demo utilized the battle engine to render interactive tactical grid entities
 | `9` | **Dream Eater*2** | Dream Eater, Dream Eater
 |===
 
-== Chapter 14: Dramatis Personae & Cast Compendium (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/cast_and_characters.adoc`
+== Dramatis Personae & Cast Compendium (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/cast_and_characters.adoc`
+
+=== Overview
 
 This compendium catalogues every character, party companion, village elder, court
 antagonist, and mystical summon present in the 2017–2018 demo archives, detailing
 their combat statistics, class associations, sprite bindings, and narrative significance.
 
-== 1. Dual Protagonists
+=== Dual Protagonists
 
-=== Elijah Ro-enheart (The Steadfast Vanguard)
+==== Elijah Ro-enheart (The Steadfast Vanguard)
 * **ID**: `Actor 1`
 * **Class**: Hero (`Class 5`) / Knight (`Class 1`)
 * **Relic Affinity**: Bearer of the **Shield of Lux**
@@ -1196,7 +1201,7 @@ auto_status_sprite
 </letbs>
 ----
 
-=== Lady Katrina Jaren (The Outrider Blade)
+==== Lady Katrina Jaren (The Outrider Blade)
 * **ID**: `Actor 2`
 * **Class**: Hero (`Class 5`) / Start (`Class 7`)
 * **Relic Affinity**: Wielder of the **Sword of Tenebris**
@@ -1219,18 +1224,18 @@ auto_status_sprite
 </letbs>
 ----
 
-== 2. Extended Tactical Party Companions (Folder 2 Additions)
+=== Extended Tactical Party Companions (Folder 2 Additions)
 
 In `Old_Game_Data_2`, three specialized tactical party members were integrated to expand the grid-based TRPG party:
 
-=== Sebastien (The Infiltrator Outlaw)
+==== Sebastien (The Infiltrator Outlaw)
 * **ID**: `Actor 4`
 * **Class**: Thief (`Class 6`)
 * **Initial Level**: Lv 4
 * **Sprite / Battler**: `Actor3_7`
 * **Tactical AI & Role**: Outrider flanker equipped with `ranged_fighter` AI, trap disarmament, and precision critical strikes.
 
-=== Angela (The Evoker Elementalist)
+==== Angela (The Evoker Elementalist)
 * **ID**: `Actor 5`
 * **Class**: Mage (`Class 2`)
 * **Initial Level**: Lv 4
@@ -1239,28 +1244,28 @@ In `Old_Game_Data_2`, three specialized tactical party members were integrated t
 * **Action Palette**: Full tactical command set (`Move`, `Skill[42]`, `Items`, `Scan`, `Pass`).
 * **Tactical Role**: Long-range elemental artillery, crowd control, and battlefield terrain modification (ice walls, volcano ground).
 
-=== Lucius (The Battle Priest)
+==== Lucius (The Battle Priest)
 * **ID**: `Actor 6`
 * **Class**: Priest (`Class 3`)
 * **Initial Level**: Lv 4
 * **Sprite / Battler**: `Actor2_7`
 * **Tactical Role**: Turn order manipulation (`Accelerate`, `Decelerate`, `Emergency Turn`), long-distance allied teleportation, and barrier restoration.
 
-== 3. Summoned Celestial Entities
+=== Summoned Celestial Entities
 
-=== Wind Spirit (Actor 11)
+==== Wind Spirit (Actor 11)
 * **Class**: `Class 12` | **Sprite**: `Nature` (Index 4)
 * **Skills**: Air Compression (`Skill 132`), Great Wind (`Skill 133` - pushback), Transposition (`Skill 134` - swap places).
 
-=== Pixie (Actor 12)
+==== Pixie (Actor 12)
 * **Class**: `Class 13` | **Sprite**: `Nature` (Index 5)
 * **Skills**: Healing Wave (`Skill 135` - AOE restoration).
 
-=== Fire Chicken (Actor 13)
+==== Fire Chicken (Actor 13)
 * **Class**: `Class 14` | **Sprite**: `Nature` (Index 2)
 * **Characteristics**: Explosive combat decoy (`loop_animation: 262`), Bomb (`Skill 136`), Fire Arrow (`Skill 137`).
 
-== 4. Key Lore Figures & NPCs
+=== Key Lore Figures & NPCs
 
 [cols="1,2,4", options="header"]
 |===
@@ -1275,18 +1280,18 @@ In `Old_Game_Data_2`, three specialized tactical party members were integrated t
 | **King Jihad** | Monarch of Sacyra | Feigns royal mobilization while falling victim to the King's Curse, secretly coveting the returned primordial darkness to surpass The Dark Lord.
 |===
 
-== Chapter 15: Combat Classes, Stat Matrices & Growth Progressions (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/classes_and_growth.adoc`
+== Combat Classes, Stat Matrices & Growth Progressions (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/classes_and_growth.adoc`
+
+=== Overview
 
 This document details the 7 primary player and NPC classes plus 4 auxiliary summon/guard
 classes from `Classes.json`. It includes base stat formulas across 8 core attributes
 (MHP, MMP, ATK, DEF, MAT, MDF, AGI, LUK) and skill learning progressions.
 
-== Class 1: Warrior
+=== Class 1: Warrior
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1299,7 +1304,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 1200 | 400 | 130 | 100 | 50 | 80 | 27 | 277
 |===
 
-=== Skill Learnings for Warrior
+==== Skill Learnings for Warrior
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
@@ -1312,7 +1317,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | Lv 1 | **Phantom Slash** (`ID: 17`) | Innate class technique
 |===
 
-== Class 2: Mage
+=== Class 2: Mage
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1325,7 +1330,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 600 | 1070 | 40 | 70 | 130 | 100 | 26 | 277
 |===
 
-=== Skill Learnings for Mage
+==== Skill Learnings for Mage
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
@@ -1346,7 +1351,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | Lv 1 | **Multi Fire** (`ID: 57`) | Innate class technique
 |===
 
-== Class 3: Priest
+=== Class 3: Priest
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1359,7 +1364,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 800 | 700 | 100 | 110 | 115 | 100 | 32 | 277
 |===
 
-=== Skill Learnings for Priest
+==== Skill Learnings for Priest
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
@@ -1382,7 +1387,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | Lv 1 | **Mana Ball** (`ID: 92`) | Innate class technique
 |===
 
-== Class 4: Summoner
+=== Class 4: Summoner
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1395,14 +1400,14 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
 |===
 
-=== Skill Learnings for Summoner
+==== Skill Learnings for Summoner
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
 | Lv 1 | **Sentinel Totem** (`ID: 102`) | Innate class technique
 |===
 
-== Class 5: Hero
+=== Class 5: Hero
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1415,7 +1420,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
 |===
 
-=== Skill Learnings for Hero
+==== Skill Learnings for Hero
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
@@ -1423,7 +1428,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | Lv 5 | **Repulsive Blow** (`ID: 11`) | Innate class technique
 |===
 
-== Class 6: Thief
+=== Class 6: Thief
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1436,7 +1441,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
 |===
 
-== Class 7: Start
+=== Class 7: Start
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1449,7 +1454,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 1 | 1 | 1 | 999 | 1 | 999 | 1 | 1
 |===
 
-== Class 10: ---Special---
+=== Class 10: ---Special---
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1462,7 +1467,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 5350 | 1070 | 138 | 138 | 138 | 138 | 277 | 277
 |===
 
-== Class 11: Guard
+=== Class 11: Guard
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1475,14 +1480,14 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 1200 | 400 | 130 | 100 | 50 | 80 | 27 | 277
 |===
 
-=== Skill Learnings for Guard
+==== Skill Learnings for Guard
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
 | Lv 1 | **Heavy Hit** (`ID: 15`) | Innate class technique
 |===
 
-== Class 12: Wind Spirit
+=== Class 12: Wind Spirit
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1495,7 +1500,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 1 | 750 | 1 | 1 | 1 | 1 | 1 | 1
 |===
 
-=== Skill Learnings for Wind Spirit
+==== Skill Learnings for Wind Spirit
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
@@ -1504,7 +1509,7 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | Lv 1 | **Transposition** (`ID: 134`) | Innate class technique
 |===
 
-== Class 13: Pixie
+=== Class 13: Pixie
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1517,14 +1522,14 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 1 | 750 | 1 | 1 | 1 | 1 | 1 | 1
 |===
 
-=== Skill Learnings for Pixie
+==== Skill Learnings for Pixie
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
 | Lv 1 | **Healing Wave** (`ID: 135`) | Innate class technique
 |===
 
-== Class 14: Fire Chicken
+=== Class 14: Fire Chicken
 
 [cols="^1,^1,^1,^1,^1,^1,^1,^1,^1", options="header"]
 |===
@@ -1537,26 +1542,26 @@ classes from `Classes.json`. It includes base stat formulas across 8 core attrib
 | 99 | 1 | 1 | 1 | 1 | 1 | 1 | 1 | 1
 |===
 
-=== Skill Learnings for Fire Chicken
+==== Skill Learnings for Fire Chicken
 [cols="^1,2,3", options="header"]
 |===
 | Level | Skill Name | Strategic Role
 | Lv 1 | **Bomb** (`ID: 136`) | Innate class technique
 |===
 
-== Chapter 16: Tactical Battle System (LeTBS) Specification (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/combat_and_letbs_mechanics.adoc`
+== Tactical Battle System (LeTBS) Specification (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/combat_and_letbs_mechanics.adoc`
+
+=== Overview
 
 This document formalizes the grid-based Tactical Strategy RPG combat architecture
 implemented via Lecode's Tactical Battle System (LeTBS) in the 2017–2018 demo.
 It details movement costs, action economy, scope geometries, terrain manipulation,
 and turn manipulation invariants.
 
-== 1. Battle Field Architecture & Action Economy
+=== Battle Field Architecture & Action Economy
 
 * **Grid Structure**: 2D tile-based tactical grid mapped over encounter maps.
 * **Movement Points (MP)**: Consumable per-turn budget determining movement range:
@@ -1566,7 +1571,7 @@ and turn manipulation invariants.
 * **Turn Timeline**: Monotonic timeline ordering turns by entity agility (`auto_turn_order_face`).
 * **Directional Facing**: Facing impacts defense and positional abilities (e.g., *Phantom Slash* teleports directly behind the target before striking).
 
-== 2. Scope & Area of Effect (AOE) Geometries
+=== Scope & Area of Effect (AOE) Geometries
 
 The demo configured rich geometric targeting parameters across skills:
 
@@ -1581,7 +1586,7 @@ The demo configured rich geometric targeting parameters across skills:
 | `through_obstacles` | *Teleportation* (`Skill 73`) | Ignores intermediate terrain obstacles, requiring only a free destination cell.
 |===
 
-== 3. Terrain State Modifications & Dynamic Hazards
+=== Terrain State Modifications & Dynamic Hazards
 
 Combat encounters feature active environmental manipulation:
 
@@ -1590,7 +1595,7 @@ Combat encounters feature active environmental manipulation:
 * **Explosive Mark & Magic Trap (`Skill 76`, `Skill 80`)**: Proximity-triggered grid landmines that detonate upon enemy entry.
 * **Burning Tile Spread (`State 110`)**: Dynamic fire propagation expanding with `spread: 100% circle(1) all`.
 
-== 4. Turn Timeline Manipulation
+=== Turn Timeline Manipulation
 
 Unique priest techniques alter the flow of tactical battle:
 
@@ -1599,18 +1604,18 @@ Unique priest techniques alter the flow of tactical battle:
 * **Emergency Turn (`Skill 89`)**: Instantly grants an immediate action turn to an allied battler.
 * **Extra Turn (`Skill 86`)**: Grants the caster or target an additional action cycle upon turn conclusion.
 
-== Chapter 17: Dataset Evolution & Delta Analysis (Folder 1 vs Folder 2)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/dataset_evolution_delta.adoc`
+== Dataset Evolution & Delta Analysis (Folder 1 vs Folder 2)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/dataset_evolution_delta.adoc`
+
+=== Overview
 
 This document provides a comparative delta between `Old Game Data` (Folder 1) and
 `Old_Game_Data_2/data` (Folder 2), detailing the evolution from narrative prototype
 to advanced LeTBS tactical simulation, and establishing modern C11 reconciliation strategies.
 
-== 1. Dataset Characteristics & Metrics
+=== Dataset Characteristics & Metrics
 
 [cols="2,^2,^2", options="header"]
 |===
@@ -1624,7 +1629,7 @@ to advanced LeTBS tactical simulation, and establishing modern C11 reconciliatio
 | Morality Engine Items | Compass of Morality, Ring of Fire | Omitted / shifted to LeTBS combat
 |===
 
-== 2. Core Differences & Evolution Strategy
+=== Core Differences & Evolution Strategy
 
 1. **Narrative vs. Tactical Pivot**:
    - **Folder 1** represents the *narrative-complete* edition of the demo. It contains all dialogue branches, the Dio Village moral tests (Eric's Honesty Pot, John the Thief vs St. Baron), and key relics like the *Compass of Morality*.
@@ -1634,19 +1639,19 @@ to advanced LeTBS tactical simulation, and establishing modern C11 reconciliatio
    - **Layer 1 Simulation Engine**: Combine the narrative quest topology and moral continuum from Folder 1 with the rich 5-character tactical class abilities and LeTBS movement/scope geometry from Folder 2.
    - **Layer 2 Presentation**: Maintain the authentic dialog scripts, dual-protagonist branch voices, and environmental puzzles.
 
-== Chapter 18: Grimoire & Complete Skill Compendium (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/grimoire_and_skills.adoc`
+== Grimoire & Complete Skill Compendium (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/grimoire_and_skills.adoc`
+
+=== Overview
 
 This document records the complete grimoire of all 75+ active techniques, spells,
 and summon abilities defined in `Skills.json`. It provides mathematical damage
 formulas, MP/TP costs, scope parameters, and tactical LeTBS sequences.
 
 
-== Basic Martial Maneuvers
+=== Basic Martial Maneuvers
 
 [cols="^1,2,^1,^1,3,4", options="header"]
 |===
@@ -1663,7 +1668,7 @@ _Note_: `Skill #2 will be used when you select the Guard command.`
 |===
 
 
-== Knight Martial Techniques
+=== Knight Martial Techniques
 
 [cols="^1,2,^1,^1,3,4", options="header"]
 |===
@@ -1685,7 +1690,7 @@ _Note_: `<letbs> scope: line(4) sequence: phantom_slash </letbs>  <Learn Require
 |===
 
 
-== Mage Elemental Spells
+=== Mage Elemental Spells
 
 [cols="^1,2,^1,^1,3,4", options="header"]
 |===
@@ -1724,7 +1729,7 @@ _Note_: `<letbs> scope_select: enemies scope: circle(3); 2 selections: append; S
 |===
 
 
-== Priest Holy Arts & Turn Manipulation
+=== Priest Holy Arts & Turn Manipulation
 
 [cols="^1,2,^1,^1,3,4", options="header"]
 |===
@@ -1772,7 +1777,7 @@ _Note_: `<letbs> scope: circle(3) sequence: mana_ball </letbs> <Learn Require Le
 |===
 
 
-== Summoner Totems & Rites
+=== Summoner Totems & Rites
 
 [cols="^1,2,^1,^1,3,4", options="header"]
 |===
@@ -1786,7 +1791,7 @@ _Note_: `<letbs> scope: circle(1) fusion_effect </letbs> <letbs_AI> type: offens
 |===
 
 
-== Summon Beast Techniques
+=== Summon Beast Techniques
 
 [cols="^1,2,^1,^1,3,4", options="header"]
 |===
@@ -1806,7 +1811,7 @@ _Note_: `<letbs> scope: circle(3) sequence: projectile(fire_arrow) </letbs> <Lea
 |===
 
 
-== Enemy Bestial & Void Techniques
+=== Enemy Bestial & Void Techniques
 
 [cols="^1,2,^1,^1,3,4", options="header"]
 |===
@@ -1829,12 +1834,12 @@ _Note_: `<letbs> scope: line(3) aoe: circle(1) scope_options: need_free_cell seq
 _Note_: `<letbs> scope: circle(4,2) sequence: projectile(dagger) </letbs>  <letbs_AI> ...`
 |===
 
-== Chapter 19: Canonical Scenario & Narrative Walkthrough (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/scenario_and_walkthrough.adoc`
+== Canonical Scenario & Narrative Walkthrough (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/scenario_and_walkthrough.adoc`
+
+=== Overview
 
 This document preserves the complete chronological story script, scene transitions,
 puzzle structures, and verbatim dialogues of the 2017–2018 demo. It documents both
@@ -1842,15 +1847,15 @@ the shared story progression and the distinct dual-protagonist narrative branche
 between **Elijah Ro-enheart** (`\n[1]`) and **Lady Katrina Jaren** (`\n[2]`).
 
 
-== Act I: The Castle Prophecy & Dark Ambition
+=== Act I: The Castle Prophecy & Dark Ambition
 
-=== Start-Up / Walk of Fear
+==== Start-Up / Walk of Fear
 
 Roté's urgent arrival as dark omens rise.
 
 *Associated Maps*: Map 002
 
-==== Map 002: Start-Up
+===== Map 002: Start-Up
 
 * **Speaker/Source: `The Walk of Fear `**
 [listing]
@@ -1858,13 +1863,13 @@ Roté's urgent arrival as dark omens rise.
 \n<Roté>It has been years since I was needed here.<br>The king...<br>The king must know of these strange events!
 ----
 
-=== The Castle (Outside)
+==== The Castle (Outside)
 
 Roté observes the rising island and eerie storm prior to the Festival.
 
 *Associated Maps*: Map 003, Map 008
 
-==== Map 003: The Castle (Outside)
+===== Map 003: The Castle (Outside)
 
 * **Speaker/Source: `Roté Observation`**
 [listing]
@@ -1875,7 +1880,7 @@ All before the Festival of Heroes.
 The king will know how to stop this, he must know...
 ----
 
-==== Map 008: Battle Tutorial
+===== Map 008: Battle Tutorial
 
 * **Speaker/Source: `Dream Eaters`**
 [listing]
@@ -1948,13 +1953,13 @@ met him... mister....minster!
 You haven't told me anything!
 ----
 
-=== The Castle (Inside) - The Throne Room
+==== The Castle (Inside) - The Throne Room
 
 Roté warns King Jihad; King Jihad's treasonous conspiracy against the Dark Lord.
 
 *Associated Maps*: Map 004, Map 009
 
-==== Map 004: The Castle (Inside)
+===== Map 004: The Castle (Inside)
 
 * **Speaker/Source: `The King`**
 [listing]
@@ -1980,7 +1985,7 @@ this discovery...
 Yes my king.
 ----
 
-==== Map 009: Secret Map
+===== Map 009: Secret Map
 
 * **Speaker/Source: `Treasure Glow`**
 [listing]
@@ -2052,15 +2057,15 @@ mistake, use the red button
 ----
 
 
-== Act II: The Dream Realm & The Ancient Archives
+=== Act II: The Dream Realm & The Ancient Archives
 
-=== Intro / The Void
+==== Intro / The Void
 
 The cosmic darkness and threshold.
 
 *Associated Maps*: Map 001, Map 002
 
-==== Map 002: Start-Up
+===== Map 002: Start-Up
 
 * **Speaker/Source: `The Walk of Fear `**
 [listing]
@@ -2068,13 +2073,13 @@ The cosmic darkness and threshold.
 \n<Roté>It has been years since I was needed here.<br>The king...<br>The king must know of these strange events!
 ----
 
-=== Character Select & The Room of Sages
+==== Character Select & The Room of Sages
 
 Meeting Chrono; selecting archetype crystals; reviewing ancient archives.
 
 *Associated Maps*: Map 006, Map 011
 
-==== Map 006: Character Select
+===== Map 006: Character Select
 
 * **Speaker/Source: `Chrono`**
 [listing]
@@ -2322,15 +2327,15 @@ This book says [Elijah]. That's... me.
 ----
 
 
-== Act III: The Trial of Mechanisms & The Dream Eaters
+=== Act III: The Trial of Mechanisms & The Dream Eaters
 
-=== The Switches Puzzle Chamber
+==== The Switches Puzzle Chamber
 
 Boulders, pressure plates, jumping ledges with 'Z', and knowledge gates.
 
 *Associated Maps*: Map 007, Map 040
 
-==== Map 007: Switches
+===== Map 007: Switches
 
 * **Speaker/Source: `Special Room Switch`**
 [listing]
@@ -2424,7 +2429,7 @@ fix your mistakes.
 By clicking Z, you can jump across certain ledges.
 ----
 
-==== Map 040: Switches
+===== Map 040: Switches
 
 * **Speaker/Source: `Special Room Switch`**
 [listing]
@@ -2518,13 +2523,13 @@ fix your mistakes.
 By clicking Z, you can jump across certain ledges.
 ----
 
-=== The Secret Crystal Chamber
+==== The Secret Crystal Chamber
 
 Elemental alignment (Blue, Yellow, Green, Red) to unlock the Heart Shield.
 
 *Associated Maps*: Map 009, Map 039
 
-==== Map 009: Secret Map
+===== Map 009: Secret Map
 
 * **Speaker/Source: `Treasure Glow`**
 [listing]
@@ -2595,7 +2600,7 @@ the outer crystals to remove the rocks. If you make a
 mistake, use the red button
 ----
 
-==== Map 039: Secret Map
+===== Map 039: Secret Map
 
 * **Speaker/Source: `Treasure Glow`**
 [listing]
@@ -2666,13 +2671,13 @@ the outer crystals to remove the rocks. If you make a
 mistake, use the red button
 ----
 
-=== The Battle Tutorial & Dream Eater Ambush
+==== The Battle Tutorial & Dream Eater Ambush
 
 Dream illusion shatters; Dream Eaters assault; Chrono passes out; 'AWAKEN!'
 
 *Associated Maps*: Map 008, Map 041, Map 012, Map 042
 
-==== Map 008: Battle Tutorial
+===== Map 008: Battle Tutorial
 
 * **Speaker/Source: `Dream Eaters`**
 [listing]
@@ -2745,7 +2750,7 @@ met him... mister....minster!
 You haven't told me anything!
 ----
 
-==== Map 041: Battle Tutorial
+===== Map 041: Battle Tutorial
 
 * **Speaker/Source: `Dream Eaters`**
 [listing]
@@ -2819,15 +2824,15 @@ You haven't told me anything!
 ----
 
 
-== Act IV: Awakening in Dio Village & Family Roots
+=== Act IV: Awakening in Dio Village & Family Roots
 
-=== Grandma's House Upstairs
+==== Grandma's House Upstairs
 
 Awakening from the dream; opening Grandma's chest for Grandma's Watch & Compass of Morality.
 
 *Associated Maps*: Map 020, Map 004
 
-==== Map 020: Grandma's House Upstairs
+===== Map 020: Grandma's House Upstairs
 
 * **Speaker/Source: `Grandma's Chest`**
 [listing]
@@ -2877,7 +2882,7 @@ into reality. I can't be a hero,
 I won't be a hero...
 ----
 
-==== Map 004: The Castle (Inside)
+===== Map 004: The Castle (Inside)
 
 * **Speaker/Source: `The King`**
 [listing]
@@ -2903,13 +2908,13 @@ this discovery...
 Yes my king.
 ----
 
-=== Grandma's House Downstairs
+==== Grandma's House Downstairs
 
 Conversation with Grandma Magolia; memories of Commander Gareth Ro-enheart; errand to Monica.
 
 *Associated Maps*: Map 021, Map 007
 
-==== Map 021: Grandma's House Downstairs
+===== Map 021: Grandma's House Downstairs
 
 * **Speaker/Source: `Grandma`**
 [listing]
@@ -3026,7 +3031,7 @@ Grandma still seems worried. Maybe I can talk to
 her one more time.
 ----
 
-==== Map 007: Switches
+===== Map 007: Switches
 
 * **Speaker/Source: `Special Room Switch`**
 [listing]
@@ -3121,15 +3126,15 @@ By clicking Z, you can jump across certain ledges.
 ----
 
 
-== Act V: Dio Village Upper & The Outskirts Crisis
+=== Act V: Dio Village Upper & The Outskirts Crisis
 
-=== Dio Village Upper / Main Square
+==== Dio Village Upper / Main Square
 
 The town in disrepair; Fighter Kid blocking the lower gate; visiting Monica.
 
 *Associated Maps*: Map 022, Map 023, Map 010, Map 012, Map 013
 
-==== Map 023: Main Square
+===== Map 023: Main Square
 
 * **Speaker/Source: `Fighter Kid`**
 [listing]
@@ -3277,13 +3282,13 @@ STAY AWAY FROM ME!
 STAY AWAY FROM ME!
 ----
 
-=== Monica's House & The Mystic's Brew
+==== Monica's House & The Mystic's Brew
 
 Meeting Monica; the fallen soldiers totem; offering for Goddess Lyri; errand for a Potion.
 
 *Associated Maps*: Map 027, Map 029
 
-==== Map 027: Monica's House
+===== Map 027: Monica's House
 
 * **Speaker/Source: `Monica`**
 [listing]
@@ -3439,13 +3444,13 @@ name has a heart by it and it reads "Miss you".
 The totem is full of offerings.
 ----
 
-=== The Secret Sword Cache
+==== The Secret Sword Cache
 
 Discovering Medusa's Sword in the hidden glade.
 
 *Associated Maps*: Map 024, Map 025, Map 017
 
-==== Map 024: The Sword Map
+===== Map 024: The Sword Map
 
 * **Speaker/Source: `Medusa's Sword`**
 [listing]
@@ -3456,7 +3461,7 @@ belongs to.
 \n<[Katrina]>Free sword for your girl~
 ----
 
-==== Map 025: The Sword Map
+===== Map 025: The Sword Map
 
 * **Speaker/Source: `Medusa's Sword`**
 [listing]
@@ -3468,15 +3473,15 @@ belongs to.
 ----
 
 
-== Act VI: Moral Crossroads of Dio Lower Ward
+=== Act VI: Moral Crossroads of Dio Lower Ward
 
-=== Eric the Lumberjack's House
+==== Eric the Lumberjack's House
 
 Self-Aware Pot; Test of Honesty: 10G life savings vs 500G rent donation; Ring of Fire reward.
 
 *Associated Maps*: Map 028
 
-==== Map 028: Eric's House
+===== Map 028: Eric's House
 
 * **Speaker/Source: `Eric`**
 [listing]
@@ -3676,13 +3681,13 @@ The pot is empty
 The pot is empty
 ----
 
-=== Shopping District & Lower Village
+==== Shopping District & Lower Village
 
 Buying the offering potion; the shopkeeper's note; St. Baron's locked mansion.
 
 *Associated Maps*: Map 029, Map 030, Map 016
 
-==== Map 030: Shopping District
+===== Map 030: Shopping District
 
 * **Speaker/Source: `St. Baron's Home`**
 [listing]
@@ -3727,13 +3732,13 @@ potion. Could she be a witch?
 waste my money...
 ----
 
-=== John the Thief's Hideout
+==== John the Thief's Hideout
 
 John's sidequest proposal to overthrow the corrupt Baron.
 
 *Associated Maps*: Map 031
 
-==== Map 031: John the Thief (Sidequest)
+===== Map 031: John the Thief (Sidequest)
 
 * **Speaker/Source: `John the Thief`**
 [listing]
@@ -3763,21 +3768,21 @@ see that I'm busy!
 ----
 
 
-== Act VII: The Frontier, Wilderness & Final Dungeon
+=== Act VII: The Frontier, Wilderness & Final Dungeon
 
-=== World Map Frontier
+==== World Map Frontier
 
 Demo completion gateway; thank-you message; frontier exits.
 
 *Associated Maps*: Map 033, Map 034, Map 035, Map 005, Map 018
 
-=== Wilderness Battle Zones (Demo Areas 3 & 4)
+==== Wilderness Battle Zones (Demo Areas 3 & 4)
 
 Combat zones featuring bats, slimes, magos, and bandits.
 
 *Associated Maps*: Map 014, Map 015, Map 016, Map 034, Map 035, Map 036, Map 019, Map 020, Map 021, Map 022, Map 033
 
-==== Map 020: Grandma's House Upstairs
+===== Map 020: Grandma's House Upstairs
 
 * **Speaker/Source: `Grandma's Chest`**
 [listing]
@@ -3827,7 +3832,7 @@ into reality. I can't be a hero,
 I won't be a hero...
 ----
 
-==== Map 021: Grandma's House Downstairs
+===== Map 021: Grandma's House Downstairs
 
 * **Speaker/Source: `Grandma`**
 [listing]
@@ -3944,13 +3949,13 @@ Grandma still seems worried. Maybe I can talk to
 her one more time.
 ----
 
-=== The Final Dungeon & Boss Threshold
+==== The Final Dungeon & Boss Threshold
 
 Multi-level dungeon fortress leading to the ultimate demo boss confrontation.
 
 *Associated Maps*: Map 017, Map 018, Map 023, Map 024, Map 025, Map 026, Map 027, Map 028, Map 037, Map 038
 
-==== Map 023: Main Square
+===== Map 023: Main Square
 
 * **Speaker/Source: `Fighter Kid`**
 [listing]
@@ -4098,7 +4103,7 @@ STAY AWAY FROM ME!
 STAY AWAY FROM ME!
 ----
 
-==== Map 024: The Sword Map
+===== Map 024: The Sword Map
 
 * **Speaker/Source: `Medusa's Sword`**
 [listing]
@@ -4109,7 +4114,7 @@ belongs to.
 \n<[Katrina]>Free sword for your girl~
 ----
 
-==== Map 025: The Sword Map
+===== Map 025: The Sword Map
 
 * **Speaker/Source: `Medusa's Sword`**
 [listing]
@@ -4120,7 +4125,7 @@ belongs to.
 \n<[Katrina]>Free sword for your girl~
 ----
 
-==== Map 026: Start Up Area
+===== Map 026: Start Up Area
 
 * **Speaker/Source: `The Beginning`**
 [listing]
@@ -4134,7 +4139,7 @@ It was a month before the Festival...<br>The tower...<br>The terror...
 The darkness...<br>The darkness...<br>The darkness returned once more.
 ----
 
-==== Map 027: Monica's House
+===== Map 027: Monica's House
 
 * **Speaker/Source: `Monica`**
 [listing]
@@ -4290,7 +4295,7 @@ name has a heart by it and it reads "Miss you".
 The totem is full of offerings.
 ----
 
-==== Map 028: Eric's House
+===== Map 028: Eric's House
 
 * **Speaker/Source: `Eric`**
 [listing]
@@ -4490,19 +4495,19 @@ The pot is empty
 The pot is empty
 ----
 
-== Chapter 20: Tactical States & Status Ailments Directory (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/states_and_statuses.adoc`
+== Tactical States & Status Ailments Directory (2017–2018 Demo)
 
-[abstract]
-== Overview
+*Source File*: `docs/game_design/demo_baseline/states_and_statuses.adoc`
+
+=== Overview
 
 This document catalogs all 30 status ailments, tactical combat states, aura modifiers,
 and battlefield terrain effects defined in `States.json` across Folder 1 and Folder 2 (LeTBS).
 It distinguishes generic RPG Maker MV Runtime Package (RTP) boilerplate from authentic
 tactical grid modifiers and stance dynamics.
 
-== 1. Triage: RTP Boilerplate States vs. Authentic Tactical Grid States
+=== Triage: RTP Boilerplate States vs. Authentic Tactical Grid States
 
 [cols="1,2,3", options="header"]
 |===
@@ -4517,7 +4522,7 @@ tactical grid modifiers and stance dynamics.
 | Authentic tactical modifiers altering grid movement points (MP), turn order priority, damage mitigation, and tile propagation.
 |===
 
-== 2. Standard Status Conditions (Tier 1 Boilerplate)
+=== Standard Status Conditions (Tier 1 Boilerplate)
 
 [cols="^1,2,^1,4", options="header"]
 |===
@@ -4536,7 +4541,7 @@ tactical grid modifiers and stance dynamics.
 | `11` | **Paralyze** | 85 | Stunned; skip turn (`loop_animation: 64`).
 |===
 
-== 3. Knight & Vanguard Tactical States (Tier 3 LeTBS)
+=== Knight & Vanguard Tactical States (Tier 3 LeTBS)
 
 [cols="^1,2,^1,4", options="header"]
 |===
@@ -4563,7 +4568,7 @@ tactical grid modifiers and stance dynamics.
 | Cast by Provoke (Skill 16). Forces enemy AI to prioritize the vanguard (`focused_by_ai_for_offense: 100`).
 |===
 
-== 4. Mage & Priest Arcane States (Tier 3 LeTBS)
+=== Mage & Priest Arcane States (Tier 3 LeTBS)
 
 [cols="^1,2,^1,4", options="header"]
 |===
@@ -4585,7 +4590,7 @@ tactical grid modifiers and stance dynamics.
 | Tactical snare inflicted by Ghost Arrow (Skill 79). Reduces movement allowance.
 |===
 
-== 5. Summoner & Environmental Grid States (Tier 3 LeTBS)
+=== Summoner & Environmental Grid States (Tier 3 LeTBS)
 
 [cols="^1,2,^1,4", options="header"]
 |===
@@ -4622,7 +4627,7 @@ tactical grid modifiers and stance dynamics.
 | Fire hazard state (`spread: 100% circle(1)`). Expands dynamically to adjacent flammable tiles.
 |===
 
-== 6. Modern C11 Architectural Mapping
+=== Modern C11 Architectural Mapping
 
 In the C11 simulation engine, tactical states are decoupled from engine internals:
 1. **Zero-Heap State Mask**: Active states on an actor are tracked via a bitmask and static array (`active_states[MAX_ACTIVE_STATES]`).
@@ -4630,17 +4635,16 @@ In the C11 simulation engine, tactical states are decoupled from engine internal
 3. **Data-Driven Configuration**: State durations, stat multipliers, and tile spread rules are loaded from `data/states/*.json`.
 
 
-== Chapter 21: Engine Systems, Switches & Variables Directory (2017–2018 Demo)
+== Engine Systems, Switches & Variables Directory (2017–2018 Demo)
 
-*Source File*: `/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline/systems_switches_variables.adoc`
+*Source File*: `docs/game_design/demo_baseline/systems_switches_variables.adoc`
 
-[abstract]
-== Overview
+=== Overview
 
 This document specifies the global state machines, monotonic time clock, morality engine,
 and the complete registry of all switches and variables governing demo logic.
 
-== 1. The Monotonic Time Engine
+=== The Monotonic Time Engine
 
 The time system is driven by Common Events 1 and 2, updating a 24-hour cycle:
 * `Variable 1`: Seconds (0–59)
@@ -4654,7 +4658,7 @@ The time system is driven by Common Events 1 and 2, updating a 24-hour cycle:
 
 In the modern C11 architecture, this corresponds to Layer 0 `time_utils` (`time_get_monotonic_ms`).
 
-== 2. The Moral Sway Continuum Engine
+=== The Moral Sway Continuum Engine
 
 The morality engine tracks the party's ethical orientation on an invariant scale:
 * `Variable 9`: **Moral (Overall)**: Continuum within `[-100, +100]`.
@@ -4662,7 +4666,7 @@ The morality engine tracks the party's ethical orientation on an invariant scale
 * `Variable 11`: **Moral (Evil)**: Cumulative points accrued for ruthless, self-serving, or thieving acts.
 * `Item 8`: **Compass of Morality**: Tool allowing the player to inspect their moral continuum in the field.
 
-== 3. Global Switches Directory
+=== Global Switches Directory
 
 [cols="^1,2,4", options="header"]
 |===
@@ -4710,7 +4714,7 @@ The morality engine tracks the party's ethical orientation on an invariant scale
 | `41` | **Angry John** | State flag for quest / scenario progression
 |===
 
-== 4. Global Variables Directory
+=== Global Variables Directory
 
 [cols="^1,2,4", options="header"]
 |===
@@ -4731,4 +4735,5 @@ The morality engine tracks the party's ethical orientation on an invariant scale
 | `14` | **Pot Amount** | Global numerical state accumulator
 | `15` | **Deposit Amount** | Global numerical state accumulator
 |===
+
 

@@ -1,0 +1,106 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/log/README.adoc
+@id            docs.code.log.index
+@layer         Documentation / Volume V: log/ Module Index
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 0 Categorized Flight Logging Folder Index
+@role          File-by-File Reading Map for engine/{include,src}/log/ and tests/
+@audience      Designers, Testers, C/Rust Engineers
+@snapshots     none
+@invariants    1. Excluded from compiled Volume TOC via README filename rule.
+               2. Maps every .h, .c, and test suite file belonging to the log stratum.
+               3. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+================================================================================
+////
+
+= Flight Logging Subsystem (`engine/{include,src}/log/`) Index
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Attributes & Orientation )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Folder Orientation ---
+This directory pairs every C header and source file in Cornerstone's **Flight Logging Subsystem** alongside its 4-tier verification guide.
+
+[TIP]
+====
+Start with link:../logging_system.adoc[the Logging Subsystem Overview] if you want the high-level flight-recorder model before inspecting individual files.
+====
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Paired File Catalog )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Per-File Documentation Inventory ---
+== Paired Module & Test Documentation
+
+[cols="2,2,4",options="header"]
+|===
+| Chapter File | Engine Source / Test Coverage | Scope
+
+| link:01_log_router_and_ring.adoc[01_log_router_and_ring.adoc]
+| `engine/include/log/log.h` + `engine/src/log/log.c`
+| Primary ring recorder, severity/category taxonomy, telemetry profile hydration, disk rotation, stats cards, and `log.*` probe hooks.
+
+| link:02_log_types_and_contracts.adoc[02_log_types_and_contracts.adoc]
+| `engine/include/log/log_types.h`
+| Stateless leaf vocabulary header: compile-time bounds, POD enums/structs, and zero-`.bss` helper predicates.
+
+| link:03_log_fallback_bios.adoc[03_log_fallback_bios.adoc]
+| `engine/include/log/log_fallback.h` + `engine/src/log/log_fallback.c`
+| Tier-0 BIOS pre-VFS boot ring, compiled `.rodata` telemetry ROM vault (10 profiles), disk-fault degradation, and early-entry drain into `cog.log`.
+
+| link:04_log_testing_and_probes.adoc[04_log_testing_and_probes.adoc]
+| `tests/{unit,functional,integrated,system}/` (`_log_`)
+| 4-tier crude-to-fine test ladder covering unit, fallback BIOS, functional, integrated replay, and system emergence.
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Validation Checkpoints )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Folder Verification ---
+== Verification Commands
+
+[source,bash]
+------
+asciidoctor --failure-level=WARN -o /dev/null docs/code/log/*.adoc
+ctest --test-dir build -R "_log_" --output-on-failure
+------
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Folder Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Related Maps
+
+* link:../README.adoc[Back to `docs/code/` Root Index]
+* link:../debug/README.adoc[Next Subsystem: `docs/code/debug/`]
+* link:../io/README.adoc[Next Subsystem: `docs/code/io/`]
+

@@ -1,0 +1,135 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/log/01_log_router_and_ring.adoc
+@id            docs.code.log.router_and_ring
+@layer         Documentation / Volume V: Paired Module (log.h + log.c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Flight Logging Router & Ring Engine (`cog.log`)
+@role          Paired Documentation for engine/include/log/log.h and engine/src/log/log.c
+@audience      Designers, QA Engineers, C Systems Programmers
+@snapshots     uses: snap_log_ring_api_sub3_3, snap_log_sub4_1_probes
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Zero dynamic heap allocations across capture, formatting, and rotation.
+               3. Every API signature and chassis figure traces directly to log.h / log.c.
+================================================================================
+////
+
+= Paired Module: Flight Log Router & Ring Engine (`log.h` + `log.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Pair Identity, Contract Summary & Memory Chassis Budget )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: File Pair Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.log`)
+
+| Public Contract (`.h`)
+| `engine/include/log/log.h` (954 lines) — operational API, convenience log macros, audit & inspection gates.
+
+| Runtime Engine (`.c`)
+| `engine/src/log/log.c` (2,833 lines) — circular ring storage, JSON config loader, file rotation, and debug probe wiring.
+
+| Chassis Footprint
+| `.data ~24.7 KiB` (`s_log` + tables) + `.bss 16.4 KiB` (`s_log_vfs_scratch`) + `.rodata ~8.6 KiB`; stack framing `<= 1 KiB`.
+
+| Inputs & Fallbacks
+| Reads `engine/config/diagnostics/telemetry/<profile>.json`; degrades cleanly to `rom://telemetry` via `cog.log.fallback`.
+|===
+
+// --- Sub-Assembly 2.2: Mental Model ---
+`log.h` defines the public switchboard used by every engine subsystem and gameplay turn loop, while `log.c` houses the circular recording tape (`256` recent messages), optional rolling `.log` file sinks, and live health probes. Designers control verbosity with JSON telemetry profiles without touching C code; programmers get O(1) append latency and reproducible memory bounds.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Paired Walkthrough Across Blocks 2–5 of log.h and log.c )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Profile Hydration & Manifest Loading (Sub-Assembly 3.1) ---
+== Configuration Loading & Data-Driven Profiles (`Sub-Assembly 3.1`)
+
+When `log_init(const log_config_t *config)` runs—or when `log_load_config_profile()` loads `"default"`, `"development"`, `"production"`, `"quiet"`, or `"combat_focus"`—`log.c` resolves configuration data through `path_finder` / `master_loader` before falling back to compiled ROMs if disk assets are absent or invalid:
+
+* `log_load_config_from_file()` parses a specific profile payload into `log_config_t`.
+* `log_load_config_from_manifest()` reads `engine/config/diagnostics/telemetry/manifest.json` to discover the active startup profile.
+* `log_load_config_profile()` looks up a named preset, tagging `loaded_from_data = true` only when hydrated from disk JSON (never pretending ROM data came from disk).
+
+// --- Sub-Assembly 3.2: Stream Engine, Ring Buffer & Entry Dispatch (Sub-Assemblies 3.2–3.5) ---
+== Ring Recording, Rotation & String Parsing (`Sub-Assemblies 3.2–3.5`)
+
+Every log emission flows through `log_write_entry()` into fixed stack buffers (`LOG_MAX_MESSAGE_LEN` bounded, zero `malloc`):
+
+include::../../snapshots/snap_log_ring_api_sub3_3.adoc[]
+
+[cols="2,4",options="header"]
+|===
+| Cog Group | Public API & Behavior
+
+| File Sink & Rotation (`3.2`)
+| `log_is_active()` reports engine readiness; `log_rotate_if_needed()` rolls active log files (`rotate_archive_stream` internal helper) before exceeding configured file-size thresholds.
+
+| Ring Retrieval (`3.4`)
+| `log_get_total_entries()` returns lifetime sequence count; `log_get_recent_entries()` and `log_get_top_entries()` copy bounded snapshots out of the ring without exposing internal static pointers.
+
+| Enum Parsers (`3.5`)
+| `log_severity_from_string()` and `log_category_from_string()` map human-readable JSON tokens (`"INFO"`, `"WARN"`, `"COMBAT"`, `"IO"`) back to strongly typed enums.
+|===
+
+.Separation Between Machine Noise and Story Events
+****
+Engine infrastructure channels (`CORE`, `IO`, `LOG`, `DEBUG`, `VIEWPORT`) can run at terse `WARN`/`INFO` levels while gameplay testers turn up `COMBAT`, `HERO`, or `RELICS` via `combat_focus.json`—keeping diagnostic logs focused and readable.
+****
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Validation Contracts, Probe Wiring & Inspection Cards )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Probe Registration & Self-Audit (`Sub-Assemblies 4.1–4.2`) ---
+== Validation Guards, Probes & Pre-Flight Audits (`Sub-Assemblies 4.1–5.2`)
+
+Inside Block 4 of `log.c`, `log_register_debug_probes()` registers telemetry invariants directly with `cog.debug`, while `log_preflight()` and `log_audit()` validate manifest contracts, rotation limits, and ring consistency:
+
+include::../../snapshots/snap_log_sub4_1_probes.adoc[]
+
+* **Runtime Mode Predicates (`4.1`)**: `log_is_data_driven()`, `log_is_safe_mode()`, and `log_reset_tripwire()`.
+* **Contract Validators (`4.2`)**: `log_validate_manifest_contract()`, `log_validate_setting_contract()`, `log_validate_rotation_bounds()`, and `log_validate_telemetry_integrity()`, aggregated by `log_preflight()` / `log_audit(bool verbose)`.
+* **Lifecycle & Cards (`5.1`–`5.2`)**: `log_execute_inspect()` populates caller-owned `log_stats_t`; `log_execute_dump_card()` formats a printable status card; `log_init()` drains any early `log_fallback` BIOS entries into the main ring; `log_shutdown()` flushes and closes streams cleanly.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Readings ---
+== Paired Neighbors
+
+* Vocabulary types consumed here: link:02_log_types_and_contracts.adoc[`log_types.h`]
+* Early-boot ROM vault & replay source: link:03_log_fallback_bios.adoc[`log_fallback.h` + `log_fallback.c`]
+* Automated verification ladder: link:04_log_testing_and_probes.adoc[Logging Testing Suite]
+

@@ -1,0 +1,54 @@
+[[snap_plate_snap_vfs_routes_cfg_whole]]
+.Complete 5-Block VFS Precedence & Policy Configuration (vfs_routes.json) (`engine/config/io/vfs_routes.json#L55-L99` · Mode: `Whole`)
+[source,json,linenums,start=55]
+------
+  "block_3_body": {
+    "default_data_root": "game/data",
+    "env_override_var": "TL_DATA_ROOT",
+    "block_path_traversal": true,
+    "max_symlink_depth": 4,
+    "allow_mod_mounts": true,
+    "rom_fallback_enabled": true,
+    "probe_await_on_corrupt": true,
+    "config_precedence": [
+      "game/config/",
+      "engine/config/",
+      "game/data/presentation/config/"
+    ],
+    "fallback_candidate_roots": [
+      "game/data",
+      "../game/data",
+      "engine/config",
+      "../engine/config",
+      "data",
+      "../data"
+    ],
+    "asset_roots": [
+      "game/assets",
+      "../game/assets",
+      "assets",
+      "../assets"
+    ],
+    "domain_search_paths": [
+      "",
+      "runtime/",
+      "runtime/math/",
+      "runtime/string/",
+      "runtime/time/",
+      "diagnostics/",
+      "diagnostics/telemetry/",
+      "diagnostics/debugger/",
+      "diagnostics/taxonomy/",
+      "diagnostics/formats/",
+      "io/",
+      "audio/",
+      "viewport/",
+      "input/",
+      "standards/",
+      "standards/blocks/",
+      "mechanics/",
+------
+
+_Canonical 5-block engine config defining VFS root search hierarchy, alias tables, and fail-closed safety flags._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L1-L159`) -> <<snap_wholesale_snap_vfs_routes_cfg_whole,Appendix: Complete 5-Block VFS Precedence & Policy Configuration (vfs_routes.json)>>.]

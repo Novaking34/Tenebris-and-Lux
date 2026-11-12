@@ -1,0 +1,110 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/log/03_log_fallback_bios.adoc
+@id            docs.code.log.fallback_bios
+@layer         Documentation / Volume V: Quarantined BIOS (log_fallback.h + .c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Tier-0 Flight Log Safe-Mode BIOS & ROM Vault (`cog.log.fallback`)
+@role          Paired Documentation for log_fallback.h and log_fallback.c
+@audience      Designers, Build Engineers, C Systems Programmers
+@snapshots     uses: snap_log_fb_bios_group
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Quarantined isolation: never masquerades ROM hydration as disk data (loaded_from_data=false).
+               3. Zero-disk boot capability verified via embedded log_telemetry_rom.h vault.
+================================================================================
+////
+
+= Paired BIOS: Tier-0 Flight Log Fallback & ROM Vault (`log_fallback.h` + `log_fallback.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( BIOS Contract Summary & Chassis Budget )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Quarantined BIOS Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.log.fallback`)
+
+| Fallback Contract (`.h`)
+| `engine/include/log/log_fallback.h` (811 lines) — Tier-0 BIOS boot, ROM asset lookup, replay drain, and emergency card dump APIs.
+
+| BIOS Implementation (`.c`)
+| `engine/src/log/log_fallback.c` (1,865 lines) — self-contained Safe-Mode recorder (`s_fb`) and generated telemetry ROM bridge.
+
+| Chassis Footprint
+| `.bss 12.3 KiB` (`s_fb` ring + state) + `.rodata 57.9 KiB` (10 embedded telemetry JSON ROMs) + stack `<= 1 KiB`.
+
+| Quarantined Boundary
+| `archetype: quarantined_fallback \| stateful`; consumes `log_telemetry_rom.h` & `cog.log.types`.
+|===
+
+// --- Sub-Assembly 2.2: Why Quarantined BIOS Matters ---
+In real game development, crashes most often strike *during* startup—when asset folders move, a user edits a JSON setting incorrectly, or disk permissions turn read-only. If the logger itself refuses to boot without healthy JSON files on disk, developers go completely blind right when telemetry matters most. `log_fallback.[ch]` solves that by booting *before* `io/` even initializes.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( BIOS Architecture, ROM Vault Hydration & Replay Handoff )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Early-Boot Ring, Disk-Fault Degradation & Replay ---
+== Pre-VFS Boot & Chronological Replay (`Sub-Assembly 3.3` & `5.2`)
+
+`log_fallback_boot()` arms a lightweight 64-entry ring buffer right at process start. Any early warning from `io_fallback` or `manifest` lands cleanly in `log_fallback_record()` (and optionally an emergency fallback stream if disk writing works). When disk storage fails or goes read-only, `disk_fault` latches without crashing the game. Later, when primary `log_init()` comes online, `log_fallback_drain_entries()` transfers every buffered early entry cleanly into the full 256-entry ring:
+
+include::../../snapshots/snap_log_fb_bios_group.adoc[]
+
+// --- Sub-Assembly 3.2: Compiled .rodata Telemetry ROM Vault (`Sub-Assembly 3.2`) ---
+== The 10-Asset Compiled Telemetry ROM Vault (`Sub-Assemblies 3.1–3.2`)
+
+At CMake build time, `cmake/GenerateConfigRom.cmake` compiles every JSON file inside `engine/config/diagnostics/telemetry/` into read-only C byte tables inside `log_telemetry_rom.h`:
+
+* `log_fallback_get_rom_info()` reports embedded asset count (`10`) and total `.rodata` byte footprint (`57.9 KiB` runtime measured chassis).
+* `log_fallback_get_rom_asset()` returns non-owning read-only pointers directly to `.rodata` bytes with zero copying or heap allocation.
+* `log_fallback_load_rom_profile()` and `log_fallback_parse_config_span()` share one boundary-safe JSON key scanner across fallback and normal loading, guaranteeing that Safe Mode boots with genuine structured settings while flagging `loaded_from_data = false`.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( BIOS Self-Audit, Cards & Verification )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Fault-Free BIOS Diagnostics (`Blocks 4 & 5`) ---
+== BIOS Self-Audit & Emergency Diagnostic Cards
+
+* `log_fallback_validate_boot_contract()` and `log_fallback_audit()` inspect ROM vault alignment, BIOS ring bounds, and sink modes non-destructively.
+* `log_fallback_get_stats()` copies `log_fallback_stats_t` (`booted`, `disk_fault`, `rom_hydrated`, `total_recorded`, `total_replayed`, `ring_count`, ROM metrics).
+* `log_fallback_execute_inspect()` and `log_fallback_execute_dump_card()` let test suites and CLI recovery tools print human-readable Safe-Mode status even in zero-disk environments.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Readings ---
+== Next Steps in `log/`
+
+* Review the tests verifying BIOS capture and drain: link:04_log_testing_and_probes.adoc[Logging Testing & Probe Verification]
+* Inspect the shared vocabulary header: link:02_log_types_and_contracts.adoc[`log_types.h`]

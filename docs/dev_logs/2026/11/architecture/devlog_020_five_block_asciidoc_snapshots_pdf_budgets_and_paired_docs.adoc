@@ -1,0 +1,128 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Tooling & Documentation Milestone )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/dev_logs/2026/11/architecture/devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc
+@id            docs.devlog.020
+@layer         Documentation / Engineering Chronology (Volume VI)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        5-Block AsciiDoc, Live Code Snapshots & PDF Layout Validation
+@role          Chronological Milestone Record (Documentation & Tooling Wave)
+@audience      Designers, Documentation Authors, Systems Architects
+@snapshots     n/a (publishing pipeline & paired-documentation milestone)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Live source snapshots keep docs textbook-accurate with zero copy drift.
+               3. --validate-layout enforces A4 PDF budgets across strict doc prefixes.
+================================================================================
+////
+
+= DevLog 020: 5-Block AsciiDoc, Live Code Snapshots & Paired Module Textbooks
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Context, Problem Diagnosed in Volume V & Holistic Upgrade Summary )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Milestone Synopsis ---
+[NOTE]
+====
+*Volume VI — Engineering Chronology (DevLog 020)* +
+*Milestone Date:* 2026-11-12 | *Scope:* `tools/src/guide.rs`, `docs/adoc_pdf_layout_rules.json`, `docs/code/{log,debug,io}/`, `docs/architecture/chronicles/`, `docs/offline_work/`, Volumes I–VI +
+*Series Navigation:* link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[← DevLog 019] | link:../README.adoc[Nov 2026 Index] | *(Latest DevLog)*
+
+Inspecting generated PDF output—especially **Volume V** (`VOLUME_V_CORE_ENGINE_CODE_TOURS.pdf`)—revealed awkward whitespace pages, broken `[abstract]` chapter numbering in Asciidoctor book builds, duplicate snapshot plate anchors, and stale manual prose drifting away from live C source files. To turn documentation into a true data-driven textbook system, `master_guide` gained live 5-mode code snapshots and PDF layout validation while `docs/code/{log,debug,io}/`, `docs/architecture/chronicles/`, and `docs/offline_work/` were rebuilt onto the **Universal 5-Block AsciiDoc Standard**.
+====
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Live Snapshot Extractor, PDF Page-Budget Rules & Paired Docs Architecture )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Live 5-Mode Code Snapshot Engine (tools/src/guide.rs) ---
+== 1. Textbook-Grade Live Code Snapshots (`docs/code_snapshots_manifest.json`)
+
+Copying C functions by hand into documentation guarantees bit-rot. Extending `tools/src/guide.rs` introduced a declarative extraction manifest (`docs/code_snapshots_manifest.json`) supporting five surgical capture modes:
+
+[cols="1,3",options="header"]
+|===
+| Snapshot Mode | Extraction Behavior & Textbook Usage
+
+| `whole_file`
+| Extracts a clean compact file wholesale (such as `cmake/GenerateConfigRom.cmake` or core test headers).
+
+| `block`
+| Captures an entire OmniCode `BLOCK 1`..`BLOCK 5` section from `.h` or `.c`.
+
+| `sub_assembly`
+| Extracts an exact `Sub-Assembly N.M` region (e.g., `io/` 5-block getters or `debug/` probe structs).
+
+| `function`
+| Isolates an individual C function body with its paired dual-audience docstring.
+
+| `symbol_group`
+| Collects related type declarations or helper families into one compact visual plate.
+|===
+
+* **Anchor Deduplication (`deduplicate_snapshot_plate_anchors`):** Eliminated duplicate `[[snap_plate_*]]` Asciidoctor anchor collisions whenever a snapshot appeared inline inside a chapter and again in a volume appendix.
+* **Out-of-Box Theme & Title Formatting (`docs/guide_theme_config.json`, `docs/themes/`):** Cleaned Volume V synopsis whitespace so cover → TOC → overview → paired chapters flow cleanly across A4 pages without empty half-page breaks.
+
+// --- Sub-Assembly 3.2: 5-Block AsciiDoc Standard & Layout Budgets ---
+== 2. The 5-Block AsciiDoc Comment Standard & `--validate-layout`
+
+Codified `docs/adoc_5block_standard.json` and `docs/adoc_pdf_layout_rules.json` so AsciiDoc manuscripts follow the exact same **Universal 5-Block Lifecycle Protocol** as `.c`, `.h`, and `.json` files:
+
+* **`//// BLOCK 1..5 ////` + `// --- Sub-Assembly X.Y`:** AsciiDoc block/line comments frame Metadata, Opening, Body, Audit/Verification, and Closing/Navigation without rendering noise in HTML/PDF outputs.
+* **PDF Hygiene Enforcement (`master_guide -- --validate-layout`):** Audits line-width budgets (`<= 104` cols with line numbers so Rouge blocks never soft-wrap in A4 PDFs), bans `[abstract]` above `==` headings, bans page-breaking `'''` horizontal rules in multi-chapter books, and enforces 6-hyphen `------` fences.
+
+// --- Sub-Assembly 3.3: Paired .h/.c Textbooks, Chronicles & Linked Offline Archive ---
+== 3. Paired Code Folders, Architectural Chronicles & Linked Offline Series
+
+* **`docs/code/{log,debug,io}/` Paired Documentation:** Organized each root subsystem into its own folder pairing every `.h` and `.c` file into unified module manuals (plus a dedicated testing chapter per folder covering unit, functional, integrated, and system tiers).
+* **`docs/architecture/chronicles/`:** Added accessible, mixed-audience deep dives explaining *why* the Rev 5 architecture was built for long-term game payoff (`01_root_stratum_story_and_game_payoff.adoc`) and how `AGENTS.md` evolved alongside AI-assisted engineering (`02_agents_md_evolution_and_ai_architecture.adoc`).
+* **`docs/offline_work/` Series Unification (Parts 1–6):** Moved `Offline_Work_5.md` and `Offline_Work_6.md` out of repo root into `docs/offline_work/`, cleaned corrupted table math delimiters and citation tags in Part 6, authored `Offline-Work-5.adoc` + `Offline-Work-6.adoc`, upgraded `README.adoc` and `Offline-Work-1..4.{adoc,md}` into 5-block format with bidirectional navigation, and added `docs/offline_work/` to strict layout validation.
+
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Toolchain, Layout & Full Suite Verification )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Multi-Layer Verification Gates ---
+== 4. Verification Summary Across Code, Layout & Books
+
+* **Native Rust Tooling (`RUSTFLAGS="-D warnings" cargo test`):** Verified snapshot extraction, anchor deduplication, layout rule checks, and validator modules cleanly with zero compiler warnings.
+* **PDF Layout Validator (`master_guide -- --validate-layout`):** Enforced zero errors across strict targets (`docs/README.adoc`, `docs/architecture/`, `docs/code/{log,debug,io}/`, `docs/offline_work/`).
+* **Full Book Compilation (`master_guide -- --all`):** Compiled standalone **Volumes I–VI** alongside the complete **`MASTER_GUIDE.pdf`** with DevLogs `001`–`020` indexed cleanly in Volume VI.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Wave Synchronization & Closing Reflections )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Catch-Up Wave & Next Milestone ---
+== 5. Synchronizing the Repository & Preparing for `core/` Audits
+
+With code, tests, Config ROMs, snapshot books, pre-production chronicles, and DevLogs `016`–`020` all aligned under **Rev 5**, the workspace is ready for synchronized wave commits under `.githooks/commit-msg` before beginning the Block 3 audit across `core/`, `audio/`, `viewport/`, and `game/`.
+
+*Navigation:* link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[← DevLog 019] | link:../README.adoc[Nov 2026 DevLog Index] | link:../../../README.adoc[Documentation Root]
+

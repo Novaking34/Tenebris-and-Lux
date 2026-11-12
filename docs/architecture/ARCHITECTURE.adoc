@@ -1,117 +1,214 @@
-= System Architecture & Technical Design Specification
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/architecture/ARCHITECTURE.adoc
+@id            docs.architecture.overview
+@layer         Documentation / Volume V: Chapter 1
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Cornerstone Game Engine & Tenebris and Lux Master Map
+@role          Architectural Overview, Strata Contracts & Fall-Down Portability
+@audience      Designers, Artists, Gameplay Scripters, C/Rust Engineers
+@snapshots     snap_manifest_ladder_sub2_1, snap_main_boot_group
+@invariants    1. Dual-audience clarity without assuming systems-level background.
+               2. Strictly authentic claims tied to verified codebase symbols.
+               3. Inline textbook snapshots cross-linked to wholesale plates.
+               4. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+================================================================================
+////
+
+= Cornerstone & Tenebris and Lux: System Architecture Overview
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.4.0, 2026-11-03
-:doctype: article
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
 
-[abstract]
-== Architecture Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes, Opening Orientation & Textbook Map )
+================================================================================
+////
 
-This document specifies the technical design, subsystem boundaries, data models, and
-ontological lifecycle governing *Tenebris and Lux* ("Darkness and Light").
-Set within the chivalric **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*, `/sɔːˈkiːrə/`), the
-game is a **Tactical Strategy RPG (TRPG)** centered on dual protagonists—**Elijah Ro-enheart**
-(son of former Head of the Royal Guard) and **Lady Katrina Jaren** (noble court aspirant seeking
-the Adventurers' Guild)—who wield the primordial **Shield of Lux** and **Sword of Tenebris**
-against the dread legions of **The Dark Lord** (the ancient Libiran sovereign Usuru).
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:engine-name: Cornerstone Game Engine
+:game-name: Tenebris and Lux
 
-The engine strictly separates **simulation state** from **presentation** across 5 strata:
+// --- Sub-Assembly 2.2: Executive Framing ---
+This guide explains how the *{engine-name}* (`engine/`) and *{game-name}* (`game/`) work together—written so a designer tuning battle balance, a writer editing dialogue, a student learning systems architecture, or an engineer hardening C23 code can build a shared mental model in minutes.
 
-[source,text]
-----
-Layer 4: Verification Suite       [ tests/ ]  (19 Automated CTest Targets)
-           │
-Layer 3: Application Entry        [ src/main.c ]  (Presentation Router & CLI)
-           │
-Layer 2: Presentation & Viewport  [ src/gui/ <-> include/gui/ ]  (X11 Double-Buffered)
-           │
-Layer 1: Simulation Engine        [ src/sim/ <-> include/sim/ ]  (Core, Combat, Items, World)
-           │
-Layer 0: Core Utilities           [ src/util/ <-> include/util/ ] (Math, Geom, Data, Log)
-----
+[NOTE]
+====
+*Textbook Code Snapshots Enabled:* Code blocks marked as excerpts in this chapter are pulled live from the repository during documentation builds. Clickable wholesale cross-references jump directly to complete listings in the Appendix when viewing compiled PDF or book builds.
+====
 
-== 1. The Universal 5-Block Code Structure
+toc::[]
 
-In alignment with the OmniCode framework, all C source code, headers, and build scripts are
-organized into 5 standardized blocks:
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Core Architectural Pillars & Live Code Snapshots )
+================================================================================
+////
 
-1. **BLOCK 1: METADATA BLOCK**: Defines module identity, layer, author, version, role,
-   and invariant axioms.
-2. **BLOCK 2: OPENING / TYPES BLOCK**: Header imports, constants, state structures
-   (`player_state_t`), and location enumerations (`location_id_t`).
-3. **BLOCK 3: BODY BLOCK**: Core simulation routines, relic stance transitions, combat
-   calculations, and moral alignment resolution.
-4. **BLOCK 4: AUDIT PROCEDURES BLOCK**: Self-healing diagnostic routines, invariant tripwires,
-   and verification harnesses.
-5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**: CLI argument parser, headless game runner,
-   automated test hooks, and clean teardown.
+// --- Sub-Assembly 3.1: Inclusive Audience Orientation ---
+[[arch_overview]]
+== Who This Engine Is Built For (Start Here)
 
-== 2. Core Mechanics & State Invariants
+A game engine should feel like a well-labeled workshop, not a locked vault. You do not need senior systems experience to use *{engine-name}* safely:
 
-=== The Twin Relics: Shield and Sword
+* **Creators & Designers** edit declarative 5-block JSON files (`engine/config/` and `game/data/`). If a syntax mistake slips into a data file, built-in ROM vaults keep the engine running in Safe-Mode and pinpoint the exact line to fix.
+* **Playtesters & Narrative Leads** test every tactical choice using the lightweight headless terminal (`--cli`) or diagnostic audit (`--audit`) without needing heavy graphics setups.
+* **C & Rust Developers** gain zero-heap determinism, strict compile-time compiler walls (`-Wall -Wextra -Wpedantic`), four test tiers (`65` CTest suites + `30` Rust unit tests), and uniform 5-block structure across source, JSON, CMake, and documentation.
 
-* **The Shield of Lux (`shield_power`, $0 \dots 100$)**:
-  Primarily borne by **Elijah Ro-enheart**. Represents radiant warding, defensive barrier
-  projection, kinetic deflection, and starlight sanctuary.
-* **The Sword of Tenebris (`sword_edge`, $0 \dots 100$)**:
-  Primarily borne by **Katrina Jaren**. Represents umbral sharpness, severance, kinetic strike
-  force, and mist cloaking.
-* **Tactical Stance (`combat_stance_t`)**:
-  - `STANCE_NEUTRAL`: Relics held in readiness.
-  - `STANCE_WARDING`: Shield raised forward; mitigates incoming damage.
-  - `STANCE_STRIKING`: Sword drawn for offensive severance; boosts strike damage.
-  - `STANCE_EQUILIBRIUM`: Twin mastery; balances offensive and defensive resonance.
-* **Moral Sway (`moral_sway`, $-100 \dots +100$)**:
-  - Positive ($> 0$): **Virtue & Mercy** (using power to protect the defenseless).
-  - Negative ($< 0$): **Tyranny & Ruin** (using power for cruel domination and ruin).
+// --- Sub-Assembly 3.2: Big Machine vs Master Turn Gear ---
+[[arch_big_machine]]
+== The Big Machine and The Master Turn Gear
 
-=== Invariant Axioms
+The architecture rests on a clean mechanical metaphor:
 
-1. **Shield Power Boundary**: $0 \le \text{state.shield\_power} \le \text{MAX\_RESONANCE}$.
-2. **Sword Edge Boundary**: $0 \le \text{state.sword\_edge} \le \text{MAX\_RESONANCE}$.
-3. **Moral Sway Bounded Range**: $-100 \le \text{state.moral\_sway} \le +100$.
-4. **Valid Location Invariant**: $0 \le \text{state.location} < \text{LOC\_COUNT}$.
-5. **Deterministic Replay Guarantee**: Any identical sequence of actions from a given initial state
-   must produce identical state telemetry.
+* **`engine/` — The Big Machine (*Cornerstone Game Engine*):** Reusable infrastructure needed by *any* tactical or adventure game: math, clocks, string parsing, virtual filesystems, flight logging, replay debugging, audio mixing, and a `640x360` X11 viewport.
+* **`game/` — The Master Turn Gear (*Tenebris and Lux*):** Pure domain rules of Sacyra and Libira: tactical grids, Elijah & Katrina's vocations, Twin Relics, combat stances, moral sway toward *Lux* or *Tenebris*, and the multi-ending state machine.
+* **`game/src/main.c` — Layer 3 Plug:** The single mechanical coupling joining the Big Machine to the Master Turn Gear at boot.
 
-== 3. Multi-Phase Engine Evolution
+.Cornerstone vs. Tenebris and Lux Structural Decoupling
+****
+*Anti-Domain-Bleed Rule:* Nothing under `engine/` is ever allowed to include `game/` headers or mention story canon (`Elijah`, `Katrina`, `Sacyra`, `Usuru`). Conversely, `CMakeLists.txt` enforces separate include fences (`ENGINE_PUBLIC_INCLUDES` vs. `COMMON_INCLUDES`) so `engine/` builds cleanly completely on its own.
 
-[cols="1,1,3", options="header"]
+*Cog Elevation Rule:* Whenever a helper inside `game/` solves a general systems problem (screen wipes, easing, audio cue scheduling, JSON parsing) with zero story coupling, it elevates into `engine/` so future games inherit it automatically.
+****
+
+// --- Sub-Assembly 3.3: Five Compilation Strata ---
+[[arch_strata]]
+== The Five Compilation Strata
+
+Code dependencies flow strictly **downward**—lower layers never call upward into higher layers:
+
+[cols="1,2,2,4",options="header"]
 |===
-| Phase | Milestone | Subsystem Architecture
-| **Phase 1 (Complete)** | `v0.0.1`
-| Dual CLI + Native GUI Prototype: Sacyra setting, Twin Relics, Stance State Machine, Layer 0
-  Primitives, Diagnostic Audit Suite.
+| Layer | Directory | Memory Contract | Responsibility
 
-| **Phase 2 (Active)** | `v0.1.0`
-| Tactical Strategy RPG Engine & 5-Screen UI: 2.5D responsive scaling (3x zoom), TrueType vector
-  fonts (Cinzel, MedievalSharp), 32-slot inventory, provincial topology, and 19 CTest targets.
+| Layer 4
+| `tests/` (`functional`, `unit`, `integrated`, `system`)
+| Test Harness (`ALLOC_ZERO_HEAP` sim)
+| Proves mathematical, structural, integration, and full CLI parity across 65 CTest checks.
 
-| **Phase 3** | `v0.2.0`
-| Cinematic Combat Resolution & AI: Real-time kinetic deflection windows, poise breaking, dynamic
-  skill execution from data catalogs, and enemy flanking AI.
+| Layer 3
+| `game/src/main.c`, `tools/`
+| Startup Plug / Rust Tooling
+| Parses CLI flags (`--cli`, `--gui`, `--debug`, `--audit`), builds manifest, compiles data/guides.
 
-| **Phase 4** | `v1.0.0`
-| Full TRPG Campaign of Sacyra: Dynamic party management, persistent disk save/load, King's Curse
-  midpoint planar wound fork, and the 5 canonical ending routes.
+| Layer 2
+| `engine/*/viewport/`
+| `ALLOC_ZERO_HEAP` (`.bss`)
+| `640x360` logical software rasterizer, Movie Reel camera, native X11 display window.
+
+| Layer 1
+| `game/` (`hero`, `combat`, `relics`, `world`, `ending`, `dispatch`)
+| `ALLOC_ZERO_HEAP`
+| Deterministic tactical RPG rules completely independent of console vs. desktop rendering.
+
+| Layer 0
+| `engine/` (`core`, `log`, `debug`, `io`, `audio`)
+| `ALLOC_ZERO_HEAP`
+| `44` header ecosystem (`31` Layer 0 + `13` Layer 2) providing math, VFS, flight logs, replay debug, 7-bus audio.
 |===
 
-== 4. Layer 2 Presentation Architecture & 5-Screen Navigation
+// --- Sub-Assembly 3.4: Universal 5-Block Protocol ---
+[[arch_five_blocks]]
+== The Universal 5-Block Protocol
 
-The presentation engine is organized into modular sub-assemblies under `src/gui/`:
-* `gui_palette`: High Fantasy Hero's Journey color palette (Radiant Gold, Tenebrous Violet).
-* `gui_fonts`: Scalable TrueType font loader with automatic `xset fp+` fontpath registration.
-* `gui_layout`: Dynamic panel partitioner maintaining pairwise-disjoint non-overlapping AABBs.
-* `gui_view2d`: 2.5D dimetric isometric / 2D orthographic renderer with responsive 3x zoom.
-* `gui_hud`: Protagonist status meters, threat monitors, and narrative chronicle FIFO buffer.
-* `gui_widgets`: Centered button cards with mnemonic hotkey accents.
-* `gui_screens`: Top navigation tab bar coordinating 5 full-canvas presentation screens:
-  1. **1: Tactical Battle** (`GUI_SCREEN_TACTICAL`): 2.5D dais, range diamonds, status HUD, dock.
-  2. **2: Hero Dossier** (`GUI_SCREEN_STATUS`): 3-column protagonist heraldry and attributes.
-  3. **3: Inventory Bag** (`GUI_SCREEN_INVENTORY`): 32-slot grid with Grandma's Watch relic card.
-  4. **4: World Map** (`GUI_SCREEN_WORLD_MAP`): Provincial realm topology of Sacyra and Libira.
-  5. **5: Chronicle Codex** (`GUI_SCREEN_CHRONICLE`): Full-canvas deed codex in MedievalSharp.
+Whether you open a `.h` contract, `.c` engine file, `.json` config, `CMakeLists.txt`, Rust tool, or `.adoc` chapter, everything shares the exact same mental geography:
+
+[cols="1,2,3,3",options="header"]
+|===
+| Block | Code Role (C / Rust) | Data Role (JSON) | Doc Role (AsciiDoc `////`)
+
+| Block 1
+| Metadata header, tags, invariants
+| `block_1_metadata` identity & rules
+| Document provenance, target audience, snapshot bindings
+
+| Block 2
+| Includes, types, macros, `.bss` (`2.1`–`2.5`)
+| `block_2_types` / `block_2_opening` limits
+| Title, attributes, reader orientation & quick TOC
+
+| Block 3
+| Core algorithms & API logic (`3.1`+)
+| `block_3_body` live runtime payload
+| Technical narrative, diagrams, tables, snapshot plates
+
+| Block 4
+| Probes, tripwires, self-audits (`4.1`–`4.2`)
+| `block_4_audit` tripwires & metrics
+| Verification commands & reader Q&A checkpoints
+
+| Block 5
+| Diagnostic dump cards, boot & shutdown (`5.1`–`5.2`)
+| `block_5_closing` handshakes & links
+| Cross-volume navigation & next readings
+|===
+
+// --- Sub-Assembly 3.5: Controlled Memory & Fall-Down Portability ---
+[[arch_memory_portability]]
+== Controlled Memory Chassis & Fall-Down Portability
+
+Avoiding `malloc`/`calloc`/`free` inside Layers 0–2 (`ALLOC_ZERO_HEAP`) creates a **Controlled Memory Chassis**: every byte of memory is visible in `.text`, `.rodata`, `.data`, `.bss`, and bounded stack frames. When RPG tables grow, capacity pressure shows up immediately at compile time instead of hiding inside unpredictable heap leaks.
+
+At the same time, Cornerstone uses an **Engine-as-a-Java "Fall-Down Stairs"** portability pattern. Rather than adding legacy compatibility clutter, we write forward-first for **ISO C23** (`-std=c23`) and **C++20** headers (`extern "C"`) anchored through `engine/include/core/manifest.h` so older compilers step down gracefully to **C17** or **C11** (`CORNERSTONE_C_STANDARD=AUTO|23|17|11`).
+
+include::../snapshots/snap_manifest_ladder_sub2_1.adoc[]
+
+To see how Layer 3 connects this portability bedrock to the game world at startup, examine the boot entry group extracted from `game/src/main.c`:
+
+include::../snapshots/snap_main_boot_group.adoc[]
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Verification Commands & Self-Check Q&A )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Practical Verification & Q&A ---
+== Verifying Architectural Boundaries Yourself
+
+[source,bash]
+----
+cmake -S . -B build && cmake --build build -j4
+./tools/target/debug/tl_tools validate all
+ctest --test-dir build --output-on-failure
+./build/tenebris-lux --audit
+----
+
+[qanda]
+Why are there no `malloc()` calls in gameplay or engine code?::
+Fixed `.rodata` and `.bss` buffers guarantee deterministic replay hashes and keep memory consumption measurable down to the byte.
+
+What enforces separation between `engine/` and `game/`?::
+CMake object library scoping (`ENGINE_PUBLIC_INCLUDES` vs. `COMMON_INCLUDES`) prevents `engine/` targets from seeing any `game/` header at compile time.
+
+Where do code changes break first if an interface changes?::
+No shims are kept behind—strict `-Wall -Wextra -Wpedantic` compiler checks and `65` CTest suites map every affected call site immediately.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Volume Navigation & Next Readings )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Where to Go Next
+
+* Continue to Chapter 2: link:resilience_bios_and_probes.adoc[Zero-Disk Safe-Mode BIOS, Config ROM Vaults & Autonomous Probe Loop].
+* Review how data configs stay isolated in link:data_driven_architecture.adoc[Data-Driven Architecture].
+* Browse the live extracted code plate catalog in link:../snapshots/INDEX.adoc[Snapshots Index].

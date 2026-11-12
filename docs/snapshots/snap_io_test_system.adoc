@@ -1,0 +1,49 @@
+[[snap_plate_snap_io_test_system]]
+.I/O Pipeline System Emergence & ROM Downgrade Verification (test_io_system_emergence) (`tests/system/test_io_system.c#L328-L367` · Mode: `Function`)
+[source,c,linenums,start=328]
+------
+/**
+ * @brief Verifies sandboxed mount redirection and live v1 -> v2 JSON hot-patch reflection.
+ */
+static void test_io_system_emergence(void)
+{
+    printf("  [EMERGE-4] Running Section 4: Emergence (Dynamic Mount & Live Hot-Patching)...\n");
+
+    const char *hotpatch_dir = "build/system_test_patch/system";
+    const char *hotpatch_file = "build/system_test_patch/system/runtime_patch.json";
+
+    TEST_ASSERT(fs_ensure_directory(hotpatch_dir), "Synthesized hot-patch directory");
+
+    static const char patch_v1[] =
+        "{\n"
+        "  \"block_1_metadata\": {\"project\": \"Tenebris and Lux\", \"file\": \"runtime_patch.json\"},\n"
+        "  \"block_2_types\": {\"schema_id\": \"tenlux.data.patch.v1\"},\n"
+        "  \"block_3_body\": {\"difficulty_mult\": 1.0, \"active_boss\": \"Usuru\"}\n"
+        "}\n";
+    TEST_ASSERT(fs_write_file_contents(hotpatch_file, patch_v1, strlen(patch_v1)),
+                "Wrote patch v1");
+
+    path_finder_init();
+    master_loader_init();
+    path_finder_set_data_root("build/system_test_patch");
+
+    master_loader_t loader;
+    bool l1 = master_loader_execute_load_verified("system", "runtime_patch.json",
+                                                  "tenlux.data.patch.v1",
+                                                  s_io_sys_load_buf,
+                                                  sizeof(s_io_sys_load_buf),
+                                                  &loader);
+    TEST_ASSERT(l1 && loader.status == LOADER_STATUS_OK, "Loaded patch v1");
+    float diff1 = 0.0f;
+    char boss1[64];
+    TEST_ASSERT(master_loader_get_float(&loader, NULL, "difficulty_mult", &diff1) &&
+                diff1 >= 0.999f && diff1 <= 1.001f,
+                "Patch v1 difficulty_mult == 1.0");
+    TEST_ASSERT(master_loader_get_string(&loader, NULL, "active_boss", boss1, sizeof(boss1)),
+                "Patch v1 boss extracted");
+    TEST_ASSERT_STR_EQ(boss1, "Usuru", "Boss is authentic Dark Lord Usuru");
+------
+
+_Drills end-to-end VFS resolution, corrupt JSON downgrade to ROM Safe Mode, and coordinated umbrella audit._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L328-L399`) -> <<snap_wholesale_snap_io_test_system,Appendix: I/O Pipeline System Emergence & ROM Downgrade Verification (test_io_system_emergence)>>.]

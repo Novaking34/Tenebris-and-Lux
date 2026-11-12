@@ -1,0 +1,49 @@
+[[snap_plate_snap_io_json_utils_sub3_1]]
+.Zero-Heap JSON Token Span Locator API (json_utils.h Sub-Assembly 3.1) (`engine/include/io/json_utils.h#L357-L396` · Mode: `Subassembly`)
+[source,c,linenums,start=357]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.1: JSON Token Locator Cogs
+Mission: Scan flat or span-bounded JSON payloads for matching keys, objects, and
+         arrays while respecting escape sequences and nesting limits cleanly.
+
+  ### For Game Designers & Non-Programmers:
+  Finds named sections, tables, and lists inside JSON configuration files cleanly
+  without mistaking words inside text descriptions for structural headings.
+
+  ### For Systems Programmers & Engine Architects:
+  Exposes zero-copy, zero-heap token and balanced-container locators constrained
+  to `[json_start, json_start + json_len)` and active `max_json_depth` policy.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Scans a JSON buffer for a specific top-level or scoped key token.
+ *
+ * Core search primitive that locates occurrences of "key" followed by a colon
+ * (:), ignoring intervening whitespace. Prevents false positive matches on
+ * substring prefixes or keys embedded inside quoted strings.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Searches through a data file to locate where a property begins (e.g. finding "attack_power:").
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Reentrant zero-heap token locator respecting quote escapes and whitespace.
+ * @triggers On nesting limit exceeded -> `IO_ERR_JSON_DEPTH_EXCEEDED` via `io.json.depth_bounds`.
+ *
+ * @param[in] json Null-terminated JSON buffer.
+ * @param[in] key  Null-terminated key name to search for (without quotes).
+ * @return Pointer to value position immediately following the colon (:),
+ *         or NULL if key is not found or parameters are invalid.
+ */
+const char *json_find_key(const char *json, const char *key);
+
+/**
+ * @brief Span-bounded key locator preventing sibling overrun across sliced buffers.
+ *
+------
+
+_Single-pass bounded span slicing capped at bracket nesting depth <= 32 on caller stack._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L357-L461`) -> <<snap_wholesale_snap_io_json_utils_sub3_1,Appendix: Zero-Heap JSON Token Span Locator API (json_utils.h Sub-Assembly 3.1)>>.]

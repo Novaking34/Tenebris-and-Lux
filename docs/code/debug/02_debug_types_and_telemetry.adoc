@@ -1,0 +1,121 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/debug/02_debug_types_and_telemetry.adoc
+@id            docs.code.debug.types_telemetry
+@layer         Documentation / Volume V: Leaf Types Header (debug_types.h)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        State Debugger Leaf Vocabulary (`cog.debug.types`)
+@role          Contract Documentation for engine/include/debug/debug_types.h
+@audience      Designers, C/C++ Tooling Engineers, Engine Architects
+@snapshots     uses: snap_debug_types_sub2_3
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Eliminates struct forward declarations and void* erasure between Layer 0 & Layer 1.
+               3. Zero mutable .bss or .data state inside the leaf header.
+================================================================================
+////
+
+= Leaf Vocabulary: Debugger Types & Snapshot Structs (`debug_types.h`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Leaf Header Identity & Anti-Erasure Guarantee )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Leaf Header Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.debug.types`)
+
+| Header File
+| `engine/include/debug/debug_types.h` (652 lines) — standalone leaf POD vocabulary (`archetype: pure_types \| stateless`).
+
+| Runtime Source
+| None intentionally (`0 B .bss`, `0 B .data`).
+
+| Fixed Capacities
+| `DEBUG_MAX_SNAPSHOTS = 64`, `16` breakpoints, `32` validation probes (`Sub-Assembly 2.1`).
+
+| Architectural Fix
+| Eliminated legacy `struct debug_config;` forward declarations and unsafe `void *` pointer erasure.
+|===
+
+// --- Sub-Assembly 2.2: Why Standalone POD Matters ---
+Before `debug_types.h` was isolated as a pure leaf vocabulary, `debug.h` and `debug_fallback.h` had to dance around forward declarations and `void *` parameters to avoid circular header includes. By giving both files direct compile-time knowledge of `debug_state_fields_t`, `debug_snapshot_t`, and `debug_config_t`, every mismatch becomes an instant compiler error instead of a hidden runtime bug.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Structural POD Ontology of debug_types.h )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Live Snapshot of POD Contracts (`Sub-Assembly 2.3`) ---
+== Structural Ontology (`Sub-Assembly 2.3`)
+
+`debug_types.h` groups enums (`debug_tripwire_t`, `debug_tripwire_reaction_t`, `debug_test_tier_t`, `debug_step_mode_t`, `debug_breakpoint_type_t`) alongside caller-owned POD structs:
+
+include::../../snapshots/snap_debug_types_sub2_3.adoc[]
+
+[cols="2,4",options="header"]
+|===
+| Type Name | What It Captures Without `game/` Coupling
+
+| `debug_state_fields_t`
+| Pure integer snapshot packet (`turn`, `hp`, `max_hp`, `mp`, `tp`, `shield_power`, `sword_edge`, `stance`, `moral_sway`, `location`, status counters, `foes_vanquished`) linking Layer 1 into Layer 0 safely.
+
+| `debug_snapshot_t`
+| Timestamped ring slot binding `snapshot_id`, `state_hash` (FNV-1a), correlated `log_sequence_id`, and eviction `locked` flag.
+
+| `debug_breakpoint_t`
+| Numeric trigger descriptor (`type`, `target_value`, `is_active`, 64-byte `label`).
+
+| `debug_config_t`
+| Runtime toggles (`break_on_tripwire`, `break_on_sway_breach`, `interactive_repl`, `loaded_from_data` provenance marker).
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Compile-Time Size Proofs & Header Check )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Compile-Time Checks ---
+== Static Bounds Verification
+
+`Sub-Assembly 2.1` enforces `static_assert` proofs ensuring snapshot ring and breakpoint capacities remain strictly positive across C23/C17/C11 and C++20/C++17 compilation modes. Verify header compliance via:
+
+[source,bash]
+------
+cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate headers
+------
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Consumers of `debug_types.h`
+
+* link:01_debug_engine_and_probes.adoc[Paired `debug.h` + `debug.c` Engine]
+* link:03_debug_fallback_bios.adoc[Paired `debug_fallback.h` + `debug_fallback.c` BIOS]

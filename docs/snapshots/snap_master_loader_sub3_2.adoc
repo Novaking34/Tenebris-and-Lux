@@ -1,0 +1,53 @@
+[[snap_plate_snap_master_loader_sub3_2]]
+.Scoped block_3_body JSON Accessor Contract (master_loader.h Sub-Assembly 3.2) (`engine/include/io/master_loader.h#L436-L479` · Mode: `Subassembly`)
+[source,c,linenums,start=436]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Scoped `block_3_body` Accessors
+Mission: Restrict all payload getters and array locators strictly inside the
+         verified `[body_start, body_start + body_len)` span (or named `sub_obj`).
+
+  ### For Game Designers & Non-Programmers:
+  Reads gameplay properties cleanly from inside `block_3_body` only, preventing
+  file headers or audit sections from ever colliding with gameplay field names.
+
+  ### For Systems Programmers & Engine Architects:
+  Delegates scope isolation and typed extraction exclusively to span-bounded
+  `json_*_span` APIs with unconditional NUL termination on extracted strings.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Extracts a string value strictly within `block_3_body` (or named sub-object).
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Safely reads text properties (character names, formulas, IDs) from the data body
+ * without accidentally matching header text outside Block 3.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Uses span-bounded `json_find_object_span()` + `json_get_string_span()` bounded to
+ * `loader->body_len`. Unconditionally NUL-terminates `out_val` when `out_size > 0`.
+ * @triggers `io.json.depth_bounds` if scan breaches `max_json_depth`.
+ *
+ * @param[in]  loader   Ready `master_loader_t` instance.
+ * @param[in]  sub_obj  Optional sub-object key inside `block_3_body` (or NULL for root body).
+ * @param[in]  key      Target property key inside resolved body/sub-object span.
+ * @param[out] out_val  Caller string buffer.
+ * @param[in]  out_size Capacity of `out_val` in bytes.
+ * @return true on clean extraction; false if missing, wrong type, or invalid params.
+ */
+bool master_loader_get_string(const master_loader_t *loader,
+                              const char *sub_obj,
+                              const char *key,
+                              char *out_val,
+                              size_t out_size);
+
+/**
+ * @brief Extracts a signed integer strictly within `block_3_body` (or named sub-object).
+ *
+------
+
+_Zero-heap typed getters that scan directly inside a validated block_3_body span._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L436-L608`) -> <<snap_wholesale_snap_master_loader_sub3_2,Appendix: Scoped block_3_body JSON Accessor Contract (master_loader.h Sub-Assembly 3.2)>>.]

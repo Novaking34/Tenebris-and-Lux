@@ -1,0 +1,34 @@
+= Generated Textbook Code Snapshots Index
+
+[cols="2,2,1,2,1",options="header"]
+|===
+| Snapshot ID | Source File | Mode | Line Span | Appendix?
+
+| `snap_manifest_ladder_sub2_1` | `engine/include/core/manifest.h` | `Subassembly` | L82–L194 | Yes
+| `snap_main_boot_group` | `game/src/main.c` | `Group` | L71–L522 | Yes
+| `snap_cmake_rom_whole` | `cmake/GenerateConfigRom.cmake` | `Whole` | L1–L302 | Yes
+| `snap_io_fallback_bios_group` | `engine/src/io/io_fallback.c` | `Group` | L2908–L3332 | Yes
+| `snap_debug_probe_group` | `engine/src/debug/debug.c` | `Group` | L1918–L2438 | Yes
+| `snap_log_sub4_1_probes` | `engine/src/log/log.c` | `Subassembly` | L1934–L2028 | Yes
+| `snap_vfs_routes_cfg_whole` | `engine/config/io/vfs_routes.json` | `Whole` | L1–L159 | Yes
+| `snap_vfs_routes_body_block` | `engine/config/io/vfs_routes.json` | `Block` | L55–L125 | Yes
+| `snap_master_loader_sub3_2` | `engine/include/io/master_loader.h` | `Subassembly` | L436–L608 | Yes
+| `snap_io_fb_json_group` | `engine/src/io/io_fallback.c` | `Group` | L779–L1194 | Yes
+| `snap_manifest_types_sub2_3` | `engine/include/core/manifest.h` | `Subassembly` | L207–L370 | Yes
+| `snap_manifest_fn_preflight` | `engine/src/core/manifest.c` | `Function` | L412–L509 | Yes
+| `snap_main_preflight_block4` | `game/src/main.c` | `Block` | L193–L334 | Yes
+| `snap_game_fn_audit` | `game/src/hero/sim_state.c` | `Function` | L315–L376 | Yes
+| `snap_gui_types_sub2_3` | `engine/include/viewport/raster/gui_types.h` | `Subassembly` | L138–L448 | Yes
+| `snap_log_types_sub2_3` | `engine/include/log/log_types.h` | `Subassembly` | L153–L303 | Yes
+| `snap_log_ring_api_sub3_3` | `engine/include/log/log.h` | `Subassembly` | L406–L484 | Yes
+| `snap_log_fb_bios_group` | `engine/src/log/log_fallback.c` | `Group` | L1256–L1801 | Yes
+| `snap_log_test_system` | `tests/system/test_log_system.c` | `Function` | L283–L385 | Yes
+| `snap_debug_types_sub2_3` | `engine/include/debug/debug_types.h` | `Subassembly` | L147–L453 | Yes
+| `snap_debug_rewind_group` | `engine/src/debug/debug.c` | `Group` | L1264–L1567 | Yes
+| `snap_debug_fb_bios_group` | `engine/src/debug/debug_fallback.c` | `Group` | L1008–L1766 | Yes
+| `snap_debug_test_unit` | `tests/unit/debug/test_debug_unit.c` | `Function` | L410–L510 | Yes
+| `snap_io_fs_utils_sub3_2` | `engine/include/io/fs_utils.h` | `Subassembly` | L359–L455 | Yes
+| `snap_io_path_finder_sub3_2` | `engine/include/io/path_finder.h` | `Subassembly` | L396–L510 | Yes
+| `snap_io_json_utils_sub3_1` | `engine/include/io/json_utils.h` | `Subassembly` | L357–L461 | Yes
+| `snap_io_test_system` | `tests/system/test_io_system.c` | `Function` | L328–L399 | Yes
+|===

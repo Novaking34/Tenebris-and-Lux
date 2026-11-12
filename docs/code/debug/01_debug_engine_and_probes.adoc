@@ -1,0 +1,124 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/debug/01_debug_engine_and_probes.adoc
+@id            docs.code.debug.engine_and_probes
+@layer         Documentation / Volume V: Paired Module (debug.h + debug.c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        State Debugger, Snapshot Ring & Autonomous Probe Host (`cog.debug`)
+@role          Paired Documentation for engine/include/debug/debug.h and engine/src/debug/debug.c
+@audience      Designers, QA Engineers, C Systems Programmers
+@snapshots     uses: snap_debug_rewind_group, snap_debug_probe_group
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Zero heap allocation across snapshot capture, rewind, probe sweeps, and card dumps.
+               3. Verified chassis accounting: 70.5 KiB .bss (live s_debug + isolated s_audit_backup).
+================================================================================
+////
+
+= Paired Module: State Debugger & Probe Host (`debug.h` + `debug.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( File Pair Contract & Chassis Profile )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Module Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.debug`)
+
+| Public Contract (`.h`)
+| `engine/include/debug/debug.h` (1,207 lines) — stepping control, snapshot rewind, watchpoints, 32-slot probe registry, tripwires, cards, and audit gates.
+
+| Runtime Engine (`.c`)
+| `engine/src/debug/debug.c` (3,221 lines) — FNV-1a snapshot ring, GCD in-place wrap rotation, interactive `AWAIT` state machine, and audit isolation.
+
+| Chassis Footprint
+| `.bss 70.5 KiB` (`s_debug` 35,232 B + `s_audit_backup` 35,232 B) + `.rodata 9.7 KiB` + single-slot normalize stack frame.
+
+| Inputs & Seams
+| Reads `engine/config/diagnostics/{debugger,taxonomy}/*.json`; pairs downward with `cog.debug.types`, `cog.debug.fallback`, and `cog.log`.
+|===
+
+// --- Sub-Assembly 2.2: Design Intuition ---
+`debug.h` + `debug.c` turn "something went wrong during frame 412" into inspectable facts: every snapshot records simulation numbers, hashes them with 32-bit FNV-1a, preserves explicitly locked milestones when the circular buffer wraps, and hosts live health probes across the rest of the engine.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Snapshots, Rewind, Breakpoints & Probe Trap Architecture )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Snapshot Ring, Locking & GCD Wrap Rotation ---
+== Snapshot Capture, Locking & Time-Travel Rewind
+
+Calling `debug_record_snapshot()` freezes a copy of `debug_state_fields_t` alongside a 32-bit FNV-1a checksum and the synchronized `log_sequence_id` from `cog.log`. Calling `debug_lock_snapshot()` protects milestone frames from overwrite; when the ring wraps, `debug.c` uses O(cap) GCD wrap rotation to evict unlocked slots while preserving chronological order. `debug_rewind_to_snapshot()` and `debug_diff_snapshots()` restore or compare any retained frame:
+
+include::../../snapshots/snap_debug_rewind_group.adoc[]
+
+// --- Sub-Assembly 3.2: Stepping Mode, Watchpoints & AWAIT Gate ---
+== Stepping Modes, Breakpoints & `DEBUG_STEP_AWAIT`
+
+[cols="2,4",options="header"]
+|===
+| Capability | Public Contract in `debug.h`
+
+| Execution Pacing & Await
+| `debug_set_step_mode()`, `debug_is_awaiting()`, `debug_can_step()`, and `debug_resolve_await()` pause execution deterministically after a fault or watchpoint hit until resolved.
+
+| Simulation Watchpoints
+| `debug_add_breakpoint()`, `debug_remove_breakpoint()`, `debug_clear_breakpoints()`, and `debug_check_breakpoints()` watch up to `16` numeric thresholds (`hp == 0`, stance shift, alignment breach, etc.) in O(n).
+
+| Provenance Queries
+| `debug_is_data_driven()` and `debug_is_safe_mode()` distinguish disk JSON profiles from compiled `.rodata` ROM fallback mode cleanly.
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Probe Registry, Tripwires, Self-Audit & Cards )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Autonomous Validation Probes & Tripwire Trap Chain ---
+== Validation Probe Matrix & Tripwire Chain
+
+Child modules bind self-checks directly into `debug.c`'s `32`-slot probe array:
+
+include::../../snapshots/snap_debug_probe_group.adoc[]
+
+* **Probe Lifecycle**: `debug_register_validation_probe()`, `debug_find_probe()`, `debug_get_probe_count()`, `debug_get_probe_at()`, `debug_evaluate_probe()`, and `debug_clear_validation_probes()`.
+* **Tripwire Matrix & Cards**: `debug_check_tripwires()`, `debug_get_tripwire_report()`, `debug_dump_tripwire_report()`, `debug_get_tripwire_status()`, `debug_reset_tripwire()`, `debug_execute_inspect()`, and `debug_execute_dump_card()`.
+* **Safe Self-Audit (`debug_preflight` / `debug_audit`)**: Swaps live state cleanly against `s_audit_backup` in `.bss`, runs destructive probe/rewind drills safely, and restores pre-audit telemetry without touching heap memory.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Readings ---
+== Paired Neighbors
+
+* Pure leaf vocabulary types: link:02_debug_types_and_telemetry.adoc[`debug_types.h`]
+* Tier-0 debugger BIOS & ROM vault: link:03_debug_fallback_bios.adoc[`debug_fallback.h` + `debug_fallback.c`]
+* Verification test ladder: link:04_debug_testing_and_tripwires.adoc[Debugger Testing & Tripwires]
+

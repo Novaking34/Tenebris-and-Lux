@@ -1,0 +1,47 @@
+[[snap_plate_snap_debug_test_unit]]
+.Debugger Unit Emergence & Tripwire Verification (test_debug_unit_emergence) (`tests/unit/debug/test_debug_unit.c#L410-L447` · Mode: `Function`)
+[source,c,linenums,start=410]
+------
+static void test_debug_unit_emergence(void)
+{
+    cornerstone_test_section(4, "Emergence (1000-Turn Wrap, 4-Slot Lock Quota & AWAIT Recovery)");
+
+    TEST_ASSERT(debug_init(NULL), "debug_init succeeds for emergence section");
+
+    /* 4.1 1000-turn ring wrap-around */
+    for (int t = 1; t <= 1000; t++) {
+        debug_state_fields_t s = cornerstone_test_make_state(
+            t, "Elijah", 500 - (t % 200), t % 100, (t * 2) % 100, t % 4, (t % 200) - 100);
+        uint64_t sid = debug_record_snapshot(&s, "sim_turn", "step");
+        TEST_ASSERT_U64_EQ(sid, (uint64_t)t, "Monotonic ID strictly tracked across 1000 turns");
+    }
+
+    TEST_ASSERT_U64_EQ(debug_get_snapshot_count(), (uint64_t)DEBUG_MAX_SNAPSHOTS,
+                       "Ring capacity capped at 64");
+
+    debug_snapshot_t oldest;
+    TEST_ASSERT(debug_get_snapshot(0U, &oldest) && (oldest.state.turn == 937),
+                "Oldest turn after 1000 pushes is 937");
+    const debug_snapshot_t *latest = debug_get_latest_snapshot();
+    TEST_ASSERT((latest != NULL) && (latest->state.turn == 1000), "Latest turn is 1000");
+
+    debug_state_fields_t restored;
+    TEST_ASSERT(debug_rewind_to_snapshot(30U, &restored) &&
+                    (restored.turn == 967) &&
+                    (restored.hp == (500 - (967 % 200))),
+                "Rewind index 30 restores turn 967 and exact HP formula");
+
+    debug_shutdown();
+
+    /* 4.2 Locked critical snapshot quota (4) + DEBUG_TRIGGER_PROBE -> AWAIT recovery */
+    TEST_ASSERT(debug_init(NULL), "Re-init debugger for lock quota & AWAIT check");
+    TEST_ASSERT(debug_can_step() && !debug_is_awaiting(), "Stepping armed initially");
+
+    uint64_t lock_ids[5] = { 0U };
+    for (int t = 1; t <= 6; t++) {
+        debug_state_fields_t s = cornerstone_test_make_state(t, "Elijah", 450 + t, 60, 40, t % 4, t);
+------
+
+_Verifies locked snapshot preservation, GCD ring rotation, probe traps, and Safe-Mode AWAIT clearing._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L410-L510`) -> <<snap_wholesale_snap_debug_test_unit,Appendix: Debugger Unit Emergence & Tripwire Verification (test_debug_unit_emergence)>>.]

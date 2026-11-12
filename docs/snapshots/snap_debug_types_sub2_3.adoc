@@ -1,0 +1,53 @@
+[[snap_plate_snap_debug_types_sub2_3]]
+.State Debugger Leaf Vocabulary & Snapshot Structs (debug_types.h Sub-Assembly 2.3) (`engine/include/debug/debug_types.h#L147-L190` · Mode: `Subassembly`)
+[source,c,linenums,start=147]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Shared Structural Ontology & POD Debugger Types
+--------------------------------------------------------------------------------
+Canonical non-anonymous enums and structures shared identically between
+`cog.debug` and quarantined `cog.debug.fallback`.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @enum debug_tripwire
+ * @brief Latched diagnostic tripwire states for the debugger and validation pipeline.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Alarm switches indicating whether configuration data was missing or damaged,
+ * an automated safety test fired, or Safe Mode engaged after a fault.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Latching error enum preserving `0..4` legacy discriminants and `5..7` active
+ * validation probe, audit breach, and Safe-Mode downgrade discriminants.
+ */
+typedef enum debug_tripwire {
+    DEBUG_TRIPWIRE_CLEAR = 0,         /**< All tripwires clear; simulation healthy. */
+    DEBUG_TRIPWIRE_MANIFEST_MISSING,  /**< Debugger/subsystem manifest unavailable. */
+    DEBUG_TRIPWIRE_SETTING_MISSING,   /**< Designated JSON setting profile missing. */
+    DEBUG_TRIPWIRE_STATE_CORRUPT,     /**< Simulation state breached domain invariants. */
+    DEBUG_TRIPWIRE_HASH_MISMATCH,     /**< Snapshot checksum diverged from recorded state. */
+    DEBUG_TRIPWIRE_TEST_FAILED,       /**< Registered validation probe / fail-test fired. */
+    DEBUG_TRIPWIRE_AUDIT_BREACH,      /**< Block 4 preflight or audit invariant failed. */
+    DEBUG_TRIPWIRE_FALLBACK_ENGAGED   /**< Downgraded to Safe Mode to complete execution. */
+} debug_tripwire_t;
+
+/**
+ * @enum debug_tripwire_reaction
+ * @brief Recovery action taxonomy ingested from taxonomy/tripwire_matrix.json.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Selects how the engine reacts when an alarm trips: logging warnings, clamping
+ * bad numbers, dropping into Safe Mode, rewinding time, or halting in AWAIT.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Mapped 1:1 to `tripwire_matrix.json` canonical reaction identifier strings.
+ */
+typedef enum debug_tripwire_reaction {
+------
+
+_Standalone integer/char POD snapshots eliminating void* type erasure between Layer 0 and Layer 1._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L147-L453`) -> <<snap_wholesale_snap_debug_types_sub2_3,Appendix: State Debugger Leaf Vocabulary & Snapshot Structs (debug_types.h Sub-Assembly 2.3)>>.]

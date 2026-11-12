@@ -1,0 +1,119 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/io/01_io_umbrella_and_pipeline.adoc
+@id            docs.code.io.umbrella
+@layer         Documentation / Volume V: Umbrella Header (io.h)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Master I/O & Virtual File System Umbrella (`cog.io`)
+@role          Contract Documentation for engine/include/io/io.h
+@audience      Designers, Tooling Developers, C/C++ Systems Engineers
+@snapshots     uses: snap_vfs_routes_cfg_whole
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Stateless facade: holds zero own .bss/.data/.text and no paired .c file.
+               3. Enforces exact downward Tier-3 include hierarchy from cog.io.fallback up to cog.master_loader.
+================================================================================
+////
+
+= Umbrella Facade: Master I/O Pipeline Switchboard (`io.h`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Umbrella Profile & Stateless Rule )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Umbrella Identity ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.io`)
+
+| Header File
+| `engine/include/io/io.h` (301 lines) — pure compile-time facade (`archetype: facade_umbrella \| stateless`).
+
+| Runtime Source
+| None intentionally (`0 B .bss`, `0 B .data`, `0 B .text`); delegates runtime execution cleanly to its 5 child cogs.
+
+| Constituent Cogs
+| `io_fallback.h` -> `fs_utils.h` -> `json_utils.h` -> `path_finder.h` -> `master_loader.h` (below `core/manifest.h`).
+
+| Manifest Anchor
+| `engine/config/io/manifest.json` (`probes: io_umbrella.*`).
+|===
+
+// --- Sub-Assembly 2.2: Why Keep `io.h` Strictly Stateless? ---
+Think of `io.h` as a clean electrical junction box, never an extra processor. Higher layers (`game/src/main.c` or test harnesses) can include `"io/io.h"` to bring all five I/O pillars online in verified topological order—while internal `log/` or lower `core/` cogs can still include just the fine-grained header they need without dragging unnecessary dependencies upward.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Include Ladder, Aggregated Constants & Coordinated Audits )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Tier-3 Include Ladder & Sub-Assembly 2.1 Bounds ---
+== Downward Re-Export Order (`BLOCK 2` of `io.h`)
+
+`io.h` opens cleanly with standard ISO C11 headers (`<stdbool.h>`, `<stddef.h>`, `<stdint.h>`), binds `"core/manifest.h"`, and re-exports child cogs in strict topological sequence:
+
+. `"io/io_fallback.h"` — Tier-0 BIOS & `.rodata` ROM vault (`cog.io.fallback`).
+. `"io/fs_utils.h"` — bounded POSIX file/stream primitives (`cog.fs_utils`).
+. `"io/json_utils.h"` — zero-heap JSON span scanner (`cog.json_utils`).
+. `"io/path_finder.h"` — 3-tier VFS path resolution (`cog.path_finder`).
+. `"io/master_loader.h"` — 5-block envelope validator & scoped body slicer (`cog.master_loader`).
+
+Sub-Assembly `2.1` aligns system-wide ceilings across the suite—such as `FS_PATH_MAX = 512` bytes and `64 KiB` configuration payload limits—ensuring static stack and `.bss` buffers across layers agree at compile time.
+
+// --- Sub-Assembly 3.2: Data-Driven VFS Overview ---
+== Configuration Anchor (`engine/config/io/`)
+
+All operational policies hydrated through `io.h` live in data files under `engine/config/io/`, anchored by `vfs_routes.json` and `manifest.json`:
+
+include::../../snapshots/snap_vfs_routes_cfg_whole.adoc[]
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Coordinated Verification Hooks )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Umbrella Audit Delegation (`Sub-Assemblies 4.1–5.2`) ---
+== Coordinated Validation & Lifecycle Gates
+
+`Sub-Assemblies 4.1` through `5.2` inside `io.h` do **not** invent separate state flags or bypass child cogs; instead they coordinate cross-cog initialization, probe verification (`io_umbrella.*`), and unified pre-flight checks across all five underlying modules cleanly.
+
+[qanda]
+Why enforce an explicit non-owning stateless facade invariant on `io.h`?::
+  If someone sneaks parsing helpers or static buffers directly into `io.h`, callers importing only `fs_utils.h` or `path_finder.h` silently diverge from full builds. Keeping `io.h` strictly stateless preserves explicit include hygiene (`Invariant 3`).
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Child Cog Walkthrough Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Dive Into Each Child Cog ---
+== Explore the Five Child I/O Cogs
+
+. link:02_fs_utils_bounded_io.adoc[`fs_utils.h` + `fs_utils.c`]
+. link:03_path_finder_vfs.adoc[`path_finder.h` + `path_finder.c`]
+. link:04_json_utils_parser.adoc[`json_utils.h` + `json_utils.c`]
+. link:05_master_loader_hydration.adoc[`master_loader.h` + `master_loader.c`]
+. link:06_io_fallback_bios_and_rom.adoc[`io_fallback.h` + `io_fallback.c`]

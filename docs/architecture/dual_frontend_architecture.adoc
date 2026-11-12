@@ -1,200 +1,147 @@
-= Architectural Specification: The Dual CLI + Native GUI Paradigm
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/architecture/dual_frontend_architecture.adoc
+@id            docs.architecture.dual_frontend
+@layer         Documentation / Volume V: Chapter 5
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Dual-Frontend Presentation, Headless CLI & Native X11 Movie Reel
+@role          Frontend Independence, Deterministic Sim & 2.5D Rasterizer Overview
+@audience      Designers, UI/Pixel Artists, QA Playtesters, Engine Programmers
+@snapshots     snap_game_fn_audit, snap_gui_types_sub2_3
+@invariants    1. Proves identical Layer 1 sim state across headless CLI and X11 GUI.
+               2. Live snapshots ground Layer 1 sim audit and Layer 2 gui_types.
+               3. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+================================================================================
+////
+
+= Dual-Frontend Presentation Layer: CLI, Native X11 & Movie Reel
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-24
-:doctype: article
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
 
-[abstract]
-== Abstract
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes & Presentation Philosophy )
+================================================================================
+////
 
-This document defines the formal architectural blueprint governing the dual-frontend
-execution model of *Tenebris and Lux* ("Darkness and Light"). Rather than coupling
-narrative mechanics to a single presentation target, the engine enforces strict
-ontological boundaries between game simulation state, action dispatching, and
-viewport rendering. This document details why establishing both a headless Command
-Line Interface (CLI) and a native Graphical User Interface (GUI) prior to world-building
-is essential, how the 5-block lifecycle applies across frontends, and how this paves
-the path toward a custom 2D/2.5D/3D engine.
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:engine-name: Cornerstone Game Engine
+:game-name: Tenebris and Lux
 
-== 1. The Core Architectural Philosophy
+// --- Sub-Assembly 2.2: Opening Orientation ---
+Many RPG engines tangle combat formulas directly into UI button handlers or draw loops—making automated testing brittle and porting nearly impossible.
+The *{engine-name}* splits **Simulation Truth (Layer 1)** cleanly from **Presentation Viewports (Layer 2)** so *{game-name}* plays identically in a lightning-fast headless CLI session, inside the `--debug` time-machine REPL, or on a pixel-crisp `640x360` native X11 desktop window.
 
-[quote, OmniCode Architectural Invariant]
-"Form precedes fullness. Representation must remain sovereign over presentation."
+toc::[]
 
-In traditional game development workflows, text prototypes are frequently written as
-monolithic console scripts where simulation logic, state mutation, and terminal I/O
-(`printf`, `scanf`) are tightly coupled. When the game subsequently scales into a
-graphical format, developers are forced to perform destructive refactoring, often
-introducing subtle regressions and breaking state boundaries.
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Shared Sim Determinism, CLI Router Flags & Movie Reel Viewport )
+================================================================================
+////
 
-*Tenebris and Lux* addresses this through an explicit **Dual-Frontend Architecture**:
+// --- Sub-Assembly 3.1: Shared Deterministic Simulation Core ---
+[[frontend_determinism]]
+== One Pure Simulation, Multiple Frontends
 
-[cols="1,2,2", options="header"]
+Every gameplay rule lives inside `game/` (Layer 1) operating strictly over `player_state_t`, pure integer coordinates, and deterministic combat/morality dispatch. Neither headless text commands nor graphical mouse clicks bypass Layer 1 validation.
+
+Consider `sim_state_audit()` in `game/src/hero/sim_state.c`—a complete pure-C simulation audit `function` that operates cleanly without opening any X11 display or GUI window:
+
+include::../snapshots/snap_game_fn_audit.adoc[]
+
+[cols="2,2,4",options="header"]
 |===
-| Dimension | Command Line Interface (CLI) | Native Graphical Interface (GUI)
-| **Primary Role** | Automated verification, CI/CD regression, script piping | Player immersion, atmospheric visualization, ergonomics
-| **I/O Channel** | Standard Streams (`stdin`, `stdout`) | Native X11 event loop & double-buffered Pixmap
-| **Latency Target** | < 1 ms per turn | 60 FPS deterministic render tick (~16.6 ms)
-| **State Interaction** | Universal Action Dispatcher (`game_process_command`) | Universal Action Dispatcher (`game_process_command`)
-| **External Footprint**| Zero dependencies (Pure ISO C11 standard library) | Zero external downloads (Native POSIX Xlib only)
+| Launch Flag (`tenebris-lux`) | Frontend Mode | Ideal Audience & Workflow
+
+| `-g`, `--gui`
+| Native X11 `640x360` Viewport
+| Players, pixel artists, and UI designers reviewing animations, palettes, and 5-screen menus.
+
+| `-c`, `--cli`
+| Headless Terminal REPL
+| Playtesters, writers, and automated scripts stepping through choices and endings at CPU speed.
+
+| `-d`, `--debug`
+| Interactive Time-Machine Debugger
+| Engineers and QA inspecting FNV-1a hashes, rewinding snapshots, and checking `DEBUG_STEP_AWAIT` traps.
+
+| `-a`, `--audit`
+| Pre-Flight + Invariant Sweep
+| CI pipelines and local commits verifying boot health, zero-heap limits, and GUI panel bounds in `<5ms`.
 |===
 
-=== Universal Action Dispatcher & Intent Emitter
+// --- Sub-Assembly 3.2: Layer 2 Native X11 & 2.5D Movie Reel ---
+[[frontend_movie_reel]]
+== Native `640x360` Viewport & The 2.5D Movie Reel Model
 
-Neither frontend owns or mutates the player state (`player_state_t`) directly. Instead,
-each frontend acts as an intent emitter that translates user input into canonical command
-tokens passed to `game_process_command()`:
+Rather than pulling in external third-party UI frameworks or bloat, Layer 2 (`engine/include/viewport/`) implements a self-contained software rasterizer rendering directly to a native `640x360` logical canvas backed by `<X11/Xlib.h>` in Linux desktop builds.
 
-[source,c]
-----
-void game_process_command(player_state_t *state, const char *raw_input,
-    char *out_msg, size_t msg_len);
-----
+Visually, the viewport works like a **Classic Cinema Movie Reel**:
 
-The lifecycle of an action execution proceeds through five deterministic phases:
+* **Horizontal Strip Navigation:** Screens glide left and right cleanly across canonical game views (Title, Gameplay, Party/Inventory, Map/Journal, System Settings).
+* **Vertical Depth Projection:** Integer tactical grid coordinates (`gui_grid_coord_t`) project cleanly through dimetric isometric transforms (`gui_iso_point_t`) and painter's-algorithm depth queues (`gui_depth_entity_t`).
+* **Integer/Letterbox Scaling (`geom_utils`):** A fixed `640x360` logical frame scales cleanly onto any desktop monitor without stretching pixel art or leaking screen coordinates back into Layer 1 game mechanics.
 
-[source,text]
-----
-┌─────────────────┐       ┌────────────────────────┐       ┌─────────────────┐
-│ Input Source    │  ==>  │ Command Tokenizer      │  ==>  │ Invariant Check │
-│ (CLI or GUI)    │       │ (sanitization & parse) │       │ (state bounds)  │
-└─────────────────┘       └────────────────────────┘       └─────────────────┘
-                                                                    │
-                                                                    ▼
-┌─────────────────┐       ┌────────────────────────┐       ┌─────────────────┐
-│ Presenter Blit  │  <==  │ Action Result Log      │  <==  │ State Mutation  │
-│ (stdout or X11) │       │ (chronicle message)    │       │ (lux, room, etc)│
-└─────────────────┘       └────────────────────────┘       └─────────────────┘
-----
+Inspect the canonical Layer 2 data contracts extracted from `engine/include/viewport/raster/gui_types.h` Sub-Assembly `2.3`:
 
-1. **Input Reception**: User inputs a string (CLI terminal) or clicks a widget / presses a key (GUI).
-2. **Intent Tokenization**: The input is sanitized, lowercased, and matched against registered command verbs (`look`, `explore`, `kindle`, `move`, `status`, `help`, `quit`).
-3. **Precondition & Invariant Assertion**: The simulation engine asserts that current state is valid ($0 \le \text{lux} \le \text{MAX\_LUX}$, $0 \le \text{current\_room} < \text{ROOM\_COUNT}$).
-4. **Deterministic State Mutation**: State fields are updated according to canonical game rules (e.g., kindling decrements shards by 1 and increments Lux by 30 up to 100).
-5. **Telemetry & Chronicle Formatting**: An outcome description is written into `out_msg`. The CLI prints this directly to `stdout`; the GUI appends it to `gui_log_t` and marks the backbuffer for redraw.
+include::../snapshots/snap_gui_types_sub2_3.adoc[]
 
-== 2. Native Desktop GUI Architecture: Why Not Web?
-
-This project explicitly rejects web-based wrappers (Electron, Tauri, Chromium Embedded Framework, WebSockets)
-in favor of a lean native binary compiled directly from ISO C11:
-
-[sidebar]
+.Future-Proof 3D Horizon Without Simulation Rewrites
 ****
-*The Fallacy of Web Wrappers in Systems Game Development:*
-Web architectures introduce non-deterministic garbage collection pauses, bundle
-hundreds of megabytes of third-party browser code, and abstract away hardware memory
-boundaries. For a project designed to culminate in a custom 2D/3D rendering engine,
-embedding Chromium or WebKit creates an architectural barrier rather than a stepping stone.
+Because `player_state_t` in Layer 1 tracks logical integers rather than X11 pixels or sprites, Cornerstone's Layer 2 viewport could evolve into hardware-accelerated 2D or full 3D rendering in the future without changing a single combat formula, dialogue branch, or save state inside `game/`.
 ****
 
-Key technical advantages of the native POSIX X11 approach:
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Dual-Frontend Parity Verification & Q&A )
+================================================================================
+////
 
-* **Instant Launch & Zero Overhead**: The entire executable binary is under 500 KB, with resident memory consumption below 15 MB.
-* **Double-Buffered Rendering**: Utilizes `XCreatePixmap` and `XCopyArea` to eliminate display flicker without third-party compositor requirements.
-* **Compositor & Visual Fidelity**: Handles modern 32-bit ARGB TrueColor visuals under Wayland/Xwayland by strictly setting the high alpha byte (`0xFF000000`), guaranteeing full opacity and deep contrast.
-* **Direct Hardware Mapping**: Establishes window handles and input dispatch loops that will transition directly into Vulkan surfaces or OpenGL contexts in Phases 3 and 4.
-* **Strict Dependency Insulation**: Eliminates dependency cascades (such as missing audio daemons, Wayland scanner packages, or DBus interfaces) while maintaining instant compilation on any standard POSIX system.
-
-=== Double-Buffering & Render Synchronization
-
-To achieve flicker-free rendering without tearing, `src/gui.c` implements offscreen
-double-buffering:
-
-[source,c]
-----
-// Allocate backbuffer pixmap matching the exact depth of the root window
-backbuffer = XCreatePixmap(display, window, GUI_WINDOW_WIDTH,
-                           GUI_WINDOW_HEIGHT, window_depth);
-
-// 1. Draw entire frame to offscreen pixmap
-render_frame(display, backbuffer, gc, state, &palette, &log);
-
-// 2. Atomically blit backbuffer to visible on-screen window
-XCopyArea(display, backbuffer, window, gc, 0, 0,
-          GUI_WINDOW_WIDTH, GUI_WINDOW_HEIGHT, 0, 0);
-XFlush(display);
-----
-
-=== Dynamic Visual Palette: The Twin Relics
-
-The visual presentation adheres to a tailored, atmospheric palette designed to reflect
-the dynamic tension between the Shield of Lux and the Sword of Tenebris:
-
-[cols="1,2,2", options="header"]
-|===
-| Element | Hex Color | Atmospheric Purpose
-| **Obsidian Void** | `#0D0E12` | Background canvas representing the bedrock of the fractured realm.
-| **Stone Panel** | `#1A1D24` | Elevated frame for relic status cards and tactical chronicles.
-| **Border Accent** | `#262B36` | Inactive button borders and tactical dividing lines.
-| **Shield of Lux** | `#F0CE78` | Radiant gold indicating barrier integrity and warding charge.
-| **Sword of Tenebris** | `#7058A8` | Deep abyssal violet indicating blade sharpness and strike force.
-| **Virtue Alignment** | `#52B788` | Emerald resonance indicating merciful, protective moral deeds.
-| **Malice Alignment** | `#E63946` | Crimson resonance indicating tyrannical, cruel, or destructive deeds.
-|===
-
-== 3. The 5-Block Implementation Mapping
-
-In strict accordance with the OmniCode framework, the presentation subsystem is structured
-into five invariant blocks across headers and source files:
-
-=== Presentation Architecture Breakdown (`include/gui/gui.h` & `src/gui/gui.c`)
-
-1. **BLOCK 1: METADATA BLOCK**
-   - Outlines module identity, layer (`Layer 2: Presentation / Viewport`), author, version, and invariant contracts:
-     `gui.h` and `gui.c` must remain strictly read-only with respect to `player_state_t`.
-2. **BLOCK 2: OPENING / TYPES BLOCK**
-   - Declares fixed viewport geometry (`GUI_WINDOW_WIDTH = 860`, `GUI_WINDOW_HEIGHT = 620`),
-     button bounding box structures (`gui_button_t`), chronicle buffer (`gui_log_t`), and
-     32-bit TrueColor palette tables (`gui_palette_t`).
-3. **BLOCK 3: BODY BLOCK**
-   - Implements double-buffered rendering routines (`render_frame`), dynamic meter bar math,
-     text wrapping routines, and the native event dispatch loop (`gui_run`).
-4. **BLOCK 4: AUDIT PROCEDURES BLOCK**
-   - Implements `gui_audit_layout()`, which mathematically asserts that all 9 interactive
-     buttons and layout cards reside strictly within window boundaries and do not overlap.
-5. **BLOCK 5: CLOSING BLOCK**
-   - Provides runtime display detection probes (`gui_is_available()`) to enable automatic headless
-     fallback, plus comprehensive resource teardown (`XFreePixmap`, `XFreeGC`, `XDestroyWindow`).
-
-== 4. Headless CI & Deterministic Replay
-
-Because simulation logic is decoupled from presentation, automated verification can execute
-in continuous integration environments without requiring an X server or virtual framebuffer (`Xvfb`):
+// --- Sub-Assembly 4.1: Proving Frontend Parity ---
+== Testing Both Frontends Cleanly
 
 [source,bash]
 ----
-# Run headless CTest verification suite
-ctest --test-dir build -C Debug --output-on-failure
+# Verify headless CLI, debugger, GUI layout audit, and X11 smoke checks via CTest
+ctest --test-dir build --output-on-failure
 
-# Execute internal invariant self-audit suite
-./build/tenebris-lux --audit
-
-# Force headless terminal CLI mode
+# Run interactive headless gameplay or debugger directly in terminal
 ./build/tenebris-lux --cli
+./build/tenebris-lux --debug
 ----
 
-Automated replay scripts can be piped directly into the CLI frontend to verify deterministic
-gameplay paths:
+[qanda]
+Does testing the game require an active X11 monitor or GPU?::
+No. Headless `--cli`, `--debug`, `--audit`, and all simulation tests run cleanly in pure terminal/CI environments without opening an X11 window.
 
-[source,bash]
-----
-printf "look\nexplore\nkindle\nmove north\nstatus\nquit\n" | ./build/tenebris-lux --cli
-----
+How does the `640x360` GUI avoid getting out of sync with CLI gameplay?::
+Both frontends dispatch actions into the exact same Layer 1 `game/` state machine and share deterministic FNV-1a snapshot verification.
 
-== 5. Custom Engine Evolution Roadmap
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Volume Navigation & Part 2 Handoff )
+================================================================================
+////
 
-The dual-frontend architecture serves as the foundation for a 4-phase engine roadmap:
+// --- Sub-Assembly 5.1: Navigation ---
+== Where to Go Next
 
-[cols="1,1,2,2", options="header"]
-|===
-| Phase | Milestone | Subsystem Architecture | Presentation Technology
-| **Phase 1** | `v0.0.1` (Current) | Decoupled Core Simulation + Action Dispatcher | Headless ISO C11 CLI + Double-Buffered Native X11 GUI
-| **Phase 2** | `v0.1.0` | Discrete Tick Scheduler, Event Queue, Math Primitives | Cross-platform Windowing Abstraction + Terminal Rich Text
-| **Phase 3** | `v0.2.0` | 2D / 2.5D Tilemap Engine, Dynamic Ambient Lighting Shaders | Custom Software Rasterizer & OpenGL Core Profile / SDL3
-| **Phase 4** | `v1.0.0` | Custom 3D Engine, Spatial Audio, ECS Scene Graph | Modern Vulkan Rendering Pipeline + Custom Asset Bundler
-|===
+* Previous: Chapter 4 — link:preflight_and_manifest_spec.adoc[Central Manifest Registry & Pre-Flight Loose-Bolts Inspection].
+* Continue into **Volume V, Part 2** subsystem code tours starting at link:../code/core_utilities.adoc[Layer 0 Core Utilities Code Tour] and link:../code/presentation_gui.adoc[Layer 2 Presentation Viewport Code Tour].
+* Review all extracted textbook code plates in link:../snapshots/INDEX.adoc[Snapshots Index] (or **Appendix A** when reading the compiled PDF book).

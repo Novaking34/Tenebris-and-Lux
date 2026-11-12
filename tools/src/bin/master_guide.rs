@@ -58,6 +58,8 @@ enum BuildMode {
     MasterOnly,
     VolumesOnly,
     SingleVolume(String),
+    SnapshotsOnly,
+    ValidateLayout,
     ScanOnly,
     Help,
 }
@@ -138,6 +140,19 @@ fn run_compilation(repo_root: &Path, mode: &BuildMode) -> Result<(), String> {
             println!("  Markdown: {:?}", md);
             println!("  PDF Book: {:?}", pdf);
         }
+        BuildMode::SnapshotsOnly => {
+            println!("Target Mode: SNAPSHOTS & THEME GENERATION ONLY");
+            if let Some(theme_path) = builder.sync_theme_yaml()? {
+                println!("  Theme YAML: {:?}", theme_path);
+            }
+            let snaps = builder.prepare_snapshots()?;
+            println!("  Generated {} textbook code snapshots into {:?}:", snaps.len(), builder.docs_dir.join("snapshots"));
+            for s in &snaps {
+                let first = s.wholesale_segments.first().map(|x| x.start_line).unwrap_or(1);
+                let last = s.wholesale_segments.last().map(|x| x.end_line).unwrap_or(1);
+                println!("    [{:?}] {} -> {}#L{}-L{}", s.spec.mode, s.spec.id, s.spec.source_file, first, last);
+            }
+        }
         BuildMode::ScanOnly => {
             println!("Target Mode: DYNAMIC AREA SCAN ONLY");
             println!("Scanning designated documentation areas in docs/...");
@@ -152,6 +167,35 @@ fn run_compilation(repo_root: &Path, mode: &BuildMode) -> Result<(), String> {
                 }
             }
             println!("\nTotal Documented Chapters: {}", total_scanned);
+        }
+        BuildMode::ValidateLayout => {
+            println!("Target Mode: PDF PAGE-BUDGET & 5-BLOCK ASCIIDOC LAYOUT VALIDATION");
+            let report = builder.validate_adoc_layout()?;
+            println!(
+                "  Audited {} AsciiDoc documents + {} extracted snapshot plates.",
+                report.files_checked, report.snapshots_checked
+            );
+            for issue in &report.issues {
+                let tag = match issue.severity {
+                    tl_tools::guide::LayoutSeverity::Error => "[ERROR]",
+                    tl_tools::guide::LayoutSeverity::Warning => "[WARN] ",
+                };
+                println!(
+                    "  {} {}:{} ({}) -> {}",
+                    tag, issue.file, issue.line, issue.rule, issue.message
+                );
+            }
+            println!(
+                "  Summary: {} errors, {} warnings.",
+                report.error_count(),
+                report.warning_count()
+            );
+            if !report.is_clean() {
+                return Err(format!(
+                    "AsciiDoc PDF layout validation failed with {} errors.",
+                    report.error_count()
+                ));
+            }
         }
         BuildMode::Help => {
             print_usage();
@@ -170,6 +214,8 @@ fn print_usage() {
     println!("  --master          Build unified master compendium only (MASTER_GUIDE.*)");
     println!("  --volumes         Build individual volume books only in docs/volumes/");
     println!("  --volume <ROMAN>  Build a specific volume (e.g. --volume I, --volume VI)");
+    println!("  --snapshots       Regenerate code snapshot plates & PDF theme YAML only");
+    println!("  --validate-layout Audit .adoc files & snapshots against single-page PDF layout rules");
     println!("  --scan            Scan and print all chapters across documentation areas");
     println!("  --help, -h        Print this help menu");
 }
@@ -227,6 +273,8 @@ fn main() -> ExitCode {
             "--all" => mode = BuildMode::All,
             "--master" => mode = BuildMode::MasterOnly,
             "--volumes" => mode = BuildMode::VolumesOnly,
+            "--snapshots" => mode = BuildMode::SnapshotsOnly,
+            "--validate-layout" => mode = BuildMode::ValidateLayout,
             "--scan" => mode = BuildMode::ScanOnly,
             "--help" | "-h" => mode = BuildMode::Help,
             "--volume" => {

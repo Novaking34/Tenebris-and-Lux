@@ -1,0 +1,162 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/architecture/resilience_bios_and_probes.adoc
+@id            docs.architecture.resilience_bios
+@layer         Documentation / Volume V: Chapter 2
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Safe-Mode BIOS Vaults, Config ROMs & Autonomous Probe Tripwire Loop
+@role          Zero-Disk Boot Guarantees, Telemetry & DEBUG_STEP_AWAIT Deep Dive
+@audience      Designers, QA Playtesters, Modders, Systems Engineers
+@snapshots     snap_cmake_rom_whole, snap_io_fallback_bios_group, snap_debug_probe_group, snap_log_sub4_1_probes
+@invariants    1. Explains zero-disk recovery clearly for non-programmers and engineers.
+               2. Live snapshots demonstrate CMake ROM generation and C Safe-Mode cogs.
+               3. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+================================================================================
+////
+
+= Zero-Disk Safe-Mode BIOS, Config ROM Vaults & Autonomous Probe Loop
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes & Resilience Promise )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:engine-name: Cornerstone Game Engine
+
+// --- Sub-Assembly 2.2: Opening Framing ---
+Software fails in the real world when external files go missing, break during an edit, or lose write permissions.
+In Rev 5, the *{engine-name}* never crashes blindly on startup: it boots through **Tier-0 Safe-Mode BIOS vaults**, falls back to **compiled-in `.rodata` Config ROMs**, and pauses transparently on bad assumptions using an **Autonomous Probe -> Safe-Mode Downgrade -> `DEBUG_STEP_AWAIT`** safety loop.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Tier-0 BIOS, Config ROM Vaults, Flight Log, Debugger & Probe Loop )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Quarantined Tier-0 Safe-Mode BIOS ---
+[[resilience_bios]]
+== Tier-0 Safe-Mode BIOS & Quarantined Fallbacks
+
+Think of `*_fallback.[ch]` files as a motherboard BIOS. Even if your hard drive configuration folder is wiped clean, the engine must still initialize telemetry, mount virtual read-only defaults, mix safe audio cues, and open a window showing what went wrong.
+
+Every modernized subsystem follows a **3-file quarantine layout**:
+
+[cols="2,3,4",options="header"]
+|===
+| File Pattern | Responsibility | Why Quarantine Matters
+
+| `<mod>_types.h`
+| Pure enums, structs, limits, callbacks
+| Breaks circular header dependencies between main code, BIOS fallback, and tests.
+
+| `<mod>_fallback.[ch]`
+| Minimal Tier-0 Safe-Mode boot & ROM reader
+| Zero dependencies on higher layers or disk parsers; boots even on an empty disk.
+
+| `<mod>.h` / `<mod>.c`
+| Full runtime subsystem + probes
+| Hydrates disk overrides on top of BIOS defaults and registers Block 4 probes.
+|===
+
+[IMPORTANT]
+====
+*Honest Telemetry Flag (`loaded_from_data`):* Every hydrated policy carries an explicit boolean `loaded_from_data`. It is set to `false` under Safe-Mode ROM/floppy defaults and flips `true` *only* after an authentic external JSON file parses and validates cleanly.
+====
+
+// --- Sub-Assembly 3.2: Compiled .rodata Config ROM Vaults ---
+[[resilience_rom]]
+== Compiled-In `.rodata` Config ROM Vaults
+
+Rather than hardcoding duplicate default tables inside C source files, CMake runs `cmake/GenerateConfigRom.cmake` during build configuration (`generate_telemetry_rom`, `generate_diagnostics_rom`, `generate_io_rom`). Every `.json` file inside those `engine/config/` subtrees is packed directly into immutable read-only `.rodata` C byte arrays under `build/generated/`.
+
+include::../snapshots/snap_cmake_rom_whole.adoc[]
+
+That single build step eliminates drift between engine JSON schemas and emergency defaults: when a disk config is missing or corrupted, Tier-0 reads the **exact same canonical JSON bytes** straight out of executable read-only memory!
+
+// --- Sub-Assembly 3.3: Safe-Mode Boot & Downgrade Transitions ---
+[[resilience_downgrade]]
+== Safe-Mode Boot, Floppy Floor & Downgrade Transitions
+
+When `io_fallback` encounters missing files, path traversal (`..`), or read-only disk conditions, it executes structured transitions between full boot (`io_fallback_boot`), stripped-down emergency floor (`io_fallback_boot_floppy`), and read-only lock (`io_fallback_downgrade_safe_mode`):
+
+include::../snapshots/snap_io_fallback_bios_group.adoc[]
+
+// --- Sub-Assembly 3.4: Flight Recorder & Time-Machine Probes ---
+[[resilience_probes]]
+== Flight Recorder (`log/`), Debugger (`debug/`) & Autonomous Probe Loop
+
+Two foundational Layer 0 systems watch every transition:
+
+* **Flight Recorder (`cog.log`):** Zero-heap categorized circular ring buffer preserving telemetry before filesystem logs even open. Sub-Assembly `4.1` wires health probes straight into the debugger:
+
+include::../snapshots/snap_log_sub4_1_probes.adoc[]
+
+* **Time-Machine Debugger (`cog.debug`):** Captures deterministic FNV-1a hashed state snapshots, evaluates active invariants, and coordinates the **Autonomous Probe -> Safe-Mode -> `DEBUG_STEP_AWAIT`** loop:
+
+include::../snapshots/snap_debug_probe_group.adoc[]
+
+.Anatomy of a Resilient Failure Recovery
+****
+1. A subsystem detects invalid config bounds or corrupt JSON in its Block 4 validation probe.
+2. Instead of calling `abort()` or continuing silently with corrupted math, the probe traps into `debug_trap_tripwire()` / Safe-Mode downgrade (`loaded_from_data = false`).
+3. Execution enters **`DEBUG_STEP_AWAIT`**, holding the frame intact with a human-readable reason, fault ring trace, and snapshot state so developers or tests can inspect *why* right away.
+****
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Verification Matrix & Resilience Q&A )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Proving Zero-Disk Resilience ---
+== Self-Audit & Zero-Disk Checks
+
+[source,bash]
+----
+# Run Layer 0 log, debug, and io integration tests through CTest
+ctest --test-dir build -R "log|debug|io|fallback|rom" --output-on-failure
+
+# Boot headless audit cleanly even against an empty data root
+./build/tenebris-lux --audit --data-root /tmp/empty_safe_mode_test
+----
+
+[qanda]
+If a designer accidentally deletes a JSON file, does the engine lose all defaults?::
+No. `GenerateConfigRom.cmake` embeds verified JSON defaults in `.rodata`, so Tier-0 BIOS boots cleanly with `loaded_from_data == false`.
+
+Does Safe-Mode silently pretend nothing went wrong?::
+No. Telemetry logs a clear downgrade event, locks unsafe disk mutations if damaged, and fires validation probes toward `DEBUG_STEP_AWAIT`.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Volume Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Next Chapters ---
+== Where to Go Next
+
+* Previous: Chapter 1 — link:ARCHITECTURE.adoc[System Architecture Overview].
+* Next: Chapter 3 — link:data_driven_architecture.adoc[Data-Driven Architecture: Dual Data Taxonomy, Layered VFS & 5-Block JSON].
+* Code Tours: See Part 2 chapters for link:../code/logging_system.adoc[Flight Logging], link:../code/debug_system.adoc[State Debugger], and link:../code/io_pipeline.adoc[Zero-Heap I/O Pipeline].

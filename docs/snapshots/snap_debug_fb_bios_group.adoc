@@ -1,0 +1,47 @@
+[[snap_plate_snap_debug_fb_bios_group]]
+.Tier-0 Debugger BIOS Boot & ROM Profile Hydration (debug_fallback.c) (`engine/src/debug/debug_fallback.c#L1715-L1752` · Mode: `Group`)
+[source,c,linenums,start=1715]
+------
+/**
+ * @brief Arms Tier-0 Safe-Mode BIOS state and seeds active ROM profile telemetry.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Turns on emergency fault recording right at startup so any failure before external
+ * configs finish loading is still captured and recoverable.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Copies caller profile name into `s_fb.active_rom_profile`, or hydrates `"default"`
+ * via `debug_fallback_load_rom_profile()` with monolith fallback, sets `s_fb.booted = true`,
+ * and logs an isolated `LOG_SEV_INFO` boot record into `cog.log.fallback`.
+ *
+ * @triggers
+ * - Layer 4 Tests : `tests/unit/debug/test_debug_fallback_unit.c:Section4`
+ *
+ * @param[in] opt_config  Optional pre-populated `debug_config_t` (or NULL for ROM default).
+ * @param[in] config_size Must equal `sizeof(debug_config_t)` when `opt_config != NULL`.
+ * @return true once Tier-0 Safe-Mode debugger BIOS is booted.
+ */
+bool debug_fallback_boot(const debug_config_t *opt_config, size_t config_size)
+{
+    /* Step 1: Resolve active Safe-Mode profile string from caller, ROM, or monolith */
+    debug_config_t scratch;
+    if (opt_config != NULL && config_size == sizeof(debug_config_t)) {
+        str_safe_copy(s_fb.active_rom_profile, opt_config->profile_name,
+                      sizeof(s_fb.active_rom_profile));
+    } else if (!debug_fallback_load_rom_profile("default", &scratch, sizeof(scratch))) {
+        debug_get_monolith_fallback_config_raw(&scratch, sizeof(scratch));
+        str_safe_copy(s_fb.active_rom_profile, scratch.profile_name,
+                      sizeof(s_fb.active_rom_profile));
+        fb_emit_bios_log(
+            LOG_SEV_WARNING,
+            __FILE__,
+            __LINE__,
+            __func__,
+            MODULE_ID,
+            "ROM default profile unavailable; seeded Safe-Mode BIOS from monolith template."
+        );
+------
+
+_Hydrates Safe-Mode debugger policies directly from embedded .rodata ROMs when disk files are unavailable._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L1008-L1766`) -> <<snap_wholesale_snap_debug_fb_bios_group,Appendix: Tier-0 Debugger BIOS Boot & ROM Profile Hydration (debug_fallback.c)>>.]

@@ -1,0 +1,405 @@
+{
+  "block_1_metadata": {
+    "schema": "tenlux.data.code_snapshots.v1",
+    "id": "docs.config.code_snapshots",
+    "version": "0.2.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-12",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Declarative textbook code-snapshot manifest extracting live code in 5 granularities: whole, block, subassembly, function, and group",
+    "invariants": [
+      "Every snapshot extracts live, verbatim source spans from repository files during master_guide compilation.",
+      "Supported extraction modes: whole, block, subassembly, function, group.",
+      "Generated .adoc plates reside solely in docs/snapshots/ (outside chapter scan_areas).",
+      "Inline excerpts link directly via <<snap_wholesale_<id>>> to complete wholesale Appendix listings when referenced."
+    ]
+  },
+  "block_2_types": {
+    "supported_modes": ["whole", "block", "subassembly", "function", "group"],
+    "output_dir": "docs/snapshots",
+    "appendix_anchor_prefix": "snap_wholesale_",
+    "default_wholesale_policy": "when_excerpted"
+  },
+  "block_3_body": {
+    "snapshots": [
+      {
+        "id": "snap_manifest_ladder_sub2_1",
+        "title": "Cornerstone Fall-Down Stairs Portability Ladder (C23/C17/C11 & C++20/17)",
+        "source_file": "engine/include/core/manifest.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 2.1",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 62
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Compile-time standard detection establishing C23/C17/C11 and C++20/C++17 parity without legacy shims.",
+        "callouts": [
+          { "match": "CS_C_STD_TIER 23", "number": 1, "text": "Detects C23 at compile time and gracefully steps down to 17 or 11 on older toolchains." },
+          { "match": "CS_CXX_STD_TIER 20", "number": 2, "text": "Detects C++20/C++17 compilation mode cleanly when engine headers are included by C++ tools." },
+          { "match": "CS_NODISCARD [[nodiscard]]", "number": 3, "text": "Activates standard [[nodiscard]] attributes automatically whenever supported by the active C/C++ tier." }
+        ]
+      },
+      {
+        "id": "snap_main_boot_group",
+        "title": "Layer 3 Plug Entry & Manifest Wiring (init_engine_manifest + main)",
+        "source_file": "game/src/main.c",
+        "mode": "group",
+        "targets": ["init_engine_manifest", "main"],
+        "excerpt": {
+          "mode": "symbol",
+          "target": "init_engine_manifest",
+          "max_lines": 46
+        },
+        "wholesale_in_appendix": "always",
+        "callout_note": "Demonstrates how Layer 3 game/src/main.c wires engine/ and game/ strata together via the central manifest registry."
+      },
+      {
+        "id": "snap_cmake_rom_whole",
+        "title": "Build-Time Compiled .rodata Config ROM Generator",
+        "source_file": "cmake/GenerateConfigRom.cmake",
+        "mode": "whole",
+        "excerpt": {
+          "mode": "block",
+          "target": "BLOCK 3",
+          "max_lines": 44
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Transforms engine/config/**/*.json directly into immutable ELF .rodata C byte tables at configure/build time.",
+        "callouts": [
+          { "match": "list(SORT _sorted_subdirs)", "number": 1, "text": "Sorts configuration subdirectories so generated .rodata asset tables remain deterministic across hosts." },
+          { "match": "file(GLOB _dir_jsons", "number": 2, "text": "Discovers all JSON configs in each domain directory before sorting and byte-encoding them." }
+        ]
+      },
+      {
+        "id": "snap_io_fallback_bios_group",
+        "title": "Tier-0 I/O Safe-Mode BIOS Boot, Floppy Floor & Downgrade Latch",
+        "source_file": "engine/src/io/io_fallback.c",
+        "mode": "group",
+        "targets": ["io_fallback_downgrade_safe_mode", "io_fallback_boot", "io_fallback_boot_floppy"],
+        "excerpt": {
+          "mode": "symbol",
+          "target": "io_fallback_boot_floppy",
+          "max_lines": 42
+        },
+        "wholesale_in_appendix": "always",
+        "callout_note": "Zero-dependency Safe-Mode transitions ensuring deterministic boot even when disk configs are missing or corrupt."
+      },
+      {
+        "id": "snap_debug_probe_group",
+        "title": "Autonomous Validation Probes & Tripwire Trap Chain",
+        "source_file": "engine/src/debug/debug.c",
+        "mode": "group",
+        "targets": ["debug_register_validation_probe", "debug_trigger_probe", "debug_trap_tripwire"],
+        "excerpt": {
+          "mode": "symbol",
+          "target": "debug_trap_tripwire",
+          "max_lines": 45
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Realizes the Probe -> Safe-Mode Downgrade -> DEBUG_STEP_AWAIT loop inside Layer 0 debug infrastructure."
+      },
+      {
+        "id": "snap_log_sub4_1_probes",
+        "title": "Flight Log Subsystem Probe Registration & Validation Guards (Sub-Assembly 4.1)",
+        "source_file": "engine/src/log/log.c",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 4.1",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 44
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Shows how cog.log verifies its own static ring limits and binds probes into cog.debug."
+      },
+      {
+        "id": "snap_vfs_routes_cfg_whole",
+        "title": "Complete 5-Block VFS Precedence & Policy Configuration (vfs_routes.json)",
+        "source_file": "engine/config/io/vfs_routes.json",
+        "mode": "whole",
+        "excerpt": {
+          "mode": "block",
+          "target": "block_3_body",
+          "max_lines": 45
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Canonical 5-block engine config defining VFS root search hierarchy, alias tables, and fail-closed safety flags."
+      },
+      {
+        "id": "snap_vfs_routes_body_block",
+        "title": "JSON Block 3 Payload Isolation (block_3_body of vfs_routes.json)",
+        "source_file": "engine/config/io/vfs_routes.json",
+        "mode": "block",
+        "target": "block_3_body",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 48
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Demonstrates scoped block_3_body extraction—matching master_loader's strict rule against reading Block 1/2 metadata as live gameplay config."
+      },
+      {
+        "id": "snap_master_loader_sub3_2",
+        "title": "Scoped block_3_body JSON Accessor Contract (master_loader.h Sub-Assembly 3.2)",
+        "source_file": "engine/include/io/master_loader.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 3.2",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 44
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Zero-heap typed getters that scan directly inside a validated block_3_body span."
+      },
+      {
+        "id": "snap_io_fb_json_group",
+        "title": "Shared Zero-Heap JSON Block Resolver & VFS Parser Group",
+        "source_file": "engine/src/io/io_fallback.c",
+        "mode": "group",
+        "targets": ["io_fb_resolve_body_span", "io_fallback_parse_vfs_routes_json"],
+        "excerpt": {
+          "mode": "symbol",
+          "target": "io_fb_resolve_body_span",
+          "max_lines": 38
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Tier-0 in-place span scanning reused seamlessly between BIOS fallback and master_loader."
+      },
+      {
+        "id": "snap_manifest_types_sub2_3",
+        "title": "Central Manifest Metadata & Registry Ontology (manifest.h Sub-Assembly 2.3)",
+        "source_file": "engine/include/core/manifest.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 2.3",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 48
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Self-describing module contracts pairing engine layers, allocation policy, thread safety, and preflight hooks."
+      },
+      {
+        "id": "snap_manifest_fn_preflight",
+        "title": "Pre-Flight Loose-Bolts Engine Walk (manifest_run_preflight)",
+        "source_file": "engine/src/core/manifest.c",
+        "mode": "function",
+        "target": "manifest_run_preflight",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 44
+        },
+        "wholesale_in_appendix": "always",
+        "callout_note": "Iterates every registered module sequentially, classifying OK, WARNINGS, DOWNGRADED, and HALT_FATAL states.",
+        "callouts": [
+          { "match": "PREFLIGHT_STATUS_OK", "number": 1, "text": "Marks aggregate status OK only when warnings and critical/fatal counts remain zero." },
+          { "match": "mod->preflight_check", "number": 2, "text": "Invokes each subsystem's deterministic preflight check function sequentially." }
+        ]
+      },
+      {
+        "id": "snap_main_preflight_block4",
+        "title": "Application Audit Integration (game/src/main.c BLOCK 4)",
+        "source_file": "game/src/main.c",
+        "mode": "block",
+        "target": "BLOCK 4",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 46
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Shows Layer 3 executing run_full_subsystem_audit() across Engine + Game + Test invariants from --audit."
+      },
+      {
+        "id": "snap_game_fn_audit",
+        "title": "Layer 1 Deterministic Simulation State Audit (sim_state_audit)",
+        "source_file": "game/src/hero/sim_state.c",
+        "mode": "function",
+        "target": "sim_state_audit",
+        "wholesale_in_appendix": "always",
+        "callout_note": "Pure simulation integrity audit verifying hero stats, inventory bounds, morality sway, and world state with zero frontend dependencies."
+      },
+      {
+        "id": "snap_gui_types_sub2_3",
+        "title": "Layer 2 640x360 Viewport & 2.5D Movie Reel Data Structures (gui_types.h Sub-Assembly 2.3)",
+        "source_file": "engine/include/viewport/raster/gui_types.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 2.3",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 48
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Canonical non-anonymous structs driving screens, palettes, layouts, and dimetric depth sorting."
+      },
+      {
+        "id": "snap_log_types_sub2_3",
+        "title": "Flight Log Leaf Vocabulary & Entry Layout (log_types.h Sub-Assembly 2.3)",
+        "source_file": "engine/include/log/log_types.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 2.3",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 42
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Zero-.bss leaf types shared cleanly by cog.log and quarantined cog.log.fallback."
+      },
+      {
+        "id": "snap_log_ring_api_sub3_3",
+        "title": "Flight Recorder Formatted Entry Dispatch API (log.h Sub-Assembly 3.3)",
+        "source_file": "engine/include/log/log.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 3.3",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 40
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Public categorized log macros and fixed-stack formatting interface for engine and game channels."
+      },
+      {
+        "id": "snap_log_fb_bios_group",
+        "title": "Tier-0 Flight Log BIOS Boot & Early-Entry Replay Drain",
+        "source_file": "engine/src/log/log_fallback.c",
+        "mode": "group",
+        "targets": ["log_fallback_boot", "log_fallback_drain_entries"],
+        "excerpt": {
+          "mode": "symbol",
+          "target": "log_fallback_boot",
+          "max_lines": 40
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Arms the 64-entry pre-VFS BIOS ring before disk mount and replays captured records once primary cog.log boots."
+      },
+      {
+        "id": "snap_log_test_system",
+        "title": "Flight Log System Emergence Verification (test_log_system_emergence)",
+        "source_file": "tests/system/test_log_system.c",
+        "mode": "function",
+        "target": "test_log_system_emergence",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 38
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Exercises full boot, rotation, Safe-Mode telemetry profile fallback, and recovery across Layer 4."
+      },
+      {
+        "id": "snap_debug_types_sub2_3",
+        "title": "State Debugger Leaf Vocabulary & Snapshot Structs (debug_types.h Sub-Assembly 2.3)",
+        "source_file": "engine/include/debug/debug_types.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 2.3",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 44
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Standalone integer/char POD snapshots eliminating void* type erasure between Layer 0 and Layer 1."
+      },
+      {
+        "id": "snap_debug_rewind_group",
+        "title": "Deterministic State Capture & Time-Travel Rewind (debug.c)",
+        "source_file": "engine/src/debug/debug.c",
+        "mode": "group",
+        "targets": ["debug_record_snapshot", "debug_rewind_to_snapshot"],
+        "excerpt": {
+          "mode": "symbol",
+          "target": "debug_rewind_to_snapshot",
+          "max_lines": 38
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Captures FNV-1a hashed simulation states in a 64-slot ring and restores bounded prior frames cleanly."
+      },
+      {
+        "id": "snap_debug_fb_bios_group",
+        "title": "Tier-0 Debugger BIOS Boot & ROM Profile Hydration (debug_fallback.c)",
+        "source_file": "engine/src/debug/debug_fallback.c",
+        "mode": "group",
+        "targets": ["debug_fallback_boot", "debug_fallback_load_rom_profile"],
+        "excerpt": {
+          "mode": "symbol",
+          "target": "debug_fallback_boot",
+          "max_lines": 38
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Hydrates Safe-Mode debugger policies directly from embedded .rodata ROMs when disk files are unavailable."
+      },
+      {
+        "id": "snap_debug_test_unit",
+        "title": "Debugger Unit Emergence & Tripwire Verification (test_debug_unit_emergence)",
+        "source_file": "tests/unit/debug/test_debug_unit.c",
+        "mode": "function",
+        "target": "test_debug_unit_emergence",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 38
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Verifies locked snapshot preservation, GCD ring rotation, probe traps, and Safe-Mode AWAIT clearing."
+      },
+      {
+        "id": "snap_io_fs_utils_sub3_2",
+        "title": "Bounded POSIX Filesystem & Read-Only Guard API (fs_utils.h Sub-Assembly 3.2)",
+        "source_file": "engine/include/io/fs_utils.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 3.2",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 42
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Caller-owned bounded file transfers with truncation protection and Safe-Mode write locks."
+      },
+      {
+        "id": "snap_io_path_finder_sub3_2",
+        "title": "Multi-Tier VFS Path & Asset Resolution API (path_finder.h Sub-Assembly 3.2)",
+        "source_file": "engine/include/io/path_finder.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 3.2",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 40
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Resolves game/config -> engine/config -> game/data/presentation/config deterministically without heap allocation."
+      },
+      {
+        "id": "snap_io_json_utils_sub3_1",
+        "title": "Zero-Heap JSON Token Span Locator API (json_utils.h Sub-Assembly 3.1)",
+        "source_file": "engine/include/io/json_utils.h",
+        "mode": "subassembly",
+        "target": "Sub-Assembly 3.1",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 40
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Single-pass bounded span slicing capped at bracket nesting depth <= 32 on caller stack."
+      },
+      {
+        "id": "snap_io_test_system",
+        "title": "I/O Pipeline System Emergence & ROM Downgrade Verification (test_io_system_emergence)",
+        "source_file": "tests/system/test_io_system.c",
+        "mode": "function",
+        "target": "test_io_system_emergence",
+        "excerpt": {
+          "mode": "head",
+          "max_lines": 40
+        },
+        "wholesale_in_appendix": "when_excerpted",
+        "callout_note": "Drills end-to-end VFS resolution, corrupt JSON downgrade to ROM Safe Mode, and coordinated umbrella audit."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "min_snapshots": 27,
+    "required_modes_covered": ["whole", "block", "subassembly", "function", "group"],
+    "verify_all_paths_exist": true
+  },
+  "block_5_closing": {
+    "status": "ACTIVE",
+    "generated_plate_dir": "docs/snapshots",
+    "wholesale_appendix_enabled": true
+  }
+}

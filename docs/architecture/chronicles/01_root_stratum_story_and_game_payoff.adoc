@@ -1,0 +1,148 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/architecture/chronicles/01_root_stratum_story_and_game_payoff.adoc
+@id            docs.arch.chronicles.root_stratum_payoff
+@layer         Documentation / Volume V: Architecture Chronicles
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Cornerstone Game Engine — Root Stratum Evolution & Payoff
+@role          Engineering Narrative: Why Root Baseline Quality Pays Down Future Work
+@audience      Game Designers, Producers, Systems Architects, Contributors
+@snapshots     uses: snap_manifest_ladder_sub2_1
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Traces only verified Rev 5 modules, chassis patterns, and invariants.
+               3. Connects low-level root engineering directly to RPG & future engine velocity.
+================================================================================
+////
+
+= Root Strata Chronicles: Why Strengthening `log/`, `debug/`, and `io/` Pays Every Future Turn
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Thesis, The Tree Metaphor & Audience Bridge )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Thesis Statement ---
+**For Game Designers & Creators**: It is tempting to ask why months of careful baseline work go into flight logs, diagnostic tripwires, and bounded file loaders before drawing a single new combat animation or writing a new dialogue scene in *Tenebris and Lux*. The answer is simple: **a game engine is a living tree, and `log/`, `debug/`, and `io/` are its roots**. When the roots rot—or silently allocate unmanaged memory, crash on a missing JSON comma, or swallow errors—every branch above them (vocations, twin relics, grid combat, X11 frames) becomes fragile and twice as slow to build.
+
+**For Systems Architects**: During the Governance Revision 5 (`Rev 5`) baseline sprint of **Cornerstone Engine** (`engine/`), modernizing `log/` -> `debug/` -> `io/` ahead of `core/` Block 3 work, `audio/`, `viewport/`, and `game/` surfaced structural lessons that fundamentally de-risk the rest of the project.
+
+[cols="2,3,3",options="header"]
+|===
+| Stratum / Root | Without Rev 5 Hardening | With Rev 5 Root Baseline
+
+| `log/` (Flight Recorder)
+| Silent early-boot drops; interleaved disk crashes; ad-hoc `printf`.
+| Zero-disk `log_fallback` boot, typed severity rings, ROM defaults, and deterministic test resets.
+
+| `debug/` (Nervous System)
+| Bugs manifest five systems later as cryptic segfaults with zero state trail.
+| Probes catch bad invariants at the boundary and pause cleanly inside `DEBUG_STEP_AWAIT`.
+
+| `io/` (Supply Line)
+| Duplicate JSON parsers, hidden `static char[32768]` scratch bloat, fragile file paths.
+| 3-tier VFS (`game/config` -> `engine/config` -> `presentation`), `rom://io`, and `block_3_body` isolation.
+|===
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Four Hard-Won Rev 5 Lessons & Their Game Development Payoff )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Lesson 1 — Purge Shims & Expose Seams ---
+== Lesson 1: Purging Legacy Shims Lets the Compiler Map Every Seam
+
+Early in engine refactors, keeping "temporary compatibility wrappers" feels polite—nothing breaks immediately. In practice, shims hide stale callers across multiple modules until a subtle behavioral mismatch blows up weeks later inside gameplay code.
+
+Cornerstone's **Active Iteration Feedback Covenant** flips that habit on its head:
+
+1. **Delete retired shims immediately** from headers and sources.
+2. **Compile strictly** (`-Wall -Wextra -Wpedantic`, zero suppressed warnings) and run the 4-tier CTest suite so the compiler itself points to every single outdated call site.
+3. **Upgrade every caller cleanly** to the true contract before advancing.
+
+By paying that small upfront cleanup cost across `log/` and `debug/`, `io/` inherited clean caller patterns from day one—and future `core/`, `audio/`, and `game/` refactors will never trip over ghost wrappers left behind in `engine/`.
+
+// --- Sub-Assembly 3.2: Lesson 2 — Leaf Contracts & Controlled Memory Chassis ---
+== Lesson 2: Splitting Pure Types & Measuring the Chassis Eliminates Hidden Bloat
+
+Two physical changes transformed dependency flow and memory visibility across the root strata:
+
+* **Quarantined Leaf Type Headers (`*_types.h`)**: Separating plain data definitions (`log_types.h`, `debug_types.h`) from behavioral headers broke circular header includes between full engines and Safe-Mode BIOS fallbacks (`*_fallback.[ch]`), keeping the dependency graph strictly acyclic.
+* **Controlled Memory Chassis (`ALLOC_ZERO_HEAP`)**: Because Layers 0, 1, and 2 allow zero dynamic heap allocation, every single byte lives visibly in ELF `.rodata`, `.data`, `.bss`, and bounded stack frames. Auditing `io/` revealed how easily forgotten function-local `static char[]` scratch buffers quietly inflate `.bss`; moving temporary scans onto tight caller slices shrank engine chassis overhead so remaining fixed capacity serves genuine RPG growth (units, vocations, skill catalogs, turn history) rather than dead engine scratch space.
+
+// --- Sub-Assembly 3.3: Lesson 3 — Fall-Down Portability Ladder ---
+== Lesson 3: Building Forward for C23/C++20 While Anchoring a C11/C++17 Floor
+
+Cornerstone treats portability like a **Java-style capability ladder** built directly inside bedrock `engine/include/core/manifest.h`:
+
+include::../../snapshots/snap_manifest_ladder_sub2_1.adoc[]
+
+Instead of writing lowest-common-denominator code *or* breaking older build environments, **the engine builds forward-first for ISO C23 and C++20** (`CORNERSTONE_C_STANDARD=AUTO|23|17|11`) and steps gracefully down the stairs (`CS_NODISCARD`, `CS_MAYBE_UNUSED`, `CS_FALLTHROUGH`, `CS_UNREACHABLE`) onto C17/C11 and C++17 floors without compatibility clutter. Modern compilers enforce stricter safety diagnostics automatically today, while older hardware still compiles the exact same tree without feature hacks.
+
+// --- Sub-Assembly 3.4: Lesson 4 — Zero-Disk BIOS + `.rodata` Config ROMs ---
+== Lesson 4: Zero-Disk Safe-Mode BIOS & Compiled `.rodata` ROMs Protect Designers
+
+Previously, broken or missing config JSON files meant fragile dummy defaults hardcoded separately inside C structs—guaranteeing drift between real configs and fallbacks. Under Rev 5:
+
+1. Authors edit one authoritative 5-block JSON config in `engine/config/` (or game overrides in `game/config/`).
+2. At build time, `cmake/GenerateConfigRom.cmake` compiles those exact JSON files into read-only ELF `.rodata` headers (`*_config_rom.h`).
+3. If disk files vanish or fail syntax/schema validation, `*_fallback` mounts the embedded `.rodata` ROM (`rom://log`, `rom://debug`, `rom://io`), sets provenance (`loaded_from_data = false` / `loaded_from_rom = true`), and lets the engine boot all the way to `DEBUG_STEP_AWAIT` so the developer sees *why* without crashing.
+
+**The Game Payoff for *Tenebris and Lux***: Designers can iterate rapidly on `game/data/` combat tables, terrain rules, or UI themes with total confidence that a malformed file triggers a clean, readable diagnostic card instead of silent data corruption or a dead startup window.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Compounding Engineering Economics Across Future Strata )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Compounding Returns Upstream ---
+== How Root Discipline Multiplies Velocity in `core/`, `viewport/` & `game/`
+
+[cols="2,4",options="header"]
+|===
+| Upcoming Subsystem | Direct Dividend Paid by the `log/` -> `debug/` -> `io/` Roots
+
+| `core/` Block 3 & Math/Time
+| Can wire `formulas.json` and `manifest.json` immediately through `master_loader` with pre-built `rom://` fallback and typed spans.
+
+| `audio/` & `viewport/` (640x360 X11)
+| Inherit pre-wired probe namespaces, bounded `.bss` accounting, and deterministic CLI/GUI diagnostics from boot frame zero.
+
+| `game/` (The Master Turn Gear)
+| Stays purely focused on RPG rules (Twin Relics, Stances, Moral Sway, Sacyra/Libira topology) without writing a single line of file I/O or log plumbing.
+
+| Future Cornerstone Titles
+| Drop cleanly onto the same Layer 3 plug (`main.c`) because zero domain lore leaked into `engine/`.
+|===
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Chronicle Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+* Continue to link:02_agents_md_evolution_and_ai_architecture.adoc[Chronicle 2: `AGENTS.md` Evolution & AI-Assisted Architecture].
+* Return to link:../README.adoc[Architecture Index] or link:../../code/README.adoc[Codebase Implementation Index].
+

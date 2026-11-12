@@ -1,0 +1,156 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/io/07_io_testing_and_downgrades.adoc
+@id            docs.code.io.testing
+@layer         Documentation / Volume V: Layer 4 I/O Verification Suite
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 4 Zero-Heap I/O Verification Suite
+@role          4-Tier Test Architecture Guide for engine/{include,src}/io/
+@audience      Designers, QA Engineers, Systems Engineers
+@snapshots     uses: snap_io_test_system
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Covers all 8 verified CTest targets (5 unit + functional + integrated + system).
+               3. Verifies zero-heap span bounds, VFS precedence, ROM fallback & AWAIT triggers.
+================================================================================
+////
+
+= Verification Suite: Bounded I/O, VFS Routing & Downgrades Across All 4 Tiers
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( 8-Target Crude-to-Fine Verification Matrix )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Complete CTest Inventory (`io/`) ---
+The `io/` subsystem carries **8 dedicated CTest targets** stepping cleanly from isolated per-cog unit tests (`Unit`) up through public API simulation (`Functional`), cross-module orchestration (`Integrated`), and full missing-disk downgrade recovery (`System`).
+
+[cols="1,2,2,3",options="header"]
+|===
+| Tier | CTest Target | Source File | Primary Verification Focus
+
+| Unit
+| `unit_fs_utils_test`
+| `tests/unit/io/test_fs_utils_unit.c`
+| `O(1)` byte-limit truncation checks, zero-NUL safety, and policy ceiling overrides.
+
+| Unit
+| `unit_path_finder_test`
+| `tests/unit/io/test_path_finder_unit.c`
+| 3-tier domain precedence (`game/config` -> `engine/config` -> `presentation`), path traversal rejection, and `rom://` routing.
+
+| Unit
+| `unit_json_utils_test`
+| `tests/unit/io/test_json_utils_unit.c`
+| Single-pass span lookup, escape-sequence parsing, depth `<= 32` bounds, and token limits.
+
+| Unit
+| `unit_master_loader_test`
+| `tests/unit/io/test_master_loader_unit.c`
+| 5-block header validation, strict `block_3_body` query isolation, and `0x0201`–`0x0207` error taxonomy.
+
+| Unit (BIOS)
+| `unit_io_fallback_test`
+| `tests/unit/io/test_io_fallback_unit.c`
+| `io_config_rom.h` ROM vault reads, `io_fallback_boot_floppy()`, shared route JSON parser, and `io_fallback_reset_for_testing()`.
+
+| Functional
+| `functional_io_test`
+| `tests/functional/test_io_functional.c`
+| External caller simulation driving `io.h` umbrella contracts and `master_loader_load()` end-to-end without touching internals.
+
+| Integrated
+| `integrated_io_test`
+| `tests/integrated/test_io_integrated.c`
+| Cross-subsystem plumbing uniting `io/` + `log/` + `debug/` probe callbacks + ROM config hydration cleanly.
+
+| System
+| `system_io_test`
+| `tests/system/test_io_system.c`
+| Full system boot/audit loops, malformed payload downgrades, `DEBUG_STEP_AWAIT` capture, and recovery determinism.
+|===
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Crude-to-Fine Test Bands & End-to-End Emergence Snapshot )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Standardized Test Band Architecture ---
+== Crude-to-Fine Band Design
+
+Every CTest suite in `io/` executes through the shared `tests/common/cornerstone_test.h` harness (`test.common.harness`), partitioning assertions into progressively tighter assurance bands:
+
+[cols="2,4",options="header"]
+|===
+| Band | Verification Question Answered
+
+| `always_pass`
+| Can `io_init()` / `io_fallback_boot()` initialize safely from clean `.bss` without crashing or touching the heap?
+
+| `never_fail`
+| Do oversized payloads (`> 65536` B), NULL buffers, `..` traversal attempts, and invalid `block_3_body` spans return safe typed errors instead of faulting?
+
+| `assertions_and_guarantees`
+| Do disk overrides (`game/config`) outrank `engine/config`, and do missing files increment `rom_loads` with `loaded_from_rom = true` identically?
+
+| `emergence`
+| When chained across real subsystem boundaries, do VFS lookup, 5-block JSON parsing, logging, and probe triggers compose cleanly without state leaks?
+
+| `preflight_audit` / `audit`
+| Do `io_preflight()`, `io_audit()`, and `master_loader_audit()` pass cleanly with deterministic post-run counters and clean teardown?
+|===
+
+// --- Sub-Assembly 3.2: System-Level Downgrade & Emergence Proof ---
+== System-Tier Emergence & Downgrade Snapshot
+
+`tests/system/test_io_system.c` exercises complete cross-subsystem initialization, missing/corrupt contract escalation through `io.loader.*` probes, and deterministic verification via `cornerstone_test.h`:
+
+include::../../snapshots/snap_io_test_system.adoc[]
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( CTest Execution & Forensic Failure Inspection )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Running Targeted I/O Tests ---
+== Running & Auditing the `io/` Test Suite
+
+[source,bash]
+------
+cmake -B build && cmake --build build -j
+ctest --test-dir build \
+  -R "(fs_utils|path_finder|json_utils|master_loader|io_fallback|_io_)" --output-on-failure
+------
+
+If any `io/` probe fires unexpectedly during a run, `tests/common/cornerstone_test.h` prints the forensic `debug` / `debug_fallback` ring snapshot and pinpoints the exact test file, band, and `DEBUG_STEP_AWAIT` code.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Test Handoffs )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+* Up one level: link:README.adoc[Layer 0 I/O Folder Index] | link:../io_pipeline.adoc[Layer 0 I/O Subsystem Overview].
+* Peer testing suites: link:../log/04_log_testing_and_probes.adoc[`log/` 4-Tier Testing] | link:../debug/04_debug_testing_and_tripwires.adoc[`debug/` 4-Tier Testing].

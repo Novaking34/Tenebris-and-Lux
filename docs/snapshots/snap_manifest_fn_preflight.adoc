@@ -1,0 +1,53 @@
+[[snap_plate_snap_manifest_fn_preflight]]
+.Pre-Flight Loose-Bolts Engine Walk (manifest_run_preflight) (`engine/src/core/manifest.c#L412-L455` · Mode: `Function`)
+[source,c,linenums,start=412]
+------
+/**
+ * @brief Executes comprehensive pre-flight diagnostics across all registered modules.
+ */
+preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
+{
+    if (registry == NULL) {
+        debug_trap_tripwire("manifest", "NULL registry passed to manifest_run_preflight", __FILE__, __LINE__);
+        return PREFLIGHT_STATUS_HALT_FATAL;
+    }
+
+    registry->pass_count = 0;
+    registry->warn_count = 0;
+    registry->critical_count = 0;
+    registry->fatal_count = 0;
+
+    /* Step 1: Active DAG Dependency Graph Verification */
+    for (size_t i = 0; i < registry->count; i++) {
+        const module_metadata_t *mod = registry->modules[i];
+        if (mod == NULL) continue;
+
+        for (size_t d = 0; d < mod->dependency_count; d++) {
+            const char *req_dep = mod->dependencies[d];
+            if (req_dep == NULL) continue;
+
+            bool found = false;
+            for (size_t j = 0; j < registry->count; j++) {
+                if (registry->modules[j] != NULL &&
+                    strcmp(registry->modules[j]->module_id, req_dep) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                diag_result_t dep_res;
+                dep_res.passed = false;
+                dep_res.severity = SEVERITY_FATAL;
+                dep_res.subsystem = mod->module_id;
+                dep_res.check_name = "Dependency DAG";
+                dep_res.details =
+                    "Fatal: Unregistered upstream dependency declared.";
+                registry->results[i] = dep_res;
+                registry->fatal_count++;
+                registry->status = PREFLIGHT_STATUS_HALT_FATAL;
+------
+
+_Iterates every registered module sequentially, classifying OK, WARNINGS, DOWNGRADED, and HALT_FATAL states._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L412-L509`) -> <<snap_wholesale_snap_manifest_fn_preflight,Appendix: Pre-Flight Loose-Bolts Engine Walk (manifest_run_preflight)>>.]

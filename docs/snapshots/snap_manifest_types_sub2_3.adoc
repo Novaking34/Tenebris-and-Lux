@@ -1,0 +1,57 @@
+[[snap_plate_snap_manifest_types_sub2_3]]
+.Central Manifest Metadata & Registry Ontology (manifest.h Sub-Assembly 2.3) (`engine/include/core/manifest.h#L207-L254` · Mode: `Subassembly`)
+[source,c,linenums,start=207]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 2.3: Structural Entity & Object Definitions
+--------------------------------------------------------------------------------
+Ontological types for architectural strata, memory models, and diagnostic audits.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @enum module_layer
+ * @brief Architectural layer strata within the hierarchical engine topology.
+ *
+ * For Designers: The 5 vertical tiers of the game engine, from deep bedrock
+ * utilities (Layer 0) up to the game rules (Layer 1) and graphical display (Layer 2).
+ *
+ * For Programmers: Strict downward dependency hierarchy enforced at compile time.
+ */
+typedef enum module_layer {
+    LAYER_0_CORE_UTIL = 0, /**< Layer 0: Foundational zero-dependency utils. */
+    LAYER_1_SIMULATION,    /**< Layer 1: Headless game simulation engine. */
+    LAYER_2_PRESENTATION,  /**< Layer 2: Graphical and text viewports. */
+    LAYER_3_APPLICATION,   /**< Layer 3: Application entry and routing. */
+    LAYER_4_TESTS,         /**< Layer 4: Verification test harness suites. */
+    LAYER_COUNT
+} module_layer_t;
+
+/**
+ * @enum alloc_policy
+ * @brief Memory allocation contract governing a module's execution model.
+ *
+ * For Designers: Rules defining how a system manages memory, ensuring bedrock
+ * systems never allocate heap memory to prevent crashes and stutter.
+ *
+ * For Programmers: Invariant memory policy verified during code audit.
+ */
+typedef enum alloc_policy {
+    ALLOC_ZERO_HEAP = 0, /**< 100% stack or static layout; zero dynamic heap. */
+    ALLOC_FIXED_POOL,    /**< Pre-allocated fixed-capacity buffer pools. */
+    ALLOC_ARENA,         /**< Frame/scene temporary arena allocation. */
+    ALLOC_DYNAMIC        /**< Managed dynamic heap allocation. */
+} alloc_policy_t;
+
+/**
+ * @enum concurrency_policy
+ * @brief Concurrency and reentrancy guarantees declared by a module.
+ *
+ * For Designers: Rules specifying whether a system can run simultaneously across
+ * multiple CPU threads or must remain tied to the main display loop.
+------
+
+_Self-describing module contracts pairing engine layers, allocation policy, thread safety, and preflight hooks._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L207-L370`) -> <<snap_wholesale_snap_manifest_types_sub2_3,Appendix: Central Manifest Metadata & Registry Ontology (manifest.h Sub-Assembly 2.3)>>.]

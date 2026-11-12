@@ -1,0 +1,33 @@
+[[snap_plate_snap_io_fallback_bios_group]]
+.Tier-0 I/O Safe-Mode BIOS Boot, Floppy Floor & Downgrade Latch (`engine/src/io/io_fallback.c#L3309-L3332` · Mode: `Group`)
+[source,c,linenums,start=3309]
+------
+bool io_fallback_boot_floppy(void)
+{
+    io_fallback_config_t floppy = s_io_floppy_template;
+    if (io_fallback_load_rom_config("floppy_safe", &floppy) ||
+        io_fallback_load_rom_config("default", &floppy)) {
+        s_io_fb.rom_hydrated = true;
+    } else {
+        s_io_fb.rom_hydrated = false;
+    }
+    floppy.read_only_mode = true;
+    floppy.loaded_from_data = false;
+    if (floppy.profile_name[0] == '\0' || strcmp(floppy.profile_name, "default") == 0) {
+        str_safe_copy(floppy.profile_name, IO_FALLBACK_FLOPPY_PROFILE_NAME,
+                      sizeof(floppy.profile_name));
+    }
+
+    s_io_fb.config = floppy;
+    io_fb_hydrate_subpolicies();
+    s_io_fb.active_sink = IO_FB_SINK_FLOPPY_RO;
+    str_safe_copy(s_io_fb.active_root, IO_FB_DEFAULT_ROOT, sizeof(s_io_fb.active_root));
+    s_io_fb.booted = true;
+    io_fallback_register_debug_probes();
+    return true;
+}
+------
+
+_Zero-dependency Safe-Mode transitions ensuring deterministic boot even when disk configs are missing or corrupt._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L2908-L3332`) -> <<snap_wholesale_snap_io_fallback_bios_group,Appendix: Tier-0 I/O Safe-Mode BIOS Boot, Floppy Floor & Downgrade Latch>>.]

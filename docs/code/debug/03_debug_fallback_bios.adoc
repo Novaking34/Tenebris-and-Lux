@@ -1,0 +1,121 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/debug/03_debug_fallback_bios.adoc
+@id            docs.code.debug.fallback_bios
+@layer         Documentation / Volume V: Quarantined BIOS (debug_fallback.h + .c)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Tier-0 State Debugger Safe-Mode BIOS & ROM Vault (`cog.debug.fallback`)
+@role          Paired Documentation for debug_fallback.h and debug_fallback.c
+@audience      Designers, Build Engineers, C Systems Programmers
+@snapshots     uses: snap_debug_fb_bios_group
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Preserves Safe-Mode fault capture and DEBUG_STEP_AWAIT without disk assets.
+               3. Hydrates debugger, snapshot_policy, and tripwire_matrix directly from .rodata ROMs.
+================================================================================
+////
+
+= Paired BIOS: Tier-0 Debugger Fallback & ROM Vault (`debug_fallback.h` + `debug_fallback.c`)
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Quarantined BIOS Profile & Chassis )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Module Profile ---
+[cols="1,3",options="header"]
+|===
+| Attribute | Verified Contract (`cog.debug.fallback`)
+
+| Fallback Contract (`.h`)
+| `engine/include/debug/debug_fallback.h` (900 lines) — BIOS boot, JSON span parsers, ROM vault loaders, fault capture, and `AWAIT` latch.
+
+| BIOS Implementation (`.c`)
+| `engine/src/debug/debug_fallback.c` (1,852 lines) — static fault templates, `.rodata` ROM bridge, and emergency state verification.
+
+| Chassis Footprint
+| `.bss 256 B` + `.data 464 B` + `.rodata 76,136 B` (`debug_diagnostics_rom.h` vault) + stack `<= 1 KiB`.
+
+| Inputs & Pairing
+| Embedded ROM mirrors of `engine/config/diagnostics/debugger/*.json` & `taxonomy/*.json`; pairs downward with `cog.log.fallback`.
+|===
+
+// --- Sub-Assembly 2.2: Purpose ---
+When disk diagnostics catalogs vanish or a debugger JSON config gets mangled during rapid iteration, `debug_fallback.[ch]` keeps every error code, snapshot limit template, and `DEBUG_STEP_AWAIT` safety latch intact directly out of read-only ELF `.rodata`.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( ROM Vault Hydration, Shared JSON Parsing & Fault Latch )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: ROM Boot & Profile Hydration ---
+== Tier-0 BIOS Boot & `.rodata` Vault (`Sub-Assemblies 3.1–3.2`)
+
+`debug_fallback_boot()` initializes Safe-Mode inspection policies before full I/O mounts, loading profiles cleanly out of `debug_diagnostics_rom.h`:
+
+include::../../snapshots/snap_debug_fb_bios_group.adoc[]
+
+[cols="2,4",options="header"]
+|===
+| ROM & Parser Function | Verified Behavior
+
+| `debug_fallback_load_rom_profile()`
+| Loads compiled `"default"`, `"strict"`, or `"trace"` debugger presets while keeping `loaded_from_data = false`.
+
+| `debug_fallback_load_rom_snapshot_policy()` & `debug_fallback_load_rom_tripwire_matrix()`
+| Hydrates ring limits and tripwire severity matrices directly from embedded `.rodata` payloads (`76,136 B` total diagnostics ROM vault).
+
+| `debug_fallback_parse_config_json()` / `parse_snapshot_policy_json()`
+| Shared zero-heap JSON parsers reused symmetrically by disk loaders and ROM hydration (`Sub-Assembly 3.1`).
+|===
+
+// --- Sub-Assembly 3.2: Safe-Mode Fault Capture & AWAIT Finishing (`Sub-Assembly 3.3`) ---
+== Fault Capture & Emergency `AWAIT` Latch (`Sub-Assembly 3.3`)
+
+If a critical subsystem faults during Safe Mode, `debug_fallback_record_fault()` logs the anomaly cleanly, `debug_fallback_finish_with_fallback()` downgrades execution onto known-good ROM boundaries, and `debug_fallback_is_awaiting()` / `debug_fallback_clear_await()` expose the held state to CLI/test operators cleanly.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( BIOS Inspection & Self-Audit )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Diagnostic Gates ---
+== BIOS Self-Audit & ROM Info (`Blocks 4 & 5`)
+
+* `debug_fallback_audit()` verifies embedded ROM accessibility and static templates without altering live debug sessions.
+* `debug_fallback_get_rom_info()` reports exact ROM counts and bytes (`debug_fallback_rom_info_t`).
+* `debug_fallback_get_stats()` and `debug_fallback_execute_inspect()` populate caller structs deterministically without dynamic allocation.
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Links )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Next Steps in `debug/`
+
+* Check the 4-tier tests covering debugger fallback and probe escalation: link:04_debug_testing_and_tripwires.adoc[Debugger Testing & Tripwires]
+* Trace how primary `debug.c` hosts live probes: link:01_debug_engine_and_probes.adoc[`debug.h` + `debug.c`]
+

@@ -1,48 +1,120 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Monthly Chronicle & 5-Block Compliance )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/dev_logs/2026/11/README.adoc
+@id            docs.dev_logs.2026_11.index
+@layer         Documentation / Engineering Chronology (2026/11)
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        November 2026 Developer Logs Index (devlog_009 .. devlog_020)
+@role          Monthly Thematic Index Across Architecture & Lore Milestones
+@audience      Designers, Lore Writers, Systems Programmers
+@snapshots     n/a (monthly chronological index)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Covers all 12 November 2026 DevLogs (009..020).
+================================================================================
+////
+
 = Developer Logs: November 2026 Monthly Chronicle
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-03
+v0.2.0-dev, 2026-11-12
 :doctype: article
+:toc: macro
 :icons: font
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Monthly Scope & Thematic Structure )
+================================================================================
+////
 
-This directory preserves the developer logs recorded during **November 2026** for *Tenebris and Lux*.
-Logs are categorized into thematic subdirectories based on their focus:
-`architecture/` for foundational engine design, verification strata, and interactive debugging; and
-`lore_and_design/` for macro-historical canon, thematic triads, and the morality architecture.
+// --- Sub-Assembly 2.1: Monthly Overview ---
+[NOTE]
+====
+This directory preserves the 12 developer logs recorded during **November 2026** (`devlog_009`–`devlog_020`) for *Tenebris and Lux*.
+Logs are categorized into thematic subdirectories: `architecture/` for engine design, BIOS/ROM fallbacks, C23 portability, and documentation pipelines; and `lore_and_design/` for macro-historical canon, morality architecture, orthogonal classes/jobs, and temporal mechanics.
+====
 
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Architecture & Lore Thematic Index )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Architecture Logs ---
 == Thematic Index
 
 === Architecture (`docs/dev_logs/2026/11/architecture/`)
 
-1. **link:architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc[devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc]** (2026-11-02) +
+. **link:architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc[devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc]** (2026-11-02) +
    *Layer 0 Subsystem Modularization & Data-Driven Architecture* +
    Decomposed utility monoliths into dedicated domain subsystems (`math/`, `data/`, `log/`, `debug/`), implemented bounded arithmetic and spatial hitboxes, zero-heap JSON parsing, and quarantine fallbacks.
-
-2. **link:architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc[devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc]** (2026-11-02) +
+. **link:architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc[devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc]** (2026-11-02) +
    *Four-Tier Verification Strata & Ontological Testing Framework* +
    Restructured test architecture into 4 strict strata (Functional, Unit, Integrated, System), introduced granular function-level cogs, and achieved 13/13 passing automated test suites with sub-microsecond latency.
-
-3. **link:architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc[devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc]** (2026-11-02) +
+. **link:architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc[devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc]** (2026-11-02) +
    *Interactive Debugging System & State Rewind Architecture* +
    Engineered interactive CLI state debugger, frozen state ring buffer, FNV-1a state hashing, time-travel rewind, and dynamic expression breakpoints.
-
-4. **link:architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc[devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc]** (2026-11-03) +
+. **link:architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc[devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc]** (2026-11-03) +
    *High Fantasy Presentation Engine, Typography Scaling & 5-Screen Architecture* +
    Re-engineered Layer 2 presentation with High-DPI TrueType fonts (Cinzel, MedievalSharp), 3x widescreen battlefield zoom with 96x96 sprites, 5-screen navigation architecture (Tactical, Hero Dossier, 32-slot Bag, Provincial Map, Deeds Codex), and system-wide v1.4.0 architectural review.
-
-5. **link:architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc[devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc]** (2026-11-07) +
+. **link:architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc[devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc]** (2026-11-07) +
    *The Big Machine, The Master Turn Gear & Core Subsystem Elevation* +
-   Formalized the Rev 4 architectural philosophy: The Big Machine (`engine/`) vs. The Master Turn Gear (`game/`), active iteration feedback covenant (purging shims to expose compiler seams), complete Layer 0 modernization (`io/`, `log/`, `debug/`, `core/`), elevated orchestrator cogs (clock_pacer, formula_eval, geom_utils viewport scaling), 4-strata verification framework expanding to 51/51 CTests (100%), and 20 registered engine modules in pre-flight audit.
+   Formalized the Rev 4 architectural philosophy (`engine/` vs. `game/`), active iteration feedback covenant, Layer 0 modernization, elevated orchestrators (`clock_pacer`, `formula_eval`, `geom_utils`), and 51/51 CTests.
+. **link:architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc[devlog_016_git_validator_movie_reel_and_audio_elevation.adoc]** (2026-11-08) +
+   *Native Git Commit Validation, Audio Elevation & Movie Reel Viewport* +
+   Integrated native Rust `git_validator` hook checks, aligned Hope-palette presentation catalogs, elevated `audio/` mixing to Layer 0, and built Layer 2's deterministic Movie Reel orchestrator.
+. **link:architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc]** (2026-11-10) +
+   *Standalone Engine Config Decoupling & Rev 5 Block 1/2 Standardization* +
+   Separated standalone `engine/config/` from `game/data/` (`v0.1.1`), modularized Rust config/header validators, introduced movement-resilient `@id` + `@chassis`/`@scale`/`@seams`, and enforced Block 2 `extern "C"` hygiene.
+. **link:architecture/devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc]** (2026-11-11) +
+   *BIOS/ROM Vaults, AWAIT Tripwire Probes & The C23 Fall-Down Ladder* +
+   Unified `.rodata` Config ROM generation (`GenerateConfigRom.cmake`), quarantined `*_fallback.[ch]` + `*_types.h` across `log`/`debug`/`io`, wired `DEBUG_STEP_AWAIT` probe downgrades, trimmed `.bss` buffers, implemented Cornerstone's C23 → C17 → C11 (+ C++20/17) Fall-Down Ladder, and aligned 65 CTest targets.
+. **link:architecture/devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc[devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc]** (2026-11-12) +
+   *5-Block AsciiDoc, Live Code Snapshots & Paired Module Textbooks* +
+   Built 5-mode live snapshot extraction in `guide.rs`, codified `adoc_pdf_layout_rules.json` + `--validate-layout`, created paired `docs/code/{log,debug,io}/` textbooks & `docs/architecture/chronicles/`, eliminated Volume V synopsis breaks, and upgraded `Offline-Work-1..6` into a 5-block linked series.
 
+// --- Sub-Assembly 3.2: Lore & Design Logs ---
 === Lore & Game Design (`docs/dev_logs/2026/11/lore_and_design/`)
 
-1. **link:lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc]** (2026-11-02) +
+. **link:lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc[devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc]** (2026-11-02) +
    *Macro-History, Thematic Triad & Multi-Ending Architecture* +
    Codified the 3,000-year dynastic wave across 30–50 kings, the 20-scene Master Storyboard, the Past/Present/Future thematic triad, the etiology of The King's Curse, and the initial midpoint campaign fork.
-
-2. **link:lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc[devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc]** (2026-11-03) +
+. **link:lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc[devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc]** (2026-11-03) +
    *Morality Architecture, Bystander Corridor & Ten-Ending Matrix* +
-   Decoupled moral conscience from elemental expression, established the $[-50, +50]$ Bystander Corridor as net moral inertia, formulated the Butterfly Effect of micro-verbs, expanded the ending topology to the 3x3 matrix plus 10th True Ending ("The Ugly Truth"), and detailed diegetic engine items.
+   Decoupled moral conscience from elemental expression, established the `[-50, +50]` Bystander Corridor as net moral inertia, formulated the Butterfly Effect of micro-verbs, expanded the ending topology to the 3×3 matrix plus 10th True Ending ("The Ugly Truth"), and detailed diegetic engine items.
+. **link:lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc]** (2026-11-09) +
+   *Orthogonal 35 Classes, 28 Jobs, Generational War & 4D Dream Clock* +
+   Synthesized *Offline Work 5 & 6*, resolving legacy 2017–2018 class/title ambiguities, codifying the 35-Class Pascal Pyramid & 28-Job 5-Pillar Compendium, detailing the Adolescent Crucible, Two-Pass Grand Tour, 10–20-year War timeline, and zero-heap 4D Dream Clock state contracts.
 
+////
+================================================================================
+BLOCK 4: AUDIT & VERIFICATION BLOCK
+( Monthly Ledger Check )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Monthly Totals ---
+== Monthly Reconciliation
+
+*Total November 2026 Logs:* 12 (`9` Architecture + `3` Lore & Game Design; spanning `devlog_009` through `devlog_020`).
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Parent Chronology Link )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+*Back to Chronology Root:* link:../../README.adoc[Developer Logs Master Index] | *Prior Month:* link:../10/README.adoc[October 2026 Chronicle]

@@ -1,23 +1,54 @@
 {
   "block_1_metadata": {
-    "schema": "tenlux.data.master_guide.v1",
-    "version": "1.0.0",
-    "interface_rev": "Rev 1",
-    "date": "2026-11-07",
+    "schema": "tenlux.data.master_guide.v2",
+    "version": "0.2.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-12",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "title": "Tenebris and Lux: Master Guide Publication Manifest",
     "invariants": [
       "Zero missing chapter tolerance during pre-flight audit",
       "Deterministic volume and chapter sequence matching project ontology",
-      "Dual granularity: unified master compendium and volume books"
+      "Dual granularity: unified master compendium and volume books",
+      "Data-driven PDF textbook theme and live 5-mode source code snapshots"
     ]
   },
   "block_2_types": {
     "formats": ["adoc", "md", "pdf"],
     "pdf_engine": "asciidoctor-pdf",
-    "default_pdf_theme": "default",
-    "toc_levels": 3,
-    "line_discipline_max_cols": 80
+    "default_pdf_theme": "cornerstone-book",
+    "pdf_themes_dir": "docs/themes",
+    "pdf_theme_data_file": "docs/guide_theme_config.json",
+    "toc_levels": 2,
+    "sectnum_levels": 3,
+    "line_discipline_max_cols": 80,
+    "publication": {
+      "master_title": "Tenebris and Lux: Comprehensive Master Guide",
+      "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+      "revnumber": "0.2.0-dev",
+      "revdate": "2026-11-12",
+      "doctype": "book",
+      "toc": "left",
+      "icons": "font",
+      "source_highlighter": "rouge",
+      "shift_chapter_headings": true,
+      "strip_manual_heading_numbers": true,
+      "expand_includes": true,
+      "expand_custom_attributes": true
+    },
+    "snapshots": {
+      "manifest_path": "docs/code_snapshots_manifest.json",
+      "output_dir": "docs/snapshots",
+      "include_wholesale_appendix": true,
+      "appendix_title": "Wholesale Source Code Reference Plates",
+      "show_line_numbers": true
+    },
+    "exclude_scan_dirs": [
+      "snapshots",
+      "themes",
+      "volumes",
+      "offline_work"
+    ]
   },
   "block_3_body": {
     "volumes": [
@@ -110,16 +141,35 @@
         "roman": "V",
         "slug": "software_architecture_and_5_block_protocol",
         "title": "Software Architecture & The 5-Block Invariant Protocol",
-        "description": "System boundaries, layered strata, dual-frontend GUI/CLI, and pre-flight zero-heap diagnostic manifests.",
+        "description": "Cornerstone Big Machine vs. Tenebris and Lux Master Turn Gear, 5 strata, Rev 5 5-block protocol, Safe-Mode BIOS & .rodata ROM vaults, VFS data pipelines, pre-flight audits, and dual-frontend presentation.",
         "scan_areas": ["architecture", "code"],
         "chapters": [
-          { "title": "OmniCode 5-Block Architectural Framework", "rel_path": "architecture/ARCHITECTURE.adoc" },
-          { "title": "Dual-Frontend Presentation Layer (CLI + Native X11)", "rel_path": "architecture/dual_frontend_architecture.adoc" },
-          { "title": "Central Manifest & Pre-Flight Diagnostic Integrity", "rel_path": "architecture/preflight_and_manifest_spec.adoc" },
+          { "title": "Cornerstone & Tenebris and Lux: System Architecture Overview", "rel_path": "architecture/ARCHITECTURE.adoc" },
+          { "title": "Zero-Disk Safe-Mode BIOS, Config ROM Vaults & Autonomous Probe Loop", "rel_path": "architecture/resilience_bios_and_probes.adoc" },
+          { "title": "Data-Driven Architecture: Dual Data Taxonomy, Layered VFS & 5-Block JSON", "rel_path": "architecture/data_driven_architecture.adoc" },
+          { "title": "Central Manifest Registry & Pre-Flight Loose-Bolts Inspection", "rel_path": "architecture/preflight_and_manifest_spec.adoc" },
+          { "title": "Dual-Frontend Presentation Layer: CLI, Native X11 & Movie Reel", "rel_path": "architecture/dual_frontend_architecture.adoc" },
+          { "title": "Root Strata Chronicles: Why Strengthening log/, debug/, and io/ Pays Every Future Turn", "rel_path": "architecture/chronicles/01_root_stratum_story_and_game_payoff.adoc" },
+          { "title": "Evolution of AGENTS.md: Engineering a Cognitive Compass for Human-AI Co-Creation", "rel_path": "architecture/chronicles/02_agents_md_evolution_and_ai_architecture.adoc" },
+          { "title": "Layer 0 Categorized Flight Logging Subsystem Overview", "rel_path": "code/logging_system.adoc" },
+          { "title": "Log Module Pair: Flight Logger Router & Severity Ring (log.h + log.c)", "rel_path": "code/log/01_log_router_and_ring.adoc" },
+          { "title": "Log Leaf Contract: Canonical Types & Ring Bounds (log_types.h)", "rel_path": "code/log/02_log_types_and_contracts.adoc" },
+          { "title": "Log Safe-Mode BIOS: Zero-Disk Fallback & ROM Vault (log_fallback.h + log_fallback.c)", "rel_path": "code/log/03_log_fallback_bios.adoc" },
+          { "title": "Log Verification Suite: 4-Tier CTest Harness & Probes", "rel_path": "code/log/04_log_testing_and_probes.adoc" },
+          { "title": "Layer 0 State Debugger & Diagnostic Engine Overview", "rel_path": "code/debug_system.adoc" },
+          { "title": "Debug Module Pair: Rewind Engine, Watchpoints & Probes (debug.h + debug.c)", "rel_path": "code/debug/01_debug_engine_and_probes.adoc" },
+          { "title": "Debug Leaf Contract: Snapshots, GCD Ring & Tripwires (debug_types.h)", "rel_path": "code/debug/02_debug_types_and_telemetry.adoc" },
+          { "title": "Debug Safe-Mode BIOS: Tripwire Emergency Floor (debug_fallback.h + debug_fallback.c)", "rel_path": "code/debug/03_debug_fallback_bios.adoc" },
+          { "title": "Debug Verification Suite: Rewind, Probes & Tripwires Across All 4 Tiers", "rel_path": "code/debug/04_debug_testing_and_tripwires.adoc" },
+          { "title": "Layer 0 Zero-Heap I/O Pipeline Subsystem Overview", "rel_path": "code/io_pipeline.adoc" },
+          { "title": "I/O Umbrella Facade & 4-Pillar Boot Pipeline (io.h)", "rel_path": "code/io/01_io_umbrella_and_pipeline.adoc" },
+          { "title": "I/O Module Pair: Bounded File & Memory Reader (fs_utils.h + fs_utils.c)", "rel_path": "code/io/02_fs_utils_bounded_io.adoc" },
+          { "title": "I/O Module Pair: Layered VFS Domain Router (path_finder.h + path_finder.c)", "rel_path": "code/io/03_path_finder_vfs.adoc" },
+          { "title": "I/O Module Pair: Zero-Heap Single-Pass JSON Scanner (json_utils.h + json_utils.c)", "rel_path": "code/io/04_json_utils_parser.adoc" },
+          { "title": "I/O Module Pair: 5-Block Contract Hydrator (master_loader.h + master_loader.c)", "rel_path": "code/io/05_master_loader_hydration.adoc" },
+          { "title": "I/O Safe-Mode BIOS: Zero-Disk Fallback & ROM Vault (io_fallback.h + io_fallback.c)", "rel_path": "code/io/06_io_fallback_bios_and_rom.adoc" },
+          { "title": "I/O Verification Suite: Bounded I/O, VFS Routing & Downgrades Across All 4 Tiers", "rel_path": "code/io/07_io_testing_and_downgrades.adoc" },
           { "title": "Layer 0 Core Utilities Code Tour", "rel_path": "code/core_utilities.adoc" },
-          { "title": "Layer 0 Zero-Heap I/O Pipeline Subsystem", "rel_path": "code/io_pipeline.adoc" },
-          { "title": "Layer 0 Categorized Flight Logging Subsystem", "rel_path": "code/logging_system.adoc" },
-          { "title": "Layer 0 State Debugger & Diagnostic Engine", "rel_path": "code/debug_system.adoc" },
           { "title": "Layer 1 Simulation Engine Code Tour", "rel_path": "code/simulation_engine.adoc" },
           { "title": "Layer 2 Presentation Viewport Code Tour", "rel_path": "code/presentation_gui.adoc" },
           { "title": "Layer 0/2 Audio Event Bus & Mixer Subsystem", "rel_path": "code/audio_subsystem.adoc" },
@@ -146,14 +196,19 @@
           { "title": "DevLog 012: Interactive Debugging System & State Rewind Architecture", "rel_path": "dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc" },
           { "title": "DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix", "rel_path": "dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc" },
           { "title": "DevLog 014: High Fantasy Presentation Engine & 5-Screen UI", "rel_path": "dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc" },
-          { "title": "DevLog 015: The Big Machine, Master Turn Gear & Core Subsystem Elevation", "rel_path": "dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc" }
+          { "title": "DevLog 015: The Big Machine, Master Turn Gear & Core Subsystem Elevation", "rel_path": "dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc" },
+          { "title": "DevLog 016: Native Git Commit Validation, Audio Elevation & Movie Reel", "rel_path": "dev_logs/2026/11/architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc" },
+          { "title": "DevLog 017: Orthogonal 35 Classes, 28 Jobs, Generational War & 4D Dream Clock", "rel_path": "dev_logs/2026/11/lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc" },
+          { "title": "DevLog 018: Standalone Engine Config Decoupling & Rev 5 Block 1/2 Standards", "rel_path": "dev_logs/2026/11/architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc" },
+          { "title": "DevLog 019: BIOS/ROM Vaults, AWAIT Probes & The C23 Fall-Down Ladder", "rel_path": "dev_logs/2026/11/architecture/devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc" },
+          { "title": "DevLog 020: 5-Block AsciiDoc, Live Code Snapshots & Paired Textbooks", "rel_path": "dev_logs/2026/11/architecture/devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc" }
         ]
       }
     ]
   },
   "block_4_audit": {
     "required_volumes": 6,
-    "min_total_chapters": 73
+    "min_total_chapters": 75
   },
   "block_5_closing": {
     "publisher": "CreativeWorkzStudio Publishing",

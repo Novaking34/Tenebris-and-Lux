@@ -1,22 +1,150 @@
-= Subsystem Architecture Index
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/architecture/README.adoc
+@id            docs.architecture.index
+@layer         Documentation / Volume V: Architecture Index
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Cornerstone Game Engine & Tenebris and Lux Architecture Index
+@role          Role-Based Reader Compass & Volume V Part 1 Navigation Map
+@audience      Designers, Artists, Storytellers, Testers, C/Rust Engineers
+@snapshots     none
+@invariants    1. Excluded cleanly from compiled book TOC (filename README.adoc).
+               2. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               3. Role-based onboarding before low-level subsystem internals.
+================================================================================
+////
+
+= Cornerstone Architecture Index
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v0.0.1, 2026-10-26
-:doctype: article
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes, Executive Framing & Role Compass )
+================================================================================
+////
 
-This directory contains the technical specifications governing the 5-block lifecycle,
-simulation decoupling, central manifest registry, and dual-frontend execution model.
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:engine-name: Cornerstone Game Engine
+:game-name: Tenebris and Lux
 
-== Documentation Manifest
+// --- Sub-Assembly 2.2: Welcoming Orientation ---
+Welcome to the architectural map of the *{engine-name}* (`engine/`) and *{game-name}* (`game/`).
+Whether you design quests, tune combat stats, draw environments, or maintain C23 and Rust code, this folder explains how every moving piece fits together without assuming a senior systems background.
 
-1. **[ARCHITECTURE.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/ARCHITECTURE.adoc)**  
-   *Core Engine & System Architecture*: Invariant boundaries, state machine definitions, decoupled presentation layers, and the multi-phase engine roadmap.
+[TIP]
+====
+*New to the project?* Start directly with link:ARCHITECTURE.adoc[System Architecture Overview]. Every chapter pairs a plain-English mental model with live code snapshots extracted straight from the repository.
+====
 
-2. **[dual_frontend_architecture.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/dual_frontend_architecture.adoc)**  
-   *Dual CLI + Native GUI Paradigm*: Native POSIX X11 double-buffering, TrueColor visual negotiation, headless CI testing, and latency specifications.
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Role-Based Tracks & Volume V Part 1 Map )
+================================================================================
+////
 
-3. **[preflight_and_manifest_spec.adoc](file:///home/professorseanex/Tenebris%20and%20Lux/docs/architecture/preflight_and_manifest_spec.adoc)**  
-   *Central Manifest & Pre-Flight Verification Architecture*: Executable module metadata, the "Don't start a machine with loose bolts" pre-flight philosophy, severity taxonomy (Warning, Critical, Fatal), and expected vs. actual verification matrices.
+// --- Sub-Assembly 3.1: Role-Based Starting Points ---
+== Find Your Starting Point
+
+[cols="2,3,3",options="header"]
+|===
+| Your Craft | Read These Chapters First | What You Will Unlock
+
+| Game Designer / Writer / Balancer
+| link:ARCHITECTURE.adoc[Architecture Overview], link:data_driven_architecture.adoc[Data-Driven Architecture]
+a|
+* Where story lore, combat formulas, and VFS search routes live in JSON.
+* How the dual-data split protects game data during engine upgrades.
+
+| QA / Playtester / Modder
+| link:resilience_bios_and_probes.adoc[Safe-Mode BIOS & Probes], link:dual_frontend_architecture.adoc[Dual-Frontend Presentation]
+a|
+* How `--audit`, `--debug`, and `--cli` verify determinism in seconds.
+* Why corrupt files downgrade safely to `DEBUG_STEP_AWAIT` instead of crashing.
+
+| Systems / Engine Engineer
+| All five architecture chapters plus link:../snapshots/INDEX.adoc[Snapshot Index]
+a|
+* `ALLOC_ZERO_HEAP` controlled chassis discipline across Layers 0–2.
+* C23/C17/C11 "Fall-Down" macro ladder, `.rodata` ROMs, and preflight DAGs.
+|===
+
+// --- Sub-Assembly 3.2: Volume V Chapter Catalog ---
+== Architecture Chapters (Volume V, Part 1)
+
+[cols="1,3,4",options="header"]
+|===
+| Chapter | Document | Primary Concepts & Snapshot Coverage
+
+| 1
+| link:ARCHITECTURE.adoc[System Architecture Overview]
+| Machine vs. Turn Gear, 5 strata, 5-block protocol, Fall-Down C23/C17/C11 ladder (`snap_manifest_ladder_sub2_1`, `snap_main_boot_group`).
+
+| 2
+| link:resilience_bios_and_probes.adoc[Zero-Disk BIOS, ROM Vaults & Probes]
+| Tier-0 Safe-Mode BIOS, CMake `.rodata` ROMs, Probe -> `DEBUG_STEP_AWAIT` loop (`snap_cmake_rom_whole`, `snap_io_fallback_bios_group`, `snap_debug_probe_group`, `snap_log_sub4_1_probes`).
+
+| 3
+| link:data_driven_architecture.adoc[Data-Driven Architecture & Layered VFS]
+| `engine/config/` vs `game/data/`, 3-tier precedence, 5-block JSON isolation (`snap_vfs_routes_cfg_whole`, `snap_vfs_routes_body_block`, `snap_master_loader_sub3_2`, `snap_io_fb_json_group`).
+
+| 4
+| link:preflight_and_manifest_spec.adoc[Central Manifest & Pre-Flight Inspection]
+| Boot registry, DAG dependency walk, inspection cards (`snap_manifest_types_sub2_3`, `snap_manifest_fn_preflight`, `snap_main_preflight_block4`).
+
+| 5
+| link:dual_frontend_architecture.adoc[Dual-Frontend Presentation Layer]
+| Deterministic headless CLI + `--debug`, native `640x360` X11 Movie Reel (`snap_game_fn_audit`, `snap_gui_types_sub2_3`).
+
+| 6
+| link:chronicles/01_root_stratum_story_and_game_payoff.adoc[Chronicle 1: Root Strata & Game Payoff]
+| Why strengthening `log/`, `debug/`, and `io/` first cuts future `core/`, `viewport/`, and `game/` cost (`snap_manifest_ladder_sub2_1`).
+
+| 7
+| link:chronicles/02_agents_md_evolution_and_ai_architecture.adoc[Chronicle 2: `AGENTS.md` & AI Co-Creation]
+| Evolution of cognitive invariants, 5-block AsciiDoc memory, and human-steered AI feedback loops.
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Documentation Self-Check & Snapshot Verification )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Publishing Verification Commands ---
+== Checking Live Sync & Snapshots
+
+Run the snapshot and guide generator before standalone reading so every plate reflects current repository code:
+
+[source,bash]
+----
+cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --snapshots
+cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --volume V
+----
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Volume Handoffs )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Continue Exploring
+
+* Go up one level to the link:../README.adoc[Master Documentation Portal].
+* Read Volume V Part 2 low-level module tours in link:../code/README.adoc[Codebase Implementation Index].
+* Inspect generated textbook code plates in link:../snapshots/INDEX.adoc[Snapshots Index].

@@ -1,209 +1,138 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/debug_system.adoc
+@id            docs.code.debug.overview
+@layer         Documentation / Volume V: Layer 0 Debugger Overview
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 0 State Debugger, Probe Host & Rewind Engine (`cog.debug`)
+@role          Architectural Overview & Subfolder Router for debug/ Paired Modules
+@audience      Designers, Testers, QA Engineers, C/Rust Engineers
+@snapshots     uses: snap_debug_rewind_group, snap_debug_probe_group
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Reflects exact Rev 5 file inventory (debug.{h,c}, debug_types.h, debug_fallback.{h,c}).
+               3. Zero orphan thematic breaks (''') or spurious [abstract] == headings.
+================================================================================
+////
+
 = Codebase Tour: Layer 0 State Debugger & Diagnostic Engine Subsystem
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-07
-:doctype: article
-:toc: left
-:toclevels: 3
-:sectnums:
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
 :source-highlighter: rouge
-:experimental:
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes, Orientation & Conceptual Role )
+================================================================================
+////
 
-This document provides a technical walkthrough and architectural manual for the
-*Layer 0 State Debugger & Diagnostic Engine Subsystem* (`engine/include/debug/` and `engine/src/debug/`).
-Serving as the diagnostic instrumentation and state-conservation apparatus of **The Big Machine**,
-the debugger subsystem provides zero-heap frozen simulation snapshots, deterministic FNV-1a 32-bit
-state hashing, multi-format forensic exports (Fixed-column, Tabular CSV, Structured NDJSON, Diagnostic Reports),
-live ASCII inspection cards, an active Invariant Tripwire Matrix, and time-travel state rewind.
-With strict enforcement of `ALLOC_ZERO_HEAP`, complete reentrancy, and quarantined emergency
-fallbacks, developers and automated test suites can audit turn-by-turn game state without introducing
-heisenbugs or simulation drift.
+// --- Sub-Assembly 2.1: Standalone Document Attributes ---
+:subsystem-root: engine/include/debug/ & engine/src/debug/
+:config-root: engine/config/diagnostics/{debugger,taxonomy}/
 
-'''
+// --- Sub-Assembly 2.2: Welcoming Orientation ---
+If `log/` is the black-box voice recorder of Cornerstone, *`debug/`* (`{subsystem-root}`) is the cockpit telemetry computer and circuit-breaker panel. Instead of chasing ghost bugs by peppering code with disposable print statements, Cornerstone captures deterministic turn snapshots, hashes state fields cleanly, hosts up to 32 active validation probes, and halts cleanly on `DEBUG_STEP_AWAIT` whenever an invariant breaks.
 
-== 1. Architectural Philosophy & Mission
+[TIP]
+====
+*Navigate the `debug/` folder*: Pair this overview with link:debug/README.adoc[docs/code/debug/] for detailed guides on `debug.h` + `debug.c`, `debug_types.h`, `debug_fallback.h` + `debug_fallback.c`, and all 5 `debug` CTest suites.
+====
 
-Debugging a tactical RPG requiring absolute simulation determinism cannot rely on
-intrusive print statements or ad-hoc debugger attachments. The Tenebris and Lux
-engine implements an **Observable State Machine**:
+toc::[]
 
-[source,text]
-----
-┌────────────────────────────────────────────────────────────────────────┐
-│                   LAYER 0 STATE DEBUGGER SUBSYSTEM                     │
-│                                                                        │
-│   [Snapshot Ring]        Zero-Heap Ring of 64 Frozen Sim States        │
-│   [FNV-1a Hashing]       Deterministic 32-Bit State Conservation Hash  │
-│   [Forensic Formats]     NDJSON Stream, Tabular CSV, Diagnostic Report │
-│   [ASCII Cards]          Terminal HUD & Vitals / Relics Inspection     │
-│   [Tripwire Matrix]      Active Invariant Boundary Checks & Tripping   │
-│   [Interactive REPL]     Turn-by-Turn Stepper & State Rewind Engine    │
-│   [Quarantined Fallback] Zero-Dependency Standalone Fallback Safety Net│
-└────────────────────────────────────────────────────────────────────────┘
-----
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Observable State Machine, Rev 5 File Map & Rewind Architecture )
+================================================================================
+////
 
-=== Key Architectural Pillars
-1. **Decoupled State Representation (`debug_state_fields_t`)**:
-   Layer 0 declares an immutable state representation composed strictly of primitive
-   integers and bounded character buffers. Layer 1 (`sim_state.h`) maps its domain
-   structs into this structure, strictly preserving the downward dependency flow.
-2. **Zero-Heap Allocation Guarantee (`ALLOC_ZERO_HEAP`)**:
-   The entire snapshot history (default capacity 64 snapshots) resides in a static ring
-   buffer in the BSS segment. Dynamic allocation is prohibited.
-3. **Deterministic FNV-1a State Hashing**:
-   Evaluates a 32-bit Fowler–Noll–Vo prime hash across all state fields at every simulation
-   step, ensuring that identical turns always yield identical checksums.
-4. **Multi-Format Forensic Telemetry**:
-   Exports structured state streams in NDJSON (for automated visualizers), CSV (for spreadsheet analysis),
-   and human-readable Diagnostic Reports.
-5. **Quarantined Fallback Isolation**:
-   If diagnostics manifests are damaged or file output fails, the quarantined fallback
-   (`debug_fallback.[ch]`) maintains state hashing and console inspection capabilities.
+// --- Sub-Assembly 3.1: Observable State Machine & Probe Loop ---
+== Architectural Philosophy: Observable State & Tripwires
 
-'''
+Why build an engine-level debugger into Layer 0 before high-level gameplay even finishes? Because deterministic tactical RPGs fail silently when moral sway drifts, an equipment bonus overflows, or a corrupted config quietly loads half a table. Cornerstone turns hidden failures into explicit diagnostics:
 
-== 2. Subsystem Layout & File Manifest
+* **Standalone Integer/Char Snapshot Contract (`debug_types.h`)**: Layer 1 gameplay projects its live simulation fields into neutral integers inside `debug_state_fields_t`—preserving downward dependency flow with zero `void *` type erasure.
+* **Zero-Heap Snapshot Ring (`DEBUG_MAX_SNAPSHOTS = 64`)**: Captures state frames and 32-bit FNV-1a checksums, supports snapshot locking with O(cap) GCD wrap rotation, and rewinds backward cleanly via `debug_rewind_to_snapshot()`.
+* **Autonomous Probe Matrix & `DEBUG_STEP_AWAIT`**: Subsystems register up to 32 named validation probes (`debug_register_validation_probe()`). When a fault hits, `debug_trigger_probe()` and `debug_trap_tripwire()` drop cleanly to a Safe-Mode fallback and hold `DEBUG_STEP_AWAIT` until resolved or cleared.
+* **Tier-0 BIOS Resilience (`debug_fallback.[ch]`)**: Backed by compiled `.rodata` ROMs (`debug_diagnostics_rom.h`) over `engine/config/diagnostics/{debugger,taxonomy}/`, error codes and inspection cards stay available even with zero disk files.
 
-[source,text]
-----
-engine/include/debug/
-├── debug.h              // Public 5-block interface, types, REPL API & tripwires
-├── debug_engine.h       // Internal state snapshot ring, formats & card renderers
-└── debug_fallback.h     // Quarantined zero-dependency emergency fallback
+// --- Sub-Assembly 3.2: Verified Rev 5 Inventory & Paired Folder Index ---
+== Verified Rev 5 File & Documentation Map
 
-engine/src/debug/
-├── debug.c              // Public facade routing state captures & REPL loop
-├── debug_engine.c       // Ring buffer, FNV-1a hasher, multi-format export engines
-└── debug_fallback.c     // Quarantined emergency fallback implementation
+[cols="2,2,3",options="header"]
+|===
+| Companion Doc | Engine Files Covered | Role & Chassis Highlights
 
-game/data/system/diagnostics/debugger/
-├── manifest.json        // Debug catalog and active profile bindings
-├── default.json         // Standard developer debugging baseline profile
-├── strict.json          // Rigid tripwire policy halting on any invariant breach
-├── trace.json           // High-frequency cog-level trace profile
-├── snapshot_policy.json // Ring buffer capacity, retention, and rewind limits
-└── inspection_cards.json// ASCII layout definitions for terminal HUD cards
-----
+| link:debug/01_debug_engine_and_probes.adoc[01: Debugger Engine & Probes]
+| `engine/include/debug/debug.h` + `engine/src/debug/debug.c` (`cog.debug`)
+| Core 64-slot snapshot ring (`s_debug` + `s_audit_backup`, `70.5 KiB .bss`), FNV-1a hashing, breakpoints, probe registry, rewind, and inspect/card dumps.
 
-'''
+| link:debug/02_debug_types_and_telemetry.adoc[02: Debugger Leaf Vocabulary]
+| `engine/include/debug/debug_types.h` (`cog.debug.types`)
+| Pure POD enums, state field packets, snapshots, breakpoints, tripwires, and config records (`0 B .bss`, zero `void *` erasure).
 
-== 3. Core Engine Cogs & API Tour
+| link:debug/03_debug_fallback_bios.adoc[03: Debugger Tier-0 BIOS]
+| `engine/include/debug/debug_fallback.h` + `engine/src/debug/debug_fallback.c` (`cog.debug.fallback`)
+| Standalone BIOS templates, emergency fault recorder, `.rodata` ROM vault (`76,136 B`) spanning debugger & taxonomy configs (`256 B .bss`, `464 B .data`).
 
-=== 3.1 State Representation & Frozen Snapshot Ring (`debug_engine.[ch]`)
+| link:debug/04_debug_testing_and_tripwires.adoc[04: Debugger Testing Suite]
+| 5 CTest targets across `tests/{unit,functional,integrated,system}/`
+| Crude-to-fine verification of snapshot rollover, GCD wrap preservation, probe firing, `DEBUG_STEP_AWAIT`, and fallback recovery.
+|===
 
-Simulation state is converted into `debug_state_fields_t` and captured at turn boundaries:
+// --- Sub-Assembly 3.3: Live Snapshot & Probe Excerpts ---
+== Deterministic Capture & Time-Travel Rewind
 
-[source,c]
-----
-typedef struct {
-    uint32_t turn_count;
-    int32_t  moral_sway;         /* [-100, +100] */
-    uint32_t stance;             /* 0: Neutral, 1: Warding, 2: Striking, 3: Eq */
-    uint32_t hero_hp;
-    uint32_t hero_mp;
-    uint32_t hero_tp;
-    uint32_t shield_power;       /* [0, 100] */
-    uint32_t sword_edge;         /* [0, 100] */
-    uint32_t active_enemies;
-    uint32_t state_hash_fnv1a;   /* 32-bit checksum */
-    uint64_t timestamp_ns;
-} debug_state_snapshot_t;
+include::../snapshots/snap_debug_rewind_group.adoc[]
 
-/* Captures a snapshot into the circular ring buffer */
-bool debug_engine_record_snapshot(const debug_state_fields_t *fields);
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Probe Chain Plate, CLI Verification & Q&A )
+================================================================================
+////
 
-/* Retrieves historical snapshots by relative turn offset (0 = current, 1 = previous) */
-const debug_state_snapshot_t *debug_engine_get_snapshot(size_t index);
-----
+// --- Sub-Assembly 4.1: Probe & Tripwire Trap Plate ---
+== Autonomous Validation Probes & `DEBUG_STEP_AWAIT`
 
-=== 3.2 Deterministic FNV-1a Hashing
+include::../snapshots/snap_debug_probe_group.adoc[]
 
-Calculated across the raw byte image of the state fields using the standard FNV-1a offset basis
-(`0x811C9DC5`) and prime (`0x01000193`):
+// --- Sub-Assembly 4.2: Executable Self-Checks & Q&A ---
+== Self-Audit & Quick Verification
 
-[source,c]
-----
-uint32_t debug_compute_state_hash(const debug_state_fields_t *fields);
-----
+[source,bash]
+------
+ctest --test-dir build -R "_debug_" --output-on-failure
+./build/tenebris-lux --audit
+------
 
-*Invariants Enforced*:
-* Any state change—whether 1 point of HP or 1 tick of Moral Sway—alters the hash value.
-* Replays that produce divergent hashes at identical turn indices trigger instant tripwire alarms.
+[qanda]
+Why keep a separate `s_audit_backup` inside `debug.c`?::
+  Running destructive rewind, tripwire, or wrap drills during `debug_audit()` without clobbering live gameplay telemetry requires isolating self-test state safely in static `.bss` (`35,232 B` live + `35,232 B` backup).
+Can `cog.debug` detect bugs even if a game UI hasn't rendered a single pixel yet?::
+  Yes. Every Layer 0 cog registers health probes (`io.*`, `log.*`, etc.) during boot, catching config corruption or structural contract drift before Layer 1 simulation starts.
 
-=== 3.3 Multi-Format Forensic Exporters
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Module Navigation )
+================================================================================
+////
 
-The diagnostic engine provides memory-bounded formatters writing into caller buffers:
+// --- Sub-Assembly 5.1: Next Readings ---
+== Companion Deep-Dive Chapters
 
-[source,c]
-----
-/* Generates single-line newline-delimited JSON record for stream ingestion */
-size_t debug_format_ndjson(const debug_state_snapshot_t *s, char *out_buf, size_t max_len);
-
-/* Generates comma-separated tabular record for spreadsheets */
-size_t debug_format_csv(const debug_state_snapshot_t *s, char *out_buf, size_t max_len);
-
-/* Generates human-readable multi-line forensic audit report */
-size_t debug_format_report(const debug_state_snapshot_t *s, char *out_buf, size_t max_len);
-----
-
-=== 3.4 Live ASCII Inspection Cards
-
-For headless CLI and terminal developers, the engine formats high-density ASCII inspection cards:
-
-[source,text]
-----
-┌─────────────────────────────────────────────────────────────┐
-│ TENEBRIS AND LUX - HERO DOSSIER & COMBAT VITALS             │
-├─────────────────────────────────────────────────────────────┤
-│ Turn: 0012 | Stance: EQUILIBRIUM [3] | Sway: +35 (Virtue)   │
-│ HP: [████████████░░░░] 450/650 | MP: 090/130 | TP: 045/100  │
-│ Shield of Lux: 075% [WARD READY] | Sword of Tenebris: 060%  │
-│ Active Enemies: 02 | State Hash: 0x8A4F12D9                 │
-└─────────────────────────────────────────────────────────────┘
-----
-
-=== 3.5 Active Invariant Tripwire Matrix
-
-Configured via `game/data/system/diagnostics/taxonomy/tripwire_matrix.json`, tripwires enforce
-system bounds at runtime:
-
-[source,c]
-----
-typedef enum {
-    TRIPWIRE_HP_BOUNDS,         /* Hero HP within [0, Max HP] */
-    TRIPWIRE_SWAY_BOUNDS,       /* Moral Sway within [-100, +100] */
-    TRIPWIRE_RELIC_BOUNDS,      /* Shield & Sword power within [0, 100] */
-    TRIPWIRE_HASH_INTEGRITY     /* State hash matches expected replayed hash */
-} tripwire_id_t;
-
-bool debug_check_tripwire(tripwire_id_t id, const debug_state_fields_t *state);
-----
-
-*Actions on Breach*:
-* In `strict` profile: immediately aborts simulation tick, emits forensic dump, and halts.
-* In `default` profile: clamps the out-of-bounds variable, emits `LOG_WARN`, and continues.
-
-=== 3.6 Interactive REPL & State Rewind (`--debug`)
-
-When launched with `tenebris_lux --debug`:
-* The engine pauses between simulation turns, launching a lightweight interactive terminal prompt.
-* Commands supported: `step`, `inspect`, `history`, `rewind <N>`, `dump <format>`, `quit`.
-* `rewind <N>` re-hydrates the live Layer 1 simulation directly from historical snapshot `N`.
-
-'''
-
-== 4. Verification & Testing Matrix
-
-The state debugger is continuously validated across 4 test tiers:
-1. **Functional Tests (`tests/functional/test_debug_functional.c`)**:
-   Verifies FNV-1a hash distribution, card string formatting, and tripwire evaluations.
-2. **Unit Tests (`tests/unit/debug/test_debug_unit.c`, `test_debug_engine_unit.c`, `test_debug_fallback_unit.c`)**:
-   Tests circular ring buffer overflow, state rewind restoration, and fallback isolation.
-3. **Integrated Tests (`tests/integrated/test_debug_integrated.c`)**:
-   Integrates debugger captures with live combat actions and stance state transitions.
-4. **System Tests (`tests/system/test_debug_system.c`)**:
-   Executes 500 consecutive simulation turns, verifying continuous hash conservation,
-   zero dynamic memory leaks, and snapshot indexing precision.
+. Open link:debug/01_debug_engine_and_probes.adoc[Paired `debug.h` + `debug.c` Walkthrough] for ring rewind and probe internals.
+. Read link:debug/02_debug_types_and_telemetry.adoc[`debug_types.h` Leaf Vocabulary] and link:debug/03_debug_fallback_bios.adoc[Paired `debug_fallback.h` + `debug_fallback.c` BIOS].
+. Continue onward to link:io_pipeline.adoc[Layer 0 Zero-Heap I/O Pipeline Overview].

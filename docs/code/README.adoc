@@ -1,38 +1,136 @@
-= Codebase Architecture & Implementation Index
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/README.adoc
+@id            docs.code.index
+@layer         Documentation / Volume V: Codebase Implementation Portal
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Cornerstone Engine & Tenebris and Lux Code Documentation Index
+@role          Portal Index Mapping Subsystems, Paired C/H Folders & 4-Tier Tests
+@audience      Designers, QA Engineers, Systems Programmers, Book Compilers
+@snapshots     uses: INDEX.adoc (27 textbook snapshot plates)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Exposes current Rev 5 Cornerstone (engine/) and Game (game/) layout.
+               3. Organizes log/, debug/, and io/ into paired module + testing folders.
+================================================================================
+////
+
+= Codebase Implementation Guide Index (Volume V, Part 2)
 CreativeWorkzStudio LLC / ProfessorSeanEX
-v1.0.0, 2026-11-07
-:doctype: article
+v0.2.0-dev, 2026-11-12
+:toc: macro
 :icons: font
+:source-highlighter: rouge
 
-[abstract]
-== Overview
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Two-Machine Overview & Documentation Structure )
+================================================================================
+////
 
-This directory provides deep-dive walkthroughs and technical specifications of the
-source code implementation across the five layered strata of **The Big Machine**
-(`engine/`) and **The Master Turn Gear** (`game/`).
+// --- Sub-Assembly 2.1: Cornerstone & Tenebris and Lux Code Map ---
+Cornerstone cleanly separates **The Big Machine** (`engine/`) from **The Master Turn Gear** (`game/`) across five strict downward compilation layers (`Layer 0` through `Layer 4`). Every subsystem documented below maps directly onto live verified headers, sources, Config ROM vaults, and CTest targets.
 
-== Implementation Manifest
+[cols="2,4",options="header"]
+|===
+| Folder / Stratum | Documentation Coverage
 
-1. **xref:core_utilities.adoc[core_utilities.adoc]** +
-   *Layer 0 Core Utilities*: `engine/src/core/` and `engine/include/core/`. Details bounded math, saturation arithmetic, 2D AABB geometry, monotonic time, 60 Hz fixed-timestep clock pacing, bounded string safety, formula evaluation, and universal orchestrators (audio bus, screen transitions).
+| `docs/code/log/`
+| Categorized Flight Logger (`log.{h,c}`, `log_types.h`, `log_fallback.{h,c}`, and 4 CTest targets).
 
-2. **xref:io_pipeline.adoc[io_pipeline.adoc]** +
-   *Layer 0 Zero-Heap I/O Pipeline*: `engine/src/io/` and `engine/include/io/`. Details the bounded POSIX VFS (`fs_utils`), upward repository path resolution (`path_finder`), streaming memory-bounded JSON parsing (`json_utils`), and pre-flight master manifest loading (`master_loader`).
+| `docs/code/debug/`
+| State Debugger & Tripwires (`debug.{h,c}`, `debug_types.h`, `debug_fallback.{h,c}`, and 5 CTest targets).
 
-3. **xref:logging_system.adoc[logging_system.adoc]** +
-   *Layer 0 Categorized Flight Logging*: `engine/src/log/` and `engine/include/log/`. Details severity taxonomy (`LOG_LEVEL_TRACE`..`FATAL`), engine vs. game channel bitmasks, the 256-entry zero-heap circular ring buffer, automatic rolling log rotation, and data-driven telemetry profiles.
+| `docs/code/io/`
+| Zero-Heap I/O Pipeline (`io.h`, `fs_utils.{h,c}`, `path_finder.{h,c}`, `json_utils.{h,c}`, `master_loader.{h,c}`, `io_fallback.{h,c}`, and 8 CTest targets).
 
-4. **xref:debug_system.adoc[debug_system.adoc]** +
-   *Layer 0 State Debugger & Diagnostics*: `engine/src/debug/` and `engine/include/debug/`. Details frozen state snapshot ring buffers, deterministic FNV-1a 32-bit state hashing, forensic stream exporters (NDJSON, CSV, Diagnostic Report), live ASCII inspection cards, active tripwire matrix, and time-travel state rewind.
+| Upstream Tours
+| `core/` utilities, `game/` Layer 1 RPG simulation, `viewport/` X11 rasterizer, `audio/` mixer, and `tests/` suite.
+|===
 
-5. **xref:simulation_engine.adoc[simulation_engine.adoc]** +
-   *Layer 1 Simulation Engine*: `game/src/` and `game/include/` (`combat/`, `hero/`, `relics/`, `world/`, `ending/`, `dispatch/`). Details pure headless TRPG simulation, twin relic stance state machines, moral sway continuum `[-100, +100]`, and action dispatching.
+toc::[]
 
-6. **xref:presentation_gui.adoc[presentation_gui.adoc]** +
-   *Layer 2 Presentation Viewports*: `engine/src/viewport/` and `engine/include/viewport/` (`raster/`, `hud/`, `reel/`, `styling/`). Details the Movie Reel architecture: horizontal Push/Pull scene transitions across 5 canonical screens, vertical Pop-Out/Sink-In depth kinematics, high fantasy palettes, and 2.5D dimetric grid projection.
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Subsystem Portals & Paired Module Chapters )
+================================================================================
+////
 
-7. **xref:audio_subsystem.adoc[audio_subsystem.adoc]** +
-   *Layer 0/2 Audio Event Bus & Mixer*: `engine/src/audio/` and `engine/include/audio/`. Details the 7-channel mixing bus (Master, BGM, Ambience, Combat SFX, Tactical SFX, UI, Stingers), zero-heap 128-event ring buffer, attenuation matrices, and quarantined emergency fallback profile.
+// --- Sub-Assembly 3.1: Root Foundation Subsystems (`log/`, `debug/`, `io/`) ---
+== Root Foundation Folders (`log/`, `debug/`, `io/`)
 
-8. **xref:test_suite.adoc[test_suite.adoc]** +
-   *Layer 4 Verification & Ontological Test Suite*: `tests/` (`functional/`, `unit/`, `integrated/`, `system/`). Details 54 CMake/CTest targets, invariant assertions, golden master replays, softlock stress tests, and automated sub-millisecond benchmarking.
+[cols="2,3,3",options="header"]
+|===
+| Subsystem Overview | Detailed Folder Index | Covered Code & Tests
+
+| link:logging_system.adoc[Layer 0 Flight Logging System]
+| link:log/README.adoc[`docs/code/log/` Index]
+| `log.{h,c}`, `log_types.h`, `log_fallback.{h,c}`, `log` 4-tier CTests (`4` targets)
+
+| link:debug_system.adoc[Layer 0 State Debugger Engine]
+| link:debug/README.adoc[`docs/code/debug/` Index]
+| `debug.{h,c}`, `debug_types.h`, `debug_fallback.{h,c}`, `debug` 4-tier CTests (`5` targets)
+
+| link:io_pipeline.adoc[Layer 0 Zero-Heap I/O Pipeline]
+| link:io/README.adoc[`docs/code/io/` Index]
+| `io.h`, `fs_utils`, `path_finder`, `json_utils`, `master_loader`, `io_fallback`, `io` CTests (`8` targets)
+|===
+
+// --- Sub-Assembly 3.2: Additional Layer 0–4 Code Tours ---
+== Additional Engine, Game & Verification Tours
+
+[cols="2,4",options="header"]
+|===
+| Chapter | Scope & Repository Paths
+
+| link:core_utilities.adoc[Layer 0 Core Utilities Code Tour]
+| `engine/{include,src}/core/` — C23/C17/C11 ladder, registry `manifest`, math, PRNG, timing, fixed strings.
+
+| link:audio_subsystem.adoc[Layer 0/2 Audio Event Bus & Mixer]
+| `engine/{include,src}/audio/` — deterministic audio cue queues, 7-bus mixing, and fallback silence floors.
+
+| link:simulation_engine.adoc[Layer 1 Simulation Engine Code Tour]
+| `game/{include,src}/{combat,hero,relics,world,ending,dispatch}/` — deterministic tactical turn simulation.
+
+| link:presentation_gui.adoc[Layer 2 Presentation Viewport Code Tour]
+| `engine/{include,src}/viewport/` — native `640x360` X11 framebuffer rasterizer, scalers, themes, and CLI parity.
+
+| link:test_suite.adoc[Layer 4 Verification & Test Suite Code Tour]
+| `tests/{common,unit,functional,integrated,system}/` — `cornerstone_test.h` harness & 4-tier test pyramid.
+|===
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Documentation Layout & Snapshot Verification )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Build & Layout Gate ---
+== Auditing Code Docs & PDF Page Budgets
+
+[source,bash]
+------
+cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --snapshots
+cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --validate-layout
+------
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Volume Navigation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+* Up one level: link:../README.adoc[Master Documentation Portal] | link:../architecture/README.adoc[Architecture Portals (Part 1)].
+* Browse live textbook code plates in link:../snapshots/INDEX.adoc[Snapshots Index].

@@ -1,0 +1,49 @@
+[[snap_plate_snap_io_path_finder_sub3_2]]
+.Multi-Tier VFS Path & Asset Resolution API (path_finder.h Sub-Assembly 3.2) (`engine/include/io/path_finder.h#L396-L435` · Mode: `Subassembly`)
+[source,c,linenums,start=396]
+------
+/*
+--------------------------------------------------------------------------------
+Sub-Assembly 3.2: Multi-Tier VFS Path & Asset Resolution Cogs
+Mission: Execute layered precedence search, diagnostic alias expansion, symlink
+         depth bounds, traversal rejection, and `.rodata` ROM fallback cleanly.
+
+  ### For Game Designers & Non-Programmers:
+  Finds configuration manifests, game data files, fonts, and artwork across game
+  overrides, engine baselines, asset folders, and zero-disk ROM fallbacks.
+
+  ### For Systems Programmers & Engine Architects:
+  Bounded-stack candidate resolution enforcing `max_symlink_depth`, `..` traversal
+  containment, destination `out_size` overflow guards, and `io.vfs.traversal_guard`.
+--------------------------------------------------------------------------------
+*/
+
+/**
+ * @brief Resolves a logical domain and relative path to a concrete disk file or `rom://` URI.
+ *
+ * Search sequence (all tables driven by `io/vfs_routes.json`):
+ *  1. `..` parent traversal sandbox guard (`block_path_traversal`) & explicit `rom://` check.
+ *  2. Direct accessible file probe (enforcing `max_symlink_depth`).
+ *  3. Mounted `active_root` (`<root>/<domain>/<clean>`, `<root>/<clean>`) and `env_override_var`.
+ *  4. Layered `config_precedence` tiers (`game/config/`, `engine/config/`, linkers) + `diagnostic_aliases`.
+ *  5. Hydrated `fallback_candidate_roots` x `domain_search_paths` matrix.
+ *  6. Compiled `.rodata` ROM vault fallback (`rom://<clean>`) when disk targets are absent.
+ *
+ * ### For Game Designers & Non-Programmers:
+ * Finds any configuration file, story file, or manifest automatically—checking game overrides
+ * first, engine baselines second, and built-in ROM backups last.
+ *
+ * ### For Systems Programmers & Engine Architects:
+ * Bounded stack probing (zero heap), strict `out_size` overflow rejection, `lstat`/`readlink`
+ * symlink depth verification, and `LOG_CAT_IO` telemetry tracking.
+ * @triggers `io.vfs.traversal_guard` (on `..`/symlink rejection), `LOG_CAT_IO`.
+ *
+ * @param[in]  domain   Optional logical domain hint (`"config"`, `"mechanics"`, `"io"`, etc.) or NULL.
+ * @param[in]  rel_path Relative asset/config path or explicit `"rom://..."` URI.
+ * @param[out] out_path Caller-supplied output path buffer (`out_path[0] = '\0'` on failure).
+ * @param[in]  out_size Capacity of `out_path` in bytes.
+------
+
+_Resolves game/config -> engine/config -> game/data/presentation/config deterministically without heap allocation._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L396-L510`) -> <<snap_wholesale_snap_io_path_finder_sub3_2,Appendix: Multi-Tier VFS Path & Asset Resolution API (path_finder.h Sub-Assembly 3.2)>>.]

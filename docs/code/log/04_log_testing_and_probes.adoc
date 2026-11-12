@@ -1,0 +1,129 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/code/log/04_log_testing_and_probes.adoc
+@id            docs.code.log.testing
+@layer         Documentation / Volume V: Layer 4 Logging Test Guide
+@version       0.2.0-dev
+@interface_rev Rev 5
+@date          2026-11-12
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Layer 4 Flight Logging Verification & Emergence Suite
+@role          4-Tier Test Architecture Guide for engine/{include,src}/log/
+@audience      Designers, QA Engineers, C Engineers
+@snapshots     uses: snap_log_test_system
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol (//// + //).
+               2. Exact mapping to CTest targets across unit, functional, integrated, and system tiers.
+               3. Zero unverified assertions or non-existent test names.
+================================================================================
+////
+
+= Verification Suite: Flight Logging Across All 4 Tiers
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.2.0-dev, 2026-11-12
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Crude-to-Fine Philosophy & Test File Matrix )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Test Coverage Inventory ---
+Cornerstone validates `cog.log` and `cog.log.fallback` from fine isolated unit checks outward to crude multi-module system boot runs. Every test executable follows five consistent bands (`always_pass`, `never_fail`, `assertions_and_guarantees`, `emergence`, and `preflight`/`audit`) anchored by `tests/common/cornerstone_test.h`.
+
+[cols="1,2,2,3",options="header"]
+|===
+| Tier | CTest Target | Source File | Primary Verification Focus
+
+| Unit
+| `unit_log_engine_test`
+| `tests/unit/log/test_log_unit.c`
+| Ring rollover, channel masks, severity filtering, disk rotation bounds, and `log_preflight()` / `log_audit()`.
+
+| Unit (BIOS)
+| `unit_log_fallback_test`
+| `tests/unit/log/test_log_fallback_unit.c`
+| `log_fallback_boot()`, 10-asset ROM lookups, read-only disk-fault latch, and early-entry drain behavior.
+
+| Functional
+| `functional_log_test`
+| `tests/functional/test_log_functional.c`
+| End-to-end logging workflows using public headers cleanly as an external caller.
+
+| Integrated
+| `integrated_log_test`
+| `tests/integrated/test_log_integrated.c`
+| Cross-module coordination: `log` + `log_fallback` drain + `debug` probe registration + `io/` JSON telemetry loading.
+
+| System
+| `system_log_test`
+| `tests/system/test_log_system.c`
+| Full system boot, corrupt/missing disk fallback to Safe-Mode telemetry ROMs, and recovery verification.
+|===
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Tier-by-Tier Architecture & Emergence Verification )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: The Five Test Bands Explained for Everyone ---
+== How Each Test Executable Progresses (Crude-to-Fine Ladder)
+
+Rather than mixing trivial sanity checks with catastrophic failure injection inside one disorganized file, every `log` test binary separates concerns cleanly into five progressive stages:
+
+. **`always_pass` (Baseline Contract)**: Confirms normal initialization (`log_init`, `log_fallback_boot`), entry dispatch, and expected clean stats under ideal inputs.
+. **`never_fail` (Hostile Boundary Defense)**: Passes `NULL` pointers, zero-length buffers, oversized format strings, and invalid severity tokens to confirm graceful `false`/safe returns with zero crashes.
+. **`assertions_and_guarantees` (Mathematical & Static Invariants)**: Verifies ring sequence monotonicity, bounded truncation guarantees (`LOG_MAX_MESSAGE_LEN`), and exact `loaded_from_data` provenance tracking.
+. **`emergence` (Multi-Component System Behavior)**: Tests interactions that cannot exist in single functions—such as early BIOS capture draining chronologically into `log_init()` and Safe-Mode downgrade under corrupt telemetry manifests.
+. **`preflight` / `post_audit` (Machine Self-Audit)**: Executes `log_preflight()`, `log_audit()`, and `log_fallback_audit()` automatically inside the verification loop.
+
+// --- Sub-Assembly 3.2: System-Level Emergence Snapshot ---
+== Live Emergence Verification (`test_log_system_emergence`)
+
+Below is an excerpt from the Layer 4 system suite demonstrating end-to-end telemetry verification:
+
+include::../../snapshots/snap_log_test_system.adoc[]
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( CTest Commands & Forensic Debugging Hook )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Running & Debugging the Log Suite ---
+== Executing the Suite & Forensic Failure Cards
+
+Because every executable includes `tests/common/cornerstone_test.h` (`test.common.harness`), any failing assertion queries `debug` / `debug_fallback` tripwire cards before exiting so testers see which contract tripped and why:
+
+[source,bash]
+------
+ctest --test-dir build -L log --output-on-failure
+ctest --test-dir build -R "^(unit_log_|functional_log_|integrated_log_|system_log_)" --output-on-failure
+------
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Cross-Subsystem Continuation )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+== Continue Reading
+
+* Inspect the files verified by these suites: link:01_log_router_and_ring.adoc[`log.h` + `log.c`] and link:03_log_fallback_bios.adoc[`log_fallback.h` + `log_fallback.c`].
+* Advance to the next root subsystem: link:../debug_system.adoc[Layer 0 State Debugger Overview].
+

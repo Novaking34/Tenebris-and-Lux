@@ -1,0 +1,55 @@
+[[snap_plate_snap_main_boot_group]]
+.Layer 3 Plug Entry & Manifest Wiring (init_engine_manifest + main) (`game/src/main.c#L71-L116` · Mode: `Group`)
+[source,c,linenums,start=71]
+------
+/**
+ * @brief Registers all core engine subsystem manifests into central registry.
+ *
+ * ### Machine Role & Mission
+ * Populates the central manifest registry with all Layer 0 utilities (manifest,
+ * fs, json, time, math, geom, string, log, debug), Layer 1 simulation engine (state,
+ * combat, world, dispatcher, game), and Layer 2 presentation viewport (gui).
+ * Enables boot-time loose-bolts invariant checks and dependency graph resolution
+ * before any game loop execution begins.
+ *
+ * ### Ontological Classification
+ * - Stratum: Layer 3 (Application Entry & Presentation Router)
+ * - Machine: app.entry.main (Executable Entry & Presentation Router)
+ * - Assembly: Pre-Flight Manifest Registry Initialization
+ * - Cog: Module Manifest Registration Primitive
+ *
+ * ### Execution & Resource Contract
+ * - Memory Model: ALLOC_ZERO_HEAP (Stack-allocated fixed manifest tables).
+ * - Concurrency: CONCURRENCY_MAIN_THREAD (Called at startup on main thread).
+ * - Latency Budget: < 50 microseconds.
+ *
+ * @param[out] registry Target manifest registry to initialize and populate.
+ */
+static void init_engine_manifest(manifest_registry_t *registry)
+{
+    /* Step 1: Zero-initialize registry table */
+    manifest_registry_init(registry);
+
+    /* Step 2: Register Layer 0 Core Utilities */
+    manifest_register(registry, &manifest_utils_manifest);
+    manifest_register(registry, &fs_utils_manifest);
+    manifest_register(registry, &json_utils_manifest);
+    manifest_register(registry, &path_finder_manifest);
+    manifest_register(registry, &master_loader_manifest);
+    manifest_register(registry, &time_utils_manifest);
+    manifest_register(registry, &math_utils_manifest);
+    manifest_register(registry, &geom_utils_manifest);
+    manifest_register(registry, &string_utils_manifest);
+    manifest_register(registry, &clock_pacer_manifest);
+    manifest_register(registry, &formula_eval_manifest);
+    manifest_register(registry, &log_manifest);
+    manifest_register(registry, &debug_manifest);
+
+    /* Step 3: Register Layer 1 Simulation Engine Subsystems */
+    manifest_register(registry, &sim_state_manifest);
+    manifest_register(registry, &combat_manifest);
+------
+
+_Demonstrates how Layer 3 game/src/main.c wires engine/ and game/ strata together via the central manifest registry._
+
+ifdef::has-snapshot-appendix[Wholesale Listing: Complete verbatim code (`#L71-L522`) -> <<snap_wholesale_snap_main_boot_group,Appendix: Layer 3 Plug Entry & Manifest Wiring (init_engine_manifest + main)>>.]

@@ -1,7 +1,7 @@
 # Volume VI: Engineering Chronology & Development Logs
 
 > **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX  
-> **Compendium**: Tenebris and Lux Master Guide — Volume VI  
+> **Compendium**: Tenebris and Lux Master Guide — Volume VI (0.2.0-dev)  
 > **Purpose**: Context Document for Google Gemini & NotebookLM Workflows
 
 ## Volume Synopsis
@@ -24,16 +24,20 @@ _Living chronological engineering logs recording every architectural milestone a
 12. DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
 13. DevLog 014: High Fantasy Presentation Engine & 5-Screen UI
 14. DevLog 015: The Big Machine, Master Turn Gear & Core Subsystem Elevation
-15. Developer Log 002: The Sacyra Chronicles, Dual Protagonists & TRPG Evolution
+15. DevLog 016: Native Git Commit Validation, Audio Elevation & Movie Reel
+16. DevLog 017: Orthogonal 35 Classes, 28 Jobs, Generational War & 4D Dream Clock
+17. DevLog 018: Standalone Engine Config Decoupling & Rev 5 Block 1/2 Standards
+18. DevLog 019: BIOS/ROM Vaults, AWAIT Probes & The C23 Fall-Down Ladder
+19. DevLog 020: 5-Block AsciiDoc, Live Code Snapshots & Paired Textbooks
+20. Developer Log 002: The Sacyra Chronicles, Dual Protagonists & TRPG Evolution
 
 ---
 
 ## Chapter 1: DevLog 001: Genesis, Paradigm Pivot & Invariants
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc`
+> **Source**: `docs/dev_logs/2026/10/architecture/devlog_001_genesis_and_pivot.adoc`
 
-[abstract]
-## Abstract
+### Abstract
 
 This developer log documents the foundational inception of *Tenebris and Lux* ("Darkness and Light"),
 the structural adoption of the OmniCode 5-Block Lifecycle Protocol, the critical audit
@@ -41,7 +45,7 @@ of the early survival-battery prototype, the transformative paradigm pivot towar
 **Shield of Lux** and **Sword of Tenebris**, and the establishment of a dedicated
 game development testing suite within CTest.
 
-## 1. Project Genesis: Clean Foundations and the 5-Block Standard
+### Project Genesis: Clean Foundations and the 5-Block Standard
 
 Every enduring game engine begins with an unyielding commitment to architectural discipline.
 *Tenebris and Lux* was initiated not by piling on bloated third-party frameworks or web wrappers
@@ -57,7 +61,7 @@ and configuration files adhere to a strict invariant boundary contract:
 4. **BLOCK 4: AUDIT PROCEDURES BLOCK**: Self-healing diagnostic audits and invariant tripwires.
 5. **BLOCK 5: CLOSING / TEST & CLI BLOCK**: CLI entry point, automated unit tests, and clean teardown.
 
-## 2. The Early Prototype: The Survival-Battery Fallacy
+### The Early Prototype: The Survival-Battery Fallacy
 
 The initial prototype envisioned *Tenebris and Lux* as an atmospheric subterranean dungeon crawl:
 
@@ -73,11 +77,10 @@ While mathematically functional and clean in C11, a critical design audit expose
 * **The "Hunger Clock" Tyranny**: Turning exploration into a panicked sprint against an expiring battery, punishing contemplation and stillness.
 * **Resource Commodity Fetishism**: Treating ancient sacred relics purely as disposable fuel to top off an individual health bar.
 
-## 3. The Paradigm Pivot: One Clarification That Changed Everything
+### The Paradigm Pivot: One Clarification That Changed Everything
 
 During our design dialogue, a foundational clarification reframed the entire universe:
 
-[quote, Project Creator Directive]
 "The story of Tenebris and Lux is a story about a shield (the Shield of Lux) and a sword
 (the Sword of Tenebris) and a kingdom divided by a rising evil and the re-awakening of the
 Dark Lord. Tenebris and Lux itself is neither good or evil, they are the apex of light and
@@ -86,7 +89,7 @@ for whether they will be used for good or evil."
 
 This single revelation fundamentally revolutionized the game design and how the story is told:
 
-### 1. From Passive Attrition to Active Agency
+#### From Passive Attrition to Active Agency
 
 In the survival prototype, the player was a helpless victim running out of oxygen. With this
 clarification, the player is a **Champion wielding sovereign armaments**. The narrative verbs
@@ -96,13 +99,13 @@ shifted from scavenging (`explore`) and consuming (`kindle`) to martial and ethi
 * **`strike`**: Drawing the **Sword of Tenebris** to sever void armor, cut through unholy bindings, and pierce illusions.
 * **`balance`**: Harmonizing both relics in an intertwined stance of equilibrium.
 
-### 2. Disentangling Darkness from the Villain
+#### Disentangling Darkness from the Villain
 
 Darkness is no longer the enemy. **Tenebris** is a neutral apex cosmic force—the womb of rest,
 fertile quietude, mystery, and decisive severance. The true villain is **The Dark Lord**
 (the ancient Libiran sovereign Usuru), a fallen king who broke the ancient seals to twist both light and shadow to his will.
 
-### 3. The Moral Sway Continuum
+#### The Moral Sway Continuum
 
 Morality does not exist in the element; it exists in the **intent of the wielder**:
 
@@ -110,7 +113,7 @@ Morality does not exist in the element; it exists in the **intent of the wielder
 * **Darkness as Virtue**: The Sword of Tenebris can be used to sever the chains of slaves, veil fleeing refugees in merciful night, and strike down corrupt rulers.
 * The game tracks `moral_sway` on a bounded continuum ($-100 \dots +100$), reflecting whether the bearer leans toward **Virtue & Mercy** or **Tyranny & Ruin**.
 
-## 4. Dual-Frontend Architecture: Native X11 & Terminal CLI
+### Dual-Frontend Architecture: Native X11 & Terminal CLI
 
 To ensure presentation remains strictly decoupled from simulation, the engine features two
 simultaneous frontends running off a universal action dispatcher (`game_process_command`):
@@ -122,7 +125,7 @@ simultaneous frontends running off a universal action dispatcher (`game_process_
    - Dynamic twin meters: Golden solar bar for the Shield of Lux (`#F0CE78`) and deep violet bar for the Sword of Tenebris (`#8A78C8`).
    - Tactical hotkeys and interactive widgets.
 
-## 5. Why Game Development Testing Differs from Software Testing
+### Why Game Development Testing Differs from Software Testing
 
 Standard software unit testing verifies stateless functions (`assert(add(2, 2) == 4)`). In game
 development, testing requires proving that dynamic, living worlds remain stable, balanced, and
@@ -130,21 +133,21 @@ immersive across millions of player inputs.
 
 Our CTest testbed introduces two dedicated game dev testing suites:
 
-### 1. Game State Invariant Testing (`tests/test_game_invariants.c`)
+#### Game State Invariant Testing (`tests/test_game_invariants.c`)
 
 * Mathematical bounds verification: Shield power [0..100], Sword edge [0..100], and Moral Sway [-100..+100] never overflow or underflow under continuous spamming.
 * Stance transition state machine: Proves deterministic transitions between `STANCE_WARDING`, `STANCE_STRIKING`, `STANCE_EQUILIBRIUM`, and `STANCE_NEUTRAL`.
 * Topological pathway validation across Kingdom provinces.
 * Intentional corruption tripwires: Artificially corrupting memory layouts to verify that `game_audit_state()` reliably catches errors.
 
-### 2. Gameplay Scenarios & Replay Testing (`tests/test_gameplay_scenarios.c`)
+#### Gameplay Scenarios & Replay Testing (`tests/test_gameplay_scenarios.c`)
 
 * **Archetype Scenarios**: Automated playthroughs of *The Righteous Warden* (warding defense) and *The Umbral Striker* (severance assault).
 * **Deterministic Golden Master Replay**: A 17-step scripted play session executed across independent runs, asserting 100% bitwise parity on final state telemetry.
 * **Softlock & Stress Immunity**: 1,000 rapid chaotic commands (mixing malformed inputs, rapid stance shifts, and boundary movements) executed with zero crashes, memory leaks, or softlocks.
 * **Simulation Latency Benchmark**: 10,000 turn dispatches executed in **160.29 ms** (**16.02 $\mu\text{s}$ per turn**)—consuming less than $0.1\%$ of a 60 FPS ($16.6\,\text{ms}$) frame budget.
 
-## 6. What Lies Ahead
+### What Lies Ahead
 
 With the foundational prototype, twin-relic mechanics, and game dev test suite verified, the next
 phases will focus on:
@@ -158,14 +161,13 @@ phases will focus on:
 
 ## Chapter 2: DevLog 003: Central Manifest & Pre-Flight Spec
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc`
+> **Source**: `docs/dev_logs/2026/10/architecture/devlog_003_preflight_and_manifest_architecture.adoc`
 
-[abstract]
-## Abstract & Engineering Intent
+### Abstract & Engineering Intent
 
 In this milestone, we moved beyond purely declarative Block 1 metadata comments into **executable, compiled metadata structures** (`module_metadata_t`) managed by a zero-allocation **Central Manifest Registry** (`include/util/manifest.h`, `src/util/manifest.c`). Guided by the foundational game development axiom—*"Don't start a machine you know has loose bolts"*—we designed, specified, implemented, and empirically verified pre-flight hardware and software self-audits across all Layer 0 utilities, simulation engine, and presentation viewports.
 
-## 1. The Core Problem: Loose Bolts & Silent Corruption
+### The Core Problem: Loose Bolts & Silent Corruption
 
 In game development, complex games are machines with hundreds of interlocking moving parts. A subtle defect in a foundational layer—such as a non-monotonic clock, an integer overflow on damage saturation, an unchecked negative rectangle dimension, or an unbuffered string copy—can propagate upward, manifesting as elusive micro-stutters, physics drift, state desynchronization, or catastrophic runtime crashes.
 
@@ -174,14 +176,13 @@ Rather than waiting for the game loop to execute before identifying structural a
 * **Critical Faults (`SEVERITY_CRITICAL`)**: Subsystem offline, but engine core intact (e.g. no `$DISPLAY` for X11 GUI); downgrade gracefully to safe mode (terminal CLI).
 * **Fatal Violations (`SEVERITY_FATAL`)**: Core invariants broken (e.g. non-monotonic time, arithmetic bounds failure, corrupt initial state); halt the engine immediately with a detailed diagnostic manifest.
 
-## 2. Architectural Implementation
+### Architectural Implementation
 
-### 2.1 Compiled Metadata Structures
+#### Compiled Metadata Structures
 
 Every subsystem in the codebase now exports an immutable `module_metadata_t` instance:
 
-[source,c]
-----
+```c
 typedef struct {
     const char *module_id;
     const char *file_name;
@@ -192,9 +193,9 @@ typedef struct {
     const char *invariants[MANIFEST_MAX_INVARIANTS];
     diag_result_t (*preflight_check)(void);
 } module_metadata_t;
-----
+```
 
-### 2.2 Subsystem Integrations
+#### Subsystem Integrations
 
 The pre-flight registry manages 7 fully audited modules across Layers 0, 1, and 2:
 1. `core.util.manifest`: Self-audits registry capacity limits, duplicate registration rejection, and severity escalation rules.
@@ -205,23 +206,22 @@ The pre-flight registry manages 7 fully audited modules across Layers 0, 1, and 
 6. `sim.engine.core`: Tests initial relic state integrity, resonance saturation ceilings, deterministic stance state transitions, and diagnostic tripwires on corrupt states.
 7. `gui.viewport.x11`: Tests button layout non-overlap and asserts window bounds (`gui_audit_layout`), while checking X11 display availability (`gui_is_available`). If `$DISPLAY` is unconnectable, emits `SEVERITY_CRITICAL` to trigger automatic CLI safe mode fallback.
 
-## 3. "Expected" vs. "Actual" Gap Analysis
+### 3. "Expected" vs. "Actual" Gap Analysis
 
 Following our strict engineering discipline, the technical specification was drafted **prior to implementation** in `docs/architecture/preflight_and_manifest_spec.adoc`. Upon completion, empirical benchmarks were gathered and recorded:
 
-[cols="1,2,2,1", options="header"]
-|===
-| Verification Item | Expected Baseline | Actual Result | Status
-| *Module Registration* | $\ge 5$ Core Modules | **7 Modules Registered** | **EXCEEDED**
-| *Severity Spectrum* | 4 Discrete Levels | **5 Graded Levels** (`PASS`, `INFO`, `WARN`, `CRIT`, `FATAL`) | **EXCEEDED**
-| *Pre-Flight Telemetry* | 80-Column ASCII Table | **Integrated Table** with status badges and policy verdicts | **SATISFIED**
-| *CTest Integration* | 6/6 Suites Passing in $< 0.05\,\text{s}$ | **6/6 Passing in $0.02\,\text{s}$** | **SATISFIED**
-| *Subsystem Invariants* | 5/5 Invariants Passing | **5/5 Invariant Checks + 7 Pre-Flight Subsystems Passing (12 Total)** | **EXCEEDED**
-| *Loose-Bolts Tripwire* | Fatal Error Halts Immediately | **Verified**: Engine halted on injected stance mismatch; exited code $\ne 0$ | **VERIFIED**
-| *Graceful Downgrade* | Unset `$DISPLAY` drops GUI $\to$ CLI | **Verified**: Emits `SEVERITY_CRITICAL`, enters `PREFLIGHT_STATUS_DOWNGRADED`, launches safe CLI | **VERIFIED**
-|===
+| Verification Item | Expected Baseline | Actual Result | Status |
+| --- | --- | --- | --- |
+| *Module Registration* | $\ge 5$ Core Modules | **7 Modules Registered** | **EXCEEDED** |
+| *Severity Spectrum* | 4 Discrete Levels | **5 Graded Levels** (`PASS`, `INFO`, `WARN`, `CRIT`, `FATAL`) | **EXCEEDED** |
+| *Pre-Flight Telemetry* | 80-Column ASCII Table | **Integrated Table** with status badges and policy verdicts | **SATISFIED** |
+| *CTest Integration* | 6/6 Suites Passing in $< 0.05\,\text{s}$ | **6/6 Passing in $0.02\,\text{s}$** | **SATISFIED** |
+| *Subsystem Invariants* | 5/5 Invariants Passing | **5/5 Invariant Checks + 7 Pre-Flight Subsystems Passing (12 Total)** | **EXCEEDED** |
+| *Loose-Bolts Tripwire* | Fatal Error Halts Immediately | **Verified**: Engine halted on injected stance mismatch; exited code $\ne 0$ | **VERIFIED** |
+| *Graceful Downgrade* | Unset `$DISPLAY` drops GUI $\to$ CLI | **Verified**: Emits `SEVERITY_CRITICAL`, enters `PREFLIGHT_STATUS_DOWNGRADED`, launches safe CLI | **VERIFIED** |
 
-## 4. Summary & Next Steps
+
+### Summary & Next Steps
 
 The engine now possesses an institutional, compile-time and pre-flight runtime foundation that guarantees system health prior to rendering a single frame or executing a single turn.
 
@@ -235,10 +235,9 @@ With the pre-flight verification subsystem and central manifest complete, future
 
 ## Chapter 3: DevLog 004: Pedagogical Metadata & Active DAG Contracts
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc`
+> **Source**: `docs/dev_logs/2026/10/architecture/devlog_004_pedagogical_metadata_and_dependency_contracts.adoc`
 
-[abstract]
-## Abstract & Engineering Intent
+### Abstract & Engineering Intent
 
 In this milestone, we solved two fundamental architectural challenges governing software maintenance and longevity:
 1. **The Pedagogical Metadata Dilemma**: How to structure source file metadata so that a novice programmer never feels overwhelmed or lost, while an experienced systems architect never feels patronized or deprived of rigorous technical contracts.
@@ -248,18 +247,17 @@ By upgrading all Layer 0 utilities, the Layer 1 simulation engine, Layer 2 deskt
 
 ---
 
-## 1. The Pedagogical Balancing Act: Beginner Mission vs. Senior Contracts
+### The Pedagogical Balancing Act: Beginner Mission vs. Senior Contracts
 
 In professional game engine design, source files are read by developers with widely divergent backgrounds:
 * **The Junior Developer / Contributor**: May understand basic gameplay concepts but easily gets lost in cryptic acronyms, dense type layouts, or unexplained mathematical formulas. If a header only contains bare function signatures without context, they do not understand *why* the module exists or what breaks if they alter a value.
 * **The Senior Systems Engineer / Architect**: Needs instant, unambiguous answers regarding memory allocations (heap vs. stack), concurrency reentrancy, cache latency budgets, interface ABI stability, and upstream prerequisites. If a file contains verbose narrative hand-waving without concrete invariants, they cannot verify safety guarantees or integration boundaries.
 
-### 1.1 The Dual-Audience Protocol
+#### The Dual-Audience Protocol
 
 We unified these perspectives into a standardized **Block 1 Metadata Specification**:
 
-[source,c]
-----
+```c
 // =============================================================================
 // BLOCK 1: METADATA BLOCK
 // ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
@@ -291,14 +289,14 @@ We unified these perspectives into a standardized **Block 1 Metadata Specificati
 //   2. POSIX conformance: CLOCK_MONOTONIC timing source without drift or leap adjustments.
 //   3. Frame sleep pacing: Non-negative sleep durations (negative inputs clamped to 0).
 // =============================================================================
-----
+```
 
 * **For Beginners**: The `PURPOSE & ARCHITECTURAL ROLE` field clearly frames the module's place in the universe using plain English, explaining both its simulation role and what other systems rely upon it.
 * **For Seniors**: The `DEPENDENCY & RESOURCE CONTRACTS` and `AXIOMATIC INVARIANTS` fields supply exact, uncompromised technical contracts: zero heap allocation (`ALLOC_ZERO_HEAP`), pure reentrancy (`REENTRANT_PURE`), sub-5-microsecond latency, and mathematical clamping properties.
 
 ---
 
-## 2. Temporal Precision: Mandating Full ISO 8601 Calendar Dates
+### Temporal Precision: Mandating Full ISO 8601 Calendar Dates
 
 Prior iterations utilized a compact month-and-year epoch stamp (e.g. `2026.10`). While concise, empirical timeline auditing revealed that month/year stamps obscure chronological sequencing:
 1. When multiple architectural refactorings occur across consecutive days within the same month, month-level stamps fail to convey sequence.
@@ -313,18 +311,17 @@ Accordingly, the repository now strictly enforces **ISO 8601 full calendar dates
 
 ---
 
-## 3. Active DAG Dependency Contracts: Turning Comments into Machine Tripwires
+### Active DAG Dependency Contracts: Turning Comments into Machine Tripwires
 
 A pervasive issue in game engine architecture is "architectural erosion": developers declare layered dependencies in comments or documentation, but nothing prevents code in Layer 0 from inadvertently calling Layer 1, or prevents an uninitialized subsystem from being invoked before its dependencies are verified.
 
 We elevated dependencies from passive comments into an **Active Directed Acyclic Graph (DAG)** validated at boot time.
 
-### 3.1 Compiled 5-Dimension Metadata Schema
+#### Compiled 5-Dimension Metadata Schema
 
 In `include/util/manifest.h`, we expanded `module_metadata_t` with explicit memory models, concurrency guarantees, contract revisions, and upstream module dependencies:
 
-[source,c]
-----
+```c
 typedef enum {
     ALLOC_ZERO_HEAP = 0,    // Pure stack/static execution (Layer 0 guarantee)
     ALLOC_FIXED_POOL,       // Fixed static ring/pool buffers
@@ -368,9 +365,9 @@ typedef struct {
     /* 5. Pre-Flight Machine Self-Audit */
     diag_result_t (*preflight_check)(void);
 } module_metadata_t;
-----
+```
 
-### 3.2 Pre-Flight DAG Enforcement Algorithm
+#### Pre-Flight DAG Enforcement Algorithm
 
 When `manifest_run_preflight(&registry)` executes, it performs a 2-step verification:
 
@@ -397,29 +394,28 @@ If any module declares a prerequisite that has not been registered prior to boot
 
 ---
 
-## 4. Subsystem Dependency Manifest
+### Subsystem Dependency Manifest
 
 The following table documents the registered subsystem topology, contract revisions, allocation policies, and upstream dependencies verified across the engine:
 
-[cols="2,2,1,2,2,3",options="header"]
-|===
-| Module ID | Header | Rev | Alloc Policy | Concurrency | Upstream Dependencies
-| `core.util.manifest` | `manifest.h` | `r2` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Anchor)
-| `core.util.time` | `time_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf)
-| `core.util.math` | `math_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf)
-| `core.util.geom` | `geom_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf)
-| `core.util.string` | `string_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf)
-| `sim.engine.core` | `game.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | `core.util.math`, `core.util.string`
-| `gui.viewport.x11` | `gui.h` | `r1` | `ALLOC_ZERO_HEAP` | `MAIN_THREAD` | `sim.engine.core`, `core.util.geom`, `core.util.time`
-|===
+| Module ID | Header | Rev | Alloc Policy | Concurrency | Upstream Dependencies |
+| --- | --- | --- | --- | --- | --- |
+| `core.util.manifest` | `manifest.h` | `r2` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Anchor) |
+| `core.util.time` | `time_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf) |
+| `core.util.math` | `math_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf) |
+| `core.util.geom` | `geom_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf) |
+| `core.util.string` | `string_utils.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | *None* (Leaf Leaf) |
+| `sim.engine.core` | `game.h` | `r1` | `ALLOC_ZERO_HEAP` | `REENTRANT` | `core.util.math`, `core.util.string` |
+| `gui.viewport.x11` | `gui.h` | `r1` | `ALLOC_ZERO_HEAP` | `MAIN_THREAD` | `sim.engine.core`, `core.util.geom`, `core.util.time` |
+
 
 ---
 
-## 5. Empirical Verification & Test Results
+### Empirical Verification & Test Results
 
 The upgraded architecture was verified across three automated layers on **2026-10-26**:
 
-### 5.1 CTest Verification Suite
+#### CTest Verification Suite
 All 6 test suites passed cleanly with 0 failures in 0.02 seconds:
 ```text
 Test project /home/professorseanex/Tenebris and Lux/build
@@ -440,13 +436,13 @@ Test project /home/professorseanex/Tenebris and Lux/build
 Total Test time (real) = 0.02 sec
 ```
 
-### 5.2 Pre-Flight System Audit Telemetry
+#### Pre-Flight System Audit Telemetry
 Executing `./build/tenebris-lux --audit` renders the 80-column diagnostic matrix with contract revisions, allocation policies, and build timestamps:
 ```text
-##### ===========================================================================
+================================================================================
            Tenebris and Lux - Pre-Flight Subsystem Integrity Manifest           
  Build Telemetry: Oct 26 2026 10:27:33 | Target Standard: ISO 8601 (2026-10-26)
-##### ===========================================================================
+================================================================================
 MODULE ID            FILE            REV  ALLOCATION  STATUS  DIAGNOSTIC DETAILS
 --------------------------------------------------------------------------------
 core.util.manifest   manifest.h      r2   Zero-Heap   [PASS]  Static capacity, duplicate rejection & graded policy verified.
@@ -459,10 +455,10 @@ gui.viewport.x11     gui.h           r1   Zero-Heap   [PASS]  X11 display connec
 --------------------------------------------------------------------------------
 Telemetry: 7 modules registered | 7 Pass | 0 Warn | 0 Critical | 0 Fatal
 Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED (System Ready)
-##### ===========================================================================
+================================================================================
 ```
 
-### 5.3 Active DAG Dependency Tripwire Test
+#### Active DAG Dependency Tripwire Test
 In `tests/test_utils.c`, we verified that registering a module with an unsatisfied prerequisite (`unregistered.prerequisite.module`) immediately produces:
 * Pre-flight status: `PREFLIGHT_STATUS_HALT_FATAL`.
 * Result severity: `SEVERITY_FATAL`.
@@ -471,7 +467,7 @@ In `tests/test_utils.c`, we verified that registering a module with an unsatisfi
 
 ---
 
-## 6. Conclusion & Next Horizons
+### Conclusion & Next Horizons
 
 By establishing a pedagogically balanced metadata standard, enforcing full ISO 8601 calendar dates (`2026-10-26`), and deploying active DAG dependency verification, we have transformed the code documentation into a living architectural framework.
 
@@ -482,10 +478,9 @@ With foundational Layer 0 utilities and Layer 1 simulation mechanics now protect
 
 ## Chapter 4: DevLog 005: Ontological Sub-Assemblies & 80-Column Discipline
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc`
+> **Source**: `docs/dev_logs/2026/10/architecture/devlog_005_ontological_code_layering_and_docstrings.adoc`
 
-[abstract]
-## Abstract & Engineering Intent
+### Abstract & Engineering Intent
 
 In this milestone, we transformed the internal anatomy of our codebase into a living, IDE-integrated mechanical structure. Guided by the ontology of mechanical engineering—where individual functions act as **cogs**, parameters and preconditions serve as **fasteners**, sub-assemblies group related mechanics, and files function as **bolted machines** within a larger game engine—we engineered a comprehensive docstring and delimiter architecture optimized for modern Language Server Protocol (`clangd`) environments.
 
@@ -493,7 +488,7 @@ Simultaneously, we reorganized our project developer logs into an enduring chron
 
 ---
 
-## 1. The Need for IDE-First Hover Documentation
+### The Need for IDE-First Hover Documentation
 
 Modern professional game development occurs within advanced IDEs (such as Antigravity IDE and VS Code) backed by Language Server Protocol (`clangd` / LSP). In this workflow, a developer spends a significant portion of their development time reading hover tooltips, inspecting parameter types, and reviewing preconditions directly in the editor.
 
@@ -509,7 +504,7 @@ To produce clean, beautiful, and informative hover windows in the IDE:
 
 ---
 
-## 2. The Machine Metaphor: From Cosmos to Fasteners
+### The Machine Metaphor: From Cosmos to Fasteners
 
 We formalized the structural organization of our C codebase into five distinct ontological tiers:
 
@@ -543,32 +538,29 @@ We formalized the structural organization of our C codebase into five distinct o
 
 ---
 
-## 3. Visual Border & Delimiter Standards
+### Visual Border & Delimiter Standards
 
 To provide instant visual recognition while scanning source files, we codified a 3-tier delimiter standard:
 
 * **Level 1: Block Lifecycle Banner** (80 columns, double equal border `==`):
 +
-[source,c]
-----
+```c
 // =============================================================================
 // BLOCK 3: BODY BLOCK
 // Stratum: Layer 0 (Core Utilities) | Machine: Bounded Arithmetic Engine
 // =============================================================================
-----
+```
 * **Level 2: Sub-Assembly Banner** (80 columns, single dash border `--`):
 +
-[source,c]
-----
+```c
 // -----------------------------------------------------------------------------
 // [ SUB-ASSEMBLY 3.1: INTEGER CLAMPING & SATURATION COGS ]
 // Mission: Guardrail calculations against integer overflow and underflow.
 // -----------------------------------------------------------------------------
-----
+```
 * **Level 3: Isolated Cog Docstring**:
 +
-[source,c]
-----
+```c
 /**
  * Clamps a signed integer to a closed interval [min_val, max_val].
  *
@@ -604,11 +596,11 @@ To provide instant visual recognition while scanning source files, we codified a
  * @see math_saturating_sub
  */
 int math_clamp_int(int val, int min_val, int max_val);
-----
+```
 
 ---
 
-## 4. Chronological Reorganization of Developer Logs
+### Chronological Reorganization of Developer Logs
 
 To ensure long-term maintainability, the project's developer logs have been reorganized into a structured calendar and topic ontology:
 
@@ -632,15 +624,15 @@ docs/dev_logs/
 
 ---
 
-## 5. Empirical Verification Telemetry
+### Empirical Verification Telemetry
 
 All modules across Layer 0, Layer 1, Layer 2, and Layer 4 were compiled and verified:
 
 ```text
-##### ===========================================================================
+================================================================================
            Tenebris and Lux - Pre-Flight Subsystem Integrity Manifest           
  Build Telemetry: Oct 26 2026 23:40:18 | Target Standard: ISO 8601 (2026-10-26)
-##### ===========================================================================
+================================================================================
 MODULE ID            FILE            REV  ALLOCATION  STATUS  DIAGNOSTIC DETAILS
 --------------------------------------------------------------------------------
 core.util.manifest   manifest.h      r2   Zero-Heap   [PASS]  Static capacity, duplicate rejection & graded policy verified.
@@ -653,14 +645,14 @@ gui.viewport.x11     gui.h           r1   Zero-Heap   [PASS]  X11 display connec
 --------------------------------------------------------------------------------
 Telemetry: 7 modules registered | 7 Pass | 0 Warn | 0 Critical | 0 Fatal
 Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED (System Ready)
-##### ===========================================================================
+================================================================================
 
 100% tests passed, 0 tests failed out of 6 (CTest execution time: 0.05 sec).
 ```
 
 ---
 
-## 6. Summary
+### Summary
 
 With complete ontological layering, IDE-optimized docstrings, strict 80-column line widths, and calendar-organized developer chronicles in place, our codebase now doubles as an intuitive, self-documenting teaching manual and a robust tactical game engine foundation.
 
@@ -669,10 +661,9 @@ With complete ontological layering, IDE-optimized docstrings, strict 80-column l
 
 ## Chapter 5: DevLog 006: Source Implementation & Root Pedagogical Commenting
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc`
+> **Source**: `docs/dev_logs/2026/10/architecture/devlog_006_source_and_root_pedagogical_commenting.adoc`
 
-[abstract]
-## Executive Summary
+### Executive Summary
 
 This log chronicles the complete expansion of the OmniCode 5-Block Ontological
 Documentation Architecture to the entire source implementation tree (`src/**/*.c`)
@@ -684,7 +675,7 @@ Furthermore, root build and version control files have been elevated with
 pedagogical commentary and strict 80-column line width discipline across the
 entire codebase.
 
-## 1. Architectural Intent: End-to-End Documentation Consistency
+### Architectural Intent: End-to-End Documentation Consistency
 
 While header files (`include/**/*.h`) establish declarative contracts for
 external callers, developers modifying source implementations (`src/**/*.c`)
@@ -706,60 +697,27 @@ has been systematically implemented across 100% of the C source files:
    `/* Step 2: Algorithmic transformation */`, `/* Step 3: Emit event */`),
    ensuring that code reads like an annotated engineering blueprint.
 
-## 2. Source Code Implementation Matrix
+### Source Code Implementation Matrix
 
-[cols="1,2,2,1", options="header"]
-|===
-| Module | File | Sub-Assemblies Documented | Functions Annotated
+| Module | File | Sub-Assemblies Documented | Functions Annotated |
+| --- | --- | --- | --- |
+| **Math Utils** | `src/util/math_utils.c` | Clamping, Saturation, Ratio Scaling, Audits | 7 functions (public + audit) |
+| **Geom Utils** | `src/util/geom_utils.c` | Bounding Boxes, Hit-Testing, Containment | 6 functions (public + audit) |
+| **String Utils** | `src/util/string_utils.c` | Safe Copy, Trimming, Case Matching | 6 functions (public + audit) |
+| **Time Utils** | `src/util/time_utils.c` | Monotonic Clocks, Millisecond Sleeping | 5 functions (public + audit) |
+| **Manifest** | `src/util/manifest.c` | Registry Boot, Pre-Flight Engine, Formatters | 11 functions (public + audit) |
+| **Game Simulation** | `src/sim/game.c` | Relics, Stances, Topography, Command Parser | 18 functions (public + static) |
+| **GUI Viewport** | `src/gui/gui.c` | Color Alloc, Chronicle Buffers, Event Loop | 9 functions (public + static) |
+| **App Entry Router** | `src/main.c` | Manifest Boot, CLI Flags, Pre-Flight Dispatch | 5 functions (public + static) |
 
-| **Math Utils**
-| `src/util/math_utils.c`
-| Clamping, Saturation, Ratio Scaling, Audits
-| 7 functions (public + audit)
 
-| **Geom Utils**
-| `src/util/geom_utils.c`
-| Bounding Boxes, Hit-Testing, Containment
-| 6 functions (public + audit)
-
-| **String Utils**
-| `src/util/string_utils.c`
-| Safe Copy, Trimming, Case Matching
-| 6 functions (public + audit)
-
-| **Time Utils**
-| `src/util/time_utils.c`
-| Monotonic Clocks, Millisecond Sleeping
-| 5 functions (public + audit)
-
-| **Manifest**
-| `src/util/manifest.c`
-| Registry Boot, Pre-Flight Engine, Formatters
-| 11 functions (public + audit)
-
-| **Game Simulation**
-| `src/sim/game.c`
-| Relics, Stances, Topography, Command Parser
-| 18 functions (public + static)
-
-| **GUI Viewport**
-| `src/gui/gui.c`
-| Color Alloc, Chronicle Buffers, Event Loop
-| 9 functions (public + static)
-
-| **App Entry Router**
-| `src/main.c`
-| Manifest Boot, CLI Flags, Pre-Flight Dispatch
-| 5 functions (public + static)
-|===
-
-## 3. Root Configuration Pedagogical Enhancement
+### Root Configuration Pedagogical Enhancement
 
 Root configuration files anchor the build system and repository hygiene.
 They have been restructured with the Universal 5-Block Lifecycle Protocol
 and educational commentary:
 
-### 3.1 `CMakeLists.txt`
+#### 3.1 `CMakeLists.txt`
 - **Block 1 (Metadata)**: Project provenance, minimum CMake version (3.24),
   and ISO C11 standard invariants.
 - **Block 2 (Opening / Toolchain)**: Explains the rationale for disabling
@@ -774,7 +732,7 @@ and educational commentary:
 - **Block 5 (Closing / CTest)**: Registers CLI contract and subsystem tests into
   CTest.
 
-### 3.2 `.gitignore`
+#### 3.2 `.gitignore`
 - **Block 1 (Metadata)**: Version control exclusion contracts and repository
   hygiene invariants.
 - **Block 2 (Compiled Binaries)**: Groups object code (`*.o`, `*.obj`),
@@ -787,17 +745,16 @@ and educational commentary:
 - **Block 5 (IDE & OS Detritus)**: Excludes `.vscode/`, `.idea/`, `.cache/`,
   macOS `.DS_Store`, and editor swap files.
 
-### 3.3 `README.md`
+#### 3.3 `README.md`
 - Synchronized documentation indices to point to the chronological calendar
   archive in `docs/dev_logs/2026/10/README.adoc`.
 
-## 4. Strict 80-Column Verification Audit
+### Strict 80-Column Verification Audit
 
 An automated Python static audit across all 18 repository files verified
 strict adherence to the 80-column line width discipline:
 
-[source,bash]
-----
+```bash
 $ python3 -c "
 import glob
 files = sorted(glob.glob('src/**/*.c') + glob.glob('include/**/*.h') + ['CMakeLists.txt', '.gitignore'])
@@ -805,9 +762,9 @@ total_bad = sum(1 for f in files for l in open(f) if len(l.rstrip('\r\n')) > 80)
 print(f'Total bad lines across {len(files)} files: {total_bad}')
 "
 Total bad lines across 17 files: 0
-----
+```
 
-## 5. Verification & Telemetry Results
+### Verification & Telemetry Results
 
 1. **Compilation Telemetry**:
    - Compiler: GCC / Clang (ISO C11 `-std=c11`).
@@ -833,10 +790,9 @@ Total bad lines across 17 files: 0
 
 ## Chapter 6: DevLog 007: Archival Extraction & The 2017–2018 Demo Baseline
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc`
+> **Source**: `docs/dev_logs/2026/10/lore_and_design/devlog_007_rpg_maker_demo_data_extraction_and_baseline.adoc`
 
-[abstract]
-## Abstract
+### Abstract
 
 This developer log chronicles the successful recovery, automated extraction,
 and architectural documentation of the original **2017–2018 RPG Maker MV demo**
@@ -848,7 +804,7 @@ Tactical Battle System (LeTBS), the 75-skill grimoire, and the morality engine.
 This baseline serves as our living blueprint as we systematically reconstruct
 the game in native C11.
 
-## 1. Historical Context: Rediscovery of the Genesis Datasets
+### Historical Context: Rediscovery of the Genesis Datasets
 
 In DevLog 002, our initial architectural chronicles operated under the premise
 that legacy digital assets from the 2014–2018 high school inception were lost
@@ -871,18 +827,17 @@ into the repository across two distinct historical directories:
      scope geometry, AOE patterns, turn timeline manipulation, and character
      generator presets `Grandma.json` and `TheKing.json`).
 
-## 2. The Extraction Toolchain: `docs/tools/extract_demo_data.py`
+### The Extraction Toolchain: `docs/tools/extract_demo_data.py`
 
 To prevent manual transcription errors and guarantee absolute fidelity to
 the original 2017–2018 records, an automated Python extraction engine was
 developed:
 
-[source,bash]
-----
+```bash
 python3 docs/tools/extract_demo_data.py
-----
+```
 
-### Core Functions of the Extraction Engine
+#### Core Functions of the Extraction Engine
 * **Cross-Dataset Reconciliation**: Ingests both `Old Game Data` and
   `Old_Game_Data_2/data`, cross-referencing actors, classes, skills, and map
   events to capture both the rich narrative branches of Folder 1 and the
@@ -895,27 +850,26 @@ python3 docs/tools/extract_demo_data.py
   from skills, states, and actors, formalizing movement points, range shapes,
   cooldowns, and AI behavior patterns (`ranged_fighter`, `ai_no_attack`).
 
-## 3. The 10-Volume Baseline Documentation Compendium
+### The 10-Volume Baseline Documentation Compendium
 
 The extraction toolchain populates `docs/game_design/demo_baseline/` with ten
 comprehensive AsciiDoc technical manuals:
 
-[cols="1,2,3", options="header"]
-|===
-| Document | Primary File | Core Contents
-| **Master Index** | xref:../../game_design/demo_baseline/README.adoc[README.adoc] | Provenance, dataset taxonomy, and reconstruction methodology.
-| **Scenario Script** | xref:../../game_design/demo_baseline/scenario_and_walkthrough.adoc[scenario_and_walkthrough.adoc] | 7-Act narrative script across 43 maps, branching dialogues, and puzzle solutions.
-| **Dramatis Personae** | xref:../../game_design/demo_baseline/cast_and_characters.adoc[cast_and_characters.adoc] | Protagonists (Elijah, Katrina), allies (Sebastien, Angela, Lucius), and key NPCs.
-| **Tactical Mechanics** | xref:../../game_design/demo_baseline/combat_and_letbs_mechanics.adoc[combat_and_letbs_mechanics.adoc] | LeTBS 2D grid rules, MP economy, scope geometry, and terrain hazards.
-| **Class Progressions** | xref:../../game_design/demo_baseline/classes_and_growth.adoc[classes_and_growth.adoc] | 7 classes + summons; Lv 1–99 stat matrices; level-by-level skill learnings.
-| **Grimoire** | xref:../../game_design/demo_baseline/grimoire_and_skills.adoc[grimoire_and_skills.adoc] | 75+ active techniques, damage formulas, and LeTBS sequence tags.
-| **Bestiary & Troops** | xref:../../game_design/demo_baseline/bestiary_and_troops.adoc[bestiary_and_troops.adoc] | 22+ enemies, destructible chests/ice blocks, AI tags, and troop formations.
-| **Armory & Items** | xref:../../game_design/demo_baseline/armory_and_inventory.adoc[armory_and_inventory.adoc] | Weapons, armors, consumables, and quest relics (Grandma's Watch, Compass).
-| **Systems & Switches** | xref:../../game_design/demo_baseline/systems_switches_variables.adoc[systems_switches_variables.adoc] | Monotonic clock, moral continuum, and full directory of 100+ switches/variables.
-| **Evolution Delta** | xref:../../game_design/demo_baseline/dataset_evolution_delta.adoc[dataset_evolution_delta.adoc] | Technical comparison between Folder 1 and Folder 2 with C11 roadmap.
-|===
+| Document | Primary File | Core Contents |
+| --- | --- | --- |
+| **Master Index** | xref:../../game_design/demo_baseline/README.adoc[README.adoc] | Provenance, dataset taxonomy, and reconstruction methodology. |
+| **Scenario Script** | xref:../../game_design/demo_baseline/scenario_and_walkthrough.adoc[scenario_and_walkthrough.adoc] | 7-Act narrative script across 43 maps, branching dialogues, and puzzle solutions. |
+| **Dramatis Personae** | xref:../../game_design/demo_baseline/cast_and_characters.adoc[cast_and_characters.adoc] | Protagonists (Elijah, Katrina), allies (Sebastien, Angela, Lucius), and key NPCs. |
+| **Tactical Mechanics** | xref:../../game_design/demo_baseline/combat_and_letbs_mechanics.adoc[combat_and_letbs_mechanics.adoc] | LeTBS 2D grid rules, MP economy, scope geometry, and terrain hazards. |
+| **Class Progressions** | xref:../../game_design/demo_baseline/classes_and_growth.adoc[classes_and_growth.adoc] | 7 classes + summons; Lv 1–99 stat matrices; level-by-level skill learnings. |
+| **Grimoire** | xref:../../game_design/demo_baseline/grimoire_and_skills.adoc[grimoire_and_skills.adoc] | 75+ active techniques, damage formulas, and LeTBS sequence tags. |
+| **Bestiary & Troops** | xref:../../game_design/demo_baseline/bestiary_and_troops.adoc[bestiary_and_troops.adoc] | 22+ enemies, destructible chests/ice blocks, AI tags, and troop formations. |
+| **Armory & Items** | xref:../../game_design/demo_baseline/armory_and_inventory.adoc[armory_and_inventory.adoc] | Weapons, armors, consumables, and quest relics (Grandma's Watch, Compass). |
+| **Systems & Switches** | xref:../../game_design/demo_baseline/systems_switches_variables.adoc[systems_switches_variables.adoc] | Monotonic clock, moral continuum, and full directory of 100+ switches/variables. |
+| **Evolution Delta** | xref:../../game_design/demo_baseline/dataset_evolution_delta.adoc[dataset_evolution_delta.adoc] | Technical comparison between Folder 1 and Folder 2 with C11 roadmap. |
 
-## 4. C11 Engine Rebuilding Roadmap
+
+### C11 Engine Rebuilding Roadmap
 
 With the historical baseline fully documented, the path forward for our native
 C11 implementation is clear, disciplined, and rigorous:
@@ -944,10 +898,9 @@ C11 implementation is clear, disciplined, and rigorous:
 
 ## Chapter 7: DevLog 008: Canonical Skills, The Dreamscape & Ground-Truth Pacing
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc`
+> **Source**: `docs/dev_logs/2026/10/lore_and_design/devlog_008_canonical_skills_and_dreamscape_baseline.adoc`
 
-[abstract]
-## Abstract
+### Abstract
 
 This developer log chronicles the ludological re-alignment of the native C11 simulation
 engine with the authentic 2017–2018 demo baseline. It details the transition from generic
@@ -958,7 +911,7 @@ adaptive defense targeting). Furthermore, it documents the critical correction o
 antagonist identity to **"The Dark Lord"** (the overarching background "A Plot"), the
 reinstatement of **The Dreamscape** opening trial, and protagonist customization.
 
-## 1. Lessons Learned: Game Developer vs. Software CRUD Thinking
+### Lessons Learned: Game Developer vs. Software CRUD Thinking
 
 In conventional software development, refactoring often centers on abstracting functions,
 reducing duplication, and piping data. In game development, however, every mechanical
@@ -986,7 +939,7 @@ choice carries immediate ludological weight:
      (guided by Chrono facing Dream Eaters), allowing the player to awaken spiritually
      before physically waking up in Dio Village at Grandma Magolia's hearth.
 
-## 2. Implementation Telemetry & Invariant Verification
+### Implementation Telemetry & Invariant Verification
 
 The native simulation sub-assemblies were updated under the OmniCode 5-Block Protocol:
 
@@ -1009,10 +962,9 @@ The native simulation sub-assemblies were updated under the OmniCode 5-Block Pro
 
 ## Chapter 8: DevLog 009: Macro-History, Thematic Triad & Multi-Ending Architecture
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc`
+> **Source**: `docs/dev_logs/2026/11/lore_and_design/devlog_009_macro_history_thematic_triad_and_multi_ending_architecture.adoc`
 
-[abstract]
-## Abstract
+### Abstract
 
 This developer log documents the codification and formalization of the definitive macro-historical
 architecture, thematic psychological triad, and multi-ending campaign structure of *Tenebris and Lux*.
@@ -1022,7 +974,7 @@ the psychological triad linking past (Usuru, Casatti, Mi-ren) to present (Elijah
 the etiology of "The King's Curse," the evolution of Grandma's Watch into The Dream Compass, and the
 five-route ending matrix.
 
-## 1. Macro-Historical Canon: The 3,000-Year Dynastic Wave
+### Macro-Historical Canon: The 3,000-Year Dynastic Wave
 
 Following the grounding of combat skills and "The Dark Lord" antagonist in DevLog 008, the overarching
 chronology was formalized to eliminate narrative contrivance and anchor the simulation in systemic causality:
@@ -1049,7 +1001,7 @@ chronology was formalized to eliminate narrative contrivance and anchor the simu
    - This established order exposes frontier neglect (Dio Village) as systemic apathy and transforms
      King Jihad from a petty villain into an existential traitor.
 
-## 2. The Thematic Triad: "Trauma is Inherited, Destiny is Chosen"
+### The Thematic Triad: "Trauma is Inherited, Destiny is Chosen"
 
 Characters are mapped not merely by their weapons, but by an enduring psychological triad:
 
@@ -1063,7 +1015,7 @@ Characters are mapped not merely by their weapons, but by an enduring psychologi
   Both bear the burden of holding a fractured world together across the veil, synthesizing both perspectives
   to achieve true Equilibrium.
 
-## 3. Ludological Architecture & Multi-Ending Specification
+### Ludological Architecture & Multi-Ending Specification
 
 1. **The King's Curse as a Planar Wound:**
    - Court madness is revealed not as a demonic hex, but as the open planar wound beneath the High Throne
@@ -1081,7 +1033,7 @@ Characters are mapped not merely by their weapons, but by an enduring psychologi
    - *Route D:* The Abyssal Usurper (Neutral-Bad / The Cycle of Usuru — `-100` Moral Sway).
    - *Route E:* The Secret Chronicler Ending (Custom Bearer 100% Route).
 
-## 4. Verification Telemetry
+### Verification Telemetry
 
 All specifications strictly conform to the repository's C11 architectural constraints:
 * Zero heap allocations (`ALLOC_ZERO_HEAP`).
@@ -1095,10 +1047,9 @@ All specifications strictly conform to the repository's C11 architectural constr
 
 ## Chapter 9: DevLog 010: Layer 0 Subsystem Modularization & Data-Driven Architecture
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc`
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_010_layer_0_subsystem_modularization_and_data_driven_architecture.adoc`
 
-[abstract]
-## Executive Summary
+### Executive Summary
 
 This development log documents the architectural reorganization and data-driven
 elevation of Layer 0 (Core Utilities) within the *Tenebris and Lux* engine.
@@ -1113,14 +1064,13 @@ catalogs and default configuration profiles were generated for all utilities in
 `data/` with resilient hardcoded tripwire fallbacks, establishing true
 data-driven configurability across the entire foundational layer.
 
-[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
 ____
 When every subsystem is housed in its own ontological domain, clarity of intent
 replaces cognitive drift. Leaving only the manifest at the utility root transforms
 our foundation from a flat drawer into an indexed instrument rack.
 ____
 
-## 1. Architectural Motivation & The Problem of Flat Foundations
+### Architectural Motivation & The Problem of Flat Foundations
 
 Prior to this milestone, Layer 0 suffered from structural asymmetry. While the
 telemetry system had been refactored into `util/log/`, other foundational
@@ -1133,7 +1083,7 @@ moral sway continuum bounds) and timing parameters (such as the 60 FPS frame
 pacing budget and the 50-microsecond simulation turn limit) remained hardcoded
 inside the engine routines.
 
-### 1.1 Structural Hygiene Objectives
+#### Structural Hygiene Objectives
 
 1. **Root Directory Cleanliness**: Maintain only `manifest.h` and `manifest.c` at
    the root of `include/util/` and `src/util/`.
@@ -1150,13 +1100,12 @@ inside the engine routines.
    (`FS_BUFFER_SMALL_BYTES`, `FS_BUFFER_MEDIUM_BYTES`, `FS_BUFFER_LARGE_BYTES`)
    and implement zero-heap JSON nested object and array extraction.
 
-## 2. Subsystem Stratification & Pathing Standards
+### Subsystem Stratification & Pathing Standards
 
 Strict include pathing rules enforce explicit stratum and domain declarations
 across the codebase:
 
-[source,c]
-----
+```c
 #include "util/manifest.h"
 #include "util/data/fs_utils.h"
 #include "util/data/json_utils.h"
@@ -1165,33 +1114,32 @@ across the codebase:
 #include "util/math/geom_utils.h"
 #include "util/string/string_utils.h"
 #include "util/time/time_utils.h"
-----
+```
 
 Lazy forwarders at the `include/` root remain strictly forbidden, guaranteeing
 that every translation unit explicitly documents its upstream stratum bindings.
 
-## 3. Revision 2 Filesystem & JSON Engines
+### Revision 2 Filesystem & JSON Engines
 
-### 3.1 Zero-Heap Filesystem Engine (`core.util.fs` Rev 2)
+#### Zero-Heap Filesystem Engine (`core.util.fs` Rev 2)
 
 To accommodate larger external configuration catalogs without heap allocation,
 `fs_utils.h` establishes canonical buffer sizing constants:
 
-[cols="1,1,3", options="header"]
-|===
-| Buffer Constant | Capacity | Intended Machine Role
-| `FS_BUFFER_SMALL_BYTES` | 1,024 B | Headers, status lines, and short tokens
-| `FS_BUFFER_MEDIUM_BYTES` | 8,192 B | Standard profile configurations (< 8 KB)
-| `FS_BUFFER_LARGE_BYTES` | 32,768 B | Aggregate catalogs and world node graphs
-| `FS_BUFFER_MAX_CONFIG` | 65,536 B | Upper limit ceiling for configuration files
-| `FS_PATH_MAX` | 512 B | Maximum supported filepath length
-|===
+| Buffer Constant | Capacity | Intended Machine Role |
+| --- | --- | --- |
+| `FS_BUFFER_SMALL_BYTES` | 1,024 B | Headers, status lines, and short tokens |
+| `FS_BUFFER_MEDIUM_BYTES` | 8,192 B | Standard profile configurations (< 8 KB) |
+| `FS_BUFFER_LARGE_BYTES` | 32,768 B | Aggregate catalogs and world node graphs |
+| `FS_BUFFER_MAX_CONFIG` | 65,536 B | Upper limit ceiling for configuration files |
+| `FS_PATH_MAX` | 512 B | Maximum supported filepath length |
+
 
 The module exposes safe bounded file reading (`fs_read_file_bounded`), recursive
 directory creation (`fs_ensure_directory`), and atomic file writing
 (`fs_write_file_contents`) with parent directory provisioning.
 
-### 3.2 Zero-Heap JSON Engine (`core.util.json` Rev 2)
+#### Zero-Heap JSON Engine (`core.util.json` Rev 2)
 
 `json_utils` has been expanded to support nested object navigation and array
 inspection while adhering strictly to `ALLOC_ZERO_HEAP`:
@@ -1204,12 +1152,12 @@ inspection while adhering strictly to `ALLOC_ZERO_HEAP`:
 * `json_array_get_count()`: Tally elements at depth 1 without heap allocations.
 * `json_array_get_string()`: Extracts the *i*-th string element safely.
 
-## 4. External Data Menus & Fallback Tripwires
+### External Data Menus & Fallback Tripwires
 
 Mirroring the architecture established for the logging subsystem, new structured
 data folders have been created in `data/`:
 
-### 4.1 Mathematical Continuum (`data/math/`)
+#### Mathematical Continuum (`data/math/`)
 
 * `manifest.json`: Menu catalog registering active profile `default`.
 * `default.json`: Canonical limits grounding game metaphysics:
@@ -1219,27 +1167,27 @@ data folders have been created in `data/`:
 ** Overload / eclipse thresholds: `+75` and `-75`
 ** Viewport dimensions: `800 x 600`
 
-### 4.2 Timing & Frame Pacing (`data/time/`)
+#### Timing & Frame Pacing (`data/time/`)
 
 * `manifest.json`: Menu catalog registering `default` and `high_refresh`.
 * `default.json`: 60 FPS profile (`16.666667 ms` frame budget, `50.0 us` turn budget).
 * `high_refresh.json`: 120 FPS profile (`8.333333 ms` frame budget, `25.0 us` turn budget).
 
-### 4.3 Lexical & Buffer Disciplines (`data/string/`)
+#### Lexical & Buffer Disciplines (`data/string/`)
 
 * `manifest.json`: Menu catalog registering `default`.
 * `default.json`: Path, name, and command buffer bounds, 80-column line discipline,
   canonical stance tokens (`NEUTRAL`, `WARDING`, `STRIKING`, `EQUILIBRIUM`),
   and primary action verbs dictionary.
 
-### 4.4 The Fallback Tripwire Protocol
+#### The Fallback Tripwire Protocol
 
 When loading configurations, each subsystem first probes external JSON files.
 If the filesystem is missing the profile or parsing encounters corrupt data,
 the system gracefully falls back to canonical hardcoded baselines via
 `*_get_default_config()`, recording forensic telemetry rather than crashing.
 
-## 5. Verification & Telemetry Results
+### Verification & Telemetry Results
 
 All modifications underwent rigorous automated verification:
 
@@ -1255,7 +1203,7 @@ All modifications underwent rigorous automated verification:
 3. **Master Compendium Compilation**: All 64 chapters compiled across AsciiDoc,
    GitHub Markdown, and publication PDF via `asciidoctor-pdf`.
 
-## 6. Conclusion & Architectural Reflection
+### Conclusion & Architectural Reflection
 
 By reorganizing Layer 0 into domain subdirectories, isolating `manifest.h` and
 `manifest.c` at the root, and expanding the zero-heap data engine to power
@@ -1268,10 +1216,9 @@ subsequent gameplay expansions without risking architectural context drift.
 
 ## Chapter 10: DevLog 011: Four-Tier Verification Strata & Ontological Testing Framework
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc`
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_011_four_tier_verification_strata_and_ontological_testing_framework.adoc`
 
-[abstract]
-## Executive Summary
+### Executive Summary
 
 This development log documents the architectural expansion and ontological formalization
 of the automated game development verification suite in *Tenebris and Lux*. To prepare
@@ -1284,7 +1231,6 @@ a four-pillar ontological verification framework: (1) Tests that should always p
 (3) Tests that are an assertion and guarantee (Axiomatic Invariants), and (4) Tests that
 account for emergence (Stochastic Stress, Replay Determinism & Latency Budgets).
 
-[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
 ____
 Before you can build an instrument to debug the machine, you must prove that each
 individual cog turns true in isolation, that grouped assemblies mesh without friction,
@@ -1292,7 +1238,7 @@ and that the entire clockwork withstands chaotic turbulence. A test suite is not
 hurdle; it is the mathematical guarantee of reality.
 ____
 
-## 1. Architectural Motivation & The Problem of Amorphous Testing
+### Architectural Motivation & The Problem of Amorphous Testing
 
 In earlier milestones, Layer 4 (Verification Suite) maintained a basic distinction between
 `tests/unit/` (which housed `test_utils.c` and `test_log.c`) and `tests/integrated/`
@@ -1316,10 +1262,9 @@ prevented crude regressions, it suffered from three fundamental structural short
 To resolve these deficits, Layer 4 was systematically restructured into four distinct
 strata, and the test contracts were unified under four universal ontological sections.
 
-## 2. The Four-Tier Testing Strata
+### The Four-Tier Testing Strata
 
-[source,text]
-----
+```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │                   TIER 4: SYSTEM VERIFICATION                          │
 │  tests/system/test_game_invariants.c & test_gameplay_scenarios.c       │
@@ -1337,9 +1282,9 @@ strata, and the test contracts were unified under four universal ontological sec
 │  tests/functional/test_functional.c                                    │
 │  Granular cog-by-cog execution with step-by-step trace telemetry       │
 └────────────────────────────────────────────────────────────────────────┘
-----
+```
 
-### Tier 1: Functional Debugging (`tests/functional/test_functional.c`)
+#### Tier 1: Functional Debugging (`tests/functional/test_functional.c`)
 
 The functional test harness serves as an interactive diagnostic workbench. It evaluates
 seventeen fundamental engine functions across utilities and simulation logic in complete
@@ -1348,7 +1293,7 @@ arguments and resulting outputs. If an unexpected behavior manifests anywhere in
 engine, developers run `./build/test_functional` to immediately determine whether the
 fault lies within the core mathematical, string, or state primitives.
 
-### Tier 2: Subsystem Unit Harnesses (`tests/unit/`)
+#### Tier 2: Subsystem Unit Harnesses (`tests/unit/`)
 
 Provides 1:1 parity with the Layer 0 domain directories:
 
@@ -1367,7 +1312,7 @@ Provides 1:1 parity with the Layer 0 domain directories:
 * **`test_log.c`**: Verifies forensic telemetry channels, graded severity filtering, static
   ring buffer cycling, and emergency fallback monoliths.
 
-### Tier 3: Integrated Utilities Harness (`tests/integrated/test_utils.c`)
+#### Tier 3: Integrated Utilities Harness (`tests/integrated/test_utils.c`)
 
 Validates the multi-subsystem coordination of all Layer 0 utilities. Exercises the central
 manifest registry (`manifest.c`), validates upstream DAG dependency resolution, enforces
@@ -1375,7 +1320,7 @@ diagnostic escalation policies (WARNING -> `PREFLIGHT_STATUS_WARNINGS`, CRITICAL
 `PREFLIGHT_STATUS_DOWNGRADED`, FATAL -> `PREFLIGHT_STATUS_HALT_FATAL`), and benchmarks
 multi-profile synchronous boot latency (< 5 milliseconds).
 
-### Tier 4: System Verification Harnesses (`tests/system/`)
+#### Tier 4: System Verification Harnesses (`tests/system/`)
 
 * **`test_game_invariants.c`**: Validates Layer 1 simulation engine state invariants: twin
   relic power bounds ([0, 100]), moral sway continuum boundaries ([-100, +100]), protagonist
@@ -1385,31 +1330,19 @@ multi-profile synchronous boot latency (< 5 milliseconds).
   command fuzzing for softlock immunity, and 10,000-turn simulation latency benchmarking
   (< 50 microseconds per turn).
 
-## 3. The Four Ontological Testing Sections
+### The Four Ontological Testing Sections
 
 Every test file in the engine now implements the four-section ontological model:
 
-[cols="1,2,3", options="header"]
-|===
-| Section | Category | Mission & Verification Scope
-| **Section 1** | **Always Pass**
-| Valid inputs, nominal parameters, default configuration loading, standard state
-initialization, well-formed JSON, normal gameplay actions. Proves the golden baseline.
+| Section | Category | Mission & Verification Scope |
+| --- | --- | --- |
+| **Section 1** | **Always Pass** | Valid inputs, nominal parameters, default configuration loading, standard state<br>initialization, well-formed JSON, normal gameplay actions. Proves the golden baseline. |
+| **Section 2** | **Never Fail** | Inviolability under error. Injects NULL pointers, zero capacities, missing files, corrupted<br>JSON, and unknown stances. Proves tripwire activation and safe fallback without OS traps. |
+| **Section 3** | **Assertion & Guarantee** | Axiomatic mathematical laws and structural contracts: bounded clamping, non-decreasing<br>monotonic clocks, strict null-termination under truncation, and deterministic stance completeness. |
+| **Section 4** | **Emergence** | Higher-order systemic behaviors: 1,000 pseudo-random fuzzing iterations, spatial grid<br>overlap emergence, golden replay bitwise equality across runs, and < 50 µs latency budgets. |
 
-| **Section 2** | **Never Fail**
-| Inviolability under error. Injects NULL pointers, zero capacities, missing files, corrupted
-JSON, and unknown stances. Proves tripwire activation and safe fallback without OS traps.
 
-| **Section 3** | **Assertion & Guarantee**
-| Axiomatic mathematical laws and structural contracts: bounded clamping, non-decreasing
-monotonic clocks, strict null-termination under truncation, and deterministic stance completeness.
-
-| **Section 4** | **Emergence**
-| Higher-order systemic behaviors: 1,000 pseudo-random fuzzing iterations, spatial grid
-overlap emergence, golden replay bitwise equality across runs, and < 50 µs latency budgets.
-|===
-
-## 4. Preparing for the Interactive Debugger
+### Preparing for the Interactive Debugger
 
 The restructuring of Layer 4 is the necessary prerequisite for building the upcoming
 interactive engine debugger. Specifically:
@@ -1424,13 +1357,12 @@ interactive engine debugger. Specifically:
    tripwires rather than memory crashes, the debugger can trap and report corrupt inputs
    with full stack and manifest context.
 
-## 5. Verification Telemetry & Verification Matrix
+### Verification Telemetry & Verification Matrix
 
 Compilation under GCC 11 with `-Wall -Wextra -Wpedantic` compiled with zero warnings.
 Automated CTest execution verified all twelve test targets:
 
-[source,text]
-----
+```text
 Test project /home/professorseanex/Tenebris and Lux/build
       Start  1: cli_help_test
  1/12 Test  #1: cli_help_test ....................   Passed    0.00 sec
@@ -1459,7 +1391,7 @@ Test project /home/professorseanex/Tenebris and Lux/build
 
 100% tests passed, 0 tests failed out of 12
 Total Test time (real) =   0.02 sec
-----
+```
 
 Internal self-audit (`./build/tenebris-lux --audit`) reported:
 * 14 registered subsystem modules passed pre-flight audit with status `OPTIMAL`.
@@ -1471,10 +1403,9 @@ Internal self-audit (`./build/tenebris-lux --audit`) reported:
 
 ## Chapter 11: DevLog 012: Interactive Debugging System & State Rewind Architecture
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc`
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_012_interactive_debugging_system_and_state_rewind_architecture.adoc`
 
-[abstract]
-## Executive Summary
+### Executive Summary
 
 This development log chronicles the design, implementation, and verification of the
 *Interactive State Debugger & Time-Travel Rewind Architecture* in *Tenebris and Lux*.
@@ -1488,14 +1419,13 @@ verification suite has expanded to 13 passing CTest targets, with `test_log.c` a
 `test_debug.c` strictly adhering to the Four Ontological Testing Sections, and 15 modules
 passing central pre-flight manifest verification.
 
-[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
 ____
 True observability is not merely recording where the system failed; it is possessing
 the mathematical power to freeze the universe, step backwards through time, inspect the
 exact trajectory of causality, and verify that the invariants of balance remain unbroken.
 ____
 
-## 1. Architectural Motivation & The Problem of Blind Mutation
+### Architectural Motivation & The Problem of Blind Mutation
 
 In complex tactical TRPG simulations featuring moral sway continuums, dual-relic resonance
 conservation, and branching multi-path endings, diagnosing subtle emergent phenomena
@@ -1515,13 +1445,12 @@ via standard print statements is inherently flawed:
 To solve these challenges, we designed a zero-heap, decoupled state debugger in Layer 0
 complemented by simulation adapters in Layer 1 and presentation controls in Layer 3.
 
-## 2. Decoupled State Snapshot Ring Buffer Architecture
+### Decoupled State Snapshot Ring Buffer Architecture
 
 The debugging engine models simulation history through an in-memory circular ring buffer
 residing in static BSS storage:
 
-[source,text]
-----
+```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │               LAYER 0: ZERO-HEAP STATE DEBUGGER ENGINE                 │
 │  src/util/debug/debug.c <-> include/util/debug/debug.h                 │
@@ -1540,9 +1469,9 @@ residing in static BSS storage:
 │  ├── state_hash (FNV-1a 32-bit Checksum)                               │
 │  └── log_sequence_id (Binding Snapshot to Forensic Telemetry Entry)    │
 └────────────────────────────────────────────────────────────────────────┘
-----
+```
 
-### Strict Decoupling Invariant
+#### Strict Decoupling Invariant
 
 Layer 0 never includes Layer 1 simulation headers (`sim/sim_types.h` or `sim/game.h`).
 Instead:
@@ -1553,9 +1482,9 @@ Instead:
   * `game_record_debug_snapshot()` captures turn-boundary snapshots.
   * `game_rewind_debug_snapshot()` safely rewinds the live player simulation.
 
-## 3. Dynamic Breakpoints & Differential State Analysis
+### Dynamic Breakpoints & Differential State Analysis
 
-### Multi-Condition Breakpoint Engine
+#### Multi-Condition Breakpoint Engine
 
 Developers and automated harnesses can register watchpoints across 7 distinct condition types:
 
@@ -1567,13 +1496,12 @@ Developers and automated harnesses can register watchpoints across 7 distinct co
 6. `DEBUG_BREAK_LOCATION`: Triggers upon journeying into a designated province.
 7. `DEBUG_BREAK_TRIPWIRE`: Triggers when any subsystem trips a latched diagnostic wire.
 
-### State Differential Analysis (`debug_diff_snapshots`)
+#### State Differential Analysis (`debug_diff_snapshots`)
 
 Rather than inspecting raw memory, `debug_diff_snapshots()` computes formatted ASCII
 differential tables displaying exact deltas across turns:
 
-[source,text]
-----
+```text
 Snapshot Diff: #1 (Turn 1) -> #2 (Turn 2)
 --------------------------------------------------
   HP:           100 -> 90 (-10)
@@ -1581,9 +1509,9 @@ Snapshot Diff: #1 (Turn 1) -> #2 (Turn 2)
   Sword (Ten):  50 -> 55 (+5)
   Moral Sway:   0 -> 5 (+5)
   State Hash:   0xAA851EE1 -> 0xB79D3C20
-----
+```
 
-## 4. Data-Driven Debugger Profiles & Fallback Monoliths
+### Data-Driven Debugger Profiles & Fallback Monoliths
 
 Following the data-driven architecture of `data/manifest.json`, the debugger catalog
 is maintained under `data/debug/`:
@@ -1598,7 +1526,7 @@ is maintained under `data/debug/`:
 * `src/util/debug/debug_fallback.c`: Quarantined emergency fallback code page guaranteeing
   operational readiness even if external JSON assets are missing or corrupted.
 
-## 5. Verification Telemetry & Verification Expansion
+### Verification Telemetry & Verification Expansion
 
 With this milestone, the verification suite achieves 100% green status across all tiers:
 
@@ -1622,10 +1550,9 @@ With this milestone, the verification suite achieves 100% green status across al
 
 ## Chapter 12: DevLog 013: Morality Architecture, Bystander Corridor & Ten-Ending Matrix
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc`
+> **Source**: `docs/dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc`
 
-[abstract]
-## Abstract
+### Abstract
 
 This developer log documents the comprehensive formalization of the morality architecture,
 philosophical foundations, and multi-route campaign topology for *Tenebris and Lux*.
@@ -1636,7 +1563,7 @@ provincial micro-verbs, expands the ending topology into a full 3x3 matrix crown
 True Ending ("The Ugly Truth"), formalizes the Witness Protagonist and Keystone Route architecture,
 and embeds core simulation subsystems into diegetic engine artifacts.
 
-## 1. Decoupling Morality ("The Why") from Elemental Expression ("The How")
+### Decoupling Morality ("The Why") from Elemental Expression ("The How")
 
 Prior design iterations occasionally risked falling into the conventional fantasy trap of conflating
 Light with intrinsic goodness and Darkness with intrinsic malice. DevLog 013 formally rectifies
@@ -1664,9 +1591,9 @@ and cements the cosmological boundary:
   Layer 1 simulation, attempting to project radiant barriers while sliding into negative `moral_sway`
   causes the barrier to waver and collapse.
 
-## 2. Psychological & Systemic Catalysts: The Bystander Corridor vs. The Butterfly Effect
+### Psychological & Systemic Catalysts: The Bystander Corridor vs. The Butterfly Effect
 
-### 2.1. Why `[-50, +50]` Constitutes "Neutrality" as Net Moral Inertia
+#### Why `[-50, +50]` Constitutes "Neutrality" as Net Moral Inertia
 In an active universe where absolute Good and Evil exert constant moral gravity, true neutrality
 belongs only to inanimate stones. For living mortals, the `[-50, +50]` corridor is classified as
 Neutral because it represents **Net Moral Inertia**:
@@ -1682,7 +1609,7 @@ Neutral because it represents **Net Moral Inertia**:
   historical momentum to reassert itself, dragging both youths into the bitter cynicism and tragedy
   of their predecessors.
 
-### 2.2. The Butterfly Effect: Micro-Agency Overriding Fate
+#### The Butterfly Effect: Micro-Agency Overriding Fate
 Derived from chaos theory, tiny perturbations in initial conditions compound nonlinearly into
 radically divergent macro-outcomes:
 
@@ -1693,7 +1620,7 @@ radically divergent macro-outcomes:
 * By crossing the $\pm 50$ conviction threshold, the player breaks the dynastic curse, affirming the
   project axiom: *"Trauma is Inherited, Destiny is Chosen."*
 
-## 3. Complete Taxonomy of the Moral Sway Continuum (`[-100, +100]`)
+### Complete Taxonomy of the Moral Sway Continuum (`[-100, +100]`)
 
 The continuum is codified into a formal 13-tier diagnostic nomenclature:
 
@@ -1711,9 +1638,9 @@ The continuum is codified into a formal 13-tier diagnostic nomenclature:
 12. **`[-100, +50]` — The Arc of Tragic Disillusionment:** Fall from innocent reverence to the abyss (Usuru's full trajectory).
 13. **`[-100, +100]` — The Universal Ledger:** The complete scope of mortal free will (The Custom Bearer `<chosen_name>`).
 
-## 4. The 10-Ending Matrix & The Witness Observer
+### The 10-Ending Matrix & The Witness Observer
 
-### 4.1. The 3x3 Matrix + The 10th True Ending
+#### The 3x3 Matrix + The 10th True Ending
 Combining the 3 elemental expressions (Lux, Tenebris, Statera) with the 3 moral bands (Good, Neutral, Bad)
 yields 9 matrix endings, crowned by the 10th synthesis route:
 
@@ -1731,7 +1658,7 @@ yields 9 matrix endings, crowned by the 10th synthesis route:
     Confronts institutional guilt, releases the First King's soul, reconciles Usuru's childhood grief, exposes
     King Jihad, and permanently mends the 3,000-year planar tear.
 
-### 4.2. The Witness Protagonist & Keystone Route Architecture
+#### The Witness Protagonist & Keystone Route Architecture
 * **Internal vs. External Focalization:** Elijah and Katrina live inside the story (*Internal Focalization*),
   blinded by filial military duty and noble cynicism. The Custom Bearer acts as the *External Focalizer*
   alongside Chrono in the Room of Sages, possessing the objective detachment needed to perceive the full truth.
@@ -1740,7 +1667,7 @@ yields 9 matrix endings, crowned by the 10th synthesis route:
 * **The Quantum Observer Effect:** Left alone, Sacyra oscillates in endless tragedy. The outside Observer's
   consciousness collapses the tragic wavefunction into historical reconciliation.
 
-## 5. Diegetic Item Architecture & Save Mechanics
+### Diegetic Item Architecture & Save Mechanics
 
 Core simulation subsystems are embedded directly into physical in-game items:
 
@@ -1756,7 +1683,7 @@ Core simulation subsystems are embedded directly into physical in-game items:
   to pivotal decision bookmarks without replaying 30 hours of intro content.
 * **Speedrunner Determinism:** Monotonic clock guarantees 100% deterministic turn routing and frame-accurate triggers.
 
-## 6. Historical Grounding: The 2017–2018 Demo Baseline
+### Historical Grounding: The 2017–2018 Demo Baseline
 
 Every sequence from Folders 1 & 2 stages Sacyra's history in microcosm:
 * **Maps 002–003 (Walk of Fear & Festival of Heroes):** Sir Roté's warnings mirror the ancient Festival of Peoples;
@@ -1766,7 +1693,7 @@ Every sequence from Folders 1 & 2 stages Sacyra's history in microcosm:
 * **Maps 020–031 (Dio Village as Libira 2.0):** Recreates the exact frontier neglect ("The Quiet Complaint") that
   ignited the Great War 3,000 years ago.
 
-## 7. Verification & Invariant Audit
+### Verification & Invariant Audit
 
 All systems and state boundaries strictly adhere to Layer 1 simulation invariants:
 * `moral_sway` bounded strictly in `[-100, +100]`.
@@ -1779,10 +1706,9 @@ All systems and state boundaries strictly adhere to Layer 1 simulation invariant
 
 ## Chapter 13: DevLog 014: High Fantasy Presentation Engine & 5-Screen UI
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc`
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc`
 
-[abstract]
-## Executive Summary
+### Executive Summary
 
 This development log chronicles the comprehensive re-engineering of the presentation engine in
 *Tenebris and Lux*, transforming it from a raw X11 fixed-bitmap prototype into a rich,
@@ -1799,16 +1725,15 @@ Furthermore, this log records a thorough architectural review of the entire syst
 identifying key technical strengths, outstanding gaps, and technical debt to align ahead of the
 upcoming `v0.1.0` consolidation milestone.
 
-[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
 ____
 A tactical RPG is not merely arithmetic in a dark void. Typography, proportion, heraldry, and
 space are narrative instruments. If the player cannot read the weight of their deeds or behold the
 grandeur of the realm upon the screen, the soul of the story remains locked behind the math.
 ____
 
-## 1. Visual Balance Dilemma & High-DPI Typography Subsystem
+### Visual Balance Dilemma & High-DPI Typography Subsystem
 
-### The Problem of Fixed-Width Core Bitmap Fonts
+#### The Problem of Fixed-Width Core Bitmap Fonts
 Early engine iterations utilized X11 core bitmap fonts (`9x15`, `fixed`) inherited from classic
 Unix workstation conventions. While functional for initial terminal and low-resolution prototyping,
 these fonts failed completely on modern high-DPI displays and widescreen aspect ratios:
@@ -1819,7 +1744,7 @@ these fonts failed completely on modern high-DPI displays and widescreen aspect 
 3. **Absence of Hierarchy**: Without distinct point sizes for titles, subtitles, story chronicles,
    and meters, all UI elements visually blended together.
 
-### TrueType Vector Typography Architecture (`gui_fonts.h`, `gui_fonts.c`)
+#### TrueType Vector Typography Architecture (`gui_fonts.h`, `gui_fonts.c`)
 To resolve this, we integrated an open-source scalable TrueType font catalog into `assets/fonts/`:
 * **`CinzelDecorative-Bold.ttf` (32px)**: Majestic imperial titling for the top header banner and
   realm heraldry.
@@ -1834,8 +1759,7 @@ The typography subsystem enforces zero heap allocation by loading X11 font struc
 descriptors. At engine initialization, `ensure_font_path_registered()` dynamically registers the
 local font path (`xset fp+ assets/fonts`) and rehashes the X server font catalog:
 
-[source,c]
-----
+```c
 // include/gui/gui_fonts.h: Typography Catalog Structure
 typedef struct {
     void *title_font;     // Cinzel Decorative Bold 32px
@@ -1844,11 +1768,11 @@ typedef struct {
     void *ui_font;        // Cinzel Medium / Palladio 18px
     bool is_loaded;       // True if X11 server bound fonts
 } gui_font_catalog_t;
-----
+```
 
-## 2. Responsive Widescreen Scaling & Isometric Dais Zoom
+### Responsive Widescreen Scaling & Isometric Dais Zoom
 
-### Eliminating the Widescreen Void
+#### Eliminating the Widescreen Void
 In previous fullscreen tests ($1450\times 700\text{ px}$ and $1920\times 1080\text{ px}$), the 8x8
 isometric dais remained locked at a tiny $384\times 192\text{ px}$ footprint, leaving ~75% of the
 viewport as an empty obsidian void, while the right status panel was squashed
@@ -1864,35 +1788,34 @@ bounds of the viewport rectangle:
 * **Scale 1x ($< 800\text{ px}$)**: Compact windowed baseline ($384\times 192\text{ px}$ dais,
   $32\times 32\text{ px}$ sprites).
 
-### Ground Shadow Apron & Shaded Elevation Prisms
+#### Ground Shadow Apron & Shaded Elevation Prisms
 To firmly anchor the floating dais in space, the renderer projects a diamond ground foundation
 apron beneath the battlefield, rendered in obsidian drop-shadow (`pal->shadow`) with etched carved
 cobblestone borders. Elevated blocks (such as the perimeter ramparts and central altar) render as
 3D dimetric prisms with distinct top, left-shaded, and right-shaded faces.
 
-## 3. Dedicated 5-Screen Navigation Architecture
+### Dedicated 5-Screen Navigation Architecture
 
 Rather than forcing every gameplay mechanic, lore entry, and inventory slot into a single crowded
 sidebar, the presentation layer was modularized into five distinct presentation screens governed
 by a top navigation tab bar:
 
-[source,text]
-----
+```text
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │ TENEBRIS AND LUX — Tactical TRPG & Hero's Journey            [Era VI: Accord of Kings] │
 ├───────────────────┬────────────────┬───────────────┬──────────────┬────────────────────┤
 │ [1: Tactical]     │ [2: Hero]      │ [3: Items]    │ [4: World]   │ [5: Lore]          │
 └───────────────────┴────────────────┴───────────────┴──────────────┴────────────────────┘
-----
+```
 
-### Screen 1: Tactical Battle (`GUI_SCREEN_TACTICAL`)
+#### Screen 1: Tactical Battle (`GUI_SCREEN_TACTICAL`)
 * **Presentation**: 2.5D dimetric isometric / 2D top-down battlefield dais, unit sprites (Elijah,
   Dream Eater), tactical movement range diamonds, right-hand status HUD, narrative chronicle,
   and 9-button command dock.
 * **Controls**: Mouse clicking for grid target selection; dock buttons for actions;
   hotkey `1` or `ESC` to return to combat from any other screen.
 
-### Screen 2: Protagonist Hero Dossier (`GUI_SCREEN_STATUS`)
+#### Screen 2: Protagonist Hero Dossier (`GUI_SCREEN_STATUS`)
 * **Presentation**: Full-canvas 3-column grand protagonist dossier:
   * *Column 1*: Hero Identity, Title, Class designation, Origin tutelage, and a 140px heraldic
     crest bounding box.
@@ -1903,7 +1826,7 @@ by a top navigation tab bar:
     vanquished, innocents warded, turns taken, kingdom gold treasury).
 * **Controls**: Hotkey `2` or `i` (Inspect).
 
-### Screen 3: 32-Slot Inventory Bag & Relics (`GUI_SCREEN_INVENTORY`)
+#### Screen 3: 32-Slot Inventory Bag & Relics (`GUI_SCREEN_INVENTORY`)
 * **Presentation**: An interactive 32-slot inventory grid (4 rows of 8 cells) with golden border
   highlights for filled slots, slot counters, and gold purse telemetry.
 * **Key Artifact Card**: Displays Grandma's Watch inspection card:
@@ -1913,7 +1836,7 @@ by a top navigation tab bar:
   * *Power*: Pierces the planar illusion of the High Throne.
 * **Controls**: Hotkey `3` or `u` (Use/Bag).
 
-### Screen 4: Provincial Realm Topology Map (`GUI_SCREEN_WORLD_MAP`)
+#### Screen 4: Provincial Realm Topology Map (`GUI_SCREEN_WORLD_MAP`)
 * **Presentation**: Full-canvas cartographic map of Sacyra and Libira showing trade roads and the
   six canonical provincial nodes:
   1. *The Dreamscape* (Astral Nexus)
@@ -1925,18 +1848,18 @@ by a top navigation tab bar:
 * **Party Marker**: Current party location highlighted with a radiant pulsing gold diamond.
 * **Controls**: Hotkey `4` or `o` (Overworld).
 
-### Screen 5: Chronicle Lore Codex (`GUI_SCREEN_CHRONICLE`)
+#### Screen 5: Chronicle Lore Codex (`GUI_SCREEN_CHRONICLE`)
 * **Presentation**: Full-canvas historical deed codex and lore ledger rendered in 20px
   `MedievalSharp` calligraphic typography, scrolling through past tactical events, dialogues,
   and realm chronicle entries.
 * **Controls**: Hotkey `5` or `c` (Chronicle).
 
-## 4. Architectural Review & State of the Engine (v1.4.0)
+### Architectural Review & State of the Engine (v1.4.0)
 
 As we prepare for the `v0.1.0` consolidation milestone, we conducted a comprehensive review
 evaluating current strengths, outstanding gaps, and architectural debt:
 
-### What Is Going Well (Core Strengths)
+#### What Is Going Well (Core Strengths)
 1. **Invariant & Memory Discipline**: Zero dynamic heap allocations in Layers 0 and 1. Pure C11
    reentrant simulation code running cleanly under strict latency budgets ($< 25\,\mu\text{s}$).
 2. **Automated Verification**: 19/19 passing CTest verification targets (< 0.5s execution time),
@@ -1948,7 +1871,7 @@ evaluating current strengths, outstanding gaps, and architectural debt:
 4. **Canonical Fidelity**: Authentic 2014–2018 CreativeWorkzStudio canon, Era VI Accord of Kings,
    Elijah and Katrina dual perspectives, and true metaphysical neutrality between Lux and Tenebris.
 
-### What Is Missing (Gaps to Address)
+#### What Is Missing (Gaps to Address)
 1. **Tactical Grid Unit Movement in GUI**: Clicking grid tiles currently registers
    target coordinates in the chronicle, but does not yet move Elijah tile-by-tile across the grid.
 2. **Dynamic Map Swapping in Presentation**: `maps.c` defines 8 canonical maps, but `gui_view2d.c`
@@ -1965,7 +1888,7 @@ evaluating current strengths, outstanding gaps, and architectural debt:
 7. **Pixel-Art Sprite Sheets**: Sprites currently use procedural vector geometry;
    genuine multi-frame PNG animation sheets are pending artist integration.
 
-### Consistency vs. Inconsistency Analysis (Technical Debt)
+#### Consistency vs. Inconsistency Analysis (Technical Debt)
 1. **Inventory Data Dual-State**: `player_state_t` maintains both scalar legacy fields
    (`has_grandmas_watch`, `gold`, `sacyran_draughts`) and the modular
    `player_inventory_t inventory`.
@@ -1978,10 +1901,9 @@ evaluating current strengths, outstanding gaps, and architectural debt:
    `Lux Barrio`, `Cuttatio`, and `Duo-Loca`.
    *Plan*: Implement `skills_loader.c` to parse the JSON grimoire into static engine tables.
 
-## 5. Verification Telemetry
+### Verification Telemetry
 
-[source,text]
-----
+```text
 Test project /home/professorseanex/Tenebris and Lux/build
       Start  1: cli_help_test                    Passed (0.00s)
       Start  2: cli_version_test                 Passed (0.00s)
@@ -2007,9 +1929,9 @@ Test project /home/professorseanex/Tenebris and Lux/build
 Pre-Flight Audit: 16/16 module manifests & 7/7 invariant tripwires passed.
 Compiler Diagnostics: Clean (-Wall -Wextra -Wpedantic, GCC/Clang C11).
 Column Discipline: 100% compliant with strict <= 80 characters limit.
-----
+```
 
-## 6. Summary & Forward Stance
+### Summary & Forward Stance
 
 With high-fantasy typography, responsive widescreen scaling, and the 5-screen navigation
 architecture operational and installed to the PC, the visual and architectural scaffolding of
@@ -2022,10 +1944,9 @@ and laying the groundwork for interactive grid movement.
 
 ## Chapter 14: DevLog 015: The Big Machine, Master Turn Gear & Core Subsystem Elevation
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc`
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc`
 
-[abstract]
-## Executive Summary
+### Executive Summary
 
 This development log documents the pivotal architectural evolution of *Tenebris and Lux*
 under the **OmniCode Universal 5-Block Lifecycle Protocol (Rev 4)**. In this cycle, the project
@@ -2045,7 +1966,6 @@ Ontological Testing Sections** (Always Pass, Expected Input, Boundary Stress, Ch
 and scaling our automated CTest suite to **51/51 passing test suites (100%)** while verifying all
 20 registered engine modules under `./build/tenebris-lux --audit` with zero dynamic heap allocations.
 
-[quote, ProfessorSeanEX, CreativeWorkzStudio Architecture Council]
 ____
 The Big Machine provides the mechanical powertrain—monotonic clocks, display surfaces, virtual
 filesystems, and flight logging rings. The Game is the Master Turn Gear that slots into that
@@ -2054,9 +1974,9 @@ universal, elevate it into the machine. When an old contract shifts, purge the s
 compiler guide the seam.
 ____
 
-## 1. The Architectural Paradigm: The Big Machine & The Master Turn Gear
+### The Architectural Paradigm: The Big Machine & The Master Turn Gear
 
-### Cognitive Separation of Powers
+#### Cognitive Separation of Powers
 A perennial failure mode in game development is the entangled coupling of generic engine systems
 with domain-specific lore, narrative scripts, and campaign states. In Rev 4, we codified an
 uncompromising boundary:
@@ -2088,7 +2008,7 @@ uncompromising boundary:
    bringing the tactical turn loop, the twin armaments (Shield of Lux, Sword of Tenebris), moral
    sway (`[-100, +100]`), and the continental chronicles of Sacyra and Libira.
 
-### Dual Waterfall & Agile Engineering Discipline
+#### Dual Waterfall & Agile Engineering Discipline
 Game engine development demands two seemingly opposing disciplines at once:
 * **Waterfall Bedrock (The Cast-Iron Frame)**: Memory limits (`ALLOC_ZERO_HEAP` in Layer 0/1),
   strict ISO C11 adherence, strictly downward layer dependency flow, and universal 5-block
@@ -2098,11 +2018,11 @@ Game engine development demands two seemingly opposing disciplines at once:
   (`io/` -> `log/` -> `debug/` -> `core/`), using test failures and compiler diagnostics as
   precision feedback to guide refactoring.
 
-## 2. Layer 0 Modernization: The Complete Four-Strata Engine Bedrock
+### Layer 0 Modernization: The Complete Four-Strata Engine Bedrock
 
 Each foundational subsystem was refactored under the strict 5-block lifecycle protocol:
 
-### 2.1 Virtual Filesystem & I/O (`io/`)
+#### Virtual Filesystem & I/O (`io/`)
 * **`path_finder`**: Zero-heap path resolver supporting multi-root searching across `game/data/`,
   `build/`, and system directories, eliminating buffer-truncation false positives.
 * **`fs_utils`**: Bounded line and block file reading without dynamic heap allocations.
@@ -2110,20 +2030,20 @@ Each foundational subsystem was refactored under the strict 5-block lifecycle pr
 * **`master_loader`**: Schema-validated asset loader verifying `block_1_metadata` envelopes and
   requiring explicit `block_3_body` payloads (`tenlux.data.*`).
 
-### 2.2 Telemetry & Ring Flight Logging (`log/`)
+#### Telemetry & Ring Flight Logging (`log/`)
 * **`log`**: Categorized flight recorder (`LOG_CAT_LOG`, `LOG_CAT_DEBUG`, `LOG_CAT_CHARACTER`)
   storing entries into a static ring buffer.
 * Formatted with fixed-width column anchors, millisecond-precision ISO timestamps, and signed
   telemetry grades (`GRADE:+003`, `GRADE:-050`).
 * Automatic flight log rotation (`tenebris_lux_dev.log.*`) quarantined into `build/logs/`.
 
-### 2.3 Diagnostic Tripwires & State Rewind Debugger (`debug/`)
+#### Diagnostic Tripwires & State Rewind Debugger (`debug/`)
 * **`debug`**: Non-crashing diagnostic tripwires (`debug_trap_tripwire`) logging violations with
   file and line number while allowing safe fallback recovery.
 * Time-travel state debugger recording up to 64 frozen simulation snapshots.
 * Bit-exact deterministic state validation using 32-bit and 64-bit FNV-1a hashing.
 
-### 2.4 Core Utilities & Elevated Orchestrators (`core/`)
+#### Core Utilities & Elevated Orchestrators (`core/`)
 * **`clock_pacer`**: Fixed-timestep pacing orchestrator enforcing canonical 60Hz ($16.666\text{ ms}$)
   simulation ticks, rendering alpha calculation, and "spiral of death" lag clamping.
 * **`formula_eval`**: Data-driven combat mechanics computing bounded damage mitigation
@@ -2135,12 +2055,12 @@ Each foundational subsystem was refactored under the strict 5-block lifecycle pr
   monotonic clocks, saturating integer math, and transition easing curves (`EASE_QUAD_IN`,
   `EASE_CUBIC_OUT`).
 
-## 3. The Cog Elevation & Orchestrator Protocol
+### The Cog Elevation & Orchestrator Protocol
 
 During this milestone, we practiced **Cog Elevation**: when a subsystem or helper inside `game/`
 is found to be universal, game-agnostic, and reusable, it must be elevated into `engine/`.
 
-### Elevation of Viewport Scalers
+#### Elevation of Viewport Scalers
 Previously, dynamic camera projection and letterbox scaling were embedded in `game/src/world/map_scaler.c`.
 We extracted the mathematical projection laws into `engine/src/core/geom_utils.c`:
 * `geom_viewport_init()`: Calculates uniform aspect-ratio scale factors and letterbox/pillarbox offsets.
@@ -2150,12 +2070,12 @@ We extracted the mathematical projection laws into `engine/src/core/geom_utils.c
 `map_scaler.c` was updated to delegate its math directly to `geom_utils`, reducing domain code
 complexity while enriching the Big Machine.
 
-### Standalone Quarantined Fallback Modules
+#### Standalone Quarantined Fallback Modules
 To ensure the engine can always compile and pass verification even when data files are missing,
 every Layer 0 cog features a quarantined fallback module (`*_fallback.[ch]`). Fallbacks provide
 hardcoded canonical profiles, zero dynamic allocations, and comprehensive pre-flight self-tests.
 
-## 4. Four-Strata Verification Ontology & 51/51 CTest Pass Proof
+### Four-Strata Verification Ontology & 51/51 CTest Pass Proof
 
 We expanded our automated testing framework across the **Four Ontological Testing Sections**:
 1. **Section 1: Always Pass (Nominal Golden Baseline)**: Validates standard functionality under ideal inputs.
@@ -2164,9 +2084,9 @@ We expanded our automated testing framework across the **Four Ontological Testin
 4. **Section 4: Critical Failure & Chaos (Corrupt, Negative & Inverted)**: Injects poison inputs, NULL pointers, zero divisors, and lag spikes to verify tripwires and crash immunity.
 
 ```text
-##### ===========================================================================
+================================================================================
 CTest Automated Verification Suite Results
-##### ===========================================================================
+================================================================================
 Test project /home/professorseanex/Tenebris and Lux/build
       Start  1: cli_help_test                    Passed    0.00 sec
       Start  2: cli_version_test                 Passed    0.00 sec
@@ -2222,17 +2142,17 @@ Test project /home/professorseanex/Tenebris and Lux/build
 
 100% tests passed, 0 tests failed out of 51
 Total Test time (real) = 0.50 sec
-##### ===========================================================================
+================================================================================
 ```
 
-## 5. Telemetry & Pre-Flight Diagnostic Self-Audit
+### Telemetry & Pre-Flight Diagnostic Self-Audit
 
 The diagnostic self-audit was expanded to 20 registered engine modules in `game/src/main.c`:
 
 ```text
-##### ===========================================================================
+================================================================================
            Tenebris and Lux - Subsystem Invariant Pre-Flight Audit              
-##### ===========================================================================
+================================================================================
 Subsystem            Source File     Rev  Memory      Status  Description
 --------------------------------------------------------------------------------
 core.util.manifest   manifest.h      r2   Zero-Heap   [PASS]  Pre-flight manifest DAG orchestrator verified.
@@ -2257,10 +2177,10 @@ gui.viewport.x11     gui.h           r2   Zero-Heap   [PASS]  X11 display connec
 Telemetry: 20 modules registered | 20 Pass | 0 Warn | 0 Critical | 0 Fatal
 Policy Verdict: ALL PRE-FLIGHT INVARIANTS SATISFIED (System Ready)
 Audit Invariant Checks: 7/7 Invariant Checks Passed (Relics, Stances, Tripwires)
-##### ===========================================================================
+================================================================================
 ```
 
-## 6. The Fractal 5-Block Invariant: Code, Manifests, Tests & Git History
+### The Fractal 5-Block Invariant: Code, Manifests, Tests & Git History
 
 During this cycle, we discovered that the OmniCode Universal 5-Block Lifecycle Protocol is a
 **fractal design pattern** that governs all documentation, implementation, and history:
@@ -2273,7 +2193,7 @@ During this cycle, we discovered that the OmniCode Universal 5-Block Lifecycle P
 By extending this pattern directly into our **Git Commit Architecture** and **DevLog Chronicles**,
 the historical record of the repository mirrors the exact structural rigor of our source code.
 
-## 7. Architectural Next Steps & Horizon Ahead
+### Architectural Next Steps & Horizon Ahead
 
 With Layer 0 of **The Big Machine** verified with 100% pass rates across 51 CTests and 20 registered
 modules, our engineering horizon points directly to:
@@ -2287,12 +2207,374 @@ modules, our engineering horizon points directly to:
 
 ---
 
-## Chapter 15: Developer Log 002: The Sacyra Chronicles, Dual Protagonists & TRPG Evolution
+## Chapter 15: DevLog 016: Native Git Commit Validation, Audio Elevation & Movie Reel
 
-> **Source**: `/home/professorseanex/Tenebris and Lux/docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc`
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc`
 
-[abstract]
-## Abstract
+
+> **[NOTE]**
+> 
+> *Volume VI — Engineering Chronology (DevLog 016)* +
+> *Milestone Dates:* 2026-11-07 – 2026-11-08 | *Baseline Commits:* `36427ba` → `52149a3` +
+> *Series Navigation:* link:devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc[← DevLog 015] | link:../README.adoc[Nov 2026 Index] | link:../lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[DevLog 017 →]
+>
+> Following DevLog 015's formalization of **The Big Machine** (`engine/`) and **The Master Turn Gear** (`game/`), five rapid commits hardened the developer workflow and elevated audiovisual systems: integrating the native Rust `git_validator` hook, aligning High-Fantasy Hope presentation catalogs, folding Offline Work 4 into architecture docs, elevating `audio/` cleanly into Layer 0, and building Layer 2's deterministic **Movie Reel** viewport architecture.
+
+
+
+### Milestone Scope & Commit Progression
+
+| Commit | Date | Milestone Summary |
+| --- | --- | --- |
+| `36427ba` | 2026-11-07 | `feat(ci):` Integrated native Rust `git_validator`, `.githooks/commit-msg` hook, and modernized CI enforcement. |
+| `a138533` | 2026-11-07 | `feat(presentation):` Aligned presentation catalogs to 5-block JSON schemas and the High-Fantasy Hope color palette. |
+| `22dea06` | 2026-11-07 | `docs(architecture):` Integrated `Offline-Work-4`, authored Layer 0 code tours, and compiled the expanded Master Guide. |
+| `9c209ad` | 2026-11-08 | `feat(viewport):` Elevated the audio mixing subsystem into Cornerstone Layer 0 and implemented the Movie Reel architecture. |
+| `52149a3` | 2026-11-08 | `feat(viewport):` Completed presentation catalog alignment, audiovisual verification tiers, and grand orchestrators. |
+
+
+
+### Enforcing 5-Block Provenance at the Commit Boundary (`36427ba`)
+
+As architectural rigor climbed inside `engine/` and `docs/`, commit history itself risked drifting into informal one-line messages that hid invariants and test coverage. Rather than adding Python or shell lint scripts in violation of Cornerstone's **Native Compiled Toolchain Invariant**, commit enforcement was implemented inside the Rust workspace (`tools/src/validator/git_commit.rs` + `git_validator` binary + `.githooks/commit-msg`).
+
+* **Strict Conventional Header Prefixes:** Only `feat(`, `fix(`, `docs(`, `refactor(`, `test(`, `chore(`, `perf(`, and `build(` headers are accepted.
+* **Mandatory 5-Block Commit Body:** Every commit message must declare:
+  . `BLOCK 1: METADATA & REVISION RECORD` (including explicit `Project:`, `Author:`, and `Date:` tags),
+  . `BLOCK 2: REASON FOR CHANGE & PROBLEM STATEMENT`,
+  . `BLOCK 3: ARCHITECTURAL MODIFICATIONS & ELEVATIONS`,
+  . `BLOCK 4: VERIFICATION, TRIPWIRES & PASS PROOF`,
+  . `BLOCK 5: INVARIANT COVENANTS & CLOSING AFFIRMATIONS`.
+* **Retroactive CI Sweep:** Running `tl_tools validate all` inspects the most recent 10 repository commits via `git log -n 10`, preventing discipline erosion after initial setup.
+
+### Elevating `audio/` to Layer 0 & Building the Movie Reel (`9c209ad`, `52149a3`)
+
+In earlier builds, audio cue triggering was intertwined with presentation transitions. Guided by the **Cog Elevation & Orchestrator Protocol**, all general-purpose synthesis, channel routing, and fade pacing were cleanly elevated into `engine/{include,src}/audio/` as Layer 0 cogs:
+
+```text
+Layer 2: Viewport (X11 / Headless Frame)
+   └── Movie Reel Orchestrator (scenes, wipes, typography scaling, Hope palette)
+          │
+          ▼ emits generic timeline triggers & cue IDs (zero lore bleed)
+Layer 0: Cornerstone Audio Bus
+   └── Multi-bus mixer + cue queue + procedural BIOS synthesis fallback
+```
+
+* **5-Block Presentation Alignment (`a138533`):** Every viewport layout, typography rule, theme token, and audio channel catalog was migrated into strict `block_1_metadata` .. `block_5_closing` JSON envelopes.
+* **Movie Reel Orchestrator (`9c209ad`):** Implemented deterministic scene reels, screen wipes, and frame pacing independent of story text so Layer 2 renders both graphical X11 (`640x360` letterboxed) and headless parity without touching heap memory (`ALLOC_ZERO_HEAP`).
+* **Offline-Work-4 Convergence (`22dea06`):** Synchronized the statistical category sheet (Core 9 Combat Stats ↔ 8 Exploration Stats, Poise, Facing, Six-Power Factions) into `docs/architecture/` and regenerated the Master Guide volumes.
+
+
+### Verification & Cross-Tier Audiovisual Parity (`52149a3`)
+
+* **4-Tier Test Expansion:** Added unit, functional, integrated, and system tests exercising audio bus mixing, procedural fallback waveforms, Movie Reel timeline progression, and Hope-palette theme loading under `-std=c11 -Wall -Wextra -Wpedantic`.
+* **Headless Determinism:** Confirmed identical frame pacing, cue dispatch ordering, and state transitions whether running headless in automated CTest harnesses or rendering via native X11.
+* **Commit Gate Proof:** `.githooks/commit-msg` verified every commit in the `36427ba`..`52149a3` chain cleanly under `cargo run --bin git_validator`.
+
+
+### Architectural Takeaway & Next Horizon
+
+With commit hygiene guarded natively in Rust and audiovisual presentation elevated into clean Layer 0 / Layer 2 boundaries, attention turned back toward completing the game's deepest ludonarrative specifications (**Offline Work 5 & 6** → DevLog 017) and decoupling `engine/config/` cleanly from `game/data/` (→ DevLog 018).
+
+*Navigation:* link:devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc[← DevLog 015] | link:../README.adoc[Nov 2026 DevLog Index] | link:../lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[Next: DevLog 017 →]
+
+
+---
+
+## Chapter 16: DevLog 017: Orthogonal 35 Classes, 28 Jobs, Generational War & 4D Dream Clock
+
+> **Source**: `docs/dev_logs/2026/11/lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc`
+
+
+> **[NOTE]**
+> 
+> *Volume VI — Engineering Chronology (DevLog 017)* +
+> *Milestone Date:* 2026-11-09 | *Canonical Sources:* link:../../../offline_work/Offline-Work-5.adoc[Offline Work 5] & link:../../../offline_work/Offline-Work-6.adoc[Offline Work 6] +
+> *Series Navigation:* link:../architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc[← DevLog 016] | link:../README.adoc[Nov 2026 Index] | link:../architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[DevLog 018 →]
+>
+> This lore-and-systems milestone synthesizes **Offline Work 5** and **Offline Work 6**, resolving ambiguities inherited from the 2017–2018 RPG Maker MV archives (`Folder 1` and `Folder 2`), codifying the **35-Class Pascal Pyramid** alongside the **28-Job 5-Pillar Vocation Compendium**, framing the **10-to-20-year Generational War** under the **Two-Pass Grand Tour**, and specifying the zero-heap **4D Dream Clock** state contracts.
+
+
+
+### Resolving 2017–2018 Demo & Early Documentation Ambiguities
+
+Cross-referencing the 2018 *classes_and_growth.adoc* tables against the full multi-route canon resolved four long-standing structural compressions:
+
+* **Flattened "7 Combat Classes" → Orthogonal Class × Job:** Legacy RPG Maker MV tables packed *Warrior, Mage, Rogue (Thief), Priest, Summoner, Hero,* and *Guard* into one list. Canon separates them into: (a) 3 Basic + 2 Advanced Base Classes (`W, M, R, P, S`), (b) **The Hero** / **The Dark One** as Tier 5 Moral Apex Classes (`±50 .. ±100`), and (c) **Guard** (*Town Sentry / Royal Man-at-Arms*) as a Civic World Vocation (**Job**).
+* **Protagonist Titles vs. Unofficial Classes:** *"Vanguard of Lux"*, *"Outrider of Tenebris"*, and *"Secret Chronicler"* are narrative focalizations. Mechanically in-story, Elijah and Katrina are multi-domain **Trainees** (`W+M+R`), while `<chosen_name>` is Chrono's initiate **Mystic** (`P+S`). Playthrough 1 grants single-domain "training wheels"; clearing the campaign unlocks official Hard-Mode **Trainee** (`2.2×` EXP) and **Mystic** (`1.8×` EXP) in New Game+.
+* **Sir Roté's Dual Designation:** Recognized cleanly through Class vs. Job orthogonality—Roté's **Class** is **Priest**, while his Crown **Job** is **Border Outrider / Court Herald**.
+* **Antagonist Identity & Class:** Confirms **Usuru** (personal name), **The Dark Lord** (title), and **The Dark One** (literal Tier 5 Moral Evil Apex Class at `-100 .. -50`).
+
+
+### Orthogonal Character Engine: 35 Classes & 28 World Jobs
+
+| Progression Axis | Canonical Rules & Static Bitmask Representation |
+| --- | --- |
+| *Class (Combat Domain)* | 5-Tier combinatorial pyramid governed by Pascal's Triangle (`C(5,1)=5`, `C(5,2)=10`, `C(5,3)=10`, `C(5,4)=5` Paragons, plus 2 Special Initiates and 3 Cosmic Apex Classes = `35` total `class_id_t` values). Unlocks permanent muscle-memory skills and passive traits. Remaining inside `[-50, +50]` (**Bystander Corridor**) caps progression at Tier 4 Paragons (`High Justiciar`..`Ascendant Mystic`). |
+| *Job (World Vocation)* | `28` vocations (`job_id_t`) across **5 Societal Pillars**: Frontier Labor (1–6), Civic/Military/Law (7–12), Scholarship/Trade/Underworld (13–18), Ecclesiastical Faith (19–23), and Ecology/Veil Seers (24–28). Enforces the **"No Starter Job in Dio Village"** rule (`JOB_NONE_DIO_VILLAGE` until crossing into Whispering Woods). Rank 1–4 tools swap with active station kits; Rank 5 banks permanent Mastery Perks into `banked_job_perks_mask`. |
+| *NG+ Encore Mastery* | Re-selecting a previously mastered Base Class in NG+ starts mastery at `15%–25%` (*Attunement Resonance*) and awards evolved capstone skills (*Sovereign Phantom Slash*, *Cataclysmic Convergence*, *Shadow Transposition*, *Chrono's Emergency Decree*, *Astral Triad Covenant*). |
+
+
+### Adolescent Crucible, Poisoned Mandate & Two-Pass Grand Tour
+
+* **The Youth Tragedy:** Establishing that Elijah, Katrina, and `<chosen_name>` open at **15–18 years old** illuminates the genesis catastrophe: **Usuru** was an uncommissioned **11-year-old** nomad bound to Libira's *Three-Day Law*, **Prince Mi-ren** a terrified `15–18`-year-old boy in oversized regent armor, and **Prince Casatti** a `14–17`-year-old academy rebel.
+* **The Poisoned Mandate & Midpoint Fork (Act I Climax):** Sending greenhorn protagonists on a sweeping Act I tour under King Jihad's royal writs is both a geopolitical smokescreen and a literal re-enactment of Usuru's *Three-Day Wanderer* pilgrimage (**Two-Pass Spiral World Design**). At the 50% Sacyra Castle Siege, **killing King Jihad** triggers a chaotic Neutral power vacuum, whereas **Uncorrupting Jihad** keeps him alive as a disgraced living indictment forcing institutional truth (*"The Ugly Truth"*).
+* **10-to-20-Year Maturation:** Act II (*2nd Great War*, Years 4–12, Ages 19–27) and Act III (*Sovereign Eclipse*, Years 13–20, Ages 28–35+) visibly age Dio Village and its heroes so weathered 30-year-old adults finally confront an immortal warlord still frozen inside an 11-year-old binary wound.
+
+### The 4D "Dream Clock" Temporal Registration Engine
+
+Turning the Dream Clock **OFF** does not freeze story time (protagonists still age across Acts I–III and reach all **9 Standard Matrix Endings** via 3D event vectors `[Location, Action, Sway]`). Enabling **Dream Clock ON** (`DREAM_CLOCK_ON_REGISTERED`) adds the 4th coordinate (`sacyra_calendar_t` timestamp) to `story_point_receipt_t`, dynamically alters what occurs at world story points (such as intercepting couriers across Libira's 7-day lag or acting during nocturnal `20:00–04:00` Veil windows), and is mathematically required to promote the campaign into the **10th True Ending ("The Ugly Truth")**.
+
+
+### Layer 1 Zero-Heap Contract Verification
+
+* **Bitmask Density (`ALLOC_ZERO_HEAP`):** All 35 classes fit inside `uint64_t mastered_classes_mask` (`0..34`) and `uint8_t class_mastery_pct[35]`; all 28 jobs fit inside `uint32_t banked_job_perks_mask` and `uint8_t job_rank[28]` (`actor_vocation_state_t`).
+* **Temporal Compactness:** `sacyra_calendar_t`, `story_point_receipt_t`, and `campaign_chronicle_state_t` require no heap pointers and map directly onto Layer 0 `time_utils` monotonic ticks scaled by tunable `engine/config/runtime/time/` parameters.
+
+
+*Archival Sources:* link:../../../offline_work/Offline-Work-5.adoc[Offline Work 5] | link:../../../offline_work/Offline-Work-6.adoc[Offline Work 6] +
+*Navigation:* link:../architecture/devlog_016_git_validator_movie_reel_and_audio_elevation.adoc[← DevLog 016] | link:../README.adoc[Nov 2026 DevLog Index] | link:../architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[Next: DevLog 018 →]
+
+
+---
+
+## Chapter 17: DevLog 018: Standalone Engine Config Decoupling & Rev 5 Block 1/2 Standards
+
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc`
+
+
+> **[NOTE]**
+> 
+> *Volume VI — Engineering Chronology (DevLog 018)* +
+> *Milestone Date:* 2026-11-10 | *Baseline Commits:* `489c3b6` (`tag: v0.1.1`) → `d552752` +
+> *Series Navigation:* link:../lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[← DevLog 017] | link:../README.adoc[Nov 2026 Index] | link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[DevLog 019 →]
+>
+> Tagged as **`v0.1.1`**, this milestone physically severed engine baseline mechanics from RPG domain lore, codified the **Rev 5 Block 1 Growth Schema** and **Block 2 `extern "C"` Header Discipline**, modularized the Rust pre-flight validator, and resolved include-hierarchy discontinuities across every translation unit in `engine/src/`.
+
+
+
+| Commit | Date | Scope & Architectural Deliverable |
+| --- | --- | --- |
+| `489c3b6` (`v0.1.1`) | 2026-11-10 | `feat(engine):` Decoupled standalone `engine/config/` from `game/data/`, modularized Rust `validator/`, formalized `engine/config/standards/blocks/block_1..5.json`, and rolled out Rev 5 Block 1 telemetry across headers. |
+| `d552752` | 2026-11-10 | `refactor(engine):` Standardized Block 2 opening blocks (`extern "C"` placement, 3-tier include hierarchy, C++-safe struct zero-initialization) and resolved module discontinuities across `engine/src/`. |
+
+
+
+### Separating Engine Mechanics (`engine/config/`) from Game Lore (`game/data/`)
+
+Before `v0.1.1`, presentation profiles, viewport themes, audio channels, and core math configs lived alongside gameplay data. Because Cornerstone (`engine/`) must boot and power completely different games without `game/` present, baseline engine configurations were extracted cleanly into `engine/config/` while reserving `game/data/` strictly for Sacyra lore and RPG content:
+
+* **Standalone Mechanical Tree:** Organized `engine/config/` across `viewport/`, `audio/`, `input/`, `runtime/` (`math/`, `time/`, `string/`), `diagnostics/` (`telemetry/`, `debugger/`, `taxonomy/`, `formats/`), and `standards/` (`manifest.json`, `subsystems.json`, `blocks/block_1..5.json`).
+* **Layered VFS Resolution (`path_finder`):** Established deterministic override search order—(1) `game/config/<rel_path>`, (2) `engine/config/<rel_path>`, and (3) `game/data/presentation/config/<rel_path>`—so game customizations override engine defaults without duplicating shared machinery.
+
+### Movement-Resilient Metadata & Unified Block 2 Opening Contracts
+
+To turn file headers into real-time scaling radar rather than static boilerplate, `engine/config/standards/blocks/block_1_metadata.json` introduced the Rev 5 **Block 1 Growth Schema**:
+
+* **Movement-Resilient `@id` vs. Volatile `@file` / `@layer`:** Stopped baking folder paths into `@id` (`core.util.*`), moving every cog toward invariant logical identifiers (`cog.<module>`) while tracking current paths and compilation strata separately.
+* **Growth Telemetry Tags:** Every Block 1 header declares `@maturity`, `@chassis` (measured `.bss`/`.data`/`.rodata`/stack footprints), `@scale` (Big-O & hard config levers), and `@seams` (`in: cfg/rom | uses: deps | probes: ... -> DEBUG_STEP_AWAIT | dag: ...`).
+* **Block 2 Strict Hygiene (`d552752`):** Placed `_POSIX_C_SOURCE 200809L` cleanly above Block 2 in POSIX sources, enforced the **3-Tier Downward Include Hierarchy** (ISO C stdlib → Tier 2 External [X11 in Layer 2 only] → Tier 3 Internal Engine), moved `extern "C" {` strictly *below* `#include` directives in headers, and replaced empty `{0}` aggregates with clean `.bss` zero-initialized singletons so C and C++ compilers agree identically.
+
+
+### Validator Modularization & Header Contract Verification
+
+* **Modular Rust Validator (`tools/src/validator/`):** Split monolithic checks into domain modules (`blocks.rs`, `config.rs`, `headers.rs`, `git_commit.rs`), validating JSON 5-block schemas (`engine/config/standards/blocks/block_1..5.json`) alongside all `44` registered Cornerstone engine headers in `engine/config/standards/subsystems.json`.
+* **Zero Discontinuities:** Swept `engine/src/` under strict `-Wall -Wextra -Wpedantic` to eliminate stray includes, broken guard naming, and `.h`/`.c` `@system` drift.
+
+
+### Readiness for Tier-0 BIOS & `.rodata` ROM Vaults
+
+With `engine/config/` cleanly separated, validator contracts machine-checked, and Block 1/Block 2 interfaces unified, the engine was ready to compile `engine/config/` JSON payloads straight into `.rodata` Config ROM vaults and wire Safe-Mode downgrade probes across `log/`, `debug/`, and `io/` (DevLog 019).
+
+*Navigation:* link:../lore_and_design/devlog_017_orthogonal_classes_jobs_generational_war_and_dream_clock.adoc[← DevLog 017] | link:../README.adoc[Nov 2026 DevLog Index] | link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[Next: DevLog 019 →]
+
+
+---
+
+## Chapter 18: DevLog 019: BIOS/ROM Vaults, AWAIT Probes & The C23 Fall-Down Ladder
+
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc`
+
+
+> **[NOTE]**
+> 
+> *Volume VI — Engineering Chronology (DevLog 019)* +
+> *Milestone Dates:* 2026-11-11 – 2026-11-12 | *Baseline:* Commit `76a443a` + Root Stratum (`log/`, `debug/`, `io/`) & `CMakeLists.txt` Upgrade +
+> *Series Navigation:* link:devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[← DevLog 018] | link:../README.adoc[Nov 2026 Index] | link:devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc[DevLog 020 →]
+>
+> This milestone fuses Cornerstone's Rev 5 autonomous root stratum (`log/`, `debug/`, and `io/`), replacing ad-hoc stubs with a unified `.rodata` Config ROM generator (`cmake/GenerateConfigRom.cmake`), quarantined BIOS fallback modules (`*_fallback.[ch]` + `*_types.h`), an autonomous **Probe → Safe-Mode Downgrade → `DEBUG_STEP_AWAIT` Tripwire Loop**, a Controlled Memory Chassis cleanup, and Cornerstone's **"Fall-Down Stairs" C23 → C17 → C11 (+ C++20/17)** portability ladder anchored in `engine/include/core/manifest.h`.
+
+
+
+
+### The Autonomous Root Spine: `log/` + `debug/` + `io/`
+
+Rather than building independent utility islands, Rev 5 connects the first three subsystems into one self-healing boot tree ("roots feeding the rest of `engine/`"):
+
+```text
+1. log/     (Boots Before Disk/VFS)
+     |  - Quarantined log_types.h + log_fallback.[ch] + rom://telemetry
+     v
+2. debug/   (Captures Faults & Holds Execution)
+     |  - Quarantined debug_types.h + debug_fallback.[ch] + rom://diagnostics
+     |  - Registers probes -> triggers Safe-Mode downgrade -> DEBUG_STEP_AWAIT
+     v
+3. io/      (Hydrates Disk / VFS / rom:// Safely)
+        - path_finder, fs_utils, json_utils, master_loader + io_fallback.[ch]
+        - Hydrates only verified block_3_body spans; falls back to rom://io on fault
+```
+
+* **Unified `.rodata` Config ROM Vault (`cmake/GenerateConfigRom.cmake`):** Retired single-domain `cmake/GenerateTelemetryRom.cmake` in favor of a generalized build-time generator converting `engine/config/**/*.json` catalogs into read-only ELF `.rodata` headers under `build/generated/`. Missing or corrupt disk files fall back directly to authentic structured engine defaults (`rom://`) rather than duplicated hardcoded literals.
+* **Quarantined Leaf Headers & Fallbacks:** Extracted `engine/include/log/log_types.h` and `engine/include/debug/debug_types.h` to prevent circular includes, and introduced `engine/include/{io/io_fallback.h}` + `engine/src/io/io_fallback.c` alongside quarantined `log_fallback.[ch]` and `debug_fallback.[ch]`.
+* **Controlled Memory Chassis Diet:** Audited ELF `.bss` footprints (`size -A`), trimming idle static scratch allocations (such as oversized buffers in `audio_bus.c`) so chassis memory overhead remains minimal and honest.
+
+### 2. "Engine-as-a-Java" Portability: The C23 Fall-Down Ladder
+
+Cornerstone targets forward-looking ISO **C23** (`-std=c23`) and **C++20** (`-std=c++20`) without dragging along deprecated legacy shims—yet steps gracefully down onto older compilers via `CORNERSTONE_C_STANDARD=AUTO|23|17|11` and `CORNERSTONE_CXX_STANDARD=AUTO|20|17` configured inside a 5-block refactored `CMakeLists.txt`.
+
+**Pre-Flight Loose-Bolts Engine Walk (manifest_run_preflight) (`engine/src/core/manifest.c#L412-L455` · Mode: `Function`)**
+
+```c
+/**
+ * @brief Executes comprehensive pre-flight diagnostics across all registered modules.
+ */
+preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
+{
+    if (registry == NULL) {
+        debug_trap_tripwire("manifest", "NULL registry passed to manifest_run_preflight", __FILE__, __LINE__);
+        return PREFLIGHT_STATUS_HALT_FATAL;
+    }
+
+    registry->pass_count = 0;
+    registry->warn_count = 0;
+    registry->critical_count = 0;
+    registry->fatal_count = 0;
+
+    /* Step 1: Active DAG Dependency Graph Verification */
+    for (size_t i = 0; i < registry->count; i++) {
+        const module_metadata_t *mod = registry->modules[i];
+        if (mod == NULL) continue;
+
+        for (size_t d = 0; d < mod->dependency_count; d++) {
+            const char *req_dep = mod->dependencies[d];
+            if (req_dep == NULL) continue;
+
+            bool found = false;
+            for (size_t j = 0; j < registry->count; j++) {
+                if (registry->modules[j] != NULL &&
+                    strcmp(registry->modules[j]->module_id, req_dep) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                diag_result_t dep_res;
+                dep_res.passed = false;
+                dep_res.severity = SEVERITY_FATAL;
+                dep_res.subsystem = mod->module_id;
+                dep_res.check_name = "Dependency DAG";
+                dep_res.details =
+                    "Fatal: Unregistered upstream dependency declared.";
+                registry->results[i] = dep_res;
+                registry->fatal_count++;
+                registry->status = PREFLIGHT_STATUS_HALT_FATAL;
+```
+
+_Iterates every registered module sequentially, classifying OK, WARNINGS, DOWNGRADED, and HALT_FATAL states._
+
+Wholesale Listing: Complete verbatim code (`#L412-L509`) -> [Appendix: Pre-Flight Loose-Bolts Engine Walk (manifest_run_preflight)](#snap_wholesale_snap_manifest_fn_preflight).
+
+* **Central Capability Macros (`engine/include/core/manifest.h`):** Exposes `CS_C_STD_TIER` (`23`/`17`/`11`/`0`) and `CS_CXX_STD_TIER` (`20`/`17`/`11`/`0`) plus `CS_NODISCARD`, `CS_MAYBE_UNUSED`, `CS_FALLTHROUGH`, `CS_UNREACHABLE`, `CS_ALIGNOF`, `CS_NORETURN`, `CS_STATIC_ASSERT`, and `CS_HAS_EMBED`, all compiling cleanly with zero GNU extension warnings under `-Wall -Wextra -Wpedantic`.
+* **No Backward-Compatibility Crutches:** Instead of emulating removed historical idioms, building against the C17/C11 floor lets every module use modern attributes when compiled in C23 and fall safely down one step without losing deterministic correctness.
+
+
+### Crude-to-Fine Verification Across `log/`, `debug/`, and `io/` (`tests/`)
+
+Extracted shared deterministic harness macros into `tests/common/` (`cornerstone_test.h`) and systematically upgraded every verification tier across the root subsystems (`test_log_*`, `test_debug_*`, `test_io_*`, plus new `tests/unit/io/test_io_fallback_unit.c`):
+
+. **Layer 1 Unit & Fallback Isolation:** Exercises ROM parsing, ring wrap-around, watchpoints, and BIOS Safe-Mode boot with empty/broken VFS paths.
+. **Layer 2 Functional Contracts:** Validates 5-block JSON loading boundaries (`block_3_body` scoping) and categorized hex fault counters (`0x0201..0x0207`).
+. **Layer 3 Integrated Cross-Module Flows:** Tests `io/` + `log/` + `debug/` probe escalation into `DEBUG_STEP_AWAIT` under live downgrades.
+. **Layer 4 System Suites:** Verifies deterministic full-boot parity and shutdown `.bss` zero-reset across repeated sessions (65 CTest targets in the suite).
+
+
+### Next Horizon: Documenting the Root Tree & Auditing `core/`
+
+With the root spine (`log/` → `debug/` → `io/`), Config ROM Vaults, C23 Fall-Down macros, and `tests/` fully aligned under Rev 5, the immediate priority became documenting this exact architecture through live code snapshots and clean multi-volume PDFs (DevLog 020) before advancing Block 3 audits into `core/`, `audio/`, and `viewport/`.
+
+*Navigation:* link:devlog_018_standalone_engine_config_decoupling_and_block1_block2_standards.adoc[← DevLog 018] | link:../README.adoc[Nov 2026 DevLog Index] | link:devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc[Next: DevLog 020 →]
+
+
+---
+
+## Chapter 19: DevLog 020: 5-Block AsciiDoc, Live Code Snapshots & Paired Textbooks
+
+> **Source**: `docs/dev_logs/2026/11/architecture/devlog_020_five_block_asciidoc_snapshots_pdf_budgets_and_paired_docs.adoc`
+
+
+> **[NOTE]**
+> 
+> *Volume VI — Engineering Chronology (DevLog 020)* +
+> *Milestone Date:* 2026-11-12 | *Scope:* `tools/src/guide.rs`, `docs/adoc_pdf_layout_rules.json`, `docs/code/{log,debug,io}/`, `docs/architecture/chronicles/`, `docs/offline_work/`, Volumes I–VI +
+> *Series Navigation:* link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[← DevLog 019] | link:../README.adoc[Nov 2026 Index] | *(Latest DevLog)*
+>
+> Inspecting generated PDF output—especially **Volume V** (`VOLUME_V_CORE_ENGINE_CODE_TOURS.pdf`)—revealed awkward whitespace pages, broken `[abstract]` chapter numbering in Asciidoctor book builds, duplicate snapshot plate anchors, and stale manual prose drifting away from live C source files. To turn documentation into a true data-driven textbook system, `master_guide` gained live 5-mode code snapshots and PDF layout validation while `docs/code/{log,debug,io}/`, `docs/architecture/chronicles/`, and `docs/offline_work/` were rebuilt onto the **Universal 5-Block AsciiDoc Standard**.
+
+
+
+
+### Textbook-Grade Live Code Snapshots (`docs/code_snapshots_manifest.json`)
+
+Copying C functions by hand into documentation guarantees bit-rot. Extending `tools/src/guide.rs` introduced a declarative extraction manifest (`docs/code_snapshots_manifest.json`) supporting five surgical capture modes:
+
+| Snapshot Mode | Extraction Behavior & Textbook Usage |
+| --- | --- |
+| `whole_file` | Extracts a clean compact file wholesale (such as `cmake/GenerateConfigRom.cmake` or core test headers). |
+| `block` | Captures an entire OmniCode `BLOCK 1`..`BLOCK 5` section from `.h` or `.c`. |
+| `sub_assembly` | Extracts an exact `Sub-Assembly N.M` region (e.g., `io/` 5-block getters or `debug/` probe structs). |
+| `function` | Isolates an individual C function body with its paired dual-audience docstring. |
+| `symbol_group` | Collects related type declarations or helper families into one compact visual plate. |
+
+
+* **Anchor Deduplication (`deduplicate_snapshot_plate_anchors`):** Eliminated duplicate `[[snap_plate_*]]` Asciidoctor anchor collisions whenever a snapshot appeared inline inside a chapter and again in a volume appendix.
+* **Out-of-Box Theme & Title Formatting (`docs/guide_theme_config.json`, `docs/themes/`):** Cleaned Volume V synopsis whitespace so cover → TOC → overview → paired chapters flow cleanly across A4 pages without empty half-page breaks.
+
+### The 5-Block AsciiDoc Comment Standard & `--validate-layout`
+
+Codified `docs/adoc_5block_standard.json` and `docs/adoc_pdf_layout_rules.json` so AsciiDoc manuscripts follow the exact same **Universal 5-Block Lifecycle Protocol** as `.c`, `.h`, and `.json` files:
+
+* **`//// BLOCK 1..5 ////` + `// --- Sub-Assembly X.Y`:** AsciiDoc block/line comments frame Metadata, Opening, Body, Audit/Verification, and Closing/Navigation without rendering noise in HTML/PDF outputs.
+* **PDF Hygiene Enforcement (`master_guide -- --validate-layout`):** Audits line-width budgets (`<= 104` cols with line numbers so Rouge blocks never soft-wrap in A4 PDFs), bans `[abstract]` above `==` headings, bans page-breaking `'''` horizontal rules in multi-chapter books, and enforces 6-hyphen `------` fences.
+
+### Paired Code Folders, Architectural Chronicles & Linked Offline Series
+
+* **`docs/code/{log,debug,io}/` Paired Documentation:** Organized each root subsystem into its own folder pairing every `.h` and `.c` file into unified module manuals (plus a dedicated testing chapter per folder covering unit, functional, integrated, and system tiers).
+* **`docs/architecture/chronicles/`:** Added accessible, mixed-audience deep dives explaining *why* the Rev 5 architecture was built for long-term game payoff (`01_root_stratum_story_and_game_payoff.adoc`) and how `AGENTS.md` evolved alongside AI-assisted engineering (`02_agents_md_evolution_and_ai_architecture.adoc`).
+* **`docs/offline_work/` Series Unification (Parts 1–6):** Moved `Offline_Work_5.md` and `Offline_Work_6.md` out of repo root into `docs/offline_work/`, cleaned corrupted table math delimiters and citation tags in Part 6, authored `Offline-Work-5.adoc` + `Offline-Work-6.adoc`, upgraded `README.adoc` and `Offline-Work-1..4.{adoc,md}` into 5-block format with bidirectional navigation, and added `docs/offline_work/` to strict layout validation.
+
+
+### Verification Summary Across Code, Layout & Books
+
+* **Native Rust Tooling (`RUSTFLAGS="-D warnings" cargo test`):** Verified snapshot extraction, anchor deduplication, layout rule checks, and validator modules cleanly with zero compiler warnings.
+* **PDF Layout Validator (`master_guide -- --validate-layout`):** Enforced zero errors across strict targets (`docs/README.adoc`, `docs/architecture/`, `docs/code/{log,debug,io}/`, `docs/offline_work/`).
+* **Full Book Compilation (`master_guide -- --all`):** Compiled standalone **Volumes I–VI** alongside the complete **`MASTER_GUIDE.pdf`** with DevLogs `001`–`020` indexed cleanly in Volume VI.
+
+
+### Synchronizing the Repository & Preparing for `core/` Audits
+
+With code, tests, Config ROMs, snapshot books, pre-production chronicles, and DevLogs `016`–`020` all aligned under **Rev 5**, the workspace is ready for synchronized wave commits under `.githooks/commit-msg` before beginning the Block 3 audit across `core/`, `audio/`, `viewport/`, and `game/`.
+
+*Navigation:* link:devlog_019_bios_rom_vaults_await_probes_and_c23_falldown_ladder.adoc[← DevLog 019] | link:../README.adoc[Nov 2026 DevLog Index] | link:../../../README.adoc[Documentation Root]
+
+
+---
+
+## Chapter 20: Developer Log 002: The Sacyra Chronicles, Dual Protagonists & TRPG Evolution
+
+> **Source**: `docs/dev_logs/2026/10/lore_and_design/devlog_002_the_sacyra_chronicles_and_trpg_vision.adoc`
+
+### Abstract
 
 This developer log chronicles the foundational provenance and overarching creative vision
 of *Tenebris and Lux*, rooted in its 2014–2018 high school inception as the premier game project
@@ -2301,7 +2583,7 @@ of CreativeWorkzStudio. It documents the elimination of placeholder factions in 
 and the technical specification of the game's true genre: a **Tactical Strategy RPG (TRPG)** fusing
 grid-based tactical maneuvering with cinematic traditional side-scroll / action-based combat resolution.
 
-## 1. Historical Provenance: The 2014–2018 High School Genesis
+### Historical Provenance: The 2014–2018 High School Genesis
 
 Before CreativeWorkzStudio evolved into a multifaceted publishing house, *Tenebris and Lux* was its
 very first major game in active development.
@@ -2314,13 +2596,13 @@ very first major game in active development.
   creative vision with the systems engineering maturity, mathematical rigor, and architectural discipline
   of modern custom engine design.
 
-## 2. Narrative Realignment: The Kingdom of Sacyra
+### Narrative Realignment: The Kingdom of Sacyra
 
 During early prototype scaffolding, generic placeholder factions ("The Solar Order" and "The Umbral Covenant")
 were inserted to test basic moral sway logic. On October 26, 2026, the creator firmly realigned the canon,
 stripping away these synthetic factions to reveal the true world:
 
-### 1. The Kingdom of Sacyra (`/sɔːˈkiːrə/`)
+#### The Kingdom of Sacyra (`/sɔːˈkiːrə/`)
 
 * The setting is the historic **Kingdom of Sacyra** (pronounced *"saw-kee-ruh"*).
 * Sacyra is a structured, chivalric realm anchored by three distinct socio-political pillars:
@@ -2329,27 +2611,26 @@ stripping away these synthetic factions to reveal the true world:
   3. **The Adventurers' Guild**: A pragmatic, frontier-based brotherhood operating beyond courtly vanity, answering commoner monster distress calls and exploring untamed ruins.
 * **The Existential Threat**: The ancient sovereign **The Dark Lord** breaking through the Abyssal Vaults, threatening to extinguish all mortal agency.
 
-### 2. The Dual Protagonists
+#### The Dual Protagonists
 
 Rather than a generic lone wanderer, the narrative is anchored by two contrasting protagonists whose
 fates, lineages, and martial philosophies intertwine:
 
-[cols="1,2,2", options="header"]
-|===
-| Character | Elijah Ro-enheart | Lady Katrina Jaren
-| **Social Origin** | Military Lineage (Common/Barracks Nobility) | High Aristocracy (House Jaren)
-| **Family Heritage** | Son of the former Head of the Royal Guard | Daughter of an influential noble house on the Royal Court
-| **Internal Desire** | Living up to his father's legendary military legacy while discovering what true honor demands | Escaping stifling aristocratic court expectations to join the local **Adventurers' Guild**
-| **Relic Synergy** | **The Shield of Lux** (Sanctuary, Warding, Formation Hold) | **The Sword of Tenebris** (Severance, Mist-Veil, Critical Strike)
-| **TRPG Doctrine** | Frontline heavy vanguard; zone-of-control denial; ally interception | Agile outrider skirmisher; bypassing enemy lines; flanking assassin
-|===
+| Character | Elijah Ro-enheart | Lady Katrina Jaren |
+| --- | --- | --- |
+| **Social Origin** | Military Lineage (Common/Barracks Nobility) | High Aristocracy (House Jaren) |
+| **Family Heritage** | Son of the former Head of the Royal Guard | Daughter of an influential noble house on the Royal Court |
+| **Internal Desire** | Living up to his father's legendary military legacy while discovering what true honor demands | Escaping stifling aristocratic court expectations to join the local **Adventurers' Guild** |
+| **Relic Synergy** | **The Shield of Lux** (Sanctuary, Warding, Formation Hold) | **The Sword of Tenebris** (Severance, Mist-Veil, Critical Strike) |
+| **TRPG Doctrine** | Frontline heavy vanguard; zone-of-control denial; ally interception | Agile outrider skirmisher; bypassing enemy lines; flanking assassin |
 
-## 3. Ludological Evolution: The Tactical Strategy RPG (TRPG)
+
+### Ludological Evolution: The Tactical Strategy RPG (TRPG)
 
 The game's true mechanical identity is a **Tactical Strategy RPG (TRPG)**. This fundamentally informs
 how the simulation engine and presentation viewports are being constructed:
 
-### 1. The Dual-Layer Combat Loop
+#### The Dual-Layer Combat Loop
 
 The combat loop operates across two synchronized phases:
 
@@ -2361,19 +2642,129 @@ The combat loop operates across two synchronized phases:
    - Attacks play out with timed player agency: precision blocks with the Shield of Lux, poise-breaking shield bashes, and devastating severance slashes with the Sword of Tenebris.
    - Upon duel conclusion, remaining unit health, stagger, and relic resonance seamlessly persist back to the tactical grid.
 
-### 2. Architectural Implications for the C Engine
+#### Architectural Implications for the C Engine
 
 Knowing this was originally an RPG Maker project gives us clear architectural directives:
 * **Decoupled Data Architecture**: Static definitions (`Units`, `Skills`, `Equipment`, `TerrainTypes`) must exist as clean data tables distinct from session state (`player_state_t`, `grid_t`).
 * **Deterministic Event Pipeline**: Interactive map features (gates, switches, dialog triggers) will follow a clean, reentrant command interpreter model.
 * **Zero Engine Bloat**: By building this custom in C11 rather than relying on bloated runtimes, our TRPG will maintain sub-millisecond turn updates, instantaneous scene transitions, and absolute softlock immunity.
 
-## 4. Next Milestone Roadmap
+### Next Milestone Roadmap
 
 1. **Phase 1 (Complete)**: Established OmniCode 5-block layering, Layer 0 utilities, CTest verification suite, and canonical documentation.
 2. **Phase 2 (Active)**: Expand simulation state to model dual protagonists (Elijah & Katrina), party data structures, and the foundational 2D tactical grid.
 3. **Phase 3**: Implement the cinematic side-scroll combat transition in the presentation layer.
 4. **Phase 4**: Expand the tactical campaign across the provinces of Sacyra to confront the vanguard of The Dark Lord.
+
+
+---
+
+## Appendix: Wholesale Source Code Reference Plates
+
+### Pre-Flight Loose-Bolts Engine Walk (manifest_run_preflight)
+
+*Snapshot ID*: `snap_manifest_fn_preflight` | *Mode*: `Function` | *File*: `engine/src/core/manifest.c` (`L412–L509` of `669 lines`) | [Jump back to chapter text](#snap_plate_snap_manifest_fn_preflight)
+
+```c
+/**
+ * @brief Executes comprehensive pre-flight diagnostics across all registered modules.
+ */
+preflight_status_t manifest_run_preflight(manifest_registry_t *registry)
+{
+    if (registry == NULL) {
+        debug_trap_tripwire("manifest", "NULL registry passed to manifest_run_preflight", __FILE__, __LINE__);
+        return PREFLIGHT_STATUS_HALT_FATAL;
+    }
+
+    registry->pass_count = 0;
+    registry->warn_count = 0;
+    registry->critical_count = 0;
+    registry->fatal_count = 0;
+
+    /* Step 1: Active DAG Dependency Graph Verification */
+    for (size_t i = 0; i < registry->count; i++) {
+        const module_metadata_t *mod = registry->modules[i];
+        if (mod == NULL) continue;
+
+        for (size_t d = 0; d < mod->dependency_count; d++) {
+            const char *req_dep = mod->dependencies[d];
+            if (req_dep == NULL) continue;
+
+            bool found = false;
+            for (size_t j = 0; j < registry->count; j++) {
+                if (registry->modules[j] != NULL &&
+                    strcmp(registry->modules[j]->module_id, req_dep) == 0) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                diag_result_t dep_res;
+                dep_res.passed = false;
+                dep_res.severity = SEVERITY_FATAL;
+                dep_res.subsystem = mod->module_id;
+                dep_res.check_name = "Dependency DAG";
+                dep_res.details =
+                    "Fatal: Unregistered upstream dependency declared.";
+                registry->results[i] = dep_res;
+                registry->fatal_count++;
+                registry->status = PREFLIGHT_STATUS_HALT_FATAL;
+                debug_trap_tripwire("manifest", "Unregistered upstream DAG dependency detected", __FILE__, __LINE__);
+                return registry->status;
+            }
+        }
+    }
+
+    /* Step 2: Individual Module Pre-Flight Verification */
+    for (size_t i = 0; i < registry->count; i++) {
+        const module_metadata_t *mod = registry->modules[i];
+        if (mod == NULL) {
+            continue;
+        }
+
+        diag_result_t res;
+        if (mod->preflight_check != NULL) {
+            res = mod->preflight_check();
+        } else {
+            res.passed = true;
+            res.severity = SEVERITY_PASS;
+            res.subsystem = mod->module_id;
+            res.check_name = "Presence";
+            res.details = "No active preflight check defined.";
+        }
+
+        registry->results[i] = res;
+
+        bool is_fatal = (res.severity == SEVERITY_FATAL) ||
+            (!res.passed && res.severity != SEVERITY_WARNING &&
+             res.severity != SEVERITY_CRITICAL);
+
+        if (is_fatal) {
+            registry->fatal_count++;
+            registry->status = PREFLIGHT_STATUS_HALT_FATAL;
+            return registry->status;
+        } else if (res.severity == SEVERITY_CRITICAL) {
+            registry->critical_count++;
+        } else if (res.severity == SEVERITY_WARNING) {
+            registry->warn_count++;
+        } else {
+            registry->pass_count++;
+        }
+    }
+
+    /* Step 3: Determine aggregate system status */
+    if (registry->critical_count > 0) {
+        registry->status = PREFLIGHT_STATUS_DOWNGRADED;
+    } else if (registry->warn_count > 0) {
+        registry->status = PREFLIGHT_STATUS_WARNINGS;
+    } else {
+        registry->status = PREFLIGHT_STATUS_OK;
+    }
+
+    return registry->status;
+}
+```
 
 
 ---
