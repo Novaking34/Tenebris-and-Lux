@@ -6,9 +6,9 @@ BLOCK 1: METADATA BLOCK
 @project       Tenebris and Lux
 @file          AGENTS.md
 @layer         Cognitive Anchor & Repository Governance Strata
-@version       0.1.1-dev
+@version       0.1.2-dev
 @interface_rev Rev 5
-@date          2026-11-11
+@date          2026-11-14
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Universal 5-Block Lifecycle Protocol & Agent Standards
@@ -51,7 +51,7 @@ PURPOSE & COGNITIVE ROLE:
 > **Standard**: OmniCode 5-Block Ontological Architecture & Layered Invariant Discipline
 > **Author**: CreativeWorkzStudio LLC / ProfessorSeanEX
 > **Repository**: [https://github.com/Novaking34/tenebris-lux](https://github.com/Novaking34/tenebris-lux)
-> **Engine Milestone**: `0.1.1-dev` | **Governance Revision**: `Rev 5`
+> **Engine Milestone**: `0.1.2-dev` | **Governance Revision**: `Rev 5`
 
 ---
 
@@ -80,6 +80,7 @@ Engine engineering demands two complementary disciplines at once:
    Within those physical laws, we modernize one subsystem stratum at a time, testing empirically across all 4 Verification Tiers, elevating reusable cogs into `engine/`, aligning C structs to JSON configs, and exposing seams directly to the compiler.
 
 **Engine-as-a-Java / "Fall-Down Stairs" Portability Contract**:
+
 * Cornerstone builds forward-first for **ISO C23** (`-std=c23`) and **C++20** (`-std=c++20`) without legacy compatibility shims, anchored cleanly to an **ISO C17/C11 + C++17 floor** so older toolchains step down automatically (`CORNERSTONE_C_STANDARD=AUTO|23|17|11`, `CORNERSTONE_CXX_STANDARD=AUTO|20|17`) and step back up natively on modern systems.
 * Central capability macros live inside bedrock `engine/include/core/manifest.h` (`CS_C_STD_TIER`, `CS_CXX_STD_TIER`, `CS_NODISCARD`, `CS_MAYBE_UNUSED`, `CS_FALLTHROUGH`, `CS_UNREACHABLE`, `CS_ALIGNOF`, `CS_NORETURN`, `CS_STATIC_ASSERT`, `CS_HAS_EMBED`).
 
@@ -191,7 +192,7 @@ BLOCK 1: METADATA BLOCK
 @id            <cog.<module>[.<variant>] — movement-resilient logical identity>
 @layer         <Layer N: Stratum Name>
 @archetype     <operational | quarantined_fallback | facade_umbrella | pure_types> | <stateful | stateless>
-@version       0.1.1-dev
+@version       0.1.2-dev
 @interface_rev Rev 5
 @date          YYYY-MM-DD
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
@@ -219,6 +220,7 @@ PURPOSE & ARCHITECTURAL ROLE:
 ```
 
 **Core Block 1 Standards (`block_1_metadata.json`)**:
+
 1. **Movement-Resilient `@id` vs. Volatile `@file` / `@layer`**: Never bake folder paths or compilation layers into `@id` (deprecated `core.util.*` style breaks whenever cogs move or elevate from `game/` to `engine/`). Keep `@id` invariant (`cog.<module>[.<variant>]` for C cogs; `engine.config.*` / `engine.standards.*` / `game.data.*` for JSON; `tools.*` for Rust), record the current repo-relative path in `@file`, and record the current compilation stratum in `@layer`.
 2. **Paired `.h` / `.c` Specialization (Anti-Duplication)**: `.h` and `.c` share identical `@id`, `@layer`, `@archetype`, `@version`, `@interface_rev`, `@date`, and `@system`. They diverge intentionally on `@role`, `@chassis`, `@scale`, `@seams`, and `PURPOSE & ARCHITECTURAL ROLE` (Header = **Contract & Seam**; Source = **Runtime Engine & Measured Chassis**).
 3. **Scaling & Growth Telemetry**: Every tag value starts aligned at column 16 (`tag_column_width = 15`). `@maturity`, `@chassis`, `@scale`, and `@seams` expose architectural pressure, ELF `.bss`/`.data`/`.rodata`/stack footprints, capacity configs, and `DEBUG_STEP_AWAIT` probe wiring without enforcing arbitrary line-count ceilings or hand-maintained function lists.
@@ -232,7 +234,7 @@ Only essential top-level anchors belong at repository root: `CMakeLists.txt`, `.
 * `game/` — **The Master Turn Gear** (`game/include/` & `game/src/{combat,hero,relics,world,ending,dispatch}/`, `game/src/main.c`, `game/data/`, `game/assets/`)
 * `cmake/` — CMake build generators (e.g., `GenerateConfigRom.cmake`)
 * `tests/` — Layer 4 Verification Suite (`functional/`, `unit/`, `integrated/`, `system/`)
-* `tools/` — Native Rust developer CLI suite (`tl_tools`, `validator`, `git_validator`, `asset_generator`, `master_guide`, `demo_extractor`, `launcher`, `updater`)
+* `tools/` — Native developer suite: compiled Rust CLI suite (`tl_tools`, `installer`, `validator`, `git_validator`, `asset_generator`, `master_guide`, `demo_extractor`, `launcher`, `updater`) and Python orchestrator (`tools/orchestrator/` for hardware probes, sweet-spot calibration, tri-state modelfiles, and model screening)
 * `docs/` — AsciiDoc realm chronicles, architecture specs, DevLogs, and the 6-volume Master Guide (`docs/master_guide_manifest.json`)
 * `.githooks/`, `.github/`, `.vscode/` — Git commit validator hooks, CI workflows, workspace configs
 
@@ -281,6 +283,7 @@ Every Block 2 translation unit opens with a standardized `BLOCK 2: OPENING BLOCK
   * **Sub-Assembly 2.5 (`Monitored Support Infrastructure — Optional, .c ONLY`)**: When a `.c` file requires non-inline `static` internal helpers prior to Block 3 so Block 3 remains **pure business logic**, place them strictly in `Sub-Assembly 2.5` — never inside `2.4` and never in `.h` headers. Every `2.5` section MUST declare explicit `Support Role:` and `Pattern Watch:` notes (and `Linkage Rule:` = strictly `static` helpers, zero module-global `.bss` arrays), ensuring support mechanics never become a lazy drawer and cohesive patterns (e.g., span scanners, POSIX symlink guards) visibly signal when to split out a dedicated cog/file later.
 
 **6 Specialized Opening Block Profiles + 1 Universal Fallback** (`engine/config/standards/blocks/block_2_opening.json`):
+
 * **`.h` Archetypes**: `operational` (`cog.h`), `quarantined_fallback` (`cog_fallback.h`), `facade_umbrella` (`subsys.h`), and `pure_types` (`cog_types.h`).
 * **`.c` Archetypes**: `operational` (`cog.c`) and `quarantined_fallback` (`cog_fallback.c`).
 * **Universal Fallback**: Baseline C/H skeleton (`universal_fallback`) for unclassified or future Layer 1/3 modules.
@@ -455,6 +458,11 @@ RUSTFLAGS="-D warnings" cargo test --manifest-path tools/Cargo.toml
 cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate all
 cargo run --manifest-path tools/Cargo.toml --bin asset_generator -- --audit
 
+# Validate Python orchestrator test suites
+python3 tools/orchestrator/tests/test_model_factory.py
+python3 tools/orchestrator/tests/test_auto_mode.py
+python3 tools/orchestrator/tests/test_staircase_sweep.py
+
 # Compile the 6-volume Master Guide (74 chapters in docs/master_guide_manifest.json)
 cargo run --manifest-path tools/Cargo.toml --bin master_guide
 
@@ -479,7 +487,7 @@ BLOCK 1: METADATA & REVISION RECORD
 Project:       Tenebris and Lux
 Author:        CreativeWorkzStudio LLC / ProfessorSeanEX
 Date:          YYYY-MM-DD
-Version:       0.1.1-dev (Rev 5)
+Version:       0.1.2-dev (Rev 5)
 
 BLOCK 2: REASON FOR CHANGE & PROBLEM STATEMENT
 <Why this change exists, which seams/gaps/invariants motivated it.>

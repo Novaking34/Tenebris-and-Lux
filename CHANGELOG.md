@@ -6,16 +6,16 @@ BLOCK 1: METADATA BLOCK
 @project       Tenebris and Lux
 @file          CHANGELOG.md
 @layer         Documentation & Release Strata (Layer 3)
-@version       0.1.0-dev
-@interface_rev Rev 4
-@date          2026-11-07
+@version       0.1.2-dev
+@interface_rev Rev 5
+@date          2026-11-14
 @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 @repository    https://github.com/Novaking34/tenebris-lux
 @system        Dual-Frontend C11 Tactical RPG Engine & Continental Campaign
 @role          Evolutionary Milestone Chronicle & Pedagogical Dev Log Index
 @invariants    1. Adheres to Semantic Versioning (SemVer 2.0.0).
                2. Conforms to Keep a Changelog (v1.1.0) formatting.
-               3. Grounded in chronological Developer Logs (DevLogs 001–014).
+               3. Grounded in chronological Developer Logs (DevLogs 001–015).
                4. Enforces the Universal 5-Block Lifecycle Protocol.
                5. Authentic project canon (No deprecated synthetic placeholders).
 
@@ -43,64 +43,116 @@ This project adheres to [Semantic Versioning (SemVer 2.0.0)](https://semver.org/
 
 | Version | Milestone Name | Status | Release Date | Core Strata & Focus | DevLog Citations |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **`0.1.0-dev`** | Tactical Grid Engine & Continental Topology | In Progress | 2026-Q4 | 2D Grid, ZOC, Formations, 5-Screen UI, 10 Endings | DevLogs 013, 014, 015 |
+| **`0.1.2`** | OmniCode Cognitive Continuum & Zero-Delta Calibration | Verified | 2026-11-14 | Cognitive Continuum, Hardware Probes, Tri-State Modelfiles, Unified Installer | DevLogs 014, 015 |
+| **`0.1.1`** | Standalone Engine Decoupling & Modular Validator | Verified | 2026-11-10 | Engine vs Game Decoupling, Layered VFS, Quarantined Fallbacks, Block 1 Alignment | DevLogs 014, 015 |
+| **`0.1.0`** | Tactical Grid Engine & Continental Topology | Verified | 2026-11-07 | 2D Grid, ZOC, Formations, Cog Elevation, 51/51 CTests | DevLogs 013, 014, 015 |
 | **`0.0.1`** | Dual-Frontend Interactive Prototype | Verified | 2026-11-03 | C11 Zero-Heap L0/L1, X11 GUI, CLI Debugger, 19 CTests | DevLogs 001–014 |
 | **`0.0.0`** | Historical Genesis & Demo Baseline | Archival | 2014–2018 | RPG Maker MV Prototype, Storyboard, Data Extraction | DevLogs 002, 007 |
 
 ---
 
-## BLOCK 2: ROADMAP & FUTURE HORIZONS (PREMISE: v0.1.0-dev)
+## BLOCK 2: ROADMAP & FUTURE HORIZONS (PREMISE: v0.2.0-dev)
 
-### [0.1.0-dev] - In Active Development (Milestone: Tactical Grid Engine)
+### [0.2.0-dev] - Next Milestone Horizons
 
-The `v0.1.0` milestone transforms the verified interactive prototype into a full Tactical Strategy RPG (TRPG) grid engine, integrating the mechanics articulated in [DevLog 013](docs/dev_logs/2026/11/lore_and_design/devlog_013_morality_architecture_bystander_corridor_and_ten_endings.adoc) and [DevLog 014](docs/dev_logs/2026/11/architecture/devlog_014_high_fantasy_presentation_engine_typography_scaling_and_5_screen_architecture.adoc).
+The forthcoming milestone focuses on completing the engine-wide Block 2 Opening Block alignment, dynamic 2D viewport rasterization, and dedicated audio bus mixing:
 
-#### 1. Tactical TRPG Grid Engine (Layer 1 Simulation)
+#### 1. Universal Block 2 Opening Modernization
 
-- **Discrete 2D Battlefield Coordinates**: Transition from abstract topological room navigation (`move north`) to discrete tile coordinates (`(x, y)` cells) across 32x32 continental zone grids.
-- **Movement Points (MP) & Terrain Scalers**: Tile-based movement budgets evaluated against biome terrain costs (plains: 1 MP, dense forest: 2 MP, stone ramparts: 1.5 MP, river ford: 3 MP).
-- **Directional Facing & Spatial Geometry**: Cardinal facing (North, South, East, West) calculating flank (+20% damage) and rear (+40% critical chance) hit profiles using `geom_utils.h`.
-- **Zone-of-Control (ZOC) Mechanics**: Hostile units project a kinetic engagement radius; moving past an unengaged enemy clamps movement and inflicts poise strain unless shielded by *Lux Barrio*.
+- Complete sub-assembly 2.1 through 2.5 standardization across all remaining `engine/` headers and source files (`io/`, `core/`, `audio/`, `viewport/`).
+- Formalize compiled-in `.rodata` Config ROM vaults and quarantined fallback parity for all 44 Cornerstone engine cogs.
 
-#### 2. Party Roster & Formation Dynamics (Layer 1 Simulation)
+#### 2. Presentation Viewport & 2D Rasterization (Layer 2 GUI)
 
-- **Multi-Unit Deployment**: Squad roster management transitioning between world-map travel and grid deployment.
-- **Formation Synergy Buffs**: Positioning Elijah Ro-enheart (Vanguard Shield) adjacent to Lady Katrina Jaren (Abyssal Flanker) establishes a kinetic corridor granting +15% barrier deflection and +10% critical severance.
-- **Diegetic Item System Integration**: Grandma's Watch evolving into the *Dream Compass* through nocturnal calibration; *Compass of Morality* reading 13-tier continuum alignment.
+- 2D discrete tile rasterization, camera panning, and aspect-ratio scaling.
+- Cinematic clash transitions with side-scrolling action frames.
 
-#### 3. High Fantasy Presentation & 5-Screen Architecture (Layer 2 GUI)
+#### 3. 7-Channel Audio Bus & Mixer (Layer 0 Audio)
 
-- **5-Screen Navigation Loop**: Full implementation of the UI screens specified in DevLog 014:
-  1. *Tactical Battlefield Screen*: Dynamic 3x widescreen battlefield zoom with 96x96 sprites, ground foundation aprons, and health/resonance meters.
-  2. *Hero Dossier Screen*: Comprehensive character stat card, relic resonance, bound skills, and moral sway continuum readouts.
-  3. *32-Slot Bag / Inventory Screen*: Zero-heap grid inventory with diegetic tooltips, quest catalysts, and herbal remedies.
-  4. *Provincial Map Screen*: Continental chart of the Six Powers displaying territorial tensions and caravan supply lines.
-  5. *Deeds Codex Screen*: Historical timeline tracking honored oaths, provincial choices, and active ending trajectory.
-- **High-DPI TrueType Font Engine**: Multi-tiered typography scaling utilizing embedded fonts (`CinzelDecorative-Bold.ttf`, `Cinzel-Bold.ttf`, `MedievalSharp.ttf`).
-
-#### 4. Expanded Ending Topology (Narrative Strata)
-
-- **10-Ending Trajectory Engine**: Implementation of the 3x3 moral matrix + 10th True Ending (*"The Ugly Truth"*) codified in DevLog 013:
-  - *The Bystander Corridor (`[-50, +50]`)*: Quantifying moral inertia where refusal to take a stand leads to default dynastic stagnation.
-  - *The Butterfly Effect*: Provincial micro-choices breaking the 3,000-year cycle of the King's Curse.
-
-#### 5. Workspace Hygiene, Tooling & Ephemeral Sandboxing (Infrastructure Strata)
-
-- **Clean Root Hygiene & Auxiliary Taxonomy**:
-  - Quarantined all ephemeral runtime telemetry and flight recorder archives into `build/logs/`, eliminating root-level log rot.
-  - Quarantined compiler language server AST indices (`clangd`) into `build/.cache/clangd`.
-  - Canonicalized `.vscode/` with professional team IDE definitions: `settings.json` (C11 ISO standards, clangd LSP paths), `tasks.json` (build, ctest, audit, master_guide), `launch.json` (GDB launch targets), and `extensions.json`.
-  - Formalized `.github/` with GitHub Actions continuous verification (`workflows/ci.yml`) alongside markdownlint rules and issue templates.
+- Low-latency circular cue mixing, priority ducking, and ambient realm soundscapes.
 
 ---
 
 ## BLOCK 3: BODY CHRONICLE: RELEASES & EVOLUTIONARY MILESTONES
 
-### [0.1.0-dev] - 2026-11-07 (Milestone: The Big Machine & Core Subsystem Elevation)
+### [0.1.2] - 2026-11-14 (Milestone: OmniCode Cognitive Continuum, Zero-Delta Calibration & Unified Installer)
+
+This milestone introduces the **OmniCode 7-Tier Cognitive Continuum**, non-headless hardware-aware probe telemetry, zero-delta sweet-spot calibration for local LLM inference, tri-state modelfiles, and the native Rust unified installer.
+
+#### 1. OmniCode 7-Tier Cognitive Continuum & Sovereign Local Handshake
+
+- **Continuum Model Dispatch**:
+  - `Tier 01: TASK_MICRO_SIFT` (0.5B Micro-Sift @ 159 tok/s, 8k context, AST & token classification).
+  - `Tier 02: TASK_RAPID_BEDROCK` (1.5B Bedrock @ 55–75 tok/s, 8k/16k context, 100% VRAM residency).
+  - `Tier 03: TASK_BALANCED_AGENT` (3B Balanced Agent, 8k context, hybrid P/E threading).
+  - `Tier 04: TASK_DEEP_SIMULATION` (7B Full Simulation, 8k context, DDR5 bus saturation).
+  - `Tiers 05–07: Cloud & Frontier Tiers` (14B/32B/70B+) via sovereign API handshake.
+- **Small Model Host Exoskeleton Pattern**:
+  - Engineered external host-chassis compiler verification (`-Wall -Wextra -Wpedantic -Werror`), AST token compression, and short-burst micro-steps ($<60$ tokens) to turn a 0.5B model into an accelerated "7B" equivalent while preventing autoregressive token repetition loops.
+
+#### 2. Hardware-Aware Probes & Non-Headless Stability Floors
+
+- **CPU Topology Probe (`tools/orchestrator/probes/cpu_probe.py`)**:
+  - Dynamically probes heterogeneous CPU topologies (Intel Core 7 150U: 2 Performance cores / 4 P-threads @ 5.4 GHz, 8 Efficient cores / 8 E-threads @ 4.0 GHz).
+- **GPU Reserve Probe (`tools/orchestrator/probes/gpu_probe.py`)**:
+  - Probes NVIDIA GeForce MX570 A: detects 311 MB driver hardware reserve, 1,737 MB addressable VRAM, and a mandatory 350 MB non-headless display floor (granting 1,387 MB usable compute VRAM).
+- **Memory Protection Probe (`tools/orchestrator/probes/memory_probe.py`)**:
+  - Probes Linux desktop sessions (Wayland/GNOME) and establishes a 3,072 MB protected desktop RAM reserve (leaving 11,064 MB safe cold budget for models from 15.2 GB system RAM).
+
+#### 3. Zero-Delta Threshing Floor Calibration
+
+- `sweet_spot.py` and `model_factory.py` calibrated to find the "Sweet Spot Toward the Max":
+  - **0.5B**: Ctx 8192, 24 GPU layers, 4 P-threads (1244 MB VRAM headroom).
+  - **1.5B**: Ctx 8192, 28 GPU layers (100% VRAM residency @ 55–75 tok/s, 0 RAM offload), 4 P-threads (527 MB VRAM headroom). Added `deep_workspace_option` (16k Ctx, 13 GPU layers).
+  - **3B**: Ctx 8192, 20 GPU layers, 8 hybrid threads (376 MB VRAM headroom).
+  - **7B**: Ctx 8192, 4 GPU layers, 10 threads saturating DDR5 memory bus (1065 MB VRAM headroom).
+- Threshing delta across all local tiers: **Ctx diff: 0, GPU layer diff: 0, CPU thread diff: 0**.
+
+#### 4. 12 Tri-State Modelfiles
+
+- Generated 12 customized modelfiles across local tiers (`Fast` for low latency, `Default` for balanced development, `Quality` for high precision) in `tools/orchestrator/config/modelfiles/`, with custom stop tokens, system prompts, and calibrated GPU offload parameters.
+
+#### 5. Unified Native Rust Installer Binary
+
+- `tools/src/bin/installer.rs`: Standalone native Rust binary compiling and verifying the developer toolchain, checking preflight dependencies, and configuring developer hooks.
+
+---
+
+### [0.1.1] - 2026-11-10 (Milestone: Standalone Engine Decoupling, Modular Validator & Block 1 Standardization)
+
+This milestone delivers complete physical decoupling between the Big Machine (`engine/`) and the Master Turn Gear (`game/`), modularization of the developer validator toolchain, layered VFS configuration resolution, and complete Block 1 metadata standardization across all 41 headers and 35 source files in `engine/`.
+
+#### 1. Machine vs. Turn Gear Physical Decoupling
+
+- Separated `engine/` (Cornerstone Game Engine) from `game/` (Tenebris and Lux).
+- Enforced strict standalone engine boundary: `engine/` compiles independently without any `game/` headers, character names, or domain lore.
+
+#### 2. Layered VFS Resolution & Configuration Taxonomy
+
+- Created `engine/config/` (`viewport`, `audio`, `input`, `runtime`, `diagnostics`, `standards`).
+- Created `game/data/presentation/config/` 5-block symbolic linkers to avoid data duplication.
+- Implemented layered VFS resolution in `path_finder.c` (`game/config/` user override &rarr; `engine/config/` baseline defaults).
+
+#### 3. Modular Rust Developer Validator
+
+- Decomposed `tools/src/validator/` into clean submodules: `config`, `json_data`, `c_header`, `git_commit`, and `report`.
+
+#### 4. Quarantined Safe-Mode Fallbacks
+
+- Implemented `gui_fallback` and `reel_fallback` cogs with 1:1 unit tests to guarantee zero-disk boot viability.
+
+#### 5. Block 1 Metadata Standardization
+
+- Standardized all 41 headers and 35 source files in `engine/` under Rev 5 Block 1 metadata with the Dual-Audience Documentation Covenant.
+
+---
+
+### [0.1.0] - 2026-11-07 (Milestone: The Big Machine & Core Subsystem Elevation)
 
 This release milestone completes the comprehensive modernization of Layer 0 under the **OmniCode Universal 5-Block Lifecycle Protocol (Rev 4)**, establishing the cognitive and mechanical foundation of the engine ([DevLog 015](docs/dev_logs/2026/11/architecture/devlog_015_the_big_machine_master_turn_gear_and_core_elevation.adoc)):
 
 #### 1. Machine vs. Master Turn Gear Separation & Cog Elevation
+
 - **The Big Machine (`engine/`)**: Codified universal, lore-agnostic mechanical apparatus handling fixed timesteps, display surfaces, flight logging, and math evaluation.
 - **The Master Turn Gear (`game/`)**: The specific game implementation of *Tenebris and Lux*, driving tactical grid loops, combat stances, hero vitals, and provincial lore.
 - **Elevated Orchestrators**:
@@ -109,15 +161,18 @@ This release milestone completes the comprehensive modernization of Layer 0 unde
   - `engine/src/core/formula_eval.c`: Data-driven battle formula evaluation (mitigation, positional hit chances, crits, moral sway) hydrated from `game/data/system/runtime/math/formulas.json`.
 
 #### 2. Active Iteration Feedback Covenant & Shim Purging
+
 - Prohibited defensive backwards-compatibility wrappers during active iteration.
 - Purged stale shims and exposed architectural seams directly to the compiler (`-std=c11 -Wall -Wextra -Wpedantic -Werror`).
 - Upgraded every calling site to new tagged types, 3-tier includes, and pre-flight audits.
 
 #### 3. Complete Layer 0 Modernization & Quarantined Fallbacks
+
 - Standardized all Layer 0 cogs under the 5-block lifecycle protocol: `manifest`, `fs_utils`, `path_finder`, `json_utils`, `master_loader`, `log`, `debug`, `math_utils`, `time_utils`, `string_utils`, `geom_utils`, `clock_pacer`, `formula_eval`.
 - Authored isolated, zero-dependency fallback modules (`*_fallback.[ch]`) for all Layer 0 modules to guarantee build safety and offline testing.
 
 #### 4. Four-Strata Verification Ontology (51/51 CTests Passing)
+
 - Expanded verification suite from 19 to 51 automated CTests implementing the 4 Ontological Testing Sections (Nominal Baseline, Expected Input, Boundary Stress, Chaos Poisoning).
 - Full 100% pass rate achieved across Unit, Functional, Integrated, and System testing strata.
 
@@ -220,7 +275,7 @@ Every milestone release is governed by rigorous pre-flight audits and invariant 
 
 ```text
 ================================================================================
-           Tenebris and Lux - Subsystem Invariant Pre-Flight Audit              
+           Tenebris and Lux - Subsystem Invariant Pre-Flight Audit
 ================================================================================
 Subsystem            Source File     Rev  Memory      Status  Description
 --------------------------------------------------------------------------------

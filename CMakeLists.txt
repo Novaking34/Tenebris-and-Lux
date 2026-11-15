@@ -7,9 +7,9 @@
 # @id            build.root.cmake
 # @layer         Layer 0 Infrastructure (Build & Test Orchestration)
 # @archetype     operational | stateful
-# @version       0.1.1-dev
+# @version       0.1.2-dev
 # @interface_rev Rev 5
-# @date          2026-11-11
+# @date          2026-11-14
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
 # @system        Cornerstone Game Engine Build & Automated CTest Coordinator
@@ -50,7 +50,7 @@
 # ==============================================================================
 
 cmake_minimum_required(VERSION 3.24)
-project(TenebrisLux VERSION 0.1.1 LANGUAGES C)
+project(TenebrisLux VERSION 0.1.2 LANGUAGES C)
 
 # ==============================================================================
 # BLOCK 2: OPENING BLOCK
