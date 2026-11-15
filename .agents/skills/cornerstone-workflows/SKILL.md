@@ -34,20 +34,20 @@ Engine and RPG development at CreativeWorkzStudio proceeds across two synchroniz
 Always verify code across the stratified verification battery:
 
 ```bash
-# 1. Build Engine & Test Harnesses (C23 Target w/ C11 Floor)
+# 1. Build Engine & Test Harnesses (C23 Target w/ C11 Floor, Structured build/ Topology)
 cmake --build build --config Debug --parallel
 
-# 2. Tier 1–3: CTest Battery (All 65 Suites Must Pass)
+# 2. Tier 1–3: CTest Battery (All 65 Suites Passing from build/tests/)
 ctest --test-dir build -C Debug --output-on-failure
 
 # 3. Tier 0/1: Pre-Flight Self-Audit & Invariant Tripwires (20 Modules / GRADE:+100)
-./build/tenebris-lux --audit
+./build/bin/tenebris-lux --audit    # Or via convenience symlink: ./build/tenebris-lux --audit
 
 # 4. Zero-Disk Safe-Mode BIOS ROM Fallback Test
-./build/tenebris-lux -r /tmp/nonexistent_fallback_root --audit
+./build/bin/tenebris-lux -r /tmp/nonexistent_fallback_root --audit
 
 # 5. Terminal CLI Game Loop Smoke Test
-echo "quit" | ./build/tenebris-lux --cli
+echo "quit" | ./build/bin/tenebris-lux --cli
 
 # 6. Tier 4: Rust Developer Toolchain Tests (All 31 Unit Tests)
 cargo test --manifest-path tools/Cargo.toml
@@ -59,6 +59,26 @@ cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate all
 python3 tools/orchestrator/tests/test_model_factory.py
 python3 tools/orchestrator/tests/test_auto_mode.py
 python3 tools/orchestrator/tests/test_staircase_sweep.py
+```
+
+### Structured Build Topology & Maintenance Targets
+
+The `build/` directory organizes artifacts strictly by type to eliminate root sprawl:
+
+* `build/bin/`: Primary game executable (`tenebris-lux`).
+* `build/lib/`: Static/shared archives and libraries.
+* `build/tests/`: All 54+ compiled Layer 4 verification test executables.
+* `build/scratch/`: Dedicated transient workspace for test filesystem mounts and patches.
+* `build/generated/`: Auto-generated `.rodata` Config ROM headers (`*_rom.h`).
+* `build/logs/`: Subsystem flight logs and rotated forensic telemetry.
+* `build/tenebris-lux`: Automated root convenience symlink pointing to `bin/tenebris-lux`.
+
+Ergonomic maintenance targets:
+```bash
+make -C build clean-scratch        # Purges test mount dirs & .tmp files
+make -C build clean-logs           # Clears rotated logs while preserving folders
+make -C build clean-tests          # Purges compiled test binaries in build/tests/
+make -C build clean-all-artifacts  # Runs clean-scratch, clean-logs, and clean-tests
 ```
 
 ---

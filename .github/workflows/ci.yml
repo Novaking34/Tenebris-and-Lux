@@ -84,13 +84,16 @@ jobs:
         run: ctest --test-dir build -C Debug --output-on-failure
 
       - name: Execute Pre-Flight Subsystem Self-Audit & Invariant Tripwires (20 Modules)
-        run: ./build/tenebris-lux --audit
+        run: ./build/bin/tenebris-lux --audit
 
-      - name: Execute Deterministic CLI Simulation Smoke Test
-        run: echo "quit" | ./build/tenebris-lux --cli
+      - name: Execute Deterministic CLI Simulation Smoke Test (Canonical Binary)
+        run: echo "quit" | ./build/bin/tenebris-lux --cli
+
+      - name: Execute Convenience Symlink Smoke Test
+        run: ./build/tenebris-lux --version
 
       - name: Execute Tier-0 Safe-Mode BIOS ROM Fallback Test
-        run: ./build/tenebris-lux -r /tmp/nonexistent_fallback_root --audit
+        run: ./build/bin/tenebris-lux -r /tmp/nonexistent_fallback_root --audit
 
   # ----------------------------------------------------------------------------
   # 3.2 Job: Developer Toolchain, Schemas & Ledger Validation

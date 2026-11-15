@@ -5,7 +5,7 @@
             "name": "Debug GUI Mode (--gui)",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/tenebris-lux",
+            "program": "${workspaceFolder}/build/bin/tenebris-lux",
             "args": [
                 "--gui"
             ],
@@ -16,7 +16,7 @@
             "name": "Debug CLI Mode (--cli)",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/tenebris-lux",
+            "program": "${workspaceFolder}/build/bin/tenebris-lux",
             "args": [
                 "--cli"
             ],
@@ -27,7 +27,7 @@
             "name": "Debug Interactive State Debugger (--debug)",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/tenebris-lux",
+            "program": "${workspaceFolder}/build/bin/tenebris-lux",
             "args": [
                 "--debug"
             ],
@@ -38,7 +38,7 @@
             "name": "Debug Pre-Flight Audit (--audit)",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/tenebris-lux",
+            "program": "${workspaceFolder}/build/bin/tenebris-lux",
             "args": [
                 "--audit"
             ],
@@ -49,7 +49,7 @@
             "name": "Debug Safe-Mode BIOS ROM Fallback",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/tenebris-lux",
+            "program": "${workspaceFolder}/build/bin/tenebris-lux",
             "args": [
                 "-r",
                 "/tmp/nonexistent_fallback_root",

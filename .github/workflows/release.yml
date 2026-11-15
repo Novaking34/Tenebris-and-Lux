@@ -82,8 +82,12 @@ jobs:
           DIST_DIR="dist/tenebris-lux-${VERSION}-linux-x64"
           mkdir -p "${DIST_DIR}"
 
-          # Core binaries
-          cp build/tenebris-lux "${DIST_DIR}/"
+          # Core binaries (packaged from canonical build/bin/ or root symlink)
+          if [ -f "build/bin/tenebris-lux" ]; then
+            cp build/bin/tenebris-lux "${DIST_DIR}/tenebris-lux"
+          else
+            cp build/tenebris-lux "${DIST_DIR}/tenebris-lux"
+          fi
           strip "${DIST_DIR}/tenebris-lux"
 
           # Native developer & launcher tooling

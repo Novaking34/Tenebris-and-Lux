@@ -134,7 +134,9 @@ class ToolCockpit(ttk.Frame):
         self.on_action_output(f"=== MODEL FACTORY CALIBRATION ===\n{msg}")
 
     def _action_launch_game(self):
-        game_bin = os.path.abspath("build/tenebris-lux")
+        canonical_bin = os.path.abspath("build/bin/tenebris-lux")
+        symlink_bin = os.path.abspath("build/tenebris-lux")
+        game_bin = canonical_bin if os.path.isfile(canonical_bin) else symlink_bin
         if os.path.isfile(game_bin):
             try:
                 subprocess.Popen([game_bin])
@@ -142,7 +144,7 @@ class ToolCockpit(ttk.Frame):
             except Exception as e:
                 messagebox.showerror("Launch Failed", f"Failed starting game binary: {e}")
         else:
-            messagebox.showwarning("Game Not Built", "Binary 'build/tenebris-lux' not found. Please click 'Build Engine' first.")
+            messagebox.showwarning("Game Not Built", "Binary 'build/bin/tenebris-lux' or 'build/tenebris-lux' not found. Please click 'Build Engine' first.")
 
 # ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES

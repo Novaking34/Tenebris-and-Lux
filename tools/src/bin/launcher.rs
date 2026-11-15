@@ -97,6 +97,7 @@ impl LauncherEnv {
 
         for root in &candidate_roots {
             let bin_candidates = [
+                root.join("build/bin/tenebris-lux"),
                 root.join("build/tenebris-lux"),
                 root.join("bin/tenebris-lux"),
                 root.join("tenebris-lux"),
@@ -127,7 +128,11 @@ impl LauncherEnv {
 
         let repo_root = resolved_root.unwrap_or(current_dir);
         let game_binary = resolved_binary.unwrap_or_else(|| {
-            repo_root.join("build/tenebris-lux")
+            if repo_root.join("build/bin/tenebris-lux").is_file() {
+                repo_root.join("build/bin/tenebris-lux")
+            } else {
+                repo_root.join("build/tenebris-lux")
+            }
         });
         let data_dir = resolved_data.unwrap_or_else(|| repo_root.join("data"));
 

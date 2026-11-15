@@ -163,7 +163,11 @@ pub fn run_updater_pipeline(repo_root: &Path) -> Result<(), String> {
     println!("  [PASS] All 19 CTest verification targets passed cleanly.");
 
     println!("Running Pre-Flight Diagnostic Self-Audit...");
-    let game_bin = build_dir.join("tenebris-lux");
+    let game_bin = if build_dir.join("bin/tenebris-lux").is_file() {
+        build_dir.join("bin/tenebris-lux")
+    } else {
+        build_dir.join("tenebris-lux")
+    };
     let audit_status = Command::new(&game_bin)
         .arg("--audit")
         .current_dir(repo_root)

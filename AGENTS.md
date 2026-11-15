@@ -238,8 +238,21 @@ Only essential top-level anchors belong at repository root: `CMakeLists.txt`, `.
 * `docs/` — AsciiDoc realm chronicles, architecture specs, DevLogs, and the 6-volume Master Guide (`docs/master_guide_manifest.json`)
 * `.githooks/`, `.github/`, `.vscode/`, `.agents/` — Git hooks, CI workflows, workspace configs, agentic workflows
 
-### 1.3 Transient Output Sandboxing & Untracked Files
+### 1.3 Transient Output Sandboxing & Structured Build Topology
 
+* **Structured Build Hierarchy (`build/`)**:
+  - `build/bin/`: Primary game application binary (`tenebris-lux`).
+  - `build/lib/`: Compiled static/shared libraries and archives (`CMAKE_ARCHIVE_OUTPUT_DIRECTORY`, `CMAKE_LIBRARY_OUTPUT_DIRECTORY`).
+  - `build/tests/`: All 54+ compiled Layer 4 verification test executables.
+  - `build/scratch/`: Dedicated transient workspace for test filesystem mounts and hotpatches.
+  - `build/generated/`: Auto-generated `.rodata` Config ROM headers (`*_rom.h`).
+  - `build/logs/`: Subsystem flight logs and rotated forensic telemetry.
+  - `build/tenebris-lux`: Automated root convenience symlink pointing to `bin/tenebris-lux` (preserving existing developer scripts and documentation).
+  - **Ergonomic Maintenance Targets**:
+    - `make -C build clean-scratch`: Purges test mount directories and `.tmp` files.
+    - `make -C build clean-logs`: Clears rotated logs while preserving folder trees.
+    - `make -C build clean-tests`: Purges compiled test binaries from `build/tests/`.
+    - `make -C build clean-all-artifacts`: Purges all test binaries, logs, and scratch artifacts.
 * **Out-of-Source Quarantine**: All compiler outputs, runtime logs (`build/logs/`), generated ROM headers (`build/generated/`), and LSP caches (`build/.cache/`) must live under `build/` so `rm -rf build` restores a clean workspace. Never create `logs/` or `.cache/` at repo root.
 * **Untracked Local Notes**: Local scratch/design manuscripts such as `Offline_Work_*.md` (e.g., `Offline_Work_5.md`, `Offline_Work_6.md`) must **never** be modified, staged, or deleted by automated workflows unless explicitly directed.
 

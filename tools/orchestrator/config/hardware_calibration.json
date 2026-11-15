@@ -17,7 +17,7 @@
     ]
   },
   "block_2_opening": {
-    "timestamp": "2026-11-14 20:12:20",
+    "timestamp": "2026-11-14 21:54:50",
     "total_calibrated_tiers": 4,
     "continue_minimum_ctx": 4096,
     "detected_hardware": {

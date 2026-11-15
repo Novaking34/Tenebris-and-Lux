@@ -36,14 +36,14 @@
         {
             "label": "Run Subsystem Pre-Flight Audit (--audit)",
             "type": "shell",
-            "command": "./build/tenebris-lux --audit",
+            "command": "./build/bin/tenebris-lux --audit",
             "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
         },
         {
             "label": "Run Safe-Mode BIOS ROM Fallback (Zero-Disk Fallback)",
             "type": "shell",
-            "command": "./build/tenebris-lux -r /tmp/nonexistent_fallback_root --audit",
+            "command": "./build/bin/tenebris-lux -r /tmp/nonexistent_fallback_root --audit",
             "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
         },
@@ -71,7 +71,7 @@
         {
             "label": "Run Full 4-Tier Verification Battery",
             "type": "shell",
-            "command": "ctest --test-dir build -C Debug --output-on-failure && ./build/tenebris-lux --audit && cargo test --manifest-path tools/Cargo.toml && cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate all && python3 tools/orchestrator/tests/test_model_factory.py && python3 tools/orchestrator/tests/test_auto_mode.py && python3 tools/orchestrator/tests/test_staircase_sweep.py",
+            "command": "ctest --test-dir build -C Debug --output-on-failure && ./build/bin/tenebris-lux --audit && cargo test --manifest-path tools/Cargo.toml && cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate all && python3 tools/orchestrator/tests/test_model_factory.py && python3 tools/orchestrator/tests/test_auto_mode.py && python3 tools/orchestrator/tests/test_staircase_sweep.py",
             "group": "test",
             "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
@@ -79,14 +79,14 @@
         {
             "label": "Launch CLI Mode",
             "type": "shell",
-            "command": "./build/tenebris-lux --cli",
+            "command": "./build/bin/tenebris-lux --cli",
             "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
         },
         {
             "label": "Launch GUI Mode (X11)",
             "type": "shell",
-            "command": "./build/tenebris-lux --gui",
+            "command": "./build/bin/tenebris-lux --gui",
             "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
         },
@@ -94,6 +94,30 @@
             "label": "Compile Master Guide Compendiums",
             "type": "shell",
             "command": "cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --all",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean Scratch Workspaces (clean-scratch)",
+            "type": "shell",
+            "command": "cmake --build build --target clean-scratch",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean Telemetry Logs (clean-logs)",
+            "type": "shell",
+            "command": "cmake --build build --target clean-logs",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean Test Binaries (clean-tests)",
+            "type": "shell",
+            "command": "cmake --build build --target clean-tests",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean All Build Artifacts (clean-all-artifacts)",
+            "type": "shell",
+            "command": "cmake --build build --target clean-all-artifacts",
             "problemMatcher": []
         },
         {

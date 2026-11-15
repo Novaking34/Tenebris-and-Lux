@@ -125,9 +125,11 @@ class EngineHubPanel(ttk.Frame):
         ttk.Label(links_box, text="• 7B Architect: Local PC hardware ceiling", font=("monospace", 8)).pack(anchor="w", pady=2)
 
     def _launch_game(self):
-        bin_path = os.path.join(os.getcwd(), "build", "tenebris-lux")
+        canonical_bin = os.path.join(os.getcwd(), "build", "bin", "tenebris-lux")
+        symlink_bin = os.path.join(os.getcwd(), "build", "tenebris-lux")
+        bin_path = canonical_bin if os.path.exists(canonical_bin) else symlink_bin
         if not os.path.exists(bin_path):
-            messagebox.showwarning("Binary Not Found", "Game binary not found at build/tenebris-lux.\nPlease click 'Build Engine' first.")
+            messagebox.showwarning("Binary Not Found", "Game binary not found at build/bin/tenebris-lux or build/tenebris-lux.\nPlease click 'Build Engine' first.")
             return
         self.on_log(f"Launching {bin_path}...")
         try:

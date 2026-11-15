@@ -114,14 +114,18 @@ pub fn run_install_pipeline(paths: &InstallPaths) -> Result<(), String> {
     // Phase 2: Deploy Game Engine & Launchers
     println!("\n[2/5] Deploying CLI Binaries & Launchers...");
 
-    let game_bin = paths.repo_root.join("build/tenebris-lux");
+    let game_bin = if paths.repo_root.join("build/bin/tenebris-lux").is_file() {
+        paths.repo_root.join("build/bin/tenebris-lux")
+    } else {
+        paths.repo_root.join("build/tenebris-lux")
+    };
     if game_bin.is_file() {
         let target_game = paths.local_bin.join("tenebris-lux");
         let _ = fs::copy(&game_bin, &target_game);
         let _ = fs::set_permissions(&target_game, fs::Permissions::from_mode(0o755));
         println!("  Installed game engine -> {:?}", target_game);
     } else {
-        println!("  [NOTE] Game binary not yet compiled at build/tenebris-lux.");
+        println!("  [NOTE] Game binary not yet compiled at build/bin/tenebris-lux or build/tenebris-lux.");
     }
 
     // Deploy omni script wrapper

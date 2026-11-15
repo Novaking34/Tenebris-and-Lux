@@ -16,8 +16,9 @@
 # @role          Root CMake Build Graph: Implements Cornerstone's "Fall-Down"
 #                ISO C23 -> C17 -> C11 toolchain ladder (plus C++20/17 header
 #                verification), compiles ROM vaults and layered OBJECT libraries,
-#                links `tenebris-lux`, and registers all CTest suites.
-# @maturity      Rev 5 Baseline | Progressive C23/17/11 & C++20/17 Fall-Down + L0/L1/L2 OBJECT libs.
+#                links `tenebris-lux` (under build/bin/ with build/ root symlink),
+#                organizes tests in build/tests/, and registers all CTest suites.
+# @maturity      Rev 5 Baseline | Progressive C23/17/11 & C++20/17 Fall-Down + Structured build/ topology.
 # @chassis       zero-runtime-deps | Compiles L0/L1/L2 OBJECT units once cleanly (no per-test rebuild bloat).
 # @scale         O(T) static target graph over L0 (25 c), L1 (24 c), L2 (12 c), and 65+ CTest checks.
 # @seams         in: engine/, game/, tests/, cmake/GenerateConfigRom.cmake | probes: optional C++20/17 & -Werror checks
@@ -26,6 +27,7 @@
 #                3. Structural Layer 0 isolation: tenebris_engine_util excludes game/include paths.
 #                4. Compiled-in .rodata Config ROM headers generated out-of-source under build/generated/.
 #                5. Four-tier Layer 4 verification suite + CLI contracts registered cleanly in CTest (65+ tests).
+#                6. Structured build topology: primary binary in bin/, tests in tests/, scratch in scratch/.
 #
 # PURPOSE & ARCHITECTURAL ROLE:
 #   Root CMake build specification for Tenebris and Lux (powered by the
@@ -151,7 +153,20 @@ else()
 endif()
 
 # ------------------------------------------------------------------------------
-# Sub-Assembly 2.4: Composable Cornerstone Build & CTest Helper Functions
+# Sub-Assembly 2.4: Structured Build Output Topology (bin/, lib/, tests/)
+# ------------------------------------------------------------------------------
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+
+# Ensure core output and scratch hierarchy exists
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/scratch")
+
+# ------------------------------------------------------------------------------
+# Sub-Assembly 2.5: Composable Cornerstone Build & CTest Helper Functions
 # ------------------------------------------------------------------------------
 # Accumulator populated by cornerstone_add_test_executable() and finalized in Block 5.
 set(CORNERSTONE_CTEST_NAMES "")
@@ -218,6 +233,9 @@ function(cornerstone_add_test_executable)
     cmake_parse_arguments(TST "" "${_one}" "${_multi}" ${ARGN})
 
     add_executable("${TST_TARGET}" ${TST_SOURCES})
+    set_target_properties("${TST_TARGET}" PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+    )
     target_include_directories("${TST_TARGET}" PRIVATE
         ${TEST_INCLUDES}
         ${TST_EXTRA_INCLUDES}
@@ -563,6 +581,16 @@ target_link_libraries(tenebris-lux PRIVATE
     m
 )
 target_compile_options(tenebris-lux PRIVATE ${GAME_WARNING_FLAGS})
+
+if(UNIX)
+    # Convenience symlink at build/tenebris-lux pointing to build/bin/tenebris-lux
+    add_custom_command(TARGET tenebris-lux POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+            "${CMAKE_BINARY_DIR}/bin/tenebris-lux"
+            "${CMAKE_BINARY_DIR}/tenebris-lux"
+        COMMENT "Generating root convenience symlink: build/tenebris-lux -> bin/tenebris-lux"
+    )
+endif()
 
 # ==============================================================================
 # BLOCK 4: AUDIT PROCEDURES & GAME DEV TESTING BLOCK
@@ -1078,6 +1106,7 @@ if(BUILD_TESTING)
                 CXX_STANDARD ${_cs_cxx_tier}
                 CXX_STANDARD_REQUIRED ON
                 CXX_EXTENSIONS OFF
+                RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
             )
             target_include_directories(test_cpp_header_compat PRIVATE
                 ${ENGINE_PUBLIC_INCLUDES}
@@ -1131,5 +1160,54 @@ if(BUILD_TESTING)
     # --------------------------------------------------------------------------
     set_tests_properties(${CORNERSTONE_CTEST_NAMES}
         PROPERTIES WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+
+    # --------------------------------------------------------------------------
+    # Sub-Assembly 5.3: Ergonomic Workspace Maintenance Targets
+    # --------------------------------------------------------------------------
+    add_custom_target(clean-scratch
+        COMMAND ${CMAKE_COMMAND} -E rm -rf
+            "${CMAKE_BINARY_DIR}/scratch"
+            "${CMAKE_BINARY_DIR}/test_mount_root"
+            "${CMAKE_BINARY_DIR}/test_nested_dir"
+            "${CMAKE_BINARY_DIR}/system_test_patch"
+            "${CMAKE_BINARY_DIR}/test_io_func_out.tmp"
+            "${CMAKE_BINARY_DIR}/unit_fs_test.tmp"
+            "${CMAKE_BINARY_DIR}/test_fs_atomic_dir"
+            "${CMAKE_BINARY_DIR}/test_fs_ro_blocked.tmp"
+            "${CMAKE_BINARY_DIR}/test_corrupt_fs_pol.json"
+            "${CMAKE_BINARY_DIR}/test_fs_emergence.txt"
+            "${CMAKE_BINARY_DIR}/unit_io_fb_write.tmp"
+            "${CMAKE_BINARY_DIR}/unit_io_fb_ro_must_not_exist.tmp"
+            "${CMAKE_BINARY_DIR}/unit_io_fb_ro_dir_must_not_exist"
+            "${CMAKE_BINARY_DIR}/test_io_int_ro.tmp"
+            "${CMAKE_BINARY_DIR}/test.tmp"
+            "${CMAKE_BINARY_DIR}/fs_utils_ro_blocked.tmp"
+            "${CMAKE_BINARY_DIR}/fs_utils_ro_dir_blocked"
+            "${CMAKE_BINARY_DIR}/test_pf_sym_target.txt"
+            "${CMAKE_BINARY_DIR}/test_pf_sym1.txt"
+            "${CMAKE_BINARY_DIR}/test_pf_sym2.txt"
+            "${CMAKE_BINARY_DIR}/test_corrupt_vfs_routes.json"
+            "${CMAKE_BINARY_DIR}/ml_bad_contract_test.json"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/scratch"
+        COMMENT "Purging transient test scratch directories and temporary files"
+    )
+
+    add_custom_target(clean-logs
+        COMMAND ${CMAKE_COMMAND} -E rm -f
+            "${CMAKE_BINARY_DIR}/logs/tenebris_lux_dev.log.*"
+            "${CMAKE_BINARY_DIR}/logs/tenebris_lux_fallback.log"
+        COMMENT "Purging rotated telemetry logs while preserving log directories"
+    )
+
+    add_custom_target(clean-tests
+        COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_BINARY_DIR}/tests"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/tests"
+        COMMENT "Purging compiled test binaries from build/tests/"
+    )
+
+    add_custom_target(clean-all-artifacts
+        DEPENDS clean-scratch clean-logs clean-tests
+        COMMENT "Purging all transient test binaries, logs, and scratch artifacts"
     )
 endif()
