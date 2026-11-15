@@ -1,0 +1,195 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "tools/orchestrator/config/models.json",
+    "id": "omnicode.tools.config.models",
+    "layer": "Layer 0: Toolchain Data Contracts",
+    "version": "0.7.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-13",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Data-Driven Model Spectrum Catalog & 7-Tier Fall-Down Hierarchy",
+    "scaffold_notice": "Temporary open-weights substrate powered by Qwen 2.5 on the OmniCode Cognitive Chassis. Proprietary MillenniumOS native weights in active development.",
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Explicit power-of-two context boundaries (2048 <= num_ctx <= 131072).",
+      "3. Hardware offload safety: GPU layers must not exceed physical VRAM allocation cliffs (1387MB usable VRAM in non-headless session).",
+      "4. CPU Threading discipline: Dynamic Core 7 150U topology mapping (4 P-threads @ 5.4 GHz for 0.5B/1.5B, 8 hybrid threads for 3B, 10 memory bus threads for 7B, max physical capacity N=12).",
+      "5. Spectrum spans from 0.5B headless sifter up to local 7B PC ceiling, 14B workhorse, 32B coder flagship, and 72B strategic summit.",
+      "6. Automatic Sovereign Local Handshake: Any cloud step-down to <= 7B auto-triggers Local Mode."
+    ]
+  },
+  "block_2_opening": {
+    "schema_id": "omnicode.schema.models.v3",
+    "pre_conditions": "Ollama daemon running locally or Cloud Nexus bridge connected",
+    "capacities": {
+      "total_tiers": 7,
+      "local_pc_ceiling": "7b",
+      "cloud_peak_ceiling": "72b"
+    }
+  },
+  "block_3_body": {
+    "default_local_bedrock": "omnicode-fast-1.5b",
+    "local_pc_ceiling": "omnicode-architect-7b",
+    "headless_decomposer": "omnicode-micro-0.5b",
+    "cloud_coder_flagship": "omnicode-cloud-32b",
+    "cloud_strategic_summit": "omnicode-cloud-72b",
+    "models": {
+      "omnicode-micro-0.5b": {
+        "name": "omnicode-micro-0.5b",
+        "base_model": "qwen2.5-coder:0.5b",
+        "parameter_count": "0.49B",
+        "tier": "LOCAL_SIFTER",
+        "role": "Focused Micro-Scout // High-Speed Task Sifter, DAG Planner & Context Precision Engine",
+        "speed_rating": "100 - 160 tok/s",
+        "min_ctx": 2048,
+        "sweet_ctx": 8192,
+        "max_ctx": 8192,
+        "recommended_gpu_layers": 24,
+        "recommended_cpu_threads": 4,
+        "temperature": 0.2,
+        "top_p": 0.85,
+        "repeat_penalty": 1.05,
+        "is_headless": true,
+        "stop_tokens": ["<|im_end|>", "<|endoftext|>"]
+      },
+      "omnicode-fast-1.5b": {
+        "name": "omnicode-fast-1.5b",
+        "base_model": "qwen2.5-coder:1.5b",
+        "parameter_count": "1.54B",
+        "tier": "LOCAL_BEDROCK",
+        "role": "Native Bedrock Workhorse // Fast Autocomplete, CLI Tooling, AST Navigation & Rapid Triage",
+        "speed_rating": "55 - 75 tok/s (Full VRAM Residency, P-Burst @ 5.4 GHz)",
+        "min_ctx": 4096,
+        "sweet_ctx": 8192,
+        "max_ctx": 32768,
+        "recommended_gpu_layers": 28,
+        "recommended_cpu_threads": 4,
+        "temperature": 0.5,
+        "top_p": 0.9,
+        "repeat_penalty": 1.1,
+        "is_headless": false,
+        "stop_tokens": ["<|im_end|>", "<|endoftext|>"]
+      },
+      "omnicode-polymath": {
+        "name": "omnicode-polymath",
+        "base_model": "qwen2.5-coder:3b",
+        "parameter_count": "3.09B",
+        "tier": "LOCAL_DEEP_LOGIC",
+        "role": "Balanced Workhorse // C11/C23, Rust & Systems Architecture",
+        "speed_rating": "15 - 28 tok/s (8-Thread Hybrid P+E Scheduling)",
+        "min_ctx": 4096,
+        "sweet_ctx": 8192,
+        "max_ctx": 16384,
+        "recommended_gpu_layers": 20,
+        "recommended_cpu_threads": 8,
+        "temperature": 0.5,
+        "top_p": 0.9,
+        "repeat_penalty": 1.1,
+        "is_headless": false,
+        "stop_tokens": ["<|im_end|>", "<|endoftext|>"]
+      },
+      "omnicode-architect-7b": {
+        "name": "omnicode-architect-7b",
+        "base_model": "qwen2.5-coder:7b",
+        "parameter_count": "7.61B",
+        "tier": "LOCAL_PC_CEILING",
+        "role": "Local PC Maximum Peak // Deep Invariant Verification & Multi-Struct Design",
+        "speed_rating": "5.5 - 9.5 tok/s (10-Thread DDR5 Memory Bus Saturation)",
+        "min_ctx": 4096,
+        "sweet_ctx": 8192,
+        "max_ctx": 16384,
+        "recommended_gpu_layers": 4,
+        "recommended_cpu_threads": 10,
+        "temperature": 0.4,
+        "top_p": 0.9,
+        "repeat_penalty": 1.1,
+        "is_headless": false,
+        "stop_tokens": ["<|im_end|>", "<|endoftext|>"]
+      },
+      "omnicode-cloud-14b": {
+        "name": "omnicode-cloud-14b",
+        "base_model": "qwen2.5-coder:14b",
+        "parameter_count": "14.7B",
+        "tier": "CLOUD_WORKHORSE",
+        "role": "Cloud Nexus Workhorse // Macro-Refactor & Large-Scale Codebase Migration (Free Colab T4 Base)",
+        "speed_rating": "25 - 45 tok/s (Remote GPU Compute)",
+        "min_ctx": 4096,
+        "sweet_ctx": 32768,
+        "max_ctx": 65536,
+        "recommended_gpu_layers": 48,
+        "recommended_cpu_threads": 8,
+        "temperature": 0.3,
+        "top_p": 0.9,
+        "repeat_penalty": 1.05,
+        "is_headless": false,
+        "stop_tokens": ["<|im_end|>", "<|endoftext|>"]
+      },
+      "omnicode-cloud-32b": {
+        "name": "omnicode-cloud-32b",
+        "base_model": "qwen2.5-coder:32b",
+        "parameter_count": "32.5B",
+        "tier": "CLOUD_CODER_FLAGSHIP",
+        "role": "Cloud Nexus Coder Flagship // State-of-the-Art C11 Authoring & Full Subsystem Synthesis (5.5T Code Tokens)",
+        "speed_rating": "20 - 35 tok/s (Remote High-VRAM Compute)",
+        "min_ctx": 8192,
+        "sweet_ctx": 65536,
+        "max_ctx": 131072,
+        "recommended_gpu_layers": 64,
+        "recommended_cpu_threads": 8,
+        "temperature": 0.2,
+        "top_p": 0.9,
+        "repeat_penalty": 1.05,
+        "is_headless": false,
+        "stop_tokens": ["<|im_end|>", "<|endoftext|>"]
+      },
+      "omnicode-cloud-72b": {
+        "name": "omnicode-cloud-72b",
+        "base_model": "qwen2.5:72b",
+        "parameter_count": "72.7B",
+        "tier": "CLOUD_STRATEGIC_SUMMIT",
+        "role": "Cloud Nexus Summit // Macro Architectural Reasoning, Cross-Subsystem Proofs & Lore Consistency (18T Tokens)",
+        "speed_rating": "12 - 25 tok/s (Remote Multi-GPU / Enterprise)",
+        "min_ctx": 8192,
+        "sweet_ctx": 65536,
+        "max_ctx": 131072,
+        "recommended_gpu_layers": 80,
+        "recommended_cpu_threads": 12,
+        "temperature": 0.2,
+        "top_p": 0.9,
+        "repeat_penalty": 1.05,
+        "is_headless": false,
+        "stop_tokens": ["<|im_end|>", "<|endoftext|>"]
+      }
+    }
+  },
+  "block_4_audit": {
+    "verification_tripwires": [
+      {
+        "name": "thread_cap_rule",
+        "rule": "recommended_cpu_threads <= 6 for local tiers",
+        "status": "PASS"
+      },
+      {
+        "name": "local_ceiling_rule",
+        "rule": "local_pc_ceiling == 'omnicode-architect-7b'",
+        "status": "PASS"
+      },
+      {
+        "name": "headless_sifter_rule",
+        "rule": "models['omnicode-micro-0.5b']['is_headless'] == true",
+        "status": "PASS"
+      },
+      {
+        "name": "cloud_summit_rule",
+        "rule": "cloud_strategic_summit == 'omnicode-cloud-72b' and models['omnicode-cloud-72b']['max_ctx'] == 131072",
+        "status": "PASS"
+      }
+    ]
+  },
+  "block_5_closing": {
+    "execution_handshake": "VALIDATED_REV5",
+    "navigation": "tools/orchestrator/config/models.json -> tools/orchestrator/calibration/sweet_spot.py"
+  }
+}

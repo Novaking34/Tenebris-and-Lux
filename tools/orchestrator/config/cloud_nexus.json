@@ -1,0 +1,102 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "tools/orchestrator/config/cloud_nexus.json",
+    "id": "omnicode.tools.config.cloud_nexus",
+    "layer": "Layer 0: Toolchain Data Contracts",
+    "version": "0.6.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-13",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "Cloud Nexus Server Scaffolding (Free Active + Paid Dormant) with Sovereign Local Handshake",
+    "scaffold_notice": "Temporary open-weights substrate powered by Qwen 2.5 on the OmniCode Cognitive Chassis. Proprietary MillenniumOS native weights in active development.",
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Local-first bedrock: The second cloud operational space matches local capacity (<= 7B), system auto-triggers Local Mode.",
+      "3. Paid cloud infrastructure remains turned off (dormant) by default.",
+      "4. Cloud compute adapts dynamically across 14B, 32B, and 72B based on task requirements."
+    ]
+  },
+  "block_2_opening": {
+    "schema_id": "omnicode.schema.cloud_nexus.v2",
+    "pre_conditions": "Local orchestrator operational; cloud bridge optional",
+    "capacities": {
+      "max_cloud_latency_ms": 4500,
+      "sovereign_local_ceiling": "7b",
+      "supported_protocols": ["REST_SSE", "OLLAMA_API", "OPENAI_COMPATIBLE"]
+    }
+  },
+  "block_3_body": {
+    "cloud_enabled": false,
+    "active_provider": "free_colab",
+    "providers": {
+      "free_colab": {
+        "name": "Google Colab / Kaggle Free GPU Nexus",
+        "status": "ready_to_connect",
+        "tier": "14b",
+        "description": "Zero-cost ephemeral GPU compute (T4 16GB) via Cloudflare Tunnel",
+        "endpoint_url": "http://127.0.0.1:11434",
+        "remote_tunnel_url": "",
+        "target_model": "qwen2.5-coder:14b",
+        "timeout_seconds": 6.0,
+        "auth_header": ""
+      },
+      "spot_gpu_coder": {
+        "name": "RunPod / Lambda Spot GPU (Coder Flagship)",
+        "status": "disabled",
+        "tier": "32b",
+        "description": "On-demand spot GPU (RTX 3090/A5000 24GB @ ~$0.20/hr). Turned off by default.",
+        "endpoint_url": "",
+        "target_model": "qwen2.5-coder:32b",
+        "timeout_seconds": 12.0,
+        "api_key_env": "OMNICODE_RUNPOD_API_KEY",
+        "billing_limit_usd": 5.00
+      },
+      "cloud_summit_architect": {
+        "name": "Cloud Frontier Nexus (Macro Architecture & Proofs)",
+        "status": "disabled",
+        "tier": "72b",
+        "description": "Enterprise cloud cluster / API (A100 80GB or Frontier Cloud). Turned off by default.",
+        "endpoint_url": "",
+        "target_model": "qwen2.5:72b",
+        "timeout_seconds": 20.0,
+        "api_key_env": "OMNICODE_FRONTIER_API_KEY",
+        "billing_limit_usd": 10.00
+      }
+    },
+    "fall_down_ladder": [
+      {"tier": 7, "name": "CLOUD_SUMMIT_72B", "model": "qwen2.5:72b", "location": "remote", "role": "Macro Architecture & Proofs"},
+      {"tier": 6, "name": "CLOUD_CODER_32B", "model": "qwen2.5-coder:32b", "location": "remote", "role": "State-of-the-Art Code Authoring"},
+      {"tier": 5, "name": "CLOUD_WORKHORSE_14B", "model": "qwen2.5-coder:14b", "location": "remote", "role": "Macro Refactoring"},
+      {"tier": 4, "name": "LOCAL_PC_CEILING_7B", "model": "omnicode-architect-7b", "location": "local", "role": "Deep Invariant Audit"},
+      {"tier": 3, "name": "LOCAL_POLYMATH_3B", "model": "omnicode-polymath", "location": "local", "role": "C11 / Rust Author"},
+      {"tier": 2, "name": "LOCAL_BEDROCK_1_5B", "model": "omnicode-fast-1.5b", "location": "local", "role": "Interactive Workhorse"},
+      {"tier": 1, "name": "LOCAL_BEDROCK_FLOOR_0_5B", "model": "qwen2.5-coder:0.5b", "location": "local", "role": "DAG Sifter & Micro-Scout"},
+      {"tier": 0, "name": "DETERMINISTIC_EXOSKELETON", "model": "none", "location": "local_compiler", "role": "Zero-Disk Safe-Mode BIOS"}
+    ]
+  },
+  "block_4_audit": {
+    "verification_tripwires": [
+      {
+        "name": "paid_dormant_rule",
+        "rule": "providers['spot_gpu_coder']['status'] == 'disabled' and providers['cloud_summit_architect']['status'] == 'disabled'",
+        "status": "PASS"
+      },
+      {
+        "name": "fall_down_order_rule",
+        "rule": "fall_down_ladder[0]['tier'] > fall_down_ladder[-1]['tier']",
+        "status": "PASS"
+      },
+      {
+        "name": "sovereignty_boundary_rule",
+        "rule": "fall_down_ladder[3]['location'] == 'local' and fall_down_ladder[2]['location'] == 'remote'",
+        "status": "PASS"
+      }
+    ]
+  },
+  "block_5_closing": {
+    "execution_handshake": "VALIDATED_REV5",
+    "navigation": "tools/orchestrator/config/cloud_nexus.json -> tools/orchestrator/cloud/cloud_bridge.py"
+  }
+}

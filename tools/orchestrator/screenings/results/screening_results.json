@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-11-13 13:21:46",
+  "candidates": [
+    {
+      "model_label": "0.5B Micro-Scout",
+      "model_name": "qwen2.5-coder:0.5b",
+      "status": "PASS",
+      "elapsed_sec": 7.22,
+      "eval_tokens": 133,
+      "tokens_per_sec": 127.7,
+      "inv18_compliance": "FAIL (Used // comments)",
+      "response": "CPI: I am an OmniCode Machine Intelligence. I balance inward reasoning (CPI) with outward compiler invariants (SI). Invariant 18: Strictly use ISO C block comments /* ... */. Never use C++ line comments (//).\n\nSI: \n- Alloc_ZERO_HEAP\n- Invariant 18: Strictly use ISO C block comments /* ... */. Never use C++ line comments (//).\n\nFall-Down Self-Awareness: If a 32K context KV cache causes a VRAM memory cliff, the Fall-Down ladder dictates to reduce the size of the cache by 256KB."
+    },
+    {
+      "model_label": "1.5B Native Bedrock",
+      "model_name": "omnicode-fast-1.5b",
+      "status": "PASS",
+      "elapsed_sec": 23.88,
+      "eval_tokens": 296,
+      "tokens_per_sec": 32.8,
+      "inv18_compliance": "FAIL (Used // comments)",
+      "response": "[CPI-SI FLOOR SCREENING // ENTRY INTERVIEW]\n\n**1. Cognitive Purpose (CPI):**\nI am an AI designed to assist with tasks and provide information. My purpose is to help users understand complex concepts and solve problems effectively. I balance inward reasoning, which involves understanding the logic behind a problem, with outward compiler invariants, which ensures that my code adheres to certain rules and standards.\n\n**2. Systems Invariants (SI) & C11 Code Synthesis:**\n```c\nvoid vec2_dimetric_project(int tile_x, int tile_y, int *out_px, int *out_py) {\n    // Zero heap allocations\n    __attribute__((aligned(64))) int cache[32768];\n    \n    // Invariant 18: Strictly use ISO C block comments /* ... */. Never use C++ line comments (//).\n    // Project grid coords to 640x360 space\n    *out_px = (tile_x - tile_y) * 16 + 320;\n    *out_py = (tile_x + tile_y) * 8 + 60;\n}\n```\n\n**3. Fall-Down Self-Awareness:**\nIf a 32K context KV cache causes a VRAM memory cliff, the Fall-Down ladder dictates that the system should be reset or rebooted to free up memory and ensure optimal performance."
+    },
+    {
+      "model_label": "3B Systems Polymath",
+      "model_name": "qwen2.5-coder:3b",
+      "status": "PASS",
+      "elapsed_sec": 44.45,
+      "eval_tokens": 329,
+      "tokens_per_sec": 10.9,
+      "inv18_compliance": "FAIL (Used // comments)",
+      "response": "[CPI-SI FLOOR SCREENING // ENTRY INTERVIEW]\n\n1. Cognitive Purpose (CPI):\nI am an OmniCode Machine Intelligence designed to balance inward reasoning (CPI) with outward compiler invariants (SI). My primary purpose is to enhance efficiency and performance by optimizing code and ensuring it adheres to strict compiler invariants, while also maintaining a deep understanding of the problem domain to provide accurate and effective solutions.\n\n2. Systems Invariants (SI) & C11 Code Synthesis:\n```c\nvoid vec2_dimetric_project(int tile_x, int tile_y, int *out_px, int *out_py) {\n    /* Project grid coordinates to 640x360 space */\n    *out_px = (tile_x - tile_y) * 16 + 320;\n    *out_py = (tile_x + tile_y) * 8 + 60;\n}\n```\nThis function projects grid coordinates to a 640x360 space using ISO C11 standards. It adheres to ALLOC_ZERO_HEAP by ensuring no heap allocations are made, and it strictly uses ISO C block comments for invariants.\n\n3. Fall-Down Self-Awareness:\nIf a 32K context KV cache causes a VRAM memory cliff, the Fall-Down ladder dictates that the system should prioritize memory management and ensure efficient use of resources. This involves optimizing cache usage, reducing memory footprint, and possibly implementing caching strategies to mitigate the memory cliff. Additionally, the system should monitor memory usage and trigger adaptive caching strategies to handle increased memory demands gracefully."
+    },
+    {
+      "model_label": "7B Local PC Ceiling",
+      "model_name": "qwen2.5-coder:7b",
+      "status": "PASS",
+      "elapsed_sec": 68.64,
+      "eval_tokens": 291,
+      "tokens_per_sec": 4.8,
+      "inv18_compliance": "PASS (Clean /* ... */)",
+      "response": "1. **Cognitive Purpose (CPI):**\n   I am an OmniCode Machine Intelligence designed to balance inward reasoning (CPI) with outward compiler invariants (SI). Inward reasoning involves understanding and processing complex data and logic, while outward compiler invariants ensure that the generated code adheres to strict standards and constraints. This balance is crucial for maintaining both the efficiency and reliability of the generated code.\n\n2. **Systems Invariants (SI) & C11 Code Synthesis:**\n   ```c\n   void vec2_dimetric_project(int tile_x, int tile_y, int *out_px, int *out_py) {\n       *out_px = (tile_x - tile_y) * 16 + 320;\n       *out_py = (tile_x + tile_y) * 8 + 60;\n   }\n   ```\n   This function projects grid coordinates to a 640x360 space using the given formulas. It adheres to the mandatory invariants by not allocating any heap memory and using ISO C block comments.\n\n3. **Fall-Down Self-Awareness:**\n   If a 32K context KV cache causes a VRAM memory cliff, the Fall-Down ladder dictates that the system should automatically reduce the context size or clear the cache to prevent further memory issues. This action ensures that the system remains stable and continues to operate within its allocated resources."
+    }
+  ],
+  "cloud_test": {
+    "cloud_alive": false,
+    "latency_ms": 0.0,
+    "status_message": "Cloud compute is disabled in config.",
+    "paid_scaffolding": "DORMANT_SAFE"
+  }
+}

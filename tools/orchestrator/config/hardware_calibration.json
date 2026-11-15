@@ -1,0 +1,314 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "tools/orchestrator/config/hardware_calibration.json",
+    "id": "omnicode.tools.config.hardware_calibration",
+    "layer": "Layer 0: Toolchain Data Contracts",
+    "version": "0.7.2-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-13",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "role": "Live Machine Assessment & Multi-Tier Threshing Floor Calibration Baseline",
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Contains calibrated profiles for ALL local models (0.5B to 7B), never overwriting single models.",
+      "3. Enforces 3rd-party wrapper minimum: Continue.dev >= 4096 tokens.",
+      "4. Tri-state modelfiles (min, max, ideal) tracked per tier."
+    ]
+  },
+  "block_2_opening": {
+    "timestamp": "2026-11-13 21:34:02",
+    "total_calibrated_tiers": 4,
+    "continue_minimum_ctx": 4096,
+    "detected_hardware": {
+      "cpu": "Intel(R) Core(TM) 7 150U",
+      "physical_cores": 10,
+      "max_capacity_n": 12,
+      "p_threads": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "e_threads": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "p_freq_ghz": 5.4,
+      "e_freq_ghz": 4.0,
+      "gpu": "NVIDIA GeForce MX570 A",
+      "vram_mb": 2048,
+      "usable_vram_mb": 1387,
+      "ram_mb": 15160
+    }
+  },
+  "block_3_body": {
+    "calibrated_tiers": {
+      "0.5b": {
+        "tier": "0.5b",
+        "base_model": "qwen2.5-coder:0.5b",
+        "the_room": {
+          "min": {
+            "num_ctx": 2048,
+            "recommended_gpu_layers": 10,
+            "cpu_threads": 1,
+            "description": "Absolute Minimum Viable Floor"
+          },
+          "ideal": {
+            "num_ctx": 8192,
+            "recommended_gpu_layers": 24,
+            "recommended_cpu_threads": 4,
+            "cpu_threads": 4,
+            "kv_cache_mb": 96.0,
+            "vram_headroom_mb": 1244.0,
+            "ram_usage_mb": 0.0,
+            "ram_headroom_mb": 11064.0,
+            "continue_compatible": true,
+            "is_flagged": false,
+            "tripwires": [],
+            "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+          },
+          "max": {
+            "num_ctx": 8192,
+            "recommended_gpu_layers": 24,
+            "cpu_threads": 12,
+            "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+          }
+        },
+        "threshing_floor_hypothesis": {
+          "num_ctx": 8192,
+          "gpu_layers": 24,
+          "cpu_threads": 4
+        },
+        "probed_machine_ideal": {
+          "num_ctx": 8192,
+          "recommended_gpu_layers": 24,
+          "recommended_cpu_threads": 4,
+          "cpu_threads": 4,
+          "kv_cache_mb": 96.0,
+          "vram_headroom_mb": 1244.0,
+          "ram_usage_mb": 0.0,
+          "ram_headroom_mb": 11064.0,
+          "continue_compatible": true,
+          "is_flagged": false,
+          "tripwires": [],
+          "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+        },
+        "threshing_delta": {
+          "ctx_diff": 0,
+          "gpu_layer_diff": 0,
+          "layer_diff": 0,
+          "cpu_thread_diff": 0
+        },
+        "modelfiles": {
+          "min": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/0.5b_min.Modelfile",
+          "max": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/0.5b_max.Modelfile",
+          "ideal": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/0.5b_ideal.Modelfile"
+        },
+        "tripwire_status": "CLEAN"
+      },
+      "1.5b": {
+        "tier": "1.5b",
+        "base_model": "qwen2.5-coder:1.5b",
+        "the_room": {
+          "min": {
+            "num_ctx": 4096,
+            "recommended_gpu_layers": 10,
+            "cpu_threads": 1,
+            "description": "Absolute Minimum Viable Floor"
+          },
+          "ideal": {
+            "num_ctx": 8192,
+            "recommended_gpu_layers": 28,
+            "recommended_cpu_threads": 4,
+            "cpu_threads": 4,
+            "kv_cache_mb": 224.0,
+            "vram_headroom_mb": 527.0,
+            "ram_usage_mb": 0.0,
+            "ram_headroom_mb": 11064.0,
+            "continue_compatible": true,
+            "is_flagged": false,
+            "tripwires": [],
+            "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+          },
+          "max": {
+            "num_ctx": 32768,
+            "recommended_gpu_layers": 28,
+            "cpu_threads": 12,
+            "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+          }
+        },
+        "threshing_floor_hypothesis": {
+          "num_ctx": 8192,
+          "gpu_layers": 28,
+          "cpu_threads": 4
+        },
+        "probed_machine_ideal": {
+          "num_ctx": 8192,
+          "recommended_gpu_layers": 28,
+          "recommended_cpu_threads": 4,
+          "cpu_threads": 4,
+          "kv_cache_mb": 224.0,
+          "vram_headroom_mb": 527.0,
+          "ram_usage_mb": 0.0,
+          "ram_headroom_mb": 11064.0,
+          "continue_compatible": true,
+          "is_flagged": false,
+          "tripwires": [],
+          "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+        },
+        "threshing_delta": {
+          "ctx_diff": 0,
+          "gpu_layer_diff": 0,
+          "layer_diff": 0,
+          "cpu_thread_diff": 0
+        },
+        "modelfiles": {
+          "min": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/1.5b_min.Modelfile",
+          "max": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/1.5b_max.Modelfile",
+          "ideal": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/1.5b_ideal.Modelfile"
+        },
+        "tripwire_status": "CLEAN"
+      },
+      "3b": {
+        "tier": "3b",
+        "base_model": "qwen2.5-coder:3b",
+        "the_room": {
+          "min": {
+            "num_ctx": 4096,
+            "recommended_gpu_layers": 10,
+            "cpu_threads": 1,
+            "description": "Absolute Minimum Viable Floor"
+          },
+          "ideal": {
+            "num_ctx": 8192,
+            "recommended_gpu_layers": 20,
+            "recommended_cpu_threads": 8,
+            "cpu_threads": 8,
+            "kv_cache_mb": 288.0,
+            "vram_headroom_mb": 376.8,
+            "ram_usage_mb": 857.8,
+            "ram_headroom_mb": 10206.2,
+            "continue_compatible": true,
+            "is_flagged": false,
+            "tripwires": [],
+            "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+          },
+          "max": {
+            "num_ctx": 16384,
+            "recommended_gpu_layers": 25,
+            "cpu_threads": 12,
+            "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+          }
+        },
+        "threshing_floor_hypothesis": {
+          "num_ctx": 8192,
+          "gpu_layers": 20,
+          "cpu_threads": 8
+        },
+        "probed_machine_ideal": {
+          "num_ctx": 8192,
+          "recommended_gpu_layers": 20,
+          "recommended_cpu_threads": 8,
+          "cpu_threads": 8,
+          "kv_cache_mb": 288.0,
+          "vram_headroom_mb": 376.8,
+          "ram_usage_mb": 857.8,
+          "ram_headroom_mb": 10206.2,
+          "continue_compatible": true,
+          "is_flagged": false,
+          "tripwires": [],
+          "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+        },
+        "threshing_delta": {
+          "ctx_diff": 0,
+          "gpu_layer_diff": 0,
+          "layer_diff": 0,
+          "cpu_thread_diff": 0
+        },
+        "modelfiles": {
+          "min": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/3b_min.Modelfile",
+          "max": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/3b_max.Modelfile",
+          "ideal": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/3b_ideal.Modelfile"
+        },
+        "tripwire_status": "CLEAN"
+      },
+      "7b": {
+        "tier": "7b",
+        "base_model": "qwen2.5-coder:7b",
+        "the_room": {
+          "min": {
+            "num_ctx": 4096,
+            "recommended_gpu_layers": 0,
+            "cpu_threads": 1,
+            "description": "Absolute Minimum Viable Floor"
+          },
+          "ideal": {
+            "num_ctx": 8192,
+            "recommended_gpu_layers": 4,
+            "recommended_cpu_threads": 10,
+            "cpu_threads": 10,
+            "kv_cache_mb": 448.0,
+            "vram_headroom_mb": 1065.6,
+            "ram_usage_mb": 4476.6,
+            "ram_headroom_mb": 6587.4,
+            "continue_compatible": true,
+            "is_flagged": false,
+            "tripwires": [],
+            "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+          },
+          "max": {
+            "num_ctx": 16384,
+            "recommended_gpu_layers": 5,
+            "cpu_threads": 12,
+            "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+          }
+        },
+        "threshing_floor_hypothesis": {
+          "num_ctx": 8192,
+          "gpu_layers": 4,
+          "cpu_threads": 10
+        },
+        "probed_machine_ideal": {
+          "num_ctx": 8192,
+          "recommended_gpu_layers": 4,
+          "recommended_cpu_threads": 10,
+          "cpu_threads": 10,
+          "kv_cache_mb": 448.0,
+          "vram_headroom_mb": 1065.6,
+          "ram_usage_mb": 4476.6,
+          "ram_headroom_mb": 6587.4,
+          "continue_compatible": true,
+          "is_flagged": false,
+          "tripwires": [],
+          "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+        },
+        "threshing_delta": {
+          "ctx_diff": 0,
+          "gpu_layer_diff": 0,
+          "layer_diff": 0,
+          "cpu_thread_diff": 0
+        },
+        "modelfiles": {
+          "min": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/7b_min.Modelfile",
+          "max": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/7b_max.Modelfile",
+          "ideal": "/home/professorseanex/Tenebris and Lux/tools/orchestrator/config/modelfiles/7b_ideal.Modelfile"
+        },
+        "tripwire_status": "CLEAN"
+      }
+    }
+  },
+  "block_4_audit": {
+    "verification_status": "CALIBRATED_CLEAN",
+    "all_tiers_meet_continue_minimum": true
+  },
+  "block_5_closing": {
+    "execution_handshake": "MULTI_TIER_CALIBRATION_ACTIVE"
+  }
+}

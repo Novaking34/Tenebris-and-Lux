@@ -1,0 +1,98 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "tools/orchestrator/config/agent_manifest.json",
+    "id": "omnicode.tools.config.agent_manifest",
+    "layer": "Layer 0: Toolchain Data Contracts",
+    "version": "0.4.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-13",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "CPI-SI Cognitive Agent Manifest & Tool Registry",
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. The CPI-SI Covenant Tensor governs all agent deliberations.",
+      "3. All destructive disk and command operations require explicit operator authorization.",
+      "4. Mandatory adherence to Cornerstone Invariant 18 (C comments only) and Invariant 1 (zero heap in Layer 0/1)."
+    ]
+  },
+  "block_2_opening": {
+    "schema_id": "omnicode.schema.agent_manifest.v1",
+    "pre_conditions": "Local Ollama daemon accessible, workspace rooted at Tenebris and Lux",
+    "capacities": {
+      "max_registered_tools": 16,
+      "max_concurrent_subagents": 4
+    }
+  },
+  "block_3_body": {
+    "system_identity": {
+      "name": "OmniCode Machine Intelligence",
+      "chassis_grade": "CPI-SI Grade (Cognitive Protocol Interface // System Invariants)",
+      "creator": "CreativeWorkzStudio LLC & Operator (ProfessorSeanEX)",
+      "covenant": "Weighs inward reasoning intent (CPI) against concrete physical laws and system invariants (SI)."
+    },
+    "registered_tools": [
+      {
+        "tag": "[TOOL:INSPECT <path>]",
+        "name": "ast_inspector",
+        "description": "Extracts high-density API contracts from C, Rust, or Python files, stripping implementation bodies (65-95% token savings).",
+        "safety_level": "READ_ONLY",
+        "requires_confirmation": false
+      },
+      {
+        "tag": "[TOOL:VERIFY <path>]",
+        "name": "invariant_verifier",
+        "description": "Performs deterministic static analysis (Invariant 18 block comments, zero heap, 5-block lifecycle) and compiler error parsing.",
+        "safety_level": "READ_ONLY",
+        "requires_confirmation": false
+      },
+      {
+        "tag": "[TOOL:READ <path>]",
+        "name": "file_reader",
+        "description": "Reads raw file content from the workspace.",
+        "safety_level": "READ_ONLY",
+        "requires_confirmation": false
+      },
+      {
+        "tag": "[TOOL:WRITE <path>]",
+        "name": "file_writer",
+        "description": "Safely writes or updates code files on disk.",
+        "safety_level": "DESTRUCTIVE_WRITE",
+        "requires_confirmation": true
+      },
+      {
+        "tag": "[TOOL:RUN <cmd>]",
+        "name": "command_runner",
+        "description": "Executes workspace shell commands (builds, tests, git operations).",
+        "safety_level": "SUBPROCESS_EXEC",
+        "requires_confirmation": true
+      },
+      {
+        "tag": "[TOOL:DIFF]",
+        "name": "git_diff",
+        "description": "Captures the active git diff for architectural review.",
+        "safety_level": "READ_ONLY",
+        "requires_confirmation": false
+      }
+    ]
+  },
+  "block_4_audit": {
+    "verification_tripwires": [
+      {
+        "name": "operator_confirmation_safety",
+        "rule": "all DESTRUCTIVE_WRITE and SUBPROCESS_EXEC tools have requires_confirmation == true",
+        "status": "PASS"
+      }
+    ],
+    "self_audit_target": "tools/orchestrator/agent/dispatcher.py"
+  },
+  "block_5_closing": {
+    "execution_handshake": "MANIFEST_REGISTERED",
+    "navigation": {
+      "next_subsystem": "tools/orchestrator/types/state.py",
+      "parent_catalog": "tools/orchestrator/config/models.json"
+    }
+  }
+}
+

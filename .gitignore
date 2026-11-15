@@ -49,6 +49,11 @@
 *.o
 *.obj
 
+# Python bytecode and module cache
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Static library archives (C11 utility and engine static archives)
 *.a
 *.lib

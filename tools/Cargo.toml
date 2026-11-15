@@ -129,6 +129,12 @@ path = "src/bin/git_validator.rs"
 name = "asset_generator"
 path = "src/bin/asset_generator.rs"
 
+# Unified system installer for engine, CLI launcher, updater, and OmniCode Studio Hub
+[[bin]]
+name = "installer"
+path = "src/bin/installer.rs"
+
+
 
 
 

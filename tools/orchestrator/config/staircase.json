@@ -1,0 +1,199 @@
+{
+  "block_1_metadata": {
+    "project": "Tenebris and Lux",
+    "file": "tools/orchestrator/config/staircase.json",
+    "id": "omnicode.tools.config.staircase",
+    "layer": "Layer 0: Toolchain Data Contracts",
+    "version": "0.7.0-dev",
+    "interface_rev": "Rev 5",
+    "date": "2026-11-13",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
+    "repository": "https://github.com/Novaking34/tenebris-lux",
+    "role": "OmniCode Cognitive Continuum: Dual-Domain (Local & Cloud) Verification Window Across the 7 Qwen 2.5 / Coder Sizes",
+    "scaffold_notice": "Temporary open-weights substrate powered by the official Qwen 2.5 family (0.5B to 72B, Coder & Reasoning) on the OmniCode Cognitive Chassis. Proprietary MillenniumOS native weights in active development.",
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Config file acts as a verification window [min_floor, max_ceiling] for empirically probed ideal states.",
+      "3. Universal Law: Local First -> Cloud (If Able) applied uniformly across all tiers.",
+      "4. The second cloud operational space matches local capacity (<= 7B on this host), the system auto-triggers Local Mode.",
+      "5. Cloud compute maintains dynamic min/ideal/max envelopes per tier, adapting compute to task demand.",
+      "6. On current host, 14B, 32B, and 72B evaluate local_supported=false and route to Cloud (If Able).",
+      "7. The absolute bedrock floor is 0.5B Min. If 0.5B Min fails, tripwire engages Level 0 Safe-Mode BIOS."
+    ]
+  },
+  "block_2_opening": {
+    "schema_id": "omnicode.schema.staircase.v3",
+    "pre_conditions": "Empirical hardware probe calibrates ideal configuration inside the bounded verification window",
+    "spectrum_architecture": {
+      "official_series": "Qwen 2.5 Ecosystem (Coder: 0.5B-32B, Dense Flagship: 72B, Reasoning: QwQ)",
+      "total_tiers": 7,
+      "tier_keys": ["0.5b", "1.5b", "3b", "7b", "14b", "32b", "72b"],
+      "sovereign_local_ceiling": "7b",
+      "cloud_entry_floor": "14b",
+      "cloud_apex_target": "72b_cloud_max",
+      "local_bedrock_floor": "0.5b_local_min"
+    },
+    "sovereignty_contract": {
+      "auto_local_trigger_rule": "When task demand <= sovereign_local_ceiling and local_chassis_ready == true, execution_target MUST switch to LOCAL immediately to eliminate network latency, external dependencies, and token burn.",
+      "cloud_elevation_rule": "When task demand > sovereign_local_ceiling or local RAM/VRAM saturation > 92%, execution_target elevates to CLOUD (If Able)."
+    }
+  },
+  "block_3_body": {
+    "cloud_strategy": {
+      "default_aim": "TASK_ADAPTIVE_APEX",
+      "target_apex_model": "qwen2.5:72b",
+      "target_coder_flagship": "qwen2.5-coder:32b",
+      "target_apex_ctx": 131072,
+      "fall_down_enabled": true,
+      "auto_local_handshake": true,
+      "rationale": "Cloud compute removes local VRAM bottlenecks. The cloud adapts dynamically: using 14B for fast refactoring, 32B for flagship code authoring, and 72B/QwQ for strategic architecture and proofs. The moment task demand drops to <= 7B, the system auto-triggers Local Mode."
+    },
+    "tiers": {
+      "0.5b": {
+        "name": "0.5B Micro-Scout",
+        "base_model": "qwen2.5-coder:0.5b",
+        "parameters": "0.49B",
+        "role": "High-Velocity Task Sifter & DAG Decomposer (100-160 tok/s)",
+        "local_supported": true,
+        "local_envelope": {
+          "min": {"num_ctx": 2048, "gpu_layers": 10, "cpu_threads": 1, "est_vram_mb": 220, "description": "Absolute Local Bedrock Floor"},
+          "ideal": {"num_ctx": 8192, "gpu_layers": 24, "cpu_threads": 4, "est_vram_mb": 493, "description": "Calibrated Sweet Spot Toward Max (100% GPU Residency, P-Burst)"},
+          "max": {"num_ctx": 8192, "gpu_layers": 24, "cpu_threads": 12, "est_vram_mb": 493, "description": "Local 0.5B Apex (Full N=12 Threads)"}
+        },
+        "cloud_envelope": {
+          "min": {"num_ctx": 4096, "description": "Cloud 0.5B Minimal (Micro-Task)"},
+          "ideal": {"num_ctx": 16384, "description": "Cloud 0.5B Fast Batch DAG"},
+          "max": {"num_ctx": 32768, "description": "Cloud 0.5B High-Concurrency Stream"}
+        }
+      },
+      "1.5b": {
+        "name": "1.5B Native Bedrock",
+        "base_model": "qwen2.5-coder:1.5b",
+        "parameters": "1.54B",
+        "role": "Native Workhorse & Interactive CLI Orchestrator (33-65 tok/s)",
+        "local_supported": true,
+        "local_envelope": {
+          "min": {"num_ctx": 4096, "gpu_layers": 10, "cpu_threads": 1, "est_vram_mb": 620, "description": "Safe Low-Power Baseline"},
+          "ideal": {"num_ctx": 8192, "gpu_layers": 28, "cpu_threads": 4, "est_vram_mb": 1210, "description": "Full GPU Residency Sweet Spot (28 Layers, 0 RAM Offload, P-Burst 60+ tok/s)"},
+          "deep_workspace_option": {"num_ctx": 16384, "gpu_layers": 13, "cpu_threads": 4, "est_vram_mb": 1222, "description": "Extended Workspace Profile (16k Ctx, 13 GPU / 15 RAM Layers)"},
+          "max": {"num_ctx": 32768, "gpu_layers": 13, "cpu_threads": 12, "est_vram_mb": 1387, "description": "Physical Razor Edge Cliff"}
+        },
+        "cloud_envelope": {
+          "min": {"num_ctx": 8192, "description": "Cloud 1.5B Minimal"},
+          "ideal": {"num_ctx": 32768, "description": "Cloud 1.5B Standard Interactive"},
+          "max": {"num_ctx": 65536, "description": "Cloud 1.5B Expanded Workhorse"}
+        }
+      },
+      "3b": {
+        "name": "3B Systems Polymath",
+        "base_model": "qwen2.5-coder:3b",
+        "parameters": "3.09B",
+        "role": "Balanced C11 / Rust Systems & Logic Author (11-25 tok/s)",
+        "local_supported": true,
+        "local_envelope": {
+          "min": {"num_ctx": 4096, "gpu_layers": 10, "cpu_threads": 1, "est_vram_mb": 950, "description": "Safe Minimal Logic Author"},
+          "ideal": {"num_ctx": 8192, "gpu_layers": 20, "cpu_threads": 8, "est_vram_mb": 1253, "description": "Polymath Sweet Spot (20 GPU Layers, 8 Hybrid Threads, 376MB Headroom)"},
+          "max": {"num_ctx": 16384, "gpu_layers": 20, "cpu_threads": 12, "est_vram_mb": 1387, "description": "Local 3B Apex Cliff"}
+        },
+        "cloud_envelope": {
+          "min": {"num_ctx": 8192, "description": "Cloud 3B Minimal"},
+          "ideal": {"num_ctx": 32768, "description": "Cloud 3B Standard Systems"},
+          "max": {"num_ctx": 65536, "description": "Cloud 3B Apex"}
+        }
+      },
+      "7b": {
+        "name": "7B Local PC Ceiling",
+        "base_model": "qwen2.5-coder:7b",
+        "parameters": "7.61B",
+        "role": "Local Hardware Ceiling & Deep Invariant Auditor (4.8 tok/s)",
+        "local_supported": true,
+        "local_envelope": {
+          "min": {"num_ctx": 4096, "gpu_layers": 0, "cpu_threads": 1, "est_vram_mb": 100, "description": "Pure DDR5 RAM Safe-Mode"},
+          "ideal": {"num_ctx": 8192, "gpu_layers": 4, "cpu_threads": 10, "est_vram_mb": 671, "description": "Stable Local Ceiling (4 GPU / 24 RAM Layers, 10-Thread DDR5 Bus Saturation)"},
+          "max": {"num_ctx": 16384, "gpu_layers": 5, "cpu_threads": 12, "est_vram_mb": 840, "description": "Local 7B Physical Ceiling"}
+        },
+        "cloud_envelope": {
+          "min": {"num_ctx": 8192, "description": "Cloud 7B Minimal"},
+          "ideal": {"num_ctx": 32768, "description": "Cloud 7B High-Throughput Auditor"},
+          "max": {"num_ctx": 65536, "description": "Cloud 7B Full Invariant Sweep"}
+        }
+      },
+      "14b": {
+        "name": "14B Cloud Workhorse",
+        "base_model": "qwen2.5-coder:14b",
+        "parameters": "14.7B",
+        "role": "Cloud Entry Workhorse & Macro-Refactor Engine (Free Colab / Spot GPU)",
+        "local_supported": false,
+        "local_envelope": {
+          "status": "DISQUALIFIED_ON_THIS_CHASSIS",
+          "reason": "Exceeds 2GB VRAM + 16GB system RAM practical interactive budget"
+        },
+        "cloud_envelope": {
+          "min": {"num_ctx": 8192, "description": "Cloud 14B Minimal (Free Colab T4 Base)"},
+          "ideal": {"num_ctx": 32768, "description": "Cloud 14B Optimal Workhorse Refactor"},
+          "max": {"num_ctx": 65536, "description": "Cloud 14B Apex"}
+        }
+      },
+      "32b": {
+        "name": "32B Coder Flagship",
+        "base_model": "qwen2.5-coder:32b",
+        "parameters": "32.5B",
+        "role": "State-of-the-Art Code Specialist // Competitive with GPT-4o on C11 & Repo Tasks",
+        "local_supported": false,
+        "local_envelope": {
+          "status": "DISQUALIFIED_ON_THIS_CHASSIS",
+          "reason": "Requires high-VRAM workstation (32GB+ VRAM or Unified Memory)"
+        },
+        "cloud_envelope": {
+          "min": {"num_ctx": 16384, "description": "Cloud 32B Minimal (A100 / RTX 3090 Spot)"},
+          "ideal": {"num_ctx": 65536, "description": "Cloud 32B Flagship C11 Authoring & Deep Verification"},
+          "max": {"num_ctx": 131072, "description": "Cloud 32B Absolute Summit (Full 128k YaRN Context)"}
+        }
+      },
+      "72b": {
+        "name": "72B Strategic Architecture Summit",
+        "base_model": "qwen2.5:72b",
+        "parameters": "72.7B",
+        "role": "Macro-Architectural Reasoning, Cross-Subsystem Proofs & Lore Consistency (18T Tokens)",
+        "local_supported": false,
+        "local_envelope": {
+          "status": "DISQUALIFIED_ON_THIS_CHASSIS",
+          "reason": "Requires multi-GPU cloud cluster (80GB+ VRAM)"
+        },
+        "cloud_envelope": {
+          "min": {"num_ctx": 16384, "description": "Cloud 72B Minimal Architecture Pass"},
+          "ideal": {"num_ctx": 65536, "description": "Cloud 72B Deep Macro Synthesis & Proofs"},
+          "max": {"num_ctx": 131072, "description": "Cloud 72B Absolute Cognitive Summit (128k Context)"}
+        }
+      }
+    }
+  },
+  "block_4_audit": {
+    "verification_tripwires": [
+      {
+        "name": "verification_window_contract",
+        "rule": "Every tier defines min <= ideal <= max",
+        "status": "PASS"
+      },
+      {
+        "name": "sovereign_handshake_rule",
+        "rule": "sovereign_local_ceiling == '7b' and cloud_entry_floor == '14b'",
+        "status": "PASS"
+      },
+      {
+        "name": "chassis_sovereignty_rule",
+        "rule": "14b, 32b, and 72b have local_supported == false on this host, preserving local stability",
+        "status": "PASS"
+      },
+      {
+        "name": "auto_local_trigger_contract",
+        "rule": "cloud_strategy.auto_local_handshake == true",
+        "status": "PASS"
+      }
+    ]
+  },
+  "block_5_closing": {
+    "execution_handshake": "VALIDATED_REV5",
+    "navigation": "tools/orchestrator/config/staircase.json -> tools/orchestrator/agent/stepped_gearbox.py"
+  }
+}
