@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .githooks/pre-commit
+# @id            tools.githooks.pre_commit
+# @layer         Developer Tooling & VCS Hooks (Layer 3 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        Git Client-Side Verification Hook
+# @role          Pre-Commit Hygiene, Binary Size Ceiling & Block 1 Metadata Guard
+# @invariants    1. Rejects staging prohibited scratch/build directories.
+#                2. Rejects single binary files exceeding 5MB asset threshold.
+#                3. Verifies Block 1 metadata banners on newly authored cogs & configs.
+#                4. Supports emergency bypass flags (SKIP_PRE_COMMIT / SKIP_HOOKS).
+#                5. Sub-100ms execution latency to guarantee zero developer friction.
+#
+# PURPOSE & ARCHITECTURAL ROLE:
+#   Protects git history from accidental binary bloat (unprocessed game assets),
+#   scratch directory pollution, and missing architectural metadata. Executes
+#   locally before each commit transaction with negligible latency.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / CONFIGURATION & PRE-CONDITIONS
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_commit
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 2.1 Emergency Bypass & Safety Overrides
+# ------------------------------------------------------------------------------
+# Allows rapid bypassing when performing automated workspace rebases or hotfixes.
+if [ -n "$SKIP_PRE_COMMIT" ] || [ -n "$SKIP_HOOKS" ]; then
+    echo "[HOOK NOTICE] Pre-commit validation bypassed via environment variable."
+    exit 0
+fi
+
+# ------------------------------------------------------------------------------
+# 2.2 Rebase & Merge Pass-Through
+# ------------------------------------------------------------------------------
+# Never interrupt an in-progress merge conflict resolution.
+if git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then
+    exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$REPO_ROOT" || exit 1
+
+# ------------------------------------------------------------------------------
+# 2.3 Staged File Discovery
+# ------------------------------------------------------------------------------
+# Inspect only files added, copied, or modified in the index.
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+VIOLATION_COUNT=0
+MAX_ASSET_BYTES=5242880 # 5 Megabytes (Game Asset Quarantine Limit)
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / CORE INSPECTION & RULE EXECUTION
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_commit
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 3.1 Rule A: Root Path & Scratch Directory Hygiene
+# ------------------------------------------------------------------------------
+# Build outputs, temporary diagnostic logs, and local design scratch files
+# must never enter the canonical git tree.
+for FILE in $STAGED_FILES; do
+    case "$FILE" in
+        build/*|.cache/*|logs/*|Offline_Work_*.md)
+            if [ -z "$ALLOW_SCRATCH" ]; then
+                echo "[PRE-COMMIT BLOCKED] Prohibited transient path staged: '$FILE'" >&2
+                echo "                     Build outputs, logs, and scratch notes must remain untracked." >&2
+                echo "                     Override if intentional: ALLOW_SCRATCH=1 git commit" >&2
+                VIOLATION_COUNT=$(( VIOLATION_COUNT + 1 ))
+            fi
+            ;;
+    esac
+done
+
+# ------------------------------------------------------------------------------
+# 3.2 Rule B: Large Binary Asset Quarantine (Game Development Discipline)
+# ------------------------------------------------------------------------------
+# In game development, large raw assets (4K textures, raw WAV sound effects,
+# 3D models) must be ingested via procedural tools or Git LFS, not raw git objects.
+if [ -z "$ALLOW_LARGE_FILE" ]; then
+    while IFS= read -r FILE; do
+        if [ -f "$FILE" ]; then
+            FILE_BYTES=$(wc -c < "$FILE" 2>/dev/null || stat -c%s "$FILE" 2>/dev/null || echo 0)
+            if [ "$FILE_BYTES" -gt "$MAX_ASSET_BYTES" ]; then
+                FILE_MB=$(( FILE_BYTES / 1048576 ))
+                echo "[PRE-COMMIT BLOCKED] File exceeds 5MB asset ceiling: '$FILE' (${FILE_MB}MB)" >&2
+                echo "                     Game assets must be processed through the asset generator." >&2
+                echo "                     Override if intentional: ALLOW_LARGE_FILE=1 git commit" >&2
+                VIOLATION_COUNT=$(( VIOLATION_COUNT + 1 ))
+            fi
+        fi
+    done <<< "$STAGED_FILES"
+fi
+
+# ------------------------------------------------------------------------------
+# 3.3 Rule C: Block 1 Metadata Header Verification for New Cogs & Configs
+# ------------------------------------------------------------------------------
+# Newly authored C headers, source cogs, and JSON configuration envelopes must
+# include the Universal Block 1 header to preserve provenance and system anchors.
+NEW_FILES=$(git diff --cached --name-only --diff-filter=A)
+if [ -n "$NEW_FILES" ] && [ -z "$SKIP_BLOCK1_CHECK" ]; then
+    for FILE in $NEW_FILES; do
+        case "$FILE" in
+            *.c|*.h)
+                if [ -f "$FILE" ]; then
+                    if ! head -n 35 "$FILE" | grep -q "BLOCK 1: METADATA BLOCK"; then
+                        echo "[PRE-COMMIT BLOCKED] Missing Block 1 Metadata Header in new C cog: '$FILE'" >&2
+                        echo "                     See AGENTS.md for canonical Block 1 header schema." >&2
+                        echo "                     Override if intentional: SKIP_BLOCK1_CHECK=1 git commit" >&2
+                        VIOLATION_COUNT=$(( VIOLATION_COUNT + 1 ))
+                    fi
+                fi
+                ;;
+            *.json)
+                case "$FILE" in
+                    .vscode/*|.github/*)
+                        # Tool-specific configuration JSONs are exempt from 5-block envelope
+                        ;;
+                    *)
+                        if [ -f "$FILE" ]; then
+                            if ! head -n 35 "$FILE" | grep -q "block_1_metadata"; then
+                                echo "[PRE-COMMIT BLOCKED] Missing 'block_1_metadata' envelope in new config: '$FILE'" >&2
+                                echo "                     See AGENTS.md for 5-Block JSON standards." >&2
+                                echo "                     Override if intentional: SKIP_BLOCK1_CHECK=1 git commit" >&2
+                                VIOLATION_COUNT=$(( VIOLATION_COUNT + 1 ))
+                            fi
+                        fi
+                        ;;
+                esac
+                ;;
+        esac
+    done
+fi
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / DIAGNOSTIC TRIPWIRES & TRAPS
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_commit
+# ==============================================================================
+
+if [ $VIOLATION_COUNT -ne 0 ]; then
+    echo "" >&2
+    echo "================================================================================" >&2
+    echo " [GIT HOOK BLOCKED] Pre-commit invariants violated ($VIOLATION_COUNT issue(s))! " >&2
+    echo "================================================================================" >&2
+    echo " Inspect the diagnostics above and resolve before committing.                   " >&2
+    echo " For an emergency hotfix bypass: git commit --no-verify                         " >&2
+    echo "================================================================================" >&2
+    exit 1
+fi
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE COMPLETION & EXIT PROTOCOL
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_commit
+# ==============================================================================
+
+exit 0

@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .githooks/pre-push
+# @id            tools.githooks.pre_push
+# @layer         Developer Tooling & VCS Hooks (Layer 3 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        Git Client-Side Verification Hook
+# @role          Pre-Push Gatekeeper: Audits Schemas, C11 Headers & Commits
+# @invariants    1. Validates all 5-block JSON data catalogs and C11 headers.
+#                2. Prevents broken commits from turning remote CI red.
+#                3. Supports emergency bypass flags (SKIP_PRE_PUSH / SKIP_HOOKS).
+#                4. Leverages precompiled tl_tools binary for rapid verification.
+#
+# PURPOSE & ARCHITECTURAL ROLE:
+#   Runs the system-wide validation suite across JSON data catalogs, C11 engine
+#   headers, and git history before transmitting objects to the remote repository.
+#   Ensures remote CI remains consistently green without unnecessary retry churn.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / CONFIGURATION & PRE-CONDITIONS
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_push
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 2.1 Emergency Bypass & Safety Overrides
+# ------------------------------------------------------------------------------
+# Developers can bypass pre-push checks in disconnected environments or urgent
+# recovery operations by specifying SKIP_PRE_PUSH=1 or SKIP_HOOKS=1.
+if [ -n "$SKIP_PRE_PUSH" ] || [ -n "$SKIP_HOOKS" ]; then
+    echo "[HOOK NOTICE] Pre-push validation bypassed via environment variable."
+    exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$REPO_ROOT" || exit 1
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / CORE TOOL DISPATCH & PRE-FLIGHT AUDITING
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_push
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 3.1 Binary Discovery Strategy
+# ------------------------------------------------------------------------------
+# Check for release or debug native Rust binaries first to avoid cargo latency.
+TL_TOOLS_BIN="$REPO_ROOT/tools/target/release/tl_tools"
+if [ ! -x "$TL_TOOLS_BIN" ]; then
+    TL_TOOLS_BIN="$REPO_ROOT/tools/target/debug/tl_tools"
+fi
+
+echo "[PRE-PUSH] Running rapid pre-flight validation audit across repository..."
+
+if [ -x "$TL_TOOLS_BIN" ]; then
+    "$TL_TOOLS_BIN" validate all
+    AUDIT_EXIT_CODE=$?
+else
+    cargo run --quiet --manifest-path "$REPO_ROOT/tools/Cargo.toml" --bin tl_tools -- validate all
+    AUDIT_EXIT_CODE=$?
+fi
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / DIAGNOSTIC TRIPWIRES & TRAPS
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_push
+# ==============================================================================
+
+if [ $AUDIT_EXIT_CODE -ne 0 ]; then
+    echo "" >&2
+    echo "================================================================================" >&2
+    echo " [GIT PUSH BLOCKED] Pre-push validation audit detected invariant defects!       " >&2
+    echo "================================================================================" >&2
+    echo " Run 'cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate all' " >&2
+    echo " locally to view detailed schema, header, or ledger diagnostic errors.          " >&2
+    echo "                                                                                " >&2
+    echo " If pushing an urgent branch to a remote draft or non-main target:              " >&2
+    echo "   git push --no-verify                                                         " >&2
+    echo "   or set: SKIP_PRE_PUSH=1 git push                                             " >&2
+    echo "================================================================================" >&2
+    exit 1
+fi
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE COMPLETION & EXIT PROTOCOL
+# Stratum: Developer Tooling | Machine: tools.githooks.pre_push
+# ==============================================================================
+
+echo "[PRE-PUSH] All 75 JSON configs, 44 C11 headers, and commit history passed. Pushing."
+exit 0

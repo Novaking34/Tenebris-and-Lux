@@ -4,7 +4,7 @@
         {
             "label": "Build Engine (Debug)",
             "type": "shell",
-            "command": "cmake --build build --config Debug",
+            "command": "cmake --build build --config Debug --parallel",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,31 +14,86 @@
             ]
         },
         {
-            "label": "Run Verification Suite (CTest)",
+            "label": "Build Engine (Release)",
+            "type": "shell",
+            "command": "cmake --build build --config Release --parallel",
+            "group": "build",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Run Verification Suite (CTest - 65 Suites)",
             "type": "shell",
             "command": "ctest --test-dir build -C Debug --output-on-failure",
             "group": {
                 "kind": "test",
                 "isDefault": true
             },
+            "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
         },
         {
-            "label": "Run Subsystem Pre-Flight Audit",
+            "label": "Run Subsystem Pre-Flight Audit (--audit)",
             "type": "shell",
             "command": "./build/tenebris-lux --audit",
+            "dependsOn": "Build Engine (Debug)",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Safe-Mode BIOS ROM Fallback (Zero-Disk Fallback)",
+            "type": "shell",
+            "command": "./build/tenebris-lux -r /tmp/nonexistent_fallback_root --audit",
+            "dependsOn": "Build Engine (Debug)",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Rust Toolchain Tests (31 Tests)",
+            "type": "shell",
+            "command": "cargo test --manifest-path tools/Cargo.toml",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run System Schema & Header Validation (tl_tools)",
+            "type": "shell",
+            "command": "cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate all",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Python Orchestrator Tests (3 Suites)",
+            "type": "shell",
+            "command": "python3 tools/orchestrator/tests/test_model_factory.py && python3 tools/orchestrator/tests/test_auto_mode.py && python3 tools/orchestrator/tests/test_staircase_sweep.py",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Full 4-Tier Verification Battery",
+            "type": "shell",
+            "command": "ctest --test-dir build -C Debug --output-on-failure && ./build/tenebris-lux --audit && cargo test --manifest-path tools/Cargo.toml && cargo run --manifest-path tools/Cargo.toml --bin tl_tools -- validate all && python3 tools/orchestrator/tests/test_model_factory.py && python3 tools/orchestrator/tests/test_auto_mode.py && python3 tools/orchestrator/tests/test_staircase_sweep.py",
+            "group": "test",
+            "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
         },
         {
             "label": "Launch CLI Mode",
             "type": "shell",
             "command": "./build/tenebris-lux --cli",
+            "dependsOn": "Build Engine (Debug)",
             "problemMatcher": []
         },
         {
-            "label": "Compile Master Guide Compendium",
+            "label": "Launch GUI Mode (X11)",
             "type": "shell",
-            "command": "cargo run --manifest-path tools/Cargo.toml --bin master_guide",
+            "command": "./build/tenebris-lux --gui",
+            "dependsOn": "Build Engine (Debug)",
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile Master Guide Compendiums",
+            "type": "shell",
+            "command": "cargo run --manifest-path tools/Cargo.toml --bin master_guide -- --all",
             "problemMatcher": []
         },
         {

@@ -1,0 +1,82 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .github/workflows/asset-audit.yml
+# @id            github.workflow.asset_audit
+# @layer         Quality Assurance & Asset Governance (Layer 4 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Actions Asset Verification & Catalog Audit
+# @role          Weekly / On-Demand Presentation, Audio & Font Integrity Audit
+# @invariants    1. Triggers via manual workflow_dispatch or weekly Sunday schedule.
+#                2. Never runs on pull requests or blocks daily feature commits.
+#                3. Verifies presentation assets, palettes, fonts, and 7 audio buses.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / PIPELINE TRIGGERS & CONCURRENCY
+# Stratum: Layer 4 Verification | Machine: github.workflow.asset_audit
+# ==============================================================================
+
+name: Presentation & Asset Integrity Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run once a week at midnight UTC on Sunday
+    - cron: '0 0 * * 0'
+
+concurrency:
+  group: asset-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / AUDIT EXECUTION ENGINE
+# Stratum: Layer 4 Verification | Machine: github.workflow.asset_audit
+# ==============================================================================
+
+jobs:
+  audit-presentation-and-assets:
+    name: "Audit Presentation Assets & Audio Catalogs"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo Dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tools
+
+      - name: Audit Presentation Assets & Procedural Generators
+        run: cargo run --manifest-path tools/Cargo.toml --bin asset_generator
+
+      - name: Audit All 5-Block JSON Data Catalogs & Manifests
+        run: cargo run --manifest-path tools/Cargo.toml --bin validator -- system
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / VERIFICATION PROOFS & TELEMETRY TRIPWIRES
+# Stratum: Layer 4 Verification | Machine: github.workflow.asset_audit
+# ==============================================================================
+# Asset Verification Invariants:
+#   - Presentation HUD and viewports align with 640x360 logical canvas.
+#   - 7-bus audio mixer channels are declared in engine/config/audio/channels.json.
+#   - Palettes, themes, and font metadata resolve through layered VFS path_finder.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / ARTIFACT ATTESTATION & LIFECYCLE HANDSHAKE
+# Stratum: Layer 4 Verification | Machine: github.workflow.asset_audit
+# ==============================================================================
+# Handshake: Weekly telemetry confirms presentation and audio health as the
+# game simulation and engine expand towards milestone v1.0.0.
+# ==============================================================================

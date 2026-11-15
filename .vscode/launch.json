@@ -2,92 +2,72 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug GUI Mode",
-            "type": "cppdbg",
+            "name": "Debug GUI Mode (--gui)",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/tenebris-lux",
             "args": [
                 "--gui"
             ],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
             "preLaunchTask": "Build Engine (Debug)"
         },
         {
-            "name": "Debug CLI Mode",
-            "type": "cppdbg",
+            "name": "Debug CLI Mode (--cli)",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/tenebris-lux",
             "args": [
                 "--cli"
             ],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
             "preLaunchTask": "Build Engine (Debug)"
         },
         {
-            "name": "Debug Interactive State Debugger",
-            "type": "cppdbg",
+            "name": "Debug Interactive State Debugger (--debug)",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/tenebris-lux",
             "args": [
                 "--debug"
             ],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
             "preLaunchTask": "Build Engine (Debug)"
         },
         {
-            "name": "Debug Pre-Flight Audit",
-            "type": "cppdbg",
+            "name": "Debug Pre-Flight Audit (--audit)",
+            "type": "lldb",
             "request": "launch",
             "program": "${workspaceFolder}/build/tenebris-lux",
             "args": [
                 "--audit"
             ],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
             "preLaunchTask": "Build Engine (Debug)"
+        },
+        {
+            "name": "Debug Safe-Mode BIOS ROM Fallback",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/tenebris-lux",
+            "args": [
+                "-r",
+                "/tmp/nonexistent_fallback_root",
+                "--audit"
+            ],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build Engine (Debug)"
+        },
+        {
+            "name": "Debug Rust Tool: tl_tools",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/tools/target/debug/tl_tools",
+            "args": [
+                "validate",
+                "all"
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

@@ -236,7 +236,7 @@ Only essential top-level anchors belong at repository root: `CMakeLists.txt`, `.
 * `tests/` — Layer 4 Verification Suite (`functional/`, `unit/`, `integrated/`, `system/`)
 * `tools/` — Native developer suite: compiled Rust CLI suite (`tl_tools`, `installer`, `validator`, `git_validator`, `asset_generator`, `master_guide`, `demo_extractor`, `launcher`, `updater`) and Python orchestrator (`tools/orchestrator/` for hardware probes, sweet-spot calibration, tri-state modelfiles, and model screening)
 * `docs/` — AsciiDoc realm chronicles, architecture specs, DevLogs, and the 6-volume Master Guide (`docs/master_guide_manifest.json`)
-* `.githooks/`, `.github/`, `.vscode/` — Git commit validator hooks, CI workflows, workspace configs
+* `.githooks/`, `.github/`, `.vscode/`, `.agents/` — Git hooks, CI workflows, workspace configs, agentic workflows
 
 ### 1.3 Transient Output Sandboxing & Untracked Files
 
@@ -473,34 +473,59 @@ cargo run --manifest-path tools/Cargo.toml --bin master_guide
 ./build/tenebris-lux --debug   # Interactive CLI state debugger enabled
 ```
 
-### 5.4 Canonical 5-Block Git Commit & Tag Protocol (`.githooks/commit-msg`)
+### 5.4 Developer Infrastructure, VCS Hooks, CI/CD & Agentic Workflows
 
-Every repository commit is audited automatically by `.githooks/commit-msg` invoking `tools/src/bin/git_validator.rs` (`tools/src/validator/git_commit.rs`). Commits missing required headers or fields are rejected at commit time:
+To prevent "works on my machine" drift across human engineers and autonomous AI agents, the repository enforces a synchronized infrastructure layer across `.githooks/`, `.github/`, `.vscode/`, and `.agents/`:
 
-* **Subject Prefix**: Must begin with one of `feat(`, `fix(`, `docs(`, `refactor(`, `test(`, `chore(`, `perf(`, `build(`.
-* **Required 5 Commit Blocks & Metadata Fields**:
+#### 5.4.1 Client-Side Git Hooks & Cross-Platform Installation (`.githooks/`)
 
-```text
-<type>(<scope>): <concise summary title>
+Client-side Git hooks enforce ledger integrity, quarantine uncompressed game assets, and run pre-flight audits with sub-millisecond execution:
 
-BLOCK 1: METADATA & REVISION RECORD
-Project:       Tenebris and Lux
-Author:        CreativeWorkzStudio LLC / ProfessorSeanEX
-Date:          YYYY-MM-DD
-Version:       0.1.2-dev (Rev 5)
+* **`.githooks/commit-msg`**: Audits the canonical 5-block ledger structure via `tools/src/bin/git_validator.rs`. Uses precompiled release/debug binaries to execute in < 2ms. Automatically permits Git auto-generated merge and revert commits (`^Merge `, `^Revert `).
+  * **Subject Prefix**: Must begin with one of `feat(`, `fix(`, `docs(`, `refactor(`, `test(`, `chore(`, `perf(`, `build(`.
+  * **Required Blocks**: `BLOCK 1: METADATA & REVISION RECORD` (Project, Author, Date), `BLOCK 2: REASON FOR CHANGE & PROBLEM STATEMENT`, `BLOCK 3: ARCHITECTURAL MODIFICATIONS & ELEVATIONS`, `BLOCK 4: VERIFICATION, TRIPWIRES & PASS PROOF`, and `BLOCK 5: INVARIANT COVENANTS & CLOSING AFFIRMATIONS`.
+* **`.githooks/pre-commit`**: Ultralight guard (< 100ms). Rejects staging transient paths (`build/*`, `logs/*`, `.cache/*`, `Offline_Work_*.md`), enforces a **5MB asset ceiling** (`MAX_ASSET_BYTES = 5242880`) to quarantine raw textures/audio, and verifies Block 1 metadata banners on newly authored `.c`, `.h`, and `.json` files.
+* **`.githooks/pre-push`**: Fast pre-flight gateway (< 2s) executing `tl_tools validate all` across 75 JSON manifests, 44 C11 headers, and recent commits before push.
+* **Cross-Platform Installers**:
+  * Linux & macOS POSIX: `./.githooks/install.sh`
+  * Windows PowerShell: `pwsh -File .githooks/install.ps1`
+  * Windows Classic CMD: `.githooks\install.bat`
+* **Emergency Bypass Levers (Never Get Blocked)**:
+  * Hook-specific: `SKIP_PRE_COMMIT=1`, `SKIP_COMMIT_MSG_HOOK=1`, `SKIP_PRE_PUSH=1`
+  * Global override: `SKIP_HOOKS=1 git commit` or `git commit --no-verify` / `git push --no-verify`
 
-BLOCK 2: REASON FOR CHANGE & PROBLEM STATEMENT
-<Why this change exists, which seams/gaps/invariants motivated it.>
+#### 5.4.2 GitHub Actions Stratified CI/CD & Issue Forms (`.github/`)
 
-BLOCK 3: ARCHITECTURAL MODIFICATIONS & ELEVATIONS
-<Concrete structural changes, cog elevations, ROMs, fallbacks, probes.>
+CI in game development separates rapid iteration from bedrock physical laws:
 
-BLOCK 4: VERIFICATION, TRIPWIRES & PASS PROOF
-<Exact post-edit commands and observed results: clean build warnings, CTest X/X, --audit, size.>
+* **Stratified 4-Job Parallel CI (`.github/workflows/ci.yml`)**:
+  1. `engine-and-game`: C23/C11 ladder compilation with `ccache`, all 65 CTest suites, 20-module pre-flight self-audit (`--audit`), CLI smoke test (`echo "quit" | ./build/tenebris-lux --cli`), and zero-disk fallback (`-r /tmp/nonexistent_fallback_root --audit`).
+  2. `developer-toolchain`: Rust stable with `Swatinem/rust-cache`, 31 unit tests, and `tl_tools validate all` (75 JSONs, 44 C11 headers).
+  3. `orchestrator-and-exoskeleton`: Python 3.11 running `test_model_factory.py`, `test_auto_mode.py`, and `test_staircase_sweep.py`.
+  4. `documentation-and-compendiums`: Asciidoctor and `master_guide --all` compiling all 6 volumes, plus 100% repo-relative link discipline audit (zero `file:///` URIs in tracked docs).
+* **Non-Blocking Workflows**:
+  * `release.yml`: Only triggers on `v*` tag pushes; packages standalone distribution tarball (`tenebris-lux-vX.Y.Z-linux-x64.tar.gz`) with stripped binaries, launcher, ROMs, and Master Guide PDFs.
+  * `asset-audit.yml`: Weekly Sunday schedule and manual `workflow_dispatch` auditing presentation assets, 7-channel audio mixer catalogs, and palettes.
+* **Structured Issue Forms (`.github/ISSUE_TEMPLATE/*.yml`)**:
+  * `bug_report.yml` (Engine Architecture & Systems Defects)
+  * `gameplay_bug.yml` (Tactical Grid, Stances & Narrative Softlocks)
+  * `feature_request.yml` (Engine Cog & Systems Elevation)
+  * `lore_narrative_proposal.yml` (Realm Chronicles & Worldbuilding)
+  * `hardware_calibration.yml` (Hardware Probes & VRAM Telemetry)
+* **Pull Request Governance (`.github/pull_request_template.md`)**:
+  * Enforces the Universal 5-Block Protocol on PR descriptions, Dual-Audience impact summary, and verification pass proof.
+* **Markdownlint Standards (`.github/.markdownlint.json`)**:
+  * Configured with `MD024` sibling exceptions, permitting 5-Block repeated section structures, tables, and bare repository links.
 
-BLOCK 5: INVARIANT COVENANTS & CLOSING AFFIRMATIONS
-<Confirmation of ALLOC_ZERO_HEAP, C23/17/11 & C++20/17 tier parity, zero // comments, root/ephemeral hygiene.>
-```
+#### 5.4.3 Unified IDE Developer Workspace (`.vscode/`)
+
+* **IntelliSense Standards (`.vscode/settings.json`)**: Configured to `c23` and `c++20`, linking `clangd`, `rust-analyzer` (via `tools/Cargo.toml`), Python analysis (`tools/orchestrator`), and `.markdownlint.json`.
+* **Native Debugging (`.vscode/launch.json`)**: Standardized on **CodeLLDB (`vadimcn.vscode-lldb`)** for unified C23/C11 and Rust debugging with zero schema errors or proprietary MSVC dependencies.
+* **Automated Tasks (`.vscode/tasks.json`)**: 13 automated tasks spanning Debug/Release builds, 65 CTest suites, 31 Rust tests, Python orchestrator suites, self-audits, zero-disk fallback, and frontends.
+
+#### 5.4.4 Agentic Operational Compass (`.agents/skills/cornerstone-workflows/`)
+
+An Antigravity skill located at `.agents/skills/cornerstone-workflows/SKILL.md` provides an operational compass for autonomous AI agents and human contributors, providing runbooks for the 4-tier verification suite, memory chassis budgeting, and non-blocking Git/CI workflows.
 
 * **Annotated Release Tags** (must begin with `v`) use:
   * `BLOCK 1: METADATA BLOCK` (requiring `@release` and `@date`)

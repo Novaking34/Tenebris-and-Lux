@@ -1,21 +1,55 @@
 {
-    "C_Cpp.default.cStandard": "c11",
-    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cStandard": "c23",
+    "C_Cpp.default.cppStandard": "c++20",
     "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/engine/include",
+        "${workspaceFolder}/game/include",
+        "${workspaceFolder}/build/generated"
+    ],
     "clangd.arguments": [
         "--compile-commands-dir=${workspaceFolder}/build",
         "--background-index",
         "--index-file=${workspaceFolder}/build/.cache/clangd.idx",
         "--header-insertion=never",
-        "--all-scopes-completion"
+        "--all-scopes-completion",
+        "--clang-tidy",
+        "--fallback-style=llvm"
     ],
+    "rust-analyzer.linkedProjects": [
+        "${workspaceFolder}/tools/Cargo.toml"
+    ],
+    "rust-analyzer.cargo.allFeatures": true,
+    "rust-analyzer.check.command": "clippy",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/tools/orchestrator"
+    ],
+    "python.testing.unittestEnabled": false,
+    "files.associations": {
+        "*.Modelfile": "dockerfile",
+        "*.adoc": "asciidoc",
+        "*.inc": "c"
+    },
     "editor.rulers": [
-        80
+        80,
+        100
     ],
     "editor.formatOnSave": false,
     "editor.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "files.trimTrailingWhitespace": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "build/.cache": true
+    },
+    "search.exclude": {
+        "**/build": true,
+        "**/tools/target": true,
+        "**/logs": true,
+        "**/.cache": true
+    },
     "markdown.validate.ignoredLinks": [
         "#engine-architecture--thesis",
         "#quickstart-build-play--audit",

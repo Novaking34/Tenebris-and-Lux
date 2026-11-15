@@ -1,0 +1,120 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .github/ISSUE_TEMPLATE/lore_narrative_proposal.yml
+# @id            github.template.lore_narrative
+# @layer         Developer Tooling & VCS Governance (Layer 4 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Issue Form: Realm Chronicles & Worldbuilding Proposals
+# @role          Narrative & Lore Governance for Writers, Designers & Worldbuilders
+# @invariants    1. Preserves authentic project canon (Sole antagonist: The Dark Lord Usuru).
+#                2. Enforces core thematic pillar: Metaphysical Neutrality.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / REGISTRATION & FORM HEADER
+# Stratum: Developer Tooling | Machine: github.template.lore_narrative
+# ==============================================================================
+
+name: "Realm Chronicles & Narrative Proposal"
+description: "Propose lore chronicles, continental encounters, character arcs, dialogue, or route branch expansions"
+title: "[LORE / NARRATIVE]: "
+labels: ["lore", "narrative", "worldbuilding"]
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / FORM SCHEMA & INPUT SPECIFICATIONS
+# Stratum: Developer Tooling | Machine: github.template.lore_narrative
+# ==============================================================================
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Tenebris and Lux - Narrative & Continental Lore Proposal
+        Use this template to propose worldbuilding expansions, realm chronicle entries, NPC dialogue, character arcs, or route branch encounters.
+        **Canon Notice**: The sole canonical antagonist is **The Dark Lord Usuru**. Neither Light (Lux) nor Darkness (Tenebris) is inherently good or evil; both are primal cosmic forces (*Metaphysical Neutrality*).
+
+  - type: dropdown
+    id: continental_domain
+    attributes:
+      label: "Continental Domain / Region"
+      description: "Which continental territory or faction does this narrative element involve?"
+      options:
+        - "Sacyra (The Sunlit Empire / Order / Stagnation)"
+        - "Libira (The Shadowed Bastion / Change / Chaos)"
+        - "The Six Continental Powers & Guilds"
+        - "Duo-Loca (The Convergence Gateway)"
+        - "The Whispering Woods & Ancient Relic Glades"
+        - "The Deeper Underworld / Vault of Usuru"
+        - "Universal Continental Lore / Cosmic Invariants"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ending_route_alignment
+    attributes:
+      label: "Ending Route Affinity"
+      description: "Which of the 5 canonical campaign routes is influenced by this proposal?"
+      options:
+        - "Route 1: Sovereign Lux (Radiant Dominance)"
+        - "Route 2: Sovereign Tenebris (Shaded Realism)"
+        - "Route 3: The Broken Balance (Usuru's Triumph)"
+        - "Route 4: The Void Covenant (Transcendence)"
+        - "Route 5: Canonical Equilibrium (The True Horizon)"
+        - "General Worldbuilding / Route-Agnostic Lore"
+    validations:
+      required: true
+
+  - type: textarea
+    id: narrative_synopsis
+    attributes:
+      label: "Narrative Synopsis & Encounter Design"
+      description: "Detail the lore premise, character dialogue, or story event."
+      placeholder: "Describe the encounter, characters involved, dialogue excerpts, and dramatic stakes..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: thematic_resonance
+    attributes:
+      label: "Thematic Rationale"
+      description: "How does this proposal reinforce the core theme: 'Trauma is Inherited, Destiny is Chosen'?"
+      placeholder: "Explain how this honors protagonist agency, moral sway, and metaphysical neutrality..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: canon_affirmations
+    attributes:
+      label: "Canon Verification"
+      options:
+        - label: "Conforms to authentic canon (Antagonist is The Dark Lord Usuru; twin relics are Shield of Lux & Sword of Tenebris)."
+          required: true
+        - label: "Includes documentation references matching docs/ and the 67-chapter Master Guide."
+          required: true
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / CANON VALIDATION & THEMATIC TRIPWIRES
+# Stratum: Developer Tooling | Machine: github.template.lore_narrative
+# ==============================================================================
+# Canon Invariant Affirmations:
+#   - continental_domain != NULL
+#   - ending_route_alignment != NULL
+#   - narrative_synopsis.length > 30 characters
+#   - thematic_resonance.length > 20 characters
+#   - canon_affirmations checked (Usuru sole antagonist; Master Guide cross-ref)
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE HANDSHAKE & NARRATIVE GOVERNANCE
+# Stratum: Developer Tooling | Machine: github.template.lore_narrative
+# ==============================================================================
+# Handshake: Approved realm proposals are compiled into the Master Guide via
+# tools/src/bin/master_guide.rs and staged for presentation in the 2D viewport.
+# ==============================================================================

@@ -1,0 +1,119 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .github/ISSUE_TEMPLATE/feature_request.yml
+# @id            github.template.feature_request
+# @layer         Developer Tooling & VCS Governance (Layer 4 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Issue Form: Engine Cog & Systems Feature Request
+# @role          Structured Elevation & Architecture Proposals
+# @invariants    1. Requires architectural layer mapping and zero-heap impact analysis.
+#                2. Evaluates cog reusability and elevation from game/ to engine/.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / REGISTRATION & FORM HEADER
+# Stratum: Developer Tooling | Machine: github.template.feature_request
+# ==============================================================================
+
+name: "Feature Request / Cog Elevation Proposal"
+description: "Propose a new Cornerstone engine cog, tooling capability, viewport scaler, or simulation subsystem"
+title: "[FEATURE]: "
+labels: ["enhancement", "architecture"]
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / FORM SCHEMA & INPUT SPECIFICATIONS
+# Stratum: Developer Tooling | Machine: github.template.feature_request
+# ==============================================================================
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Cornerstone Engine & Systems Feature Proposal
+        Use this template to propose architectural enhancements, new engine cogs in `engine/`, elevation of generic helpers from `game/` into `engine/`, or additions to `tools/` and `tools/orchestrator/`.
+
+  - type: dropdown
+    id: architectural_target
+    attributes:
+      label: "Architectural Target"
+      description: "Where does this proposed capability belong in the layered strata?"
+      options:
+        - "Cornerstone Layer 0: Core Cog (Math, Time, Strings, Pacer, Formulas)"
+        - "Cornerstone Layer 0: I/O & VFS (Path finder, Loader, JSON, Scratch buffers)"
+        - "Cornerstone Layer 0: Diagnostics (Log ring, Debugger, Probes, Safe-Mode ROMs)"
+        - "Cornerstone Layer 0: Audio Bus (Mixer channels, Sound triggers, Audio fallback)"
+        - "Cornerstone Layer 2: Viewport (X11 rasterizer, Dimetric 2D, Widgets, HUD, Reel)"
+        - "Tenebris and Lux Layer 1: Simulation (Tactical grid, Turn scheduler, Relic state)"
+        - "Layer 3: Developer Tooling (tl_tools, validator, master_guide, installer)"
+        - "Cognitive Exoskeleton: Python Orchestrator (Hardware sweeps, Dynamic auto mode)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem_statement
+    attributes:
+      label: "Problem Statement & Motivation"
+      description: "What limitation, bottleneck, or missing capability does this feature address?"
+      placeholder: "Describe the architectural or ludological motivation..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: "Proposed Architectural Design & Seams"
+      description: "Describe the proposed API contracts, struct designs, or subsystem seams."
+      placeholder: "Detail the proposed .h / .c cogs, function signatures, or config schemas..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: memory_chassis_impact
+    attributes:
+      label: "Controlled Memory Chassis & Invariant Impact"
+      description: "How does this feature respect ALLOC_ZERO_HEAP (zero dynamic allocations in Layer 0/1/2) and ISO C11/C23 standards?"
+      placeholder: |
+        - Heap Allocations: Exactly 0 in runtime path.
+        - Measured Chassis Budget: Adds ~XX bytes in .rodata / .data.
+        - Safe-Mode Fallback: Includes Tier-0 procedural fallback cog.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: architectural_affirmations
+    attributes:
+      label: "Architectural Affirmations"
+      options:
+        - label: "Conforms to the OmniCode Universal 5-Block Protocol (Metadata, Opening, Body, Audit, Closing)."
+          required: true
+        - label: "Enforces downward dependency flow (engine/ never imports game/)."
+          required: true
+        - label: "Includes paired Tier-0 Safe-Mode BIOS ROM fallback."
+          required: false
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / VALIDATION CRITERIA & ARCHITECTURE TRIPWIRES
+# Stratum: Developer Tooling | Machine: github.template.feature_request
+# ==============================================================================
+# Invariant Affirmation Requirements:
+#   - architectural_target != NULL
+#   - problem_statement.length > 25 characters
+#   - proposed_solution.length > 25 characters
+#   - memory_chassis_impact.length > 10 characters
+#   - architectural_affirmations (OmniCode 5-Block and Downward Flow) checked
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE HANDSHAKE & ELEVATION GOVERNANCE
+# Stratum: Developer Tooling | Machine: github.template.feature_request
+# ==============================================================================
+# Handshake: Proposals are audited against the Cog Elevation Protocol in AGENTS.md.
+# Reusable cogs are scheduled for elevation into the Cornerstone Game Engine.
+# ==============================================================================

@@ -1,0 +1,109 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .github/ISSUE_TEMPLATE/hardware_calibration.yml
+# @id            github.template.hardware_calibration
+# @layer         Developer Tooling & VCS Governance (Layer 4 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Issue Form: Hardware Calibration & Exoskeleton Telemetry
+# @role          Hardware Probe Ingestion for Local LLM Continuum Calibration
+# @invariants    1. Captures empirical hardware specs, VRAM floors, and headroom.
+#                2. Calibrates tri-state modelfile sweet spots (Min, Ideal, Max).
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / REGISTRATION & FORM HEADER
+# Stratum: Developer Tooling | Machine: github.template.hardware_calibration
+# ==============================================================================
+
+name: "Hardware Calibration & Exoskeleton Telemetry"
+description: "Submit GPU probe telemetry, VRAM residency benchmarks, or sweet-spot calibration for local LLM models"
+title: "[CALIBRATION]: "
+labels: ["tooling", "orchestrator", "calibration"]
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / FORM SCHEMA & INPUT SPECIFICATIONS
+# Stratum: Developer Tooling | Machine: github.template.hardware_calibration
+# ==============================================================================
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Cognitive Continuum & Hardware Calibration Submission
+        Use this template to submit empirical telemetry from `tools/orchestrator/scripts/hardware_probe.py` or manual VRAM profiling.
+        Contributes directly to `tools/orchestrator/config/hardware_calibration.json` and the **OmniCode 7-Tier Staircase**.
+
+  - type: input
+    id: hardware_spec
+    attributes:
+      label: "Hardware Configuration"
+      description: "GPU Model, Dedicated VRAM, System RAM, and CPU Architecture."
+      placeholder: "NVIDIA GeForce MX570 A (2048 MB VRAM), 32 GB DDR5 RAM, Intel Core i7-12700H"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: model_tier
+    attributes:
+      label: "Target Model Tier"
+      description: "Which tier of the OmniCode continuum was profiled?"
+      options:
+        - "Tier 0.5B: Local Scout / Micro-Sifting (Qwen2.5-0.5B-Instruct)"
+        - "Tier 1.5B: Native Bedrock / Systems Logic (Qwen2.5-1.5B-Coder)"
+        - "Tier 3B: Polymath Sweet Spot (Qwen2.5-3B-Coder)"
+        - "Tier 7B: Local Hardware Ceiling / Invariant Auditing (Qwen2.5-7B-Coder)"
+        - "Cloud Tier: 14B / 32B / 72B Horizon"
+    validations:
+      required: true
+
+  - type: input
+    id: empirical_telemetry
+    attributes:
+      label: "Empirical Sweet Spot Telemetry"
+      description: "Context Window, Offloaded GPU Layers, Headroom (MB), and Generation Speed (tok/s)."
+      placeholder: "Ctx: 8192 tokens | GPU Layers: 28/28 | Headroom: 527 MB | Burst: 62 tok/s"
+    validations:
+      required: true
+
+  - type: textarea
+    id: probe_output
+    attributes:
+      label: "Hardware Probe Raw JSON Output"
+      description: "Paste output from running python3 tools/orchestrator/scripts/hardware_probe.py."
+      render: json
+      placeholder: |
+        {
+          "detected_hardware": {
+            "gpu_name": "NVIDIA GeForce MX570 A",
+            "vram_total_mb": 2048,
+            "vram_usable_mb": 1387
+          }
+        }
+    validations:
+      required: false
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / TELEMETRY VALIDATION CRITERIA & HEADROOM TRIPWIRES
+# Stratum: Developer Tooling | Machine: github.template.hardware_calibration
+# ==============================================================================
+# Telemetry Affirmation Requirements:
+#   - hardware_spec != NULL
+#   - model_tier != NULL
+#   - empirical_telemetry contains context window and offload data
+#   - Headroom must respect the non-headless stability floor (>= 350 MB)
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE HANDSHAKE & MODELFILE CALIBRATION
+# Stratum: Developer Tooling | Machine: github.template.hardware_calibration
+# ==============================================================================
+# Handshake: Calibrated parameters are ingested by the Model Factory to generate
+# tri-state modelfiles in tools/orchestrator/config/modelfiles/*.Modelfile.
+# ==============================================================================

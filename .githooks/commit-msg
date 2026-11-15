@@ -5,45 +5,133 @@
 # ==============================================================================
 # @project       Tenebris and Lux
 # @file          .githooks/commit-msg
+# @id            tools.githooks.commit_msg
 # @layer         Developer Tooling & VCS Hooks (Layer 3 Infrastructure)
-# @version       0.1.0-dev
-# @interface_rev Rev 1
-# @date          2026-11-07
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
 # @system        Git Client-Side Verification Hook
 # @role          Enforces Universal 5-Block Lifecycle Protocol on Commit Messages
-# @invariants    1. Rejects commits lacking canonical 5-block structure.
-#                2. Rejects commits lacking conventional commit prefixes.
-#                3. Executes compiled Rust git_validator utility.
+# @invariants    1. Rejects commits lacking canonical 5-block ledger structure.
+#                2. Rejects commits lacking conventional commit prefixes (feat, fix, etc.).
+#                3. Bypasses automatic merge/revert messages to prevent commit lockups.
+#                4. Leverages precompiled git_validator binary for sub-millisecond execution.
+#                5. Supports emergency bypass flags (SKIP_COMMIT_MSG_HOOK / SKIP_HOOKS).
+#
+# PURPOSE & ARCHITECTURAL ROLE:
+#   Validates that all commit messages authored in this repository adhere to the
+#   OmniCode Universal 5-Block Protocol before the git transaction is finalized.
+#   Maintains an auditable, machine-parseable ledger for automated release
+#   notes, changelogs, and forensic traceability.
 # ==============================================================================
 
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / CONFIGURATION & PRE-CONDITIONS
+# Stratum: Developer Tooling | Machine: tools.githooks.commit_msg
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 2.1 Emergency Bypass & Safety Overrides
+# ------------------------------------------------------------------------------
+# In hotfix scenarios or automated batch operations, developers can set
+# SKIP_COMMIT_MSG_HOOK=1 or SKIP_HOOKS=1 to safely bypass validation without
+# removing the hook file or altering local git configuration.
+if [ -n "$SKIP_COMMIT_MSG_HOOK" ] || [ -n "$SKIP_HOOKS" ]; then
+    echo "[HOOK NOTICE] Commit-msg validation bypassed via environment variable."
+    exit 0
+fi
+
+# ------------------------------------------------------------------------------
+# 2.2 Input Argument Validation
+# ------------------------------------------------------------------------------
 COMMIT_MSG_FILE="$1"
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 
-if [ ! -f "$COMMIT_MSG_FILE" ]; then
-    echo "[HOOK ERROR] Commit message file not found: $COMMIT_MSG_FILE" >&2
+if [ -z "$COMMIT_MSG_FILE" ] || [ ! -f "$COMMIT_MSG_FILE" ]; then
+    echo "[HOOK ERROR] Commit message file not found or inaccessible: '$COMMIT_MSG_FILE'" >&2
     exit 1
 fi
 
-# Run native Rust git_validator in hook mode
-cargo run --quiet --manifest-path "$REPO_ROOT/tools/Cargo.toml" --bin git_validator -- --hook "$COMMIT_MSG_FILE"
-EXIT_CODE=$?
+# ------------------------------------------------------------------------------
+# 2.3 Automatic Commit Filter (Merge / Revert Pass-Through)
+# ------------------------------------------------------------------------------
+# Git generates automatic messages during branch merges and cherry-pick reverts.
+# We parse the first line to ensure automatic operations never deadlock.
+FIRST_LINE="$(head -n 1 "$COMMIT_MSG_FILE" | tr -d '\r')"
 
-if [ $EXIT_CODE -ne 0 ]; then
+if [[ "$FIRST_LINE" =~ ^Merge[[:space:]] ]] || [[ "$FIRST_LINE" =~ ^Revert[[:space:]] ]]; then
+    exit 0
+fi
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / CORE EXECUTION & VALIDATOR DISPATCH
+# Stratum: Developer Tooling | Machine: tools.githooks.commit_msg
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 3.1 Binary Discovery Strategy
+# ------------------------------------------------------------------------------
+# To ensure zero developer lag during rapid gameplay iteration, we check for
+# precompiled native Rust release or debug binaries before invoking cargo.
+VALIDATOR_BIN="$REPO_ROOT/tools/target/release/git_validator"
+if [ ! -x "$VALIDATOR_BIN" ]; then
+    VALIDATOR_BIN="$REPO_ROOT/tools/target/debug/git_validator"
+fi
+
+# ------------------------------------------------------------------------------
+# 3.2 Validator Execution
+# ------------------------------------------------------------------------------
+if [ -x "$VALIDATOR_BIN" ]; then
+    "$VALIDATOR_BIN" --hook "$COMMIT_MSG_FILE"
+    VALIDATOR_EXIT_CODE=$?
+else
+    cargo run --quiet --manifest-path "$REPO_ROOT/tools/Cargo.toml" --bin git_validator -- --hook "$COMMIT_MSG_FILE"
+    VALIDATOR_EXIT_CODE=$?
+fi
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / DIAGNOSTIC TRIPWIRES & TRAPS
+# Stratum: Developer Tooling | Machine: tools.githooks.commit_msg
+# ==============================================================================
+
+if [ $VALIDATOR_EXIT_CODE -ne 0 ]; then
     echo "" >&2
     echo "================================================================================" >&2
     echo " [GIT HOOK BLOCKED] Commit message rejected by Universal 5-Block Validator!    " >&2
     echo "================================================================================" >&2
     echo " Your commit message must adhere to the OmniCode Universal 5-Block Protocol:    " >&2
+    echo "                                                                                " >&2
     echo "   <type>(<scope>): <subject line>                                              " >&2
+    echo "                                                                                " >&2
     echo "   BLOCK 1: METADATA & REVISION RECORD                                          " >&2
+    echo "   Project:        Tenebris and Lux                                             " >&2
+    echo "   Author:         Your Name / Studio                                           " >&2
+    echo "   Date:           YYYY-MM-DD                                                   " >&2
+    echo "                                                                                " >&2
     echo "   BLOCK 2: REASON FOR CHANGE & PROBLEM STATEMENT                               " >&2
+    echo "   (Describe the defect, gameplay balance need, or architecture expansion)       " >&2
+    echo "                                                                                " >&2
     echo "   BLOCK 3: ARCHITECTURAL MODIFICATIONS & ELEVATIONS                             " >&2
+    echo "   (List modified subsystems, elevated cogs, or schema migrations)               " >&2
+    echo "                                                                                " >&2
     echo "   BLOCK 4: VERIFICATION, TRIPWIRES & PASS PROOF                                " >&2
+    echo "   (Provide test evidence: CTest count, Cargo unit tests, or self-audit)        " >&2
+    echo "                                                                                " >&2
     echo "   BLOCK 5: INVARIANT COVENANTS & CLOSING AFFIRMATIONS                           " >&2
+    echo "   (Affirm memory chassis, zero-heap Layer 0/1 invariants, or clean standards)   " >&2
+    echo "================================================================================" >&2
+    echo " Hint: If committing an emergency hotfix without full documentation:            " >&2
+    echo "       git commit --no-verify                                                   " >&2
+    echo "       or set: SKIP_COMMIT_MSG_HOOK=1 git commit                                " >&2
     echo "================================================================================" >&2
     exit 1
 fi
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE COMPLETION & EXIT PROTOCOL
+# Stratum: Developer Tooling | Machine: tools.githooks.commit_msg
+# ==============================================================================
 
 exit 0

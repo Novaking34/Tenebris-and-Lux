@@ -1,0 +1,138 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .github/ISSUE_TEMPLATE/bug_report.yml
+# @id            github.template.bug_report_engine
+# @layer         Developer Tooling & VCS Governance (Layer 4 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Issue Form: Engine Architecture & Systems Defects
+# @role          Structured Defect Ingestion for Systems Programmers & Architects
+# @invariants    1. Enforces environment, build config, and diagnostic log collection.
+#                2. Categorizes defects by Cornerstone engine stratum and subsystem.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / REGISTRATION & FORM HEADER
+# Stratum: Developer Tooling | Machine: github.template.bug_report_engine
+# ==============================================================================
+
+name: "Engine Architecture & Systems Defect"
+description: "Report a crash, memory chassis leak, X11 viewport glitch, audio bus failure, or ROM fallback anomaly"
+title: "[ENGINE DEFECT]: "
+labels: ["bug", "engine", "systems"]
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / FORM SCHEMA & INPUT SPECIFICATIONS
+# Stratum: Developer Tooling | Machine: github.template.bug_report_engine
+# ==============================================================================
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Cornerstone Game Engine Defect Report
+        Thank you for reporting a systems or engine defect. This form is designed for **Systems Programmers and Engine Architects** investigating runtime crashes, memory violations (`ALLOC_ZERO_HEAP`), rendering anomalies, or toolchain failures.
+        *For gameplay balance, tactical grid softlocks, or stance mechanics, please use the **Gameplay Defect / Softlock** template.*
+
+  - type: dropdown
+    id: subsystem_stratum
+    attributes:
+      label: "Subsystem Stratum"
+      description: "Which Cornerstone engine subsystem encountered the anomaly?"
+      options:
+        - "Layer 0: Core Utilities (math_utils, time_utils, string_utils, clock_pacer, formula_eval)"
+        - "Layer 0: I/O & VFS (path_finder, json_utils, master_loader, fs_utils)"
+        - "Layer 0: Logging & Telemetry (log_engine, log_fallback, flight recorder)"
+        - "Layer 0: Debugger & Probes (debug_engine, debug_fallback, snapshot ring, tripwires)"
+        - "Layer 0: Audio Event Bus (audio_bus, audio_fallback, 7-channel mixer)"
+        - "Layer 2: Viewport & Presentation (X11 rasterizer, gui_view2d, palette, hud, layout, reel)"
+        - "Layer 3: Engine-Game Plug (main.c, CLI dispatcher, mode selector)"
+        - "Developer Tooling (tl_tools, validator, git_validator, master_guide, installer)"
+        - "Python Orchestrator (hardware probes, auto mode, tri-state modelfiles)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: execution_mode
+    attributes:
+      label: "Engine Execution Mode"
+      description: "In which operational mode did the defect manifest?"
+      options:
+        - "Native X11 Desktop GUI (--gui)"
+        - "Deterministic Terminal CLI (--cli)"
+        - "Interactive Memory Debugger (--debug)"
+        - "Pre-Flight Self-Audit (--audit)"
+        - "Safe-Mode BIOS ROM Fallback (--safe-mode)"
+        - "Headless CI / Automated Verification Run"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Defect Description & Reproduction Steps"
+      description: "Provide a clear, deterministic sequence of steps to reproduce the issue."
+      placeholder: |
+        1. Built engine with: cmake --build build --config Debug
+        2. Launched with command: ./build/tenebris-lux --debug
+        3. Triggered operation: ...
+        4. Observed behavior: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_vs_actual
+    attributes:
+      label: "Expected vs. Actual Behavior"
+      description: "What was expected under engine contracts, and what actually occurred?"
+      placeholder: |
+        Expected: Clock pacer clamps frame delta to 100ms without spiral-of-death lag.
+        Actual: Tripwire caught corrupt delta time or allocation breached chassis bounds.
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostic_logs
+    attributes:
+      label: "Forensic Telemetry & Debugger Logs"
+      description: "Paste relevant output from logs/tenebris_lux_dev.log, ./build/tenebris-lux --debug, or gdb backtrace."
+      render: text
+      placeholder: |
+        [2026-11-14T...] [SAFE#000002] [ERROR] [CAT:DEBUG] Tripwire trapped: ...
+    validations:
+      required: false
+
+  - type: input
+    id: host_environment
+    attributes:
+      label: "Host Environment"
+      description: "OS, Linux kernel, display server (X11 / Wayland via XWayland), GPU driver, and C compiler version."
+      placeholder: "Ubuntu 26.04 LTS, Kernel 6.x, X11, GCC 14.x (-std=c23), NVIDIA MX570"
+    validations:
+      required: true
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / VALIDATION CRITERIA & DIAGNOSTIC TRIPWIRES
+# Stratum: Developer Tooling | Machine: github.template.bug_report_engine
+# ==============================================================================
+# Required Field Invariants:
+#   - subsystem_stratum != NULL
+#   - execution_mode != NULL
+#   - description.length > 20 characters
+#   - expected_vs_actual.length > 20 characters
+#   - host_environment != NULL
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE HANDSHAKE & TRIAGE PROTOCOL
+# Stratum: Developer Tooling | Machine: github.template.bug_report_engine
+# ==============================================================================
+# Handshake: Submitted defects are triaged against Cornerstone engine invariants
+# and assigned to systems developers for reproduction under CTest test suites.
+# ==============================================================================

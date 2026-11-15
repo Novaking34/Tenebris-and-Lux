@@ -1,6 +1,63 @@
-blank_issues_enabled: true
-contact_links:
-  - name: "Tenebris and Lux Compendium Documentation"
-    url: "https://github.com/Novaking34/tenebris-lux/tree/main/docs"
-    about: "Explore the 67-chapter Master Guide, continental lore, and engine architecture specifications."
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .github/ISSUE_TEMPLATE/config.yml
+# @id            github.template.config
+# @layer         Developer Tooling & VCS Governance (Layer 4 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Issue Configuration & Contact Links
+# @role          Directs Community and Contributors to Compendiums and Canonical Specs
+# @invariants    1. Links strictly to canonical repository documentation and specs.
+#                2. Enables blank issues for ad-hoc technical coordination.
+# ==============================================================================
 
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / GLOBAL ISSUE POLICY
+# Stratum: Developer Tooling | Machine: github.template.config
+# ==============================================================================
+
+blank_issues_enabled: true
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / CANONICAL SPECIFICATIONS & CONTACT LINKS
+# Stratum: Developer Tooling | Machine: github.template.config
+# ==============================================================================
+
+contact_links:
+  - name: "Tenebris and Lux Master Guide & Compendiums"
+    url: "https://github.com/Novaking34/tenebris-lux/tree/main/docs"
+    about: "Explore the 6-volume, 67-chapter Master Guide covering continental lore and engine architecture."
+
+  - name: "Cornerstone Engine Architectural Specifications"
+    url: "https://github.com/Novaking34/tenebris-lux/blob/main/AGENTS.md"
+    about: "Read the OmniCode Universal 5-Block Lifecycle Protocol, Layered Invariants, and Memory Chassis specs."
+
+  - name: "Developer Chronicles & DevLogs"
+    url: "https://github.com/Novaking34/tenebris-lux/tree/main/docs/devlogs"
+    about: "Review the development logs (DevLogs 001-020) documenting milestone evolutions and refactor sprints."
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / VERIFICATION & ROUTING CRITERIA
+# Stratum: Developer Tooling | Machine: github.template.config
+# ==============================================================================
+# Issue Routing Verification:
+#   - Systems / Crashes / Allocations  -> bug_report.yml (Engine Architecture)
+#   - Turn softlocks / Stances / Lore -> gameplay_bug.yml (Simulation)
+#   - Engine Cogs / Generic Helpers    -> feature_request.yml (Elevation)
+#   - Chronicles / Vocations / Routes  -> lore_narrative_proposal.yml (Worldbuilding)
+#   - Hardware Probes / VRAM Sweet Spot-> hardware_calibration.yml (Telemetry)
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE HANDSHAKE & CLOSING SUMMARY
+# Stratum: Developer Tooling | Machine: github.template.config
+# ==============================================================================
+# Contact and issue routing policies are governed by CreativeWorkzStudio LLC.
+# All submitted issues must honor the OmniCode 5-Block Lifecycle Protocol.
+# ==============================================================================

@@ -1,0 +1,138 @@
+# ==============================================================================
+# BLOCK 1: METADATA BLOCK
+# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ==============================================================================
+# @project       Tenebris and Lux
+# @file          .github/ISSUE_TEMPLATE/gameplay_bug.yml
+# @id            github.template.gameplay_bug
+# @layer         Developer Tooling & VCS Governance (Layer 4 Infrastructure)
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-14
+# @author        CreativeWorkzStudio LLC / ProfessorSeanEX
+# @repository    https://github.com/Novaking34/tenebris-lux
+# @system        GitHub Issue Form: Gameplay, Tactical Grid & Narrative Softlocks
+# @role          Structured Issue Ingestion for Ludologists, Designers & Players
+# @invariants    1. Captures protagonist, realm, stance, and relic states.
+#                2. Separates gameplay logic from engine infrastructure defects.
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 2: OPENING BLOCK / REGISTRATION & FORM HEADER
+# Stratum: Developer Tooling | Machine: github.template.gameplay_bug
+# ==============================================================================
+
+name: "Gameplay Defect / Combat & Narrative Softlock"
+description: "Report a tactical grid bug, combat turn softlock, relic resonance mismatch, or narrative route desync"
+title: "[GAMEPLAY DEFECT]: "
+labels: ["gameplay", "design", "simulation"]
+
+# ==============================================================================
+# BLOCK 3: BODY BLOCK / FORM SCHEMA & INPUT SPECIFICATIONS
+# Stratum: Developer Tooling | Machine: github.template.gameplay_bug
+# ==============================================================================
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Tenebris and Lux - Simulation & Gameplay Defect
+        Use this form to report issues encountered during gameplay simulation in **Tenebris and Lux** (The Master Turn Gear).
+        *For engine segfaults, memory violations, or compiler issues, please use the **Engine Architecture & Systems Defect** template.*
+
+  - type: dropdown
+    id: active_protagonist
+    attributes:
+      label: "Active Protagonist"
+      description: "Which protagonist was leading the simulation?"
+      options:
+        - "Elijah Ro-enheart (The Shield of Lux / Light Bearer)"
+        - "Lady Katrina Jaren (The Sword of Tenebris / Shadow Bearer)"
+        - "Dual Bearer / Custom Party Formation"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: combat_stance
+    attributes:
+      label: "Combat Stance & Relic State"
+      description: "What was the active combat stance at the time of the defect?"
+      options:
+        - "Neutral Stance"
+        - "Edge Striking Stance (Sword of Tenebris prioritized)"
+        - "Warding Stance (Shield of Lux prioritized - Barrio active)"
+        - "Equilibrium Stance (Gold & Shadow entwined resonance)"
+        - "Exploration / Non-Combat Field State"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: realm_location
+    attributes:
+      label: "Continental Realm / Campaign Location"
+      description: "Where in the continental topology was the encounter occurring?"
+      options:
+        - "The Dreamscape (Prologue / Awakening)"
+        - "Dio Village / Whispering Woods (Sacyran Marches)"
+        - "Duo-Loca Gateway / Continental Nexus"
+        - "Libiran Highlands / Sovereign Bastion"
+        - "Deeper Underworld / Vault of the Dark Lord Usuru"
+        - "Tactical Map / World Navigation Grid"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: "Reproduction Steps"
+      description: "Detail the exact sequence of combat or movement actions."
+      placeholder: |
+        1. Initiated combat against Dream Eater in Realm 1.
+        2. Switched stance to 'Warding' and cast Lux Barrio.
+        3. Passed turn to opponent.
+        4. Turn counter locked or HP underflowed below 0.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_vs_actual
+    attributes:
+      label: "Expected vs. Actual Outcome"
+      description: "Explain what the ludological rules dictate vs. what occurred."
+      placeholder: |
+        Expected: Lux Barrio absorbs 25% of incoming strike and decrements turn duration.
+        Actual: Barrio persisted infinitely or damage calculation bypassed barrier clamp.
+    validations:
+      required: true
+
+  - type: textarea
+    id: battle_log
+    attributes:
+      label: "In-Game Battle / CLI Log"
+      description: "Paste terminal output or CLI battle history."
+      render: text
+      placeholder: |
+        [Turn 3] Elijah shifts stance -> Equilibrium.
+        [Turn 4] Enemy strikes for 45 damage...
+    validations:
+      required: false
+
+# ==============================================================================
+# BLOCK 4: AUDIT PROCEDURES / VALIDATION CRITERIA & SIMULATION INVARIANTS
+# Stratum: Developer Tooling | Machine: github.template.gameplay_bug
+# ==============================================================================
+# Required Field Invariants:
+#   - active_protagonist != NULL
+#   - combat_stance != NULL
+#   - realm_location != NULL
+#   - steps_to_reproduce.length > 20 characters
+#   - expected_vs_actual.length > 20 characters
+# ==============================================================================
+
+# ==============================================================================
+# BLOCK 5: CLOSING BLOCK / LIFECYCLE HANDSHAKE & LUDOLOGICAL TRIAGE
+# Stratum: Developer Tooling | Machine: github.template.gameplay_bug
+# ==============================================================================
+# Handshake: Gameplay bugs are reviewed against combat formulas in game/data/
+# and integrated into Layer 1 turn-simulation unit and regression test suites.
+# ==============================================================================
