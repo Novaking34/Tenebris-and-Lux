@@ -1,4 +1,4 @@
-# Auto-generated from docs/guide_theme_config.json by tools/src/guide.rs
+# Auto-generated from docs/guide_theme_config.json by tools/src/guide/theme.rs
 extends: default
 page:
   size: Letter

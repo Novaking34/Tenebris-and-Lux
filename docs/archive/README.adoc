@@ -1,0 +1,90 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/archive/README.adoc
+@id            docs.archive.index
+@layer         Documentation / Archival Vault
+@version       0.1.2-dev
+@interface_rev Rev 5
+@date          2026-11-14
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Documentation & Research Historical Archive
+@role          Repository Archival Vault for Research Benchmarks & Milestones
+@audience      Engineers, Researchers & Project Historians
+@snapshots     none
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol.
+               2. Preserves historical research transcripts and legacy milestones.
+================================================================================
+////
+
+= Project Historical Archive & Research Vault
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.1.2-dev, 2026-11-14
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes, Orientation & Archive Taxonomy )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Archival Purpose & Taxonomy ---
+Welcome to the *Tenebris and Lux* archival vault. This directory houses historical
+research benchmarks, model screenings, milestone retrospectives, and experimental
+artifacts preserved for longitudinal analysis and cognitive provenance.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Archival Vault Collections & Historical Records )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Model Floor Screenings & Cognitive Benchmarks ---
+== Model Floor Screenings (`floor_screening/`)
+
+Contains historical performance evaluations, tok/s benchmarks, and philosophical
+covenant transcripts from the multi-tier local model sweep conducted during
+milestone development:
+
+* **0.5B Micro-Scout** (`qwen2.5-coder:0.5b`): High-speed task sifting and DAG decomposition.
+* **1.5B Native Bedrock** (`omnicode-fast-1.5b`): 32K context sweet-spot workhorse.
+* **3B Systems Polymath** (`qwen2.5-coder:3b`): Zero-heap C11 systems logic synthesis.
+* **7B Local PC Ceiling** (`qwen2.5-coder:7b`): Hardware ceiling reasoning and covenant balance.
+* **Cloud Frontier Peak** (`agy` / DeepMind Cloud): Cognitive partner reasoning and fallback bridge.
+
+See link:floor_screening/SUMMARY_MANIFEST.md[floor_screening/SUMMARY_MANIFEST.md] for the complete summary table.
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Archival Integrity & Quarantine Invariants )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Archival Quarantine Contract ---
+[NOTE]
+====
+Files in `docs/archive/` are preserved for historical provenance and cognitive
+tracking. They are decoupled from production engine builds and are not scanned
+as active textbook chapters by `master_guide`.
+====
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Navigation & Cross-References )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+Return to the main living library: link:../README.adoc[docs/README.adoc].

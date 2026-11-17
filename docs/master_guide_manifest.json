@@ -1,9 +1,9 @@
 {
   "block_1_metadata": {
     "schema": "tenlux.data.master_guide.v2",
-    "version": "0.2.0-dev",
+    "version": "0.1.2-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-12",
+    "date": "2026-11-14",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "title": "Tenebris and Lux: Master Guide Publication Manifest",
     "invariants": [
@@ -13,7 +13,7 @@
       "Data-driven PDF textbook theme and live 5-mode source code snapshots"
     ]
   },
-  "block_2_types": {
+  "block_2_opening": {
     "formats": ["adoc", "md", "pdf"],
     "pdf_engine": "asciidoctor-pdf",
     "default_pdf_theme": "cornerstone-book",
@@ -25,8 +25,8 @@
     "publication": {
       "master_title": "Tenebris and Lux: Comprehensive Master Guide",
       "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
-      "revnumber": "0.2.0-dev",
-      "revdate": "2026-11-12",
+      "revnumber": "0.1.2-dev",
+      "revdate": "2026-11-14",
       "doctype": "book",
       "toc": "left",
       "icons": "font",
@@ -47,7 +47,9 @@
       "snapshots",
       "themes",
       "volumes",
-      "offline_work"
+      "offline_work",
+      "archive",
+      "books"
     ]
   },
   "block_3_body": {

@@ -2,9 +2,9 @@
   "block_1_metadata": {
     "schema": "tenlux.data.guide_theme_config.v1",
     "id": "docs.config.pdf_theme",
-    "version": "0.2.0-dev",
+    "version": "0.1.2-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-12",
+    "date": "2026-11-14",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "Data-driven typography, spacing, color, and page-budget specification compiled into Asciidoctor-PDF YAML themes",
@@ -14,7 +14,7 @@
       "Monospace code listings at 7.5pt fit >= 100 columns on a page without awkward mid-line wraps."
     ]
   },
-  "block_2_types": {
+  "block_2_opening": {
     "theme_name": "cornerstone-book",
     "extends": "default",
     "generated_yaml_path": "docs/themes/cornerstone-book-theme.yml"

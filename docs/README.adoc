@@ -98,9 +98,21 @@ All project knowledge lives under `docs/` and is organized into six compiled vol
 | Volume V Appendix A
 | Live textbook code snapshot plates (`whole`, `block`, `subassembly`, `function`, `group`) synchronized directly from source files.
 
-| link:volumes/[docs/volumes/] & link:MASTER_GUIDE.adoc[docs/MASTER_GUIDE.*]
-| Compiled Outputs
-| Standalone six-volume books (`VOLUME_I` through `VOLUME_VI`) and the unified Master Guide rendered as `.adoc`, `.md`, and `.pdf`.
+| link:books/[docs/books/]
+| Publication Deliverables
+| Master Guide compendiums (`MASTER_GUIDE.adoc`, `MASTER_GUIDE.md`, `MASTER_GUIDE.pdf`) and future publishing tomes.
+
+| link:volumes/[docs/volumes/]
+| Volume Outputs
+| Standalone six-volume books (`VOLUME_I` through `VOLUME_VI`) rendered as `.adoc`, `.md`, and `.pdf`.
+
+| link:offline_work/[docs/offline_work/]
+| Living Design Scratch
+| Mobile app design manuscripts (`Offline-Work-1..6`) used for ongoing collaborative world and system mapping.
+
+| link:archive/[docs/archive/]
+| Archival Research Vault
+| Historical model floor screenings (`floor_screening/`), benchmark reports, and evolutionary research logs.
 |===
 
 // --- Sub-Assembly 3.2: Data-Driven Publishing Pipeline & Config Vault ---

@@ -2,9 +2,9 @@
   "block_1_metadata": {
     "schema": "tenlux.data.code_snapshots.v1",
     "id": "docs.config.code_snapshots",
-    "version": "0.2.0-dev",
+    "version": "0.1.2-dev",
     "interface_rev": "Rev 5",
-    "date": "2026-11-12",
+    "date": "2026-11-14",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "role": "Declarative textbook code-snapshot manifest extracting live code in 5 granularities: whole, block, subassembly, function, and group",
@@ -15,7 +15,7 @@
       "Inline excerpts link directly via <<snap_wholesale_<id>>> to complete wholesale Appendix listings when referenced."
     ]
   },
-  "block_2_types": {
+  "block_2_opening": {
     "supported_modes": ["whole", "block", "subassembly", "function", "group"],
     "output_dir": "docs/snapshots",
     "appendix_anchor_prefix": "snap_wholesale_",

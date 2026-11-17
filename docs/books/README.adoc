@@ -1,0 +1,110 @@
+////
+================================================================================
+BLOCK 1: METADATA BLOCK
+( Identity, Provenance, Audience, Snapshot Bindings & Document Anchors )
+================================================================================
+@project       Tenebris and Lux
+@file          docs/books/README.adoc
+@id            docs.books.index
+@layer         Documentation / Publications & Book Vault
+@version       0.1.2-dev
+@interface_rev Rev 5
+@date          2026-11-14
+@author        CreativeWorkzStudio LLC / ProfessorSeanEX
+@repository    https://github.com/Novaking34/tenebris-lux
+@system        Master Book Publication & Distribution Vault
+@role          Catalog & Distribution Hub for Compiled Books and Compendiums
+@audience      Designers, Writers, Artists, Players & Systems Engineers
+@snapshots     none (catalog overview)
+@invariants    1. Universal 5-Block AsciiDoc Comment Protocol.
+               2. Houses complete compiled publications (.adoc, .md, .pdf).
+================================================================================
+////
+
+= Publication & Book Compendium Vault
+CreativeWorkzStudio LLC / ProfessorSeanEX
+v0.1.2-dev, 2026-11-14
+:toc: macro
+:icons: font
+:source-highlighter: rouge
+
+////
+================================================================================
+BLOCK 2: OPENING BLOCK
+( Document Attributes, Orientation & Publication Taxonomy )
+================================================================================
+////
+
+// --- Sub-Assembly 2.1: Orientation & Publication Mission ---
+Welcome to the *Tenebris and Lux* publication vault. This directory serves as
+the definitive distribution library for all compiled books, comprehensive master
+compendiums, and multi-volume campaign modules.
+
+toc::[]
+
+////
+================================================================================
+BLOCK 3: BODY BLOCK
+( Catalog of Published Books & Multi-Volume Anthologies )
+================================================================================
+////
+
+// --- Sub-Assembly 3.1: Comprehensive Master Guide ---
+== Comprehensive Master Guide
+
+The unified compendium synthesizing all 114 chapters across the six core volumes
+into a single printable and searchable publication.
+
+[cols="1,2,3",options="header"]
+|===
+| Format | File Path | Description
+
+| AsciiDoc
+| link:MASTER_GUIDE.adoc[docs/books/MASTER_GUIDE.adoc]
+| Source compendium formatted for Asciidoctor and PDF compilation.
+
+| Markdown
+| link:MASTER_GUIDE.md[docs/books/MASTER_GUIDE.md]
+| GitHub and web-optimized compendium.
+
+| Printable PDF
+| link:MASTER_GUIDE.pdf[docs/books/MASTER_GUIDE.pdf]
+| Formatted US Letter publication with custom Cornerstone theme.
+|===
+
+// --- Sub-Assembly 3.2: Multi-Volume Anthology ---
+== Core Anthology Volumes (docs/volumes/)
+
+Individual volume books compiled standalone for targeted reading:
+
+* **Volume I**: *World Canon, Metaphysics & Continental Topography* (link:../volumes/VOLUME_I_world_canon_and_continental_topography.adoc[Volume I])
+* **Volume II**: *Dramatis Personae & Dual Protagonist Dynamics* (link:../volumes/VOLUME_II_dramatis_personae_and_dual_protagonists.adoc[Volume II])
+* **Volume III**: *Ludology & Tactical TRPG Mechanics* (link:../volumes/VOLUME_III_ludology_and_tactical_trpg_mechanics.adoc[Volume III])
+* **Volume IV**: *Demo Baseline & Historical Archive* (link:../volumes/VOLUME_IV_demo_baseline_and_historical_archive.adoc[Volume IV])
+* **Volume V**: *Software Architecture & 5-Block Protocol* (link:../volumes/VOLUME_V_software_architecture_and_5_block_protocol.adoc[Volume V])
+* **Volume VI**: *Engineering Chronology & Development Logs* (link:../volumes/VOLUME_VI_engineering_chronology_and_dev_logs.adoc[Volume VI])
+
+////
+================================================================================
+BLOCK 4: AUDIT BLOCK
+( Verification Matrix & Integrity Proofs )
+================================================================================
+////
+
+// --- Sub-Assembly 4.1: Book Assembly Audit ---
+[NOTE]
+====
+All books are compiled automatically by `tools/src/bin/master_guide.rs` using
+data-driven layout rules from `docs/master_guide_manifest.json` and
+`docs/guide_theme_config.json`.
+====
+
+////
+================================================================================
+BLOCK 5: CLOSING BLOCK
+( Navigation & Handshake )
+================================================================================
+////
+
+// --- Sub-Assembly 5.1: Navigation ---
+Return to the main living library: link:../README.adoc[docs/README.adoc].
