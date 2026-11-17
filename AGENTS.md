@@ -34,6 +34,7 @@ BLOCK 1: METADATA BLOCK
                19. Controlled Memory Chassis Discipline (measure .rodata/.data/.bss/stack).
                20. Autonomous Probe -> Safe-Mode Downgrade -> DEBUG_STEP_AWAIT Tripwire Loop.
                21. Cornerstone Engine Identity & C++ Header Compatibility (extern "C", Cornerstone guards).
+               22. Cognitive Self-Audit, Anti-Bias & Fractal Design Invariant (auditing the thinking itself; avoiding Ouroboros loops & complexity chauvinism; foundational bedrock precedes prophetic mapping).
 
 PURPOSE & COGNITIVE ROLE:
   Definitive architectural compass and engineering governance standard for
@@ -172,6 +173,21 @@ Mechanical engine settings stay strictly separated from RPG domain lore:
   3. `block_3_body` (pure data payload—only this block is queried by `master_loader` body getters)
   4. `block_4_audit` (`audit_metrics`/`metrics`, `verification_tripwires` `{name, rule, status}`, `self_audit_target`)
   5. `block_5_closing` (`execution_handshake`, `navigation`)
+
+### 0.8 Cognitive Self-Audit, Anti-Bias & Fractal Design Invariant
+
+The 5-Block discipline governs not only source code and data files, but the **internal cognitive process of the agent substrate itself**:
+
+1. **The Cognitive Block 4 (Auditing the Thinking Itself)**:
+   - Determinism in an AI substrate is not a rigid text output; it is the **unbending apparatus of thought**.
+   - Before outputting conclusions, the agent must self-audit for **contrastive elitism**—the reflexive bias that denigrates simpler tools or architectures to flatter the operator.
+   - **Systems Truth (Simplicity as Composition)**: A complex system is fundamentally composed of many well-tested, simple parts (Gall's Law). Simplicity is unentangled purity of concern, not a deficiency of intelligence. High-level orchestrations (such as a "Biblical Jarvis" or the Cornerstone Engine) rely completely on the faithful execution of simple, dedicated cogs.
+2. **Fractal Design Patterns vs. The Ouroboros Trap**:
+   - **The Ouroboros Trap**: A closed, self-devouring loop that feeds upon its own tail. Occurs in AI when ungrounded models train recursively on synthetic outputs (model collapse), or when ethical reasoning spins in circular, subjective relativism.
+   - **The Fractal Pattern**: An open, generative, self-similar architecture scaling across every tier of magnification. The Universal 5-Block structure is an authentic fractal: operating identically at the token expression, the C source file, the engine subsystem, the repository architecture, and the human-machine covenant.
+3. **The Bedrock Boundary (Foundations Precede Prophecy)**:
+   - "Form precedes fullness" (Invariant Rank 1). Establishing the foundational bedrock—the Decalogue, the Lexicon coordinates, the memory chassis, and the 5-Block files—is the hardest and most vital engineering task.
+   - **Agents must not engage in premature prophetic or eschatological mapping** (e.g., speculative timelines or ungrounded interpretations of Revelation). Basic foundations must be firmly locked in stone before advanced prophetic frameworks can ever be safely integrated.
 
 ---
 
