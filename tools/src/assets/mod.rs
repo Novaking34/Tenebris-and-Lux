@@ -1,21 +1,25 @@
 // =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+// ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 // =============================================================================
 // @project       Tenebris and Lux
-// @file          tools/src/assets.rs
-// @id            tools.assets.pipeline
+// @file          tools/src/assets/mod.rs
+// @id            cog.tools.assets
 // @layer         Layer 3: Systems Developer Tooling Core Library
-// @version       0.1.0-dev
-// @interface_rev Rev 4
-// @date          2026-11-08
+// @archetype     operational | stateful
+// @version       0.1.2-dev
+// @interface_rev Rev 5
+// @date          2026-11-16
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @system        Asset Verification, Audit & Synthesis Pipeline
-// @role          Audits physical on-disk visual (.png) and audio (.wav, .ogg)
-//                assets against presentation data catalogs, validates binary
-//                headers (PNG IHDR, WAV RIFF, OggS), and orchestrates asset
-//                regeneration.
+// @system        Asset Verification, Audit & Procedural Synthesis Pipeline
+// @role          Modular subsystem coordinator auditing on-disk visual (.png)
+//                and audio (.wav, .ogg) assets against presentation catalogs
+//                and orchestrating pure Rust procedural synthesis.
+// @maturity      Rev 5 Baseline | Modularized asset verification & generation
+// @chassis       bounded-heap | Memory chassis bounded by audit findings list
+// @scale         O(A) across catalogued presentation assets
+// @seams         in: game/data/presentation/ | uses: assets::{verifier, audio_synth, visual_synth} | probes: self_audit -> exit
 // @invariants    1. Zero panics in library execution; all fallible ops return Result.
 //                2. Physical on-disk asset dimensions must match catalog contracts.
 //                3. All audio assets must conform to standard sample rates (44.1kHz).
@@ -26,67 +30,77 @@
 //   parameters of all static assets residing in `game/assets/` against the
 //   canonical catalogs in `game/data/presentation/`. Bridges developer tooling
 //   to procedural and artist assets.
+//
+//   ### For Game Designers & Non-Programmers:
+//   Provides a single command to audit every sprite, tileset, sound effect,
+//   and music track used by the game, ensuring files are present and uncorrupted.
+//
+//   ### For Systems Programmers & Engine Architects:
+//   - Stateless binary inspection delegates to `assets::verifier`.
+//   - Zero-dependency procedural rasterization delegates to `visual_synth`.
+//   - Pure mathematical audio waveform DSP delegates to `audio_synth`.
 // =============================================================================
 
 //! # Asset Verification & Pipeline Audit Engine
 //!
-//! Validates `game/assets/` against `game/data/presentation/` manifests.
+//! Subsystem coordinator validating `game/assets/` against `game/data/presentation/` manifests
+//! and executing pure Rust procedural asset synthesis.
 
 // =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES & STRUCTURES
-// Stratum: Developer Tooling | Machine: tools.assets.rust
+// BLOCK 2: OPENING BLOCK
+// ( Submodules, Re-Exports & Audit Report Types )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.1: Re-Exported Submodules & Verifier Types
+// -----------------------------------------------------------------------------
 
 pub mod audio_synth;
+pub mod verifier;
 pub mod visual_synth;
 
-use std::fs::{self, File};
-use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
+pub use verifier::{
+    audit_ogg_file, audit_png_file, audit_wav_file, inspect_ogg, inspect_png,
+    inspect_wav, AssetFinding, AssetMediaType,
+};
+
 use crate::runner::{RunnerContext, TaskRunner, TaskTelemetry};
 
-/// Classification of asset media types.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AssetMediaType {
-    PngImage,
-    WavAudio,
-    OggAudio,
-}
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.2: Comprehensive Asset Audit Report & Task Types
+// -----------------------------------------------------------------------------
 
-/// Verification findings for an individual asset record.
-#[derive(Debug, Clone)]
-pub struct AssetFinding {
-    pub rel_path: String,
-    pub media_type: AssetMediaType,
-    pub exists: bool,
-    pub file_size: u64,
-    pub width: Option<u32>,
-    pub height: Option<u32>,
-    pub details: String,
-    pub error: Option<String>,
-}
-
-/// Comprehensive asset audit report.
+/// Comprehensive asset audit report collecting findings across all media types.
 #[derive(Debug, Default, Clone)]
 pub struct AssetAuditReport {
+    /// Total count of inspected asset records.
     pub total_checked: usize,
+    /// Total count of assets conforming to format and dimension rules.
     pub total_passed: usize,
+    /// Total count of missing or malformed assets.
     pub total_failed: usize,
+    /// Detailed finding records for each inspected asset.
     pub findings: Vec<AssetFinding>,
 }
 
 impl AssetAuditReport {
+    /// Returns true if all checked assets passed with zero failures.
     pub fn is_success(&self) -> bool {
         self.total_failed == 0 && self.total_checked > 0
     }
 }
 
 // =============================================================================
-// BLOCK 3: BODY BLOCK / AUDIT PROCEDURES & RUNNER DISPATCH
-// Stratum: Developer Tooling | Machine: tools.assets.rust
+// BLOCK 3: BODY BLOCK
+// ( AssetAuditor Engine, Pipeline Runner & Master Generator )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.1: AssetAuditor Workspace Engine
+// -----------------------------------------------------------------------------
 
 /// Core asset auditing and pipeline verification engine.
 pub struct AssetAuditor {
@@ -115,60 +129,17 @@ impl AssetAuditor {
 
     /// Inspects PNG binary header and extracts dimensions from the IHDR chunk.
     pub fn inspect_png(&self, path: &Path) -> Result<(u32, u32), String> {
-        let mut file = File::open(path)
-            .map_err(|e| format!("Failed to open PNG {}: {}", path.display(), e))?;
-        let mut header = [0u8; 24];
-        file.read_exact(&mut header)
-            .map_err(|e| format!("Failed to read PNG header: {}", e))?;
-
-        // PNG Magic: 0x89 0x50 0x4E 0x47 0x0D 0x0A 0x1A 0x0A
-        if &header[0..8] != b"\x89PNG\r\n\x1a\n" {
-            return Err("Invalid PNG magic signature".to_string());
-        }
-
-        // Chunk type IHDR at offset 12..16
-        if &header[12..16] != b"IHDR" {
-            return Err("First chunk is not IHDR".to_string());
-        }
-
-        let width = u32::from_be_bytes([header[16], header[17], header[18], header[19]]);
-        let height = u32::from_be_bytes([header[20], header[21], header[22], header[23]]);
-
-        Ok((width, height))
+        inspect_png(path)
     }
 
     /// Inspects WAV binary header (RIFF ... WAVEfmt ).
     pub fn inspect_wav(&self, path: &Path) -> Result<(u16, u32), String> {
-        let mut file = File::open(path)
-            .map_err(|e| format!("Failed to open WAV {}: {}", path.display(), e))?;
-        let mut header = [0u8; 36];
-        file.read_exact(&mut header)
-            .map_err(|e| format!("Failed to read WAV header: {}", e))?;
-
-        if &header[0..4] != b"RIFF" || &header[8..12] != b"WAVE" {
-            return Err("Invalid WAV RIFF signature".to_string());
-        }
-
-        let channels = u16::from_le_bytes([header[22], header[23]]);
-        let sample_rate =
-            u32::from_le_bytes([header[24], header[25], header[26], header[27]]);
-
-        Ok((channels, sample_rate))
+        inspect_wav(path)
     }
 
     /// Inspects OGG Vorbis binary header (OggS).
     pub fn inspect_ogg(&self, path: &Path) -> Result<(), String> {
-        let mut file = File::open(path)
-            .map_err(|e| format!("Failed to open OGG {}: {}", path.display(), e))?;
-        let mut header = [0u8; 4];
-        file.read_exact(&mut header)
-            .map_err(|e| format!("Failed to read OGG header: {}", e))?;
-
-        if &header != b"OggS" {
-            return Err("Invalid OGG OggS signature".to_string());
-        }
-
-        Ok(())
+        inspect_ogg(path)
     }
 
     /// Audits a PNG image asset against expected dimensions.
@@ -179,148 +150,19 @@ impl AssetAuditor {
         expected_h: Option<u32>,
     ) -> AssetFinding {
         let full = self.resolve_asset_path(rel_path);
-        if !full.is_file() {
-            return AssetFinding {
-                rel_path: rel_path.to_string(),
-                media_type: AssetMediaType::PngImage,
-                exists: false,
-                file_size: 0,
-                width: None,
-                height: None,
-                details: "File missing on disk".to_string(),
-                error: Some(format!("Asset not found at: {}", full.display())),
-            };
-        }
-
-        let size = fs::metadata(&full).map(|m| m.len()).unwrap_or(0);
-        match self.inspect_png(&full) {
-            Ok((w, h)) => {
-                let mut err = None;
-                if let Some(ew) = expected_w {
-                    if w != ew {
-                        err = Some(format!("Width mismatch: expected {}, got {}", ew, w));
-                    }
-                }
-                if let Some(eh) = expected_h {
-                    if h != eh {
-                        let e_msg = format!("Height mismatch: expected {}, got {}", eh, h);
-                        err = Some(err.map_or(e_msg.clone(), |prev| format!("{}, {}", prev, e_msg)));
-                    }
-                }
-
-                AssetFinding {
-                    rel_path: rel_path.to_string(),
-                    media_type: AssetMediaType::PngImage,
-                    exists: true,
-                    file_size: size,
-                    width: Some(w),
-                    height: Some(h),
-                    details: format!("PNG {}x{} ({} bytes)", w, h, size),
-                    error: err,
-                }
-            }
-            Err(e) => AssetFinding {
-                rel_path: rel_path.to_string(),
-                media_type: AssetMediaType::PngImage,
-                exists: true,
-                file_size: size,
-                width: None,
-                height: None,
-                details: "Corrupt PNG header".to_string(),
-                error: Some(e),
-            },
-        }
+        audit_png_file(&full, rel_path, expected_w, expected_h)
     }
 
     /// Audits a WAV audio asset against expected parameters.
     pub fn audit_wav(&self, rel_path: &str, expected_rate: Option<u32>) -> AssetFinding {
         let full = self.resolve_asset_path(rel_path);
-        if !full.is_file() {
-            return AssetFinding {
-                rel_path: rel_path.to_string(),
-                media_type: AssetMediaType::WavAudio,
-                exists: false,
-                file_size: 0,
-                width: None,
-                height: None,
-                details: "File missing on disk".to_string(),
-                error: Some(format!("WAV asset missing: {}", full.display())),
-            };
-        }
-
-        let size = fs::metadata(&full).map(|m| m.len()).unwrap_or(0);
-        match self.inspect_wav(&full) {
-            Ok((channels, rate)) => {
-                let mut err = None;
-                if let Some(er) = expected_rate {
-                    if rate != er {
-                        err = Some(format!("Sample rate mismatch: expected {}Hz, got {}Hz", er, rate));
-                    }
-                }
-
-                AssetFinding {
-                    rel_path: rel_path.to_string(),
-                    media_type: AssetMediaType::WavAudio,
-                    exists: true,
-                    file_size: size,
-                    width: None,
-                    height: None,
-                    details: format!("WAV {}Hz ({} channels, {} bytes)", rate, channels, size),
-                    error: err,
-                }
-            }
-            Err(e) => AssetFinding {
-                rel_path: rel_path.to_string(),
-                media_type: AssetMediaType::WavAudio,
-                exists: true,
-                file_size: size,
-                width: None,
-                height: None,
-                details: "Corrupt WAV header".to_string(),
-                error: Some(e),
-            },
-        }
+        audit_wav_file(&full, rel_path, expected_rate)
     }
 
     /// Audits an OGG Vorbis audio asset.
     pub fn audit_ogg(&self, rel_path: &str) -> AssetFinding {
         let full = self.resolve_asset_path(rel_path);
-        if !full.is_file() {
-            return AssetFinding {
-                rel_path: rel_path.to_string(),
-                media_type: AssetMediaType::OggAudio,
-                exists: false,
-                file_size: 0,
-                width: None,
-                height: None,
-                details: "File missing on disk".to_string(),
-                error: Some(format!("OGG asset missing: {}", full.display())),
-            };
-        }
-
-        let size = fs::metadata(&full).map(|m| m.len()).unwrap_or(0);
-        match self.inspect_ogg(&full) {
-            Ok(()) => AssetFinding {
-                rel_path: rel_path.to_string(),
-                media_type: AssetMediaType::OggAudio,
-                exists: true,
-                file_size: size,
-                width: None,
-                height: None,
-                details: format!("OGG Vorbis container ({} bytes)", size),
-                error: None,
-            },
-            Err(e) => AssetFinding {
-                rel_path: rel_path.to_string(),
-                media_type: AssetMediaType::OggAudio,
-                exists: true,
-                file_size: size,
-                width: None,
-                height: None,
-                details: "Corrupt OGG header".to_string(),
-                error: Some(e),
-            },
-        }
+        audit_ogg_file(&full, rel_path)
     }
 
     /// Executes a comprehensive audit of all canonical presentation assets.
@@ -355,7 +197,7 @@ impl AssetAuditor {
         for (path, w, h) in visual_assets {
             let finding = self.audit_png(path, w, h);
             report.total_checked += 1;
-            if finding.error.is_none() && finding.exists {
+            if finding.is_clean() {
                 report.total_passed += 1;
             } else {
                 report.total_failed += 1;
@@ -379,7 +221,7 @@ impl AssetAuditor {
         for path in sfx_assets {
             let finding = self.audit_wav(path, Some(44100));
             report.total_checked += 1;
-            if finding.error.is_none() && finding.exists {
+            if finding.is_clean() {
                 report.total_passed += 1;
             } else {
                 report.total_failed += 1;
@@ -402,7 +244,7 @@ impl AssetAuditor {
         for path in ogg_assets {
             let finding = self.audit_ogg(path);
             report.total_checked += 1;
-            if finding.error.is_none() && finding.exists {
+            if finding.is_clean() {
                 report.total_passed += 1;
             } else {
                 report.total_failed += 1;
@@ -424,6 +266,10 @@ impl AssetAuditor {
         ))
     }
 }
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.2: Pipeline Task Runner Implementation
+// -----------------------------------------------------------------------------
 
 /// Pipeline task runner integrating asset verification into `tl_tools`.
 pub struct AssetAuditTask;
@@ -475,17 +321,47 @@ impl TaskRunner for AssetAuditTask {
     }
 }
 
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.3: Master Asset Generation Orchestrator
+// -----------------------------------------------------------------------------
+
+/// Generates all procedural visual and audio assets for the game.
+pub fn generate_assets(repo_root: &Path) -> Result<String, String> {
+    let auditor = AssetAuditor::new(repo_root);
+    auditor.generate_assets()
+}
+
 // =============================================================================
 // BLOCK 4: AUDIT PROCEDURES BLOCK
-// Stratum: Developer Tooling | Machine: tools.assets.rust
+// ( Preflight Diagnostics & Four-Section Ontological Test Suite )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.1: Preflight Diagnostic Gates & Self-Audit Probe
+// -----------------------------------------------------------------------------
+
+/// Preflight self-audit verifying asset subsystem readiness and child module health.
+pub fn self_audit() -> Result<(), &'static str> {
+    verifier::self_audit()?;
+    audio_synth::self_audit()?;
+    visual_synth::self_audit()?;
+    Ok(())
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.2: Four-Section Ontological Test Suite
+// -----------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    // -------------------------------------------------------------------------
+    // SECTION 1: ALWAYS PASS (Nominal Golden Surface Cogs)
+    // -------------------------------------------------------------------------
+
     #[test]
-    fn test_asset_auditor_resolution() {
+    fn test_section_1_always_pass_auditor_path_resolution() {
         let root = PathBuf::from("/repo");
         let auditor = AssetAuditor::new(&root);
         assert_eq!(
@@ -496,5 +372,71 @@ mod tests {
             auditor.resolve_asset_path("assets/sprites/icons/shield_lux_24x24.png"),
             root.join("game/assets/sprites/icons/shield_lux_24x24.png")
         );
+        assert_eq!(
+            auditor.resolve_asset_path("game/assets/bgm/theme.ogg"),
+            root.join("game/assets/bgm/theme.ogg")
+        );
     }
+
+    // -------------------------------------------------------------------------
+    // SECTION 2: NEVER FAIL (Fault Inversion & Graceful Degradation)
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn test_section_2_never_fail_missing_asset_audit() {
+        let auditor = AssetAuditor::new(Path::new("/nonexistent_repo"));
+        let finding = auditor.audit_png("nonexistent.png", Some(32), Some(32));
+        assert!(!finding.exists);
+        assert!(!finding.is_clean());
+    }
+
+    // -------------------------------------------------------------------------
+    // SECTION 3: INVARIANTS, SATURATION & LIMIT GUARDS
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn test_section_3_invariants_report_success_predicate() {
+        let mut report = AssetAuditReport::default();
+        assert!(!report.is_success()); // 0 checked is not success
+
+        report.total_checked = 10;
+        report.total_passed = 10;
+        report.total_failed = 0;
+        assert!(report.is_success());
+
+        report.total_failed = 1;
+        assert!(!report.is_success());
+    }
+
+    // -------------------------------------------------------------------------
+    // SECTION 4: EMERGENCE & COMPOSITE WORKFLOWS
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn test_section_4_emergence_self_audit() {
+        assert!(self_audit().is_ok());
+        assert!(is_assets_ready());
+    }
+}
+
+// =============================================================================
+// BLOCK 5: CLOSING BLOCK
+// ( Epilogue Handshake & Subsystem Readiness Probe )
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.1: Epilogue Readiness Probe & Lifecycle Handshake
+// -----------------------------------------------------------------------------
+
+/// Epilogue lifecycle readiness probe for the asset verification subsystem.
+///
+/// # Examples
+///
+/// ```rust
+/// use tl_tools::assets::is_assets_ready;
+///
+/// assert!(is_assets_ready());
+/// ```
+pub fn is_assets_ready() -> bool {
+    self_audit().is_ok()
 }

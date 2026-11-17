@@ -1,71 +1,115 @@
 # =============================================================================
 # BLOCK 1: METADATA BLOCK
-# ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+# ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 # =============================================================================
 # @project       Tenebris and Lux
 # @file          tools/Cargo.toml
 # @id            tools.manifest.cargo
-# @layer         Developer Tooling & Document Compilers
-# @version       0.1.0
-# @interface_rev Rev 1
-# @date          2026-10-29
-# @updated       2026-10-29
+# @layer         Layer 4: Developer Tooling & Verification Strata
+# @archetype     manifest | operational
+# @version       0.1.2-dev
+# @interface_rev Rev 5
+# @date          2026-11-16
 # @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 # @repository    https://github.com/Novaking34/tenebris-lux
+# @system        OmniCode Developer Toolchain Root Package Manifest
+# @role          Cargo Configuration, Workspace Dependencies & Target Registry
+# @maturity      Rev 5 Baseline | 4-Tier Macro Test Architecture
+# @chassis       bounded-heap | Native compiled binaries; stack frames bounded
+# @scale         O(1) build configuration over 8 compiled binaries and 4 test tiers
+# @seams         in: Cargo.lock | uses: serde, serde_json | exports: tl_tools
+# @invariants    1. Conformance to Rust 2024 Edition standard.
+#                2. Pure native compiled static binaries (zero Python runtime deps).
+#                3. Universal 5-Block Lifecycle Protocol enforced across manifests.
+#                4. Strict <= 80-column line width discipline across all documentation.
 #
 # PURPOSE & ARCHITECTURAL ROLE:
-#   Root Cargo manifest for the Tenebris and Lux developer toolchain. Manages
-#   the compiled developer utilities: historical RPG Maker MV demo extraction,
-#   game design curation, and master guide publishing for NotebookLM and Google
-#   Gemini chat feedback loops.
+#   Root Cargo package manifest for the Cornerstone developer toolchain (`tl_tools`).
+#   Orchestrates compilation, dependency resolution, release profiles, strict
+#   compiler lints (-D warnings), standalone binary targets, and the 4-tier
+#   macro verification suite (`functional/`, `unit/`, `integrated/`, `system/`).
 #
-# DEPENDENCY & RESOURCE CONTRACTS:
-#   - Upstream Dependencies: Rust 2024 Edition standard library, serde, serde_json
-#   - Downstream Consumers:  CI/CD pipelines, docs generation, release packaging
-#   - Memory Allocation:     Standard heap allocations during compilation/extraction
-#   - Concurrency / Safety:  Thread-safe file I/O and process execution
-#   - Latency Budget:        Native compilation speed; master guide generated < 2s
+#   ### For Game Designers & Non-Programmers:
+#   Defines the build rules for all project tools: asset generators, demo extractors,
+#   master guide compilers, and system validators that power the development workflow.
 #
-# AXIOMATIC INVARIANTS:
-#   1. Strict conformance to Rust 2024 Edition standard.
-#   2. Zero dynamic runtime interpreter dependencies (native static binaries).
-#   3. Strict <= 80-column line width discipline across all documentation.
-#   4. Reentrant, pure serialization models for game metadata.
+#   ### For Systems Programmers & Engine Architects:
+#   Enforces zero runtime script interpreter overhead, configures LTO release builds,
+#   pins dependency versions, and structures integration tests to mirror engine/tests/.
 # =============================================================================
 
 # =============================================================================
-# BLOCK 2: OPENING BLOCK / PACKAGE SPECIFICATION
+# BLOCK 2: OPENING BLOCK / PACKAGE SPECIFICATION & PROVENANCE
 # Stratum: Developer Tooling | Machine: tools.manifest.cargo
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# Sub-Assembly 2.1: Package Specification & Core Identity
+# -----------------------------------------------------------------------------
 
 [package]
 name = "tl_tools"
-version = "0.1.0"
+version = "0.1.2-dev"
 edition = "2024"
+rust-version = "1.85"
+default-run = "tl_tools"
+
+# -----------------------------------------------------------------------------
+# Sub-Assembly 2.2: Provenance, Licensing & Ecosystem Classification
+# -----------------------------------------------------------------------------
+
 authors = ["CreativeWorkzStudio LLC / ProfessorSeanEX"]
 description = "Developer tooling, archival extraction, and master guide generator for Tenebris and Lux"
+repository = "https://github.com/Novaking34/tenebris-lux"
+homepage = "https://github.com/Novaking34/tenebris-lux"
 license = "MIT OR Apache-2.0"
 publish = false
+keywords = ["omnicode", "cornerstone", "gamedev", "rpg", "toolchain"]
+categories = ["development-tools", "command-line-utilities", "game-development"]
 
 # =============================================================================
-# BLOCK 3: BODY BLOCK / DEPENDENCY GRAPH
+# BLOCK 3: BODY BLOCK / DEPENDENCY GRAPH & FEATURE GATES
 # Stratum: Developer Tooling | Machine: tools.manifest.cargo
 # =============================================================================
 
+# -----------------------------------------------------------------------------
+# Sub-Assembly 3.1: Standard Production Dependencies (Zero-Bloat Invariant)
+# -----------------------------------------------------------------------------
+
 [dependencies]
-# Serialization engine for RPG Maker MV JSON databases and master manifests
+# Standard JSON serialization engine for RPG Maker databases, manifests & configs
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.154"
+
+# -----------------------------------------------------------------------------
+# Sub-Assembly 3.2: Optional Feature Flags & Compilation Tiers
+# -----------------------------------------------------------------------------
+
+[features]
+default = []
+diagnostics = []
+benchmarks = []
 
 # =============================================================================
 # BLOCK 4: AUDIT PROCEDURES BLOCK / PROFILES & COMPILER LINTS
 # Stratum: Developer Tooling | Machine: tools.manifest.cargo
 # =============================================================================
 
+# -----------------------------------------------------------------------------
+# Sub-Assembly 4.1: Compiler Warning Purity & Code Hygiene Lints
+# -----------------------------------------------------------------------------
+
 [lints.rust]
 warnings = "deny"
 missing_docs = "allow"
 non_snake_case = "allow"
+
+[lints.clippy]
+all = "warn"
+
+# -----------------------------------------------------------------------------
+# Sub-Assembly 4.2: Build Profiles & Optimization Strata
+# -----------------------------------------------------------------------------
 
 [profile.dev]
 opt-level = 0
@@ -79,15 +123,32 @@ codegen-units = 1
 panic = "abort"
 strip = true
 
+[profile.test]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[profile.bench]
+opt-level = 3
+debug = false
+lto = true
+
 # =============================================================================
-# BLOCK 5: CLOSING BLOCK / BINARY TARGETS & CLI DISPATCH
+# BLOCK 5: CLOSING BLOCK / TARGET REGISTRY & VERIFICATION TIER MAPPINGS
 # Stratum: Developer Tooling | Machine: tools.manifest.cargo
 # =============================================================================
 
-# Core developer tooling library (Runner engine, extractors, compilers)
+# -----------------------------------------------------------------------------
+# Sub-Assembly 5.1: Core Developer Tooling Library Target
+# -----------------------------------------------------------------------------
+
 [lib]
 name = "tl_tools"
 path = "src/lib.rs"
+
+# -----------------------------------------------------------------------------
+# Sub-Assembly 5.2: Binary Target Registry (CLI Dispatchers & Tools)
+# -----------------------------------------------------------------------------
 
 # Central multi-tool CLI dispatcher & runner
 [[bin]]
@@ -133,6 +194,26 @@ path = "src/bin/asset_generator.rs"
 [[bin]]
 name = "installer"
 path = "src/bin/installer.rs"
+
+# -----------------------------------------------------------------------------
+# Sub-Assembly 5.3: Four-Tier Macro Verification Targets (engine/tests/ Mirror)
+# -----------------------------------------------------------------------------
+
+[[test]]
+name = "functional"
+path = "tests/functional/main.rs"
+
+[[test]]
+name = "unit"
+path = "tests/unit/main.rs"
+
+[[test]]
+name = "integrated"
+path = "tests/integrated/main.rs"
+
+[[test]]
+name = "system"
+path = "tests/system/main.rs"
 
 
 

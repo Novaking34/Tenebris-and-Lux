@@ -1,22 +1,44 @@
 // =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+// ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          tools/src/validator/config.rs
-// @id            tools.validator.config
-// @layer         Layer 3: Systems Developer Tooling Core Library
-// @version       0.1.0
-// @interface_rev Rev 1
-// @date          2026-11-09
+// @id            cog.tools.validator.config
+// @layer         Layer 3: Developer Toolchain Command Sub-Assemblies
+// @archetype     operational | stateless
+// @version       0.1.2-dev
+// @interface_rev Rev 5
+// @date          2026-11-15
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
+// @system        OmniCode Developer Toolchain // Validator Config Loader
+// @role          Data-Driven Configuration Loader & Layered Rule Merger
+// @maturity      Rev 5 Baseline | Layered JSON rule merger
+// @chassis       bounded-heap | Developer tooling memory chassis; bounded hash maps
+// @scale         O(N) across subsystems and rule declarations
+// @seams         in: engine/config/standards/ | uses: serde_json | probes: self_audit
+// @invariants    1. Zero panics on missing or malformed configuration JSON.
+//                2. Strict fallback to hardcoded default rule baselines.
+//                3. Layered precedence: engine standards override generic tools defaults.
 //
 // PURPOSE & ARCHITECTURAL ROLE:
 //   Data-driven configuration loader and rule merger for the OmniCode
 //   validator. Implements layered resolution: loads generic protocol baselines
 //   from `tools/config/` and overlays project-specific specializations from
 //   `engine/config/standards/`.
+//
+//   ### For Game Designers & Non-Programmers:
+//   Loads the rulebooks that determine how code, lore, and assets must be structured.
+//   Ensures that every rule file can be loaded safely without crashing the tooling.
+//
+//   ### For Systems Programmers & Engine Architects:
+//   - Ownership & Reentrancy: All loaders are purely functional, allocating fresh
+//     configuration records with zero shared mutable global state.
+//   - Extension Seam: Additional JSON standards or block descriptors register as
+//     new pointer mappings in `load_header_rules_config`.
+//   - Explicit Non-Goal: Does not enforce or apply rules directly; produces pure
+//     typed rule models for consumption by validator modules.
 // =============================================================================
 
 //! # Validator Data-Driven Configuration Loader
@@ -25,14 +47,22 @@
 //! engine standards (`engine/config/standards/`) into typed rule sets.
 
 // =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES & STRUCTURES
-// Stratum: Developer Tooling | Machine: tools.validator.config
+// BLOCK 2: OPENING BLOCK
+// ( Types, Enums, Subsystem Records & Configuration Defaults )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.1: Pre-Conditions & Library Imports
+// -----------------------------------------------------------------------------
 
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use serde::{Deserialize, Serialize};
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.2: Types, Enums & Subsystem Records
+// -----------------------------------------------------------------------------
 
 /// Archetype category of a C11 header.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -282,9 +312,13 @@ impl Default for HeaderRulesConfig {
 }
 
 // =============================================================================
-// BLOCK 3: BODY BLOCK / CONFIGURATION LOADER
-// Stratum: Developer Tooling | Machine: tools.validator.config
+// BLOCK 3: BODY BLOCK
+// ( Subsystem Registry Loader & Layered Standards Rules Merger )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.1: Subsystem Registry Loader
+// -----------------------------------------------------------------------------
 
 /// Loads the subsystem registry from `engine/config/standards/subsystems.json`.
 pub fn load_subsystems_registry(repo_root: &Path) -> Result<SubsystemRegistry, String> {
@@ -315,6 +349,10 @@ pub fn load_subsystems_registry(repo_root: &Path) -> Result<SubsystemRegistry, S
 
     Ok(registry)
 }
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.2: Header & Source Rules Configuration Merger
+// -----------------------------------------------------------------------------
 
 /// Loads and merges header rules from `tools/config/` and `engine/config/standards/`.
 pub fn load_header_rules_config(repo_root: &Path) -> HeaderRulesConfig {
@@ -611,3 +649,114 @@ pub fn load_header_rules_config(repo_root: &Path) -> HeaderRulesConfig {
 
     config
 }
+
+// =============================================================================
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Four-Section Ontological Test Schema & Diagnostic Self-Audit )
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.1: Unit Test Suite (Four-Section Ontological Schema)
+// -----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // -------------------------------------------------------------------------
+    // SECTION 1: ALWAYS PASS (Nominal Golden Surface Cogs)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_1_default_rules_config_valid() {
+        let config = HeaderRulesConfig::default();
+        assert_eq!(config.canonical_project, "Tenebris and Lux");
+        assert_eq!(config.tag_column_width, 15);
+        assert!(config.mandatory_metadata_tags.contains(&"@project".to_string()));
+    }
+
+    // -------------------------------------------------------------------------
+    // SECTION 2: NEVER FAIL (Fault Inversion & Graceful Degradation)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_2_missing_registry_returns_error() {
+        let nonexistent = Path::new("/nonexistent/path/for/tenebris/lux");
+        let result = load_subsystems_registry(nonexistent);
+        assert!(result.is_err());
+    }
+
+    // -------------------------------------------------------------------------
+    // SECTION 3: INVARIANTS & PROPERTY ASSERTS
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_3_subsystem_record_deserialization() {
+        let json = r#"{"subsystem": "core", "layer": 0, "archetype": "operational", "stateful": true}"#;
+        let record: SubsystemRecord = serde_json::from_str(json).expect("Failed to deserialize");
+        assert_eq!(record.subsystem, "core");
+        assert_eq!(record.layer, 0);
+        assert_eq!(record.archetype, HeaderArchetype::Operational);
+        assert!(record.stateful);
+    }
+
+    // -------------------------------------------------------------------------
+    // SECTION 4: EMERGENCE & COMPOSITE WORKFLOWS
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_4_emergence_self_audit() {
+        assert!(self_audit().is_ok());
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.2: Diagnostic Self-Audit
+// -----------------------------------------------------------------------------
+
+/// Internal self-audit testing validator config parsing and default rules.
+///
+/// # Dual-Audience Documentation
+/// * For Game Designers: Tests that default configuration profiles are valid.
+/// * For Systems Programmers: Verifies default invariants and error handling.
+///
+/// # Examples
+///
+/// ```rust
+/// use tl_tools::validator::config::self_audit;
+///
+/// assert!(self_audit().is_ok());
+/// ```
+pub fn self_audit() -> Result<(), &'static str> {
+    let config = HeaderRulesConfig::default();
+    if config.canonical_project.is_empty() {
+        return Err("canonical_project must not be empty in default config");
+    }
+    if config.mandatory_metadata_tags.is_empty() {
+        return Err("mandatory_metadata_tags must not be empty in default config");
+    }
+    Ok(())
+}
+
+// =============================================================================
+// BLOCK 5: CLOSING BLOCK
+// ( State Summary Handshake, Module Epilogue & Teardown Verification )
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.1: Epilogue Predicate
+// -----------------------------------------------------------------------------
+
+/// Epilogue readiness probe for the validator configuration subsystem.
+///
+/// # Dual-Audience Documentation
+/// * For Game Designers: Confirms the configuration loader is operational.
+/// * For Systems Programmers: Returns true when self-audit passes.
+///
+/// # Examples
+///
+/// ```rust
+/// use tl_tools::validator::config::is_config_system_ready;
+///
+/// assert!(is_config_system_ready());
+/// ```
+pub fn is_config_system_ready() -> bool {
+    self_audit().is_ok()
+}
+

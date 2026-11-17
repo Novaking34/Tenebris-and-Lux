@@ -1,134 +1,158 @@
 // =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+// ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          tools/src/bin/demo_extractor.rs
-// @id            tools.bin.demo_extractor
-// @layer         Layer 3: Systems Developer Tooling Standalone Binary
-// @version       0.1.0
-// @interface_rev Rev 1
-// @date          2026-10-29
-// @updated       2026-10-29
+// @id            cog.tools.bin.demo_extractor
+// @layer         Layer 3: Developer Tooling & Pipeline Orchestration
+// @archetype     operational | stateful
+// @version       0.1.2-dev
+// @interface_rev Rev 5
+// @date          2026-11-16
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
+// @system        Tools Extractor Subsystem
+// @role          Standalone Demo Extractor Binary Entrypoint
+// @maturity      Rev 5 Baseline | Hardened
+// @chassis       zero-heap (stack-managed argument dispatch)
+// @scale         O(1) argument parsing and command dispatch
+// @seams         in: CLI arguments | uses: cmd::extract | probes: self_audit -> is_demo_extractor_ready
+// @invariants    1. Strict exit code propagation (0 = success, 1 = failure).
+//                2. Zero unhandled errors during extraction dispatch.
+//                3. Universal 5-Block Lifecycle Protocol enforced.
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Dedicated binary target for standalone historical RPG Maker MV demo data
-//   extraction. Leverages the core `tl_tools::extractor` library to inspect,
-//   deserialize, and validate historical 2017–2018 demo assets without
-//   requiring the full multi-tool CLI dispatcher.
+//   Standalone command-line executable for extracting, deserializing, and
+//   validating historical 2017-2018 RPG Maker MV demo datasets.
 //
-// PEDAGOGICAL MISSION:
-//   Demonstrates how standalone binaries in a modular Rust crate can serve
-//   as thin execution harnesses over a shared core (`tl_tools::extractor`).
-//   Preserves exact behavioral parity with the CLI runner while allowing direct
-//   invocation in specialized automated scripts or CI/CD pipelines.
+// ### For Game Designers & Non-Programmers:
+//   Run `demo_extractor` to convert legacy RPG Maker MV data tables into modern
+//   AsciiDoc documentation and canonical models for the new engine.
 //
-// AXIOMATIC INVARIANTS:
-//   1. Strict exit code semantics (0 = success, 1 = failure).
-//   2. Fail-fast error reporting if external archives are unreachable.
-//   3. Zero mutation of source archival JSON datasets.
-//   4. Strict <= 80-column line width discipline across all documentation.
+// ### For Systems Programmers & Engine Architects:
+//   Provides a lightweight binary delegating to `tl_tools::cmd::extract` with
+//   proper exit code propagation and preflight readiness probes.
 // =============================================================================
 
-//! # Standalone Demo Extractor Binary
-//!
-//! Provides a dedicated CLI binary entry point for extracting and verifying
-//! the 2017–2018 RPG Maker MV demo datasets using the [`tl_tools::extractor`]
-//! library module.
-
 // =============================================================================
-// BLOCK 2: OPENING BLOCK / IMPORTS & TYPES
-// Stratum: Developer Tooling | Machine: tools.bin.demo_extractor
+// BLOCK 2: OPENING BLOCK
+// ( Pre-Conditions, Imports & Constants )
 // =============================================================================
 
-use std::path::{Path, PathBuf};
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.1: Pre-Conditions & Library Imports
+// -----------------------------------------------------------------------------
+
+use std::env;
 use std::process::ExitCode;
-use tl_tools::extractor::DemoExtractor;
+use tl_tools::cmd::extract::dispatch_standalone_extractor;
+use tl_tools::cmd::resolve_repo_root;
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.2: Binary Identity Constants
+// -----------------------------------------------------------------------------
+
+/// Canonical binary identifier.
+pub const BINARY_NAME: &str = "demo_extractor";
 
 // =============================================================================
-// BLOCK 3: BODY BLOCK / EXECUTION LOGIC
-// Stratum: Developer Tooling | Machine: tools.bin.demo_extractor
+// BLOCK 3: BODY BLOCK
+// ( Execution Engine & CLI Dispatch )
 // =============================================================================
 
-/// Executes the standalone extraction workflow.
-fn run_standalone_extractor(
-    archive_base: &Path,
-    output_dir: &Path,
-) -> Result<(), String> {
-    println!("============================================================");
-    println!("     Tenebris and Lux - Standalone Demo Extractor Binary    ");
-    println!("============================================================");
-    println!("Archive Base: {:?}", archive_base);
-    println!("Output Dir:   {:?}", output_dir);
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.1: Command Dispatch Logic
+// -----------------------------------------------------------------------------
 
-    let extractor = DemoExtractor::new(archive_base, output_dir);
-    let summary = extractor.run()?;
-
-    println!("------------------------------------------------------------");
-    println!("Extraction Summary:");
-    println!("  Actors:   {}", summary.actor_count);
-    println!("  Classes:  {}", summary.class_count);
-    println!("  Skills:   {}", summary.skill_count);
-    println!("  Items:    {}", summary.item_count);
-    println!("  Weapons:  {}", summary.weapon_count);
-    println!("  Armors:   {}", summary.armor_count);
-    println!("  Enemies:  {}", summary.enemy_count);
-    println!("  Troops:   {}", summary.troop_count);
-    println!("============================================================");
-    Ok(())
+fn run() -> Result<(), String> {
+    let args: Vec<String> = env::args().collect();
+    let repo_root = resolve_repo_root();
+    dispatch_standalone_extractor(&args, &repo_root)
 }
 
 // =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK / PREFLIGHT AUDIT
-// Stratum: Developer Tooling | Machine: tools.bin.demo_extractor
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Four-Section Ontological Test Suite & Subsystem Self-Audit )
 // =============================================================================
 
-/// Validates that the external archive directory exists and contains data.
-fn audit_environment(archive_base: &Path) -> Result<(), String> {
-    if !archive_base.is_dir() {
-        return Err(format!(
-            "External archive directory not found at: {:?}",
-            archive_base
-        ));
-    }
-    let f1 = archive_base.join("Old Game Data/data");
-    let f2 = archive_base.join("Old_Game_Data_2/data");
-    if !f1.is_dir() && !f2.is_dir() {
-        return Err(format!(
-            "Neither folder 1 nor folder 2 found inside: {:?}",
-            archive_base
-        ));
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.1: Internal Subsystem Self-Audit Probe
+// -----------------------------------------------------------------------------
+
+/// Internal self-audit testing binary metadata invariants.
+pub fn self_audit() -> Result<(), &'static str> {
+    if BINARY_NAME != "demo_extractor" {
+        return Err("Self-audit failed: BINARY_NAME mismatch");
     }
     Ok(())
 }
 
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.2: Four-Section Ontological Unit Tests
+// -----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // -------------------------------------------------------------------------
+    // Section 1: Always Pass (Golden Surface Path)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_1_always_pass_binary_name() {
+        assert_eq!(BINARY_NAME, "demo_extractor");
+    }
+
+    // -------------------------------------------------------------------------
+    // Section 2: Never Fail (Edge Resilience & Fault Inversion)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_2_never_fail_self_audit() {
+        assert!(self_audit().is_ok());
+    }
+
+    // -------------------------------------------------------------------------
+    // Section 3: Invariants (Structural Bounds & Mathematical Guards)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_3_invariants_name_length() {
+        assert!(!BINARY_NAME.is_empty());
+        assert!(BINARY_NAME.len() < 32);
+    }
+
+    // -------------------------------------------------------------------------
+    // Section 4: Emergence (System Integration & Roundtrip Synthesis)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_4_emergence_ready() {
+        assert!(is_demo_extractor_ready());
+    }
+}
+
 // =============================================================================
-// BLOCK 5: CLOSING / CLI ENTRY BLOCK
-// Stratum: Developer Tooling | Machine: tools.bin.demo_extractor
+// BLOCK 5: CLOSING BLOCK
+// ( Epilogue Readiness & Process Termination )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.1: Epilogue Readiness Probe
+// -----------------------------------------------------------------------------
+
+/// Returns true if the demo extractor binary is ready for execution.
+pub fn is_demo_extractor_ready() -> bool {
+    self_audit().is_ok()
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.2: Process Termination Entrypoint
+// -----------------------------------------------------------------------------
 
 fn main() -> ExitCode {
-    let archive_base = PathBuf::from(
-        "/home/professorseanex/Tenebris_Lux_Old_Game_Data_Archive",
-    );
-    let output_dir = PathBuf::from(
-        "/home/professorseanex/Tenebris and Lux/docs/game_design/demo_baseline",
-    );
-
-    if let Err(e) = audit_environment(&archive_base) {
-        eprintln!("Preflight Audit Error: {}", e);
-        return ExitCode::FAILURE;
-    }
-
-    match run_standalone_extractor(&archive_base, &output_dir) {
-        Ok(()) => {
-            println!("Demo Extractor completed successfully.");
-            ExitCode::SUCCESS
-        }
+    match run() {
+        Ok(()) => ExitCode::SUCCESS,
         Err(err) => {
-            eprintln!("Extraction Execution Error: {}", err);
+            eprintln!("Error: {}", err);
             ExitCode::FAILURE
         }
     }

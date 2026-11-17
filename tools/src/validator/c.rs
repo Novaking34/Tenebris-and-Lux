@@ -1,32 +1,55 @@
 // =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+// ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 // =============================================================================
 // @project       Tenebris and Lux
-// @file          tools/src/validator/c_header.rs
-// @id            tools.validator.c_header
-// @layer         Layer 3: Systems Developer Tooling Core Library
-// @version       0.1.0
-// @interface_rev Rev 1
-// @date          2026-11-09
+// @file          tools/src/validator/c.rs
+// @id            cog.tools.validator.c
+// @layer         Layer 3: Developer Toolchain Validator Sub-Assemblies
+// @archetype     operational | stateful
+// @version       0.1.2-dev
+// @interface_rev Rev 5
+// @date          2026-11-15
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
+// @system        OmniCode Universal 5-Block Validator Suite
+// @role          C11/C23 Header & Source 5-Block Validator Engine
+// @maturity      Rev 5 Baseline | Full C11/C23 5-block header & source validator
+// @chassis       bounded-heap | Developer tooling memory chassis; bounded vectors & AST strings
+// @scale         O(N) header & source audit sweeps across engine trees
+// @seams         in: engine/include/, engine/src/ | uses: validator::{report, config} | probes: self_audit -> is_c_validator_ready
+// @invariants    1. Zero panics on malformed C source or header AST.
+//                2. Strictly enforces Invariant 18 (zero // comments in C code).
+//                3. Validates 5-block structure and paired .c source parity across all engine cogs.
+//                4. Strict read-only observational purity; zero filesystem mutations.
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   C11 5-Block Header Validator. Enforces the OmniCode Universal 5-Block
-//   Lifecycle Protocol, Invariant 18 (zero // comments), Anti-Domain-Bleed
+//   C11/C23 5-Block Header and Source Validator. Enforces the OmniCode Universal
+//   5-Block Lifecycle Protocol, Invariant 18 (zero // comments), Anti-Domain-Bleed
 //   covenants, two-sub-assembly Block 4 & Block 5 standards, and subsystem
-//   archetype requirements across all headers in `engine/include/`.
+//   archetype requirements across all engine headers and paired C sources.
+//
+//   ### For Game Designers & Non-Programmers:
+//   This is the master blueprint inspector for the Cornerstone Game Engine.
+//   It ensures that all engine components are neatly packaged, follow consistent
+//   naming rules, and have clear instructions so gameplay systems can link to them.
+//
+//   ### For Systems Programmers & Engine Architects:
+//   - Ownership & Reentrancy: All validation routines are purely read-only and
+//     reentrant. AST parsing uses bounded line and character traversal.
+//   - Extension Seam: Additional language checks or archetype rules register via
+//     subsystem configs and modular sub-assemblies in Block 3.
+//   - Explicit Non-Goal: Does not attempt full C AST transpilation or macro
+//     expansion; operates as a high-speed lexical and syntactic linter.
 // =============================================================================
 
-//! # C11 Header Validator Engine
+//! # C11/C23 Header & Source Validator Engine
 //!
-//! Validates `engine/include/` headers against OmniCode standards, archetype
-//! specifications, and invariant contracts.
+//! Validates `engine/include/` headers and paired sources against OmniCode standards.
 
 // =============================================================================
-// BLOCK 2: OPENING BLOCK / TYPES & STRUCTURES
-// Stratum: Developer Tooling | Machine: tools.validator.c_header
+// BLOCK 2: OPENING BLOCK
+// ( Public Contract Limits, Command Types, Options & O(1) Pre-Conditions )
 // =============================================================================
 
 use std::fs;
@@ -36,6 +59,20 @@ use std::time::Instant;
 use crate::runner::{RunnerContext, TaskRunner, TaskTelemetry};
 use super::config::{HeaderArchetype, HeaderRulesConfig, SubsystemRecord, SubsystemRegistry};
 use super::report::{IssueSeverity, ValidationIssue, ValidationSummary};
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.1: Operational Defaults & Lexical Patterns
+// -----------------------------------------------------------------------------
+
+/// Standard header file extension.
+pub const HEADER_EXTENSION: &str = "h";
+
+/// Standard source file extension.
+pub const SOURCE_EXTENSION: &str = "c";
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.2: Types, Enums & Parsed AST Envelopes
+// -----------------------------------------------------------------------------
 
 #[derive(Debug, Clone)]
 struct ParsedBlock1 {
@@ -82,14 +119,25 @@ struct ParsedBlock3 {
     functions: Vec<ParsedFuncDoc>,
 }
 
+#[derive(Debug, Clone)]
+struct PrecedingDoxygen {
+    has_brief: bool,
+    has_dual_designer: bool,
+    has_dual_programmer: bool,
+    has_param_tag: bool,
+    has_return_tag: bool,
+    designer_text: String,
+    programmer_text: String,
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.3: Verification Helpers & Lexical Pre-Conditional Inlines
+// -----------------------------------------------------------------------------
+
 fn strip_comment_decor_prefix(raw_line: &str) -> &str {
-    raw_line
-        .trim_start()
-        .trim_start_matches('/')
-        .trim_start_matches('*')
-        .trim_start_matches('-')
-        .trim_start_matches('=')
-        .trim_start()
+    raw_line.trim_start_matches(|c: char| {
+        c.is_ascii_whitespace() || c == '/' || c == '*' || c == '-' || c == '='
+    })
 }
 
 fn find_sub_assembly_pos(text: &str, num: &str) -> Option<usize> {
@@ -310,17 +358,6 @@ fn extract_top_level_c_items(cleaned: &str) -> Vec<TopLevelCItem> {
         .into_iter()
         .map(|it| it.item)
         .collect()
-}
-
-#[derive(Debug, Clone)]
-struct PrecedingDoxygen {
-    has_brief: bool,
-    has_dual_designer: bool,
-    has_dual_programmer: bool,
-    has_param_tag: bool,
-    has_return_tag: bool,
-    designer_text: String,
-    programmer_text: String,
 }
 
 fn parse_b3_sub_assemblies(b3_slice: &str) -> Vec<(String, usize, String, usize)> {
@@ -625,6 +662,10 @@ fn parse_block_1_comment(content: &str, col_width: usize) -> Result<ParsedBlock1
     })
 }
 
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.4: Validator Struct Definition
+// -----------------------------------------------------------------------------
+
 /// Validator auditing C11 header files against 5-block architecture.
 pub struct HeaderValidator {
     repo_root: PathBuf,
@@ -634,9 +675,13 @@ pub struct HeaderValidator {
 }
 
 // =============================================================================
-// BLOCK 3: BODY BLOCK / CORE VALIDATION IMPLEMENTATION
-// Stratum: Developer Tooling | Machine: tools.validator.c_header
+// BLOCK 3: BODY BLOCK
+// ( Primary Execution Engine, Header Validation Sweeps & AST Parity )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.1: Constructor & Header Discovery Engine
+// -----------------------------------------------------------------------------
 
 impl HeaderValidator {
     /// Creates a new HeaderValidator with loaded registry and rules.
@@ -800,6 +845,58 @@ impl HeaderValidator {
         self.validate_block_5_closing(path, &rel_to_include, &content, archetype, stateful, issues);
     }
 
+    fn push_block_issue(
+        issues: &mut Vec<ValidationIssue>,
+        path: &Path,
+        block: &str,
+        field: &str,
+        severity: IssueSeverity,
+        message: String,
+    ) {
+        issues.push(ValidationIssue {
+            file: path.to_path_buf(),
+            block: block.to_string(),
+            field: field.to_string(),
+            severity,
+            message,
+        });
+    }
+
+    fn push_b1_err(
+        issues: &mut Vec<ValidationIssue>,
+        path: &Path,
+        field: &str,
+        message: String,
+    ) {
+        Self::push_block_issue(issues, path, "block_1_metadata", field, IssueSeverity::Error, message);
+    }
+
+    fn push_b2_issue(
+        issues: &mut Vec<ValidationIssue>,
+        path: &Path,
+        field: &str,
+        severity: IssueSeverity,
+        message: String,
+    ) {
+        Self::push_block_issue(issues, path, "block_2_opening", field, severity, message);
+    }
+
+    fn push_b3_issue(
+        issues: &mut Vec<ValidationIssue>,
+        path: &Path,
+        field: &str,
+        severity: IssueSeverity,
+        message: String,
+    ) {
+        Self::push_block_issue(issues, path, "block_3_body", field, severity, message);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.2: Invariant 18 & Anti-Domain-Bleed Auditing
+// -----------------------------------------------------------------------------
+
+impl HeaderValidator {
     fn validate_invariant_18(&self, path: &Path, content: &str, issues: &mut Vec<ValidationIssue>) {
         for (line_num, line) in content.lines().enumerate() {
             if let Some(pos) = line.find("//") {
@@ -824,6 +921,36 @@ impl HeaderValidator {
         }
     }
 
+    fn validate_anti_domain_bleed(
+        &self,
+        path: &Path,
+        content: &str,
+        kind: &str,
+        issues: &mut Vec<ValidationIssue>,
+    ) {
+        for forbidden in &self.rules.forbidden_domain_prefixes {
+            let pattern = format!("#include \"{}", forbidden);
+            if content.contains(&pattern) {
+                Self::push_b2_issue(
+                    issues,
+                    path,
+                    "anti_domain_bleed",
+                    IssueSeverity::Error,
+                    format!(
+                        "Domain bleed detected: engine {} includes game domain path '{}'",
+                        kind, forbidden
+                    ),
+                );
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.3: Block 1 Metadata & Strict Template Alignment
+// -----------------------------------------------------------------------------
+
+impl HeaderValidator {
     fn validate_block_1_metadata(&self, path: &Path, content: &str, issues: &mut Vec<ValidationIssue>) {
         if !content.contains("BLOCK 1: METADATA BLOCK") {
             issues.push(ValidationIssue {
@@ -909,15 +1036,258 @@ impl HeaderValidator {
             .any(|dom| rel_to_include.starts_with(&format!("{}/", dom)))
     }
 
+    fn validate_strict_block_1_file(
+        &self,
+        path: &Path,
+        expected_rel_path: &str,
+        record: Option<&SubsystemRecord>,
+        is_source: bool,
+        content: &str,
+        issues: &mut Vec<ValidationIssue>,
+    ) -> Option<ParsedBlock1> {
+        let parsed = match parse_block_1_comment(content, self.rules.tag_column_width) {
+            Ok(p) => p,
+            Err(msg) => {
+                Self::push_b1_err(issues, path, "template", msg);
+                return None;
+            }
+        };
+
+        let tpl = if is_source && !self.rules.source_template_lines.is_empty() {
+            &self.rules.source_template_lines
+        } else {
+            &self.rules.header_template_lines
+        };
+
+        // 1. Validate banner lines against c_block_1_template from engine/config/standards/blocks/block_1_metadata.json
+        let expected_banner = [
+            "/*".to_string(),
+            self.rules.banner_rule.clone(),
+            self.rules.block_1_title.clone(),
+            self.rules.block_1_subtitle.clone(),
+            self.rules.banner_rule.clone(),
+        ];
+        for idx in 0..5 {
+            let expected_line = tpl.get(idx).unwrap_or(&expected_banner[idx]);
+            if parsed.lines.get(idx) != Some(expected_line) {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "template_banner",
+                    format!(
+                        "Block 1 line {} does not match c_block_1_template ('{}')",
+                        idx + 1,
+                        expected_line
+                    ),
+                );
+            }
+        }
+        let n = parsed.lines.len();
+        let close_rule = tpl
+            .len()
+            .checked_sub(2)
+            .and_then(|i| tpl.get(i))
+            .unwrap_or(&self.rules.banner_rule);
+        if n < 7 || &parsed.lines[n - 2] != close_rule || parsed.lines[n - 1] != "*/" {
+            Self::push_b1_err(
+                issues,
+                path,
+                "template_footer",
+                "Block 1 closing banner must match 80-'=' rule followed by '*/'".to_string(),
+            );
+        }
+
+        // 2. Validate ordered 17 tags and column-width alignment
+        if self.rules.enforce_tag_order {
+            let actual_tags: Vec<&str> = parsed.tags.iter().map(|(k, _, _)| k.as_str()).collect();
+            let expected_tags: Vec<&str> = self
+                .rules
+                .ordered_metadata_tags
+                .iter()
+                .map(|s| s.as_str())
+                .collect();
+            if actual_tags != expected_tags {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "ordered_tags",
+                    format!(
+                        "Block 1 tags must match exact canonical order {:?}, found {:?}",
+                        expected_tags, actual_tags
+                    ),
+                );
+            }
+
+            for (tag, val, aligned) in &parsed.tags {
+                if !*aligned {
+                    Self::push_b1_err(
+                        issues,
+                        path,
+                        tag,
+                        format!(
+                            "Tag '{}' must align value at column {} (1-indexed column {})",
+                            tag,
+                            self.rules.tag_column_width,
+                            self.rules.tag_column_width + 1
+                        ),
+                    );
+                }
+                if val.trim().is_empty() {
+                    Self::push_b1_err(
+                        issues,
+                        path,
+                        tag,
+                        format!("Tag '{}' value must not be empty", tag),
+                    );
+                }
+            }
+        }
+
+        // 3. Movement-resilient @file & @id contracts
+        if let Some(file_val) = parsed.tag_value("@file") {
+            if file_val != expected_rel_path {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "@file",
+                    format!(
+                        "@file '{}' does not match current repo path '{}'",
+                        file_val, expected_rel_path
+                    ),
+                );
+            }
+        }
+
+        if let Some(id_val) = parsed.tag_value("@id") {
+            if !is_valid_cog_id(id_val) {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "@id",
+                    format!(
+                        "@id '{}' must follow movement-resilient format 'cog.<module>[.<variant>]' without baked directory paths",
+                        id_val
+                    ),
+                );
+            }
+            if let Some(rec) = record {
+                if let Some(expected_id) = rec.id.as_deref() {
+                    if id_val != expected_id {
+                        Self::push_b1_err(
+                            issues,
+                            path,
+                            "@id",
+                            format!(
+                                "@id '{}' does not match subsystems.json id '{}'",
+                                id_val, expected_id
+                            ),
+                        );
+                    }
+                }
+            }
+        }
+
+        // 4. Growth tags (@archetype, @maturity, @chassis, @scale, @seams, @invariants)
+        if let (Some(arch_val), Some(rec)) = (parsed.tag_value("@archetype"), record) {
+            let expected_prefix = archetype_prefix(rec.archetype, rec.stateful);
+            if arch_val != expected_prefix {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "@archetype",
+                    format!(
+                        "@archetype '{}' must match subsystems.json '{}'",
+                        arch_val, expected_prefix
+                    ),
+                );
+            }
+        }
+
+        if let Some(mat_val) = parsed.tag_value("@maturity") {
+            let valid_mat = self.rules.maturity_taxonomy.iter().any(|stage| {
+                mat_val
+                    .strip_prefix(stage)
+                    .map(|rest| {
+                        let r = rest.trim_start();
+                        r.starts_with('|') && !r[1..].trim().is_empty()
+                    })
+                    .unwrap_or(false)
+            });
+            if !valid_mat {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "@maturity",
+                    format!(
+                        "@maturity '{}' must begin with one of {:?} followed by ' | <continuity detail>'",
+                        mat_val, self.rules.maturity_taxonomy
+                    ),
+                );
+            }
+        }
+
+        if let Some(chassis_val) = parsed.tag_value("@chassis") {
+            if !chassis_val.starts_with("zero-heap |") || chassis_val["zero-heap |".len()..].trim().is_empty() {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "@chassis",
+                    "@chassis in Layer 0 must begin with 'zero-heap | <measured footprint/bounds>'".to_string(),
+                );
+            }
+        }
+
+        if let Some(inv_val) = parsed.tag_value("@invariants") {
+            if !inv_val.starts_with("1. Stratum Baseline:") {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "@invariants",
+                    "@invariants item 1 must use '1. Stratum Baseline: ...' instead of duplicated stratum boilerplate".to_string(),
+                );
+            }
+            if !inv_val.contains("\n2.") && !inv_val.contains("2.") {
+                Self::push_b1_err(
+                    issues,
+                    path,
+                    "@invariants",
+                    "@invariants must include at least one file-specific invariant ('2. ...')".to_string(),
+                );
+            }
+        }
+
+        // 5. Dual-audience sections in exact template order and indentation
+        if !parsed.sections_in_order || !parsed.sections_indented {
+            Self::push_b1_err(
+                issues,
+                path,
+                "dual_audience_sections",
+                "PURPOSE & ARCHITECTURAL ROLE must contain '  ### For Game Designers & Non-Programmers:' followed by '  ### For Systems Programmers & Engine Architects:'".to_string(),
+            );
+        }
+        if parsed.designer_text.is_empty() || parsed.programmer_text.is_empty() {
+            Self::push_b1_err(
+                issues,
+                path,
+                "dual_audience_sections",
+                "Both Dual-Audience overview sections must contain non-empty documentation".to_string(),
+            );
+        }
+
+        Some(parsed)
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.4: Block 2 Opening & Sub-Assembly Sequence Rules
+// -----------------------------------------------------------------------------
+
+impl HeaderValidator {
     fn is_strict_b2_domain(&self, rel_to_include: &str) -> bool {
         Self::is_strict_domain_in(&self.rules.strict_block_2_domains, rel_to_include)
     }
 
-    fn is_strict_b3_domain(&self, rel_to_include: &str) -> bool {
-        Self::is_strict_domain_in(&self.rules.strict_block_3_domains, rel_to_include)
-    }
-
-    fn expected_cornerstone_guard(&self, rel_to_include: &str) -> String {
+    pub fn expected_cornerstone_guard(&self, rel_to_include: &str) -> String {
         let sanitized: String = rel_to_include
             .chars()
             .map(|ch| {
@@ -929,67 +1299,6 @@ impl HeaderValidator {
             })
             .collect();
         format!("{}{}", self.rules.strict_include_guard_prefix, sanitized)
-    }
-
-    fn push_block_issue(
-        issues: &mut Vec<ValidationIssue>,
-        path: &Path,
-        block: &str,
-        field: &str,
-        severity: IssueSeverity,
-        message: String,
-    ) {
-        issues.push(ValidationIssue {
-            file: path.to_path_buf(),
-            block: block.to_string(),
-            field: field.to_string(),
-            severity,
-            message,
-        });
-    }
-
-    fn push_b2_issue(
-        issues: &mut Vec<ValidationIssue>,
-        path: &Path,
-        field: &str,
-        severity: IssueSeverity,
-        message: String,
-    ) {
-        Self::push_block_issue(issues, path, "block_2_opening", field, severity, message);
-    }
-
-    fn push_b3_issue(
-        issues: &mut Vec<ValidationIssue>,
-        path: &Path,
-        field: &str,
-        severity: IssueSeverity,
-        message: String,
-    ) {
-        Self::push_block_issue(issues, path, "block_3_body", field, severity, message);
-    }
-
-    fn validate_anti_domain_bleed(
-        &self,
-        path: &Path,
-        content: &str,
-        kind: &str,
-        issues: &mut Vec<ValidationIssue>,
-    ) {
-        for forbidden in &self.rules.forbidden_domain_prefixes {
-            let pattern = format!("#include \"{}", forbidden);
-            if content.contains(&pattern) {
-                Self::push_b2_issue(
-                    issues,
-                    path,
-                    "anti_domain_bleed",
-                    IssueSeverity::Error,
-                    format!(
-                        "Domain bleed detected: engine {} includes game domain path '{}'",
-                        kind, forbidden
-                    ),
-                );
-            }
-        }
     }
 
     fn validate_cornerstone_banner_fields(
@@ -1050,68 +1359,6 @@ impl HeaderValidator {
             &fields,
             issues,
         );
-    }
-
-    fn validate_cornerstone_b3_banner(
-        &self,
-        path: &Path,
-        b3_slice: &str,
-        archetype: HeaderArchetype,
-        is_source: bool,
-        issues: &mut Vec<ValidationIssue>,
-    ) {
-        let banner_end = b3_slice.find("*/").unwrap_or_else(|| b3_slice.len().min(600));
-        let banner_slice = &b3_slice[..banner_end];
-
-        self.validate_cornerstone_banner_fields(
-            path,
-            "block_3_body",
-            "Block 3",
-            banner_slice,
-            &self.rules.block_3_required_banner_fields,
-            issues,
-        );
-
-        let has_subtitle = banner_slice
-            .lines()
-            .take(6)
-            .map(str::trim)
-            .any(|l| l.starts_with('(') && l.ends_with(')'));
-        if !has_subtitle {
-            Self::push_b3_issue(
-                issues,
-                path,
-                "b3_subtitle",
-                IssueSeverity::Error,
-                "Block 3 Cornerstone banner missing parenthetical '( ... )' archetype subtitle"
-                    .to_string(),
-            );
-        }
-
-        let subtitle_key = match (archetype, is_source) {
-            (HeaderArchetype::Operational, false) => "operational_header",
-            (HeaderArchetype::Operational, true) => "operational_source",
-            (HeaderArchetype::QuarantinedFallback, false) => "quarantined_fallback_header",
-            (HeaderArchetype::QuarantinedFallback, true) => "quarantined_fallback_source",
-            (HeaderArchetype::FacadeUmbrella, false) => "facade_umbrella_header",
-            (HeaderArchetype::PureTypes, false) => "pure_types_header",
-            _ if is_source => "universal_fallback_source",
-            _ => "universal_fallback_header",
-        };
-        if let Some(expected_sub) = self.rules.archetype_b3_subtitles.get(subtitle_key) {
-            if !banner_slice.contains(expected_sub) {
-                Self::push_b3_issue(
-                    issues,
-                    path,
-                    "b3_archetype_subtitle",
-                    IssueSeverity::Warning,
-                    format!(
-                        "Block 3 subtitle differs from archetype template '{}' ('{}')",
-                        subtitle_key, expected_sub
-                    ),
-                );
-            }
-        }
     }
 
     fn validate_tier_dividers(
@@ -1375,400 +1622,6 @@ impl HeaderValidator {
         self.validate_strict_b2_sub_assemblies(c_path, content, b2_pos, b2_end, true, issues);
     }
 
-    fn push_b1_err(
-        issues: &mut Vec<ValidationIssue>,
-        path: &Path,
-        field: &str,
-        message: String,
-    ) {
-        issues.push(ValidationIssue {
-            file: path.to_path_buf(),
-            block: "block_1_metadata".to_string(),
-            field: field.to_string(),
-            severity: IssueSeverity::Error,
-            message,
-        });
-    }
-
-    fn validate_strict_block_1_file(
-        &self,
-        path: &Path,
-        expected_rel_path: &str,
-        record: Option<&SubsystemRecord>,
-        is_source: bool,
-        content: &str,
-        issues: &mut Vec<ValidationIssue>,
-    ) -> Option<ParsedBlock1> {
-        let parsed = match parse_block_1_comment(content, self.rules.tag_column_width) {
-            Ok(p) => p,
-            Err(msg) => {
-                Self::push_b1_err(issues, path, "template", msg);
-                return None;
-            }
-        };
-
-        let tpl = if is_source && !self.rules.source_template_lines.is_empty() {
-            &self.rules.source_template_lines
-        } else {
-            &self.rules.header_template_lines
-        };
-
-        // 1. Validate banner lines against c_block_1_template from engine/config/standards/blocks/block_1_metadata.json
-        let expected_banner = [
-            "/*".to_string(),
-            self.rules.banner_rule.clone(),
-            self.rules.block_1_title.clone(),
-            self.rules.block_1_subtitle.clone(),
-            self.rules.banner_rule.clone(),
-        ];
-        for idx in 0..5 {
-            let expected_line = tpl.get(idx).unwrap_or(&expected_banner[idx]);
-            if parsed.lines.get(idx) != Some(expected_line) {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "template_banner",
-                    format!(
-                        "Block 1 line {} does not match c_block_1_template ('{}')",
-                        idx + 1,
-                        expected_line
-                    ),
-                );
-            }
-        }
-        let n = parsed.lines.len();
-        let close_rule = tpl
-            .len()
-            .checked_sub(2)
-            .and_then(|i| tpl.get(i))
-            .unwrap_or(&self.rules.banner_rule);
-        if n < 7 || &parsed.lines[n - 2] != close_rule || parsed.lines[n - 1] != "*/" {
-            Self::push_b1_err(
-                issues,
-                path,
-                "template_footer",
-                "Block 1 closing banner must match 80-'=' rule followed by '*/'".to_string(),
-            );
-        }
-
-        // 2. Validate ordered 17 tags and column-width alignment
-        if self.rules.enforce_tag_order {
-            let actual_tags: Vec<&str> = parsed.tags.iter().map(|(k, _, _)| k.as_str()).collect();
-            let expected_tags: Vec<&str> = self
-                .rules
-                .ordered_metadata_tags
-                .iter()
-                .map(|s| s.as_str())
-                .collect();
-            if actual_tags != expected_tags {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "ordered_tags",
-                    format!(
-                        "Block 1 tags must match exact canonical order {:?}, found {:?}",
-                        expected_tags, actual_tags
-                    ),
-                );
-            }
-
-            for (tag, val, aligned) in &parsed.tags {
-                if !*aligned {
-                    Self::push_b1_err(
-                        issues,
-                        path,
-                        tag,
-                        format!(
-                            "Tag '{}' must align value at column {} (1-indexed column {})",
-                            tag,
-                            self.rules.tag_column_width,
-                            self.rules.tag_column_width + 1
-                        ),
-                    );
-                }
-                if val.trim().is_empty() {
-                    Self::push_b1_err(
-                        issues,
-                        path,
-                        tag,
-                        format!("Tag '{}' value must not be empty", tag),
-                    );
-                }
-            }
-        }
-
-        // 3. Movement-resilient @file & @id contracts
-        if let Some(file_val) = parsed.tag_value("@file") {
-            if file_val != expected_rel_path {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "@file",
-                    format!(
-                        "@file '{}' does not match current repo path '{}'",
-                        file_val, expected_rel_path
-                    ),
-                );
-            }
-        }
-
-        if let Some(id_val) = parsed.tag_value("@id") {
-            if !is_valid_cog_id(id_val) {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "@id",
-                    format!(
-                        "@id '{}' must follow movement-resilient format 'cog.<module>[.<variant>]' without baked directory paths",
-                        id_val
-                    ),
-                );
-            }
-            if let Some(rec) = record {
-                if let Some(expected_id) = rec.id.as_deref() {
-                    if id_val != expected_id {
-                        Self::push_b1_err(
-                            issues,
-                            path,
-                            "@id",
-                            format!(
-                                "@id '{}' does not match subsystems.json id '{}'",
-                                id_val, expected_id
-                            ),
-                        );
-                    }
-                }
-            }
-        }
-
-        // 4. Growth tags (@archetype, @maturity, @chassis, @scale, @seams, @invariants)
-        if let (Some(arch_val), Some(rec)) = (parsed.tag_value("@archetype"), record) {
-            let expected_prefix = archetype_prefix(rec.archetype, rec.stateful);
-            if arch_val != expected_prefix {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "@archetype",
-                    format!(
-                        "@archetype '{}' must match subsystems.json '{}'",
-                        arch_val, expected_prefix
-                    ),
-                );
-            }
-        }
-
-        if let Some(mat_val) = parsed.tag_value("@maturity") {
-            let valid_mat = self.rules.maturity_taxonomy.iter().any(|stage| {
-                mat_val
-                    .strip_prefix(stage)
-                    .map(|rest| {
-                        let r = rest.trim_start();
-                        r.starts_with('|') && !r[1..].trim().is_empty()
-                    })
-                    .unwrap_or(false)
-            });
-            if !valid_mat {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "@maturity",
-                    format!(
-                        "@maturity '{}' must begin with one of {:?} followed by ' | <continuity detail>'",
-                        mat_val, self.rules.maturity_taxonomy
-                    ),
-                );
-            }
-        }
-
-        if let Some(chassis_val) = parsed.tag_value("@chassis") {
-            if !chassis_val.starts_with("zero-heap |") || chassis_val["zero-heap |".len()..].trim().is_empty() {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "@chassis",
-                    "@chassis in Layer 0 must begin with 'zero-heap | <measured footprint/bounds>'".to_string(),
-                );
-            }
-        }
-
-        if let Some(inv_val) = parsed.tag_value("@invariants") {
-            if !inv_val.starts_with("1. Stratum Baseline:") {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "@invariants",
-                    "@invariants item 1 must use '1. Stratum Baseline: ...' instead of duplicated stratum boilerplate".to_string(),
-                );
-            }
-            if !inv_val.contains("\n2.") && !inv_val.contains("2.") {
-                Self::push_b1_err(
-                    issues,
-                    path,
-                    "@invariants",
-                    "@invariants must include at least one file-specific invariant ('2. ...')".to_string(),
-                );
-            }
-        }
-
-        // 5. Dual-audience sections in exact template order and indentation
-        if !parsed.sections_in_order || !parsed.sections_indented {
-            Self::push_b1_err(
-                issues,
-                path,
-                "dual_audience_sections",
-                "PURPOSE & ARCHITECTURAL ROLE must contain '  ### For Game Designers & Non-Programmers:' followed by '  ### For Systems Programmers & Engine Architects:'".to_string(),
-            );
-        }
-        if parsed.designer_text.is_empty() || parsed.programmer_text.is_empty() {
-            Self::push_b1_err(
-                issues,
-                path,
-                "dual_audience_sections",
-                "Both Dual-Audience overview sections must contain non-empty documentation".to_string(),
-            );
-        }
-
-        Some(parsed)
-    }
-
-    fn validate_paired_source(
-        &self,
-        _header_path: &Path,
-        rel_to_include: &str,
-        record: Option<&SubsystemRecord>,
-        header_b1: Option<&ParsedBlock1>,
-        header_b3: Option<&ParsedBlock3>,
-        issues: &mut Vec<ValidationIssue>,
-    ) {
-        let Some(stem_rel) = rel_to_include.strip_suffix(".h") else {
-            return;
-        };
-        let rel_c = format!("{}.c", stem_rel);
-        let expected_c_rel = format!("engine/src/{}", rel_c);
-        let c_path = self.repo_root.join(&expected_c_rel);
-        let archetype = record
-            .map(|r| r.archetype)
-            .unwrap_or(HeaderArchetype::Operational);
-
-        if !c_path.exists() {
-            if matches!(
-                archetype,
-                HeaderArchetype::FacadeUmbrella | HeaderArchetype::PureTypes
-            ) {
-                return;
-            }
-            Self::push_b1_err(
-                issues,
-                &c_path,
-                "paired_source",
-                format!("Missing paired C source file '{}'", expected_c_rel),
-            );
-            return;
-        }
-
-        let content = match fs::read_to_string(&c_path) {
-            Ok(c) => c,
-            Err(e) => {
-                Self::push_b1_err(
-                    issues,
-                    &c_path,
-                    "read",
-                    format!("Failed to read paired C source: {}", e),
-                );
-                return;
-            }
-        };
-
-        let before_err_count = issues
-            .iter()
-            .filter(|i| i.severity == IssueSeverity::Error)
-            .count();
-
-        self.validate_invariant_18(&c_path, &content, issues);
-        self.validate_block_1_metadata(&c_path, &content, issues);
-        let src_b1 = self.validate_strict_block_1_file(
-            &c_path,
-            &expected_c_rel,
-            record,
-            true,
-            &content,
-            issues,
-        );
-
-        if let (Some(hb), Some(sb)) = (header_b1, src_b1.as_ref()) {
-            for shared_tag in [
-                "@id",
-                "@layer",
-                "@archetype",
-                "@version",
-                "@interface_rev",
-                "@date",
-                "@system",
-            ] {
-                if hb.tag_value(shared_tag) != sb.tag_value(shared_tag) {
-                    Self::push_b1_err(
-                        issues,
-                        &c_path,
-                        shared_tag,
-                        format!(
-                            "Header/Source parity mismatch on '{}': header has {:?}, source has {:?}",
-                            shared_tag,
-                            hb.tag_value(shared_tag),
-                            sb.tag_value(shared_tag)
-                        ),
-                    );
-                }
-            }
-            if hb.designer_text == sb.designer_text && !hb.designer_text.is_empty() {
-                Self::push_b1_err(
-                    issues,
-                    &c_path,
-                    "designer_prose_anti_duplication",
-                    "Source Designer section must complement the header rather than copying it verbatim".to_string(),
-                );
-            }
-            if hb.programmer_text == sb.programmer_text && !hb.programmer_text.is_empty() {
-                Self::push_b1_err(
-                    issues,
-                    &c_path,
-                    "programmer_prose_anti_duplication",
-                    "Source Programmer section must detail runtime chassis/probes rather than copying header prose verbatim".to_string(),
-                );
-            }
-        }
-
-        if self.is_strict_b2_domain(rel_to_include) {
-            self.validate_source_block_2_opening(&c_path, &content, issues);
-        }
-
-        if self.is_strict_b3_domain(rel_to_include) {
-            let src_b3 = self.validate_b3_structure(
-                &c_path,
-                rel_to_include,
-                &content,
-                archetype,
-                true,
-                issues,
-            );
-            if let (Some(hb), Some(sb)) = (header_b3, src_b3.as_ref()) {
-                self.validate_b3_pair_parity(&c_path, hb, sb, issues);
-            }
-        }
-
-        let after_err_count = issues
-            .iter()
-            .filter(|i| i.severity == IssueSeverity::Error)
-            .count();
-        if self.verbose {
-            let badge = if after_err_count > before_err_count {
-                "[FAIL]"
-            } else {
-                "[PASS]"
-            };
-            println!("{} {}", badge, expected_c_rel);
-        }
-    }
-
     fn validate_block_2_opening(
         &self,
         path: &Path,
@@ -1947,6 +1800,216 @@ impl HeaderValidator {
                     message: "Missing 'Sub-Assembly 2.4' header in opening block".to_string(),
                 });
             }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.5: Block 3 Body & Function Prototype Parity Engine
+// -----------------------------------------------------------------------------
+
+impl HeaderValidator {
+    fn is_strict_b3_domain(&self, rel_to_include: &str) -> bool {
+        Self::is_strict_domain_in(&self.rules.strict_block_3_domains, rel_to_include)
+    }
+
+    fn validate_cornerstone_b3_banner(
+        &self,
+        path: &Path,
+        b3_slice: &str,
+        archetype: HeaderArchetype,
+        is_source: bool,
+        issues: &mut Vec<ValidationIssue>,
+    ) {
+        let banner_end = b3_slice.find("*/").unwrap_or_else(|| b3_slice.len().min(600));
+        let banner_slice = &b3_slice[..banner_end];
+
+        self.validate_cornerstone_banner_fields(
+            path,
+            "block_3_body",
+            "Block 3",
+            banner_slice,
+            &self.rules.block_3_required_banner_fields,
+            issues,
+        );
+
+        let has_subtitle = banner_slice
+            .lines()
+            .take(6)
+            .map(str::trim)
+            .any(|l| l.starts_with('(') && l.ends_with(')'));
+        if !has_subtitle {
+            Self::push_b3_issue(
+                issues,
+                path,
+                "b3_subtitle",
+                IssueSeverity::Error,
+                "Block 3 Cornerstone banner missing parenthetical '( ... )' archetype subtitle"
+                    .to_string(),
+            );
+        }
+
+        let subtitle_key = match (archetype, is_source) {
+            (HeaderArchetype::Operational, false) => "operational_header",
+            (HeaderArchetype::Operational, true) => "operational_source",
+            (HeaderArchetype::QuarantinedFallback, false) => "quarantined_fallback_header",
+            (HeaderArchetype::QuarantinedFallback, true) => "quarantined_fallback_source",
+            (HeaderArchetype::FacadeUmbrella, false) => "facade_umbrella_header",
+            (HeaderArchetype::PureTypes, false) => "pure_types_header",
+            _ if is_source => "universal_fallback_source",
+            _ => "universal_fallback_header",
+        };
+        if let Some(expected_sub) = self.rules.archetype_b3_subtitles.get(subtitle_key) {
+            if !banner_slice.contains(expected_sub) {
+                Self::push_b3_issue(
+                    issues,
+                    path,
+                    "b3_archetype_subtitle",
+                    IssueSeverity::Warning,
+                    format!(
+                        "Block 3 subtitle differs from archetype template '{}' ('{}')",
+                        subtitle_key, expected_sub
+                    ),
+                );
+            }
+        }
+    }
+
+    fn validate_paired_source(
+        &self,
+        _header_path: &Path,
+        rel_to_include: &str,
+        record: Option<&SubsystemRecord>,
+        header_b1: Option<&ParsedBlock1>,
+        header_b3: Option<&ParsedBlock3>,
+        issues: &mut Vec<ValidationIssue>,
+    ) {
+        let Some(stem_rel) = rel_to_include.strip_suffix(".h") else {
+            return;
+        };
+        let rel_c = format!("{}.c", stem_rel);
+        let expected_c_rel = format!("engine/src/{}", rel_c);
+        let c_path = self.repo_root.join(&expected_c_rel);
+        let archetype = record
+            .map(|r| r.archetype)
+            .unwrap_or(HeaderArchetype::Operational);
+
+        if !c_path.exists() {
+            if matches!(
+                archetype,
+                HeaderArchetype::FacadeUmbrella | HeaderArchetype::PureTypes
+            ) {
+                return;
+            }
+            Self::push_b1_err(
+                issues,
+                &c_path,
+                "paired_source",
+                format!("Missing paired C source file '{}'", expected_c_rel),
+            );
+            return;
+        }
+
+        let content = match fs::read_to_string(&c_path) {
+            Ok(c) => c,
+            Err(e) => {
+                Self::push_b1_err(
+                    issues,
+                    &c_path,
+                    "read",
+                    format!("Failed to read paired C source: {}", e),
+                );
+                return;
+            }
+        };
+
+        let before_err_count = issues
+            .iter()
+            .filter(|i| i.severity == IssueSeverity::Error)
+            .count();
+
+        self.validate_invariant_18(&c_path, &content, issues);
+        self.validate_block_1_metadata(&c_path, &content, issues);
+        let src_b1 = self.validate_strict_block_1_file(
+            &c_path,
+            &expected_c_rel,
+            record,
+            true,
+            &content,
+            issues,
+        );
+
+        if let (Some(hb), Some(sb)) = (header_b1, src_b1.as_ref()) {
+            for shared_tag in [
+                "@id",
+                "@layer",
+                "@archetype",
+                "@version",
+                "@interface_rev",
+                "@date",
+                "@system",
+            ] {
+                if hb.tag_value(shared_tag) != sb.tag_value(shared_tag) {
+                    Self::push_b1_err(
+                        issues,
+                        &c_path,
+                        shared_tag,
+                        format!(
+                            "Header/Source parity mismatch on '{}': header has {:?}, source has {:?}",
+                            shared_tag,
+                            hb.tag_value(shared_tag),
+                            sb.tag_value(shared_tag)
+                        ),
+                    );
+                }
+            }
+            if hb.designer_text == sb.designer_text && !hb.designer_text.is_empty() {
+                Self::push_b1_err(
+                    issues,
+                    &c_path,
+                    "designer_prose_anti_duplication",
+                    "Source Designer section must complement the header rather than copying it verbatim".to_string(),
+                );
+            }
+            if hb.programmer_text == sb.programmer_text && !hb.programmer_text.is_empty() {
+                Self::push_b1_err(
+                    issues,
+                    &c_path,
+                    "programmer_prose_anti_duplication",
+                    "Source Programmer section must detail runtime chassis/probes rather than copying header prose verbatim".to_string(),
+                );
+            }
+        }
+
+        if self.is_strict_b2_domain(rel_to_include) {
+            self.validate_source_block_2_opening(&c_path, &content, issues);
+        }
+
+        if self.is_strict_b3_domain(rel_to_include) {
+            let src_b3 = self.validate_b3_structure(
+                &c_path,
+                rel_to_include,
+                &content,
+                archetype,
+                true,
+                issues,
+            );
+            if let (Some(hb), Some(sb)) = (header_b3, src_b3.as_ref()) {
+                self.validate_b3_pair_parity(&c_path, hb, sb, issues);
+            }
+        }
+
+        let after_err_count = issues
+            .iter()
+            .filter(|i| i.severity == IssueSeverity::Error)
+            .count();
+        if self.verbose {
+            let badge = if after_err_count > before_err_count {
+                "[FAIL]"
+            } else {
+                "[PASS]"
+            };
+            println!("{} {}", badge, expected_c_rel);
         }
     }
 
@@ -2527,7 +2590,13 @@ impl HeaderValidator {
     ) -> Option<ParsedBlock3> {
         self.validate_b3_structure(path, rel_to_include, content, archetype, false, issues)
     }
+}
 
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.6: Block 4 Audit & Block 5 Closing Validation Engines
+// -----------------------------------------------------------------------------
+
+impl HeaderValidator {
     fn validate_block_4_audit(
         &self,
         path: &Path,
@@ -2785,10 +2854,9 @@ impl HeaderValidator {
     }
 }
 
-// =============================================================================
-// BLOCK 4: AUDIT PROCEDURES BLOCK / TASK RUNNER IMPLEMENTATION
-// Stratum: Developer Tooling | Machine: tools.validator.c_header
-// =============================================================================
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.7: Task Runner Adapter
+// -----------------------------------------------------------------------------
 
 /// Task runner adapter integrating C11 header validation.
 pub struct HeaderValidationTask;
@@ -2842,16 +2910,23 @@ impl TaskRunner for HeaderValidationTask {
 }
 
 // =============================================================================
-// BLOCK 5: CLOSING BLOCK / TESTS
-// Stratum: Developer Tooling | Machine: tools.validator.c_header
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Four-Section Ontological Test Schema & Diagnostic Self-Audit )
 // =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.1: Unit Test Suite (Four-Section Ontological Schema)
+// -----------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    // -------------------------------------------------------------------------
+    // SECTION 1: ALWAYS PASS (Nominal Golden Surface Cogs)
+    // -------------------------------------------------------------------------
     #[test]
-    fn test_all_engine_headers_pass_validation() {
+    fn test_section_1_all_engine_headers_pass_validation() {
         let candidate_roots = [Path::new("."), Path::new("..")];
         let repo_root = candidate_roots
             .iter()
@@ -2884,8 +2959,33 @@ mod tests {
         );
     }
 
+    // -------------------------------------------------------------------------
+    // SECTION 2: NEVER FAIL (Fault Inversion & Graceful Degradation)
+    // -------------------------------------------------------------------------
     #[test]
-    fn test_block_1_template_schema_self_consistent() {
+    fn test_section_2_never_fail_empty_include_dir() {
+        let headers = HeaderValidator::discover_headers(Path::new("nonexistent_path"));
+        assert!(headers.is_empty());
+    }
+
+    #[test]
+    fn test_section_2_malformed_c_syntax_never_panics() {
+        let malformed = "/* unclosed comment\n#include <bad\nvoid broken(";
+        let cleaned = strip_comments_and_strings(malformed);
+        let _items = extract_top_level_c_items(&cleaned);
+
+        let p1_res = parse_block_1_comment(malformed, 15);
+        assert!(p1_res.is_err(), "Malformed Block 1 must fail gracefully without panic");
+
+        let bad_cog = is_valid_cog_id("not_a_cog");
+        assert!(!bad_cog);
+    }
+
+    // -------------------------------------------------------------------------
+    // SECTION 3: INVARIANTS, SATURATION & LIMIT GUARDS
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_3_block_1_template_schema_self_consistent() {
         let candidate_roots = [Path::new("."), Path::new("..")];
         let repo_root = candidate_roots
             .iter()
@@ -2919,7 +3019,7 @@ mod tests {
     }
 
     #[test]
-    fn test_block_2_config_and_guard_derivation() {
+    fn test_section_3_block_2_config_and_guard_derivation() {
         let candidate_roots = [Path::new("."), Path::new("..")];
         let repo_root = candidate_roots
             .iter()
@@ -2954,7 +3054,7 @@ mod tests {
     }
 
     #[test]
-    fn test_block_2_header_strict_rules_and_fallback_isolation() {
+    fn test_section_3_block_2_header_strict_rules_and_fallback_isolation() {
         let rules = HeaderRulesConfig::default();
         let validator = HeaderValidator::new(
             PathBuf::from("."),
@@ -3077,7 +3177,7 @@ Mission:  Safe boot
     }
 
     #[test]
-    fn test_block_2_source_posix_order_2_4_warnings_and_monitored_2_5() {
+    fn test_section_3_block_2_source_posix_order_2_4_warnings_and_monitored_2_5() {
         let rules = HeaderRulesConfig::default();
         let validator = HeaderValidator::new(
             PathBuf::from("."),
@@ -3162,7 +3262,7 @@ int non_static_helper(void) { return 0; }
     }
 
     #[test]
-    fn test_block_3_config_loading_and_strict_rules() {
+    fn test_section_3_block_3_config_loading_and_strict_rules() {
         let candidate_roots = [Path::new("."), Path::new("..")];
         let repo_root = candidate_roots
             .iter()
@@ -3460,4 +3560,79 @@ int illegal_stub_fn(void);
             .iter()
             .any(|i| i.field == "functions_in_statutory_stub" && i.severity == IssueSeverity::Error));
     }
+
+    // -------------------------------------------------------------------------
+    // SECTION 4: EMERGENCE & COMPOSITE WORKFLOWS
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_4_emergence_self_audit() {
+        assert!(self_audit().is_ok());
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.2: Diagnostic Self-Audit
+// -----------------------------------------------------------------------------
+
+/// Internal self-audit testing C validator rules.
+///
+/// # Dual-Audience Documentation
+/// * For Game Designers: Tests the C header and source inspector.
+/// * For Systems Programmers: Verifies guard derivation and rule integrity.
+///
+/// # Examples
+///
+/// ```rust
+/// use tl_tools::validator::c::self_audit;
+///
+/// assert!(self_audit().is_ok());
+/// ```
+pub fn self_audit() -> Result<(), &'static str> {
+    if HEADER_EXTENSION != "h" {
+        return Err("HEADER_EXTENSION must be 'h'");
+    }
+    if SOURCE_EXTENSION != "c" {
+        return Err("SOURCE_EXTENSION must be 'c'");
+    }
+    if !is_valid_cog_id("cog.core.log") {
+        return Err("is_valid_cog_id failed on valid cog id");
+    }
+    if is_valid_cog_id("invalid_cog_id_without_prefix") {
+        return Err("is_valid_cog_id allowed invalid id without cog prefix");
+    }
+    let stripped = strip_comment_decor_prefix("/* --- Sub-Assembly 2.1: Types --- */");
+    if !stripped.starts_with("Sub-Assembly 2.1") {
+        return Err("strip_comment_decor_prefix failed to strip comment decorations");
+    }
+    let arch = archetype_prefix(HeaderArchetype::Operational, true);
+    if arch != "operational | stateful" {
+        return Err("archetype_prefix failed on operational stateful cog");
+    }
+    Ok(())
+}
+
+// =============================================================================
+// BLOCK 5: CLOSING BLOCK
+// ( State Summary Handshake, Module Epilogue & Teardown Verification )
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.1: Epilogue Predicate
+// -----------------------------------------------------------------------------
+
+/// Epilogue readiness probe for the C validator subsystem.
+///
+/// # Dual-Audience Documentation
+/// * For Game Designers: Confirms the C inspector is operational.
+/// * For Systems Programmers: Returns true when self-audit passes.
+///
+/// # Examples
+///
+/// ```rust
+/// use tl_tools::validator::c::is_c_validator_ready;
+///
+/// assert!(is_c_validator_ready());
+/// ```
+pub fn is_c_validator_ready() -> bool {
+    self_audit().is_ok()
 }

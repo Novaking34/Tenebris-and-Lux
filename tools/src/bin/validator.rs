@@ -1,258 +1,160 @@
 // =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+// ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          tools/src/bin/validator.rs
-// @id            tools.bin.validator
-// @layer         Layer 3: Systems Developer Tooling Standalone Binary
-// @version       0.1.0
-// @interface_rev Rev 1
-// @date          2026-11-05
+// @id            cog.tools.bin.validator
+// @layer         Layer 3: Developer Tooling & Pipeline Orchestration
+// @archetype     operational | stateful
+// @version       0.1.2-dev
+// @interface_rev Rev 5
+// @date          2026-11-16
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
+// @system        Tools Validator Subsystem
+// @role          Standalone Code & Data Validator Binary Entrypoint
+// @maturity      Rev 5 Baseline | Hardened
+// @chassis       zero-heap (stack-managed argument dispatch)
+// @scale         O(1) argument parsing and command dispatch
+// @seams         in: CLI arguments | uses: cmd::validate | probes: self_audit -> is_validator_ready
+// @invariants    1. Strict exit code propagation (0 = success, 1 = failure).
+//                2. Zero unhandled errors during code validation.
+//                3. Universal 5-Block Lifecycle Protocol enforced.
 //
 // PURPOSE & ARCHITECTURAL ROLE:
-//   Standalone command-line data validation binary for Tenebris and Lux.
-//   Audits JSON manifests and catalogs across `game/data/` for Universal 5-Block
-//   Lifecycle Protocol compliance, cross-manifest link integrity, and domain
-//   invariant contracts.
+//   Standalone command-line executable for validating C11 headers, Rust sources,
+//   JSON schemas, AsciiDoc files, CMake scripts, and markdown documents against
+//   the OmniCode 5-Block standard.
 //
-// PEDAGOGICAL MISSION:
-//   Eliminates fragile ad-hoc validation scripts by providing a native, fast,
-//   zero-warning tool that can run locally during development or headlessly in
-//   CI/CD pipelines to guarantee all shipped data assets are bulletproof.
+// ### For Game Designers & Non-Programmers:
+//   Run `validator <path>` to scan any source code file or directory and get an
+//   instant report on whether it meets project formatting and safety rules.
 //
-// AXIOMATIC INVARIANTS:
-//   1. Strict exit code propagation (0 = all data valid, 1 = validation errors).
-//   2. Fail-fast error reporting detailing exact file, block, field, and message.
-//   3. Deterministic path resolution relative to repository workspace root.
-//   4. Strict line discipline <= 80 columns across all documentation.
+// ### For Systems Programmers & Engine Architects:
+//   Provides a lightweight binary delegating to `tl_tools::cmd::validate` with
+//   proper exit code propagation and preflight readiness probes.
 // =============================================================================
 
-//! # Standalone Data Validator Binary
-//!
-//! Audits `game/data/` for OmniCode 5-Block compliance and invariant integrity.
+// =============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Pre-Conditions, Imports & Constants )
+// =============================================================================
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / IMPORTS & CLI CONFIGURATION
-// Stratum: Developer Tooling | Machine: tools.bin.validator
-// =============================================================================
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.1: Pre-Conditions & Library Imports
+// -----------------------------------------------------------------------------
 
 use std::env;
-use std::path::PathBuf;
 use std::process::ExitCode;
+use tl_tools::cmd::resolve_repo_root;
+use tl_tools::cmd::validate::dispatch_standalone_validator;
 
-use tl_tools::validator::{DataValidator, ValidationOptions};
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.2: Binary Identity Constants
+// -----------------------------------------------------------------------------
 
-/// Parsed CLI configuration for the standalone validator.
-#[derive(Debug, Clone)]
-struct CliArgs {
-    domain: String,
-    strict: bool,
-    verbose: bool,
-    json_output: bool,
-    show_help: bool,
-    repo_root: PathBuf,
-}
+/// Canonical binary identifier.
+pub const BINARY_NAME: &str = "validator";
 
-impl CliArgs {
-    fn parse() -> Self {
-        let args: Vec<String> = env::args().collect();
-        let mut domain = "system".to_string();
-        let mut strict = false;
-        let mut verbose = false;
-        let mut json_output = false;
-        let mut show_help = false;
+// =============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Execution Engine & CLI Dispatch )
+// =============================================================================
 
-        let mut i = 1;
-        while i < args.len() {
-            match args[i].as_str() {
-                "--domain" | "-d" => {
-                    if i + 1 < args.len() {
-                        domain = args[i + 1].clone();
-                        i += 1;
-                    }
-                }
-                "--all" | "-a" => {
-                    domain = "all".to_string();
-                }
-                "--strict" | "-s" => {
-                    strict = true;
-                }
-                "--verbose" | "-v" => {
-                    verbose = true;
-                }
-                "--json" | "-j" => {
-                    json_output = true;
-                }
-                "--help" | "-h" => {
-                    show_help = true;
-                }
-                other => {
-                    if !other.starts_with('-') {
-                        domain = other.to_string();
-                    }
-                }
-            }
-            i += 1;
-        }
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.1: Command Dispatch Logic
+// -----------------------------------------------------------------------------
 
-        let repo_root = resolve_repo_root();
-
-        Self {
-            domain,
-            strict,
-            verbose,
-            json_output,
-            show_help,
-            repo_root,
-        }
-    }
-
-    fn print_help() {
-        println!("================================================================================");
-        println!("       Tenebris and Lux - Data Catalog & Schema Validator CLI                   ");
-        println!("================================================================================");
-        println!("Usage: validator [OPTIONS] [DOMAIN]\n");
-        println!("Arguments:");
-        println!("  [DOMAIN]              Sub-domain under game/data/ to audit (default: 'system')");
-        println!("                        Use 'all' to audit the entire game/data/ repository tree\n");
-        println!("Options:");
-        println!("  -d, --domain <name>   Explicitly specify target sub-domain (e.g. system, mechanics)");
-        println!("  -a, --all             Audit all sub-domains across game/data/");
-        println!("  -s, --strict          Treat warnings as hard errors (fail on any issue)");
-        println!("  -v, --verbose         Print status badge for each scanned file");
-        println!("  -j, --json            Output validation results as structured JSON");
-        println!("  -h, --help            Print this usage manual and exit");
-        println!("================================================================================");
-    }
-}
-
-/// Resolves repository root directory by walking up from current working directory.
-fn resolve_repo_root() -> PathBuf {
-    let current = env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-    if current.join("CMakeLists.txt").exists() && current.join("game").exists() {
-        return current;
-    }
-    if let Some(parent) = current.parent() {
-        if parent.join("CMakeLists.txt").exists() && parent.join("game").exists() {
-            return parent.to_path_buf();
-        }
-    }
-    PathBuf::from("/home/professorseanex/Tenebris and Lux")
+fn run() -> Result<(), String> {
+    let args: Vec<String> = env::args().collect();
+    let repo_root = resolve_repo_root();
+    dispatch_standalone_validator(&args, &repo_root)
 }
 
 // =============================================================================
-// BLOCK 3: BODY BLOCK / EXECUTION DISPATCH
-// Stratum: Developer Tooling | Machine: tools.bin.validator
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Four-Section Ontological Test Suite & Subsystem Self-Audit )
 // =============================================================================
 
-fn run_validator(args: &CliArgs) -> Result<bool, String> {
-    if args.domain == "headers" {
-        let registry = tl_tools::validator::load_subsystems_registry(&args.repo_root)?;
-        let rules = tl_tools::validator::load_header_rules_config(&args.repo_root);
-        let validator = tl_tools::validator::HeaderValidator::new(
-            args.repo_root.clone(),
-            registry,
-            rules,
-            args.verbose,
-        );
-        let summary = validator.run_audit()?;
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.1: Internal Subsystem Self-Audit Probe
+// -----------------------------------------------------------------------------
 
-        if args.json_output {
-            let json_report = serde_json::json!({
-                "target_domain": "engine/include",
-                "total_files": summary.total_files,
-                "passed_files": summary.passed_files,
-                "failed_files": summary.failed_files,
-                "errors": summary.error_count(),
-                "warnings": summary.warning_count(),
-                "duration_ms": summary.duration_ms,
-                "verdict": if summary.is_success(args.strict) { "PASS" } else { "FAIL" },
-                "issues": summary.issues.iter().map(|i| {
-                    serde_json::json!({
-                        "file": i.file.to_string_lossy(),
-                        "block": i.block,
-                        "field": i.field,
-                        "severity": format!("{}", i.severity),
-                        "message": i.message
-                    })
-                }).collect::<Vec<_>>()
-            });
-            println!("{}", serde_json::to_string_pretty(&json_report).unwrap_or_default());
-        } else {
-            summary.print_custom_summary("C11 Engine Headers 5-Block Standard Audit", "engine/include/");
-        }
+/// Internal self-audit testing binary metadata invariants.
+pub fn self_audit() -> Result<(), &'static str> {
+    if BINARY_NAME != "validator" {
+        return Err("Self-audit failed: BINARY_NAME mismatch");
+    }
+    Ok(())
+}
 
-        return Ok(summary.is_success(args.strict));
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.2: Four-Section Ontological Unit Tests
+// -----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // -------------------------------------------------------------------------
+    // Section 1: Always Pass (Golden Surface Path)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_1_always_pass_binary_name() {
+        assert_eq!(BINARY_NAME, "validator");
     }
 
-    let options = ValidationOptions {
-        target_domain: args.domain.clone(),
-        strict: args.strict,
-        verbose: args.verbose,
-        repo_root: args.repo_root.clone(),
-    };
-
-    let validator = DataValidator::new(options);
-    let summary = validator.run_audit()?;
-
-    if args.json_output {
-        let json_report = serde_json::json!({
-            "target_domain": args.domain,
-            "total_files": summary.total_files,
-            "passed_files": summary.passed_files,
-            "failed_files": summary.failed_files,
-            "errors": summary.error_count(),
-            "warnings": summary.warning_count(),
-            "duration_ms": summary.duration_ms,
-            "verdict": if summary.is_success(args.strict) { "PASS" } else { "FAIL" },
-            "issues": summary.issues.iter().map(|i| {
-                serde_json::json!({
-                    "file": i.file.to_string_lossy(),
-                    "block": i.block,
-                    "field": i.field,
-                    "severity": format!("{}", i.severity),
-                    "message": i.message
-                })
-            }).collect::<Vec<_>>()
-        });
-        println!("{}", serde_json::to_string_pretty(&json_report).unwrap_or_default());
-    } else {
-        summary.print_summary(&args.domain);
+    // -------------------------------------------------------------------------
+    // Section 2: Never Fail (Edge Resilience & Fault Inversion)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_2_never_fail_self_audit() {
+        assert!(self_audit().is_ok());
     }
 
-    Ok(summary.is_success(args.strict))
+    // -------------------------------------------------------------------------
+    // Section 3: Invariants (Structural Bounds & Mathematical Guards)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_3_invariants_name_length() {
+        assert!(!BINARY_NAME.is_empty());
+        assert!(BINARY_NAME.len() < 32);
+    }
+
+    // -------------------------------------------------------------------------
+    // Section 4: Emergence (System Integration & Roundtrip Synthesis)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_4_emergence_ready() {
+        assert!(is_validator_ready());
+    }
 }
 
 // =============================================================================
-// BLOCK 4: AUDIT & TRIPWIRE CHECKS
-// Stratum: Developer Tooling | Machine: tools.bin.validator
+// BLOCK 5: CLOSING BLOCK
+// ( Epilogue Readiness & Process Termination )
 // =============================================================================
 
-// Invariants asserted via ExitCode semantics.
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.1: Epilogue Readiness Probe
+// -----------------------------------------------------------------------------
 
-// =============================================================================
-// BLOCK 5: CLOSING BLOCK / CLI ENTRY POINT
-// Stratum: Developer Tooling | Machine: tools.bin.validator
-// =============================================================================
+/// Returns true if the validator binary is ready for execution.
+pub fn is_validator_ready() -> bool {
+    self_audit().is_ok()
+}
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.2: Process Termination Entrypoint
+// -----------------------------------------------------------------------------
 
 fn main() -> ExitCode {
-    let args = CliArgs::parse();
-
-    if args.show_help {
-        CliArgs::print_help();
-        return ExitCode::SUCCESS;
-    }
-
-    match run_validator(&args) {
-        Ok(true) => ExitCode::SUCCESS,
-        Ok(false) => ExitCode::FAILURE,
-        Err(e) => {
-            eprintln!("Error executing data validator: {}", e);
+    match run() {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(err) => {
+            eprintln!("Error: {}", err);
             ExitCode::FAILURE
         }
     }
 }
-

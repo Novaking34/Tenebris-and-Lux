@@ -1,168 +1,159 @@
 // =============================================================================
 // BLOCK 1: METADATA BLOCK
-// ( Identity, Provenance, Invariant Boundary Contracts & System Anchors )
+// ( Identity, Provenance, Scaling Telemetry & Architectural Boundary Contracts )
 // =============================================================================
 // @project       Tenebris and Lux
 // @file          tools/src/bin/asset_generator.rs
-// @id            tools.bin.asset_generator
-// @layer         Layer 3: Systems Developer Tooling Standalone Binary
-// @version       0.1.0-dev
-// @interface_rev Rev 4
-// @date          2026-11-08
+// @id            cog.tools.bin.asset_generator
+// @layer         Layer 3: Developer Tooling & Pipeline Orchestration
+// @archetype     operational | stateful
+// @version       0.1.2-dev
+// @interface_rev Rev 5
+// @date          2026-11-16
 // @author        CreativeWorkzStudio LLC / ProfessorSeanEX
 // @repository    https://github.com/Novaking34/tenebris-lux
-// @system        Standalone Asset Generator & Catalog Audit Binary
-// @role          Provides operator command-line interface to audit, verify,
-//                and regenerate game assets across audio and visual catalogs.
+// @system        Tools Asset Generator Subsystem
+// @role          Standalone Asset Generator Binary Entrypoint
+// @maturity      Rev 5 Baseline | Hardened
+// @chassis       zero-heap (stack-managed argument dispatch)
+// @scale         O(1) argument parsing and command dispatch
+// @seams         in: CLI arguments | uses: cmd::assets | probes: self_audit -> is_asset_generator_ready
 // @invariants    1. Strict exit code propagation (0 = success, 1 = failure).
-//                2. Deterministic path resolution relative to workspace root.
+//                2. Zero unhandled errors during asset generation dispatch.
 //                3. Universal 5-Block Lifecycle Protocol enforced.
+//
+// PURPOSE & ARCHITECTURAL ROLE:
+//   Standalone command-line executable for verifying and generating presentation
+//   assets, synthetic audio waveforms, and procedural visual textures.
+//
+// ### For Game Designers & Non-Programmers:
+//   Run `asset_generator` to verify that all game sound effects and textures
+//   meet project standards, or generate placeholder assets if missing.
+//
+// ### For Systems Programmers & Engine Architects:
+//   Provides a lightweight binary delegating to `tl_tools::cmd::assets` with
+//   proper exit code propagation and preflight readiness probes.
 // =============================================================================
 
-//! # Standalone Asset Generator & Verification Binary
+// =============================================================================
+// BLOCK 2: OPENING BLOCK
+// ( Pre-Conditions, Imports & Constants )
+// =============================================================================
 
-// =============================================================================
-// BLOCK 2: OPENING BLOCK / IMPORTS & CLI CONFIGURATION
-// Stratum: Developer Tooling | Machine: tools.bin.asset_generator
-// =============================================================================
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.1: Pre-Conditions & Library Imports
+// -----------------------------------------------------------------------------
 
 use std::env;
-use std::path::PathBuf;
 use std::process::ExitCode;
+use tl_tools::cmd::assets::dispatch_standalone_asset_generator;
+use tl_tools::cmd::resolve_repo_root;
 
-use tl_tools::assets::AssetAuditor;
+// -----------------------------------------------------------------------------
+// Sub-Assembly 2.2: Binary Identity Constants
+// -----------------------------------------------------------------------------
 
-#[derive(Debug, Clone)]
-enum AssetCommand {
-    Audit,
-    Generate,
-    Help,
+/// Canonical binary identifier.
+pub const BINARY_NAME: &str = "asset_generator";
+
+// =============================================================================
+// BLOCK 3: BODY BLOCK
+// ( Execution Engine & CLI Dispatch )
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 3.1: Command Dispatch Logic
+// -----------------------------------------------------------------------------
+
+fn run() -> Result<(), String> {
+    let args: Vec<String> = env::args().collect();
+    let repo_root = resolve_repo_root();
+    dispatch_standalone_asset_generator(&args, &repo_root)
 }
 
-#[derive(Debug, Clone)]
-struct CliArgs {
-    command: AssetCommand,
-    repo_root: PathBuf,
-    verbose: bool,
+// =============================================================================
+// BLOCK 4: AUDIT PROCEDURES BLOCK
+// ( Four-Section Ontological Test Suite & Subsystem Self-Audit )
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.1: Internal Subsystem Self-Audit Probe
+// -----------------------------------------------------------------------------
+
+/// Internal self-audit testing binary metadata invariants.
+pub fn self_audit() -> Result<(), &'static str> {
+    if BINARY_NAME != "asset_generator" {
+        return Err("Self-audit failed: BINARY_NAME mismatch");
+    }
+    Ok(())
 }
 
-impl CliArgs {
-    fn parse() -> Self {
-        let args: Vec<String> = env::args().collect();
-        let mut command = AssetCommand::Audit;
-        let mut verbose = false;
+// -----------------------------------------------------------------------------
+// Sub-Assembly 4.2: Four-Section Ontological Unit Tests
+// -----------------------------------------------------------------------------
 
-        let cwd = env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
-        let mut repo_root = cwd.clone();
-        if repo_root.ends_with("tools") {
-            if let Some(parent) = repo_root.parent() {
-                repo_root = parent.to_path_buf();
-            }
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        let mut i = 1;
-        while i < args.len() {
-            match args[i].as_str() {
-                "audit" | "--audit" => command = AssetCommand::Audit,
-                "generate" | "--generate" | "gen" => command = AssetCommand::Generate,
-                "help" | "--help" | "-h" => command = AssetCommand::Help,
-                "-v" | "--verbose" => verbose = true,
-                "--root" => {
-                    if i + 1 < args.len() {
-                        repo_root = PathBuf::from(&args[i + 1]);
-                        i += 1;
-                    }
-                }
-                _ => {}
-            }
-            i += 1;
-        }
+    // -------------------------------------------------------------------------
+    // Section 1: Always Pass (Golden Surface Path)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_1_always_pass_binary_name() {
+        assert_eq!(BINARY_NAME, "asset_generator");
+    }
 
-        Self {
-            command,
-            repo_root,
-            verbose,
-        }
+    // -------------------------------------------------------------------------
+    // Section 2: Never Fail (Edge Resilience & Fault Inversion)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_2_never_fail_self_audit() {
+        assert!(self_audit().is_ok());
+    }
+
+    // -------------------------------------------------------------------------
+    // Section 3: Invariants (Structural Bounds & Mathematical Guards)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_3_invariants_name_length() {
+        assert!(!BINARY_NAME.is_empty());
+        assert!(BINARY_NAME.len() < 32);
+    }
+
+    // -------------------------------------------------------------------------
+    // Section 4: Emergence (System Integration & Roundtrip Synthesis)
+    // -------------------------------------------------------------------------
+    #[test]
+    fn test_section_4_emergence_ready() {
+        assert!(is_asset_generator_ready());
     }
 }
 
 // =============================================================================
-// BLOCK 3: BODY BLOCK / EXECUTION DISPATCH
-// Stratum: Developer Tooling | Machine: tools.bin.asset_generator
+// BLOCK 5: CLOSING BLOCK
+// ( Epilogue Readiness & Process Termination )
 // =============================================================================
 
-fn print_help() {
-    println!("============================================================");
-    println!("    Tenebris and Lux - Asset Pipeline Tool (asset_generator) ");
-    println!("============================================================");
-    println!("Usage: asset_generator [COMMAND] [OPTIONS]\n");
-    println!("Commands:");
-    println!("  audit       Audit all on-disk visual (.png) & audio (.wav/.ogg) assets");
-    println!("  generate    Trigger procedural asset synthesizer to produce all assets");
-    println!("  help        Display this help message\n");
-    println!("Options:");
-    println!("  -v, --verbose    Show detailed per-asset metadata and inspection");
-    println!("  --root <PATH>    Override repository workspace root directory");
-    println!("============================================================");
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.1: Epilogue Readiness Probe
+// -----------------------------------------------------------------------------
+
+/// Returns true if the asset generator binary is ready for execution.
+pub fn is_asset_generator_ready() -> bool {
+    self_audit().is_ok()
 }
+
+// -----------------------------------------------------------------------------
+// Sub-Assembly 5.2: Process Termination Entrypoint
+// -----------------------------------------------------------------------------
 
 fn main() -> ExitCode {
-    let args = CliArgs::parse();
-
-    match args.command {
-        AssetCommand::Help => {
-            print_help();
-            ExitCode::SUCCESS
-        }
-        AssetCommand::Generate => {
-            println!("============================================================");
-            println!("  [PIPELINE] Launching Procedural Asset Synthesizer...");
-            println!("============================================================");
-            let auditor = AssetAuditor::new(&args.repo_root);
-            match auditor.generate_assets() {
-                Ok(stdout) => {
-                    println!("{}", stdout);
-                    println!("  [SUCCESS] Asset synthesis completed successfully.");
-                    ExitCode::SUCCESS
-                }
-                Err(e) => {
-                    eprintln!("  [ERROR] Asset synthesis failed: {}", e);
-                    ExitCode::FAILURE
-                }
-            }
-        }
-        AssetCommand::Audit => {
-            println!("============================================================");
-            println!("  [AUDIT] Verifying On-Disk Presentation Assets...");
-            println!("  Workspace Root: {}", args.repo_root.display());
-            println!("============================================================");
-
-            let auditor = AssetAuditor::new(&args.repo_root);
-            let report = auditor.audit_all();
-
-            for f in &report.findings {
-                if let Some(err) = &f.error {
-                    eprintln!("  [FAIL] {} => {}", f.rel_path, err);
-                } else if args.verbose {
-                    println!("  [PASS] {} => {}", f.rel_path, f.details);
-                }
-            }
-
-            println!("------------------------------------------------------------");
-            println!(
-                "  Result: {}/{} assets valid on disk ({} failed)",
-                report.total_passed, report.total_checked, report.total_failed
-            );
-            println!("============================================================");
-
-            if report.is_success() {
-                println!("  [PASS] All visual and audio assets conform to contracts.");
-                ExitCode::SUCCESS
-            } else {
-                eprintln!("  [FAIL] One or more assets failed verification.");
-                ExitCode::FAILURE
-            }
+    match run() {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(err) => {
+            eprintln!("Error: {}", err);
+            ExitCode::FAILURE
         }
     }
 }
-

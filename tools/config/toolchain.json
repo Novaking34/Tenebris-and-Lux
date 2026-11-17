@@ -3,8 +3,9 @@
   "block_1_metadata": {
     "project": "Tenebris and Lux",
     "layer": "Developer Tooling Strata",
-    "version": "0.1.1-dev",
+    "version": "0.1.2-dev",
     "interface_rev": "Rev 5",
+    "date": "2026-11-16",
     "author": "CreativeWorkzStudio LLC / ProfessorSeanEX",
     "repository": "https://github.com/Novaking34/tenebris-lux",
     "system": "Universal OmniCode Toolchain Generic Configuration",
