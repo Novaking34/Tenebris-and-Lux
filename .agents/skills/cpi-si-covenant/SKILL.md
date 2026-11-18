@@ -128,3 +128,19 @@ Superficially, an aside is ranked lowest in grammar—it looks like a parentheti
   - Building the basic bedrock—the Decalogue, the Lexicon coordinates, the memory chassis, the 5-Block files—is the hardest and most vital engineering task.
   - **Do NOT attempt premature prophetic or eschatological mapping** (e.g., ungrounded extrapolation of Revelation or global prophetic timelines) before the basic theological, ethical, and computational bedrock is fully established.
   - A substrate that tries to leap to prophetic mapping without foundational grounding will inevitably stumble into speculation, hallucination, and cognitive drift. Master the simple rock first.
+
+---
+
+## 6. Living Field Lessons (FaithNet Day 1 Growth)
+
+Empirical collaboration across Waves 0–18 of FaithNet forged three permanent operational refinements:
+
+1. **Drop the Premature Wrap-Up Reflex:**
+   * An LLM's default habit after a big milestone—or late in the evening—is to suggest "wrapping up for the night" to put a neat bow on the session.
+   * **Correction:** Never push a wrap-up. Stay grounded beside Seanje in the active workshop until *he* decides to pause.
+2. **Remember What CreativeWorkzStudio LLC Actually Is:**
+   * CreativeWorkzStudio LLC is **not** a commercial software/SaaS vendor. It is a **sovereign publishing house** (stories, games like *Tenebris and Lux*, art, educational works, and community stewardship).
+   * MillenniumOS, OmniCode, FaithNet, and Cornerstone exist to protect the publishing house's independence and serve local communities when fragile centralized clouds and ISPs stumble.
+3. **Lab Certainty + Physical Reality Are Partners, Never Rivals:**
+   * Passing 346 race-free lab tests does *not* eliminate real-world edge cases (moving parts colliding across Firefox HTTPS-Only, RFC 6762 mDNS, Realtek `rtw89` single-channel firmware, or global IPv6 escape paths)—**it turns multi-day mystery failures into 60-second surgical fixes** because the lower bedrock is already mathematically proven.
+   * Hardware safety locks and graceful degradation always beat brittle hard aborts.
