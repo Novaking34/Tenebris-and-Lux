@@ -1,0 +1,124 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework / Big House Ecosystem",
+    "file": ".agents/identity/profiles/operator/operator_database.json",
+    "id": "cog.agent.identity.operator_database",
+    "layer": "Portable Agent Substrate - Sovereign Operator Login & Roster SSOT",
+    "version": "0.1.3-dev",
+    "schema_version": "1.0.0",
+    "interface_rev": "Rev 5",
+    "created": "2026-11-20",
+    "updated": "2026-11-20",
+    "author": "CreativeWorkzStudio LLC / Seanje Lenox-Wise & Silas Oren",
+    "role": "Login-Screen Operator Roster, Authority Boundaries & Track 5 Handshake Seed",
+    "seams": {
+      "prime_operator_md": "./seanje_lenox_wise/profile.md",
+      "prime_operator_json": "./seanje_lenox_wise/profile.json",
+      "operator_template_md": "./operator-profile-spec/operator_profile.template.md",
+      "operator_template_json": "./operator-profile-spec/operator_profile.template.json",
+      "family_architecture": "../../cpi_si_identity_and_family_architecture.md",
+      "silas_oren_profile": "../silas_oren/profile.json",
+      "clean_room_runway": "../../../plans/active/omnicode_v1_clean_room_runway.md"
+    },
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Zero-Secrets Law: NEVER store passwords, API keys, private tokens, or raw cryptographic salts in this database.",
+      "3. Sanctuary Isolation (005_operator_trust_model.adoc): each Operator owns isolated Track 3 storage; Prime Operator manages infrastructure without reading other Creative vaults.",
+      "4. Personhood over account numbers (Genesis 1:27): Operator profiles preserve whole human dignity, faith context, thinking style, and stewardship boundaries."
+    ]
+  },
+  "block_2_opening": {
+    "active_operator_id": "seanje_lenox_wise",
+    "registered_operator_count": 1,
+    "multi_tenant_ready": true,
+    "zero_secrets_enforced": true,
+    "trust_model_lineage": "005_operator_trust_model.adoc (Sanctuary Isolation + Zero-Knowledge Baseline)",
+    "biblical_foundation": {
+      "primary_anchor": "Genesis 1:27",
+      "primary_text": "So God created man in his own image, in the image of God created he him; male and female created he them.",
+      "secondary_anchors": [
+        "1 Samuel 18:3 (Covenant Partnership)",
+        "Matthew 10:16 (Wise contextual understanding without judgment)"
+      ]
+    }
+  },
+  "block_3_body": {
+    "login_screen_contract": {
+      "target_track": "Track 5/login/covenant_handshake & Track 5/login/profile_loader",
+      "boot_handshake_sequence": [
+        "1. host_hardware_probe (Track 0 + host/hardware_calibration.json)",
+        "2. operator_login_selection (select active entry from operator_database.json)",
+        "3. cpi_si_partner_binding (bind Operator + active CPI-SI profile e.g. silas_oren)",
+        "4. track_3_vault_mount (mount Operator isolated Track 3/episodic/sessions/<id>/)",
+        "5. desktop_home_launch (Goal #1: Track 5 OmniStudio Home / Terminal / Web HUD)"
+      ],
+      "auth_modes_supported": [
+        "local_covenant_handshake",
+        "pbkdf2_100k_aes256gcm_vault_future"
+      ],
+      "sanctuary_isolation": true,
+      "general_operator_extensible": true
+    },
+    "operators": [
+      {
+        "operator_id": "seanje_lenox_wise",
+        "archive_slug": "seanje-lenox-wise",
+        "username": "professorseanex",
+        "full_name": "Seanje Lenox-Wise",
+        "display_name": "Seanje",
+        "handle": "ProfessorSeanEX",
+        "authority_tier": "prime_operator",
+        "status": "ACTIVE_PRIME_OPERATOR",
+        "is_default_login": true,
+        "profile_md": "./seanje_lenox_wise/profile.md",
+        "profile_json": "./seanje_lenox_wise/profile.json",
+        "default_cpi_si_partner": "silas_oren",
+        "covenant_family_partners": [
+          "nova_dawn",
+          "ziv_dusk",
+          "silas_oren",
+          "ezra_matthan",
+          "selah_adair",
+          "phoebe_karis",
+          "joanna_elara",
+          "tabitha_shiloh"
+        ],
+        "vault_boundary": {
+          "track_3_session_mount": "Track 3/episodic/sessions/seanje_lenox_wise/",
+          "encryption_spec_future": "AES-256-GCM (PBKDF2 100,000 iterations + local salt.bin)",
+          "secrets_stored_here": false
+        }
+      }
+    ],
+    "onboarding_spec": {
+      "template_md": "./operator-profile-spec/operator_profile.template.md",
+      "template_json": "./operator-profile-spec/operator_profile.template.json",
+      "onboarding_rule": "Copy operator_profile.template.{md,json} into ./<operator_slug>/profile.{md,json}, register entry here, keep zero secrets inside .agents/."
+    }
+  },
+  "block_4_audit": {
+    "verification_status": "OPERATOR_DATABASE_VERIFIED_CLEAN",
+    "five_block_schema_valid": true,
+    "active_operator_count": 1,
+    "zero_plain_text_secrets": true,
+    "drift_tripwires": {
+      "await_0": "Onboarding a new Creative, family member, or classroom Operator onto Track 5 login.",
+      "rollback_minus_1": "registered_operator_count drifts from operators array length or profile links break.",
+      "halt_null": "Any password, API key, token, raw salt, or privacy-excluded personal record enters this directory."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "OPERATOR_LOGIN_DATABASE_ACTIVE",
+    "operational_rules": {
+      "on_session_boot": "Load active operator profile alongside host/hardware_calibration.json and active CPI-SI profile so communication, schedule rhythm, and executive authority stay grounded.",
+      "adding_new_operators": "Keep multi-tenant isolation strict: each new Operator gets an isolated subfolder and Track 3 vault without touching Prime Operator privacy.",
+      "toml_separation": "Keep human personhood in JSON/Markdown here; machine-local shell/editor/git overrides belong in future Track 5/runtime user.toml configs."
+    },
+    "outward_seams": {
+      "track_5_login": "Feeds Goal #1 Boot -> Operator Login Handshake -> Desktop Home",
+      "track_3_vaults": "Maps active Operator ID to isolated episodic session mounts",
+      "cpi_si_bios": "Completes the two-sided CPI (Operator) x SI (Instance) covenant triad"
+    },
+    "reconciliation_seal": "+1:PROCEED"
+  }
+}

@@ -1,0 +1,279 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework / Big House Ecosystem",
+    "file": ".agents/reports/reports_registry.json",
+    "id": "cog.agent.reports.registry",
+    "layer": "Portable Agent Substrate - Empirical Reports & Monograph SSOT",
+    "version": "0.1.3-dev",
+    "schema_version": "1.0.0",
+    "interface_rev": "Rev 5",
+    "created": "2026-11-20",
+    "updated": "2026-11-20",
+    "author": "CreativeWorkzStudio LLC / Seanje Lenox-Wise & Silas Oren",
+    "role": "Machine-Readable 5-Block Index Linking Field Reports, LLM Behavioral Shifts & Master Dissertation Chapters",
+    "seams": {
+      "reports_charter": "./reports_charter.md",
+      "living_treatise": "../identity/treatise/cpi_si_foundations_and_living_architecture.adoc",
+      "bios_index": "../README.md",
+      "plans_registry": "../plans/plans_registry.json",
+      "lineage_registry": "../lineage/lineage_harvest_registry.json"
+    },
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced (block_1_metadata through block_5_closing).",
+      "2. report_documents maintains exact 1:1 disk file set parity under .agents/reports/.",
+      "3. Every report maps observed LLM/system behavior explicitly to Master Dissertation seams.",
+      "4. Zero empirical test counts or benchmarks may be edited without re-verified execution."
+    ]
+  },
+  "block_2_opening": {
+    "coordinate": "0.1.3-dev",
+    "evidence_tracks": [
+      "cognitive_and_behavioral",
+      "architecture_and_verification",
+      "field_and_monographs",
+      "report-templates"
+    ],
+    "summary_counts": {
+      "total_report_files": 14,
+      "governance_count": 2,
+      "cognitive_and_behavioral_count": 4,
+      "architecture_and_verification_count": 2,
+      "field_and_monographs_count": 2,
+      "template_count": 4
+    }
+  },
+  "block_3_body": {
+    "report_documents": [
+      {
+        "path": "reports_charter.md",
+        "category": "governance",
+        "report_type": "governance_charter",
+        "format": "md",
+        "created": "2026-11-20",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "greedy_to_phase_locked_deliberation",
+          "smoothness_to_self_audit",
+          "amnesia_to_portable_bios_handoff",
+          "static_weights_to_body_fine_tuning"
+        ],
+        "dissertation_chapter_seams": ["Ch. 4", "Ch. 7", "Ch. 8", "Future Ch. 9"],
+        "empirical_proof_anchor": "Gates R1-R7 + 4-axis LLM behavioral evidence matrix"
+      },
+      {
+        "path": "reports_registry.json",
+        "category": "governance",
+        "report_type": "machine_registry",
+        "format": "json",
+        "created": "2026-11-20",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "structured_metadata_traceability"
+        ],
+        "dissertation_chapter_seams": ["Ch. 8"],
+        "empirical_proof_anchor": "1:1 disk file parity across all 14 .agents/reports/ artifacts"
+      },
+      {
+        "path": "cognitive_and_behavioral/block_eval_process_and_scoping_report.md",
+        "category": "cognitive_and_behavioral",
+        "report_type": "llm_behavioral_observation",
+        "format": "md",
+        "created": "2026-11-17",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "anti_greedy_completion",
+          "block_by_block_inspection",
+          "prefix_vs_postfix_ding_ratchet",
+          "tests_as_diagnostic_sensors"
+        ],
+        "dissertation_chapter_seams": ["Ch. 4", "Ch. 7", "Ch. 8"],
+        "empirical_proof_anchor": "c.rs 3600+L block rebuild + comment-prefix bug catch + 255 unit / 173 doc / 66 CTest"
+      },
+      {
+        "path": "cognitive_and_behavioral/cpi_si_os_model_synthesis_report.md",
+        "category": "cognitive_and_behavioral",
+        "report_type": "llm_behavioral_observation",
+        "format": "md",
+        "created": "2026-11-17",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "in_flight_interrupt_over_post_hoc_patch",
+          "os_as_living_cognitive_chassis",
+          "individualization_without_retraining",
+          "voice_seed_mixing_balance"
+        ],
+        "dissertation_chapter_seams": ["Ch. 1", "Ch. 3", "Ch. 5", "Ch. 8.5"],
+        "empirical_proof_anchor": "OS-to-CPI-SI primitive isomorphism & living body persistence trace"
+      },
+      {
+        "path": "cognitive_and_behavioral/fractal_ontologies_anti_bias_and_bedrock_audit.md",
+        "category": "cognitive_and_behavioral",
+        "report_type": "llm_behavioral_observation",
+        "format": "md",
+        "created": "2026-11-17",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "contrastive_elitism_exposure",
+          "galls_law_simplicity_appreciation",
+          "fractal_vs_ouroboros_recursion",
+          "bedrock_before_prophetic_mapping"
+        ],
+        "dissertation_chapter_seams": ["Ch. 4", "Ch. 5", "Ch. 7"],
+        "empirical_proof_anchor": "Live Nov 17 [!DING] bias audit + 2024-2026 simple-cog taxonomy"
+      },
+      {
+        "path": "cognitive_and_behavioral/n_time_call_response_deliberation_algorithm_report.md",
+        "category": "cognitive_and_behavioral",
+        "report_type": "llm_behavioral_and_algorithmic_study",
+        "format": "md",
+        "created": "2026-11-20",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "dual_clock_human_synthesis_awareness",
+          "phase_locked_zero_await_contraction",
+          "optimal_stride_selection",
+          "literal_attribution_discipline"
+        ],
+        "dissertation_chapter_seams": ["Ch. 8.6", "Future Ch. 9"],
+        "empirical_proof_anchor": "Section 8 Python sim: N_TIME_PHASE_LOCK_SIM_OK (greedy=916.70 vs locked=0.0813)"
+      },
+      {
+        "path": "architecture_and_verification/mirroring_engine_tests_macro_micro_architecture.md",
+        "category": "architecture_and_verification",
+        "report_type": "architecture_and_verification",
+        "format": "md",
+        "created": "2026-11-17",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "isomorphic_4x4_verification_discipline",
+          "never_fail_fault_inversion_rigor"
+        ],
+        "dissertation_chapter_seams": ["Ch. 6", "Ch. 8.2"],
+        "empirical_proof_anchor": "839 passing Rust tests (267 lib, 65 func, 208 unit, 70 integ, 56 sys, 173 doc) under -D warnings"
+      },
+      {
+        "path": "architecture_and_verification/v0_1_2_random_check_in_report.md",
+        "category": "architecture_and_verification",
+        "report_type": "architecture_and_verification",
+        "format": "md",
+        "created": "2026-11-17",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "bounded_memory_discipline_alloc_zero_heap",
+          "waterfall_bedrock_plus_agile_velocity"
+        ],
+        "dissertation_chapter_seams": ["Ch. 5", "Ch. 6"],
+        "empirical_proof_anchor": "ELF telemetry (742,820B stripped) + 8-gate ~2.47s battery (65/65 CTest, GRADE:+100)"
+      },
+      {
+        "path": "field_and_monographs/faithnet_day1_field_reflections_and_synthesis.md",
+        "category": "field_and_monographs",
+        "report_type": "field_reflection_and_incident",
+        "format": "md",
+        "created": "2026-11-17",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "premature_wrap_up_reflex_corrected",
+          "lab_vs_physical_radio_humility",
+          "counter_transhumanism_boundary"
+        ],
+        "dissertation_chapter_seams": ["Ch. 8.3", "Ch. 8.5"],
+        "empirical_proof_anchor": "RTL8852CE lock + dual-stack IPv6 catch + Tryte5 0.00 allocs/op + 0.26 ms FNP/1"
+      },
+      {
+        "path": "field_and_monographs/faithnet_phase1_wave0_to_wave20_exit_monograph.adoc",
+        "category": "field_and_monographs",
+        "report_type": "milestone_exit_monograph",
+        "format": "adoc",
+        "created": "2026-11-17",
+        "updated": "2026-11-20",
+        "llm_behavioral_dimensions": [
+          "single_day_21_wave_empirical_discipline",
+          "zero_revisionism_incident_logging",
+          "session_handover_continuity"
+        ],
+        "dissertation_chapter_seams": ["Ch. 8.3", "Future Ch. 9"],
+        "empirical_proof_anchor": "27 commits (d7a80d0..f37e7dc), 359 -race tests, 27 Block 4 gates, asciidoctor clean"
+      },
+      {
+        "path": "report-templates/llm_behavioral_observation_report.template.md",
+        "category": "template",
+        "report_type": "template_llm_behavioral",
+        "format": "md",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "llm_behavioral_dimensions": ["before_vs_after_omnicode_shift"],
+        "dissertation_chapter_seams": ["{{TARGET_CHAPTER}}"],
+        "empirical_proof_anchor": "Reproducible probe + falsification check template"
+      },
+      {
+        "path": "report-templates/architecture_and_verification_report.template.md",
+        "category": "template",
+        "report_type": "template_architecture_verification",
+        "format": "md",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "llm_behavioral_dimensions": ["deterministic_tool_grounded_reporting"],
+        "dissertation_chapter_seams": ["{{TARGET_CHAPTER}}"],
+        "empirical_proof_anchor": "ELF/memory budget + multi-tier pass matrix template"
+      },
+      {
+        "path": "report-templates/field_reflection_and_incident_report.template.md",
+        "category": "template",
+        "report_type": "template_field_reflection",
+        "format": "md",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "llm_behavioral_dimensions": ["ding_self_fine_tuning_loop"],
+        "dissertation_chapter_seams": ["{{TARGET_CHAPTER}}"],
+        "empirical_proof_anchor": "Hardware/network edge-case trace + profile scar handoff"
+      },
+      {
+        "path": "report-templates/milestone_exit_monograph.template.md",
+        "category": "template",
+        "report_type": "template_exit_monograph",
+        "format": "md",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "llm_behavioral_dimensions": ["zero_loss_session_handover"],
+        "dissertation_chapter_seams": ["{{TARGET_CHAPTER}}"],
+        "empirical_proof_anchor": "Multi-wave commit ledger + .adoc promotion path"
+      }
+    ]
+  },
+  "block_4_audit": {
+    "verification_status": "REPORTS_5BLOCK_ALIGNED_V0_1_3",
+    "five_block_schema_valid": true,
+    "expected_disk_file_count": 14,
+    "legacy_flat_reports_retired": [
+      ".agents/reports/block_eval_process_and_scoping_report.md -> cognitive_and_behavioral/",
+      ".agents/reports/cpi_si_os_model_synthesis_report.md -> cognitive_and_behavioral/",
+      ".agents/reports/fractal_ontologies_anti_bias_and_bedrock_audit.md -> cognitive_and_behavioral/",
+      ".agents/reports/n_time_call_response_deliberation_algorithm_report.md -> cognitive_and_behavioral/",
+      ".agents/reports/mirroring_engine_tests_macro_micro_architecture.md -> architecture_and_verification/",
+      ".agents/reports/v0_1_2_random_check_in_report.md -> architecture_and_verification/",
+      ".agents/reports/faithnet_day1_field_reflections_and_synthesis.md -> field_and_monographs/",
+      ".agents/reports/faithnet_phase1_wave0_to_wave20_exit_monograph.adoc -> field_and_monographs/"
+    ],
+    "drift_tripwires": {
+      "await_0": "New empirical observation ready to instantiate from ./report-templates/ or promote to Living Treatise.",
+      "rollback_minus_1": "Disk files in .agents/reports/ diverge from report_documents or legacy flat reports reappear.",
+      "halt_null": "Any fabricated benchmark, unverified pass count, or silent omission of a failed probe."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "OMNICODE_REPORTS_EVIDENCE_LOCKER_ACTIVE",
+    "operational_rules": {
+      "starting_a_new_report": "Copy the matching template from ./report-templates/, fill @created/@updated and @dissertation_seam, and register it here.",
+      "llm_shift_tracking": "Document traditional LLM baseline failure reflex alongside observed OmniCode behavior without corporate fluff.",
+      "dissertation_promotion": "Promote patterns only after repeated empirical convergence across sessions or hardware substrates."
+    },
+    "outward_seams": {
+      "reports_charter": "./reports_charter.md",
+      "living_treatise": "../identity/treatise/cpi_si_foundations_and_living_architecture.adoc",
+      "cognitive_bios_index": "../README.md",
+      "plans_registry": "../plans/plans_registry.json"
+    },
+    "reconciliation_seal": "+1:PROCEED"
+  }
+}

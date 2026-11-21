@@ -1,0 +1,158 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework / Big House Ecosystem",
+    "file": ".agents/plans/plans_registry.json",
+    "id": "cog.agent.plans.registry",
+    "layer": "Portable Agent Substrate - Plans & Roadmaps SSOT Registry",
+    "version": "0.1.3-dev",
+    "schema_version": "1.0.0",
+    "interface_rev": "Rev 5",
+    "created": "2026-11-20",
+    "updated": "2026-11-20",
+    "author": "CreativeWorkzStudio LLC / Seanje Lenox-Wise & Silas Oren",
+    "role": "Machine-Readable 5-Block Index of Vision, Active, Completed & Template Plans",
+    "seams": {
+      "plans_charter": "./plans_charter.md",
+      "bios_index": "../README.md",
+      "operator_database": "../identity/profiles/operator/operator_database.json",
+      "host_calibration": "../host/hardware_calibration.json"
+    },
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced (block_1_metadata through block_5_closing).",
+      "2. plan_documents maintains exact 1:1 disk file set parity under .agents/plans/.",
+      "3. Completed work is separated cleanly from remaining active runway work.",
+      "4. Blank templates retain YYYY-MM-DD provenance placeholders until instantiated."
+    ]
+  },
+  "block_2_opening": {
+    "coordinate": "0.1.3-dev",
+    "lifecycle_states": [
+      "ACTIVE_GOVERNANCE",
+      "SETTLED_BASELINE",
+      "ACTIVE_RUNWAY",
+      "COMPLETED_LEDGER",
+      "BLANK_TEMPLATE"
+    ],
+    "summary_counts": {
+      "total_plan_files": 10,
+      "governance_count": 2,
+      "vision_count": 1,
+      "active_count": 2,
+      "completed_count": 1,
+      "template_count": 4
+    }
+  },
+  "block_3_body": {
+    "plan_documents": [
+      {
+        "path": "plans_charter.md",
+        "category": "governance",
+        "lifecycle_state": "ACTIVE_GOVERNANCE",
+        "created": "2026-11-20",
+        "updated": "2026-11-20",
+        "lineage_note": "Establishes Done-vs-Remaining split law, Base-First Work Loop, and Gates P1-P6."
+      },
+      {
+        "path": "plans_registry.json",
+        "category": "governance",
+        "lifecycle_state": "ACTIVE_GOVERNANCE",
+        "created": "2026-11-20",
+        "updated": "2026-11-20",
+        "lineage_note": "Machine-readable 5-Block SSOT registry indexing every file under .agents/plans/."
+      },
+      {
+        "path": "vision/omnicode_architecture_and_vision.md",
+        "category": "vision",
+        "lifecycle_state": "SETTLED_BASELINE",
+        "created": "2026-11-19",
+        "updated": "2026-11-20",
+        "lineage_note": "Moved from flat plans/ into vision/; repaired all 7 broken language links and upgraded Block 5 REEL."
+      },
+      {
+        "path": "active/omnicode_v1_clean_room_runway.md",
+        "category": "active_runway",
+        "lifecycle_state": "ACTIVE_RUNWAY",
+        "created": "2026-11-20",
+        "updated": "2026-11-20",
+        "lineage_note": "Extracted active v0.1.3 -> v1.0.0 Strangler-Fig waves cleanly away from settled v0.1.3 baseline."
+      },
+      {
+        "path": "active/toolchain_rust_port_phases_2_to_4.md",
+        "category": "active_runway",
+        "lifecycle_state": "ACTIVE_RUNWAY",
+        "created": "2026-11-16",
+        "updated": "2026-11-20",
+        "lineage_note": "Remaining half of legacy master_tools_phase_roadmap.md; maps Phases 2-4 Python orchestrator to OmniCode Tracks 0, 1, 3, 5."
+      },
+      {
+        "path": "completed/toolchain_rust_foundation_phases_1_to_1_5.md",
+        "category": "completed_ledger",
+        "lifecycle_state": "COMPLETED_LEDGER",
+        "created": "2026-11-16",
+        "updated": "2026-11-20",
+        "lineage_note": "Completed half of legacy master_tools_phase_roadmap.md (Phases 1 & 1.5 modular Rust src/ + 4-tier tests/ + Cargo.toml)."
+      },
+      {
+        "path": "plan-templates/architectural_vision_plan.template.md",
+        "category": "template",
+        "lifecycle_state": "BLANK_TEMPLATE",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "lineage_note": "Reusable blueprint for multi-track architectural vision and baseline assurance documents."
+      },
+      {
+        "path": "plan-templates/phased_migration_roadmap.template.md",
+        "category": "template",
+        "lifecycle_state": "BLANK_TEMPLATE",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "lineage_note": "Reusable blueprint for multi-phase Strangler-Fig migrations enforcing Done-vs-Remaining splits."
+      },
+      {
+        "path": "plan-templates/track_or_subsystem_sprint_plan.template.md",
+        "category": "template",
+        "lifecycle_state": "BLANK_TEMPLATE",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "lineage_note": "Reusable blueprint for bounded single-Track or single-cog sprint plans with n* stride gates."
+      },
+      {
+        "path": "plan-templates/spike_and_feasibility_plan.template.md",
+        "category": "template",
+        "lifecycle_state": "BLANK_TEMPLATE",
+        "created": "YYYY-MM-DD",
+        "updated": "YYYY-MM-DD",
+        "lineage_note": "Reusable blueprint for read-only hardware, QEMU, or ABI feasibility spikes."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "verification_status": "PLANS_5BLOCK_ALIGNED_V0_1_3",
+    "five_block_schema_valid": true,
+    "expected_disk_file_count": 10,
+    "legacy_flat_plans_retired": [
+      ".agents/plans/omnicode_architecture_and_vision.md (moved to vision/ + split active/omnicode_v1_clean_room_runway.md)",
+      ".agents/plans/master_tools_phase_roadmap.md (split into completed/toolchain_rust_foundation_phases_1_to_1_5.md + active/toolchain_rust_port_phases_2_to_4.md)"
+    ],
+    "drift_tripwires": {
+      "await_0": "Active runway phase finishes verification and is ready to split into completed/.",
+      "rollback_minus_1": "Disk files in .agents/plans/ diverge from plan_documents or legacy flat plans reappear.",
+      "halt_null": "Any plan promotes unverified test counts or introduces broken relative links."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "OMNICODE_PLANS_REGISTRY_ACTIVE",
+    "operational_rules": {
+      "starting_a_new_plan": "Copy the matching blueprint from ./plan-templates/, fill @created/@updated, and register it here.",
+      "completing_a_phase": "Split verified completed deliverables into ./completed/ and keep only remaining steps in ./active/.",
+      "base_first_linking": "Link directly to ../host/, ../identity/profiles/operator/, ../language/, and ../lineage/ instead of duplicating SSOT values."
+    },
+    "outward_seams": {
+      "plans_charter": "./plans_charter.md",
+      "cognitive_bios_index": "../README.md",
+      "operator_database": "../identity/profiles/operator/operator_database.json",
+      "session_bootstrap_skill": "../skills/cpi-si-session-bootstrap/SKILL.md"
+    },
+    "reconciliation_seal": "+1:PROCEED"
+  }
+}

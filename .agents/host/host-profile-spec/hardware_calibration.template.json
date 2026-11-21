@@ -1,0 +1,587 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework",
+    "file": ".agents/host/host-profile-spec/hardware_calibration.template.json",
+    "id": "cog.agent.host.spec.hardware_calibration_template",
+    "layer": "Portable Agent Substrate - Blank Multi-Platform Calibration Blueprint",
+    "version": "0.1.3-dev",
+    "interface_rev": "Rev 5",
+    "created": "YYYY-MM-DD",
+    "updated": "YYYY-MM-DD",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)",
+    "role": "Reusable Blank Multi-Platform Hardware & AI Calibration Schema Template",
+    "seams": {
+      "instantiates_to": "../hardware_calibration.json",
+      "os_overview_doc": "../host_environments_overview.md",
+      "paired_templates": [
+        "./linux_host_profile.template.md",
+        "./windows_host_profile.template.md",
+        "./macos_host_profile.template.md",
+        "./millenniumos_host_profile.template.md"
+      ]
+    },
+    "invariants": [
+      "1. Blank template keeps is_current_platform: false across ALL 4 platforms until instantiated.",
+      "2. When instantiating a live host copy at ../hardware_calibration.json, flip exactly one active platform to true.",
+      "3. Enforce Continue.dev minimum context >= 4096 tokens once tiers are probed.",
+      "4. Never omit non-headless display VRAM and desktop RAM reserves on GUI workstations."
+    ]
+  },
+  "block_2_opening": {
+    "timestamp": "YYYY-MM-DD",
+    "active_platform": null,
+    "supported_platforms": [
+      "linux",
+      "windows",
+      "macos",
+      "millenniumos"
+    ],
+    "total_calibrated_tiers": 0,
+    "continue_minimum_ctx": 4096,
+    "non_headless_guards": {
+      "desktop_ram_reserve_mb": null,
+      "vram_display_floor_mb": null,
+      "usable_compute_vram_mb": null
+    },
+    "active_host_summary": {
+      "hostname": null,
+      "chassis": null,
+      "os": null,
+      "kernel": null,
+      "desktop_session": null,
+      "cpu": null,
+      "gpu_display": null,
+      "gpu_compute": null,
+      "ram_mb": null
+    }
+  },
+  "block_3_body": {
+    "platforms": {
+      "linux": {
+        "is_current_platform": false,
+        "status": "BLANK_TEMPLATE",
+        "profile_doc": null,
+        "template_spec": "./linux_host_profile.template.md",
+        "hardware": {
+          "hostname": null,
+          "os_distro": null,
+          "arch": null,
+          "kernel": null,
+          "desktop_session": {
+            "xdg_session_type": null,
+            "xdg_current_desktop": null
+          },
+          "cpu": {
+            "model_name": null,
+            "vendor_id": null,
+            "family": null,
+            "model": null,
+            "stepping": null,
+            "physical_cores": null,
+            "logical_threads": null,
+            "numa_nodes": null,
+            "virtualization": null,
+            "min_freq_mhz": null,
+            "max_freq_mhz": null,
+            "p_cores": null,
+            "p_threads": [],
+            "p_max_freq_ghz": null,
+            "e_cores": null,
+            "e_threads": [],
+            "e_max_freq_ghz": null,
+            "caches": {
+              "l1d": null,
+              "l1i": null,
+              "l2": null,
+              "l3": null
+            }
+          },
+          "memory_and_swap": {
+            "ram_mb": null,
+            "non_headless_reserve_mb": null,
+            "available_for_compute_budget_mb": null,
+            "total_swap_mb": null,
+            "swap_devices": []
+          },
+          "gpus": {
+            "display_igpu": {
+              "name": null,
+              "revision": null,
+              "pci_slot": null,
+              "role": null
+            },
+            "compute_dgpu": {
+              "name": null,
+              "architecture": null,
+              "revision": null,
+              "pci_slot": null,
+              "pci_bus_id": null,
+              "driver_version": null,
+              "total_vram_mb": null,
+              "addressable_vram_mb": null,
+              "hw_reserve_mb": null,
+              "display_floor_mb": null,
+              "usable_compute_vram_mb": null
+            }
+          },
+          "storage": {
+            "block_device": null,
+            "model": null,
+            "revision": null,
+            "pci_slot": null,
+            "capacity_gib": null,
+            "capacity_gb": null,
+            "dram_cache": null,
+            "root_partition": null,
+            "mount": null,
+            "fs_total": null,
+            "fs_used": null,
+            "fs_avail": null,
+            "fs_use_pct": null
+          },
+          "audio": {
+            "model": null,
+            "revision": null,
+            "pci_slot": null
+          },
+          "network": {
+            "controller": null,
+            "revision": null,
+            "driver": null,
+            "pci_slot": null,
+            "interfaces": [],
+            "faithnet_ap_ssid": null,
+            "radio_constraints": {
+              "single_channel_sta_ap": null,
+              "powersave_disabled": null,
+              "weak_uplink_band": null,
+              "beacon_int_weak_uplink": null
+            }
+          },
+          "toolchains": {
+            "rustc": null,
+            "cargo": null,
+            "go": null,
+            "gcc": null,
+            "cmake": null,
+            "python3": null,
+            "qemu_system_x86_64": null,
+            "ollama": null
+          }
+        },
+        "calibrated_tiers": {
+          "0.5b": {
+            "tier": "0.5b",
+            "base_model": null,
+            "the_room": {
+              "min": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "recommended_cpu_threads": null,
+                "cpu_threads": null,
+                "kv_cache_mb": null,
+                "vram_headroom_mb": null,
+                "ram_usage_mb": null,
+                "ram_headroom_mb": null,
+                "continue_compatible": null,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Physical Ceiling"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": null,
+              "gpu_layers": null,
+              "cpu_threads": null
+            },
+            "probed_machine_ideal": {
+              "num_ctx": null,
+              "recommended_gpu_layers": null,
+              "recommended_cpu_threads": null,
+              "cpu_threads": null,
+              "kv_cache_mb": null,
+              "vram_headroom_mb": null,
+              "ram_usage_mb": null,
+              "ram_headroom_mb": null,
+              "continue_compatible": null,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": null,
+              "gpu_layer_diff": null,
+              "layer_diff": null,
+              "cpu_thread_diff": null
+            },
+            "tripwire_status": "UNPROBED"
+          },
+          "1.5b": {
+            "tier": "1.5b",
+            "base_model": null,
+            "the_room": {
+              "min": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "recommended_cpu_threads": null,
+                "cpu_threads": null,
+                "kv_cache_mb": null,
+                "vram_headroom_mb": null,
+                "ram_usage_mb": null,
+                "ram_headroom_mb": null,
+                "continue_compatible": null,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Physical Ceiling"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": null,
+              "gpu_layers": null,
+              "cpu_threads": null
+            },
+            "probed_machine_ideal": {
+              "num_ctx": null,
+              "recommended_gpu_layers": null,
+              "recommended_cpu_threads": null,
+              "cpu_threads": null,
+              "kv_cache_mb": null,
+              "vram_headroom_mb": null,
+              "ram_usage_mb": null,
+              "ram_headroom_mb": null,
+              "continue_compatible": null,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": null,
+              "gpu_layer_diff": null,
+              "layer_diff": null,
+              "cpu_thread_diff": null
+            },
+            "tripwire_status": "UNPROBED"
+          },
+          "3b": {
+            "tier": "3b",
+            "base_model": null,
+            "the_room": {
+              "min": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "recommended_cpu_threads": null,
+                "cpu_threads": null,
+                "kv_cache_mb": null,
+                "vram_headroom_mb": null,
+                "ram_usage_mb": null,
+                "ram_headroom_mb": null,
+                "continue_compatible": null,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Physical Ceiling"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": null,
+              "gpu_layers": null,
+              "cpu_threads": null
+            },
+            "probed_machine_ideal": {
+              "num_ctx": null,
+              "recommended_gpu_layers": null,
+              "recommended_cpu_threads": null,
+              "cpu_threads": null,
+              "kv_cache_mb": null,
+              "vram_headroom_mb": null,
+              "ram_usage_mb": null,
+              "ram_headroom_mb": null,
+              "continue_compatible": null,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": null,
+              "gpu_layer_diff": null,
+              "layer_diff": null,
+              "cpu_thread_diff": null
+            },
+            "tripwire_status": "UNPROBED"
+          },
+          "7b": {
+            "tier": "7b",
+            "base_model": null,
+            "the_room": {
+              "min": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "recommended_cpu_threads": null,
+                "cpu_threads": null,
+                "kv_cache_mb": null,
+                "vram_headroom_mb": null,
+                "ram_usage_mb": null,
+                "ram_headroom_mb": null,
+                "continue_compatible": null,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": null,
+                "recommended_gpu_layers": null,
+                "cpu_threads": null,
+                "description": "Physical Ceiling"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": null,
+              "gpu_layers": null,
+              "cpu_threads": null
+            },
+            "probed_machine_ideal": {
+              "num_ctx": null,
+              "recommended_gpu_layers": null,
+              "recommended_cpu_threads": null,
+              "cpu_threads": null,
+              "kv_cache_mb": null,
+              "vram_headroom_mb": null,
+              "ram_usage_mb": null,
+              "ram_headroom_mb": null,
+              "continue_compatible": null,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": null,
+              "gpu_layer_diff": null,
+              "layer_diff": null,
+              "cpu_thread_diff": null
+            },
+            "tripwire_status": "UNPROBED"
+          }
+        }
+      },
+      "windows": {
+        "is_current_platform": false,
+        "status": "BLANK_TEMPLATE",
+        "profile_doc": null,
+        "template_spec": "./windows_host_profile.template.md",
+        "hardware": {
+          "hostname": null,
+          "os_edition_and_build": null,
+          "arch": null,
+          "desktop_session": {
+            "compositor": null,
+            "long_paths_enabled": null,
+            "developer_mode_enabled": null
+          },
+          "cpu": {
+            "model_name": null,
+            "physical_cores": null,
+            "logical_threads": null,
+            "virtualization_hyperv": null
+          },
+          "memory_and_pagefile": {
+            "ram_mb": null,
+            "non_headless_reserve_mb": null,
+            "pagefile_mb": null
+          },
+          "gpus": {
+            "display_gpu": null,
+            "compute_gpu": null,
+            "wddm_dedicated_vram_mb": null,
+            "wddm_shared_vram_mb": null,
+            "usable_compute_vram_mb": null
+          },
+          "storage": {
+            "system_drive": null,
+            "filesystem": null,
+            "capacity_gb": null,
+            "defender_repo_exclusion": null
+          },
+          "audio": {
+            "api": null,
+            "device": null
+          },
+          "network": {
+            "adapter": null,
+            "wifi_ap_hosting_supported": null,
+            "firewall_profile": null
+          },
+          "virtualization": {
+            "wsl2_installed": null,
+            "hyperv_enabled": null
+          },
+          "toolchains": {
+            "msvc_or_mingw": null,
+            "rustc": null,
+            "go": null,
+            "cmake": null,
+            "python3": null,
+            "ollama": null
+          }
+        },
+        "calibrated_tiers": {}
+      },
+      "macos": {
+        "is_current_platform": false,
+        "status": "BLANK_TEMPLATE",
+        "profile_doc": null,
+        "template_spec": "./macos_host_profile.template.md",
+        "hardware": {
+          "hostname": null,
+          "macos_version": null,
+          "arch": null,
+          "desktop_session": {
+            "window_server": null,
+            "sip_status": null
+          },
+          "cpu": {
+            "chip_or_model": null,
+            "physical_cores": null,
+            "logical_threads": null,
+            "p_cores": null,
+            "e_cores": null
+          },
+          "memory_and_gpu": {
+            "unified_memory_architecture": null,
+            "ram_mb": null,
+            "metal_wired_limit_mb": null,
+            "non_headless_reserve_mb": null,
+            "gpu_cores_or_discrete": null
+          },
+          "storage": {
+            "volume": null,
+            "filesystem": null,
+            "capacity_gb": null
+          },
+          "audio": {
+            "api": null,
+            "device": null
+          },
+          "network": {
+            "wifi_hardware": null,
+            "awdl_interference_noted": null,
+            "raw_ap0_unavailable": null
+          },
+          "virtualization": {
+            "virtualization_framework": null,
+            "qemu_or_utm": null
+          },
+          "toolchains": {
+            "xcode_clt": null,
+            "rustc": null,
+            "go": null,
+            "cmake": null,
+            "python3": null,
+            "ollama": null
+          }
+        },
+        "calibrated_tiers": {}
+      },
+      "millenniumos": {
+        "is_current_platform": false,
+        "status": "BLANK_TEMPLATE",
+        "profile_doc": null,
+        "template_spec": "./millenniumos_host_profile.template.md",
+        "hardware": {
+          "target_name": null,
+          "boot_mode": null,
+          "emulation_or_silicon": null,
+          "track_0_probes": {
+            "cpuid_vendor": null,
+            "e820_or_uefi_usable_ram_mb": null,
+            "pcie_device_count": null,
+            "framebuffer_mode": null
+          },
+          "track_1_runtime_budget": {
+            "alloc_zero_heap_enforced": null,
+            "static_arena_budget_mb": null,
+            "native_cpsi_router_tier": null
+          },
+          "track_3_vfs_store": {
+            "root_vfs_mount": null,
+            "episodic_bank_capacity_mb": null
+          },
+          "track_4_faithnet_native": {
+            "fnp1_driver": null,
+            "raw_radio_binding": null
+          },
+          "track_5_desktop_floor": {
+            "covenant_handshake": null,
+            "omnistudio_home_vram_mb": null
+          }
+        },
+        "calibrated_tiers": {}
+      }
+    }
+  },
+  "block_4_audit": {
+    "verification_status": "UNPROBED_TEMPLATE",
+    "active_platform": null,
+    "active_platform_count": 0,
+    "inactive_platforms_flagged_false": [
+      "linux",
+      "windows",
+      "macos",
+      "millenniumos"
+    ],
+    "all_tiers_meet_continue_minimum": false,
+    "zero_threshing_delta_verified": false,
+    "drift_tripwires": {
+      "await_0": "Fill hardware probes and calibrated_tiers for target machine before trusting values.",
+      "rollback_minus_1": "Instantiated platform has threshing_delta != 0 or missing non-headless floors.",
+      "halt_null": "More than one platform sets is_current_platform: true after instantiation."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "TEMPLATE_AWAITING_HOST_INSTANTIATION",
+    "instantiation_steps": [
+      "1. Copy this template to ../hardware_calibration.json on the target workstation.",
+      "2. Keep is_current_platform: false on inactive platforms and flip ONLY the active OS to true.",
+      "3. Run OS-native probes from the matching ./<os>_host_profile.template.md Block 4 audit.",
+      "4. Fill hardware fields and calibrate 0.5b..7b tiers preserving non-headless RAM/VRAM floors.",
+      "5. Write the live paired Markdown profile at ../host_pc_hardware_profile.md."
+    ],
+    "reconciliation_seal": "0:AWAIT"
+  }
+}

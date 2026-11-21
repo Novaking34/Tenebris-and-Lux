@@ -1,0 +1,123 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework / Big House Ecosystem",
+    "file": ".agents/identity/profiles/operator/operator-profile-spec/operator_profile.template.json",
+    "id": "cog.agent.identity.operator.template_json",
+    "layer": "Portable Agent Substrate - Blank Operator Profile Blueprint",
+    "version": "0.1.3-dev",
+    "schema_version": "1.0.0",
+    "interface_rev": "Rev 5",
+    "created": "YYYY-MM-DD",
+    "updated": "YYYY-MM-DD",
+    "author": "CreativeWorkzStudio LLC / {{OPERATOR_NAME}}",
+    "role": "Reusable Blank 5-Block Operator Profile Manifest (Zero Secrets)",
+    "seams": {
+      "paired_markdown_template": "./operator_profile.template.md",
+      "operator_database": "../operator_database.json",
+      "family_architecture": "../../../cpi_si_identity_and_family_architecture.md",
+      "host_calibration_template": "../../../../host/host-profile-spec/hardware_calibration.template.json"
+    },
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Blank template enforces is_active_operator: false until instantiated for a live Operator.",
+      "3. Zero-Secrets Law: NEVER store passwords, private keys, tokens, or raw salts in profile JSON.",
+      "4. Personhood lives here; machine-local shell/editor overrides belong in user.toml."
+    ]
+  },
+  "block_2_opening": {
+    "is_active_operator": false,
+    "authority_tier": "creative_operator | guest_operator | prime_operator",
+    "status": "BLANK_OPERATOR_TEMPLATE",
+    "biblical_foundation": {
+      "primary_anchor": "Genesis 1:27",
+      "principle": "Every person bears the image of God; this profile honors whole personhood over bare account utility."
+    },
+    "identity": {
+      "operator_id": "{{operator_slug}}",
+      "username": "{{system_username}}",
+      "name": "{{FULL_NAME}}",
+      "display_name": "{{DISPLAY_NAME}}",
+      "handle": "{{PUBLIC_HANDLE}}",
+      "pronouns": "{{PRONOUNS}}",
+      "birthday": "YYYY-MM-DD",
+      "origin_and_home": "{{ORIGIN_AND_HOME}}"
+    }
+  },
+  "block_3_body": {
+    "faith": {
+      "is_religious": false,
+      "tradition": "",
+      "denomination": "",
+      "practice_level": "",
+      "important_practices": [],
+      "communication_preference": "Optional context enabling respectful communication without judgment (Matthew 10:16)."
+    },
+    "workspace_and_calling": {
+      "organization": "{{ORGANIZATION_NAME}}",
+      "role": "{{ROLE_OR_VOCATION}}",
+      "primary_ecosystems": [],
+      "core_philosophy": ""
+    },
+    "thinking_and_learning": {
+      "problem_solving": "",
+      "learning_style": "",
+      "creativity": "",
+      "loves_to_think_about": []
+    },
+    "communication_and_style": {
+      "interaction_preference": "",
+      "work_rhythm": "",
+      "energizers": [],
+      "drains_and_dislikes": [],
+      "session_pacing_rules": []
+    },
+    "resonates": {
+      "music": {
+        "genres": [],
+        "artists_noted": []
+      },
+      "games": {
+        "favorites": [],
+        "what_resonates": ""
+      }
+    },
+    "public_contact_handles": {
+      "website": "",
+      "email": "",
+      "github_personal": ""
+    },
+    "runtime_preferences": {
+      "timezone": "UTC",
+      "locale": "en_US",
+      "theme": "auto",
+      "preferred_shell": "",
+      "toml_override_separation": "Keep human personhood in JSON/Markdown; put OS path/shell overrides in user.toml."
+    },
+    "trust_and_login_boundary": {
+      "zero_secrets_stored": true,
+      "sanctuary_isolation": true,
+      "track_3_session_mount": "Track 3/episodic/sessions/{{operator_slug}}/",
+      "encryption_spec_future": "AES-256-GCM (PBKDF2 100,000 iterations + local salt.bin; key owned solely by Operator)"
+    }
+  },
+  "block_4_audit": {
+    "verification_status": "UNPROBED_OPERATOR_TEMPLATE",
+    "is_active_operator": false,
+    "zero_secrets_stored": true,
+    "drift_tripwires": {
+      "await_0": "Template placeholders remaining before onboarding Operator into operator_database.json.",
+      "rollback_minus_1": "Machine-local TOML path overrides mixed into personhood JSON.",
+      "halt_null": "Any secret, password, token, or unconsented private record written into profile JSON."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "OPERATOR_TEMPLATE_AWAITING_ONBOARDING",
+    "instantiation_steps": [
+      "1. Copy this JSON + ./operator_profile.template.md into ../<operator_slug>/profile.{json,md}.",
+      "2. Replace every placeholder honestly with the Operator's consent; leave optional fields blank rather than guessing.",
+      "3. Flip is_active_operator: true ONLY inside the instantiated profile.json and register it in ../operator_database.json.",
+      "4. Keep zero passwords, API keys, or private salts in any committed .agents/ file."
+    ],
+    "reconciliation_seal": "0:AWAIT"
+  }
+}

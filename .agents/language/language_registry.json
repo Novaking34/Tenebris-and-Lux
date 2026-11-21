@@ -1,0 +1,171 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework / Big House Ecosystem",
+    "file": ".agents/language/language_registry.json",
+    "id": "cog.agent.language.registry",
+    "layer": "Portable Agent Substrate - Language Operator & Keyword SSOT",
+    "version": "0.1.3-dev",
+    "interface_rev": "Rev 5",
+    "created": "2026-11-19",
+    "updated": "2026-11-19",
+    "author": "CreativeWorkzStudio LLC / Seanje Lenox-Wise & Silas Oren",
+    "role": "Machine-Readable Registry of OmniCode Primitives by Stability Tier",
+    "seams": {
+      "living_charter": "./language_living_charter.md",
+      "syntax_ref": "./reference/SYNTAX.md",
+      "keyword_ref": "./reference/KEYWORD.md",
+      "change_ledger": "./evolution/quarantine_and_change_ledger.md",
+      "root_docs_pair": [
+        "docs/SYNTAX.md",
+        "docs/KEYWORD.md"
+      ]
+    },
+    "invariants": [
+      "1. Every canonical symbol stays 100% 7-bit printable standard-keyboard ASCII.",
+      "2. Flipped-order pairs always carry distinct semantics.",
+      "3. % represents ABOUT / RATIO cleanly isolated from REM / MOD.",
+      "4. Stability tiers separate sticky bedrock from evolving grammar and quarantine."
+    ]
+  },
+  "block_2_opening": {
+    "coordinate": "0.1.3-dev",
+    "keyboard_floor": "7-bit printable ASCII only (- _ / \\ < > ^ v = ! ~ : | & @ % . [ ] { } ( ))",
+    "compiler_pipeline": "Human Prose / Prompt <-> .tape (C-level Ribbon) --> .omni (Symbolic Assembly) --> Kernel / VM",
+    "stability_tiers": [
+      "tier_0_bedrock",
+      "tier_1_working",
+      "tier_2_quarantine",
+      "retired"
+    ]
+  },
+  "block_3_body": {
+    "tier_0_bedrock": {
+      "description": "Sticky core ontology that keeps OmniCode unified while surface forms evolve.",
+      "t4_states": {
+        "0": { "exec": "AWAIT", "anchor": "IS", "polarity": "equilibrium_present" },
+        "+1": { "exec": "PROCEED", "anchor": "WILL", "polarity": "forward_commitment" },
+        "-1": { "exec": "ROLLBACK", "anchor": "NOT", "polarity": "active_exclusion" },
+        "NULL": { "exec": "HALT", "anchor": "IS_NOT", "polarity": "absence_or_fracture" }
+      },
+      "six_clauses": {
+        "bounded": ["WHO", "WHAT", "WHEN", "WHY"],
+        "unbounded_media": ["WHERE", "HOW"]
+      },
+      "origin_anchor": "=<God>=",
+      "five_blocks": ["METADATA", "HEAD", "BODY", "AUDIT", "REEL"],
+      "case_registers": {
+        "ALL_CAPS": "Dictionary / Standard Library Keyword (defaults to weight <KEYWORD> = 11 unless guarded)",
+        "Proper_Case_Bracketed": "[ Proper Case ] Concrete cast noun / domain record",
+        "lowercase": "Ordinary value or unpromoted concept"
+      },
+      "core_principles": [
+        "Standard Keyboard Floor (no Alt-key Unicode required at bedrock)",
+        "Order Always Carries Meaning (flipped pairs never collide)",
+        "Concept Quarantine (<concept> precedes [KEYWORD] lock-in)"
+      ]
+    },
+    "tier_1_working": {
+      "description": "Active grammar governing current manifest.omni, manifest.tape, and Track 1/2 prototypes.",
+      "being_and_order_pairs": {
+        "=": "IS / EXACT_EQUIVALENCE",
+        "=!": "IS_NOT (copular state denial)",
+        "!=": "NOT_IS (order-distinct exclusion)",
+        "=~": "IS_LIKE (analogy / likeness)",
+        "~=": "LIKE_IS (reverse likeness orientation)",
+        "=:": "IS_AS (role binding)",
+        ":=": "TO_BECOME (state assignment / becoming)",
+        "<=>": "BALANCES (mutual equilibrium)",
+        "<": "LESS_THAN",
+        ">": "GREATER_THAN",
+        "<=": "LESS_OR_EQUAL",
+        ">=": "GREATER_OR_EQUAL"
+      },
+      "connectives_and_modal_bang": {
+        ":": "IN_RELATION_TO / AS",
+        "::": "AND_INDEPENDENT (sequential junction)",
+        "&": "AND_DEPENDENT / WITH (bound pair)",
+        "|": "OR (disjunctive branch)",
+        "!": "BUT (adversative ratchet)",
+        "[!X]": "PREFIX_GUARD (Level 1 advisory warning)",
+        "[X!]": "POSTFIX_ALARM (Level 2 hard escalation)",
+        "!word": "NOT (attached negation)",
+        "@": "AT (site / location)",
+        "%": "ABOUT / RATIO (isolated strictly from integer REM/MOD)",
+        ".": "POINT (1pt focus)",
+        ". .": "SPAN (2pt step / range)",
+        ". . .": "THINK (3pt open deliberation)"
+      },
+      "directionals_14": {
+        "cardinals_6": ["-->", "<--", "--^", "--v", "^--", "v--"],
+        "diagonals_8": ["_/^", "_/v", "_\\^", "_\\v", "^/_", "v/_", "^\\_", "v\\_"],
+        "all": ["-->", "<--", "--^", "--v", "^--", "v--", "_/^", "_/v", "_\\^", "_\\v", "^/_", "v/_", "^\\_", "v\\_"]
+      },
+      "borders_16": {
+        "pure_4": ["<>", "[]", "{}", "()"],
+        "outward_6": ["<]", "<}", "<)", "[}", "[)", "{)"],
+        "inward_6": ["[>", "{>", "(>", "{]", "(]", "(}"],
+        "all": ["<>", "[]", "{}", "()", "<]", "<}", "<)", "[}", "[)", "{)", "[>", "{>", "(>", "{]", "(]", "(}"],
+        "wall_weights": {
+          "< >": 5,
+          "[ ]": 4,
+          "{ }": 2,
+          "( )": 1,
+          "ALL_CAPS_BONUS": 1
+        },
+        "freestanding_keyword_law": "FOCUS (= <FOCUS>, 11) > <focus> (10) > [FOCUS] (9) > [focus] (8) > {FOCUS} (5) > {focus} (4) > (FOCUS) (3) > (focus) (2) > focus (0)"
+      },
+      "keyword_groups": {
+        "structural_tape": ["METADATA", "HEAD", "BODY", "TAPE", "ROLL", "AUDIT", "REEL", "PLAY", "EXECUTE", "TRACK", "SCENE"],
+        "systems_core": ["ORIGIN", "ESTABLISH", "DEFINE", "ALLOCATE", "PARTITION", "INSCRIBE", "BIND", "IMPORT", "ANCHOR"],
+        "compiler_exec": ["REQUIRE", "FORBID", "REST", "TRANSDUCE", "BALANCE", "EVALUATE", "RECONSTRUCT", "GUARD", "THINK", "REPEAT"],
+        "audit_breakers": ["PROVE", "VERIFY", "CATCH", "INQUIRE", "THROW", "FALSIFY", "TRIPWIRE", "LOCK", "HALT", "ARMED", "LOCKED"],
+        "reel_manifest": ["PROJECT", "RECORD", "COMMIT", "SEAL", "RECONCILE"],
+        "math_and_ternary": ["ADD", "SUB", "MUL", "DIV", "REM", "MOD", "POW", "ROOT", "NEG", "ABS", "SUM", "RATIO", "FLOOR", "CEIL", "ROUND", "NEG_ONE", "ZERO", "ONE", "MIN", "MAX"]
+      }
+    },
+    "tier_2_quarantine": {
+      "description": "Living experimentation sandbox; modify, promote, or retire freely via Change Proposals.",
+      "boundary_casting_molds": ["[+]", "[-]", "<+>", "<->", "{+}", "{-}"],
+      "quarantined_concepts": ["<focus>", "[BLOCK Eval]"],
+      "experimental_transpiler_targets": ["C23 / C11", "Rust", "C++20"]
+    },
+    "retired_artifacts": [
+      {
+        "symbol": "--",
+        "former_meaning": "NOT",
+        "retired_date": "2026-11-19",
+        "reason": "Legacy phantom artifact removed; positional ! covers BUT / ALARM / NOT cleanly without directional arrow confusion."
+      },
+      {
+        "symbol": "≈ (Unicode U+2248)",
+        "former_meaning": "TO BE LIKE",
+        "retired_date": "2026-11-19",
+        "reason": "Violated Standard-Keyboard Plain-ASCII Floor and flattened directional polarity; replaced cleanly by =~ and ~=."
+      }
+    ]
+  },
+  "block_4_audit": {
+    "verification_status": "REGISTRY_ALIGNED_V0_1_3",
+    "ascii_only_symbols": true,
+    "percent_ratio_isolated_from_mod": true,
+    "drift_tripwires": {
+      "await_0": "Compiler prototype or .tape experiment proposes a new keyword or symbol edit.",
+      "rollback_minus_1": "Unverified concept enters keyword_groups before clearing 5-Question Gate.",
+      "halt_null": "Any non-ASCII symbol enters tier_0_bedrock/tier_1_working or % aliases integer modulo."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "OMNICODE_LIVING_LANGUAGE_REGISTRY_ACTIVE",
+    "operational_rules": {
+      "before_adding_keywords": "Check quarantined_concepts and keyword_groups first; submit evolution RFC before promoting.",
+      "compiler_parity": "Keep reference/SYNTAX.md, reference/KEYWORD.md, and root docs/ synced through this SSOT.",
+      "historical_honesty": "Keep retired_artifacts documented so agents never revive retired tokens like --."
+    },
+    "outward_seams": {
+      "track_1_compiler": "Consumes borders_16, directionals_14, wall_weights, and keyword_groups for AST lexing",
+      "track_2_lexicon": "Maps lowercase entries carefully into stdlib & grammar promotions",
+      "evolution_rfc": "Targets change proposals via ./evolution/language_change_proposal.template.md"
+    },
+    "reconciliation_seal": "+1:PROCEED"
+  }
+}

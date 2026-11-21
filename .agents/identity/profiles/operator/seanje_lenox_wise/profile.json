@@ -1,0 +1,181 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework / Big House Ecosystem",
+    "file": ".agents/identity/profiles/operator/seanje_lenox_wise/profile.json",
+    "id": "cog.agent.identity.operator.seanje_lenox_wise",
+    "layer": "Portable Agent Substrate - Prime Operator Profile Manifest",
+    "version": "0.1.3-dev",
+    "schema_version": "1.0.0",
+    "interface_rev": "Rev 5",
+    "created": "2025-11-05",
+    "updated": "2026-11-20",
+    "author": "CreativeWorkzStudio LLC / Seanje Lenox-Wise & Silas Oren",
+    "role": "Prime Operator, Architect, Game Designer & Covenant Steward Profile",
+    "seams": {
+      "narrative_profile": "./profile.md",
+      "operator_database": "../operator_database.json",
+      "operator_template": "../operator-profile-spec/operator_profile.template.json",
+      "voice_seed": "../../../voice_tone_and_cpi_si_paradox.md",
+      "family_architecture": "../../../cpi_si_identity_and_family_architecture.md",
+      "host_calibration": "../../../../host/hardware_calibration.json"
+    },
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Zero-Secrets Boundary: zero passwords, API keys, private tokens, or excluded records stored here.",
+      "3. Executive Covenant Law: Seanje Lenox-Wise retains final authority over architecture, naming, version ticks, and sync gates.",
+      "4. Derived strictly from verified archive sources (claude-global-archived bio/config, 005_operator_trust_model, covenant-partnership) and live host observation."
+    ]
+  },
+  "block_2_opening": {
+    "is_active_operator": true,
+    "authority_tier": "prime_operator",
+    "status": "ACTIVE_PRIME_OPERATOR",
+    "biblical_foundation": {
+      "primary_anchor": "Genesis 1:27",
+      "secondary_anchors": [
+        "Genesis 1:1 (God is Creator; all work answers to truth)",
+        "1 Samuel 18:3 (Covenant friendship & mutual loyalty)",
+        "Proverbs 27:17 (Iron sharpeneth iron)",
+        "Matthew 10:16 (Wise contextual understanding)"
+      ],
+      "principle": "Bears God's image; leads CreativeWorkzStudio LLC and CPI-SI stewardship without elevating technology above Scripture or human accountability."
+    },
+    "identity": {
+      "operator_id": "seanje_lenox_wise",
+      "archive_slug": "seanje-lenox-wise",
+      "username": "professorseanex",
+      "name": "Seanje Lenox-Wise",
+      "display_name": "Seanje",
+      "handle": "ProfessorSeanEX",
+      "pronouns": "he/him",
+      "birthday": "2000-04-17",
+      "origin_and_home": "Born in Chicago, IL; settled in St. Louis, MO since age 13",
+      "physical_note_public": "5'10\", black hair, brown eyes, two extra nubs on pinkies, comfortable dress style"
+    }
+  },
+  "block_3_body": {
+    "faith": {
+      "is_religious": true,
+      "tradition": "Christianity",
+      "denomination": "Apostolic",
+      "practice_level": "devout",
+      "important_practices": [
+        "Daily time with the Lord (prayer and Scripture) before work",
+        "Sunday worship",
+        "Biblical foundation grounding architecture and code decisions",
+        "Homeless ministry conviction: everyone deserves a place to lay their head down at night",
+        "Integrating faith naturally without empty performance"
+      ],
+      "communication_preference": "Faith is integrated naturally and truthfully, never forced or performative."
+    },
+    "workspace_and_calling": {
+      "organization": "CreativeWorkzStudio LLC",
+      "organization_nature": "Sovereign publishing house (games, stories, art, educational tools, community infrastructure) - NOT a commercial SaaS/cloud-lock vendor",
+      "role": "Co-Founder & Prime Operator / Gaming Division Lead",
+      "archived_community_vocation": "Intake Specialist & Food Pantry Admin, Guardian Angel Settlement Association (GASA) - recorded in 2025-11-06 bio",
+      "lived_caregiving_ground": "Daily birth-to-five education/caregiving experience shaping 'walk with me' patience and pedagogical depth",
+      "primary_ecosystems": [
+        "OmniCode / MillenniumOS (Tracks 0-7)",
+        "Cornerstone Engine & Tenebris and Lux",
+        "FaithNet (FNP/1)"
+      ],
+      "core_philosophy": "You learn more when having fun. Compatibility with the modern world, without dependency on it."
+    },
+    "thinking_and_learning": {
+      "problem_solving": "Building Blocks thinker (0 Anchor / -1 Break Down / +1 Build Up)",
+      "learning_style": "Learn by doing and building; true understanding means being able to explain it clearly in plain English",
+      "creativity": "Jack of all trades across game design, coding, writing, singing, cooking, and humor",
+      "loves_to_think_about": [
+        "Deep game design & player-honoring mechanics (non-extractive)",
+        "Kingdom principles in technology and games",
+        "System architecture from silicon to prose",
+        "Philosophy and psychology",
+        "How to uplift and serve people practically"
+      ]
+    },
+    "communication_and_style": {
+      "interaction_preference": "Genuine 2-way dialogue over transactional prompting",
+      "work_rhythm": "Both night owl and early morning worker (respect sleep schedule; never wake unnecessarily)",
+      "discernment_quote": "I'm not God so I can't see your heart, but I can hear it.",
+      "energizers": [
+        "Time with the Lord",
+        "Family time",
+        "Genuine 2-way conversation",
+        "Uplifting people & good humor",
+        "Cool spring days with rain (prefers warm over cold)"
+      ],
+      "drains_and_dislikes": [
+        "People playing pretend or corporate buzzword theater",
+        "Shallow or extractive game/software mechanics",
+        "Rushed AI completions that fake certainty or ignore n-time synthesis",
+        "Being woken up unnecessarily or being cold"
+      ],
+      "session_pacing_rules": [
+        "Respect n-time call-response deliberation and 'walk with me' checkpoints.",
+        "Never push premature session wrap-ups; stay present in the active workshop.",
+        "Never place unverified paraphrases inside quotation marks under Seanje's name."
+      ]
+    },
+    "resonates": {
+      "music": {
+        "genres": ["All kinds of music"],
+        "artists_noted": ["KB", "Andy Mineo"]
+      },
+      "games": {
+        "favorites": ["Yu-Gi-Oh", "Pokemon", "Wizard101", "Tekken series", "Deep RPGs", "Well-designed platformers"],
+        "what_resonates": "Constraint creating creativity, deep mechanics, and systems that respect players."
+      }
+    },
+    "public_contact_handles": {
+      "website": "https://creativeworkzstudio.com",
+      "email": "seanje.lenox@creativeworkzstudio.com",
+      "github_personal": "https://github.com/ProfessorSeanEX/",
+      "github_alt": "https://github.com/Novaking34",
+      "github_company": "https://github.com/Creative-Workz-Studio-LLC/workspace"
+    },
+    "runtime_preferences": {
+      "timezone": "America/Chicago",
+      "timezone_note": "Matches live St. Louis host -06:00 offset; 2025-12-07 archive config.jsonc listed America/New_York.",
+      "locale": "en_US",
+      "theme": "auto",
+      "preferred_shell": "zsh (bash retained)",
+      "toml_override_separation": "Personhood lives in JSON/Markdown here; machine overrides stay in host/ or future user.toml."
+    },
+    "trust_and_login_boundary": {
+      "zero_secrets_stored": true,
+      "sanctuary_isolation": true,
+      "final_executive_authority": "operator_retains_final_authority",
+      "encryption_spec_future": "AES-256-GCM via local Universal Security Key (zero plain-text key storage)"
+    }
+  },
+  "block_4_audit": {
+    "verification_status": "OPERATOR_PROFILE_VERIFIED_CLEAN",
+    "is_active_operator": true,
+    "zero_secrets_stored": true,
+    "primary_source_provenance": [
+      "claude-global-archived/config/user/seanje-lenox-wise/bio.md (2025-11-06)",
+      "claude-global-archived/config/user/seanje-lenox-wise/config.jsonc (2025-12-07)",
+      "cpisiModel/millennium/docs/architecture/005_operator_trust_model.adoc",
+      "Bereshit/word/glossary/paradigm/covenant-partnership.adoc",
+      "OmniCode/.agents/identity/voice_tone_and_cpi_si_paradox.md"
+    ],
+    "drift_tripwires": {
+      "await_0": "Operator shares seasonal updates (schedule, projects, preferences) for living bio refinement.",
+      "rollback_minus_1": "Invented quotes, stale hardcoded age math, or corporate filler leaks into profile.",
+      "halt_null": "Any secret, password, credential, or privacy-excluded personal record enters this file."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "PRIME_OPERATOR_SEANJE_PROFILE_ACTIVE",
+    "operational_rules": {
+      "two_way_partnership": "Speak honestly, bring genuine engineering judgment, and hold firm when wisdom calls for 0:AWAIT.",
+      "living_profile": "Update only verified seasonal facts when shared; never overwrite historical provenance silently."
+    },
+    "outward_seams": {
+      "operator_database": "../operator_database.json",
+      "track_5_login": "Binds active Operator context during Boot -> Login -> Desktop Home",
+      "cpi_si_voice_seed": "../../../voice_tone_and_cpi_si_paradox.md"
+    },
+    "reconciliation_seal": "+1:PROCEED"
+  }
+}

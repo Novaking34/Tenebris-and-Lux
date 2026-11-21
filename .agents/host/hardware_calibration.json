@@ -1,0 +1,640 @@
+{
+  "block_1_metadata": {
+    "project": "OmniCode Framework",
+    "file": ".agents/host/hardware_calibration.json",
+    "id": "cog.agent.host.hardware_calibration",
+    "layer": "Portable Agent Substrate - Multi-Platform Host & Calibration Data Contract",
+    "version": "0.1.3-dev",
+    "interface_rev": "Rev 5",
+    "created": "2026-11-19",
+    "updated": "2026-11-19",
+    "author": "CreativeWorkzStudio LLC / ProfessorSeanEX (Seanje Lenox-Wise)",
+    "role": "Portable Multi-Platform Host Hardware & Local AI Threshing-Floor SSOT",
+    "seams": {
+      "live_profile_doc": "./host_pc_hardware_profile.md",
+      "os_overview_doc": "./host_environments_overview.md",
+      "blank_template": "./host-profile-spec/hardware_calibration.template.json",
+      "provenance": "Tenebris-and-Lux/tools/orchestrator/config/hardware_calibration.json",
+      "upstream_calibration_created": "2026-11-17"
+    },
+    "invariants": [
+      "1. Universal 5-Block JSON lifecycle protocol enforced.",
+      "2. Exactly one active host sets is_current_platform: true; all inactive platforms set is_current_platform: false.",
+      "3. Continue.dev minimum context floor >= 4096 tokens enforced across calibrated tiers.",
+      "4. Non-headless safety floor: protect >= 3072 MiB system RAM and >= 350 MiB display VRAM.",
+      "5. Single SSOT per calibrated tier inside each platform block without duplicate tier copies."
+    ]
+  },
+  "block_2_opening": {
+    "timestamp": "2026-11-19",
+    "active_platform": "linux",
+    "supported_platforms": [
+      "linux",
+      "windows",
+      "macos",
+      "millenniumos"
+    ],
+    "total_calibrated_tiers": 4,
+    "continue_minimum_ctx": 4096,
+    "non_headless_guards": {
+      "desktop_ram_reserve_mb": 3072,
+      "vram_display_floor_mb": 350,
+      "usable_compute_vram_mb": 1387
+    },
+    "active_host_summary": {
+      "hostname": "professorseanex-Inspiron-16-5640",
+      "chassis": "Dell Inspiron 16 5640",
+      "os": "Ubuntu 26.04.1 LTS (x86_64)",
+      "kernel": "7.0.0-43-generic #43-Ubuntu SMP PREEMPT_DYNAMIC",
+      "desktop_session": "wayland (ubuntu:GNOME)",
+      "cpu": "Intel(R) Core(TM) 7 150U (10 physical cores / 12 logical threads)",
+      "gpu_display": "Intel Corporation Raptor Lake-U [Intel Graphics]",
+      "gpu_compute": "NVIDIA GeForce MX570 A (2048 MiB GDDR6 total, 1387 MiB usable)",
+      "ram_mb": 15160
+    }
+  },
+  "block_3_body": {
+    "platforms": {
+      "linux": {
+        "is_current_platform": true,
+        "status": "VERIFIED_LIVE_HOST",
+        "profile_doc": "./host_pc_hardware_profile.md",
+        "template_spec": "./host-profile-spec/linux_host_profile.template.md",
+        "hardware": {
+          "hostname": "professorseanex-Inspiron-16-5640",
+          "os_distro": "Ubuntu 26.04.1 LTS",
+          "arch": "x86_64",
+          "kernel": "7.0.0-43-generic #43-Ubuntu SMP PREEMPT_DYNAMIC Fri Oct 23 13:25:25 UTC 2026",
+          "desktop_session": {
+            "xdg_session_type": "wayland",
+            "xdg_current_desktop": "ubuntu:GNOME"
+          },
+          "default_shell": "/usr/bin/zsh (bash retained)",
+          "cpu": {
+            "model_name": "Intel(R) Core(TM) 7 150U",
+            "vendor_id": "GenuineIntel",
+            "family": 6,
+            "model": 186,
+            "stepping": 3,
+            "physical_cores": 10,
+            "logical_threads": 12,
+            "numa_nodes": 1,
+            "virtualization": "VT-x",
+            "min_freq_mhz": 400.0,
+            "max_freq_mhz": 5400.0,
+            "p_cores": 2,
+            "p_threads": [0, 1, 2, 3],
+            "p_max_freq_ghz": 5.4,
+            "e_cores": 8,
+            "e_threads": [4, 5, 6, 7, 8, 9, 10, 11],
+            "e_max_freq_ghz": 4.0,
+            "caches": {
+              "l1d": "352 KiB (10 instances)",
+              "l1i": "576 KiB (10 instances)",
+              "l2": "6.5 MiB (4 instances)",
+              "l3": "12 MiB (1 instance)"
+            }
+          },
+          "memory_and_swap": {
+            "ram_mb": 15160,
+            "non_headless_reserve_mb": 3072,
+            "available_for_compute_budget_mb": 11064,
+            "total_swap_mb": 11676,
+            "swap_devices": [
+              {
+                "name": "/dev/zram0",
+                "type": "partition",
+                "size": "7.4G",
+                "priority": 100
+              },
+              {
+                "name": "/swap.img",
+                "type": "file",
+                "size": "4G",
+                "priority": -1
+              }
+            ]
+          },
+          "gpus": {
+            "display_igpu": {
+              "name": "Intel Corporation Raptor Lake-U [Intel Graphics]",
+              "revision": "04",
+              "pci_slot": "00:02.0",
+              "role": "Primary Wayland / GNOME display scanout"
+            },
+            "compute_dgpu": {
+              "name": "NVIDIA GeForce MX570 A",
+              "architecture": "GA107M",
+              "revision": "a1",
+              "pci_slot": "01:00.0",
+              "pci_bus_id": "0000:01:00.0",
+              "driver_version": "595.99.02",
+              "total_vram_mb": 2048,
+              "addressable_vram_mb": 1737,
+              "hw_reserve_mb": 311,
+              "display_floor_mb": 350,
+              "usable_compute_vram_mb": 1387
+            }
+          },
+          "storage": {
+            "block_device": "nvme0n1",
+            "model": "Micron Technology Inc 2550 NVMe SSD (DRAM-less)",
+            "revision": "01",
+            "pci_slot": "02:00.0",
+            "capacity_gib": 953.9,
+            "capacity_gb": 1024,
+            "dram_cache": false,
+            "root_partition": "/dev/nvme0n1p2",
+            "mount": "/",
+            "fs_total": "937G",
+            "fs_used": "114G",
+            "fs_avail": "776G",
+            "fs_use_pct": 13
+          },
+          "audio": {
+            "model": "Intel Corporation Raptor Lake-P/U/H cAVS",
+            "revision": "01",
+            "pci_slot": "00:1f.3"
+          },
+          "network": {
+            "controller": "Realtek Semiconductor Co., Ltd. RTL8852CE PCIe 802.11ax Wireless Network Controller",
+            "revision": "01",
+            "driver": "rtw89_8852ce",
+            "pci_slot": "03:00.0",
+            "interfaces": [
+              "lo",
+              "wlp3s0",
+              "ap0"
+            ],
+            "faithnet_ap_ssid": "FaithNet-HomeRoom",
+            "radio_constraints": {
+              "single_channel_sta_ap": true,
+              "powersave_disabled": true,
+              "weak_uplink_band": "2.4 GHz",
+              "beacon_int_weak_uplink": 200
+            }
+          },
+          "toolchains": {
+            "zsh": "5.9 (x86_64-ubuntu-linux-gnu)",
+            "rustc": "1.93.1",
+            "cargo": "1.93.1",
+            "go": "go1.26.8 linux/amd64",
+            "gcc": "15.2.0",
+            "cmake": "4.2.3",
+            "python3": "3.14.4",
+            "qemu_system_x86_64": "10.2.1",
+            "ollama": "0.40.8"
+          }
+        },
+        "calibrated_tiers": {
+          "0.5b": {
+            "tier": "0.5b",
+            "base_model": "qwen2.5-coder:0.5b",
+            "the_room": {
+              "min": {
+                "num_ctx": 2048,
+                "recommended_gpu_layers": 10,
+                "cpu_threads": 1,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": 8192,
+                "recommended_gpu_layers": 24,
+                "recommended_cpu_threads": 4,
+                "cpu_threads": 4,
+                "kv_cache_mb": 96.0,
+                "vram_headroom_mb": 1244.0,
+                "ram_usage_mb": 0.0,
+                "ram_headroom_mb": 11064.0,
+                "continue_compatible": true,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": 8192,
+                "recommended_gpu_layers": 24,
+                "cpu_threads": 12,
+                "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": 8192,
+              "gpu_layers": 24,
+              "cpu_threads": 4
+            },
+            "probed_machine_ideal": {
+              "num_ctx": 8192,
+              "recommended_gpu_layers": 24,
+              "recommended_cpu_threads": 4,
+              "cpu_threads": 4,
+              "kv_cache_mb": 96.0,
+              "vram_headroom_mb": 1244.0,
+              "ram_usage_mb": 0.0,
+              "ram_headroom_mb": 11064.0,
+              "continue_compatible": true,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": 0,
+              "gpu_layer_diff": 0,
+              "layer_diff": 0,
+              "cpu_thread_diff": 0
+            },
+            "modelfile_slots": {
+              "min": "0.5b_min.Modelfile",
+              "ideal": "0.5b_ideal.Modelfile",
+              "max": "0.5b_max.Modelfile",
+              "upstream_source_dir": "Tenebris-and-Lux/tools/orchestrator/config/modelfiles"
+            },
+            "tripwire_status": "CLEAN"
+          },
+          "1.5b": {
+            "tier": "1.5b",
+            "base_model": "qwen2.5-coder:1.5b",
+            "the_room": {
+              "min": {
+                "num_ctx": 4096,
+                "recommended_gpu_layers": 10,
+                "cpu_threads": 1,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": 8192,
+                "recommended_gpu_layers": 28,
+                "recommended_cpu_threads": 4,
+                "cpu_threads": 4,
+                "kv_cache_mb": 224.0,
+                "vram_headroom_mb": 527.0,
+                "ram_usage_mb": 0.0,
+                "ram_headroom_mb": 11064.0,
+                "continue_compatible": true,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": 32768,
+                "recommended_gpu_layers": 28,
+                "cpu_threads": 12,
+                "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": 8192,
+              "gpu_layers": 28,
+              "cpu_threads": 4
+            },
+            "probed_machine_ideal": {
+              "num_ctx": 8192,
+              "recommended_gpu_layers": 28,
+              "recommended_cpu_threads": 4,
+              "cpu_threads": 4,
+              "kv_cache_mb": 224.0,
+              "vram_headroom_mb": 527.0,
+              "ram_usage_mb": 0.0,
+              "ram_headroom_mb": 11064.0,
+              "continue_compatible": true,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": 0,
+              "gpu_layer_diff": 0,
+              "layer_diff": 0,
+              "cpu_thread_diff": 0
+            },
+            "modelfile_slots": {
+              "min": "1.5b_min.Modelfile",
+              "ideal": "1.5b_ideal.Modelfile",
+              "max": "1.5b_max.Modelfile",
+              "upstream_source_dir": "Tenebris-and-Lux/tools/orchestrator/config/modelfiles"
+            },
+            "tripwire_status": "CLEAN"
+          },
+          "3b": {
+            "tier": "3b",
+            "base_model": "qwen2.5-coder:3b",
+            "the_room": {
+              "min": {
+                "num_ctx": 4096,
+                "recommended_gpu_layers": 10,
+                "cpu_threads": 1,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": 8192,
+                "recommended_gpu_layers": 20,
+                "recommended_cpu_threads": 8,
+                "cpu_threads": 8,
+                "kv_cache_mb": 288.0,
+                "vram_headroom_mb": 376.8,
+                "ram_usage_mb": 857.8,
+                "ram_headroom_mb": 10206.2,
+                "continue_compatible": true,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": 16384,
+                "recommended_gpu_layers": 25,
+                "cpu_threads": 12,
+                "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": 8192,
+              "gpu_layers": 20,
+              "cpu_threads": 8
+            },
+            "probed_machine_ideal": {
+              "num_ctx": 8192,
+              "recommended_gpu_layers": 20,
+              "recommended_cpu_threads": 8,
+              "cpu_threads": 8,
+              "kv_cache_mb": 288.0,
+              "vram_headroom_mb": 376.8,
+              "ram_usage_mb": 857.8,
+              "ram_headroom_mb": 10206.2,
+              "continue_compatible": true,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": 0,
+              "gpu_layer_diff": 0,
+              "layer_diff": 0,
+              "cpu_thread_diff": 0
+            },
+            "modelfile_slots": {
+              "min": "3b_min.Modelfile",
+              "ideal": "3b_ideal.Modelfile",
+              "max": "3b_max.Modelfile",
+              "upstream_source_dir": "Tenebris-and-Lux/tools/orchestrator/config/modelfiles"
+            },
+            "tripwire_status": "CLEAN"
+          },
+          "7b": {
+            "tier": "7b",
+            "base_model": "qwen2.5-coder:7b",
+            "the_room": {
+              "min": {
+                "num_ctx": 4096,
+                "recommended_gpu_layers": 0,
+                "cpu_threads": 1,
+                "description": "Absolute Minimum Viable Floor"
+              },
+              "ideal": {
+                "num_ctx": 8192,
+                "recommended_gpu_layers": 4,
+                "recommended_cpu_threads": 10,
+                "cpu_threads": 10,
+                "kv_cache_mb": 448.0,
+                "vram_headroom_mb": 1065.6,
+                "ram_usage_mb": 4476.6,
+                "ram_headroom_mb": 6587.4,
+                "continue_compatible": true,
+                "is_flagged": false,
+                "tripwires": [],
+                "description": "Sweet Spot Toward the Max (Guarding Non-Headless Headroom)"
+              },
+              "max": {
+                "num_ctx": 16384,
+                "recommended_gpu_layers": 5,
+                "cpu_threads": 12,
+                "description": "Physical Ceiling (Full N=12 Thread Capacity, Apex Offload)"
+              }
+            },
+            "threshing_floor_hypothesis": {
+              "num_ctx": 8192,
+              "gpu_layers": 4,
+              "cpu_threads": 10
+            },
+            "probed_machine_ideal": {
+              "num_ctx": 8192,
+              "recommended_gpu_layers": 4,
+              "recommended_cpu_threads": 10,
+              "cpu_threads": 10,
+              "kv_cache_mb": 448.0,
+              "vram_headroom_mb": 1065.6,
+              "ram_usage_mb": 4476.6,
+              "ram_headroom_mb": 6587.4,
+              "continue_compatible": true,
+              "is_flagged": false,
+              "tripwires": []
+            },
+            "threshing_delta": {
+              "ctx_diff": 0,
+              "gpu_layer_diff": 0,
+              "layer_diff": 0,
+              "cpu_thread_diff": 0
+            },
+            "modelfile_slots": {
+              "min": "7b_min.Modelfile",
+              "ideal": "7b_ideal.Modelfile",
+              "max": "7b_max.Modelfile",
+              "upstream_source_dir": "Tenebris-and-Lux/tools/orchestrator/config/modelfiles"
+            },
+            "tripwire_status": "CLEAN"
+          }
+        }
+      },
+      "windows": {
+        "is_current_platform": false,
+        "status": "UNPROBED_TEMPLATE_SLOT",
+        "profile_doc": null,
+        "template_spec": "./host-profile-spec/windows_host_profile.template.md",
+        "hardware": {
+          "hostname": null,
+          "os_edition_and_build": null,
+          "arch": null,
+          "desktop_session": {
+            "compositor": "DWM (expected)",
+            "long_paths_enabled": null,
+            "developer_mode_enabled": null
+          },
+          "cpu": {
+            "model_name": null,
+            "physical_cores": null,
+            "logical_threads": null,
+            "virtualization_hyperv": null
+          },
+          "memory_and_pagefile": {
+            "ram_mb": null,
+            "non_headless_reserve_mb": null,
+            "pagefile_mb": null
+          },
+          "gpus": {
+            "display_gpu": null,
+            "compute_gpu": null,
+            "wddm_dedicated_vram_mb": null,
+            "wddm_shared_vram_mb": null,
+            "usable_compute_vram_mb": null
+          },
+          "storage": {
+            "system_drive": null,
+            "filesystem": "NTFS",
+            "capacity_gb": null,
+            "defender_repo_exclusion": null
+          },
+          "audio": {
+            "api": "WASAPI",
+            "device": null
+          },
+          "network": {
+            "adapter": null,
+            "wifi_ap_hosting_supported": null,
+            "firewall_profile": null
+          },
+          "virtualization": {
+            "wsl2_installed": null,
+            "hyperv_enabled": null
+          },
+          "toolchains": {
+            "msvc_or_mingw": null,
+            "rustc": null,
+            "go": null,
+            "cmake": null,
+            "python3": null,
+            "ollama": null
+          }
+        },
+        "calibrated_tiers": {}
+      },
+      "macos": {
+        "is_current_platform": false,
+        "status": "UNPROBED_TEMPLATE_SLOT",
+        "profile_doc": null,
+        "template_spec": "./host-profile-spec/macos_host_profile.template.md",
+        "hardware": {
+          "hostname": null,
+          "macos_version": null,
+          "arch": null,
+          "desktop_session": {
+            "window_server": "Quartz / WindowServer (expected)",
+            "sip_status": null
+          },
+          "cpu": {
+            "chip_or_model": null,
+            "physical_cores": null,
+            "logical_threads": null,
+            "p_cores": null,
+            "e_cores": null
+          },
+          "memory_and_gpu": {
+            "unified_memory_architecture": null,
+            "ram_mb": null,
+            "metal_wired_limit_mb": null,
+            "non_headless_reserve_mb": null,
+            "gpu_cores_or_discrete": null
+          },
+          "storage": {
+            "volume": null,
+            "filesystem": "APFS",
+            "capacity_gb": null
+          },
+          "audio": {
+            "api": "CoreAudio",
+            "device": null
+          },
+          "network": {
+            "wifi_hardware": null,
+            "awdl_interference_noted": null,
+            "raw_ap0_unavailable": true
+          },
+          "virtualization": {
+            "virtualization_framework": null,
+            "qemu_or_utm": null
+          },
+          "toolchains": {
+            "xcode_clt": null,
+            "rustc": null,
+            "go": null,
+            "cmake": null,
+            "python3": null,
+            "ollama": null
+          }
+        },
+        "calibrated_tiers": {}
+      },
+      "millenniumos": {
+        "is_current_platform": false,
+        "status": "TARGET_NATIVE_OS_SLOT",
+        "profile_doc": null,
+        "template_spec": "./host-profile-spec/millenniumos_host_profile.template.md",
+        "hardware": {
+          "target_name": "MillenniumOS Sovereign Host",
+          "boot_mode": null,
+          "emulation_or_silicon": null,
+          "track_0_probes": {
+            "cpuid_vendor": null,
+            "e820_or_uefi_usable_ram_mb": null,
+            "pcie_device_count": null,
+            "framebuffer_mode": null
+          },
+          "track_1_runtime_budget": {
+            "alloc_zero_heap_enforced": true,
+            "static_arena_budget_mb": null,
+            "native_cpsi_router_tier": null
+          },
+          "track_3_vfs_store": {
+            "root_vfs_mount": null,
+            "episodic_bank_capacity_mb": null
+          },
+          "track_4_faithnet_native": {
+            "fnp1_driver": null,
+            "raw_radio_binding": null
+          },
+          "track_5_desktop_floor": {
+            "covenant_handshake": null,
+            "omnistudio_home_vram_mb": null
+          }
+        },
+        "calibrated_tiers": {}
+      }
+    }
+  },
+  "block_4_audit": {
+    "verification_status": "CALIBRATED_CLEAN",
+    "active_platform": "linux",
+    "active_platform_count": 1,
+    "inactive_platforms_flagged_false": [
+      "windows",
+      "macos",
+      "millenniumos"
+    ],
+    "all_tiers_meet_continue_minimum": true,
+    "zero_threshing_delta_verified": true,
+    "drift_tripwires": {
+      "await_0": "Kernel upgrade, NVIDIA driver change, or new tool version requires re-probe.",
+      "rollback_minus_1": "threshing_delta != 0 or usable VRAM drops below 1387 MiB.",
+      "halt_null": "More than one platform sets is_current_platform: true or non-headless reserves violated."
+    }
+  },
+  "block_5_closing": {
+    "execution_handshake": "MULTI_PLATFORM_HOST_CALIBRATION_ACTIVE",
+    "operational_defaults": {
+      "fast_inline_tier": "0.5b",
+      "default_coding_tier": "1.5b",
+      "balanced_synthesis_tier": "3b",
+      "heavy_reasoning_tier": "7b",
+      "safe_parallel_build_jobs": 8,
+      "non_headless_ram_reserve_mb": 3072,
+      "non_headless_vram_floor_mb": 350
+    },
+    "outward_seams": {
+      "track_0": "Track 0 HAL & hardware probes consume verified CPU/RAM/GPU/radio limits",
+      "track_1": "Track 1 cognitive calibration & substrate router enforce zero-spill defaults",
+      "track_4": "Track 4 FaithNet drivers respect single-channel RTL8852CE wlp3s0 + ap0 constraints",
+      "track_5": "Track 5 Wayland desktop session holds protected RAM and VRAM display floor"
+    },
+    "paired_documents": {
+      "live_profile": "./host_pc_hardware_profile.md",
+      "os_overview": "./host_environments_overview.md",
+      "blank_template": "./host-profile-spec/hardware_calibration.template.json"
+    },
+    "reconciliation_seal": "+1:PROCEED"
+  }
+}
